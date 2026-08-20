@@ -1,0 +1,12 @@
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Kelus — Shop smarter. Know before you buy.",
+  description: "Kelus compares price, protection, and history so you can choose the offer that is actually worth buying.",
+  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="en"><body>{children}</body></html>;
+}
