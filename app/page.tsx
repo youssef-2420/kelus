@@ -47,7 +47,7 @@ export default function Home() {
         </div>
         <div className="search-field"><label htmlFor="condition">Condition</label><select id="condition" value={condition} onChange={event => setCondition(event.target.value)}><option>New &amp; Used</option><option>New</option><option>Used</option><option>Refurbished</option></select></div>
         <div className="search-field"><label htmlFor="variant">Variant</label><select id="variant" value={variant} onChange={event => setVariant(event.target.value)}><option>256GB</option><option>128GB</option><option>512GB</option><option>1TB</option></select></div>
-        <div className="search-field search-field--location"><label>Location</label><div className="field-row field-static"><Icon>⌖</Icon><span>United States</span><span className="select-chevron">⌄</span></div></div>
+        <div className="search-field search-field--location"><label htmlFor="location">Location</label><div className="field-row field-static" id="location" role="textbox" aria-readonly="true" tabIndex={0}><Icon>⌖</Icon><span>United States</span><span className="select-chevron">⌄</span></div></div>
         <button className="button button--primary search-button" onClick={() => document.getElementById("results")?.scrollIntoView({ behavior: "smooth" })}>Compare prices <span>›</span></button>
       </div>
       <div className="trust-row"><span><Icon>♢</Icon>Trusted retailers</span><span><Icon>◇</Icon>Real-time prices</span><span><Icon>⟳</Icon>Price history insights</span><span><Icon>♙</Icon>Safe &amp; secure</span></div>
