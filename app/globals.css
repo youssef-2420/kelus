@@ -79,3 +79,19 @@ button { cursor:pointer; }
 .search-field > div { transition:color .18s ease; }.search-field:focus-within { background:#fbfefc; box-shadow:inset 0 -2px var(--green); }.search-field:focus-within > div { color:var(--forest); }.search-field select { appearance:none; background:none; padding-right:26px; }.select-control { position:relative; display:flex !important; align-items:center; }.select-control select { cursor:pointer; }.select-control svg { position:absolute; right:0; pointer-events:none; transition:transform .18s ease; }.search-field:focus-within .select-control svg { transform:rotate(180deg); }.suggestions { animation:suggestion-in .16s ease-out both; }.search-submit { transition:background .18s ease,transform .18s ease,box-shadow .18s ease; }.search-submit:focus-visible { outline:3px solid #b5ddd4; outline-offset:2px; }.payment-methods button { transition:background .18s ease,color .18s ease,box-shadow .18s ease; }.payment-methods button:hover { background:#f2f8f5; color:var(--forest); }.payment-methods button.active { box-shadow:inset 0 -3px var(--forest); }.payment-mark { min-height:21px; display:inline-flex; align-items:center; justify-content:center; font-size:20px; line-height:1; font-weight:800; letter-spacing:-1px; }.card-mark { color:#1f635b; font-size:24px; }.google-mark { font-family:Arial,sans-serif; color:#4285f4; text-shadow:1px 0 #ea4335,-1px 0 #34a853; }.apple-mark { color:#111; gap:2px; font-size:18px; letter-spacing:-.7px; }.apple-mark b { font-family:Arial,sans-serif; font-size:13px; letter-spacing:-.8px; }.paypal-mark { position:relative; width:23px; color:#1477bf; font-family:Arial,sans-serif; font-size:21px; font-style:italic; }.paypal-mark i,.paypal-mark b { position:absolute; font-style:italic; }.paypal-mark i { color:#0a4d93; transform:translateX(-2px); }.paypal-mark b { color:#159bd7; transform:translateX(2px); }.payment-mark-large { width:58px; height:58px; border-radius:50%; background:#eef6f3; font-size:28px; margin:0 auto 15px; }.payment-mark-large.apple-mark b { font-size:18px; }.payment-mark-large.paypal-mark { margin:0 auto 15px; }.express-icon { display:none; } @keyframes suggestion-in { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
 
 .location-control { gap:10px; }.location-control > svg:first-child { position:static; flex:none; }.location-control select { padding-right:25px; }
+
+/* A quiet visual handoff between the three steps on the How it works page. */
+@media (min-width:621px) {
+  .steps-section { position:relative; }
+  .step-card { animation:step-rise .5s ease-out both; }
+  .step-card:nth-child(2) { animation-delay:.13s; }
+  .step-card:nth-child(3) { animation-delay:.26s; }
+  .step-icon { position:relative; transition:transform .22s ease,box-shadow .22s ease; }
+  .step-card:hover .step-icon { transform:translateY(-3px); box-shadow:0 8px 18px rgba(23,103,95,.14); }
+  .step-card:not(:last-child) .step-icon::after { content:""; position:absolute; left:calc(100% + 16px); top:50%; width:30px; height:1px; background:linear-gradient(90deg,#bfdcd5,#17675f,#bfdcd5); background-size:200% 100%; animation:connector-flow 2.5s linear infinite; }
+  .step-card:not(:last-child) .step-icon::before { content:""; position:absolute; left:calc(100% + 42px); top:calc(50% - 4px); width:7px; height:7px; border-top:1px solid #17675f; border-right:1px solid #17675f; transform:rotate(45deg); animation:connector-pulse 2.5s ease-in-out infinite; }
+}
+@keyframes step-rise { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+@keyframes connector-flow { from { background-position:200% 0; } to { background-position:0 0; } }
+@keyframes connector-pulse { 0%,100% { opacity:.45; } 50% { opacity:1; } }
+@media (prefers-reduced-motion:reduce) { .step-card,.step-card:not(:last-child) .step-icon::after,.step-card:not(:last-child) .step-icon::before { animation:none !important; } }
