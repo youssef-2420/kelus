@@ -95,3 +95,21 @@ button { cursor:pointer; }
 @keyframes connector-flow { from { background-position:200% 0; } to { background-position:0 0; } }
 @keyframes connector-pulse { 0%,100% { opacity:.45; } 50% { opacity:1; } }
 @media (prefers-reduced-motion:reduce) { .step-card,.step-card:not(:last-child) .step-icon::after,.step-card:not(:last-child) .step-icon::before { animation:none !important; } }
+
+/* Final interaction polish: consistent feedback without changing the visual system. */
+html { scroll-behavior:smooth; }
+:where(a,button,input,select):focus-visible { outline:3px solid #9fcfc3; outline-offset:3px; }
+.wordmark,.text-link { transition:color .18s ease,opacity .18s ease; }
+.button:active,.header-signin:active,.search-submit:active { transform:translateY(1px) scale(.99); }
+.offer-card,.feature-grid article,.guide-grid article,.insight-card,.saved-card,.product-summary { transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease; }
+@media (hover:hover) {
+  .offer-card:hover,.feature-grid article:hover,.guide-grid article:hover,.insight-card:hover,.saved-card:hover,.product-summary:hover { transform:translateY(-3px); border-color:#a8c9bf; box-shadow:0 12px 26px rgba(18,68,61,.08); }
+  .text-link:hover svg,.button:hover svg { transform:translateX(3px); }
+}
+.text-link svg,.button svg { transition:transform .18s ease; }
+.sort-tabs button,.filter-toggle,.watch-button,.icon-button { transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease; }
+.filter-toggle:hover,.watch-button:hover,.icon-button:hover { transform:translateY(-1px); }
+@media (prefers-reduced-motion:reduce) {
+  html { scroll-behavior:auto; }
+  .wordmark,.text-link,.button,.header-signin,.offer-card,.feature-grid article,.guide-grid article,.insight-card,.saved-card,.product-summary,.sort-tabs button,.filter-toggle,.watch-button,.icon-button,.text-link svg,.button svg { transition:none !important; }
+}
