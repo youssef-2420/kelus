@@ -74,3 +74,4 @@ button { cursor:pointer; }
 @media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; }.app-page { animation:none; }.site-header nav a:after { transition:none; } }
 
 .forgot-link { padding:0; border:0; background:transparent; }
+.signin-confirm { min-height:350px; display:grid; justify-items:center; align-content:center; text-align:center; }.signin-confirm > span { width:56px; height:56px; display:grid; place-items:center; border-radius:50%; color:var(--green); background:#dff1e9; }.signin-confirm h2 { margin:19px 0 8px; }.signin-confirm p { color:var(--muted); line-height:1.55; max-width:315px; margin:0 0 20px; }
