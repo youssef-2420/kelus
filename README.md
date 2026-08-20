@@ -2,10 +2,6 @@
 
 Kelus helps shoppers compare trusted offers, understand the trade-offs, and buy with confidence.
 
-## Live website
-
-https://kelus-comparison-mvp.youssef-aitaddi.chatgpt.site
-
 ## Main pages
 
 - **Home:** `app/page.tsx`
