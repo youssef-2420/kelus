@@ -1,7 +1,7 @@
 "use client";
 
-import { Icon } from "@/components/Icon";
 import { usePathname } from "next/navigation";
+import { SignInDialog } from "@/components/SignInDialog";
 
 export function KelusHeader() {
   const pathname = usePathname();
@@ -11,6 +11,6 @@ export function KelusHeader() {
     <nav aria-label="Main navigation">
       {navItems.map((item) => <a key={item.href} href={item.href} className={pathname === item.href || (item.href === "/results" && pathname.startsWith("/product")) || (item.href === "/results" && pathname.startsWith("/compare")) ? "is-active" : ""}>{item.label}</a>)}
     </nav>
-    <a className="header-signin" href="/saved"><Icon name="bell" size={17} /> Alerts</a>
+    <SignInDialog />
   </header>;
 }
