@@ -22,3 +22,4 @@ export type RecommendationKind = "kelus_pick" | "cheapest" | "safest_option";
 export type Recommendation = { offerId: string; kind: RecommendationKind; reasons: string[]; tradeoffs: string[] };
 export type ProviderResult = { providerId: string; offers: Offer[]; observations: PriceObservation[]; isDemo: boolean };
 export type OfferSearchResult = { offers: Offer[]; observations: PriceObservation[]; failedProviders: string[]; isDemo: boolean };
+export type SearchStatus = "idle" | "resolving_product" | "fetching_offers" | "normalizing_offers" | "ranking" | "complete" | "partial" | "error";
