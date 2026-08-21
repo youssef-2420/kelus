@@ -2,11 +2,11 @@ import type { Offer, PricePoint, Product, ProductVariant, Retailer, Seller } fro
 
 export const marketOptions = [{ id: "us", label: "United States" }] as const;
 export const products: Product[] = [
-  { id: "apple-iphone-17", slug: "iphone-17", name: "iPhone 17", category: "Smartphone", brand: "Apple", image: "IPH", identifiers: { brand: "Apple", family: "iPhone" } },
-  { id: "apple-iphone-17-pro", slug: "iphone-17-pro", name: "iPhone 17 Pro", category: "Smartphone", brand: "Apple", image: "17P", identifiers: { brand: "Apple", family: "iPhone" } },
-  { id: "apple-iphone-17-pro-max", slug: "iphone-17-pro-max", name: "iPhone 17 Pro Max", category: "Smartphone", brand: "Apple", image: "17M", identifiers: { brand: "Apple", family: "iPhone" } },
-  { id: "apple-macbook-air-m4", slug: "macbook-air-m4", name: "MacBook Air", category: "Laptop", brand: "Apple", image: "MBA", identifiers: { brand: "Apple", family: "MacBook" } },
-  { id: "apple-airpods-pro-2", slug: "airpods-pro-2", name: "AirPods Pro", category: "Audio", brand: "Apple", image: "APP", identifiers: { brand: "Apple", family: "AirPods" } },
+  { id: "apple-iphone-17", slug: "iphone-17", name: "iPhone 17", category: "Smartphone", brand: "Apple", image: "IPH", identifiers: { brand: "Apple", family: "iPhone" }, searchPreview: { fromPrice: 799, offerCount: 3, isDemo: true } },
+  { id: "apple-iphone-17-pro", slug: "iphone-17-pro", name: "iPhone 17 Pro", category: "Smartphone", brand: "Apple", image: "17P", identifiers: { brand: "Apple", family: "iPhone" }, searchPreview: { fromPrice: 999, offerCount: 0, isDemo: true } },
+  { id: "apple-iphone-17-pro-max", slug: "iphone-17-pro-max", name: "iPhone 17 Pro Max", category: "Smartphone", brand: "Apple", image: "17M", identifiers: { brand: "Apple", family: "iPhone" }, searchPreview: { fromPrice: 1199, offerCount: 0, isDemo: true } },
+  { id: "apple-macbook-air-m4", slug: "macbook-air-m4", name: "MacBook Air", category: "Laptop", brand: "Apple", image: "MBA", identifiers: { brand: "Apple", family: "MacBook" }, searchPreview: { fromPrice: 999, offerCount: 0, isDemo: true } },
+  { id: "apple-airpods-pro-2", slug: "airpods-pro-2", name: "AirPods Pro", category: "Audio", brand: "Apple", image: "APP", identifiers: { brand: "Apple", family: "AirPods" }, searchPreview: { fromPrice: 249, offerCount: 0, isDemo: true } },
 ];
 export const featuredProduct = products[0];
 export const productVariants: ProductVariant[] = [
