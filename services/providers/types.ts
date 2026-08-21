@@ -1,3 +1,3 @@
-import type { ProductVariant, ProviderResult } from "@/types/kelus";
+import type { ProviderResult, SearchCriteria } from "@/types/kelus";
 
-export interface OfferProvider { id: string; getOffers(variant: ProductVariant): Promise<ProviderResult> }
+export interface OfferProvider { id: string; getOffers(criteria: SearchCriteria): Promise<ProviderResult> }

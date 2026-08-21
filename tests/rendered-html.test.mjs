@@ -6,7 +6,7 @@ import test from "node:test";
 const outputFor = (route) => route === "/" ? join(process.cwd(), "out", "index.html") : join(process.cwd(), "out", route.slice(1), "index.html");
 
 test("exports the Kelus comparison flow as static pages", async () => {
-  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "Kelus Pick"], ["/product/iphone-17", "Best balance of price"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/saved", "Keep an eye"]]) {
+  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Best balance of price"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/saved", "Keep an eye"]]) {
     const html = await readFile(outputFor(route), "utf8");
     assert.match(html, new RegExp(expected));
     assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/i);
@@ -21,9 +21,9 @@ test("Kelus source separates demo offers from recommendation and provider contra
     readFile(new URL("../services/providers/types.ts", import.meta.url), "utf8"),
     readFile(new URL("../components/OfferCard.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(data, /demoRecommendations/);
+  assert.match(data, /Seed data is deliberately demo-only/);
   assert.match(recommendation, /tradeoffs/);
-  assert.match(provider, /OfferProvider/);
+  assert.match(provider, /SearchCriteria/);
   assert.match(offerCard, /OutboundRetailerCTA/);
   assert.doesNotMatch(offerCard, /Kelus score|score/);
 });
