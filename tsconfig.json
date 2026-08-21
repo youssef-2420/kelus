@@ -35,6 +35,8 @@
     "components/**/*.ts",
     "components/**/*.tsx",
     "lib/**/*.ts",
+    "services/**/*.ts",
+    "services/**/*.tsx",
     "types/**/*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"

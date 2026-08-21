@@ -1,39 +1,29 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { access, readFile } from "node:fs/promises";
+import { join } from "node:path";
 import test from "node:test";
 
-async function render(path = "/") {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", process.pid + "-" + Date.now() + path);
-  const { default: worker } = await import(workerUrl.href);
-  return worker.fetch(
-    new Request("http://localhost" + path, { headers: { accept: "text/html" } }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
-}
+const outputFor = (route) => route === "/" ? join(process.cwd(), "out", "index.html") : join(process.cwd(), "out", route.slice(1), "index.html");
 
-test("server-renders the Kelus core product flows", async () => {
-  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "iPhone 17 offers"], ["/product/iphone-17", "Best balance of price"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/checkout", "Choose how you want to pay"]]) {
-    const response = await render(route);
-    const html = await response.text();
-    assert.equal(response.status, 200, route + " returns 200");
-    assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+test("exports the Kelus comparison flow as static pages", async () => {
+  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "Kelus Pick"], ["/product/iphone-17", "Best balance of price"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/saved", "Keep an eye"]]) {
+    const html = await readFile(outputFor(route), "utf8");
     assert.match(html, new RegExp(expected));
     assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/i);
   }
+  await assert.rejects(access(join(process.cwd(), "out", "checkout", "index.html")));
 });
 
-test("Kelus source is product-specific and componentized", async () => {
-  const [page, layout, data] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+test("Kelus source separates demo offers from recommendation and provider contracts", async () => {
+  const [data, recommendation, provider, offerCard] = await Promise.all([
     readFile(new URL("../lib/demo-data.ts", import.meta.url), "utf8"),
+    readFile(new URL("../services/recommendations.ts", import.meta.url), "utf8"),
+    readFile(new URL("../services/providers/types.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/OfferCard.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /SearchControls/);
-  assert.match(page, /KelusHeader/);
-  assert.match(data, /export const offers/);
-  assert.match(layout, /title: "Kelus — Shop smarter\. Know before you buy\."/);
-  assert.match(layout, /openGraph:/);
-  assert.doesNotMatch(layout, /Starter Project|codex-preview|_sites-preview/);
+  assert.match(data, /demoRecommendations/);
+  assert.match(recommendation, /tradeoffs/);
+  assert.match(provider, /OfferProvider/);
+  assert.match(offerCard, /OutboundRetailerCTA/);
+  assert.doesNotMatch(offerCard, /Kelus score|score/);
 });

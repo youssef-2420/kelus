@@ -1,4 +1,5 @@
 import { SignInDialog } from "@/components/SignInDialog";
+import { MobileNavigation } from "@/components/MobileNavigation";
 import Link from "next/link";
 
 export function KelusHeader() {
@@ -8,6 +9,6 @@ export function KelusHeader() {
     <nav aria-label="Main navigation">
       {navItems.map((item) => <Link key={item.href} href={item.href}>{item.label}</Link>)}
     </nav>
-    <SignInDialog />
+    <div className="header-actions"><MobileNavigation items={navItems}/><SignInDialog /></div>
   </header>;
 }
