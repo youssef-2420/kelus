@@ -130,7 +130,6 @@ function ResultsSidebar() {
       <span className="rp-nav-item is-disabled"><Icon name="trending" size={18}/>Price tracker</span>
       <Link href="/saved" className="rp-nav-item"><Icon name="heart" size={18}/>Watchlist</Link>
     </nav>
-    <div className="rp-sidebar-footer"><Link href="/" className="rp-nav-item"><Icon name="sparkle" size={17}/>Kelus home</Link></div>
   </aside>;
 }
 
