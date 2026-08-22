@@ -1,6 +1,7 @@
 import type { PricePoint } from "@/types/kelus";
 
 export function PriceChart({ points }: { points: PricePoint[] }) {
+  if (points.length < 2) return null;
   const low = Math.min(...points.map((point) => point.price));
   const high = Math.max(...points.map((point) => point.price));
   const path = points.map((point, index) => {
@@ -8,8 +9,11 @@ export function PriceChart({ points }: { points: PricePoint[] }) {
     const y = 10 + ((high - point.price) / Math.max(high - low, 1)) * 62;
     return (index === 0 ? "M" : "L") + x + " " + y;
   }).join(" ");
-  return <div className="chart" aria-label="Price history chart">
-    <svg viewBox="0 0 100 88" preserveAspectRatio="none" role="img" aria-label="Prices declined from 899 dollars to 799 dollars">
+  const first = points[0].price;
+  const last = points[points.length - 1].price;
+  const direction = last === first ? "remained at" : last < first ? "declined to" : "increased to";
+  return <div className="chart">
+    <svg viewBox="0 0 100 88" preserveAspectRatio="none" role="img" aria-label={`Observed prices started at ${first} dollars and ${direction} ${last} dollars`}>
       <defs><linearGradient id="price-fill" x1="0" x2="0" y1="0" y2="1"><stop stopColor="#2f8277" stopOpacity=".28"/><stop offset="1" stopColor="#2f8277" stopOpacity="0"/></linearGradient></defs>
       <path className="chart-grid" d="M0 15H100M0 40H100M0 65H100" />
       <path d={path + " L94 78 L6 78 Z"} fill="url(#price-fill)" />

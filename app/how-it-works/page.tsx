@@ -3,7 +3,7 @@ import { Icon } from "@/components/Icon";
 import Link from "next/link";
 
 const steps = [
-  { icon: "search", number: "01", title: "Tell us what you want", copy: "Search for a product, choose the condition and variant that suit you, then set your location." },
+  { icon: "search", number: "01", title: "Tell us what you want", copy: "Search for a product and choose the configuration and condition that suit you." },
   { icon: "tag", number: "02", title: "Compare the offers that matter", copy: "Kelus puts price, delivery, seller quality, warranty, and returns side-by-side." },
   { icon: "history", number: "03", title: "Decide with confidence", copy: "Use price history and clear recommendations to buy now or set an alert for later." },
 ];

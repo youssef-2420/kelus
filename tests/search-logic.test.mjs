@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
+import { getRelevantAttributeLabel } from "../lib/product-attributes.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
 test("catalog search and variants are canonical rather than presentation strings", () => {
@@ -8,6 +9,15 @@ test("catalog search and variants are canonical rather than presentation strings
   assert.deepEqual(matches.map((product) => product.slug), ["iphone-17", "iphone-17-pro", "iphone-17-pro-max"]);
   assert.deepEqual(getVariantsForProduct("apple-iphone-17").map((variant) => variant.label), ["128GB", "256GB", "512GB"]);
   assert.equal(products.length, 5);
+});
+
+test("search asks only for a relevant product attribute", () => {
+  const iphone = products.find((product) => product.slug === "iphone-17");
+  const laptop = products.find((product) => product.slug === "macbook-air-m4");
+  const audio = products.find((product) => product.slug === "airpods-pro-2");
+  assert.equal(getRelevantAttributeLabel(iphone, getVariantsForProduct(iphone.id)), "Storage");
+  assert.equal(getRelevantAttributeLabel(laptop, getVariantsForProduct(laptop.id)), "Configuration");
+  assert.equal(getRelevantAttributeLabel(audio, getVariantsForProduct(audio.id)), null);
 });
 
 test("normalized offers support condition filtering and deterministic ranking", () => {

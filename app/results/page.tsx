@@ -9,12 +9,13 @@ import { PriceChart } from "@/components/PriceChart";
 import { ProductMark } from "@/components/ProductMark";
 import { SearchControls } from "@/components/SearchControls";
 import { WatchButton } from "@/components/WatchButton";
-import { getProductBySlug, getVariantById, getVariantsForProduct, priceHistory } from "@/lib/demo-data";
+import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
+import { getRelevantAttributeLabel } from "@/lib/product-attributes";
 import { readSearchCriteria, searchCriteriaToQuery } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
 import { getRecommendation, sortOffers } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
-import type { ConditionFilter, Offer, OfferSearchResult, Product, ProductVariant, Retailer } from "@/types/kelus";
+import type { ConditionFilter, Offer, OfferSearchResult, PriceObservation, Product, ProductVariant, Retailer } from "@/types/kelus";
 
 type SortMode = "recommended" | "lowest" | "highest";
 
@@ -39,9 +40,25 @@ function returnTerms(offer: Offer) {
 
 function cheaperTradeoff(pick: Offer, alternative: Offer) {
   const savings = (knownTotal(pick) ?? pick.price) - (knownTotal(alternative) ?? alternative.price);
-  if (alternative.condition !== pick.condition) return `Save $${savings} by choosing ${alternative.condition} condition.`;
+  if (alternative.condition !== pick.condition) return `Save $${savings} by choosing ${alternative.condition}.`;
   if (alternative.seller.sellerType !== pick.seller.sellerType) return `Save $${savings} with seller terms that differ from a retailer purchase.`;
   return `Save $${savings}; review delivery and return terms before choosing.`;
+}
+
+function realHistoryPoints(observations: PriceObservation[]) {
+  const dailyLows = new Map<string, number>();
+  observations
+    .filter((observation) => !observation.isDemo && observation.shippingCost !== null && observation.shippingCost !== undefined && !Number.isNaN(Date.parse(observation.timestamp)))
+    .sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp))
+    .forEach((observation) => {
+      const day = observation.timestamp.slice(0, 10);
+      const value = observation.price + (observation.shippingCost ?? 0);
+      dailyLows.set(day, Math.min(dailyLows.get(day) ?? Number.POSITIVE_INFINITY, value));
+    });
+  return [...dailyLows.entries()].slice(-6).map(([day, price]) => ({
+    label: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`)),
+    price: Math.round(price),
+  }));
 }
 
 export default function ResultsPage() {
@@ -63,6 +80,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
   const product = getProductBySlug(criteria.productSlug)!;
   const variant = getVariantById(criteria.variantId);
   const variants = useMemo(() => getVariantsForProduct(product.id), [product.id]);
+  const attributeLabel = getRelevantAttributeLabel(product, variants);
   const [result, setResult] = useState<OfferSearchResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -106,7 +124,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
   const sorted = useMemo(() => sortOffers(filteredOffers, sort), [filteredOffers, sort]);
   const recommendation = getRecommendation(filteredOffers, "kelus_pick");
   const pick = filteredOffers.find((offer) => offer.id === recommendation?.offerId);
-  const cheaperOption = pick && knownTotal(pick) !== null ? [...filteredOffers].filter((offer) => knownTotal(offer) !== null && total(offer) < total(pick)).sort((a, b) => total(a) - total(b))[0] : undefined;
+  const cheaperOption = pick && knownTotal(pick) !== null ? [...filteredOffers].filter((offer) => knownTotal(offer) !== null && total(offer) <= total(pick) - 5).sort((a, b) => total(a) - total(b))[0] : undefined;
   const otherOffers = sorted.filter((offer) => offer.id !== pick?.id && offer.id !== cheaperOption?.id);
   const context = getPriceContext(filteredOffers, result?.observations ?? []);
 
@@ -134,18 +152,18 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
       <div className="rp-columns">
         <section>
           <ProductSummary product={product} variantLabel={variant?.label} condition={criteria.condition} count={filteredOffers.length} loading={loading} refreshing={refreshing} live={result ? !result.isDemo : false} lastUpdated={result?.lastUpdated} editing={editing} onToggleEditing={() => setEditing((open) => !open)} />
-          {!loading && !failed && <p className="rp-live-note"><Icon name="check" size={15}/>Live eBay offers are currently available. Additional retailers are being added.</p>}
           {refreshWarning && <div className="rp-refresh-warning" role="status"><Icon name="history" size={15}/><span>{refreshWarning}</span><button type="button" onClick={retry}>Refresh</button></div>}
           {editing && <div className="rp-edit-panel"><SearchControls compact initialCriteria={criteria}/></div>}
-          {!loading && !failed && <ResultsFilters condition={condition} maxPrice={maxPrice} retailer={retailer} retailers={retailers} sort={sort} variantId={variant?.id ?? ""} variants={variants} onCondition={setCondition} onMaxPrice={setMaxPrice} onRetailer={setRetailer} onSort={setSort} onVariant={changeVariant} />}
+          {!loading && !failed && <ResultsFilters attributeLabel={attributeLabel} condition={condition} maxPrice={maxPrice} retailer={retailer} retailers={retailers} sort={sort} variantId={variant?.id ?? ""} variants={variants} onCondition={setCondition} onMaxPrice={setMaxPrice} onRetailer={setRetailer} onSort={setSort} onVariant={changeVariant} />}
           {loading ? <LoadingState /> : failed ? <ErrorState message={errorMessage} onRetry={retry} /> : !filteredOffers.length ? <NoResultsState /> : <div className="rp-offers">
             {pick && <OurPick offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/>}
             {cheaperOption && pick && <CheaperOption offer={cheaperOption} productName={product.name} tradeoff={cheaperTradeoff(pick, cheaperOption)}/>}
+            {otherOffers.length > 0 && <div className="rp-other-label">Other offers</div>}
             {otherOffers.map((offer) => <OfferRow key={offer.id} offer={offer} productName={product.name}/>)}
           </div>}
           <p className="rp-disclaimer">Results currently cover matching live eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links; no eBay campaign tracking is added unless configured.</p>
         </section>
-        <PriceContextPanel context={context}/>
+        <PriceContextPanel context={context} observations={result?.observations ?? []}/>
       </div>
     </div>
   </main>;
@@ -168,9 +186,10 @@ function ProductSummary({ product, variantLabel, condition, count, loading, refr
     <div className="rp-summary-main">
       <ProductMark label={product.image}/>
       <div className="rp-summary-body">
+        <span className="rp-section-label">Product</span>
         <h1>{product.name}</h1>
         <p>{[variantLabel, condition === "any" ? "Any condition" : titleCase(condition), "Unlocked"].filter(Boolean).join(" · ")}</p>
-        <p className="rp-summary-location"><Icon name="pin" size={15}/>United States</p>
+        <p className="rp-summary-source">{loading ? "Checking connected offers…" : live ? `Live eBay offers · ${updatedLabel(lastUpdated)}` : "Demo offers · Illustrative data"}</p>
         <div className="rp-summary-actions">
           <button className="button button-secondary rp-edit-search" type="button" onClick={onToggleEditing}>{editing ? "Close search" : "Edit search"}</button>
           <WatchButton product={product.name}/>
@@ -179,16 +198,16 @@ function ProductSummary({ product, variantLabel, condition, count, loading, refr
     </div>
     <div className="rp-summary-status">
       <span className={`rp-offer-count${refreshing ? " is-refreshing" : ""}`}><i/>{loading ? "Checking live prices…" : `${count} matching ${live ? "live " : ""}offer${count === 1 ? "" : "s"}`}</span>
-      <span className="rp-updated"><Icon name="refresh" size={13}/>{loading ? "Connecting securely to eBay…" : refreshing ? "Refreshing quietly…" : updatedLabel(lastUpdated)}</span>
+      {refreshing && <span className="rp-updated"><Icon name="refresh" size={13}/>Refreshing quietly…</span>}
     </div>
   </div>;
 }
 
-function ResultsFilters({ condition, maxPrice, retailer, retailers, sort, variantId, variants, onCondition, onMaxPrice, onRetailer, onSort, onVariant }: { condition: ConditionFilter; maxPrice: string; retailer: string; retailers: Retailer[]; sort: SortMode; variantId: string; variants: ProductVariant[]; onCondition: (value: ConditionFilter) => void; onMaxPrice: (value: string) => void; onRetailer: (value: string) => void; onSort: (value: SortMode) => void; onVariant: (value: string) => void }) {
+function ResultsFilters({ attributeLabel, condition, maxPrice, retailer, retailers, sort, variantId, variants, onCondition, onMaxPrice, onRetailer, onSort, onVariant }: { attributeLabel: string | null; condition: ConditionFilter; maxPrice: string; retailer: string; retailers: Retailer[]; sort: SortMode; variantId: string; variants: ProductVariant[]; onCondition: (value: ConditionFilter) => void; onMaxPrice: (value: string) => void; onRetailer: (value: string) => void; onSort: (value: SortMode) => void; onVariant: (value: string) => void }) {
   return <div className="rp-filterbar" aria-label="Offer filters">
     <div className="rp-filterbar-fields">
       <label>Condition<select value={condition} onChange={(event) => onCondition(event.target.value as ConditionFilter)}><option value="any">All</option><option value="new">New</option><option value="used">Used</option><option value="refurbished">Refurbished</option></select></label>
-      <label>Storage<select value={variantId} onChange={(event) => onVariant(event.target.value)}>{variants.map((item) => <option key={item.id} value={item.id}>{item.storage ?? item.label}</option>)}</select></label>
+      {attributeLabel && <label>{attributeLabel}<select value={variantId} onChange={(event) => onVariant(event.target.value)}>{variants.map((item) => <option key={item.id} value={item.id}>{attributeLabel === "Storage" ? item.storage ?? item.label : item.label}</option>)}</select></label>}
       <label>Retailer<select value={retailer} onChange={(event) => onRetailer(event.target.value)}><option value="all">All</option>{retailers.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
       <label>Max price<input type="number" min="0" inputMode="numeric" value={maxPrice} placeholder="Any" aria-label="Maximum total price" onChange={(event) => onMaxPrice(event.target.value)}/></label>
     </div>
@@ -208,12 +227,12 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 }
 
 function NoResultsState() {
-  return <div className="results-state"><Icon name="search"/><h2>No matching eBay offers found for this configuration.</h2><p>Try another condition, storage option, or price limit.</p></div>;
+  return <div className="results-state"><Icon name="search"/><h2>No matching eBay offers found for this configuration.</h2><p>Try another condition, configuration, or price limit.</p></div>;
 }
 
 function OurPick({ offer, productName, reasons }: { offer: Offer; productName: string; reasons: string[] }) {
   return <article className="rp-pick">
-    <span className="rp-pick-label"><Icon name="star" size={13}/>OUR PICK</span>
+    <span className="rp-pick-label"><Icon name="star" size={13}/>Our Pick</span>
     <OfferRow offer={offer} productName={productName} highlighted />
     <div className="rp-why"><Icon name="sparkle" size={16}/><div><b>Why we picked it</b><p>{reasons.slice(0, 3).join(" · ")}</p></div></div>
   </article>;
@@ -221,7 +240,7 @@ function OurPick({ offer, productName, reasons }: { offer: Offer; productName: s
 
 function CheaperOption({ offer, productName, tradeoff }: { offer: Offer; productName: string; tradeoff: string }) {
   return <article className="rp-cheaper-option">
-    <span className="rp-cheaper-label">CHEAPER OPTION</span>
+    <span className="rp-cheaper-label">Cheaper option</span>
     <OfferRow offer={offer} productName={productName} compact />
     <p>{tradeoff}</p>
   </article>;
@@ -240,6 +259,8 @@ function OfferImage({ offer, productName }: { offer: Offer; productName: string 
   const source = offer.imageUrl?.startsWith("https://") ? offer.imageUrl : undefined;
   const [failed, setFailed] = useState(false);
   return <span className="rp-product-image">
+    {/* Retailer images use changing third-party hosts, so the native element is intentional here. */}
+    {/* eslint-disable-next-line @next/next/no-img-element */}
     {source && !failed ? <img src={source} alt={`${productName} listing from ${offer.retailer.name}`} loading="lazy" onError={() => setFailed(true)}/> : <span className="rp-product-image-fallback" aria-hidden="true"><Icon name="tag" size={22}/></span>}
   </span>;
 }
@@ -248,20 +269,22 @@ function OfferRow({ offer, productName, highlighted = false, compact = false }: 
   return <div className={`rp-row${highlighted ? "" : " rp-row--plain"}${compact ? " rp-row--compact" : ""}`}>
     <div className="rp-row-lead">
       <OfferImage offer={offer} productName={productName}/>
-      <div className="rp-row-details"><div className="rp-row-retailer"><RetailerLogo offer={offer}/><div><div className="rp-row-name"><strong>{offer.retailer.name}</strong>{offer.dataSource === "live" && <span className="rp-badge">Live</span>}</div><p className="rp-row-meta">{titleCase(offer.condition)} · {offer.delivery ?? "Shipping details unavailable"}</p></div></div><p className="rp-row-meta">{offer.seller.name ?? "Seller name unavailable"}{offer.seller.feedbackPercentage !== undefined ? " · " + offer.seller.feedbackPercentage + "% feedback" : ""}</p><p className="rp-row-meta">{returnTerms(offer)}</p></div>
+      <div className="rp-row-details"><div className="rp-row-retailer"><RetailerLogo offer={offer}/><strong>{offer.retailer.name}</strong></div><p className="rp-row-source">{offer.dataSource === "live" ? `Live ${offer.retailer.name} offer · ${updatedLabel(offer.lastUpdated)}` : "Demo offer · Illustrative data"}</p></div>
     </div>
     <div className="rp-row-price"><strong>${knownTotal(offer) ?? offer.price}</strong><span>{knownTotal(offer) === null ? "Item price" : "Item + shipping"}</span>{offer.shippingCostKnown === false ? <em>Shipping not provided</em> : offer.shippingCost > 0 ? <em>Includes ${offer.shippingCost} shipping</em> : <em>Free shipping</em>}</div>
-    {!compact && <ul className="rp-row-checks"><li><Icon name="check" size={15}/>{offer.warranty ?? "Warranty information unavailable"}</li><li><Icon name="check" size={15}/>{returnTerms(offer)}</li></ul>}
+    <div className="rp-row-terms"><strong>{titleCase(offer.condition)}</strong><span>{offer.delivery ?? "Delivery details unavailable"}</span><span>{returnTerms(offer)}</span></div>
     <span className={highlighted ? "rp-row-cta" : "rp-row-cta rp-row-cta--outline"}><OutboundRetailerCTA offer={offer}/></span>
   </div>;
 }
 
-function PriceContextPanel({ context }: { context: ReturnType<typeof getPriceContext> }) {
+function PriceContextPanel({ context, observations }: { context: ReturnType<typeof getPriceContext>; observations: PriceObservation[] }) {
   const comparisonAverage = context.average90Day ?? context.average30Day;
   const difference = context.currentTrustedPrice && comparisonAverage ? Math.round((1 - context.currentTrustedPrice / comparisonAverage) * 100) : null;
+  const points = realHistoryPoints(observations);
+  const historyReady = context.historyStatus === "ready" && points.length > 1;
+  const verdict = !historyReady ? "Price history is building" : difference !== null && difference >= 5 ? "Good time to buy" : difference !== null && difference <= -5 ? "Above the typical price" : "Near the typical price";
   return <aside className="rp-insights">
-    <section className="rp-panel"><h2>Price context</h2>{context.isDemo ? <><PriceChart points={priceHistory}/><div className="rp-chart-stats"><div><span>90-day average</span><strong>{context.average90Day ? `$${context.average90Day}` : "—"}</strong></div><div><span>Recent low</span><strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></div></div><p className="rp-demo-caption">Illustrative price history.</p></> : context.historyStatus === "ready" ? <div className="rp-chart-stats"><div><span>Observed 30-day average</span><strong>{context.average30Day ? `$${context.average30Day}` : "—"}</strong></div><div><span>Recent observed low</span><strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></div></div> : <p className="rp-rating-support">Price history is building from {context.observationCount} live observation{context.observationCount === 1 ? "" : "s"}. A single day is not treated as historical insight.</p>}</section>
-    <section className="rp-panel"><h2>Price rating</h2><p className="rp-rating-heading">{context.verdict}</p><p className="rp-rating-support">{difference === null ? "Not enough live price history yet." : `The current known total is ${Math.abs(difference)}% ${difference >= 0 ? "below" : "above"} the recent observed average.`}</p></section>
-    <section className="rp-panel"><h2><Icon name="bell" size={16}/>Set price alert</h2><p className="rp-alert-copy">Save this product and return when live alerts are available.</p><Link href="/saved" className="button button-primary rp-alert-submit">Track price</Link></section>
+    <section className="rp-panel rp-price-context"><div className="rp-panel-heading"><h2>Price context</h2><span className={`rp-source-chip${context.isDemo ? " is-demo" : ""}`}>{context.isDemo ? "Demo" : "Live data"}</span></div><p className="rp-rating-heading">{verdict}</p>{historyReady && <PriceChart points={points}/>}<div className="rp-chart-stats rp-chart-stats--three"><div><span>Current price</span><strong>{context.currentTrustedPrice ? `$${context.currentTrustedPrice}` : "—"}</strong></div><div><span>Typical price</span><strong>{comparisonAverage ? `$${comparisonAverage}` : "—"}</strong></div><div><span>Recent low</span><strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></div></div><p className="rp-rating-support">{historyReady && difference !== null ? `The current known total is ${Math.abs(difference)}% ${difference >= 0 ? "below" : "above"} the recent observed average.` : context.isDemo ? "Demo offers do not create historical price insight." : `Building from ${context.observationCount} live observation${context.observationCount === 1 ? "" : "s"}.`}</p></section>
+    <section className="rp-panel"><h2><Icon name="bell" size={16}/>Price alert</h2><p className="rp-alert-copy">Save this product and return when live alerts are available.</p><Link href="/saved" className="button button-primary rp-alert-submit">Track price</Link></section>
   </aside>;
 }

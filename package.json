@@ -12,6 +12,7 @@
     "start": "next start",
     "test": "npm run build:static && node --experimental-strip-types --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "typecheck": "tsc --noEmit --incremental false -p tsconfig.typecheck.json",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
