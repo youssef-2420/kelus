@@ -9,9 +9,9 @@ export default function ComparePage() {
   const rows = [
     ["Price", ...offers.map((offer) => "$" + offer.price)],
     ["Condition", ...offers.map((offer) => offer.condition)],
-    ["Delivery", ...offers.map((offer) => offer.delivery)],
-    ["Warranty", ...offers.map((offer) => offer.warranty)],
-    ["Retailer return terms", ...offers.map((offer) => offer.returnPolicy)],
+    ["Delivery", ...offers.map((offer) => offer.delivery ?? "Unavailable")],
+    ["Warranty", ...offers.map((offer) => offer.warranty ?? "Unavailable")],
+    ["Retailer return terms", ...offers.map((offer) => offer.returnPolicy ?? "Unavailable")],
     ["Availability", ...offers.map((offer) => offer.availability)],
   ];
   const recommendation = getRecommendation(offers, "kelus_pick")!;

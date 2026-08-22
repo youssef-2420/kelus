@@ -1,3 +1,4 @@
 import type { ProviderResult, SearchCriteria } from "@/types/kelus";
 
-export interface OfferProvider { id: string; getOffers(criteria: SearchCriteria): Promise<ProviderResult> }
+export type ProviderRequestContext = { signal?: AbortSignal };
+export interface OfferProvider { id: string; getOffers(criteria: SearchCriteria, context?: ProviderRequestContext): Promise<ProviderResult> }
