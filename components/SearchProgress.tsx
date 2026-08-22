@@ -5,7 +5,7 @@ import { Icon } from "@/components/Icon";
 import type { SearchCriteria, SearchStatus } from "@/types/kelus";
 
 const messages: Record<SearchStatus, string> = {
-  idle: "Checking the market…", resolving_product: "Finding matching offers…", fetching_offers: "Checking the market…", normalizing_offers: "Comparing prices…", ranking: "Checking seller and purchase terms…", complete: "Comparison ready", partial: "Comparison ready", error: "We could not compare prices right now.",
+  idle: "Finding matching products…", resolving_product: "Finding matching products…", fetching_offers: "Checking retailers…", normalizing_offers: "Comparing offers…", ranking: "Reviewing price context…", complete: "Comparison ready", partial: "Comparison ready", error: "We could not compare prices right now.",
 };
 
 export function SearchProgress({ criteria, status, failed, onRetry }: { criteria: SearchCriteria; status: SearchStatus; failed: boolean; onRetry: () => void }) {

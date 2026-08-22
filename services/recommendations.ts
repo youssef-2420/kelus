@@ -15,7 +15,7 @@ export function getRecommendation(offers: Offer[], kind: RecommendationKind): Re
   return { offerId: offer.id, kind, reasons: [`$${total(offer)} total price`, `${conditionLabel(offer.condition)} condition`, offer.returnPolicy, offer.warranty, offer.delivery], tradeoffs: [total(offer) === total(cheapest) ? "No price trade-off against the cheapest offer." : `$${total(offer) - total(cheapest)} more than the cheapest offer.`] };
 }
 
-export function sortOffers(offers: Offer[], mode: "recommended" | "lowest" | "safest") {
+export function sortOffers(offers: Offer[], mode: "recommended" | "lowest" | "highest") {
   const cheapest = offers.length ? Math.min(...offers.map(total)) : 0;
-  return [...offers].sort((a, b) => mode === "lowest" ? total(a) - total(b) : mode === "safest" ? safetyValue(b) - safetyValue(a) : pickValue(b, cheapest) - pickValue(a, cheapest));
+  return [...offers].sort((a, b) => mode === "lowest" ? total(a) - total(b) : mode === "highest" ? total(b) - total(a) : pickValue(b, cheapest) - pickValue(a, cheapest));
 }

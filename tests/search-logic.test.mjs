@@ -17,6 +17,7 @@ test("normalized offers support condition filtering and deterministic ranking", 
   assert.equal(getRecommendation(offers, "safest_option")?.offerId, "amazon-iphone-17-256");
   assert.equal(getRecommendation(offers, "kelus_pick")?.offerId, "amazon-iphone-17-256");
   assert.deepEqual(sortOffers(offers, "lowest").map((offer) => offer.id), ["ebay-iphone-17-256", "amazon-iphone-17-256", "best-buy-iphone-17-256"]);
+  assert.deepEqual(sortOffers(offers, "highest").map((offer) => offer.id), ["amazon-iphone-17-256", "best-buy-iphone-17-256", "ebay-iphone-17-256"]);
 });
 
 test("search URLs preserve canonical product, variant, condition, and market values", () => {
