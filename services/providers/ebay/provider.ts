@@ -126,6 +126,11 @@ export class EbayProvider implements OfferProvider {
         signal,
       });
     } catch (error) {
+      this.logger.error("[ebay-provider] search_network_error", {
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message : String(error),
+        cause: error instanceof Error && error.cause instanceof Error ? error.cause.message : undefined,
+      });
       if (error instanceof DOMException && error.name === "TimeoutError") throw new EbayProviderError("The eBay request timed out.", "timeout");
       throw new EbayProviderError("We couldn't reach eBay right now.", "network");
     }
