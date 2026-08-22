@@ -47,7 +47,7 @@ export function SearchControls({ compact = false, minimal = false, initialCriter
     trackEvent({ name: "search_submitted", productSlug: criteria.productSlug });
     try {
       const response = await startSearch(criteria, setSearchStatus);
-      const remaining = Math.max(0, 700 - (performance.now() - startedAt));
+      const remaining = Math.max(0, 420 - (performance.now() - startedAt));
       if (remaining) await new Promise((resolve) => window.setTimeout(resolve, remaining));
       trackEvent({ name: response.failedProviders.length ? "search_partial" : "search_completed", productSlug: criteria.productSlug });
       router.push(`/results?${searchCriteriaToQuery(criteria)}`);
