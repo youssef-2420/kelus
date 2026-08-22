@@ -36,7 +36,9 @@ export class EbayProvider implements OfferProvider {
     now: () => number = Date.now,
   ) {
     this.config = config;
-    this.fetcher = fetcher;
+    // Cloudflare's native fetch must not be invoked as an object method because
+    // that changes its `this` value and triggers an "Illegal invocation" error.
+    this.fetcher = (input, init) => fetcher(input, init);
     this.logger = logger;
     this.now = now;
   }
@@ -132,8 +134,7 @@ export class EbayProvider implements OfferProvider {
         cause: error instanceof Error && error.cause instanceof Error ? error.cause.message : undefined,
       });
       if (error instanceof DOMException && error.name === "TimeoutError") throw new EbayProviderError("The eBay request timed out.", "timeout");
-      const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
-      throw new EbayProviderError(`We couldn't reach eBay right now. (${detail})`, "network");
+      throw new EbayProviderError("We couldn't reach eBay right now.", "network");
     }
   }
 }
