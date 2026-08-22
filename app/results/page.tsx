@@ -1,73 +1,39 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { KelusHeader } from "@/components/KelusHeader";
-import { SearchControls } from "@/components/SearchControls";
-import { OfferCard } from "@/components/OfferCard";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Icon } from "@/components/Icon";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
 import { PriceChart } from "@/components/PriceChart";
+import { ProductMark } from "@/components/ProductMark";
+import { SearchControls } from "@/components/SearchControls";
 import { WatchButton } from "@/components/WatchButton";
-import { Icon } from "@/components/Icon";
-import { getProductBySlug, getVariantById, priceHistory } from "@/lib/demo-data";
-import { readSearchCriteria } from "@/lib/search-state";
-import { trackEvent } from "@/services/analytics";
-import { retrySearch, startSearch } from "@/services/search-session";
+import { getProductBySlug, getVariantById, getVariantsForProduct, priceHistory } from "@/lib/demo-data";
+import { readSearchCriteria, searchCriteriaToQuery } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
 import { getRecommendation, sortOffers } from "@/services/recommendations";
-import type { Offer, OfferSearchResult } from "@/types/kelus";
+import { retrySearch, startSearch } from "@/services/search-session";
+import type { ConditionFilter, Offer, OfferSearchResult } from "@/types/kelus";
 
 type SortMode = "recommended" | "lowest" | "safest";
-const conditionLabel = (condition: string) => condition === "any" ? "Any condition" : condition[0].toUpperCase() + condition.slice(1);
+const label = (value: string) => value[0].toUpperCase() + value.slice(1);
+const total = (offer: Offer) => offer.price + offer.shippingCost;
+const returns = (offer: Offer) => offer.returnPolicy.match(/(\d+)-day/)?.[1] ? `${offer.returnPolicy.match(/(\d+)-day/)?.[1]}-day returns` : offer.returnPolicy;
 
-export default function ResultsPage() {
-  return <Suspense fallback={<main className="app-page"><KelusHeader/><section className="results-layout section"><div className="results-state"><Icon name="history" size={24}/><h2>Preparing your comparison…</h2></div></section></main>}><ResultsSearchPage/></Suspense>;
-}
+export default function ResultsPage() { return <Suspense fallback={<main className="app-page rp-shell"><div className="rp-body"><div className="results-state"><Icon name="history"/><h2>Preparing your comparison…</h2></div></div></main>}><Results/></Suspense>; }
 
-function ResultsSearchPage() {
-  const searchParams = useSearchParams();
-  const criteria = useMemo(() => readSearchCriteria(new URLSearchParams(searchParams.toString())), [searchParams]);
-  return <ResultsContent key={searchParams.toString()} criteria={criteria} searchKey={searchParams.toString()}/>;
-}
+function Results() { const params = useSearchParams(); const criteria = useMemo(() => readSearchCriteria(new URLSearchParams(params.toString())), [params]); return <ResultsContent key={params.toString()} criteria={criteria}/>; }
 
-function ResultsContent({ criteria, searchKey }: { criteria: ReturnType<typeof readSearchCriteria>; searchKey: string }) {
-  const product = getProductBySlug(criteria.productSlug)!;
-  const variant = getVariantById(criteria.variantId);
-  const [result, setResult] = useState<OfferSearchResult | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-  const [sort, setSort] = useState<SortMode>("recommended");
-  const [filterOpen, setFilterOpen] = useState(false);
-  const [maxPrice, setMaxPrice] = useState("");
-  const [retailer, setRetailer] = useState("all");
-  const [warrantyOnly, setWarrantyOnly] = useState(false);
-  const [returnsOnly, setReturnsOnly] = useState(false);
-
+function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCriteria> }) {
+  const router = useRouter(); const product = getProductBySlug(criteria.productSlug)!; const variant = getVariantById(criteria.variantId); const variants = useMemo(() => getVariantsForProduct(product.id), [product.id]);
+  const [result, setResult] = useState<OfferSearchResult | null>(null); const [loading, setLoading] = useState(true); const [failed, setFailed] = useState(false); const [condition, setCondition] = useState<ConditionFilter>("any"); const [retailer, setRetailer] = useState("all"); const [sort, setSort] = useState<SortMode>("recommended"); const [editing, setEditing] = useState(false);
   useEffect(() => { let cancelled = false; startSearch(criteria).then((next) => { if (!cancelled) setResult(next); }).catch(() => { if (!cancelled) setFailed(true); }).finally(() => { if (!cancelled) setLoading(false); }); return () => { cancelled = true; }; }, [criteria]);
-  const filteredOffers = useMemo(() => (result?.offers ?? []).filter((offer) => (!maxPrice || offer.price + offer.shippingCost <= Number(maxPrice)) && (retailer === "all" || offer.retailer.id === retailer) && (!warrantyOnly || Boolean(offer.warranty)) && (!returnsOnly || /\d+-day/.test(offer.returnPolicy))), [maxPrice, result?.offers, retailer, returnsOnly, warrantyOnly]);
-  const sortedOffers = useMemo(() => sortOffers(filteredOffers, sort), [filteredOffers, sort]);
-  const pickRecommendation = getRecommendation(filteredOffers, "kelus_pick");
-  const cheapestRecommendation = getRecommendation(filteredOffers, "cheapest");
-  const safestRecommendation = getRecommendation(filteredOffers, "safest_option");
-  const pick = filteredOffers.find((offer) => offer.id === pickRecommendation?.offerId);
-  const cheapest = filteredOffers.find((offer) => offer.id === cheapestRecommendation?.offerId);
-  const safest = filteredOffers.find((offer) => offer.id === safestRecommendation?.offerId);
-  const priceContext = getPriceContext(filteredOffers, result?.observations ?? []);
   const retailers = [...new Map((result?.offers ?? []).map((offer) => [offer.retailer.id, offer.retailer])).values()];
-
-  function applyFilter() { setFilterOpen(false); trackEvent({ name: "filter_changed", filter: "offer_filters" }); }
-  function recommendationCard(title: string, offer: Offer | undefined, recommendation: ReturnType<typeof getRecommendation>) {
-    if (!offer || !recommendation) return null;
-    return <article className={title === "Kelus Pick" ? "recommendation-card" : "alternative-card"}><div><span className={title === "Kelus Pick" ? "offer-badge" : "insight-label"}>{title}</span><h2>{offer.retailer.name} <strong>${offer.price + offer.shippingCost}</strong></h2>{title === "Kelus Pick" && <><p>Why we’d choose it</p><ul>{recommendation.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul></>}<p className="tradeoff"><b>Trade-off:</b> {recommendation.tradeoffs[0]}</p></div>{title === "Kelus Pick" ? <OutboundRetailerCTA offer={offer}/> : null}</article>;
-  }
-
-  return <main className="app-page"><KelusHeader/><div className="results-search"><SearchControls key={searchKey} compact initialCriteria={criteria}/></div>
-    <section className="results-layout section"><div className="results-main"><div className="results-heading"><div><Link className="crumb" href="/">Search</Link><p className="eyebrow">Illustrative demo offers</p><h1>{product.name} offers</h1><p>{variant?.label ?? "All variants"} · {conditionLabel(criteria.condition)} · United States</p></div><WatchButton product={product.name}/></div>
-      {loading ? <div className="results-state"><Icon name="history" size={24}/><h2>Comparing demo offers…</h2><p>Kelus is normalizing retailer terms for this search.</p></div> : failed ? <div className="results-state"><Icon name="close" size={24}/><h2>We could not compare prices right now.</h2><p>Please try again in a moment.</p><button className="button button-primary" onClick={() => { setLoading(true); setFailed(false); retrySearch(criteria).then(setResult).catch(() => setFailed(true)).finally(() => setLoading(false)); }}>Try again <Icon name="arrow" size={17}/></button></div> : <>{result?.failedProviders.length ? <p className="comparison-note"><Icon name="history" size={17}/>Some demo providers are unavailable. Available providers still appear below.</p> : null}{recommendationCard("Kelus Pick", pick, pickRecommendation)}{recommendationCard("Cheapest", cheapest, cheapestRecommendation)}{recommendationCard("Safest option", safest, safestRecommendation)}
-      <div className="controls-row"><button type="button" className="filter-toggle" aria-expanded={filterOpen} onClick={() => setFilterOpen(!filterOpen)}><Icon name="sliders" size={16}/>Filters</button><div className="sort-tabs">{([ ["recommended", "Recommended"], ["lowest", "Lowest price"], ["safest", "Safest"] ] as const).map(([value, label]) => <button key={value} className={sort === value ? "active" : ""} onClick={() => setSort(value)}>{label}</button>)}</div></div>
-      {filterOpen && <aside className="filter-panel" aria-label="Offer filters"><label><b>Maximum price</b><input type="number" min="0" value={maxPrice} onChange={(event) => setMaxPrice(event.target.value)} placeholder="Any price"/></label><label><b>Retailer</b><select value={retailer} onChange={(event) => setRetailer(event.target.value)}><option value="all">All retailers</option>{retailers.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}</select></label><label><input type="checkbox" checked={warrantyOnly} onChange={(event) => setWarrantyOnly(event.target.checked)}/> Warranty details</label><label><input type="checkbox" checked={returnsOnly} onChange={(event) => setReturnsOnly(event.target.checked)}/> Clear return terms</label><button className="button button-secondary" onClick={applyFilter}>Apply filters</button></aside>}
-      <p className="comparison-note"><Icon name="shield" size={17}/>Kelus compares retailer terms and evidence. Retailers handle the purchase.</p>{!filteredOffers.length ? <div className="results-state"><Icon name="search" size={24}/><h2>No matching offers</h2><p>Try another condition, variant, or remove a filter. The catalog remains available even when demo retailers have no offer.</p></div> : <div className="offer-list">{sortedOffers.map((offer) => <OfferCard offer={offer} key={offer.id}/>)}</div>}</>}</div>
-      <aside className="insights-panel"><div className="product-summary"><span className="product-mark"><span>{product.image}</span></span><div><p className="eyebrow">Product overview</p><h2>{product.name}</h2><p>{variant?.label ?? "Variant not selected"} · Demo data</p></div></div><div className="insight-card"><span className="insight-label">Price context · demo</span><strong>{priceContext.currentTrustedPrice === null ? "—" : `$${priceContext.currentTrustedPrice}`}</strong><p>90-day average {priceContext.average90Day === null ? "—" : `$${priceContext.average90Day}`} · recent low {priceContext.recentLow === null ? "—" : `$${priceContext.recentLow}`}.</p><Link href="/compare/iphone-17" className="text-link" onClick={() => trackEvent({ name: "offer_compared", offerId: pick?.id ?? "" })}>Compare the evidence <Icon name="arrow" size={15}/></Link></div><div className="insight-card"><div className="insight-title"><span>Price history · illustrative</span><b>{priceContext.verdict}</b></div><PriceChart points={priceHistory}/><p>Illustrative values only until live provider data is connected.</p></div></aside></section>
-  </main>;
+  const offers = useMemo(() => (result?.offers ?? []).filter((offer) => (condition === "any" || offer.condition === condition) && (retailer === "all" || offer.retailer.id === retailer)), [condition, result?.offers, retailer]);
+  const sorted = useMemo(() => sortOffers(offers, sort), [offers, sort]); const recommendation = getRecommendation(offers, "kelus_pick"); const pick = offers.find((offer) => offer.id === recommendation?.offerId); const others = sorted.filter((offer) => offer.id !== pick?.id); const context = getPriceContext(offers, result?.observations ?? []);
+  const changeVariant = (variantId: string) => router.push(`/results?${searchCriteriaToQuery({ ...criteria, variantId })}`);
+  return <main className="app-page rp-shell"><aside className="rp-sidebar"><Link href="/" className="rp-sidebar-logo"><Icon name="sparkle" size={18}/>kelus</Link><nav className="rp-nav"><Link href="/results" className="rp-nav-item is-active"><Icon name="search" size={18}/>Search</Link><span className="rp-nav-item is-disabled"><Icon name="tag" size={18}/>Deals</span><span className="rp-nav-item is-disabled"><Icon name="trending" size={18}/>Price tracker</span><Link href="/saved" className="rp-nav-item"><Icon name="heart" size={18}/>Watchlist</Link></nav><div className="rp-sidebar-footer"><span className="rp-nav-item is-disabled"><Icon name="moon" size={17}/>Dark mode</span><Link href="/" className="rp-nav-item"><Icon name="sparkle" size={17}/>Kelus home</Link></div></aside><div className="rp-body"><div className="rp-topbar"><SearchControls minimal initialCriteria={criteria}/><div className="rp-topbar-actions"><Link href="/saved" className="rp-icon-btn" aria-label="Watchlist"><Icon name="heart" size={19}/></Link><Link href="/saved" className="rp-icon-btn rp-icon-btn--dot" aria-label="Notifications"><Icon name="bell" size={19}/></Link></div></div><div className="rp-columns"><section><div className="rp-summary"><div className="rp-summary-main"><ProductMark label={product.image}/><div className="rp-summary-body"><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : label(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><p className="rp-summary-location"><Icon name="pin" size={15}/>United States</p><div className="rp-summary-actions"><button className="button button-secondary rp-edit-search" onClick={() => setEditing(!editing)}>{editing ? "Close search" : "Edit search"}</button><WatchButton product={product.name}/></div></div></div><div className="rp-summary-status"><span className="rp-offer-count"><i/>{loading ? "Comparing offers…" : `${offers.length} offer${offers.length === 1 ? "" : "s"} found`}</span><span className="rp-updated"><Icon name="refresh" size={13}/>Updated now</span></div></div>{editing && <div className="rp-edit-panel"><SearchControls compact initialCriteria={criteria}/></div>}{!loading && !failed && <div className="rp-filterbar"><div className="rp-filterbar-fields"><label>Condition<select value={condition} onChange={(event) => setCondition(event.target.value as ConditionFilter)}><option value="any">All</option><option value="new">New</option><option value="used">Used</option><option value="refurbished">Refurbished</option></select></label><label>Storage<select value={variant?.id ?? ""} onChange={(event) => changeVariant(event.target.value)}>{variants.map((item) => <option key={item.id} value={item.id}>{item.storage ?? item.label}</option>)}</select></label><label>Seller<select value={retailer} onChange={(event) => setRetailer(event.target.value)}><option value="all">All</option>{retailers.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label></div><label>Sort by<select value={sort} onChange={(event) => setSort(event.target.value as SortMode)}><option value="recommended">Best overall</option><option value="lowest">Lowest price</option><option value="safest">Safest</option></select></label></div>}{loading ? <div className="results-state"><Icon name="history"/><h2>Comparing offers…</h2><p>Kelus is organizing retailer terms for this search.</p></div> : failed ? <div className="results-state"><Icon name="close"/><h2>We could not compare prices right now.</h2><p>Please try again in a moment.</p><button className="button button-primary" onClick={() => { setLoading(true); setFailed(false); retrySearch(criteria).then(setResult).catch(() => setFailed(true)).finally(() => setLoading(false)); }}>Try again</button></div> : !offers.length ? <div className="results-state"><Icon name="search"/><h2>No matching offers found.</h2><p>Try another condition or seller.</p></div> : <div className="rp-offers">{pick && <article className="rp-pick"><span className="rp-pick-label"><Icon name="star" size={13}/>Kelus Pick</span><OfferLine offer={pick} highlighted/><div className="rp-why"><Icon name="sparkle" size={16}/><div><b>Why Kelus picked this</b><p>{recommendation?.reasons.slice(0, 2).join(" · ")}</p></div></div></article>}{others.map((offer) => <OfferLine key={offer.id} offer={offer} delta={pick ? total(offer) - total(pick) : 0}/>)}</div>}<p className="rp-disclaimer">Kelus compares retailer terms and evidence. Prices and offers can change.</p></section><aside className="rp-insights"><section className="rp-panel"><h2>Price history</h2><PriceChart points={priceHistory}/><div className="rp-chart-stats"><div><span>90-day average</span><strong>{context.average90Day ? `$${context.average90Day}` : "—"}</strong></div><div><span>Recent low</span><strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></div></div></section><section className="rp-panel"><h2>Price rating</h2><p className="rp-rating-heading">{context.verdict}</p><p className="rp-rating-support">{context.currentTrustedPrice && context.average90Day ? `Today is ${Math.round((1 - context.currentTrustedPrice / context.average90Day) * 100)}% below the 90-day average.` : "Not enough price history yet."}</p><div className="rp-rating-bar"><i/></div><div className="rp-rating-labels"><span>Great time</span><span>Buy now</span><span>Average</span><span>High</span></div></section><section className="rp-panel"><h2><Icon name="bell" size={16}/>Set price alert</h2><p className="rp-alert-copy">We’ll notify you when the price drops.</p><Link href="/saved" className="button button-primary rp-alert-submit">Create alert</Link></section></aside></div></div></main>;
 }
+
+function OfferLine({ offer, highlighted = false, delta = 0 }: { offer: Offer; highlighted?: boolean; delta?: number }) { const badge = offer.seller.sellerType === "retailer" ? "Trusted retailer" : label(offer.condition); return <div className={`rp-row${highlighted ? "" : " rp-row--plain"}`}><div className="rp-row-lead"><span className="rp-row-logo">{offer.retailer.logo}</span><div><div className="rp-row-name"><strong>{offer.retailer.name}</strong><span className="rp-badge">{badge}</span></div><p className="rp-row-meta">{offer.delivery}</p><p className="rp-row-meta">{returns(offer)}</p></div></div><div className="rp-row-price"><strong>${total(offer)}</strong><span>Total (est.)</span><em>{highlighted ? (offer.shippingCost ? `+$${offer.shippingCost} shipping` : "No extra fees") : delta > 0 ? `+$${delta} vs pick` : "Same as pick"}</em></div><ul className="rp-row-checks"><li><Icon name="check" size={15}/>{label(offer.condition)} condition</li><li><Icon name="check" size={15}/>{offer.warranty}</li><li><Icon name="check" size={15}/>{returns(offer)}</li></ul><span className={highlighted ? "rp-row-cta" : "rp-row-cta rp-row-cta--outline"}><OutboundRetailerCTA offer={offer}/></span></div>; }
