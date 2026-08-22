@@ -17,6 +17,11 @@ export function clearEbayTokenCache() {
   cachedToken = null;
 }
 
+async function credentialFingerprint(value: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest).slice(0, 6), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 export async function getEbayApplicationToken(config: EbayProviderConfig, fetcher: typeof fetch = fetch, now = Date.now()) {
   const key = config.clientId + ":" + config.apiBaseUrl;
   if (cachedToken?.key === key && cachedToken.expiresAt > now) return cachedToken.token;
@@ -33,7 +38,16 @@ export async function getEbayApplicationToken(config: EbayProviderConfig, fetche
     }),
     signal: AbortSignal.timeout(config.requestTimeoutMs),
   });
-  if (!response.ok) throw new EbayAuthError("eBay authentication failed.", response.status);
+  if (!response.ok) {
+    console.error("[ebay-auth] oauth_failed", {
+      status: response.status,
+      clientIdLength: config.clientId.length,
+      clientIdFingerprint: await credentialFingerprint(config.clientId),
+      clientSecretLength: config.clientSecret.length,
+      clientSecretFingerprint: await credentialFingerprint(config.clientSecret),
+    });
+    throw new EbayAuthError("eBay authentication failed.", response.status);
+  }
 
   let body: EbayTokenResponse;
   try {
