@@ -132,7 +132,8 @@ export class EbayProvider implements OfferProvider {
         cause: error instanceof Error && error.cause instanceof Error ? error.cause.message : undefined,
       });
       if (error instanceof DOMException && error.name === "TimeoutError") throw new EbayProviderError("The eBay request timed out.", "timeout");
-      throw new EbayProviderError("We couldn't reach eBay right now.", "network");
+      const detail = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
+      throw new EbayProviderError(`We couldn't reach eBay right now. (${detail})`, "network");
     }
   }
 }
