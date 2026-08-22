@@ -16,7 +16,7 @@ const storageKey = (criteria: SearchCriteria) => `kelus:offers:${keyFor(criteria
 export function readCachedSearch(criteria: SearchCriteria): StoredSearch | null {
   if (typeof window === "undefined") return null;
   try {
-    const value = JSON.parse(window.sessionStorage.getItem(storageKey(criteria)) ?? "null") as StoredSearch | null;
+    const value = JSON.parse(window.localStorage.getItem(storageKey(criteria)) ?? "null") as StoredSearch | null;
     if (!value || !value.result || Date.now() - value.cachedAt > storageTtlMs) return null;
     return value;
   } catch {
@@ -27,7 +27,7 @@ export function readCachedSearch(criteria: SearchCriteria): StoredSearch | null 
 function storeSearch(criteria: SearchCriteria, result: OfferSearchResult) {
   if (typeof window === "undefined") return;
   try {
-    window.sessionStorage.setItem(storageKey(criteria), JSON.stringify({ cachedAt: Date.now(), result } satisfies StoredSearch));
+    window.localStorage.setItem(storageKey(criteria), JSON.stringify({ cachedAt: Date.now(), result } satisfies StoredSearch));
   } catch {
     // Storage can be unavailable in strict privacy modes; live search still works.
   }
