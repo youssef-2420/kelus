@@ -149,3 +149,6 @@ html { scroll-behavior:smooth; }
 @keyframes rp-shimmer{0%{background-position:100% 0}100%{background-position:-120% 0}}
 @media(max-width:620px){.rp-skeleton-row{grid-template-columns:40px 1fr}.rp-skeleton-row strong,.rp-skeleton-row em{display:none}}
 @media(prefers-reduced-motion:reduce){.rp-loading-pulse,.rp-skeleton-row i,.rp-skeleton-row b,.rp-skeleton-row span,.rp-skeleton-row strong,.rp-skeleton-row em,.rp-offer-count.is-refreshing i{animation:none}}
+
+/* Retailer identity */
+.rp-row-logo--ebay{display:flex;align-items:center;justify-content:center;gap:0;width:54px;padding:0 5px;background:#fff;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;letter-spacing:-2px;line-height:1;text-transform:none}.rp-row-logo--ebay .ebay-e{color:#e53238}.rp-row-logo--ebay .ebay-b{color:#0064d2}.rp-row-logo--ebay .ebay-a{color:#f5af02}.rp-row-logo--ebay .ebay-y{color:#86b817}

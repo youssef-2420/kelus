@@ -227,10 +227,19 @@ function CheaperOption({ offer, tradeoff }: { offer: Offer; tradeoff: string }) 
   </article>;
 }
 
+function RetailerLogo({ offer }: { offer: Offer }) {
+  if (offer.retailer.id === "ebay") {
+    return <span className="rp-row-logo rp-row-logo--ebay" role="img" aria-label="eBay">
+      <span className="ebay-e">e</span><span className="ebay-b">b</span><span className="ebay-a">a</span><span className="ebay-y">y</span>
+    </span>;
+  }
+  return <span className="rp-row-logo" aria-hidden="true">{offer.retailer.logo}</span>;
+}
+
 function OfferRow({ offer, highlighted = false, compact = false }: { offer: Offer; highlighted?: boolean; compact?: boolean }) {
   return <div className={`rp-row${highlighted ? "" : " rp-row--plain"}${compact ? " rp-row--compact" : ""}`}>
     <div className="rp-row-lead">
-      <span className="rp-row-logo" aria-hidden="true">{offer.retailer.logo}</span>
+      <RetailerLogo offer={offer}/>
       <div><div className="rp-row-name"><strong>{offer.retailer.name}</strong>{offer.dataSource === "live" && <span className="rp-badge">Live</span>}</div><p className="rp-row-meta">{titleCase(offer.condition)} · {offer.delivery ?? "Shipping details unavailable"}</p><p className="rp-row-meta">{offer.seller.name ?? "Seller name unavailable"}{offer.seller.feedbackPercentage !== undefined ? " · " + offer.seller.feedbackPercentage + "% feedback" : ""}</p><p className="rp-row-meta">{returnTerms(offer)}</p></div>
     </div>
     <div className="rp-row-price"><strong>${knownTotal(offer) ?? offer.price}</strong><span>{knownTotal(offer) === null ? "Item price" : "Item + shipping"}</span>{offer.shippingCostKnown === false ? <em>Shipping not provided</em> : offer.shippingCost > 0 ? <em>Includes ${offer.shippingCost} shipping</em> : <em>Free shipping</em>}</div>
