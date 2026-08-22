@@ -57,12 +57,12 @@ const worker = {
 
 const conditions: ConditionFilter[] = ["any", "new", "used", "refurbished"];
 
-function json(body: unknown, status = 200) {
+function json(body: unknown, status = 200, cacheControl = "no-store") {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "no-store",
+      "Cache-Control": cacheControl,
     },
   });
 }
@@ -83,7 +83,7 @@ async function handleOfferSearch(request: Request, env: Env) {
   const criteria = criteriaFrom(new URL(request.url));
   if (!criteria) return json({ error: { code: "invalid_search", message: "Choose a supported iPhone model, storage, condition, and the United States market." } }, 400);
   try {
-    return json(await getLiveOffersForSearch(criteria, env));
+    return json(await getLiveOffersForSearch(criteria, env), 200, "public, max-age=30, s-maxage=60, stale-while-revalidate=300");
   } catch (error) {
     const providerError = error instanceof EbayProviderError ? error : null;
     const code = providerError?.code ?? (error instanceof Error && error.message.includes("not configured") ? "provider_unconfigured" : "provider_error");

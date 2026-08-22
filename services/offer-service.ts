@@ -21,6 +21,19 @@ function apiUrl(criteria: SearchCriteria) {
   return "/api/offers?" + searchCriteriaToQuery(criteria);
 }
 
+async function fetchOffers(criteria: SearchCriteria) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), 15_000);
+  try {
+    return await fetch(apiUrl(criteria), {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    });
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
+
 export async function getOffersForSearch(criteria: SearchCriteria, onStatus?: (status: SearchStatus) => void): Promise<OfferSearchResult> {
   onStatus?.("resolving_product");
   onStatus?.("fetching_offers");
@@ -29,11 +42,16 @@ export async function getOffersForSearch(criteria: SearchCriteria, onStatus?: (s
   trackEvent({ name: "live_provider_search_started", provider: "ebay", productSlug: criteria.productSlug });
   let response: Response;
   try {
-    response = await fetch(apiUrl(criteria), { headers: { Accept: "application/json" } });
-  } catch {
+    response = await fetchOffers(criteria);
+    if (response.status === 429 || response.status >= 500) {
+      await new Promise((resolve) => window.setTimeout(resolve, 350));
+      response = await fetchOffers(criteria);
+    }
+  } catch (error) {
     trackEvent({ name: "live_provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
     trackEvent({ name: "provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
-    throw new OfferSearchError("We couldn't reach the eBay offer service.", "network");
+    const timedOut = error instanceof DOMException && error.name === "AbortError";
+    throw new OfferSearchError(timedOut ? "The live search took too long. Please try again." : "We couldn't reach the eBay offer service.", timedOut ? "timeout" : "network");
   }
   let body: OfferSearchResult | ApiErrorBody;
   try {

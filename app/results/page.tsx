@@ -13,7 +13,7 @@ import { getProductBySlug, getVariantById, getVariantsForProduct, priceHistory }
 import { readSearchCriteria, searchCriteriaToQuery } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
 import { getRecommendation, sortOffers } from "@/services/recommendations";
-import { retrySearch, startSearch } from "@/services/search-session";
+import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { ConditionFilter, Offer, OfferSearchResult, Product, ProductVariant, Retailer } from "@/types/kelus";
 
 type SortMode = "recommended" | "lowest" | "highest";
@@ -65,7 +65,9 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
   const variants = useMemo(() => getVariantsForProduct(product.id), [product.id]);
   const [result, setResult] = useState<OfferSearchResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [refreshWarning, setRefreshWarning] = useState("");
   const [errorMessage, setErrorMessage] = useState("We couldn't load eBay offers right now.");
   const [condition, setCondition] = useState<ConditionFilter>("any");
   const [retailer, setRetailer] = useState("all");
@@ -75,10 +77,24 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
 
   useEffect(() => {
     let cancelled = false;
-    startSearch(criteria)
+    const cached = readCachedSearch(criteria);
+    if (cached) {
+      queueMicrotask(() => {
+        if (cancelled) return;
+        setResult(cached.result);
+        setLoading(false);
+        setRefreshing(true);
+      });
+    }
+    (cached ? retrySearch(criteria) : startSearch(criteria))
       .then((next) => { if (!cancelled) setResult(next); })
-      .catch((error) => { if (!cancelled) { setErrorMessage(error instanceof Error ? error.message : "We couldn't load eBay offers right now."); setFailed(true); } })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .catch((error) => {
+        if (cancelled) return;
+        const message = error instanceof Error ? error.message : "We couldn't load eBay offers right now.";
+        if (cached) setRefreshWarning("Showing your most recent live results. Refresh when your connection improves.");
+        else { setErrorMessage(message); setFailed(true); }
+      })
+      .finally(() => { if (!cancelled) { setLoading(false); setRefreshing(false); } });
     return () => { cancelled = true; };
   }, [criteria]);
 
@@ -101,7 +117,8 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
   function retry() {
     setLoading(true);
     setFailed(false);
-    retrySearch(criteria).then(setResult).catch(() => setFailed(true)).finally(() => setLoading(false));
+    setRefreshWarning("");
+    retrySearch(criteria).then(setResult).catch((error) => { setErrorMessage(error instanceof Error ? error.message : "We couldn't load eBay offers right now."); setFailed(true); }).finally(() => setLoading(false));
   }
 
   return <main className="app-page rp-shell">
@@ -116,8 +133,9 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
       </div>
       <div className="rp-columns">
         <section>
-          <ProductSummary product={product} variantLabel={variant?.label} condition={criteria.condition} count={filteredOffers.length} loading={loading} live={result ? !result.isDemo : false} lastUpdated={result?.lastUpdated} editing={editing} onToggleEditing={() => setEditing((open) => !open)} />
+          <ProductSummary product={product} variantLabel={variant?.label} condition={criteria.condition} count={filteredOffers.length} loading={loading} refreshing={refreshing} live={result ? !result.isDemo : false} lastUpdated={result?.lastUpdated} editing={editing} onToggleEditing={() => setEditing((open) => !open)} />
           {!loading && !failed && <p className="rp-live-note"><Icon name="check" size={15}/>Live eBay offers are currently available. Additional retailers are being added.</p>}
+          {refreshWarning && <div className="rp-refresh-warning" role="status"><Icon name="history" size={15}/><span>{refreshWarning}</span><button type="button" onClick={retry}>Refresh</button></div>}
           {editing && <div className="rp-edit-panel"><SearchControls compact initialCriteria={criteria}/></div>}
           {!loading && !failed && <ResultsFilters condition={condition} maxPrice={maxPrice} retailer={retailer} retailers={retailers} sort={sort} variantId={variant?.id ?? ""} variants={variants} onCondition={setCondition} onMaxPrice={setMaxPrice} onRetailer={setRetailer} onSort={setSort} onVariant={changeVariant} />}
           {loading ? <LoadingState /> : failed ? <ErrorState message={errorMessage} onRetry={retry} /> : !filteredOffers.length ? <NoResultsState /> : <div className="rp-offers">
@@ -145,7 +163,7 @@ function ResultsSidebar() {
   </aside>;
 }
 
-function ProductSummary({ product, variantLabel, condition, count, loading, live, lastUpdated, editing, onToggleEditing }: { product: Product; variantLabel?: string; condition: ConditionFilter; count: number; loading: boolean; live: boolean; lastUpdated?: string; editing: boolean; onToggleEditing: () => void }) {
+function ProductSummary({ product, variantLabel, condition, count, loading, refreshing, live, lastUpdated, editing, onToggleEditing }: { product: Product; variantLabel?: string; condition: ConditionFilter; count: number; loading: boolean; refreshing: boolean; live: boolean; lastUpdated?: string; editing: boolean; onToggleEditing: () => void }) {
   return <div className="rp-summary">
     <div className="rp-summary-main">
       <ProductMark label={product.image}/>
@@ -160,8 +178,8 @@ function ProductSummary({ product, variantLabel, condition, count, loading, live
       </div>
     </div>
     <div className="rp-summary-status">
-      <span className="rp-offer-count"><i/>{loading ? "Checking eBay…" : `${count} matching ${live ? "live " : ""}offer${count === 1 ? "" : "s"}`}</span>
-      <span className="rp-updated"><Icon name="refresh" size={13}/>{loading ? "Refreshing offers…" : updatedLabel(lastUpdated)}</span>
+      <span className={`rp-offer-count${refreshing ? " is-refreshing" : ""}`}><i/>{loading ? "Checking live prices…" : `${count} matching ${live ? "live " : ""}offer${count === 1 ? "" : "s"}`}</span>
+      <span className="rp-updated"><Icon name="refresh" size={13}/>{loading ? "Connecting securely to eBay…" : refreshing ? "Refreshing quietly…" : updatedLabel(lastUpdated)}</span>
     </div>
   </div>;
 }
@@ -179,7 +197,10 @@ function ResultsFilters({ condition, maxPrice, retailer, retailers, sort, varian
 }
 
 function LoadingState() {
-  return <div className="results-state"><Icon name="history"/><h2>Comparing offers…</h2><p>Kelus is organizing product, retailer, and price information.</p></div>;
+  return <div className="rp-loading" role="status" aria-live="polite">
+    <div className="rp-loading-copy"><span className="rp-loading-pulse"><Icon name="search" size={17}/></span><div><h2>Comparing live eBay offers</h2><p>Checking prices, shipping, seller quality, and availability.</p></div></div>
+    {[0, 1, 2].map((item) => <div className="rp-skeleton-row" key={item} aria-hidden="true"><i/><div><b/><span/><span/></div><strong/><em/></div>)}
+  </div>;
 }
 
 function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
