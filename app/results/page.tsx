@@ -139,9 +139,9 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
           {editing && <div className="rp-edit-panel"><SearchControls compact initialCriteria={criteria}/></div>}
           {!loading && !failed && <ResultsFilters condition={condition} maxPrice={maxPrice} retailer={retailer} retailers={retailers} sort={sort} variantId={variant?.id ?? ""} variants={variants} onCondition={setCondition} onMaxPrice={setMaxPrice} onRetailer={setRetailer} onSort={setSort} onVariant={changeVariant} />}
           {loading ? <LoadingState /> : failed ? <ErrorState message={errorMessage} onRetry={retry} /> : !filteredOffers.length ? <NoResultsState /> : <div className="rp-offers">
-            {pick && <OurPick offer={pick} reasons={recommendation?.reasons ?? []}/>}
-            {cheaperOption && pick && <CheaperOption offer={cheaperOption} tradeoff={cheaperTradeoff(pick, cheaperOption)}/>}
-            {otherOffers.map((offer) => <OfferRow key={offer.id} offer={offer}/>)}
+            {pick && <OurPick offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/>}
+            {cheaperOption && pick && <CheaperOption offer={cheaperOption} productName={product.name} tradeoff={cheaperTradeoff(pick, cheaperOption)}/>}
+            {otherOffers.map((offer) => <OfferRow key={offer.id} offer={offer} productName={product.name}/>)}
           </div>}
           <p className="rp-disclaimer">Results currently cover matching live eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links; no eBay campaign tracking is added unless configured.</p>
         </section>
@@ -211,18 +211,18 @@ function NoResultsState() {
   return <div className="results-state"><Icon name="search"/><h2>No matching eBay offers found for this configuration.</h2><p>Try another condition, storage option, or price limit.</p></div>;
 }
 
-function OurPick({ offer, reasons }: { offer: Offer; reasons: string[] }) {
+function OurPick({ offer, productName, reasons }: { offer: Offer; productName: string; reasons: string[] }) {
   return <article className="rp-pick">
     <span className="rp-pick-label"><Icon name="star" size={13}/>OUR PICK</span>
-    <OfferRow offer={offer} highlighted />
+    <OfferRow offer={offer} productName={productName} highlighted />
     <div className="rp-why"><Icon name="sparkle" size={16}/><div><b>Why we picked it</b><p>{reasons.slice(0, 3).join(" · ")}</p></div></div>
   </article>;
 }
 
-function CheaperOption({ offer, tradeoff }: { offer: Offer; tradeoff: string }) {
+function CheaperOption({ offer, productName, tradeoff }: { offer: Offer; productName: string; tradeoff: string }) {
   return <article className="rp-cheaper-option">
     <span className="rp-cheaper-label">CHEAPER OPTION</span>
-    <OfferRow offer={offer} compact />
+    <OfferRow offer={offer} productName={productName} compact />
     <p>{tradeoff}</p>
   </article>;
 }
@@ -236,11 +236,19 @@ function RetailerLogo({ offer }: { offer: Offer }) {
   return <span className="rp-row-logo" aria-hidden="true">{offer.retailer.logo}</span>;
 }
 
-function OfferRow({ offer, highlighted = false, compact = false }: { offer: Offer; highlighted?: boolean; compact?: boolean }) {
+function OfferImage({ offer, productName }: { offer: Offer; productName: string }) {
+  const source = offer.imageUrl?.startsWith("https://") ? offer.imageUrl : undefined;
+  const [failed, setFailed] = useState(false);
+  return <span className="rp-product-image">
+    {source && !failed ? <img src={source} alt={`${productName} listing from ${offer.retailer.name}`} loading="lazy" onError={() => setFailed(true)}/> : <span className="rp-product-image-fallback" aria-hidden="true"><Icon name="tag" size={22}/></span>}
+  </span>;
+}
+
+function OfferRow({ offer, productName, highlighted = false, compact = false }: { offer: Offer; productName: string; highlighted?: boolean; compact?: boolean }) {
   return <div className={`rp-row${highlighted ? "" : " rp-row--plain"}${compact ? " rp-row--compact" : ""}`}>
     <div className="rp-row-lead">
-      <RetailerLogo offer={offer}/>
-      <div><div className="rp-row-name"><strong>{offer.retailer.name}</strong>{offer.dataSource === "live" && <span className="rp-badge">Live</span>}</div><p className="rp-row-meta">{titleCase(offer.condition)} · {offer.delivery ?? "Shipping details unavailable"}</p><p className="rp-row-meta">{offer.seller.name ?? "Seller name unavailable"}{offer.seller.feedbackPercentage !== undefined ? " · " + offer.seller.feedbackPercentage + "% feedback" : ""}</p><p className="rp-row-meta">{returnTerms(offer)}</p></div>
+      <OfferImage offer={offer} productName={productName}/>
+      <div className="rp-row-details"><div className="rp-row-retailer"><RetailerLogo offer={offer}/><div><div className="rp-row-name"><strong>{offer.retailer.name}</strong>{offer.dataSource === "live" && <span className="rp-badge">Live</span>}</div><p className="rp-row-meta">{titleCase(offer.condition)} · {offer.delivery ?? "Shipping details unavailable"}</p></div></div><p className="rp-row-meta">{offer.seller.name ?? "Seller name unavailable"}{offer.seller.feedbackPercentage !== undefined ? " · " + offer.seller.feedbackPercentage + "% feedback" : ""}</p><p className="rp-row-meta">{returnTerms(offer)}</p></div>
     </div>
     <div className="rp-row-price"><strong>${knownTotal(offer) ?? offer.price}</strong><span>{knownTotal(offer) === null ? "Item price" : "Item + shipping"}</span>{offer.shippingCostKnown === false ? <em>Shipping not provided</em> : offer.shippingCost > 0 ? <em>Includes ${offer.shippingCost} shipping</em> : <em>Free shipping</em>}</div>
     {!compact && <ul className="rp-row-checks"><li><Icon name="check" size={15}/>{offer.warranty ?? "Warranty information unavailable"}</li><li><Icon name="check" size={15}/>{returnTerms(offer)}</li></ul>}
