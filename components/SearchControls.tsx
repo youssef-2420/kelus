@@ -1,7 +1,6 @@
 "use client";
 
 import { KeyboardEvent, useId, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
 import { getProductBySlug, getVariantsForProduct, searchProducts } from "@/lib/demo-data";
 import { getRelevantAttributeLabel } from "@/lib/product-attributes";
 import { defaultSearch, searchCriteriaToQuery } from "@/lib/search-state";
@@ -16,7 +15,6 @@ type Props = { compact?: boolean; minimal?: boolean; initialCriteria?: SearchCri
 const conditionLabels: Record<ConditionFilter, string> = { any: "Any", new: "New", used: "Used", refurbished: "Refurbished" };
 
 export function SearchControls({ compact = false, minimal = false, initialCriteria = defaultSearch }: Props) {
-  const router = useRouter();
   const listboxId = useId();
   const initialProduct = getProductBySlug(initialCriteria.productSlug) ?? getProductBySlug(defaultSearch.productSlug)!;
   const [selectedProduct, setSelectedProduct] = useState(initialProduct);
@@ -52,7 +50,7 @@ export function SearchControls({ compact = false, minimal = false, initialCriter
       const remaining = Math.max(0, 420 - (performance.now() - startedAt));
       if (remaining) await new Promise((resolve) => window.setTimeout(resolve, remaining));
       trackEvent({ name: response.failedProviders.length ? "search_partial" : "search_completed", productSlug: criteria.productSlug });
-      router.push(`/results?${searchCriteriaToQuery(criteria)}`);
+      window.location.assign(`/results?${searchCriteriaToQuery(criteria)}`);
     } catch { setSearchStatus("error"); setSearchFailed(true); trackEvent({ name: "search_failed", productSlug: criteria.productSlug }); }
   }
   if (minimal) return <div className="rp-search-pill-wrap"><form className={`rp-search-pill${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}><Icon name="search" size={19}/><input value={query} placeholder="Search for a product" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={onKeyDown} onChange={(event) => { setLoading(true); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); window.setTimeout(() => setLoading(false), 160); }} /><button type="submit" className="sr-only" disabled={searching}>Search</button></form>{open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{loading ? <p className="suggestion-state">Finding products…</p> : matches.length ? <>{matches.map((product, index) => <button type="button" role="option" aria-selected={index === activeIndex} id={`${listboxId}-${index}`} className={index === activeIndex ? "is-active" : ""} key={product.slug} onMouseDown={() => chooseProduct(product)}><ProductMark label={product.image} small/><span className="suggestion-copy"><b>{product.name}</b><small>{product.brand} · {product.category}</small></span><Icon name="arrow" size={16}/></button>)}<button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>View all results for “{query}” <Icon name="arrow" size={16}/></button></> : <p className="suggestion-state">No matching products</p>}</div>}{searching && <SearchProgress criteria={{ productSlug: selectedProduct.slug, variantId: variantId || undefined, condition, market }} status={searchStatus} failed={searchFailed} onRetry={() => { setSearchFailed(false); window.setTimeout(() => { void submit(true); }, 0); }} />}</div>;

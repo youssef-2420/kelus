@@ -1,6 +1,6 @@
 import { KelusHeader } from "@/components/KelusHeader";
 import { Icon } from "@/components/Icon";
-import Link from "next/link";
+import { SafeLink as Link } from "@/components/SafeLink";
 
 const steps = [
   { icon: "search", number: "01", title: "Tell us what you want", copy: "Search for a product and choose the configuration and condition that suit you." },

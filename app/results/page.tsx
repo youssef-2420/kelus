@@ -1,8 +1,8 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { SafeLink as Link } from "@/components/SafeLink";
 import { Icon } from "@/components/Icon";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
 import { PriceChart } from "@/components/PriceChart";
@@ -76,7 +76,6 @@ function Results() {
 }
 
 function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCriteria> }) {
-  const router = useRouter();
   const product = getProductBySlug(criteria.productSlug)!;
   const variant = getVariantById(criteria.variantId);
   const variants = useMemo(() => getVariantsForProduct(product.id), [product.id]);
@@ -129,7 +128,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
   const context = getPriceContext(filteredOffers, result?.observations ?? []);
 
   function changeVariant(variantId: string) {
-    router.push(`/results?${searchCriteriaToQuery({ ...criteria, variantId })}`);
+    window.location.assign(`/results?${searchCriteriaToQuery({ ...criteria, variantId })}`);
   }
 
   function retry() {
@@ -173,7 +172,7 @@ function ResultsSidebar() {
   return <aside className="rp-sidebar">
     <Link href="/" className="wordmark rp-sidebar-logo" aria-label="Kelus home">kelus</Link>
     <nav className="rp-nav" aria-label="Results navigation">
-      <Link href="/results" className="rp-nav-item is-active"><Icon name="search" size={18}/>Search</Link>
+      <Link href="/#product-search" className="rp-nav-item is-active"><Icon name="search" size={18}/>Search</Link>
       <span className="rp-nav-item is-disabled"><Icon name="tag" size={18}/>Deals</span>
       <span className="rp-nav-item is-disabled"><Icon name="trending" size={18}/>Price tracker</span>
       <Link href="/saved" className="rp-nav-item"><Icon name="heart" size={18}/>Watchlist</Link>

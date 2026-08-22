@@ -27,3 +27,14 @@ test("Kelus source separates demo offers from recommendation and provider contra
   assert.match(offerCard, /OutboundRetailerCTA/);
   assert.doesNotMatch(offerCard, /Kelus score|score/);
 });
+
+test("production navigation avoids the incompatible client-side link shim", async () => {
+  const [header, results, search] = await Promise.all([
+    readFile(new URL("../components/KelusHeader.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/results/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(header + results, /from ["']next\/link["']/);
+  assert.match(header, /SafeLink/);
+  assert.match(results + search, /window\.location\.assign/);
+});

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { KelusHeader } from "@/components/KelusHeader";
 import { Icon } from "@/components/Icon";
 import { ProductMark } from "@/components/ProductMark";
-import Link from "next/link";
+import { SafeLink as Link } from "@/components/SafeLink";
 
 const key = "kelus-watched-products";
 export default function SavedPage() {

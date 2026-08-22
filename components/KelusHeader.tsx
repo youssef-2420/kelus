@@ -1,9 +1,9 @@
 import { SignInDialog } from "@/components/SignInDialog";
 import { MobileNavigation } from "@/components/MobileNavigation";
-import Link from "next/link";
+import { SafeLink as Link } from "@/components/SafeLink";
 
 export function KelusHeader() {
-  const navItems = [{ href: "/results", label: "Compare" }, { href: "/how-it-works", label: "How it works" }, { href: "/saved", label: "My alerts" }];
+  const navItems = [{ href: "/#product-search", label: "Compare" }, { href: "/how-it-works", label: "How it works" }, { href: "/saved", label: "My alerts" }];
   return <header className="site-header">
     <Link className="wordmark" href="/" aria-label="Kelus home">kelus</Link>
     <nav aria-label="Main navigation">

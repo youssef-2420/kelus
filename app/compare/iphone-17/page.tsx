@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { SafeLink as Link } from "@/components/SafeLink";
 import { KelusHeader } from "@/components/KelusHeader";
 import { Icon } from "@/components/Icon";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
@@ -23,7 +23,7 @@ export default function ComparePage() {
       <Link className="crumb" href="/product/iphone-17">← iPhone 17 details</Link>
       <div className="compare-head">
         <div><p className="eyebrow">Illustrative comparison</p><h1>See the trade-offs clearly.</h1><p>Compare the retailer terms that change the value of a deal. Kelus does not sell or fulfill products.</p></div>
-        <Link className="button button-secondary" href="/results">Edit search</Link>
+        <Link className="button button-secondary" href="/#product-search">Edit search</Link>
       </div>
       <div className="compare-table" role="table">
         <div className="compare-row compare-columns" role="row">

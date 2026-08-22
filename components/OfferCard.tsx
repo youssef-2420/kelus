@@ -1,6 +1,6 @@
 import type { Offer } from "@/types/kelus";
 import { Icon } from "@/components/Icon";
-import Link from "next/link";
+import { SafeLink as Link } from "@/components/SafeLink";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
 
 export function OfferCard({ offer }: { offer: Offer }) {

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
 import { getRelevantAttributeLabel } from "../lib/product-attributes.ts";
+import { readSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
 test("catalog search and variants are canonical rather than presentation strings", () => {
@@ -36,4 +37,8 @@ test("search URLs preserve canonical product, variant, condition, and market val
   assert.equal(params.get("variant"), "iphone-17-256");
   assert.equal(params.get("condition"), "new");
   assert.equal(params.get("market"), "us");
+});
+
+test("a direct Results visit resolves a complete default search", () => {
+  assert.deepEqual(readSearchCriteria(new URLSearchParams()), { productSlug: "iphone-17", variantId: "iphone-17-128", condition: "any", market: "us" });
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { SafeLink as Link } from "@/components/SafeLink";
 import { Icon } from "@/components/Icon";
 
 type NavItem = { href: string; label: string };
