@@ -12,8 +12,8 @@ export function MobileNavigation({ items }: { items: NavItem[] }) {
     <button type="button" className="mobile-nav-toggle" aria-expanded={open} aria-controls="mobile-navigation" onClick={() => setOpen(!open)}>
       Menu <Icon name={open ? "close" : "sliders"} size={16}/>
     </button>
-    {open && <nav id="mobile-navigation" className="mobile-nav-panel" aria-label="Mobile navigation">
-      {items.map((item) => <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>{item.label}</Link>)}
-    </nav>}
+    <nav id="mobile-navigation" className={`mobile-nav-panel${open ? " is-open" : ""}`} aria-label="Mobile navigation" aria-hidden={!open}>
+      {items.map((item) => <Link key={item.href} href={item.href} tabIndex={open ? 0 : -1} onClick={() => setOpen(false)}>{item.label}</Link>)}
+    </nav>
   </div>;
 }
