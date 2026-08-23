@@ -1,49 +1,34 @@
 import type { Offer, PricePoint, Product, ProductVariant, Retailer, Seller } from "@/types/kelus";
 
-export const marketOptions = [{ id: "ma", label: "Morocco" }] as const;
+export const marketOptions = [{ id: "us", label: "United States" }] as const;
 export const products: Product[] = [
-  { id: "apple-iphone-13", slug: "iphone-13", name: "iPhone 13", category: "Smartphone", brand: "Apple", image: "IPH", identifiers: { brand: "Apple", family: "iPhone" }, searchPreview: { fromPrice: 3200, offerCount: 3, isDemo: true } },
-  { id: "samsung-galaxy-s22", slug: "galaxy-s22", name: "Samsung Galaxy S22", category: "Smartphone", brand: "Samsung", image: "SGS", identifiers: { brand: "Samsung", family: "Galaxy" }, searchPreview: { fromPrice: 2800, offerCount: 2, isDemo: true } },
-  { id: "apple-macbook-air-m1", slug: "macbook-air-m1", name: "MacBook Air M1", category: "Laptop", brand: "Apple", image: "MBA", identifiers: { brand: "Apple", family: "MacBook" }, searchPreview: { fromPrice: 7200, offerCount: 2, isDemo: true } },
-  { id: "sony-wh1000xm5", slug: "sony-headphones", name: "Sony WH-1000XM5", category: "Audio", brand: "Sony", image: "SNY", identifiers: { brand: "Sony", family: "WH-1000X" }, searchPreview: { fromPrice: 2899, offerCount: 2, isDemo: true } },
-  { id: "canon-eos-r50", slug: "canon-camera", name: "Canon EOS R50", category: "Camera", brand: "Canon", image: "CNO", identifiers: { brand: "Canon", family: "EOS" }, searchPreview: { fromPrice: 8999, offerCount: 1, isDemo: true } },
+  { id: "apple-iphone-17", slug: "iphone-17", name: "iPhone 17", category: "Smartphone", brand: "Apple", image: "IPH", identifiers: { brand: "Apple", family: "iPhone" }, searchPreview: { fromPrice: 799, offerCount: 3, isDemo: true } },
+  { id: "apple-iphone-17-pro", slug: "iphone-17-pro", name: "iPhone 17 Pro", category: "Smartphone", brand: "Apple", image: "17P", identifiers: { brand: "Apple", family: "iPhone" }, searchPreview: { fromPrice: 999, offerCount: 0, isDemo: true } },
+  { id: "apple-iphone-17-pro-max", slug: "iphone-17-pro-max", name: "iPhone 17 Pro Max", category: "Smartphone", brand: "Apple", image: "17M", identifiers: { brand: "Apple", family: "iPhone" }, searchPreview: { fromPrice: 1199, offerCount: 0, isDemo: true } },
+  { id: "apple-macbook-air-m4", slug: "macbook-air-m4", name: "MacBook Air", category: "Laptop", brand: "Apple", image: "MBA", identifiers: { brand: "Apple", family: "MacBook" }, searchPreview: { fromPrice: 999, offerCount: 0, isDemo: true } },
+  { id: "apple-airpods-pro-2", slug: "airpods-pro-2", name: "AirPods Pro", category: "Audio", brand: "Apple", image: "APP", identifiers: { brand: "Apple", family: "AirPods" }, searchPreview: { fromPrice: 249, offerCount: 0, isDemo: true } },
 ];
 export const featuredProduct = products[0];
 export const productVariants: ProductVariant[] = [
-  ...["128GB", "256GB"].map((storage) => ({ id: `iphone-13-${storage.slice(0, -2)}`, productId: "apple-iphone-13", label: storage, storage, specifications: { storage }, identifiers: {} })),
-  ...["128GB", "256GB"].map((storage) => ({ id: `galaxy-s22-${storage.slice(0, -2)}`, productId: "samsung-galaxy-s22", label: storage, storage, specifications: { storage }, identifiers: {} })),
-  { id: "macbook-air-m1-256", productId: "apple-macbook-air-m1", label: "256GB SSD", storage: "256GB", specifications: { storage: "256GB", ram: "8GB" }, identifiers: {} },
-  { id: "macbook-air-m1-512", productId: "apple-macbook-air-m1", label: "512GB SSD", storage: "512GB", specifications: { storage: "512GB", ram: "8GB" }, identifiers: {} },
-  { id: "sony-wh1000xm5", productId: "sony-wh1000xm5", label: "Standard", specifications: {}, identifiers: {} },
-  { id: "canon-eos-r50", productId: "canon-eos-r50", label: "Body Only", specifications: {}, identifiers: {} },
+  ...["128GB", "256GB", "512GB"].map((storage) => ({ id: `iphone-17-${storage.slice(0, -2)}`, productId: "apple-iphone-17", label: storage, storage, specifications: { storage }, identifiers: {} })),
+  ...["256GB", "512GB", "1TB"].map((storage) => ({ id: `iphone-17-pro-${storage.toLowerCase()}`, productId: "apple-iphone-17-pro", label: storage, storage, specifications: { storage }, identifiers: {} })),
+  ...["256GB", "512GB", "1TB"].map((storage) => ({ id: `iphone-17-pro-max-${storage.toLowerCase()}`, productId: "apple-iphone-17-pro-max", label: storage, storage, specifications: { storage }, identifiers: {} })),
+  { id: "macbook-air-m4-16-512", productId: "apple-macbook-air-m4", label: "16GB · 512GB", storage: "512GB", specifications: { ram: "16GB", storage: "512GB", processor: "M4" }, identifiers: {} },
+  { id: "macbook-air-m4-24-1tb", productId: "apple-macbook-air-m4", label: "24GB · 1TB", storage: "1TB", specifications: { ram: "24GB", storage: "1TB", processor: "M4" }, identifiers: {} },
+  { id: "airpods-pro-2-usbc", productId: "apple-airpods-pro-2", label: "USB-C", specifications: { connector: "USB-C" }, identifiers: {} },
 ];
 export const getProductBySlug = (slug: string) => products.find((product) => product.slug === slug);
 export const getVariantById = (id?: string) => productVariants.find((variant) => variant.id === id);
 export const getVariantsForProduct = (productId: string) => productVariants.filter((variant) => variant.productId === productId);
 export const searchProducts = (query: string) => products.filter((product) => `${product.brand} ${product.name}`.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 5);
 
-const retailers: Record<string, Retailer> = { 
-  jumia: { id: "jumia", name: "Jumia.ma", logo: "J", website: "https://www.jumia.ma" }, 
-  avito: { id: "avito", name: "Avito.ma", logo: "A", website: "https://www.avito.ma" }
-};
-const sellers: Record<string, Seller> = { 
-  jumia: { id: "jumia-official", retailerId: "jumia", name: "Jumia Official Store", sellerType: "retailer" }, 
-  avito: { id: "avito-seller", retailerId: "avito", name: "Verified Seller", sellerType: "marketplace_seller" }
-};
+const retailers: Record<string, Retailer> = { amazon: { id: "amazon", name: "Amazon", logo: "A", website: "https://www.amazon.com" }, bestBuy: { id: "best-buy", name: "Best Buy", logo: "B", website: "https://www.bestbuy.com" }, ebay: { id: "ebay", name: "eBay", logo: "e", website: "https://www.ebay.com" } };
+const sellers: Record<string, Seller> = { amazon: { id: "amazon-retail", retailerId: "amazon", name: "Amazon", sellerType: "retailer" }, bestBuy: { id: "best-buy-retail", retailerId: "best-buy", name: "Best Buy", sellerType: "retailer" }, ebay: { id: "ebay-demo-seller", retailerId: "ebay", name: "Top Rated seller", sellerType: "marketplace_seller" } };
 
+// Seed data is deliberately demo-only. Provider adapters consume this normalized format until live credentials exist.
 export const offers: Offer[] = [
-  { id: "jumia-iphone-13-256", productId: "apple-iphone-13", variantId: "iphone-13-256", retailer: retailers.jumia, seller: sellers.jumia, price: 5499, currency: "MAD", condition: "new", shippingCost: 0, delivery: "Free delivery in Casablanca", availability: "In stock", warranty: "1-year warranty", returnPolicy: "14-day returns", affiliateUrl: null, lastUpdated: "2026-08-23T12:00:00Z", dataSource: "demo" },
-  { id: "avito-iphone-13-256", productId: "apple-iphone-13", variantId: "iphone-13-256", retailer: retailers.avito, seller: sellers.avito, price: 3200, currency: "MAD", condition: "used", shippingCost: 150, delivery: "Delivery in 2-3 days", availability: "Limited stock", warranty: "Seller protection", returnPolicy: "7-day returns", affiliateUrl: null, lastUpdated: "2026-08-23T12:00:00Z", dataSource: "demo" },
-  { id: "jumia-galaxy-s22-256", productId: "samsung-galaxy-s22", variantId: "galaxy-s22-256", retailer: retailers.jumia, seller: sellers.jumia, price: 4999, currency: "MAD", condition: "new", shippingCost: 0, delivery: "Free delivery in Casablanca", availability: "In stock", warranty: "1-year warranty", returnPolicy: "14-day returns", affiliateUrl: null, lastUpdated: "2026-08-23T12:00:00Z", dataSource: "demo" },
-  { id: "avito-galaxy-s22-256", productId: "samsung-galaxy-s22", variantId: "galaxy-s22-256", retailer: retailers.avito, seller: sellers.avito, price: 2800, currency: "MAD", condition: "used", shippingCost: 150, delivery: "Delivery in 2-3 days", availability: "In stock", warranty: "Seller protection", returnPolicy: "7-day returns", affiliateUrl: null, lastUpdated: "2026-08-23T12:00:00Z", dataSource: "demo" },
-  { id: "jumia-macbook-m1-512", productId: "apple-macbook-air-m1", variantId: "macbook-air-m1-512", retailer: retailers.jumia, seller: sellers.jumia, price: 12999, currency: "MAD", condition: "new", shippingCost: 0, delivery: "Free delivery nationwide", availability: "In stock", warranty: "1-year warranty", returnPolicy: "14-day returns", affiliateUrl: null, lastUpdated: "2026-08-23T12:00:00Z", dataSource: "demo" },
-  { id: "avito-macbook-m1-512", productId: "apple-macbook-air-m1", variantId: "macbook-air-m1-512", retailer: retailers.avito, seller: sellers.avito, price: 7200, currency: "MAD", condition: "used", shippingCost: 200, delivery: "Pickup in Rabat", availability: "In stock", warranty: "Seller guarantee", returnPolicy: "5-day returns", affiliateUrl: null, lastUpdated: "2026-08-23T12:00:00Z", dataSource: "demo" },
+  { id: "amazon-iphone-17-256", productId: "apple-iphone-17", variantId: "iphone-17-256", retailer: retailers.amazon, seller: sellers.amazon, price: 799, currency: "USD", condition: "new", shippingCost: 0, delivery: "Free delivery tomorrow", availability: "In stock", warranty: "1-year manufacturer warranty", returnPolicy: "30-day retailer returns", affiliateUrl: null, lastUpdated: "2026-08-20T12:00:00Z", dataSource: "demo" },
+  { id: "best-buy-iphone-17-256", productId: "apple-iphone-17", variantId: "iphone-17-256", retailer: retailers.bestBuy, seller: sellers.bestBuy, price: 799, currency: "USD", condition: "new", shippingCost: 0, delivery: "Free pickup today", availability: "In stock", warranty: "1-year manufacturer warranty", returnPolicy: "15-day retailer returns", affiliateUrl: null, lastUpdated: "2026-08-20T12:00:00Z", dataSource: "demo" },
+  { id: "ebay-iphone-17-256", productId: "apple-iphone-17", variantId: "iphone-17-256", retailer: retailers.ebay, seller: sellers.ebay, price: 749, currency: "USD", condition: "used", shippingCost: 0, delivery: "Free delivery in 2 days", availability: "Limited stock", warranty: "1-year marketplace warranty", returnPolicy: "30-day seller return terms", affiliateUrl: null, lastUpdated: "2026-08-20T12:00:00Z", dataSource: "demo" },
 ];
-export const priceHistory: PricePoint[] = [
-  { label: "Apr", price: 5900 }, 
-  { label: "May", price: 5800 }, 
-  { label: "Jun", price: 5700 }, 
-  { label: "Jul", price: 5600 }, 
-  { label: "Aug", price: 5500 }, 
-  { label: "Today", price: 5499 }
-];
+export const priceHistory: PricePoint[] = [{ label: "Apr", price: 899 }, { label: "May", price: 879 }, { label: "Jun", price: 849 }, { label: "Jul", price: 829 }, { label: "Aug", price: 799 }, { label: "Today", price: 799 }];
