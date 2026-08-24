@@ -126,6 +126,7 @@ test("normalization maps price, shipping, seller, condition, and destination wit
   assert.equal(offer.warranty, "Warranty information unavailable");
   assert.equal(offer.returnPolicy, "Return terms unavailable");
   assert.equal(offer.dataSource, "live");
+  assert.equal(offer.sourceTitle, validItem.title);
   assert.equal(offer.affiliateUrl, "https://www.ebay.com/itm/123");
 });
 

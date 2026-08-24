@@ -23,6 +23,7 @@ export type Offer = {
   returnPolicy: string; affiliateUrl: string | null; lastUpdated: string; dataSource: "demo" | "live";
   sourceProvider?: "ebay" | string;
   sourceCondition?: string;
+  sourceTitle?: string;
   imageUrl?: string;
   itemLocation?: string;
 };

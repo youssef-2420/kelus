@@ -96,6 +96,7 @@ export function normalizeEbayItem(item: EbayItemSummary, product: Product, varia
     dataSource: "live",
     sourceProvider: "ebay",
     sourceCondition: item.condition,
+    sourceTitle: item.title,
     imageUrl: item.image?.imageUrl,
     itemLocation: location(item),
   };
