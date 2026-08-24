@@ -12,7 +12,7 @@ import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById } from "@/lib/demo-data";
 import { readSearchCriteria } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
-import { getRecommendation } from "@/services/recommendations";
+import { getCheaperAlternative, getRecommendation } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { Offer, OfferSearchResult, PriceObservation } from "@/types/kelus";
 
@@ -61,8 +61,8 @@ function NewResults() {
   const offers = result?.offers ?? [];
   const recommendation = getRecommendation(offers, "kelus_pick");
   const pick = offers.find((offer) => offer.id === recommendation?.offerId);
-  const priced = offers.filter((offer) => knownTotal(offer) !== null).sort((a, b) => knownTotal(a)! - knownTotal(b)!);
-  const lowest = priced.find((offer) => offer.id !== pick?.id);
+  const cheaperAlternative = pick ? getCheaperAlternative(offers, pick) : null;
+  const lowest = cheaperAlternative?.offer;
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const context = getPriceContext(offers, result?.observations ?? []);
   const heroOffer = pick ?? offers[0];
@@ -73,7 +73,7 @@ function NewResults() {
       <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked`}</span></div></section>
       {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state">No matching live eBay offers found.</div> : <>
         {pick && <section className="nr-section"><p className="nr-label is-accent">Our Pick</p><FeaturedOffer offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/></section>}
-        {lowest && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p>{pick && knownTotal(pick) !== null && knownTotal(lowest) !== null && knownTotal(pick)! > knownTotal(lowest)! && <b>Save ${knownTotal(pick)! - knownTotal(lowest)!}</b>}</div><LowestOffer offer={lowest} productName={product.name} pick={pick}/></section>}
+        {lowest && cheaperAlternative && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p><b>Save ${cheaperAlternative.savings}</b></div><LowestOffer offer={lowest} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/></section>}
         {otherOffers.length > 0 && <section className="nr-section"><p className="nr-label">Other offers</p><div className="nr-other-list">{otherOffers.map((offer, index) => <OtherOffer key={offer.id} offer={offer} productName={product.name} initiallyOpen={index === 0}/>)}</div></section>}
         <PriceContext context={context} observations={result?.observations ?? []}/>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
@@ -98,9 +98,8 @@ function FeaturedOffer({ offer, productName, reasons }: { offer: Offer; productN
   return <article className="nr-feature-card"><div className="nr-feature-top"><OfferIdentity offer={offer} productName={productName}/><strong>${knownTotal(offer) ?? offer.price}</strong></div><div className="nr-why"><b>Why we picked it</b><p>{reasons.slice(0, 3).join(" · ") || "Strong balance of known price and seller terms among connected offers."}</p></div><span className="nr-cta"><OutboundRetailerCTA offer={offer}/></span></article>;
 }
 
-function LowestOffer({ offer, productName, pick }: { offer: Offer; productName: string; pick?: Offer }) {
-  const changed = pick && pick.condition !== offer.condition;
-  return <article className="nr-low-card"><div className="nr-feature-top"><OfferIdentity offer={offer} productName={productName}/><strong>${knownTotal(offer) ?? offer.price}</strong></div><div className="nr-tradeoff"><b>Trade-off</b><p>{changed ? `${titleCase(offer.condition)} condition instead of ${pick ? titleCase(pick.condition) : "the recommended condition"}. Review the listing and seller terms before choosing.` : "Lower known price with different delivery or seller terms. Review the details before choosing."}</p></div><span className="nr-cta is-outline"><OutboundRetailerCTA offer={offer}/></span></article>;
+function LowestOffer({ offer, productName, tradeoff }: { offer: Offer; productName: string; tradeoff: string }) {
+  return <article className="nr-low-card"><div className="nr-feature-top"><OfferIdentity offer={offer} productName={productName}/><strong>${knownTotal(offer) ?? offer.price}</strong></div><div className="nr-tradeoff"><b>Trade-off</b><p>{tradeoff}</p></div><span className="nr-cta is-outline"><OutboundRetailerCTA offer={offer}/></span></article>;
 }
 
 function OtherOffer({ offer, productName, initiallyOpen }: { offer: Offer; productName: string; initiallyOpen: boolean }) {

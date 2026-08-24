@@ -11,6 +11,11 @@ export type EbayShippingOption = {
   minEstimatedDeliveryDate?: string;
   maxEstimatedDeliveryDate?: string;
 };
+export type EbayReturnTerms = {
+  returnsAccepted?: boolean;
+  returnPeriod?: { value?: number; unit?: string };
+  returnShippingCostPayer?: "BUYER" | "SELLER" | string;
+};
 export type EbayItemSummary = {
   itemId?: string;
   legacyItemId?: string;
@@ -32,7 +37,9 @@ export type EbayItemSummary = {
   seller?: EbaySeller;
   shippingOptions?: EbayShippingOption[];
   topRatedBuyingExperience?: boolean;
+  returnTerms?: EbayReturnTerms;
 };
+export type EbayItemDetail = EbayItemSummary & { returnTerms?: EbayReturnTerms };
 export type EbaySearchResponse = {
   total?: number;
   itemSummaries?: EbayItemSummary[];
@@ -43,4 +50,3 @@ export type EbayTokenResponse = {
   expires_in?: number;
   token_type?: string;
 };
-

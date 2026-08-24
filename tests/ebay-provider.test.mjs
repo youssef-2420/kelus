@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getProductBySlug, getVariantById } from "../lib/demo-data.ts";
 import { clearEbayTokenCache, getEbayApplicationToken } from "../services/providers/ebay/auth.ts";
-import { isAccessory, isPartsOnly, matchesCanonicalEbayItem, matchesCondition, matchesModel, matchesStorage, normalizeEbayCondition } from "../services/providers/ebay/matching.ts";
+import { isAccessory, isActiveListing, isPartsOnly, matchesCanonicalEbayItem, matchesCondition, matchesModel, matchesStorage, normalizeEbayCondition } from "../services/providers/ebay/matching.ts";
 import { normalizeEbayItem } from "../services/providers/ebay/normalize.ts";
 import { EbayProvider, EbayProviderError } from "../services/providers/ebay/provider.ts";
 
@@ -69,8 +69,27 @@ test("matching excludes accessories, wrong storage, wrong model, and auctions", 
   assert.equal(matchesCanonicalEbayItem(validItem, product, variant, "any"), true);
   assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Case for Apple iPhone 17 Pro 256GB" }, product, variant, "any"), false);
   assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 512GB Unlocked", shortDescription: "" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB 512GB Unlocked" }, product, variant, "any"), false);
   assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro Max 256GB Unlocked" }, product, variant, "any"), false);
   assert.equal(matchesCanonicalEbayItem({ ...validItem, buyingOptions: ["AUCTION"] }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, buyingOptions: undefined }, product, variant, "any"), false);
+});
+
+test("matching rejects parts, carrier-locked listings, ended listings, and condition conflicts", () => {
+  assert.ok(product && variant);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB Logic Board" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB Unlocked for parts" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB Verizon" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, itemEndDate: "2025-01-01T00:00:00Z" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem(validItem, product, variant, "new"), false);
+  assert.equal(isActiveListing({ ...validItem, itemEndDate: "2027-01-01T00:00:00Z" }, Date.parse("2026-08-24T00:00:00Z")), true);
+});
+
+test("accessory words in a description do not reject a real phone title", () => {
+  assert.ok(product && variant);
+  const phoneWithCaseMention = { ...validItem, shortDescription: "Phone includes a protective case and charging cable; not compatible with iPhone 17 Pro Max" };
+  assert.equal(isAccessory(phoneWithCaseMention), false);
+  assert.equal(matchesCanonicalEbayItem(phoneWithCaseMention, product, variant, "any"), true);
 });
 
 test("matching checks remain independently testable and conservative", () => {
@@ -81,6 +100,17 @@ test("matching checks remain independently testable and conservative", () => {
   assert.equal(matchesCondition(validItem, "new"), false);
   assert.equal(isAccessory({ ...validItem, title: "Screen protector for iPhone 17 Pro 256GB" }), true);
   assert.equal(isPartsOnly({ ...validItem, title: "Apple iPhone 17 Pro 256GB for parts only" }), true);
+});
+
+test("base iPhone 17 matching rejects sibling models", () => {
+  const baseProduct = getProductBySlug("iphone-17");
+  const baseVariant = getVariantById("iphone-17-256");
+  assert.ok(baseProduct && baseVariant);
+  const baseItem = { ...validItem, title: "Apple iPhone 17 256GB Unlocked", shortDescription: "" };
+  assert.equal(matchesCanonicalEbayItem(baseItem, baseProduct, baseVariant, "any"), true);
+  for (const sibling of ["iPhone 17 Pro", "iPhone 17 Pro Max", "iPhone 17 Air", "iPhone 17 Plus", "iPhone 17e"]) {
+    assert.equal(matchesCanonicalEbayItem({ ...baseItem, title: `Apple ${sibling} 256GB Unlocked` }, baseProduct, baseVariant, "any"), false);
+  }
 });
 
 test("normalization maps price, shipping, seller, condition, and destination without inventing warranty", () => {
@@ -97,6 +127,17 @@ test("normalization maps price, shipping, seller, condition, and destination wit
   assert.equal(offer.returnPolicy, "Return terms unavailable");
   assert.equal(offer.dataSource, "live");
   assert.equal(offer.affiliateUrl, "https://www.ebay.com/itm/123");
+});
+
+test("normalization uses real eBay return terms when supplied by item detail", () => {
+  assert.ok(product && variant);
+  const sellerPaid = normalizeEbayItem({
+    ...validItem,
+    returnTerms: { returnsAccepted: true, returnPeriod: { value: 30, unit: "DAY" }, returnShippingCostPayer: "SELLER" },
+  }, product, variant, "2026-08-22T12:00:00.000Z");
+  const noReturns = normalizeEbayItem({ ...validItem, returnTerms: { returnsAccepted: false } }, product, variant, "2026-08-22T12:00:00.000Z");
+  assert.equal(sellerPaid?.returnPolicy, "30-day seller returns · Seller-paid return shipping");
+  assert.equal(noReturns?.returnPolicy, "No returns");
 });
 
 test("normalization keeps unknown shipping distinct from free shipping", () => {
@@ -120,6 +161,38 @@ test("normalization rejects malformed prices and unsafe destination URLs", () =>
   assert.ok(product && variant);
   assert.equal(normalizeEbayItem({ ...validItem, price: { value: "not-a-price", currency: "USD" } }, product, variant, new Date().toISOString()), null);
   assert.equal(normalizeEbayItem({ ...validItem, itemWebUrl: "https://example.com/not-ebay" }, product, variant, new Date().toISOString()), null);
+  assert.equal(normalizeEbayItem({ ...validItem, itemWebUrl: "https://www.ebay.com/itm/999" }, product, variant, new Date().toISOString()), null);
+});
+
+test("provider enriches matched offers with factual return terms", async () => {
+  clearEbayTokenCache();
+  const fetcher = async (input) => {
+    const url = String(input);
+    if (url.includes("/oauth2/token")) return new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 });
+    if (url.includes("/item_summary/search")) return new Response(JSON.stringify({ total: 1, itemSummaries: [{ ...validItem, condition: "New", conditionId: "1000" }] }), { status: 200 });
+    if (url.includes("/buy/browse/v1/item/")) return new Response(JSON.stringify({ returnTerms: { returnsAccepted: true, returnPeriod: { value: 30, unit: "DAY" }, returnShippingCostPayer: "SELLER" } }), { status: 200 });
+    throw new Error("Unexpected URL: " + url);
+  };
+  const provider = new EbayProvider(config, fetcher, silentLogger, () => Date.parse("2026-08-24T12:00:00Z"));
+  const result = await provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" });
+  assert.equal(result.offers.length, 1);
+  assert.equal(result.offers[0].returnPolicy, "30-day seller returns · Seller-paid return shipping");
+  assert.equal(result.observations[0].price, 899.99);
+  assert.equal(result.observations[0].shippingCost, 12.5);
+});
+
+test("provider keeps a valid offer when optional item-detail enrichment fails", async () => {
+  clearEbayTokenCache();
+  const fetcher = async (input) => {
+    const url = String(input);
+    if (url.includes("/oauth2/token")) return new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 });
+    if (url.includes("/item_summary/search")) return new Response(JSON.stringify({ total: 1, itemSummaries: [validItem] }), { status: 200 });
+    return new Response("unavailable", { status: 503 });
+  };
+  const provider = new EbayProvider(config, fetcher, silentLogger, () => Date.parse("2026-08-24T12:00:00Z"));
+  const result = await provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" });
+  assert.equal(result.offers.length, 1);
+  assert.equal(result.offers[0].returnPolicy, "Return terms unavailable");
 });
 
 test("provider returns zero offers cleanly and caches identical searches", async () => {
@@ -147,5 +220,27 @@ test("provider surfaces rate limiting as a typed failure", async () => {
   await assert.rejects(
     provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" }),
     (error) => error instanceof EbayProviderError && error.code === "rate_limited",
+  );
+});
+
+test("provider surfaces malformed search responses and timeouts as typed failures", async () => {
+  clearEbayTokenCache();
+  const malformedFetcher = async (input) => String(input).includes("/oauth2/token")
+    ? new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 })
+    : new Response(JSON.stringify({ itemSummaries: {} }), { status: 200 });
+  await assert.rejects(
+    new EbayProvider(config, malformedFetcher, silentLogger).getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" }),
+    (error) => error instanceof EbayProviderError && error.code === "malformed_response",
+  );
+
+  clearEbayTokenCache();
+  const timeoutConfig = { ...config, requestTimeoutMs: 5 };
+  const timeoutFetcher = async (input, init) => {
+    if (String(input).includes("/oauth2/token")) return new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 });
+    await new Promise((_, reject) => init.signal.addEventListener("abort", () => reject(init.signal.reason), { once: true }));
+  };
+  await assert.rejects(
+    new EbayProvider(timeoutConfig, timeoutFetcher, silentLogger).getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" }),
+    (error) => error instanceof EbayProviderError && error.code === "timeout",
   );
 });

@@ -13,7 +13,7 @@ import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/d
 import { getRelevantAttributeLabel } from "@/lib/product-attributes";
 import { readSearchCriteria, searchCriteriaToQuery } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
-import { getRecommendation, sortOffers } from "@/services/recommendations";
+import { getCheaperAlternative, getRecommendation, sortOffers } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { ConditionFilter, Offer, OfferSearchResult, PriceObservation, Product, ProductVariant, Retailer } from "@/types/kelus";
 
@@ -36,13 +36,6 @@ function returnTerms(offer: Offer) {
   const days = offer.returnPolicy.match(/(\d+)-day/)?.[1];
   if (!days) return offer.returnPolicy;
   return offer.seller.sellerType === "retailer" ? `${days}-day retailer returns` : `${days}-day seller return terms`;
-}
-
-function cheaperTradeoff(pick: Offer, alternative: Offer) {
-  const savings = (knownTotal(pick) ?? pick.price) - (knownTotal(alternative) ?? alternative.price);
-  if (alternative.condition !== pick.condition) return `Save $${savings} by choosing ${alternative.condition}.`;
-  if (alternative.seller.sellerType !== pick.seller.sellerType) return `Save $${savings} with seller terms that differ from a retailer purchase.`;
-  return `Save $${savings}; review delivery and return terms before choosing.`;
 }
 
 function realHistoryPoints(observations: PriceObservation[]) {
@@ -123,7 +116,8 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
   const sorted = useMemo(() => sortOffers(filteredOffers, sort), [filteredOffers, sort]);
   const recommendation = getRecommendation(filteredOffers, "kelus_pick");
   const pick = filteredOffers.find((offer) => offer.id === recommendation?.offerId);
-  const cheaperOption = pick && knownTotal(pick) !== null ? [...filteredOffers].filter((offer) => knownTotal(offer) !== null && total(offer) <= total(pick) - 5).sort((a, b) => total(a) - total(b))[0] : undefined;
+  const cheaperAlternative = pick ? getCheaperAlternative(filteredOffers, pick) : null;
+  const cheaperOption = cheaperAlternative?.offer;
   const otherOffers = sorted.filter((offer) => offer.id !== pick?.id && offer.id !== cheaperOption?.id);
   const context = getPriceContext(filteredOffers, result?.observations ?? []);
 
@@ -156,7 +150,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
           {!loading && !failed && <ResultsFilters attributeLabel={attributeLabel} condition={condition} maxPrice={maxPrice} retailer={retailer} retailers={retailers} sort={sort} variantId={variant?.id ?? ""} variants={variants} onCondition={setCondition} onMaxPrice={setMaxPrice} onRetailer={setRetailer} onSort={setSort} onVariant={changeVariant} />}
           {loading ? <LoadingState /> : failed ? <ErrorState message={errorMessage} onRetry={retry} /> : !filteredOffers.length ? <NoResultsState /> : <div className="rp-offers">
             {pick && <OurPick offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/>}
-            {cheaperOption && pick && <CheaperOption offer={cheaperOption} productName={product.name} tradeoff={cheaperTradeoff(pick, cheaperOption)}/>}
+            {cheaperOption && cheaperAlternative && <CheaperOption offer={cheaperOption} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/>}
             {otherOffers.length > 0 && <div className="rp-other-label">Other offers</div>}
             {otherOffers.map((offer) => <OfferRow key={offer.id} offer={offer} productName={product.name}/>)}
           </div>}

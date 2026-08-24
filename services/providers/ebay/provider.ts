@@ -2,13 +2,20 @@ import { getProductBySlug, getVariantById } from "../../../lib/demo-data.ts";
 import type { ProviderResult, SearchCriteria } from "@/types/kelus";
 import type { OfferProvider, ProviderRequestContext } from "@/services/providers/types";
 import type { EbayProviderConfig } from "@/services/providers/ebay/config";
-import type { EbaySearchResponse } from "@/services/providers/ebay/types";
+import type { EbayItemDetail, EbayItemSummary, EbaySearchResponse } from "@/services/providers/ebay/types";
 import { clearEbayTokenCache, getEbayApplicationToken } from "./auth.ts";
 import { buildEbayQuery, matchesCanonicalEbayItem } from "./matching.ts";
 import { normalizeEbayItem, observationForEbayOffer } from "./normalize.ts";
 
 type Logger = Pick<Console, "info" | "warn" | "error">;
 type CacheEntry = { expiresAt: number; value: ProviderResult };
+const maxDetailRequests = 12;
+
+function estimatedKnownTotal(item: EbayItemSummary) {
+  const price = Number(item.price?.value);
+  const shipping = (item.shippingOptions ?? []).map((option) => Number(option.shippingCost?.value)).filter(Number.isFinite);
+  return Number.isFinite(price) && shipping.length ? price + Math.min(...shipping) : Number.POSITIVE_INFINITY;
+}
 
 export class EbayProviderError extends Error {
   readonly code: "invalid_search" | "authentication" | "rate_limited" | "timeout" | "network" | "malformed_response" | "provider_error";
@@ -88,9 +95,15 @@ export class EbayProvider implements OfferProvider {
 
     const rawItems = payload.itemSummaries ?? [];
     const matchedItems = rawItems.filter((item) => matchesCanonicalEbayItem(item, product, variant, criteria.condition));
+    const detailCandidates = [...matchedItems].sort((a, b) => estimatedKnownTotal(a) - estimatedKnownTotal(b)).slice(0, maxDetailRequests);
+    const detailResults = await Promise.allSettled(detailCandidates.map((item) => this.getItemDetail(token, item.itemId!, context?.signal)));
+    const details = new Map(detailResults.flatMap((result, index) => result.status === "fulfilled" && result.value ? [[detailCandidates[index].itemId, result.value] as const] : []));
+    const detailFailures = detailResults.filter((result) => result.status === "rejected").length;
+    if (detailFailures) this.logger.warn("[ebay-provider] detail_enrichment_partial", { attempted: detailCandidates.length, failed: detailFailures });
     const offers = matchedItems.flatMap((item) => {
       try {
-        const offer = normalizeEbayItem(item, product, variant, fetchedAt);
+        const detail = details.get(item.itemId);
+        const offer = normalizeEbayItem(detail ? { ...item, returnTerms: detail.returnTerms } : item, product, variant, fetchedAt);
         return offer ? [offer] : [];
       } catch (error) {
         this.logger.warn("[ebay-provider] normalization_failure", { itemId: item.itemId, message: error instanceof Error ? error.message : "Unknown error" });
@@ -105,8 +118,29 @@ export class EbayProvider implements OfferProvider {
       fetchedAt,
     };
     this.cache.set(key, { expiresAt: this.now() + this.config.cacheTtlMs, value });
-    this.logger.info("[ebay-provider] request_completed", { rawItems: rawItems.length, matchedItems: matchedItems.length, normalizedOffers: offers.length });
+    this.logger.info("[ebay-provider] request_completed", { rawItems: rawItems.length, matchedItems: matchedItems.length, normalizedOffers: offers.length, enrichedItems: details.size });
     return value;
+  }
+
+  private async getItemDetail(token: string, itemId: string, externalSignal?: AbortSignal): Promise<EbayItemDetail | null> {
+    const url = new URL(this.config.apiBaseUrl + "/buy/browse/v1/item/" + encodeURIComponent(itemId));
+    const timeoutSignal = AbortSignal.timeout(this.config.requestTimeoutMs);
+    const signal = externalSignal ? AbortSignal.any([externalSignal, timeoutSignal]) : timeoutSignal;
+    const response = await this.fetcher(url, {
+      headers: {
+        Authorization: "Bearer " + token,
+        "X-EBAY-C-MARKETPLACE-ID": this.config.marketplaceId,
+        "Accept-Language": "en-US",
+      },
+      signal,
+    });
+    if (!response.ok) return null;
+    try {
+      const body = await response.json() as EbayItemDetail;
+      return body && typeof body === "object" ? body : null;
+    } catch {
+      return null;
+    }
   }
 
   private async search(token: string, query: string, externalSignal?: AbortSignal) {

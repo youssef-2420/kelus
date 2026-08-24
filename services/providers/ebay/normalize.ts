@@ -22,15 +22,33 @@ function shipping(option?: EbayShippingOption) {
   return { cost: null, label: null };
 }
 
-function safeEbayUrl(value?: string) {
+function listingId(item: EbayItemSummary) {
+  return item.legacyItemId?.trim() || item.itemId?.split("|")[1]?.trim() || null;
+}
+
+function safeEbayUrl(value: string | undefined, item: EbayItemSummary) {
   if (!value) return null;
   try {
     const url = new URL(value);
     if (url.protocol !== "https:" || (url.hostname !== "ebay.com" && !url.hostname.endsWith(".ebay.com"))) return null;
+    const expectedId = listingId(item);
+    if (!expectedId || !url.pathname.split("/").includes(expectedId)) return null;
     return url.toString();
   } catch {
     return null;
   }
+}
+
+function returnPolicy(item: EbayItemSummary) {
+  const terms = item.returnTerms;
+  if (!terms || terms.returnsAccepted === undefined) return "Return terms unavailable";
+  if (!terms.returnsAccepted) return "No returns";
+  const period = terms.returnPeriod;
+  const days = period && /^days?$/i.test(period.unit ?? "") && Number.isFinite(period.value) && Number(period.value) > 0 ? Number(period.value) : null;
+  const base = days ? `${days}-day seller returns` : "Returns accepted";
+  if (terms.returnShippingCostPayer === "SELLER") return `${base} · Seller-paid return shipping`;
+  if (terms.returnShippingCostPayer === "BUYER") return `${base} · Buyer-paid return shipping`;
+  return base;
 }
 
 function location(item: EbayItemSummary) {
@@ -41,7 +59,7 @@ function location(item: EbayItemSummary) {
 export function normalizeEbayItem(item: EbayItemSummary, product: Product, variant: ProductVariant, fetchedAt: string): Offer | null {
   const condition = normalizeEbayCondition(item.conditionId, item.condition);
   const price = amount(item.price?.value, item.price?.currency);
-  const destination = safeEbayUrl(item.itemWebUrl);
+  const destination = safeEbayUrl(item.itemWebUrl, item);
   if (!item.itemId || !item.title || price === null || !condition || !destination) return null;
   const selectedShipping = [...(item.shippingOptions ?? [])]
     .map((option) => ({ option, cost: amount(option.shippingCost?.value, option.shippingCost?.currency) }))
@@ -72,7 +90,7 @@ export function normalizeEbayItem(item: EbayItemSummary, product: Product, varia
     delivery: normalizedShipping.label ?? "Shipping details unavailable",
     availability: "Unknown",
     warranty: "Warranty information unavailable",
-    returnPolicy: "Return terms unavailable",
+    returnPolicy: returnPolicy(item),
     affiliateUrl: destination,
     lastUpdated: fetchedAt,
     dataSource: "live",

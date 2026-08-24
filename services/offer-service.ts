@@ -21,9 +21,12 @@ function apiUrl(criteria: SearchCriteria) {
   return "/api/offers?" + searchCriteriaToQuery(criteria);
 }
 
-async function fetchOffers(criteria: SearchCriteria) {
+const initialRequestTimeoutMs = 12_000;
+const retryRequestTimeoutMs = 6_000;
+
+async function fetchOffers(criteria: SearchCriteria, timeoutMs: number) {
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort(), 15_000);
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
     return await fetch(apiUrl(criteria), {
       headers: { Accept: "application/json" },
@@ -42,10 +45,10 @@ export async function getOffersForSearch(criteria: SearchCriteria, onStatus?: (s
   trackEvent({ name: "live_provider_search_started", provider: "ebay", productSlug: criteria.productSlug });
   let response: Response;
   try {
-    response = await fetchOffers(criteria);
+    response = await fetchOffers(criteria, initialRequestTimeoutMs);
     if (response.status === 429 || response.status >= 500) {
       await new Promise((resolve) => window.setTimeout(resolve, 350));
-      response = await fetchOffers(criteria);
+      response = await fetchOffers(criteria, retryRequestTimeoutMs);
     }
   } catch (error) {
     trackEvent({ name: "live_provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
