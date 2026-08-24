@@ -142,7 +142,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
     <ResultsSidebar />
     <div className="rp-body">
       <div className="rp-topbar">
-        <SearchControls minimal initialCriteria={criteria}/>
+        <SearchControls minimal initialCriteria={criteria} resultPath="/results"/>
         <div className="rp-topbar-actions">
           <Link href="/saved" className="rp-icon-btn" aria-label="Watchlist"><Icon name="heart" size={19}/></Link>
           <Link href="/saved" className="rp-icon-btn rp-icon-btn--dot" aria-label="Notifications"><Icon name="bell" size={19}/></Link>
@@ -152,7 +152,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
         <section>
           <ProductSummary product={product} variantLabel={variant?.label} condition={criteria.condition} count={filteredOffers.length} loading={loading} refreshing={refreshing} live={result ? !result.isDemo : false} lastUpdated={result?.lastUpdated} editing={editing} onToggleEditing={() => setEditing((open) => !open)} />
           {refreshWarning && <div className="rp-refresh-warning" role="status"><Icon name="history" size={15}/><span>{refreshWarning}</span><button type="button" onClick={retry}>Refresh</button></div>}
-          {editing && <div className="rp-edit-panel"><SearchControls compact initialCriteria={criteria}/></div>}
+          {editing && <div className="rp-edit-panel"><SearchControls compact initialCriteria={criteria} resultPath="/results" actionLabel="Compare prices"/></div>}
           {!loading && !failed && <ResultsFilters attributeLabel={attributeLabel} condition={condition} maxPrice={maxPrice} retailer={retailer} retailers={retailers} sort={sort} variantId={variant?.id ?? ""} variants={variants} onCondition={setCondition} onMaxPrice={setMaxPrice} onRetailer={setRetailer} onSort={setSort} onVariant={changeVariant} />}
           {loading ? <LoadingState /> : failed ? <ErrorState message={errorMessage} onRetry={retry} /> : !filteredOffers.length ? <NoResultsState /> : <div className="rp-offers">
             {pick && <OurPick offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/>}
