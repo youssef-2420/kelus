@@ -30,6 +30,17 @@ test("alert ownership is enforced by RLS for every operation", async () => {
   assert.match(sql, /primary key \(user_id, id\)/i);
 });
 
+test("background alert events are server-written and user-readable only", async () => {
+  const sql = await read("supabase/migrations/202608250002_price_alert_monitoring.sql");
+  assert.match(sql, /price_alert_events/i);
+  assert.match(sql, /enable row level security/i);
+  assert.match(sql, /grant select on table public\.price_alert_events to authenticated/i);
+  assert.doesNotMatch(sql, /grant (insert|update|delete).*price_alert_events.*authenticated/i);
+  assert.match(sql, /auth\.uid\(\).*user_id/is);
+  assert.match(sql, /cron\.schedule/i);
+  assert.match(sql, /vault\.decrypted_secrets/i);
+});
+
 test("local alerts are deleted only after authenticated migration succeeds", async () => {
   const service = await read("services/user-alerts.ts");
   const upsert = service.indexOf("await upsertUserAlerts(user.id, local)");

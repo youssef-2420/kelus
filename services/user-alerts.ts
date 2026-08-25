@@ -33,6 +33,17 @@ export async function deleteUserAlert(userId: string, alertId: string) {
   if (error) throw error;
 }
 
+export async function refreshUserAlerts(userId: string) {
+  const client = await authenticatedClient(userId);
+  const { data, error } = await client.auth.getSession();
+  if (error || !data.session?.access_token) throw new Error("Your session is no longer valid. Please sign in again.");
+  const response = await fetch("/api/alerts/check", {
+    method: "POST",
+    headers: { Accept: "application/json", Authorization: `Bearer ${data.session.access_token}` },
+  });
+  if (!response.ok) throw new Error("Tracked prices could not be checked right now.");
+}
+
 export async function migrateLocalAlerts(user: User) {
   const local = readPriceAlerts();
   if (!local.length) return;

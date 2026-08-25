@@ -4,6 +4,7 @@ import handler from "vinext/server/app-router-entry";
 import { getProductBySlug, getVariantById } from "../lib/demo-data";
 import { getLiveOffersForSearch } from "../services/server-offer-service";
 import { EbayProviderError } from "../services/providers/ebay/provider";
+import { authorizeAlertMonitor, runAlertMonitor } from "../services/server-alert-monitor";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
 
 interface Env {
@@ -14,6 +15,9 @@ interface Env {
   EBAY_MARKETPLACE_ID?: string;
   EBAY_CACHE_TTL_SECONDS?: string;
   EBAY_REQUEST_TIMEOUT_MS?: string;
+  NEXT_PUBLIC_SUPABASE_URL?: string;
+  SUPABASE_SECRET_KEY?: string;
+  ALERT_MONITOR_SECRET?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -39,6 +43,7 @@ const worker = {
     const url = new URL(request.url);
 
     if (url.pathname === "/api/offers") return handleOfferSearch(request, env);
+    if (url.pathname === "/api/alerts/check") return handleAlertCheck(request, env);
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
@@ -52,6 +57,11 @@ const worker = {
     }
 
     return handler.fetch(request, env, ctx);
+  },
+  async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext) {
+    ctx.waitUntil(runAlertMonitor(env).then((result) => console.info("[alert-monitor] scheduled_complete", result)).catch((error) => {
+      console.error("[alert-monitor] scheduled_failed", { message: error instanceof Error ? error.message : "Unknown error" });
+    }));
   },
 };
 
@@ -91,6 +101,18 @@ async function handleOfferSearch(request: Request, env: Env) {
     const message = code === "provider_unconfigured" ? "Live eBay offers are not configured yet." : providerError?.message ?? "We couldn't load eBay offers right now.";
     console.error("[ebay-provider] provider_error", { code, status: providerError?.status });
     return json({ error: { code, message } }, status);
+  }
+}
+
+async function handleAlertCheck(request: Request, env: Env) {
+  if (request.method !== "POST") return json({ error: { code: "method_not_allowed", message: "Only POST is supported." } }, 405);
+  try {
+    const scope = await authorizeAlertMonitor(request, env);
+    if (!scope) return json({ error: { code: "unauthorized", message: "A valid Kelus session is required." } }, 401);
+    return json(await runAlertMonitor(env, scope));
+  } catch (error) {
+    console.error("[alert-monitor] check_failed", { message: error instanceof Error ? error.message : "Unknown error" });
+    return json({ error: { code: "monitor_error", message: "Tracked prices could not be checked right now." } }, 503);
   }
 }
 

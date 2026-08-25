@@ -9,7 +9,7 @@ import { ProductMark } from "@/components/ProductMark";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { comparisonHref, getAlertStatus, getDistanceFromTarget, getPriceChange, isAlertStale, type PriceAlertRecord, readPriceAlerts, updateAlertFromError, updateAlertFromResult, writePriceAlerts } from "@/services/price-alerts";
 import { retrySearch } from "@/services/search-session";
-import { deleteUserAlert, migrateLocalAlerts, readUserAlerts, upsertUserAlerts } from "@/services/user-alerts";
+import { deleteUserAlert, migrateLocalAlerts, readUserAlerts, refreshUserAlerts, upsertUserAlerts } from "@/services/user-alerts";
 
 const money = (value: number) => `$${value.toLocaleString("en-US", { minimumFractionDigits: Number.isInteger(value) ? 0 : 2, maximumFractionDigits: 2 })}`;
 
@@ -66,14 +66,20 @@ export default function AlertsPage() {
       if (cancelled) return;
       setAlerts(stored); setExpanded(stored[0]?.id ?? null); setReady(true);
       setRefreshing(new Set(stored.filter((alert) => !alert.paused).map((alert) => alert.id)));
-      const updated = await Promise.all(stored.map(async (alert) => {
-        if (alert.paused) return alert;
-        try { return updateAlertFromResult(alert, await retrySearch(alert.criteria)); }
-        catch (error) { return updateAlertFromError(alert, error instanceof Error ? error.message : "The latest price check failed."); }
-      }));
+      let updated: PriceAlertRecord[];
+      if (user) {
+        try { await refreshUserAlerts(user.id); updated = await readUserAlerts(user.id); }
+        catch { updated = stored; if (!cancelled) setSyncError("Your saved alerts are safe, but prices could not be checked right now."); }
+      } else {
+        updated = await Promise.all(stored.map(async (alert) => {
+          if (alert.paused) return alert;
+          try { return updateAlertFromResult(alert, await retrySearch(alert.criteria)); }
+          catch (error) { return updateAlertFromError(alert, error instanceof Error ? error.message : "The latest price check failed."); }
+        }));
+      }
       if (cancelled) return;
       setAlerts(updated); setRefreshing(new Set());
-      try { if (user) await upsertUserAlerts(user.id, updated); else writePriceAlerts(updated); }
+      try { if (!user) writePriceAlerts(updated); }
       catch { if (!cancelled) setSyncError("Prices were refreshed, but your account could not be synced yet."); }
     }
     void loadAndRefresh();
@@ -133,6 +139,6 @@ export default function AlertsPage() {
         })}
       </div> : <div className="alerts-empty"><Icon name="bell" size={28}/><h2>No alerts yet</h2><p>Search for a product and track its live price to add it here.</p><Link className="button button-primary" href="/#product-search">+ Add Product <Icon name="arrow" size={17}/></Link></div>}
     </section>
-    <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account. Active prices refresh when you open this page." : "Alerts are stored locally until you sign in. Active prices refresh when you open this page."}</p>
+    <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account, persist across devices, and are checked automatically." : "Alerts are stored locally until you sign in. Active prices refresh when you open this page."}</p>
   </main>;
 }
