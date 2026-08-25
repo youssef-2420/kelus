@@ -19,3 +19,7 @@ export function getRelevantAttributeLabel(product: Product, variants: ProductVar
   if (product.searchAttribute.type === "none" || getSearchAttributeVariants(product, variants).length <= 1) return null;
   return ATTRIBUTE_LABELS[product.searchAttribute.type];
 }
+
+export function getVisibleSearchAttributeLabel(product: Product, variants: ProductVariant[], productSelected: boolean) {
+  return productSelected ? getRelevantAttributeLabel(product, variants) : null;
+}

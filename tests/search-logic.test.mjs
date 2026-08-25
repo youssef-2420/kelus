@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
-import { getRelevantAttributeLabel, getSearchAttributeVariants } from "../lib/product-attributes.ts";
+import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel } from "../lib/product-attributes.ts";
 import { readSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
@@ -19,6 +19,18 @@ test("search asks only for a relevant product attribute", () => {
   assert.equal(getRelevantAttributeLabel(iphone, getVariantsForProduct(iphone.id)), "Storage");
   assert.equal(getRelevantAttributeLabel(laptop, getVariantsForProduct(laptop.id)), "Configuration");
   assert.equal(getRelevantAttributeLabel(audio, getVariantsForProduct(audio.id)), null);
+});
+
+test("homepage hides an attribute until a phone is selected", () => {
+  const iphone = products.find((product) => product.slug === "iphone-17");
+  const variants = getVariantsForProduct(iphone.id);
+  assert.equal(getVisibleSearchAttributeLabel(iphone, variants, false), null);
+  assert.equal(getVisibleSearchAttributeLabel(iphone, variants, true), "Storage");
+});
+
+test("homepage keeps the attribute hidden for a selected none product", () => {
+  const audio = products.find((product) => product.slug === "airpods-pro-2");
+  assert.equal(getVisibleSearchAttributeLabel(audio, getVariantsForProduct(audio.id), true), null);
 });
 
 test("search attribute labels follow the product model definition", () => {
