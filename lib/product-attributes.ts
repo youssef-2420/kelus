@@ -1,11 +1,21 @@
 import type { Product, ProductVariant } from "@/types/kelus";
 
+const ATTRIBUTE_LABELS = {
+  storage: "Storage",
+  size: "Size",
+  edition: "Edition",
+  configuration: "Configuration",
+} as const;
+
+export function getSearchAttributeVariants(product: Product, variants: ProductVariant[]) {
+  const variantsById = new Map(variants.map((variant) => [variant.id, variant]));
+  return product.searchAttribute.validVariantIds
+    .map((variantId) => variantsById.get(variantId))
+    .filter((variant): variant is ProductVariant => variant !== undefined)
+    .filter((variant) => variant.productId === product.id);
+}
+
 export function getRelevantAttributeLabel(product: Product, variants: ProductVariant[]) {
-  if (variants.length <= 1) return null;
-  const category = product.category.toLowerCase();
-  if (category.includes("phone")) return "Storage";
-  if (/\b(tv|television)\b/.test(category)) return "Size";
-  if (category.includes("console")) return "Edition";
-  if (category.includes("laptop")) return "Configuration";
-  return null;
+  if (product.searchAttribute.type === "none" || getSearchAttributeVariants(product, variants).length <= 1) return null;
+  return ATTRIBUTE_LABELS[product.searchAttribute.type];
 }

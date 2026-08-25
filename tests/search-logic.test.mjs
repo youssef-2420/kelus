@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
-import { getRelevantAttributeLabel } from "../lib/product-attributes.ts";
+import { getRelevantAttributeLabel, getSearchAttributeVariants } from "../lib/product-attributes.ts";
 import { readSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
@@ -21,22 +21,34 @@ test("search asks only for a relevant product attribute", () => {
   assert.equal(getRelevantAttributeLabel(audio, getVariantsForProduct(audio.id)), null);
 });
 
-test("search attribute labels follow the selected product category", () => {
-  const product = (category) => ({ id: category, slug: category, name: category, category, brand: "Test", image: "T", identifiers: {} });
+test("search attribute labels follow the product model definition", () => {
+  const product = (type, validVariantIds) => ({ id: type, slug: type, name: type, category: "Test category", brand: "Test", image: "T", identifiers: {}, searchAttribute: { type, validVariantIds } });
   const variants = (productId, labels) => labels.map((label, index) => ({ id: `${productId}-${index}`, productId, label, specifications: {}, identifiers: {} }));
 
-  const phone = product("Smartphone");
-  const tv = product("Television");
-  const console = product("Game Console");
-  const laptop = product("Laptop");
-  const accessory = product("Audio");
+  const phone = product("storage", ["storage-0", "storage-1"]);
+  const tv = product("size", ["size-0", "size-1"]);
+  const console = product("edition", ["edition-0", "edition-1"]);
+  const laptop = product("configuration", ["configuration-0", "configuration-1"]);
+  const accessory = product("none", []);
 
   assert.equal(getRelevantAttributeLabel(phone, variants(phone.id, ["128GB", "256GB"])), "Storage");
   assert.equal(getRelevantAttributeLabel(tv, variants(tv.id, ["55-inch", "65-inch"])), "Size");
   assert.equal(getRelevantAttributeLabel(console, variants(console.id, ["Digital", "Disc"])), "Edition");
   assert.equal(getRelevantAttributeLabel(laptop, variants(laptop.id, ["16GB · 512GB", "24GB · 1TB"])), "Configuration");
   assert.equal(getRelevantAttributeLabel(accessory, []), null);
-  assert.equal(getRelevantAttributeLabel(accessory, variants(accessory.id, ["Standard"])), null);
+  assert.equal(getRelevantAttributeLabel(product("none", ["none-0"]), variants("none", ["Standard"])), null);
+});
+
+test("product search attributes declare and constrain valid variant options", () => {
+  for (const product of products) {
+    const configured = getSearchAttributeVariants(product, getVariantsForProduct(product.id));
+    assert.deepEqual(configured.map((variant) => variant.id), product.searchAttribute.validVariantIds);
+    assert.ok(configured.every((variant) => variant.productId === product.id));
+  }
+
+  const iphone = products.find((product) => product.slug === "iphone-17");
+  const unrelatedVariant = { id: "other-variant", productId: "other-product", label: "Other", specifications: {}, identifiers: {} };
+  assert.equal(getSearchAttributeVariants(iphone, [...getVariantsForProduct(iphone.id), unrelatedVariant]).some((variant) => variant.id === unrelatedVariant.id), false);
 });
 
 test("normalized offers support condition filtering and deterministic ranking", () => {

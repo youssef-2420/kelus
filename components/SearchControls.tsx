@@ -2,7 +2,7 @@
 
 import { KeyboardEvent, useId, useMemo, useState } from "react";
 import { getProductBySlug, getVariantsForProduct, searchProducts } from "@/lib/demo-data";
-import { getRelevantAttributeLabel } from "@/lib/product-attributes";
+import { getRelevantAttributeLabel, getSearchAttributeVariants } from "@/lib/product-attributes";
 import { defaultSearch, searchCriteriaToQuery } from "@/lib/search-state";
 import { trackEvent } from "@/services/analytics";
 import { startSearch } from "@/services/search-session";
@@ -29,10 +29,10 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const [searchStatus, setSearchStatus] = useState<SearchStatus>("idle");
   const [searchFailed, setSearchFailed] = useState(false);
   const matches = useMemo(() => query.trim() ? searchProducts(query) : [], [query]);
-  const variants = useMemo(() => getVariantsForProduct(selectedProduct.id), [selectedProduct.id]);
+  const variants = useMemo(() => getSearchAttributeVariants(selectedProduct, getVariantsForProduct(selectedProduct.id)), [selectedProduct]);
   const attributeLabel = getRelevantAttributeLabel(selectedProduct, variants);
 
-  function chooseProduct(product: typeof selectedProduct) { setSelectedProduct(product); setVariantId(getVariantsForProduct(product.id)[0]?.id ?? ""); setQuery(product.name); setOpen(false); setActiveIndex(-1); trackEvent({ name: "product_selected", productSlug: product.slug }); }
+  function chooseProduct(product: typeof selectedProduct) { setSelectedProduct(product); setVariantId(getSearchAttributeVariants(product, getVariantsForProduct(product.id))[0]?.id ?? ""); setQuery(product.name); setOpen(false); setActiveIndex(-1); trackEvent({ name: "product_selected", productSlug: product.slug }); }
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "ArrowDown") { event.preventDefault(); setOpen(true); setActiveIndex((index) => Math.min(index + 1, matches.length - 1)); }
     if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((index) => Math.max(index - 1, 0)); }

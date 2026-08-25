@@ -11,7 +11,7 @@ import { ProductMark } from "@/components/ProductMark";
 import { SearchControls } from "@/components/SearchControls";
 import { WatchButton } from "@/components/WatchButton";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
-import { getRelevantAttributeLabel } from "@/lib/product-attributes";
+import { getRelevantAttributeLabel, getSearchAttributeVariants } from "@/lib/product-attributes";
 import { readSearchCriteria, searchCriteriaToQuery } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
 import { getCheaperAlternative, getRecommendation, sortOffers } from "@/services/recommendations";
@@ -72,7 +72,7 @@ function Results() {
 function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCriteria> }) {
   const product = getProductBySlug(criteria.productSlug)!;
   const variant = getVariantById(criteria.variantId);
-  const variants = useMemo(() => getVariantsForProduct(product.id), [product.id]);
+  const variants = useMemo(() => getSearchAttributeVariants(product, getVariantsForProduct(product.id)), [product]);
   const attributeLabel = getRelevantAttributeLabel(product, variants);
   const [result, setResult] = useState<OfferSearchResult | null>(null);
   const [loading, setLoading] = useState(true);

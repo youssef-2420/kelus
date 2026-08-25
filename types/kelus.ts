@@ -3,7 +3,9 @@ export type ConditionFilter = (typeof CONDITIONS)[number];
 export type OfferCondition = Exclude<ConditionFilter, "any">;
 export type Market = "us";
 
-export type Product = { id: string; brand: string; name: string; category: string; slug: string; image: string; identifiers: Record<string, string>; searchPreview?: { fromPrice: number; offerCount: number; isDemo: boolean } };
+export type ProductSearchAttributeType = "storage" | "size" | "edition" | "configuration" | "none";
+export type ProductSearchAttribute = { type: ProductSearchAttributeType; validVariantIds: string[] };
+export type Product = { id: string; brand: string; name: string; category: string; slug: string; image: string; identifiers: Record<string, string>; searchAttribute: ProductSearchAttribute; searchPreview?: { fromPrice: number; offerCount: number; isDemo: boolean } };
 export type ProductVariant = { id: string; productId: string; label: string; storage?: string; color?: string; specifications: Record<string, string>; identifiers: Record<string, string> };
 export type Retailer = { id: string; name: string; logo: string; website: string };
 export type Seller = {
