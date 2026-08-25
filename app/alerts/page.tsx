@@ -3,11 +3,13 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { KelusHeader } from "@/components/KelusHeader";
+import { useAuth } from "@/components/AuthProvider";
 import { Icon } from "@/components/Icon";
 import { ProductMark } from "@/components/ProductMark";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { comparisonHref, getAlertStatus, getDistanceFromTarget, getPriceChange, isAlertStale, type PriceAlertRecord, readPriceAlerts, updateAlertFromError, updateAlertFromResult, writePriceAlerts } from "@/services/price-alerts";
 import { retrySearch } from "@/services/search-session";
+import { deleteUserAlert, migrateLocalAlerts, readUserAlerts, upsertUserAlerts } from "@/services/user-alerts";
 
 const money = (value: number) => `$${value.toLocaleString("en-US", { minimumFractionDigits: Number.isInteger(value) ? 0 : 2, maximumFractionDigits: 2 })}`;
 
@@ -39,36 +41,55 @@ function AlertImage({ alert }: { alert: PriceAlertRecord }) {
 }
 
 export default function AlertsPage() {
+  const { loading: authLoading, user } = useAuth();
   const [alerts, setAlerts] = useState<PriceAlertRecord[]>([]);
   const [ready, setReady] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<string | null>(null);
   const [target, setTarget] = useState("");
+  const [syncError, setSyncError] = useState("");
 
   useEffect(() => {
+    if (authLoading) return;
     let cancelled = false;
-    const stored = readPriceAlerts();
-    queueMicrotask(() => {
+    queueMicrotask(() => { if (!cancelled) { setReady(false); setSyncError(""); } });
+    async function loadAndRefresh() {
+      let stored: PriceAlertRecord[];
+      try {
+        if (user) { await migrateLocalAlerts(user); stored = await readUserAlerts(user.id); }
+        else stored = readPriceAlerts();
+      } catch {
+        if (!cancelled) { setSyncError("We couldn’t sync your alerts. Your local alerts were kept safely."); setReady(true); }
+        return;
+      }
       if (cancelled) return;
       setAlerts(stored); setExpanded(stored[0]?.id ?? null); setReady(true);
       setRefreshing(new Set(stored.filter((alert) => !alert.paused).map((alert) => alert.id)));
-    });
-    Promise.all(stored.map(async (alert) => {
-      if (alert.paused) return alert;
-      try { return updateAlertFromResult(alert, await retrySearch(alert.criteria)); }
-      catch (error) { return updateAlertFromError(alert, error instanceof Error ? error.message : "The latest price check failed."); }
-    })).then((updated) => {
+      const updated = await Promise.all(stored.map(async (alert) => {
+        if (alert.paused) return alert;
+        try { return updateAlertFromResult(alert, await retrySearch(alert.criteria)); }
+        catch (error) { return updateAlertFromError(alert, error instanceof Error ? error.message : "The latest price check failed."); }
+      }));
       if (cancelled) return;
-      setAlerts(updated); writePriceAlerts(updated); setRefreshing(new Set());
-    });
+      setAlerts(updated); setRefreshing(new Set());
+      try { if (user) await upsertUserAlerts(user.id, updated); else writePriceAlerts(updated); }
+      catch { if (!cancelled) setSyncError("Prices were refreshed, but your account could not be synced yet."); }
+    }
+    void loadAndRefresh();
     return () => { cancelled = true; };
-  }, []);
+  }, [authLoading, user]);
 
-  function persist(next: PriceAlertRecord[]) { setAlerts(next); writePriceAlerts(next); }
+  function persist(next: PriceAlertRecord[]) {
+    setAlerts(next); setSyncError("");
+    if (user) upsertUserAlerts(user.id, next).catch(() => setSyncError("This change could not be synced. Please try again."));
+    else writePriceAlerts(next);
+  }
   function togglePause(alert: PriceAlertRecord) { persist(alerts.map((item) => item.id === alert.id ? { ...item, paused: !item.paused } : item)); }
   function removeAlert(alert: PriceAlertRecord) {
-    const next = alerts.filter((item) => item.id !== alert.id); persist(next);
+    const next = alerts.filter((item) => item.id !== alert.id); setAlerts(next);
+    if (user) deleteUserAlert(user.id, alert.id).catch(() => { setAlerts(alerts); setSyncError("The alert could not be removed. Please try again."); });
+    else writePriceAlerts(next);
     if (expanded === alert.id) setExpanded(next[0]?.id ?? null);
   }
   function beginEdit(alert: PriceAlertRecord) { setEditing(alert.id); setTarget(alert.targetPrice?.toString() ?? ""); }
@@ -83,6 +104,7 @@ export default function AlertsPage() {
   return <main className="app-page alerts-page"><KelusHeader />
     <section className="alerts-main section">
       <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>My Alerts</h1><p>Track products you want and know when the price is worth buying.</p></div><Link href="/#product-search" className="alerts-add" aria-label="Add a new product">+</Link></div>
+      {syncError && <p className="alerts-sync-error" role="alert">{syncError}</p>}
       {!ready ? <div className="alerts-empty" role="status"><Icon name="refresh" size={28}/><h2>Loading your alerts…</h2></div> : alerts.length ? <div className="alerts-list">
         {alerts.map((alert) => {
           const open = expanded === alert.id;
@@ -111,6 +133,6 @@ export default function AlertsPage() {
         })}
       </div> : <div className="alerts-empty"><Icon name="bell" size={28}/><h2>No alerts yet</h2><p>Search for a product and track its live price to add it here.</p><Link className="button button-primary" href="/#product-search">+ Add Product <Icon name="arrow" size={17}/></Link></div>}
     </section>
-    <p className="alerts-local-note"><Icon name="lock" size={16}/>Alerts and targets are stored locally in this browser. Active prices refresh when you open this page.</p>
+    <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account. Active prices refresh when you open this page." : "Alerts are stored locally until you sign in. Active prices refresh when you open this page."}</p>
   </main>;
 }

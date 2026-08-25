@@ -2,30 +2,38 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
+import { useAuth } from "@/components/AuthProvider";
 import { trackEvent } from "@/services/analytics";
 import { alertId, createAlert, PRICE_ALERTS_CHANGED, readPriceAlerts, upsertPriceAlert, writePriceAlerts } from "@/services/price-alerts";
 import { startSearch } from "@/services/search-session";
+import { deleteUserAlert, readUserAlerts, upsertUserAlerts } from "@/services/user-alerts";
 import type { OfferSearchResult, SearchCriteria } from "@/types/kelus";
 
 type Props = { product?: string; criteria: SearchCriteria; result?: OfferSearchResult | null };
 
 export function WatchButton({ product = "iPhone 17", criteria, result }: Props) {
+  const { user } = useAuth();
   const id = alertId(criteria);
   const [saved, setSaved] = useState(false);
   const [checking, setChecking] = useState(false);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const sync = () => setSaved(readPriceAlerts().some((alert) => alert.id === id));
+    let active = true;
+    const sync = () => {
+      if (user) readUserAlerts(user.id).then((alerts) => { if (active) setSaved(alerts.some((alert) => alert.id === id)); }).catch(() => undefined);
+      else setSaved(readPriceAlerts().some((alert) => alert.id === id));
+    };
     sync();
     window.addEventListener(PRICE_ALERTS_CHANGED, sync);
-    return () => window.removeEventListener(PRICE_ALERTS_CHANGED, sync);
-  }, [id]);
+    return () => { active = false; window.removeEventListener(PRICE_ALERTS_CHANGED, sync); };
+  }, [id, user]);
 
   async function toggle() {
     setMessage("");
     if (saved) {
-      writePriceAlerts(readPriceAlerts().filter((alert) => alert.id !== id));
+      if (user) await deleteUserAlert(user.id, id);
+      else writePriceAlerts(readPriceAlerts().filter((alert) => alert.id !== id));
       setSaved(false);
       return;
     }
@@ -34,7 +42,8 @@ export function WatchButton({ product = "iPhone 17", criteria, result }: Props) 
       const liveResult = result && !result.isDemo ? result : await startSearch(criteria);
       const alert = createAlert(criteria, liveResult);
       if (!alert) { setMessage("Live price unavailable"); return; }
-      upsertPriceAlert(alert);
+      if (user) await upsertUserAlerts(user.id, [alert]);
+      else upsertPriceAlert(alert);
       setSaved(true);
       trackEvent({ name: "price_alert_created", product });
     } catch {
