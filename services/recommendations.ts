@@ -1,6 +1,13 @@
 import type { Offer, Recommendation, RecommendationKind } from "@/types/kelus";
 
-export const knownOfferTotal = (offer: Offer) => offer.shippingCostKnown === false ? null : offer.price + offer.shippingCost;
+const currencyAmount = (value: number) => Math.round(value * 100) / 100;
+export const knownOfferTotal = (offer: Offer) => offer.shippingCostKnown === false
+  || !Number.isFinite(offer.price)
+  || !Number.isFinite(offer.shippingCost)
+  || offer.price < 0
+  || offer.shippingCost < 0
+  ? null
+  : currencyAmount(offer.price + offer.shippingCost);
 const conditionLabel = (condition: Offer["condition"]) => condition[0].toUpperCase() + condition.slice(1);
 const returnDays = (offer: Offer) => Number(offer.returnPolicy?.match(/(\d+)-day/)?.[1] ?? 0);
 const factual = (value?: string | null) => Boolean(value) && !/(unavailable|unknown)/i.test(value ?? "");
@@ -21,8 +28,7 @@ function returnEvidence(offer: Offer) {
 function evidenceValue(offer: Offer) {
   const conditionValue = offer.condition === "new" ? 10 : offer.condition === "refurbished" ? 4 : 0;
   const shippingValue = offer.shippingCostKnown === false ? -50 : 6;
-  const warrantyValue = factual(offer.warranty) ? 3 : 0;
-  return sellerEvidence(offer) + returnEvidence(offer) + conditionValue + shippingValue + warrantyValue;
+  return sellerEvidence(offer) + returnEvidence(offer) + conditionValue + shippingValue;
 }
 
 function comparableOffers(offers: Offer[]) {
@@ -45,6 +51,7 @@ function reasonsFor(offer: Offer, kind: RecommendationKind) {
 
 export function getRecommendation(offers: Offer[], kind: RecommendationKind): Recommendation | null {
   if (!offers.length) return null;
+  if (kind === "kelus_pick" && !offers.some((offer) => knownOfferTotal(offer) !== null)) return null;
   const eligible = comparableOffers(offers);
   const cheapestTotal = Math.min(...eligible.map(rankingTotal));
   const offer = kind === "cheapest"

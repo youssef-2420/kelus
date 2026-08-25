@@ -80,6 +80,9 @@ test("matching rejects parts, carrier-locked listings, ended listings, and condi
   assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB Logic Board" }, product, variant, "any"), false);
   assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB Unlocked for parts" }, product, variant, "any"), false);
   assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB Verizon" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB ATT Deep Blue" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB TMobile" }, product, variant, "any"), false);
+  assert.equal(matchesCanonicalEbayItem({ ...validItem, title: "Apple iPhone 17 Pro 256GB ATT Unlocked" }, product, variant, "any"), true);
   assert.equal(matchesCanonicalEbayItem({ ...validItem, itemEndDate: "2025-01-01T00:00:00Z" }, product, variant, "any"), false);
   assert.equal(matchesCanonicalEbayItem(validItem, product, variant, "new"), false);
   assert.equal(isActiveListing({ ...validItem, itemEndDate: "2027-01-01T00:00:00Z" }, Date.parse("2026-08-24T00:00:00Z")), true);
@@ -163,6 +166,17 @@ test("normalization rejects malformed prices and unsafe destination URLs", () =>
   assert.equal(normalizeEbayItem({ ...validItem, price: { value: "not-a-price", currency: "USD" } }, product, variant, new Date().toISOString()), null);
   assert.equal(normalizeEbayItem({ ...validItem, itemWebUrl: "https://example.com/not-ebay" }, product, variant, new Date().toISOString()), null);
   assert.equal(normalizeEbayItem({ ...validItem, itemWebUrl: "https://www.ebay.com/itm/999" }, product, variant, new Date().toISOString()), null);
+});
+
+test("normalization rejects impossible seller metrics instead of treating them as evidence", () => {
+  assert.ok(product && variant);
+  const offer = normalizeEbayItem({
+    ...validItem,
+    seller: { username: "bad-metrics", feedbackPercentage: "140", feedbackScore: -5 },
+  }, product, variant, "2026-08-22T12:00:00.000Z");
+  assert.ok(offer);
+  assert.equal(offer.seller.feedbackPercentage, undefined);
+  assert.equal(offer.seller.feedbackScore, undefined);
 });
 
 test("provider enriches matched offers with factual return terms", async () => {

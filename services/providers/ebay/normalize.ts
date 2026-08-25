@@ -67,6 +67,7 @@ export function normalizeEbayItem(item: EbayItemSummary, product: Product, varia
   const normalizedShipping = shipping(selectedShipping);
   const sellerName = item.seller?.username?.trim() || null;
   const feedbackPercentage = Number(item.seller?.feedbackPercentage);
+  const feedbackScore = Number(item.seller?.feedbackScore);
 
   return {
     id: "ebay-" + item.itemId,
@@ -78,8 +79,8 @@ export function normalizeEbayItem(item: EbayItemSummary, product: Product, varia
       retailerId: "ebay",
       name: sellerName,
       sellerType: "marketplace_seller",
-      feedbackPercentage: Number.isFinite(feedbackPercentage) ? feedbackPercentage : undefined,
-      feedbackScore: Number.isFinite(item.seller?.feedbackScore) ? item.seller?.feedbackScore : undefined,
+      feedbackPercentage: Number.isFinite(feedbackPercentage) && feedbackPercentage >= 0 && feedbackPercentage <= 100 ? feedbackPercentage : undefined,
+      feedbackScore: Number.isFinite(feedbackScore) && feedbackScore >= 0 ? feedbackScore : undefined,
       topRated: item.topRatedBuyingExperience || undefined,
     },
     price,

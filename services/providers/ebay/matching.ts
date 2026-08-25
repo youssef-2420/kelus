@@ -8,7 +8,16 @@ const accessoryTerms = [
   "flex cable", "phone skin", "wallet case", "holster", "bumper", "car mount", "replica", "mockup",
 ];
 const partsTerms = ["for parts", "parts only", "repair", "broken", "cracked", "not working", "as is"];
-const carrierTerms = ["verizon", "at t", "tmobile", "t mobile", "sprint", "cricket", "boost mobile", "straight talk", "us cellular"];
+const carrierPatterns = [
+  /\bverizon\b/,
+  /\b(?:at t|att)\b/,
+  /\b(?:t mobile|tmobile)\b/,
+  /\bsprint\b/,
+  /\bcricket\b/,
+  /\bboost mobile\b/,
+  /\bstraight talk\b/,
+  /\bus cellular\b/,
+];
 const phoneStorageSizes = new Set([64, 128, 256, 512, 1024, 2048]);
 
 const compact = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -101,7 +110,7 @@ export function matchesVariant(item: EbayItemSummary, product: Product, variant:
   if (!item.itemId || !item.title || !text) return false;
   if (isAccessory(item) || isPartsOnly(item)) return false;
   if (title.includes("locked") && !title.includes("unlocked")) return false;
-  if (!title.includes("unlocked") && carrierTerms.some((carrier) => title.includes(carrier))) return false;
+  if (!title.includes("unlocked") && carrierPatterns.some((carrier) => carrier.test(title))) return false;
   if (matchesStructuredIdentifier(item, product, variant) === false) return false;
   return matchesModel(item, product)
     && matchesStorage(item, variant)

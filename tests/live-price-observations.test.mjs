@@ -107,6 +107,19 @@ test("price comparison includes shipping and deprioritizes unknown shipping", ()
   assert.deepEqual(sortOffers([cheapItemHighShipping, higherItemFreeShipping, unknownShipping], "lowest").map((offer) => offer.id), ["free-shipping", "high-shipping", "unknown-shipping"]);
 });
 
+test("Our Pick is withheld when no offer has a known total including shipping", () => {
+  const base = { ...offers[0], retailer: { id: "ebay", name: "eBay", logo: "e", website: "https://www.ebay.com" }, dataSource: "live", sourceProvider: "ebay", shippingCost: 0, shippingCostKnown: false };
+  assert.equal(getRecommendation([
+    { ...base, id: "unknown-a", price: 700 },
+    { ...base, id: "unknown-b", price: 750 },
+  ], "kelus_pick"), null);
+});
+
+test("known totals are rounded to currency precision", () => {
+  const offer = { ...offers[0], price: 899.99, shippingCost: 49.99, shippingCostKnown: true };
+  assert.equal(knownOfferTotal(offer), 949.98);
+});
+
 test("Our Pick balances modest price differences against real seller and return evidence", () => {
   const base = { ...offers[0], retailer: { id: "ebay", name: "eBay", logo: "e", website: "https://www.ebay.com" }, dataSource: "live", sourceProvider: "ebay", condition: "new", shippingCost: 0, shippingCostKnown: true, warranty: "Warranty information unavailable" };
   const weakSeller = { ...base, id: "weak", price: 790, seller: { ...base.seller, sellerType: "marketplace_seller", feedbackPercentage: 93, feedbackScore: 12 }, returnPolicy: "No returns", delivery: "Free shipping" };
