@@ -4,6 +4,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Icon } from "@/components/Icon";
+import { EbayWordmark } from "@/components/EbayWordmark";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
 import { PriceChart } from "@/components/PriceChart";
 import { ProductMark } from "@/components/ProductMark";
@@ -69,7 +70,7 @@ function NewResults() {
   const heroOffer = pick ?? offers[0];
 
   return <main className="nr-page">
-    <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} resultPath="/results-v2" actionLabel="Compare"/></header>
+    <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} resultPath="/results-v2" actionLabel="Search"/></header>
     <div className="nr-content section">
       <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked`}</span></div></section>
       {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state">No matching live eBay offers found.</div> : <>
@@ -84,8 +85,6 @@ function NewResults() {
   </main>;
 }
 
-function EbayLogo() { return <span className="nr-ebay" aria-label="eBay"><i>e</i><b>b</b><em>a</em><strong>y</strong></span>; }
-
 function ListingImage({ offer, productName, large = false }: { offer?: Offer; productName: string; large?: boolean }) {
   const [failed, setFailed] = useState(false);
   const source = offer?.imageUrl?.startsWith("https://") ? offer.imageUrl : undefined;
@@ -93,7 +92,7 @@ function ListingImage({ offer, productName, large = false }: { offer?: Offer; pr
 }
 
 function OfferIdentity({ offer, productName }: { offer: Offer; productName: string }) {
-  return <div className="nr-offer-identity"><ListingImage offer={offer} productName={productName}/><div><div className="nr-retailer"><EbayLogo/><b>{offer.retailer.name}</b></div><p>{titleCase(offer.condition)} · {offer.shippingCostKnown === false ? "Shipping unavailable" : offer.shippingCost ? `+$${offer.shippingCost} shipping` : "Free shipping"} · {offer.returnPolicy ?? "Return terms unavailable"}</p></div></div>;
+  return <div className="nr-offer-identity"><ListingImage offer={offer} productName={productName}/><div><div className="nr-retailer"><EbayWordmark/><b>{offer.retailer.name}</b></div><p>{titleCase(offer.condition)} · {offer.shippingCostKnown === false ? "Shipping unavailable" : offer.shippingCost ? `+$${offer.shippingCost} shipping` : "Free shipping"} · {offer.returnPolicy ?? "Return terms unavailable"}</p></div></div>;
 }
 
 function FeaturedOffer({ offer, productName, reasons }: { offer: Offer; productName: string; reasons: string[] }) {
@@ -109,7 +108,7 @@ function OtherOffer({ offer, productName }: { offer: Offer; productName: string 
   const detailId = `offer-details-${offer.id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
   return <article className={`nr-other${open ? " is-open" : ""}`}>
     <button className="nr-other-summary" type="button" aria-expanded={open} aria-controls={detailId} onClick={() => setOpen((value) => !value)}>
-      <EbayLogo/><span><b>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</b><small>{titleCase(offer.condition)} · {offer.shippingCostKnown === false ? "Shipping unavailable" : offer.shippingCost ? `+$${offer.shippingCost} shipping` : "Free shipping"} · {offer.returnPolicy ?? "Return terms unavailable"}</small></span><strong>${knownTotal(offer) ?? offer.price}</strong><Icon name="chevron" size={17}/>
+      <EbayWordmark compact/><span><b>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</b><small>{titleCase(offer.condition)} · {offer.shippingCostKnown === false ? "Shipping unavailable" : offer.shippingCost ? `+$${offer.shippingCost} shipping` : "Free shipping"} · {offer.returnPolicy ?? "Return terms unavailable"}</small></span><strong>${knownTotal(offer) ?? offer.price}</strong><Icon name="chevron" size={17}/>
     </button>
     <div className="nr-other-reveal" id={detailId} aria-hidden={!open}><div><div className="nr-other-detail"><ListingImage offer={offer} productName={productName}/><div><p>{offer.seller.feedbackPercentage ? `${offer.seller.feedbackPercentage}% positive · ` : ""}{offer.seller.name || "Seller name unavailable"}</p><small>{updatedLabel(offer.lastUpdated)} · Live eBay offer</small><span className="nr-cta"><OutboundRetailerCTA offer={offer}/></span></div></div></div></div>
   </article>;

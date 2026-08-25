@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { SafeLink as Link } from "@/components/SafeLink";
+import { EbayWordmark } from "@/components/EbayWordmark";
 import { Icon } from "@/components/Icon";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
 import { PriceChart } from "@/components/PriceChart";
@@ -241,9 +242,7 @@ function CheaperOption({ offer, productName, tradeoff }: { offer: Offer; product
 
 function RetailerLogo({ offer }: { offer: Offer }) {
   if (offer.retailer.id === "ebay") {
-    return <span className="rp-row-logo rp-row-logo--ebay" role="img" aria-label="eBay">
-      <span className="ebay-e">e</span><span className="ebay-b">b</span><span className="ebay-a">a</span><span className="ebay-y">y</span>
-    </span>;
+    return <span className="rp-row-logo rp-row-logo--ebay"><EbayWordmark compact/></span>;
   }
   return <span className="rp-row-logo" aria-hidden="true">{offer.retailer.logo}</span>;
 }
