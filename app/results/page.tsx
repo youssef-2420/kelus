@@ -145,7 +145,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
       </div>
       <div className="rp-columns">
         <section>
-          <ProductSummary product={product} variantLabel={variant?.label} condition={criteria.condition} count={filteredOffers.length} loading={loading} refreshing={refreshing} live={result ? !result.isDemo : false} lastUpdated={result?.lastUpdated} editing={editing} onToggleEditing={() => setEditing((open) => !open)} />
+          <ProductSummary product={product} criteria={criteria} result={result} variantLabel={variant?.label} condition={criteria.condition} count={filteredOffers.length} loading={loading} refreshing={refreshing} live={result ? !result.isDemo : false} lastUpdated={result?.lastUpdated} editing={editing} onToggleEditing={() => setEditing((open) => !open)} />
           {refreshWarning && <div className="rp-refresh-warning" role="status"><Icon name="history" size={15}/><span>{refreshWarning}</span><button type="button" onClick={retry}>Refresh</button></div>}
           {editing && <div className="rp-edit-panel"><SearchControls compact initialCriteria={criteria} resultPath="/results" actionLabel="Compare prices"/></div>}
           {!loading && !failed && <ResultsFilters attributeLabel={attributeLabel} condition={condition} maxPrice={maxPrice} retailer={retailer} retailers={retailers} sort={sort} variantId={variant?.id ?? ""} variants={variants} onCondition={setCondition} onMaxPrice={setMaxPrice} onRetailer={setRetailer} onSort={setSort} onVariant={changeVariant} />}
@@ -175,7 +175,7 @@ function ResultsSidebar() {
   </aside>;
 }
 
-function ProductSummary({ product, variantLabel, condition, count, loading, refreshing, live, lastUpdated, editing, onToggleEditing }: { product: Product; variantLabel?: string; condition: ConditionFilter; count: number; loading: boolean; refreshing: boolean; live: boolean; lastUpdated?: string; editing: boolean; onToggleEditing: () => void }) {
+function ProductSummary({ product, criteria, result, variantLabel, condition, count, loading, refreshing, live, lastUpdated, editing, onToggleEditing }: { product: Product; criteria: ReturnType<typeof readSearchCriteria>; result: OfferSearchResult | null; variantLabel?: string; condition: ConditionFilter; count: number; loading: boolean; refreshing: boolean; live: boolean; lastUpdated?: string; editing: boolean; onToggleEditing: () => void }) {
   return <div className="rp-summary">
     <div className="rp-summary-main">
       <ProductMark label={product.image}/>
@@ -186,7 +186,7 @@ function ProductSummary({ product, variantLabel, condition, count, loading, refr
         <p className="rp-summary-source">{loading ? "Checking connected offers…" : live ? `Live eBay offers · ${updatedLabel(lastUpdated)}` : "Demo offers · Illustrative data"}</p>
         <div className="rp-summary-actions">
           <button className="button button-secondary rp-edit-search" type="button" onClick={onToggleEditing}>{editing ? "Close search" : "Edit search"}</button>
-          <WatchButton product={product.name}/>
+          <WatchButton product={product.name} criteria={criteria} result={result}/>
         </div>
       </div>
     </div>

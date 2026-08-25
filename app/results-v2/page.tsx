@@ -78,7 +78,7 @@ function NewResults() {
         {lowest && cheaperAlternative && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p><b>Save ${cheaperAlternative.savings}</b></div><LowestOffer offer={lowest} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/></section>}
         {otherOffers.length > 0 && <section className="nr-section"><p className="nr-label">Other offers</p><div className="nr-other-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name}/>)}</div></section>}
         <PriceContext context={context} observations={result?.observations ?? []}/>
-        <section className="nr-section nr-alert-section"><div><p className="nr-label">Price alert</p><h2>Want a better price?</h2><p>Track this product and come back when the price changes.</p></div><WatchButton product={product.name}/></section>
+        <section className="nr-section nr-alert-section"><div><p className="nr-label">Price alert</p><h2>Want a better price?</h2><p>Track this product and come back when the price changes.</p></div><WatchButton product={product.name} criteria={criteria} result={result}/></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
       </>}
     </div>
