@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
 import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId } from "../lib/product-attributes.ts";
-import { readSearchCriteria } from "../lib/search-state.ts";
+import { readSearchCriteria, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
 test("catalog search and variants are canonical rather than presentation strings", () => {
@@ -105,6 +105,22 @@ test("search URLs preserve canonical product, variant, condition, and market val
   assert.equal(params.get("variant"), "iphone-17-256");
   assert.equal(params.get("condition"), "new");
   assert.equal(params.get("market"), "us");
+});
+
+test("homepage search criteria round-trip product, storage, and condition into results", () => {
+  const criteria = validateSearchCriteria({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" });
+  assert.ok(criteria);
+  assert.deepEqual(readSearchCriteria(new URLSearchParams(searchCriteriaToQuery(criteria))), criteria);
+});
+
+test("submission validation rejects cross-product and unknown configurations", () => {
+  assert.equal(validateSearchCriteria({ productSlug: "iphone-17-pro", variantId: "macbook-air-m4-16-512", condition: "new", market: "us" }), null);
+  assert.equal(validateSearchCriteria({ productSlug: "iphone-17-pro", variantId: "unknown", condition: "new", market: "us" }), null);
+});
+
+test("results parsing replaces an incompatible product variant with a declared option", () => {
+  const criteria = readSearchCriteria(new URLSearchParams({ product: "macbook-air-m4", variant: "iphone-17-512", condition: "used", market: "us" }));
+  assert.deepEqual(criteria, { productSlug: "macbook-air-m4", variantId: "macbook-air-m4-16-512", condition: "used", market: "us" });
 });
 
 test("a direct Results visit resolves a complete default search", () => {
