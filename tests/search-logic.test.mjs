@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
-import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel } from "../lib/product-attributes.ts";
+import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId } from "../lib/product-attributes.ts";
 import { readSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
@@ -31,6 +31,32 @@ test("homepage hides an attribute until a phone is selected", () => {
 test("homepage keeps the attribute hidden for a selected none product", () => {
   const audio = products.find((product) => product.slug === "airpods-pro-2");
   assert.equal(getVisibleSearchAttributeLabel(audio, getVariantsForProduct(audio.id), true), null);
+});
+
+test("changing products resets an incompatible previous variant", () => {
+  const iphone = products.find((product) => product.slug === "iphone-17");
+  const laptop = products.find((product) => product.slug === "macbook-air-m4");
+  const laptopVariants = getVariantsForProduct(laptop.id);
+  assert.equal(resolveSearchAttributeVariantId(laptop, laptopVariants, "iphone-17-512"), "macbook-air-m4-16-512");
+  assert.equal(isValidSearchConfiguration(laptop, laptopVariants, "iphone-17-512"), false);
+  assert.equal(isValidSearchConfiguration(iphone, getVariantsForProduct(iphone.id), "iphone-17-512"), true);
+});
+
+test("none products remain valid without rendering an attribute field", () => {
+  const audio = products.find((product) => product.slug === "airpods-pro-2");
+  const audioVariants = getVariantsForProduct(audio.id);
+  const variantId = resolveSearchAttributeVariantId(audio, audioVariants);
+  assert.equal(variantId, "airpods-pro-2-usbc");
+  assert.equal(isValidSearchConfiguration(audio, audioVariants, variantId), true);
+  assert.equal(getVisibleSearchAttributeLabel(audio, audioVariants, true), null);
+});
+
+test("search configuration rejects undeclared variants and missing required options", () => {
+  const iphone = products.find((product) => product.slug === "iphone-17");
+  const variants = getVariantsForProduct(iphone.id);
+  assert.equal(isValidSearchConfiguration(iphone, variants, undefined), false);
+  assert.equal(isValidSearchConfiguration(iphone, variants, "iphone-17-pro-256gb"), false);
+  assert.equal(isValidSearchConfiguration(iphone, variants, "iphone-17-256"), true);
 });
 
 test("search attribute labels follow the product model definition", () => {
