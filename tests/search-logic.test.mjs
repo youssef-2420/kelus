@@ -21,6 +21,24 @@ test("search asks only for a relevant product attribute", () => {
   assert.equal(getRelevantAttributeLabel(audio, getVariantsForProduct(audio.id)), null);
 });
 
+test("search attribute labels follow the selected product category", () => {
+  const product = (category) => ({ id: category, slug: category, name: category, category, brand: "Test", image: "T", identifiers: {} });
+  const variants = (productId, labels) => labels.map((label, index) => ({ id: `${productId}-${index}`, productId, label, specifications: {}, identifiers: {} }));
+
+  const phone = product("Smartphone");
+  const tv = product("Television");
+  const console = product("Game Console");
+  const laptop = product("Laptop");
+  const accessory = product("Audio");
+
+  assert.equal(getRelevantAttributeLabel(phone, variants(phone.id, ["128GB", "256GB"])), "Storage");
+  assert.equal(getRelevantAttributeLabel(tv, variants(tv.id, ["55-inch", "65-inch"])), "Size");
+  assert.equal(getRelevantAttributeLabel(console, variants(console.id, ["Digital", "Disc"])), "Edition");
+  assert.equal(getRelevantAttributeLabel(laptop, variants(laptop.id, ["16GB · 512GB", "24GB · 1TB"])), "Configuration");
+  assert.equal(getRelevantAttributeLabel(accessory, []), null);
+  assert.equal(getRelevantAttributeLabel(accessory, variants(accessory.id, ["Standard"])), null);
+});
+
 test("normalized offers support condition filtering and deterministic ranking", () => {
   const newOffers = offers.filter((offer) => offer.condition === "new");
   assert.equal(newOffers.length, 2);
