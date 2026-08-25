@@ -13,6 +13,8 @@ test("Supabase browser auth uses only public configuration", async () => {
   assert.doesNotMatch(client + dialog, /SERVICE_ROLE|service_role/);
   assert.match(dialog, /signInWithPassword/);
   assert.match(dialog, /signUp/);
+  assert.match(dialog, /data: \{ full_name: name \}/);
+  assert.match(dialog, /autoComplete="name"/);
   assert.match(dialog, /resetPasswordForEmail/);
   assert.match(dialog, /signOut/);
 });

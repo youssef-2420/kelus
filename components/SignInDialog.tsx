@@ -13,6 +13,7 @@ export function SignInDialog() {
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("signin");
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -47,7 +48,16 @@ export function SignInDialog() {
         if (authError) throw authError;
         setOpen(false);
       } else if (mode === "create") {
-        const { data, error: authError } = await client.auth.signUp({ email: email.trim(), password, options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/?verified=1` } });
+        const name = fullName.trim();
+        if (!name) throw new Error("Enter your full name.");
+        const { data, error: authError } = await client.auth.signUp({
+          email: email.trim(),
+          password,
+          options: {
+            data: { full_name: name },
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=/?verified=1`,
+          },
+        });
         if (authError) throw authError;
         if (data.session) setOpen(false);
         else setNotice("Check your email to verify your account, then return to Kelus to sign in.");
@@ -75,10 +85,14 @@ export function SignInDialog() {
 
   if (authLoading) return <button type="button" className="header-signin" disabled aria-label="Checking account"><span className="auth-spinner"/> Account</button>;
 
-  if (user) return <div className="account-menu" ref={menuRef}>
-    <button type="button" className="header-signin account-trigger" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}><span className="account-avatar">{(user.email?.[0] ?? "K").toUpperCase()}</span><span className="account-email">{user.email}</span><Icon name="chevron" size={14}/></button>
-    {menuOpen && <div className="account-panel"><p><b>Signed in</b><span>{user.email}</span></p><Link href="/alerts" onClick={() => setMenuOpen(false)}><Icon name="bell" size={16}/>My Alerts</Link><button type="button" onClick={signOut}><Icon name="lock" size={16}/>Sign out</button></div>}
-  </div>;
+  if (user) {
+    const storedName = typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name.trim() : "";
+    const displayName = storedName || user.email || "Kelus account";
+    return <div className="account-menu" ref={menuRef}>
+      <button type="button" className="header-signin account-trigger" aria-expanded={menuOpen} onClick={() => setMenuOpen((value) => !value)}><span className="account-avatar">{displayName[0].toUpperCase()}</span><span className="account-email">{displayName}</span><Icon name="chevron" size={14}/></button>
+      {menuOpen && <div className="account-panel"><p><b>{storedName || "Signed in"}</b><span>{user.email}</span></p><Link href="/alerts" onClick={() => setMenuOpen(false)}><Icon name="bell" size={16}/>My Alerts</Link><button type="button" onClick={signOut}><Icon name="lock" size={16}/>Sign out</button></div>}
+    </div>;
+  }
 
   return <><button type="button" className="header-signin" onClick={openDialog}><Icon name="lock" size={17}/>Sign in</button>
     {open && <div className="modal-backdrop"><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
@@ -87,6 +101,7 @@ export function SignInDialog() {
       {!configured && <p className="auth-message is-error" role="alert">Supabase setup is required before sign-in can be used.</p>}
       {mode !== "forgot" && mode !== "reset" && <div className="signin-tabs"><button type="button" className={mode === "signin" ? "active" : ""} onClick={() => switchMode("signin")}>Sign in</button><button type="button" className={mode === "create" ? "active" : ""} onClick={() => switchMode("create")}>Create account</button></div>}
       <form onSubmit={submit}>
+        {mode === "create" && <label>Full name<input type="text" value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Your full name" autoComplete="name" required disabled={busy}/></label>}
         {mode !== "reset" && <label>Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" required disabled={busy}/></label>}
         {mode !== "forgot" && <label>{mode === "reset" ? "New password" : "Password"}<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="At least 8 characters" minLength={8} autoComplete={mode === "signin" ? "current-password" : "new-password"} required disabled={busy}/></label>}
         {mode === "signin" && <button className="forgot-link" type="button" onClick={() => switchMode("forgot")}>Forgot password?</button>}
