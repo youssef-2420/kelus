@@ -46,4 +46,6 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   assert.doesNotMatch(header + results, /from ["']next\/link["']/);
   assert.match(header, /SafeLink/);
   assert.match(results + search, /window\.location\.assign/);
+  assert.match(search, /canonicalProductPath\(criteria\)/);
+  assert.doesNotMatch(search, /startSearch/);
 });
