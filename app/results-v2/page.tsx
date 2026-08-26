@@ -16,6 +16,7 @@ import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations } from "@/services/price-intelligence";
+import { settleProductOfferLoad } from "@/services/product-offer-load";
 import { getCheaperAlternative, getRecommendation } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { Offer, OfferSearchResult, PriceObservation } from "@/types/kelus";
@@ -59,13 +60,30 @@ export function ProductIntelligenceView({ criteria }: { criteria: ReturnType<typ
   const [result, setResult] = useState<OfferSearchResult | null>(cachedResult);
   const [loading, setLoading] = useState(!result);
   const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
-    const request = cachedResult ? retrySearch(criteria) : startSearch(criteria);
-    request.then((next) => { if (!cancelled) setResult(next); }).catch((reason) => { if (!cancelled && !cachedResult) setError(reason instanceof Error ? reason.message : "Live offers are unavailable."); }).finally(() => { if (!cancelled) setLoading(false); });
+    const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
+    settleProductOfferLoad(request).then((outcome) => {
+      if (cancelled) return;
+      if (outcome.status === "ERROR") {
+        setResult(null);
+        setError(outcome.message);
+      } else {
+        setResult(outcome.result);
+      }
+      setLoading(false);
+    });
     return () => { cancelled = true; };
-  }, [cachedResult, criteria]);
+  }, [attempt, cachedResult, criteria]);
+
+  const retry = () => {
+    setResult(null);
+    setError("");
+    setLoading(true);
+    setAttempt((value) => value + 1);
+  };
 
   const offers = result?.offers ?? [];
   const recommendation = getRecommendation(offers, "kelus_pick");
@@ -81,7 +99,7 @@ export function ProductIntelligenceView({ criteria }: { criteria: ReturnType<typ
     <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
     <div className="nr-content section">
       <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked · ${updatedLabel(result?.lastUpdated)}`}</span></div></section>
-      {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state">No matching live eBay offers found.</div> : <>
+      {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p><button type="button" className="button button-primary" onClick={retry}>Retry</button></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state"><p>No matching live eBay offers found.</p><button type="button" className="button button-primary" onClick={retry}>Retry</button></div> : <>
         {pick && <section className="nr-section"><p className="nr-label is-accent">Our Pick</p><FeaturedOffer offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/></section>}
         {lowest && cheaperAlternative && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p><b>Save ${cheaperAlternative.savings}</b></div><LowestOffer offer={lowest} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/></section>}
         {otherOffers.length > 0 && <section className="nr-section"><p className="nr-label">Other offers</p><div className="nr-other-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name}/>)}</div></section>}

@@ -28,10 +28,12 @@ async function fetchOffers(criteria: SearchCriteria, timeoutMs: number) {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(apiUrl(criteria), {
+    const response = await fetch(apiUrl(criteria), {
       headers: { Accept: "application/json" },
       signal: controller.signal,
     });
+    const body = await response.json() as OfferSearchResult | ApiErrorBody;
+    return { response, body };
   } finally {
     window.clearTimeout(timeout);
   }
@@ -44,25 +46,22 @@ export async function getOffersForSearch(criteria: SearchCriteria, onStatus?: (s
   trackEvent({ name: "provider_search_started", provider: "ebay", productSlug: criteria.productSlug });
   trackEvent({ name: "live_provider_search_started", provider: "ebay", productSlug: criteria.productSlug });
   let response: Response;
+  let body: OfferSearchResult | ApiErrorBody;
   try {
-    response = await fetchOffers(criteria, initialRequestTimeoutMs);
+    ({ response, body } = await fetchOffers(criteria, initialRequestTimeoutMs));
     if (response.status === 429 || response.status >= 500) {
       await new Promise((resolve) => window.setTimeout(resolve, 350));
-      response = await fetchOffers(criteria, retryRequestTimeoutMs);
+      ({ response, body } = await fetchOffers(criteria, retryRequestTimeoutMs));
     }
   } catch (error) {
     trackEvent({ name: "live_provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
     trackEvent({ name: "provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
     const timedOut = error instanceof DOMException && error.name === "AbortError";
-    throw new OfferSearchError(timedOut ? "The live search took too long. Please try again." : "We couldn't reach the eBay offer service.", timedOut ? "timeout" : "network");
-  }
-  let body: OfferSearchResult | ApiErrorBody;
-  try {
-    body = await response.json() as OfferSearchResult | ApiErrorBody;
-  } catch {
-    trackEvent({ name: "live_provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
-    trackEvent({ name: "provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
-    throw new OfferSearchError("The eBay offer service returned an invalid response.", "malformed_response", response.status);
+    const malformed = error instanceof SyntaxError;
+    throw new OfferSearchError(
+      timedOut ? "The live search took too long. Please try again." : malformed ? "The eBay offer service returned an invalid response." : "We couldn't reach the eBay offer service.",
+      timedOut ? "timeout" : malformed ? "malformed_response" : "network",
+    );
   }
   const isResult = "offers" in body && Array.isArray(body.offers) && "failedProviders" in body && Array.isArray(body.failedProviders);
   if (!response.ok || !isResult) {
