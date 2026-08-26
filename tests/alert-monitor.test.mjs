@@ -12,6 +12,10 @@ const offer = (id, price, shippingCost = 0) => ({
   affiliateUrl: `https://www.ebay.com/itm/${id}`, lastUpdated: "2026-08-25T10:00:00Z", dataSource: "live",
 });
 const result = (offers) => ({ offers, observations: [], failedProviders: [], isDemo: false, lastUpdated: "2026-08-25T10:00:00Z" });
+const observation = (day, price) => ({
+  id: `obs-${day}`, offerId: `offer-${day}`, variantId: criteria.variantId, providerId: "ebay", retailerId: "ebay",
+  price, shippingCost: 0, condition: "new", availability: "In stock", timestamp: `2026-08-${String(day).padStart(2, "0")}T12:00:00Z`, isDemo: false,
+});
 
 test("monitor deduplicates identical configurations across users and emits factual events", async () => {
   const first = { ...createAlert(criteria, result([offer("start", 899)]), "2026-08-24T10:00:00Z"), targetPrice: 829 };
@@ -28,6 +32,28 @@ test("monitor deduplicates identical configurations across users and emits factu
   assert.equal(monitored.updates[0].alert.currentPrice, 824);
   assert.deepEqual(monitored.events.map((event) => event.type).sort(), ["price_drop", "target_reached"]);
   assert.equal(monitored.events.every((event) => event.data.currentPrice === 824), true);
+});
+
+test("background refresh reuses stored observations for price intelligence and Buy-Wait status", async () => {
+  const alert = createAlert(criteria, result([offer("start", 899)]), "2026-08-10T10:00:00Z");
+  const observations = [18, 19, 20, 21, 22, 23, 24].map((day) => observation(day, day === 24 ? 820 : 900));
+  const monitored = await monitorAlertRecords([{ userId: "user-a", alert }], async () => ({
+    ...result([offer("fresh", 820)]), observations, observationsStored: true,
+  }), "2026-08-24T12:00:00Z");
+
+  const updated = monitored.updates[0].alert;
+  assert.equal(updated.priceIntelligence.historyStatus, "ready");
+  assert.equal(updated.priceIntelligence.currentTrustedPrice, 820);
+  assert.equal(updated.buyWaitDecision.label, "BUY NOW");
+});
+
+test("background refresh never invents intelligence when observation storage is unavailable", async () => {
+  const alert = createAlert(criteria, result([offer("start", 899)]));
+  const monitored = await monitorAlertRecords([{ userId: "user-a", alert }], async () => ({
+    ...result([offer("fresh", 820)]), observations: [observation(24, 820)], observationsStored: false,
+  }));
+  assert.equal(monitored.updates[0].alert.priceIntelligence.verdict, "Price history is building");
+  assert.equal(monitored.updates[0].alert.buyWaitDecision.label, "HISTORY BUILDING");
 });
 
 test("monitor preserves the last real price when a provider check fails", async () => {

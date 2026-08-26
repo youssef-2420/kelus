@@ -41,6 +41,20 @@ test("background alert events are server-written and user-readable only", async 
   assert.match(sql, /vault\.decrypted_secrets/i);
 });
 
+test("background monitor runs are auditable without exposing operations to browser roles", async () => {
+  const [sql, monitor] = await Promise.all([
+    read("supabase/migrations/202608260001_alert_monitor_runs.sql"),
+    read("services/server-alert-monitor.ts"),
+  ]);
+  assert.match(sql, /price_alert_monitor_runs/i);
+  assert.match(sql, /enable row level security/i);
+  assert.match(sql, /revoke all on table public\.price_alert_monitor_runs from anon, authenticated/i);
+  assert.doesNotMatch(sql, /grant .*price_alert_monitor_runs.*authenticated/i);
+  assert.match(monitor, /run_complete/);
+  assert.match(monitor, /run_failed/);
+  assert.match(monitor, /crypto\.randomUUID\(\)/);
+});
+
 test("local alerts are deleted only after authenticated migration succeeds", async () => {
   const service = await read("services/user-alerts.ts");
   const upsert = service.indexOf("await upsertUserAlerts(user.id, local)");

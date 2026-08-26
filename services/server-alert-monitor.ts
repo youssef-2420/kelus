@@ -15,6 +15,7 @@ type MonitorEnvironment = EbayEnvironment & {
 
 type AlertRow = { user_id: string; id: string; alert_data: PriceAlertRecord };
 type MonitorScope = { userId?: string };
+type MonitorRunStatus = "running" | "completed" | "failed";
 
 function serviceClient(env: MonitorEnvironment) {
   const url = env.NEXT_PUBLIC_SUPABASE_URL?.trim();
@@ -76,18 +77,59 @@ async function persistEvents(client: SupabaseClient, events: Awaited<ReturnType<
   if (error) throw error;
 }
 
+async function writeMonitorRun(client: SupabaseClient, run: {
+  id: string;
+  scopeUserId?: string;
+  status: MonitorRunStatus;
+  startedAt: string;
+  completedAt?: string;
+  checkedAlerts?: number;
+  searchedConfigurations?: number;
+  failedConfigurations?: number;
+  queuedEvents?: number;
+  errorMessage?: string;
+}) {
+  const { error } = await client.from("price_alert_monitor_runs").upsert({
+    id: run.id,
+    scope_user_id: run.scopeUserId ?? null,
+    status: run.status,
+    started_at: run.startedAt,
+    completed_at: run.completedAt ?? null,
+    checked_alerts: run.checkedAlerts ?? 0,
+    searched_configurations: run.searchedConfigurations ?? 0,
+    failed_configurations: run.failedConfigurations ?? 0,
+    queued_events: run.queuedEvents ?? 0,
+    error_message: run.errorMessage ?? null,
+  });
+  if (error) console.warn("[alert-monitor] run_audit_unavailable", { runId: run.id, message: error.message });
+}
+
 export async function runAlertMonitor(env: MonitorEnvironment, scope: MonitorScope = {}) {
   const client = serviceClient(env);
-  const records = await readActiveAlerts(client, scope);
-  const result = await monitorAlertRecords(records, (criteria: SearchCriteria) => getLiveOffersForSearch(criteria, env));
-  await persistUpdates(client, result.updates);
-  await persistEvents(client, result.events);
-  return {
-    checkedAlerts: result.updates.length,
-    searchedConfigurations: result.searchedConfigurations,
-    failedConfigurations: result.failedConfigurations,
-    queuedEvents: result.events.length,
-  };
+  const runId = crypto.randomUUID();
+  const startedAt = new Date().toISOString();
+  await writeMonitorRun(client, { id: runId, scopeUserId: scope.userId, status: "running", startedAt });
+  try {
+    const records = await readActiveAlerts(client, scope);
+    const result = await monitorAlertRecords(records, (criteria: SearchCriteria) => getLiveOffersForSearch(criteria, env));
+    await persistUpdates(client, result.updates);
+    await persistEvents(client, result.events);
+    const summary = {
+      runId,
+      checkedAlerts: result.updates.length,
+      searchedConfigurations: result.searchedConfigurations,
+      failedConfigurations: result.failedConfigurations,
+      queuedEvents: result.events.length,
+    };
+    await writeMonitorRun(client, { id: runId, scopeUserId: scope.userId, status: "completed", startedAt, completedAt: new Date().toISOString(), ...summary });
+    console.info("[alert-monitor] run_complete", summary);
+    return summary;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown alert monitor failure";
+    await writeMonitorRun(client, { id: runId, scopeUserId: scope.userId, status: "failed", startedAt, completedAt: new Date().toISOString(), errorMessage: message });
+    console.error("[alert-monitor] run_failed", { runId, message });
+    throw error;
+  }
 }
 
 export type { MonitorEnvironment };

@@ -1,6 +1,9 @@
 import { getProductBySlug, getVariantById } from "../lib/demo-data.ts";
 import { searchCriteriaToQuery } from "../lib/search-state.ts";
-import type { Offer, OfferSearchResult, SearchCriteria } from "../types/kelus.ts";
+import type { OfferSearchResult, PriceContext, SearchCriteria } from "../types/kelus.ts";
+import { getBuyWaitDecision, type BuyWaitDecision } from "./buy-wait-decision.ts";
+import { getPriceContext } from "./price-context.ts";
+import { knownOfferTotal } from "./recommendations.ts";
 
 export const PRICE_ALERTS_KEY = "kelus:price-alerts:v1";
 export const PRICE_ALERTS_CHANGED = "kelus:price-alerts-changed";
@@ -28,24 +31,23 @@ export type PriceAlertRecord = {
   paused: boolean;
   state: PriceAlertState;
   errorMessage?: string;
+  priceIntelligence?: PriceContext;
+  buyWaitDecision?: BuyWaitDecision;
 };
-
-const finitePrice = (value: unknown): value is number => typeof value === "number" && Number.isFinite(value) && value >= 0;
 
 export function alertId(criteria: SearchCriteria) {
   return `${criteria.productSlug}|${criteria.variantId ?? "default"}|${criteria.condition}|${criteria.market}`;
 }
 
-export function knownOfferTotal(offer: Offer) {
-  return offer.shippingCostKnown === false || !finitePrice(offer.price) || !finitePrice(offer.shippingCost)
-    ? null
-    : Math.round((offer.price + offer.shippingCost) * 100) / 100;
-}
-
-export function bestLiveOffer(offers: Offer[]) {
+export function bestLiveOffer(offers: OfferSearchResult["offers"]) {
   return offers
     .filter((offer) => offer.dataSource === "live" && knownOfferTotal(offer) !== null)
     .sort((a, b) => knownOfferTotal(a)! - knownOfferTotal(b)!)[0] ?? null;
+}
+
+function alertPriceIntelligence(criteria: SearchCriteria, result: OfferSearchResult) {
+  const priceIntelligence = getPriceContext(criteria, result.observationsStored === true ? result.observations : []);
+  return { priceIntelligence, buyWaitDecision: getBuyWaitDecision(priceIntelligence) };
 }
 
 export function createAlert(criteria: SearchCriteria, result: OfferSearchResult, now = new Date().toISOString()): PriceAlertRecord | null {
@@ -72,6 +74,7 @@ export function createAlert(criteria: SearchCriteria, result: OfferSearchResult,
     currentRetailer: offer.retailer.name,
     paused: false,
     state: "ready",
+    ...alertPriceIntelligence(criteria, result),
   };
 }
 
@@ -79,6 +82,7 @@ export function updateAlertFromResult(alert: PriceAlertRecord, result: OfferSear
   const offer = !result.isDemo ? bestLiveOffer(result.offers) : null;
   const total = offer ? knownOfferTotal(offer) : null;
   if (!offer || total === null) return { ...alert, lastCheckedAt: checkedAt, state: "unavailable", errorMessage: "No matching live eBay offer is available right now." };
+  const intelligence = alertPriceIntelligence(alert.criteria, result);
   return {
     ...alert,
     currentPrice: total,
@@ -90,6 +94,7 @@ export function updateAlertFromResult(alert: PriceAlertRecord, result: OfferSear
     currentRetailer: offer.retailer.name,
     state: "ready",
     errorMessage: undefined,
+    ...intelligence,
   };
 }
 
