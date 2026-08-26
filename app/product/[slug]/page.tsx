@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
-import { canonicalProductPath, readCanonicalProductCriteria } from "@/lib/search-state";
+import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
 import { CONDITIONS } from "@/types/kelus";
 
-type RouteParams = { productSlug: string; variantId: string; condition: string };
+type RouteParams = { slug: string };
 type PageProps = { params: Promise<RouteParams> };
 
-function exactProduct(params: RouteParams) {
-  const criteria = readCanonicalProductCriteria(params.productSlug, params.variantId, params.condition);
+function exactProduct(slug: string) {
+  const criteria = readCanonicalProductSlug(slug);
   if (!criteria) return null;
   const product = getProductBySlug(criteria.productSlug);
   const variant = getVariantById(criteria.variantId);
@@ -18,12 +18,12 @@ function exactProduct(params: RouteParams) {
 
 export function generateStaticParams(): RouteParams[] {
   return products.flatMap((product) => product.searchAttribute.validVariantIds.flatMap((variantId) =>
-    CONDITIONS.map((condition) => ({ productSlug: product.slug, variantId, condition })),
+    CONDITIONS.map((condition) => ({ slug: `${variantId}-${condition}` })),
   ));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const resolved = exactProduct(await params);
+  const resolved = exactProduct((await params).slug);
   if (!resolved) return { title: "Product not found | Kelus", robots: { index: false, follow: false } };
   const { criteria, product, variant } = resolved;
   const condition = criteria.condition === "any" ? "all conditions" : criteria.condition;
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CanonicalProductPage({ params }: PageProps) {
-  const resolved = exactProduct(await params);
+  const resolved = exactProduct((await params).slug);
   if (!resolved) notFound();
   const { criteria, product, variant } = resolved;
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;

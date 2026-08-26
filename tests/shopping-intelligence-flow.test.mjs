@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { getProductBySlug, getVariantById } from "../lib/demo-data.ts";
-import { canonicalProductPath, readCanonicalProductCriteria, validateSearchCriteria } from "../lib/search-state.ts";
+import { canonicalProductPath, readCanonicalProductSlug, validateSearchCriteria } from "../lib/search-state.ts";
 import { monitorAlertRecords } from "../services/alert-monitor.ts";
 import { getBuyWaitDecision } from "../services/buy-wait-decision.ts";
 import { getPriceContext } from "../services/price-context.ts";
@@ -29,8 +29,8 @@ test("complete search to canonical product, recommendation, and authenticated tr
   const valid = validateSearchCriteria(criteria);
   assert.ok(valid);
   const path = canonicalProductPath(valid);
-  assert.equal(path, "/product/iphone-17-pro/iphone-17-pro-256gb/new");
-  assert.deepEqual(readCanonicalProductCriteria("iphone-17-pro", "iphone-17-pro-256gb", "new"), criteria);
+  assert.equal(path, "/product/iphone-17-pro-256gb-new");
+  assert.deepEqual(readCanonicalProductSlug(path.replace("/product/", "")), criteria);
 
   const candidates = [
     item("our-pick", 820, 9),

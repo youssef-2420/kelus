@@ -1,5 +1,5 @@
 import type { ConditionFilter, Market, SearchCriteria } from "../types/kelus.ts";
-import { getProductBySlug, getVariantById, getVariantsForProduct } from "./demo-data.ts";
+import { getProductBySlug, getVariantById, getVariantsForProduct, products } from "./demo-data.ts";
 import { getSearchAttributeVariants, isValidSearchConfiguration } from "./product-attributes.ts";
 
 const validConditions: ConditionFilter[] = ["any", "new", "used", "refurbished"];
@@ -27,7 +27,7 @@ export function searchCriteriaToQuery(criteria: SearchCriteria) { const params =
 export function canonicalProductPath(criteria: SearchCriteria) {
   const valid = validateSearchCriteria(criteria);
   if (!valid?.variantId) throw new Error("A valid canonical product variant is required.");
-  return `/product/${encodeURIComponent(valid.productSlug)}/${encodeURIComponent(valid.variantId)}/${valid.condition}`;
+  return `/product/${encodeURIComponent(`${valid.variantId}-${valid.condition}`)}`;
 }
 
 export function readCanonicalProductCriteria(productSlug: string, variantId: string, condition: string): SearchCriteria | null {
@@ -37,4 +37,16 @@ export function readCanonicalProductCriteria(productSlug: string, variantId: str
     condition: condition as ConditionFilter,
     market: "us",
   });
+}
+
+export function readCanonicalProductSlug(slug: string): SearchCriteria | null {
+  const decoded = decodeURIComponent(slug);
+  for (const product of products) {
+    for (const variant of getSearchAttributeVariants(product, getVariantsForProduct(product.id))) {
+      for (const condition of validConditions) {
+        if (decoded === `${variant.id}-${condition}`) return validateSearchCriteria({ productSlug: product.slug, variantId: variant.id, condition, market: "us" });
+      }
+    }
+  }
+  return null;
 }

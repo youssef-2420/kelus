@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
 import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId } from "../lib/product-attributes.ts";
-import { canonicalProductPath, readCanonicalProductCriteria, readSearchCriteria, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
+import { canonicalProductPath, readCanonicalProductCriteria, readCanonicalProductSlug, readSearchCriteria, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
 test("catalog search and variants are canonical rather than presentation strings", () => {
@@ -115,13 +115,15 @@ test("homepage search criteria round-trip product, storage, and condition into r
 
 test("exact searches resolve to one persistent canonical product URL", () => {
   const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" };
-  assert.equal(canonicalProductPath(criteria), "/product/iphone-17-pro/iphone-17-pro-256gb/new");
+  assert.equal(canonicalProductPath(criteria), "/product/iphone-17-pro-256gb-new");
   assert.deepEqual(readCanonicalProductCriteria("iphone-17-pro", "iphone-17-pro-256gb", "new"), criteria);
+  assert.deepEqual(readCanonicalProductSlug("iphone-17-pro-256gb-new"), criteria);
 });
 
 test("canonical product identity rejects cross-product variants and invalid conditions", () => {
   assert.equal(readCanonicalProductCriteria("iphone-17-pro", "iphone-17-512", "new"), null);
   assert.equal(readCanonicalProductCriteria("iphone-17-pro", "iphone-17-pro-256gb", "broken"), null);
+  assert.equal(readCanonicalProductSlug("iphone-17-pro-2tb-new"), null);
 });
 
 test("submission validation rejects cross-product and unknown configurations", () => {
