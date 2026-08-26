@@ -25,12 +25,14 @@ export async function getLiveOffersForSearch(criteria: SearchCriteria, env: Live
   if (!successful.length && failedProviders.length) throw settled[0].status === "rejected" ? settled[0].reason : new Error("eBay offers are unavailable.");
   const currentObservations = successful.flatMap((result) => result.observations);
   let observations = currentObservations;
+  let observationsStored = false;
   if (env.DB) {
     try {
       const canonicalProductId = getProductBySlug(criteria.productSlug)?.id;
       if (!canonicalProductId) throw new Error("Canonical product is unavailable.");
       const stored = await storeLivePriceObservations(env.DB, canonicalProductId, currentObservations);
-      observations = await readLivePriceObservations(env.DB, criteria.variantId ?? "");
+      observations = await readLivePriceObservations(env.DB, canonicalProductId, criteria.variantId ?? "", criteria.condition);
+      observationsStored = true;
       console.info("[price-observations] stored", { provider: "ebay", inserted: stored, available: observations.length });
     } catch (error) {
       console.warn("[price-observations] storage_unavailable", { message: error instanceof Error ? error.message : "Unknown error" });
@@ -39,6 +41,7 @@ export async function getLiveOffersForSearch(criteria: SearchCriteria, env: Live
   return {
     offers: successful.flatMap((result) => result.offers),
     observations,
+    observationsStored,
     failedProviders,
     connectedProviders: ["ebay"],
     isDemo: false,

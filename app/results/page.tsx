@@ -14,6 +14,7 @@ import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/d
 import { getRelevantAttributeLabel, getSearchAttributeVariants } from "@/lib/product-attributes";
 import { readSearchCriteria, searchCriteriaToQuery } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
+import { exactRealPriceObservations } from "@/services/price-intelligence";
 import { getCheaperAlternative, getRecommendation, sortOffers } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { ConditionFilter, Offer, OfferSearchResult, PriceObservation, Product, ProductVariant, Retailer } from "@/types/kelus";
@@ -120,7 +121,8 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
   const cheaperAlternative = pick ? getCheaperAlternative(filteredOffers, pick) : null;
   const cheaperOption = cheaperAlternative?.offer;
   const otherOffers = sorted.filter((offer) => offer.id !== pick?.id && offer.id !== cheaperOption?.id);
-  const context = getPriceContext(filteredOffers, result?.observations ?? []);
+  const storedObservations = result?.observationsStored ? result.observations : [];
+  const context = getPriceContext({ ...criteria, condition }, storedObservations);
 
   function changeVariant(variantId: string) {
     window.location.assign(`/results?${searchCriteriaToQuery({ ...criteria, variantId })}`);
@@ -157,7 +159,7 @@ function ResultsContent({ criteria }: { criteria: ReturnType<typeof readSearchCr
           </div>}
           <p className="rp-disclaimer">Results currently cover matching live eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links; no eBay campaign tracking is added unless configured.</p>
         </section>
-        <PriceContextPanel context={context} observations={result?.observations ?? []}/>
+        <PriceContextPanel context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition })}/>
       </div>
     </div>
   </main>;
@@ -274,7 +276,7 @@ function PriceContextPanel({ context, observations }: { context: ReturnType<type
   const difference = context.currentTrustedPrice && comparisonAverage ? Math.round((1 - context.currentTrustedPrice / comparisonAverage) * 100) : null;
   const points = realHistoryPoints(observations);
   const historyReady = context.historyStatus === "ready" && points.length > 1;
-  const verdict = !historyReady ? "Price history is building" : difference !== null && difference >= 5 ? "Good time to buy" : difference !== null && difference <= -5 ? "Above the typical price" : "Near the typical price";
+  const verdict = historyReady ? context.verdict : "Price history is building";
   return <aside className="rp-insights">
     <section className="rp-panel rp-price-context"><div className="rp-panel-heading"><h2>Price context</h2><span className={`rp-source-chip${context.isDemo ? " is-demo" : ""}`}>{context.isDemo ? "Demo" : "Live data"}</span></div><p className="rp-rating-heading">{verdict}</p>{historyReady && <PriceChart points={points}/>}<div className="rp-chart-stats rp-chart-stats--three"><div><span>Current price</span><strong>{context.currentTrustedPrice ? `$${context.currentTrustedPrice}` : "—"}</strong></div><div><span>Typical price</span><strong>{comparisonAverage ? `$${comparisonAverage}` : "—"}</strong></div><div><span>Recent low</span><strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></div></div><p className="rp-rating-support">{historyReady && difference !== null ? `The current known total is ${Math.abs(difference)}% ${difference >= 0 ? "below" : "above"} the recent observed average.` : context.isDemo ? "Demo offers do not create historical price insight." : `Building from ${context.observationCount} live observation${context.observationCount === 1 ? "" : "s"}.`}</p></section>
     <section className="rp-panel"><h2><Icon name="bell" size={16}/>Price alert</h2><p className="rp-alert-copy">Save this product and return when live alerts are available.</p><Link href="/saved" className="button button-primary rp-alert-submit">Track price</Link></section>

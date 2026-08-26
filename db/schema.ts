@@ -16,4 +16,5 @@ export const priceObservations = sqliteTable("price_observations", {
 }, (table) => [
   uniqueIndex("price_observations_provider_offer_time_unique").on(table.providerId, table.offerId, table.observedAt),
   index("price_observations_variant_time_idx").on(table.variantId, table.observedAt),
+  index("price_observations_product_variant_condition_time_idx").on(table.canonicalProductId, table.variantId, table.condition, table.observedAt),
 ]);

@@ -1,0 +1,1 @@
+CREATE INDEX `price_observations_product_variant_condition_time_idx` ON `price_observations` (`canonical_product_id`,`variant_id`,`condition`,`observed_at`);

@@ -44,13 +44,15 @@ export type PriceObservation = {
   availability?: Offer["availability"];
 };
 export type PricePoint = { label: string; price: number };
-export type PriceContext = { currentTrustedPrice: number | null; average30Day: number | null; average90Day: number | null; recentLow: number | null; recentHigh: number | null; trend: "rising" | "falling" | "stable"; verdict: string; isDemo: boolean; historyStatus: "demo" | "building" | "ready"; observationCount: number };
+export type PriceVerdict = "Great price" | "Good price" | "Typical" | "Expensive" | "Price history is building";
+export type PriceContext = { currentTrustedPrice: number | null; average30Day: number | null; average90Day: number | null; recentLow: number | null; recentHigh: number | null; trend: "rising" | "falling" | "stable"; verdict: PriceVerdict; isDemo: false; historyStatus: "building" | "ready"; observationCount: number };
 export type RecommendationKind = "kelus_pick" | "cheapest" | "safest_option";
 export type Recommendation = { offerId: string; kind: RecommendationKind; reasons: string[]; tradeoffs: string[] };
 export type ProviderResult = { providerId: string; offers: Offer[]; observations: PriceObservation[]; isDemo: boolean; fetchedAt?: string };
 export type OfferSearchResult = {
   offers: Offer[];
   observations: PriceObservation[];
+  observationsStored?: boolean;
   failedProviders: string[];
   isDemo: boolean;
   connectedProviders?: string[];

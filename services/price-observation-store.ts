@@ -1,4 +1,4 @@
-import type { PriceObservation } from "@/types/kelus";
+import type { ConditionFilter, PriceObservation } from "@/types/kelus";
 
 type ObservationStatement = {
   bind(...values: unknown[]): ObservationStatement;
@@ -40,6 +40,7 @@ async function ensureObservationSchema(db: ObservationDatabase) {
     )`),
     db.prepare("CREATE UNIQUE INDEX IF NOT EXISTS price_observations_provider_offer_time_unique ON price_observations (provider_id, offer_id, observed_at)"),
     db.prepare("CREATE INDEX IF NOT EXISTS price_observations_variant_time_idx ON price_observations (variant_id, observed_at)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS price_observations_product_variant_condition_time_idx ON price_observations (canonical_product_id, variant_id, condition, observed_at)"),
   ]);
 }
 
@@ -75,15 +76,15 @@ export async function storeLivePriceObservations(db: ObservationDatabase, canoni
   return results.reduce((count, result) => count + (result.meta.changes ?? 0), 0);
 }
 
-export async function readLivePriceObservations(db: ObservationDatabase, variantId: string, limit = 500): Promise<PriceObservation[]> {
+export async function readLivePriceObservations(db: ObservationDatabase, canonicalProductId: string, variantId: string, condition: ConditionFilter, limit = 5_000): Promise<PriceObservation[]> {
   await ensureObservationSchema(db);
-  const safeLimit = Math.max(1, Math.min(Math.floor(limit), 1000));
+  const safeLimit = Math.max(1, Math.min(Math.floor(limit), 10_000));
   const result = await db.prepare(`SELECT offer_id, variant_id, provider_id, retailer_id, price_cents,
     shipping_cents, condition, availability, observed_at
     FROM price_observations
-    WHERE variant_id = ?
+    WHERE canonical_product_id = ? AND variant_id = ? AND (? = 'any' OR condition = ?)
     ORDER BY observed_at DESC
-    LIMIT ?`).bind(variantId, safeLimit).all<StoredObservation>();
+    LIMIT ?`).bind(canonicalProductId, variantId, condition, condition, safeLimit).all<StoredObservation>();
   return result.results.map((row) => ({
     id: `${row.provider_id}-${row.offer_id}-${row.observed_at}`,
     offerId: row.offer_id,

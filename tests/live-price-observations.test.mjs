@@ -71,15 +71,14 @@ test("stored observations normalize back into live Kelus history", async () => {
     availability: "Unknown",
     observed_at: "2026-08-22T12:00:00.000Z",
   }]);
-  const [observation] = await readLivePriceObservations(database, "iphone-17-pro-256gb");
+  const [observation] = await readLivePriceObservations(database, "apple-iphone-17-pro", "iphone-17-pro-256gb", "new");
   assert.equal(observation.price, 829.99);
   assert.equal(observation.shippingCost, null);
   assert.equal(observation.isDemo, false);
 });
 
 test("one day of live observations remains building rather than fake history", () => {
-  const liveOffer = { ...offers[0], dataSource: "live", sourceProvider: "ebay", shippingCostKnown: true };
-  const context = getPriceContext([liveOffer], [liveObservation, { ...liveObservation, offerId: "ebay-offer-2", id: "second" }]);
+  const context = getPriceContext({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" }, [liveObservation, { ...liveObservation, offerId: "ebay-offer-2", id: "second" }]);
   assert.equal(context.historyStatus, "building");
   assert.equal(context.average30Day, null);
   assert.equal(context.average90Day, null);

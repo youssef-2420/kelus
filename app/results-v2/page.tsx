@@ -14,6 +14,7 @@ import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById } from "@/lib/demo-data";
 import { readSearchCriteria } from "@/lib/search-state";
 import { getPriceContext } from "@/services/price-context";
+import { exactRealPriceObservations } from "@/services/price-intelligence";
 import { getCheaperAlternative, getRecommendation } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { Offer, OfferSearchResult, PriceObservation } from "@/types/kelus";
@@ -66,7 +67,8 @@ function NewResults() {
   const cheaperAlternative = pick ? getCheaperAlternative(offers, pick) : null;
   const lowest = cheaperAlternative?.offer;
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
-  const context = getPriceContext(offers, result?.observations ?? []);
+  const storedObservations = result?.observationsStored ? result.observations : [];
+  const context = getPriceContext(criteria, storedObservations);
   const heroOffer = pick ?? offers[0];
 
   return <main className="nr-page">
@@ -77,7 +79,7 @@ function NewResults() {
         {pick && <section className="nr-section"><p className="nr-label is-accent">Our Pick</p><FeaturedOffer offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/></section>}
         {lowest && cheaperAlternative && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p><b>Save ${cheaperAlternative.savings}</b></div><LowestOffer offer={lowest} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/></section>}
         {otherOffers.length > 0 && <section className="nr-section"><p className="nr-label">Other offers</p><div className="nr-other-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name}/>)}</div></section>}
-        <PriceContext context={context} observations={result?.observations ?? []}/>
+        <PriceContext context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })}/>
         <section className="nr-section nr-alert-section"><div><p className="nr-label">Price alert</p><h2>Want a better price?</h2><p>Track this product and come back when the price changes.</p></div><WatchButton product={product.name} criteria={criteria} result={result}/></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
       </>}
@@ -118,5 +120,5 @@ function PriceContext({ context, observations }: { context: ReturnType<typeof ge
   const points = realHistoryPoints(observations);
   const ready = context.historyStatus === "ready" && points.length > 1;
   const average = context.average90Day ?? context.average30Day;
-  return <section className="nr-section nr-context"><p className="nr-label">Price context</p><div className="nr-context-card"><div><h2>{ready ? "Is now a good time to buy?" : "Price history is building."}</h2><p>{ready ? "Compare today’s known total with the recent observed range." : `Kelus has ${context.observationCount} live observation${context.observationCount === 1 ? "" : "s"}. More real history is needed before showing a verdict.`}</p><div className="nr-context-stats"><span>Current<strong>{context.currentTrustedPrice ? `$${context.currentTrustedPrice}` : "—"}</strong></span><span>Typical<strong>{average ? `$${average}` : "—"}</strong></span><span>Recent low<strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></span></div></div>{ready && <PriceChart points={points}/>}</div></section>;
+  return <section className="nr-section nr-context"><p className="nr-label">Price context</p><div className="nr-context-card"><div><h2>{ready ? context.verdict : "Price history is building."}</h2><p>{ready ? "Compare today’s known total with the recent observed range." : `Kelus has ${context.observationCount} live observation${context.observationCount === 1 ? "" : "s"}. More real history is needed before showing a verdict.`}</p><div className="nr-context-stats"><span>Current<strong>{context.currentTrustedPrice ? `$${context.currentTrustedPrice}` : "—"}</strong></span><span>Typical<strong>{average ? `$${average}` : "—"}</strong></span><span>Recent low<strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></span></div></div>{ready && <PriceChart points={points}/>}</div></section>;
 }
