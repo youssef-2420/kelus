@@ -55,6 +55,18 @@ test("background monitor runs are auditable without exposing operations to brows
   assert.match(monitor, /crypto\.randomUUID\(\)/);
 });
 
+test("price-alert email status is server-written, user-readable, and claimed atomically", async () => {
+  const sql = await read("supabase/migrations/202608260002_price_alert_email_notifications.sql");
+  assert.match(sql, /price_alert_notifications/i);
+  assert.match(sql, /enable row level security/i);
+  assert.match(sql, /grant select on table public\.price_alert_notifications to authenticated/i);
+  assert.doesNotMatch(sql, /grant (insert|update|delete).*price_alert_notifications.*authenticated/i);
+  assert.match(sql, /for update skip locked/i);
+  assert.match(sql, /event_key text not null unique/i);
+  assert.match(sql, /attempt_count < 5/i);
+  assert.match(sql, /grant execute on function public\.claim_price_alert_notifications\(integer\) to service_role/i);
+});
+
 test("local alerts are deleted only after authenticated migration succeeds", async () => {
   const service = await read("services/user-alerts.ts");
   const upsert = service.indexOf("await upsertUserAlerts(user.id, local)");

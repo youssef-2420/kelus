@@ -5,8 +5,10 @@ import { monitorAlertRecords, type OwnedPriceAlert } from "@/services/alert-moni
 import { getLiveOffersForSearch } from "@/services/server-offer-service";
 import type { ObservationDatabase } from "@/services/price-observation-store";
 import type { EbayEnvironment } from "@/services/providers/ebay/config";
+import { processTargetReachedNotifications } from "@/services/server-alert-notifications";
+import type { TransactionalEmailEnvironment } from "@/services/transactional-email";
 
-type MonitorEnvironment = EbayEnvironment & {
+type MonitorEnvironment = EbayEnvironment & TransactionalEmailEnvironment & {
   DB?: ObservationDatabase;
   NEXT_PUBLIC_SUPABASE_URL?: string;
   SUPABASE_SECRET_KEY?: string;
@@ -87,6 +89,9 @@ async function writeMonitorRun(client: SupabaseClient, run: {
   searchedConfigurations?: number;
   failedConfigurations?: number;
   queuedEvents?: number;
+  notificationsQueued?: number;
+  notificationsSent?: number;
+  notificationsFailed?: number;
   errorMessage?: string;
 }) {
   const { error } = await client.from("price_alert_monitor_runs").upsert({
@@ -99,6 +104,9 @@ async function writeMonitorRun(client: SupabaseClient, run: {
     searched_configurations: run.searchedConfigurations ?? 0,
     failed_configurations: run.failedConfigurations ?? 0,
     queued_events: run.queuedEvents ?? 0,
+    notifications_queued: run.notificationsQueued ?? 0,
+    notifications_sent: run.notificationsSent ?? 0,
+    notifications_failed: run.notificationsFailed ?? 0,
     error_message: run.errorMessage ?? null,
   });
   if (error) console.warn("[alert-monitor] run_audit_unavailable", { runId: run.id, message: error.message });
@@ -114,12 +122,23 @@ export async function runAlertMonitor(env: MonitorEnvironment, scope: MonitorSco
     const result = await monitorAlertRecords(records, (criteria: SearchCriteria) => getLiveOffersForSearch(criteria, env));
     await persistUpdates(client, result.updates);
     await persistEvents(client, result.events);
+    let notifications = { queued: 0, sent: 0, failed: 0, configurationPending: false };
+    try {
+      notifications = await processTargetReachedNotifications(client, env, result.events);
+    } catch (error) {
+      notifications.failed = result.events.filter((event) => event.type === "target_reached").length;
+      console.error("[alert-email] processing_failed", { message: error instanceof Error ? error.message : "Unknown notification failure" });
+    }
     const summary = {
       runId,
       checkedAlerts: result.updates.length,
       searchedConfigurations: result.searchedConfigurations,
       failedConfigurations: result.failedConfigurations,
       queuedEvents: result.events.length,
+      notificationsQueued: notifications.queued,
+      notificationsSent: notifications.sent,
+      notificationsFailed: notifications.failed,
+      emailConfigurationPending: notifications.configurationPending,
     };
     await writeMonitorRun(client, { id: runId, scopeUserId: scope.userId, status: "completed", startedAt, completedAt: new Date().toISOString(), ...summary });
     console.info("[alert-monitor] run_complete", summary);

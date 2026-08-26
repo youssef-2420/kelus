@@ -15,8 +15,11 @@ export type PriceAlertEvent = {
   occurredAt: string;
   data: {
     productName: string;
+    configuration: string;
+    trackedPrice: number | null;
     previousPrice: number | null;
     currentPrice: number | null;
+    priceDrop: number | null;
     targetPrice: number | null;
     comparisonHref: string;
   };
@@ -48,8 +51,13 @@ function eventFor(owner: OwnedPriceAlert, next: PriceAlertRecord, type: PriceAle
     occurredAt: checkedAt,
     data: {
       productName: next.productName,
+      configuration: next.configuration,
+      trackedPrice: next.trackedPrice,
       previousPrice: owner.alert.currentPrice,
       currentPrice: next.currentPrice,
+      priceDrop: next.trackedPrice === null || next.currentPrice === null
+        ? null
+        : Math.max(0, roundMoney(next.trackedPrice - next.currentPrice)),
       targetPrice: next.targetPrice,
       comparisonHref: `/results-v2?${criteriaKey(next.criteria)}`,
     },
