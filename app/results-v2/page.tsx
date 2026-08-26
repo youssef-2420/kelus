@@ -12,7 +12,7 @@ import { SearchControls } from "@/components/SearchControls";
 import { WatchButton } from "@/components/WatchButton";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById } from "@/lib/demo-data";
-import { readSearchCriteria } from "@/lib/search-state";
+import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations } from "@/services/price-intelligence";
@@ -48,6 +48,11 @@ export default function NewResultsPage() {
 function NewResults() {
   const params = useSearchParams();
   const criteria = useMemo(() => readSearchCriteria(new URLSearchParams(params.toString())), [params]);
+  useEffect(() => { window.location.replace(canonicalProductPath(criteria)); }, [criteria]);
+  return <main className="nr-page"><div className="nr-state">Opening the canonical product comparison…</div></main>;
+}
+
+export function ProductIntelligenceView({ criteria }: { criteria: ReturnType<typeof readSearchCriteria> }) {
   const product = getProductBySlug(criteria.productSlug)!;
   const variant = getVariantById(criteria.variantId);
   const cachedResult = useMemo(() => readCachedSearch(criteria)?.result ?? null, [criteria]);
@@ -73,9 +78,9 @@ function NewResults() {
   const heroOffer = pick ?? offers[0];
 
   return <main className="nr-page">
-    <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} resultPath="/results-v2" actionLabel="Search"/></header>
+    <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
     <div className="nr-content section">
-      <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked`}</span></div></section>
+      <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked · ${updatedLabel(result?.lastUpdated)}`}</span></div></section>
       {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state">No matching live eBay offers found.</div> : <>
         {pick && <section className="nr-section"><p className="nr-label is-accent">Our Pick</p><FeaturedOffer offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/></section>}
         {lowest && cheaperAlternative && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p><b>Save ${cheaperAlternative.savings}</b></div><LowestOffer offer={lowest} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/></section>}

@@ -49,6 +49,6 @@ test("empty and failed refreshes retain the last real price", () => {
 test("comparison link restores canonical product configuration and condition", () => {
   const alert = createAlert(criteria, result([offer("one", 829, 0)]));
   const url = new URL(comparisonHref(alert), "https://kelus.me");
-  assert.equal(url.pathname, "/results-v2");
-  assert.deepEqual(Object.fromEntries(url.searchParams), { product: "iphone-17-pro", condition: "new", market: "us", variant: "iphone-17-pro-256gb" });
+  assert.equal(url.pathname, "/product/iphone-17-pro/iphone-17-pro-256gb/new");
+  assert.deepEqual(Object.fromEntries(url.searchParams), {});
 });

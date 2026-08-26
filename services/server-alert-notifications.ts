@@ -52,7 +52,7 @@ async function markFailed(client: SupabaseClient, notification: ClaimedNotificat
 
 function emailData(event: PriceAlertEvent["data"]): TargetReachedEmailData | null {
   if (event.trackedPrice === null || event.currentPrice === null || event.priceDrop === null) return null;
-  if (!event.comparisonHref.startsWith("/results-v2?")) return null;
+  if (!event.comparisonHref.startsWith("/product/")) return null;
   return {
     productName: event.productName,
     configuration: event.configuration,

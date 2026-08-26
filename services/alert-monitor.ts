@@ -1,4 +1,4 @@
-import { searchCriteriaToQuery } from "../lib/search-state.ts";
+import { canonicalProductPath, searchCriteriaToQuery } from "../lib/search-state.ts";
 import type { OfferSearchResult, SearchCriteria } from "../types/kelus.ts";
 import { getAlertStatus, type PriceAlertRecord, updateAlertFromError, updateAlertFromResult } from "./price-alerts.ts";
 
@@ -59,7 +59,7 @@ function eventFor(owner: OwnedPriceAlert, next: PriceAlertRecord, type: PriceAle
         ? null
         : Math.max(0, roundMoney(next.trackedPrice - next.currentPrice)),
       targetPrice: next.targetPrice,
-      comparisonHref: `/results-v2?${criteriaKey(next.criteria)}`,
+      comparisonHref: canonicalProductPath(next.criteria),
     },
   };
 }

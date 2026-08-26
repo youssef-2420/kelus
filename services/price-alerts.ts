@@ -1,5 +1,5 @@
 import { getProductBySlug, getVariantById } from "../lib/demo-data.ts";
-import { searchCriteriaToQuery } from "../lib/search-state.ts";
+import { canonicalProductPath } from "../lib/search-state.ts";
 import type { OfferSearchResult, PriceContext, SearchCriteria } from "../types/kelus.ts";
 import { getBuyWaitDecision, type BuyWaitDecision } from "./buy-wait-decision.ts";
 import { getPriceContext } from "./price-context.ts";
@@ -125,7 +125,7 @@ export function isAlertStale(alert: PriceAlertRecord, now = Date.now()) {
 }
 
 export function comparisonHref(alert: PriceAlertRecord) {
-  return `/results-v2?${searchCriteriaToQuery(alert.criteria)}`;
+  return canonicalProductPath(alert.criteria);
 }
 
 function validAlert(value: unknown): value is PriceAlertRecord {

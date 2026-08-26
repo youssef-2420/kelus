@@ -8,7 +8,7 @@ const data = {
   trackedPrice: 899,
   currentPrice: 799,
   priceDrop: 100,
-  comparisonHref: "/results-v2?product=iphone-17-pro&variant=iphone-17-pro-256gb&condition=new&market=us",
+  comparisonHref: "/product/iphone-17-pro/iphone-17-pro-256gb/new",
 };
 
 test("target-reached email contains only exact persisted product and price facts", () => {

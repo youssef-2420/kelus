@@ -23,3 +23,18 @@ export function readSearchCriteria(params: URLSearchParams): SearchCriteria {
   return { productSlug, variantId, condition, market };
 }
 export function searchCriteriaToQuery(criteria: SearchCriteria) { const params = new URLSearchParams({ product: criteria.productSlug, condition: criteria.condition, market: criteria.market }); if (criteria.variantId) params.set("variant", criteria.variantId); return params.toString(); }
+
+export function canonicalProductPath(criteria: SearchCriteria) {
+  const valid = validateSearchCriteria(criteria);
+  if (!valid?.variantId) throw new Error("A valid canonical product variant is required.");
+  return `/product/${encodeURIComponent(valid.productSlug)}/${encodeURIComponent(valid.variantId)}/${valid.condition}`;
+}
+
+export function readCanonicalProductCriteria(productSlug: string, variantId: string, condition: string): SearchCriteria | null {
+  return validateSearchCriteria({
+    productSlug: decodeURIComponent(productSlug),
+    variantId: decodeURIComponent(variantId),
+    condition: condition as ConditionFilter,
+    market: "us",
+  });
+}
