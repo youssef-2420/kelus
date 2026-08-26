@@ -13,6 +13,7 @@ import { WatchButton } from "@/components/WatchButton";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById } from "@/lib/demo-data";
 import { readSearchCriteria } from "@/lib/search-state";
+import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations } from "@/services/price-intelligence";
 import { getCheaperAlternative, getRecommendation } from "@/services/recommendations";
@@ -120,5 +121,6 @@ function PriceContext({ context, observations }: { context: ReturnType<typeof ge
   const points = realHistoryPoints(observations);
   const ready = context.historyStatus === "ready" && points.length > 1;
   const average = context.average90Day ?? context.average30Day;
-  return <section className="nr-section nr-context"><p className="nr-label">Price context</p><div className="nr-context-card"><div><h2>{ready ? context.verdict : "Price history is building."}</h2><p>{ready ? "Compare today’s known total with the recent observed range." : `Kelus has ${context.observationCount} live observation${context.observationCount === 1 ? "" : "s"}. More real history is needed before showing a verdict.`}</p><div className="nr-context-stats"><span>Current<strong>{context.currentTrustedPrice ? `$${context.currentTrustedPrice}` : "—"}</strong></span><span>Typical<strong>{average ? `$${average}` : "—"}</strong></span><span>Recent low<strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></span></div></div>{ready && <PriceChart points={points}/>}</div></section>;
+  const decision = getBuyWaitDecision(context);
+  return <section className="nr-section nr-context"><p className="nr-label">Price context</p><div className="nr-context-card"><div><h2>{decision.label}</h2><p>{decision.explanation}</p><div className="nr-context-stats"><span>Current<strong>{context.currentTrustedPrice ? `$${context.currentTrustedPrice}` : "—"}</strong></span><span>Typical<strong>{average ? `$${average}` : "—"}</strong></span><span>Recent low<strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></span></div></div>{ready && <PriceChart points={points}/>}</div></section>;
 }
