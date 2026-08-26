@@ -19,7 +19,7 @@ test("canonical product exports contain record-specific SEO and structured data"
   assert.match(html, /iPhone 17 Pro 256GB prices \| Kelus/);
   assert.match(html, /application\/ld\+json/);
   assert.match(html, /https:\/\/schema\.org/);
-  assert.match(html, /rel="canonical"/);
+  assert.match(html, /rel="canonical" href="https:\/\/kelus\.me\/product\/iphone-17-pro\/iphone-17-pro-256gb\/new"/);
   assert.doesNotMatch(html, /six-month low|manufacturer warranty/i);
 });
 

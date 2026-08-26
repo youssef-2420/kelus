@@ -29,11 +29,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const condition = criteria.condition === "any" ? "all conditions" : criteria.condition;
   const title = `${product.name} ${variant.label} prices | Kelus`;
   const description = `Compare matching live eBay offers for ${product.name} ${variant.label} in ${condition}. See Kelus's current pick and real price context when available.`;
+  const canonicalUrl = `https://kelus.me${canonicalProductPath(criteria)}`;
   return {
     title,
     description,
-    alternates: { canonical: canonicalProductPath(criteria) },
-    openGraph: { title, description, type: "website", images: [] },
+    alternates: { canonical: canonicalUrl },
+    openGraph: { title, description, type: "website", url: canonicalUrl, images: [] },
     twitter: { card: "summary", title, description, images: [] },
   };
 }
