@@ -226,6 +226,20 @@ test("provider returns zero offers cleanly and caches identical searches", async
   assert.equal(searchCalls, 1);
 });
 
+test("provider deduplicates repeated eBay item identities", async () => {
+  clearEbayTokenCache();
+  const fetcher = async (input) => {
+    const url = String(input);
+    if (url.includes("/oauth2/token")) return new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 });
+    if (url.includes("/item_summary/search")) return new Response(JSON.stringify({ itemSummaries: [validItem, { ...validItem }] }), { status: 200 });
+    return new Response(JSON.stringify({ returnTerms: { returnsAccepted: false } }), { status: 200 });
+  };
+  const provider = new EbayProvider(config, fetcher, silentLogger, () => Date.parse("2026-08-26T12:00:00Z"));
+  const result = await provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" });
+  assert.equal(result.offers.length, 1);
+  assert.equal(result.observations.length, 1);
+});
+
 test("provider surfaces rate limiting as a typed failure", async () => {
   clearEbayTokenCache();
   const fetcher = async (input) => String(input).includes("/oauth2/token")

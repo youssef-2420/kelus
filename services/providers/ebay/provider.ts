@@ -100,7 +100,7 @@ export class EbayProvider implements OfferProvider {
     const details = new Map(detailResults.flatMap((result, index) => result.status === "fulfilled" && result.value ? [[detailCandidates[index].itemId, result.value] as const] : []));
     const detailFailures = detailResults.filter((result) => result.status === "rejected").length;
     if (detailFailures) this.logger.warn("[ebay-provider] detail_enrichment_partial", { attempted: detailCandidates.length, failed: detailFailures });
-    const offers = matchedItems.flatMap((item) => {
+    const normalizedOffers = matchedItems.flatMap((item) => {
       try {
         const detail = details.get(item.itemId);
         const offer = normalizeEbayItem(detail ? { ...item, returnTerms: detail.returnTerms } : item, product, variant, fetchedAt);
@@ -110,6 +110,7 @@ export class EbayProvider implements OfferProvider {
         return [];
       }
     });
+    const offers = [...new Map(normalizedOffers.map((offer) => [offer.id, offer])).values()];
     const value: ProviderResult = {
       providerId: this.id,
       offers,

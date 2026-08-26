@@ -4,8 +4,9 @@ import type { EbayEnvironment } from "@/services/providers/ebay/config";
 import { getEbayProviderConfig } from "@/services/providers/ebay/config";
 import { EbayProvider } from "@/services/providers/ebay/provider";
 import { readLivePriceObservations, storeLivePriceObservations, type ObservationDatabase } from "@/services/price-observation-store";
+import { readSupabasePriceObservations, storeSupabasePriceObservations, type SupabaseObservationEnvironment } from "@/services/supabase-price-observation-store";
 
-type LiveOfferEnvironment = EbayEnvironment & { DB?: ObservationDatabase };
+type LiveOfferEnvironment = EbayEnvironment & SupabaseObservationEnvironment & { DB?: ObservationDatabase };
 
 let providerState: { key: string; provider: EbayProvider } | null = null;
 
@@ -26,17 +27,37 @@ export async function getLiveOffersForSearch(criteria: SearchCriteria, env: Live
   const currentObservations = successful.flatMap((result) => result.observations);
   let observations = currentObservations;
   let observationsStored = false;
-  if (env.DB) {
+  const canonicalProductId = getProductBySlug(criteria.productSlug)?.id;
+  const histories: typeof currentObservations[] = [];
+  if (canonicalProductId) {
     try {
-      const canonicalProductId = getProductBySlug(criteria.productSlug)?.id;
-      if (!canonicalProductId) throw new Error("Canonical product is unavailable.");
-      const stored = await storeLivePriceObservations(env.DB, canonicalProductId, currentObservations);
-      observations = await readLivePriceObservations(env.DB, canonicalProductId, criteria.variantId ?? "", criteria.condition);
-      observationsStored = true;
-      console.info("[price-observations] stored", { provider: "ebay", inserted: stored, available: observations.length });
+      const stored = await storeSupabasePriceObservations(env, canonicalProductId, currentObservations);
+      const history = await readSupabasePriceObservations(env, canonicalProductId, criteria.variantId ?? "", criteria.condition);
+      if (history) {
+        histories.push(history);
+        observationsStored = true;
+        console.info("[price-observations] supabase_stored", { provider: "ebay", inserted: stored, available: history.length });
+      }
     } catch (error) {
-      console.warn("[price-observations] storage_unavailable", { message: error instanceof Error ? error.message : "Unknown error" });
+      console.warn("[price-observations] supabase_unavailable", { message: error instanceof Error ? error.message : "Unknown error" });
     }
+  }
+  if (env.DB && canonicalProductId) {
+    try {
+      const stored = await storeLivePriceObservations(env.DB, canonicalProductId, currentObservations);
+      const history = await readLivePriceObservations(env.DB, canonicalProductId, criteria.variantId ?? "", criteria.condition);
+      histories.push(history);
+      observationsStored = true;
+      console.info("[price-observations] d1_stored", { provider: "ebay", inserted: stored, available: history.length });
+    } catch (error) {
+      console.warn("[price-observations] d1_unavailable", { message: error instanceof Error ? error.message : "Unknown error" });
+    }
+  }
+  if (histories.length) {
+    observations = [...new Map(histories.flat().map((observation) => [
+      [observation.providerId, observation.offerId, observation.timestamp].join("|"),
+      observation,
+    ])).values()];
   }
   return {
     offers: successful.flatMap((result) => result.offers),
