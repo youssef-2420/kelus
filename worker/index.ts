@@ -47,7 +47,7 @@ const worker = {
     const url = new URL(request.url);
 
     if (url.pathname === "/api/offers") return handleOfferSearch(request, env);
-    if (url.pathname === "/api/alerts/check") return handleAlertCheck(request, env);
+    if (url.pathname === "/api/alerts/check") return handleAlertCheck(request, env, ctx);
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
@@ -121,12 +121,18 @@ async function handleOfferSearch(request: Request, env: Env) {
   }
 }
 
-async function handleAlertCheck(request: Request, env: Env) {
+async function handleAlertCheck(request: Request, env: Env, ctx: ExecutionContext) {
   if (request.method !== "POST") return json({ error: { code: "method_not_allowed", message: "Only POST is supported." } }, 405);
   try {
     const scope = await authorizeAlertMonitor(request, env);
     if (!scope) return json({ error: { code: "unauthorized", message: "A valid Kelus session is required." } }, 401);
-    return json(await runAlertMonitor(env, scope));
+    const result = await runAlertMonitor(env, scope);
+    ctx.waitUntil(refreshPersistedProductIntelligenceSnapshots(env, fetch, Date.now(), getLiveOffersForSearch)
+      .then((summary) => console.info("[product-intelligence] monitor_refresh_complete", summary))
+      .catch((error) => console.error("[product-intelligence] monitor_refresh_failed", {
+        message: error instanceof Error ? error.message : "Unknown error",
+      })));
+    return json(result);
   } catch (error) {
     console.error("[alert-monitor] check_failed", { message: error instanceof Error ? error.message : "Unknown error" });
     return json({ error: { code: "monitor_error", message: "Tracked prices could not be checked right now." } }, 503);

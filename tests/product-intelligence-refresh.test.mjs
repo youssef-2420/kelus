@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh.ts";
 
@@ -44,4 +45,14 @@ test("scheduled snapshot refresh isolates provider failures", async () => {
     async () => { throw new Error("eBay unavailable"); },
   );
   assert.deepEqual(result, { due: 1, refreshed: 0, empty: 0, failed: 1 });
+});
+
+test("the deployed alert-monitor schedule starts snapshot refresh out of band", async () => {
+  const [workerSource, migrationSource] = await Promise.all([
+    readFile(new URL("../worker/index.ts", import.meta.url), "utf8"),
+    readFile(new URL("../supabase/migrations/202608250002_price_alert_monitoring.sql", import.meta.url), "utf8"),
+  ]);
+  assert.match(migrationSource, /https:\/\/kelus\.me\/api\/alerts\/check/);
+  assert.match(workerSource, /ctx\.waitUntil\(refreshPersistedProductIntelligenceSnapshots/);
+  assert.match(workerSource, /const result = await runAlertMonitor[\s\S]*ctx\.waitUntil/);
 });
