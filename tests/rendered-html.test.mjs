@@ -21,11 +21,33 @@ test("canonical product exports contain record-specific SEO and structured data"
   assert.match(html, /https:\/\/schema\.org/);
   assert.match(html, /rel="canonical" href="https:\/\/kelus\.me\/product\/iphone-17-pro-256gb-new\/?"/);
   assert.doesNotMatch(html, /six-month low|manufacturer warranty/i);
-  assert.match(html, /OUR PICK/);
+  assert.match(html, /Our Pick/);
+  assert.match(html, /Why this one/);
+  assert.match(html, /Our Pick vs Cheapest/);
+  assert.match(html, /View offer/);
   assert.match(html, /When to Buy/);
   assert.match(html, /Track/);
-  assert.match(html, /live offers checked/);
+  assert.match(html, /live offers/);
   assert.doesNotMatch(html, /Checking connected offers|Comparing live eBay offers/);
+});
+
+test("Product Intelligence presentation keeps production data wiring and the existing header", async () => {
+  const [view, styles] = await Promise.all([
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(view, /<Link href="\/" className="wordmark" aria-label="Kelus home">kelus<\/Link><SearchControls minimal minimalAction initialCriteria=\{criteria\} actionLabel="Search"\/>/);
+  assert.match(view, /canonicalProductPath\(nextCriteria\)/);
+  assert.match(view, /window\.location\.assign/);
+  assert.match(view, /Updating recommendation…/);
+  assert.match(view, /decision\.reasons\.join/);
+  assert.match(view, /knownTotal/);
+  assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
+  assert.match(styles, /\.pi-selectors/);
+  assert.match(styles, /\.pi-offer-reveal/);
+  assert.match(styles, /@media \(max-width:430px\)/);
+  assert.match(styles, /prefers-reduced-motion:reduce/);
+  assert.doesNotMatch(view, /\$1,204|techprodeals|Apple warranty|12 offers/);
 });
 
 test("Kelus source separates demo offers from recommendation and provider contracts", async () => {
