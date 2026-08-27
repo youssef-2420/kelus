@@ -24,8 +24,22 @@ export async function resolveInitialProductIntelligence(
     }
   };
   const snapshotStartedAt = Date.now();
-  const snapshot = await within(readProductIntelligenceSnapshot(environment.DB, criteria), databaseTimeoutMs, null);
+  const canonicalProductId = getProductBySlug(criteria.productSlug)?.id;
+  const historyStartedAt = Date.now();
+  const snapshotPromise = within(readProductIntelligenceSnapshot(environment.DB, criteria), databaseTimeoutMs, null);
+  const observationsPromise = canonicalProductId
+    ? within(readLivePriceObservations(
+      environment.DB,
+      canonicalProductId,
+      criteria.variantId ?? "",
+      criteria.condition,
+      500,
+      false,
+    ), 150, [])
+    : Promise.resolve([]);
+  const [snapshot, observations] = await Promise.all([snapshotPromise, observationsPromise]);
   const snapshotDurationMs = Date.now() - snapshotStartedAt;
+  const historyDurationMs = Date.now() - historyStartedAt;
   if (!snapshot) {
     const outcome = { status: "ERROR", message: "Saved product intelligence is refreshing. Please try again shortly." } as const;
     console.info("[product-intelligence] initial_resolved", {
@@ -37,18 +51,6 @@ export async function resolveInitialProductIntelligence(
     });
     return outcome;
   }
-  const canonicalProductId = getProductBySlug(criteria.productSlug)?.id;
-  const historyStartedAt = Date.now();
-  const observations = canonicalProductId
-    ? await within(readLivePriceObservations(
-      environment.DB,
-      canonicalProductId,
-      criteria.variantId ?? "",
-      criteria.condition,
-      500,
-      false,
-    ), 150, [])
-    : [];
   const result = { ...snapshot, observations, observationsStored: observations.length > 0 };
   const outcome: ProductOfferLoadOutcome = result.offers.length
     ? { status: "SUCCESS", result }
@@ -58,7 +60,7 @@ export async function resolveInitialProductIntelligence(
     status: outcome.status,
     durationMs: Date.now() - startedAt,
     snapshotDurationMs,
-    historyDurationMs: Date.now() - historyStartedAt,
+    historyDurationMs,
     offers: outcome.result.offers.length,
   });
   return outcome;
