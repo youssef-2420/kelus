@@ -20,6 +20,7 @@ import { exactRealPriceObservations } from "@/services/price-intelligence";
 import { settleProductOfferLoad, type ProductOfferLoadOutcome } from "@/services/product-offer-load";
 import { getCheaperAlternative } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
+import { trackEvent } from "@/services/analytics";
 import type { Offer, OfferSearchResult, PriceObservation } from "@/types/kelus";
 
 const knownTotal = (offer: Offer) => offer.shippingCostKnown === false ? null : offer.price + offer.shippingCost;
@@ -120,6 +121,14 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = result?.snapshotState === "stale" || result?.snapshotState === "expired" || result?.lastRefreshFailed || result?.lastRefreshReturnedEmpty;
+
+  useEffect(() => {
+    trackEvent({ name: "product_page_viewed", productSlug: criteria.productSlug, variantId: criteria.variantId, condition: criteria.condition });
+  }, [criteria.condition, criteria.productSlug, criteria.variantId]);
+
+  useEffect(() => {
+    if (pick) trackEvent({ name: "recommendation_viewed", productSlug: criteria.productSlug, offerId: pick.id, confidence: decision.confidence });
+  }, [criteria.productSlug, decision.confidence, pick]);
 
   return <main className="nr-page">
     <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>

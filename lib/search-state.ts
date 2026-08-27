@@ -5,6 +5,14 @@ import { getSearchAttributeVariants, isValidSearchConfiguration } from "./produc
 const validConditions: ConditionFilter[] = ["any", "new", "used", "refurbished"];
 export const defaultSearch: SearchCriteria = { productSlug: "iphone-17", variantId: "iphone-17-256", condition: "any", market: "us" };
 
+export function resolveConditionFromQuery(query: string, fallback: ConditionFilter = defaultSearch.condition): ConditionFilter {
+  const normalized = query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (/\b(refurbished|renewed|certified refurbished)\b/.test(normalized)) return "refurbished";
+  if (/\b(used|pre owned|preowned)\b/.test(normalized)) return "used";
+  if (/\b(new|sealed|brand new|open box)\b/.test(normalized)) return "new";
+  return fallback;
+}
+
 export function validateSearchCriteria(criteria: SearchCriteria): SearchCriteria | null {
   const product = getProductBySlug(criteria.productSlug);
   if (!product || !validConditions.includes(criteria.condition) || criteria.market !== "us") return null;

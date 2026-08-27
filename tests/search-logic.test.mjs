@@ -1,15 +1,33 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
-import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId } from "../lib/product-attributes.ts";
-import { canonicalProductPath, readCanonicalProductCriteria, readCanonicalProductSlug, readSearchCriteria, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
+import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId, resolveSearchAttributeVariantIdFromQuery } from "../lib/product-attributes.ts";
+import { canonicalProductPath, readCanonicalProductCriteria, readCanonicalProductSlug, readSearchCriteria, resolveConditionFromQuery, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
 test("catalog search and variants are canonical rather than presentation strings", () => {
   const matches = searchProducts("iph");
-  assert.deepEqual(matches.map((product) => product.slug), ["iphone-17", "iphone-17-pro", "iphone-17-pro-max"]);
+  assert.ok(matches.some((product) => product.slug === "iphone-17"));
+  assert.ok(matches.some((product) => product.slug === "iphone-17-pro"));
+  assert.ok(matches.some((product) => product.slug === "iphone-17-pro-max"));
   assert.deepEqual(getVariantsForProduct("apple-iphone-17").map((variant) => variant.label), ["128GB", "256GB", "512GB"]);
-  assert.equal(products.length, 5);
+  assert.ok(products.length >= 30);
+  assert.ok(products.flatMap((product) => product.searchAttribute.validVariantIds).length >= 50);
+});
+
+test("catalog covers representative high-intent electronics categories", () => {
+  assert.ok(searchProducts("macbook pro").some((product) => product.slug === "macbook-pro-14-m4"));
+  assert.ok(searchProducts("samsung s26 ultra").some((product) => product.slug === "galaxy-s26-ultra"));
+  assert.ok(searchProducts("ps5").some((product) => product.slug === "playstation-5-slim"));
+  assert.ok(searchProducts("bose qc ultra earbuds").some((product) => product.slug === "bose-quietcomfort-ultra-earbuds"));
+  assert.ok(searchProducts("pixel 10 pro xl").some((product) => product.slug === "pixel-10-pro-xl"));
+});
+
+test("aliases resolve to canonical products without duplicate identities", () => {
+  assert.equal(searchProducts("xbox x")[0].slug, "xbox-series-x");
+  assert.equal(searchProducts("switch oled")[0].slug, "nintendo-switch-oled");
+  assert.equal(new Set(products.map((product) => product.slug)).size, products.length);
+  assert.equal(new Set(products.flatMap((product) => product.searchAttribute.validVariantIds)).size, products.flatMap((product) => product.searchAttribute.validVariantIds).length);
 });
 
 test("search asks only for a relevant product attribute", () => {
@@ -40,6 +58,14 @@ test("changing products resets an incompatible previous variant", () => {
   assert.equal(resolveSearchAttributeVariantId(laptop, laptopVariants, "iphone-17-512"), "macbook-air-m4-16-512");
   assert.equal(isValidSearchConfiguration(laptop, laptopVariants, "iphone-17-512"), false);
   assert.equal(isValidSearchConfiguration(iphone, getVariantsForProduct(iphone.id), "iphone-17-512"), true);
+});
+
+test("natural queries resolve variant and condition before canonical routing", () => {
+  const macbook = products.find((product) => product.slug === "macbook-pro-16-m4");
+  const macbookVariant = resolveSearchAttributeVariantIdFromQuery(macbook, getVariantsForProduct(macbook.id), "used macbook pro 16 1tb");
+  assert.equal(macbookVariant, "macbook-pro-16-m4-max-36-1tb");
+  assert.equal(resolveConditionFromQuery("used macbook pro 16 1tb"), "used");
+  assert.equal(canonicalProductPath({ productSlug: macbook.slug, variantId: macbookVariant, condition: "used", market: "us" }), "/product/macbook-pro-16-m4-max-36-1tb-used");
 });
 
 test("none products remain valid without rendering an attribute field", () => {

@@ -46,6 +46,7 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   const { criteria, product, variant } = resolved;
   const initialOutcome = await resolveInitialProductIntelligence(criteria);
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
+  const offers = initialOutcome.status === "SUCCESS" ? initialOutcome.result.offers.filter((offer) => offer.dataSource === "live").slice(0, 5) : [];
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -58,6 +59,17 @@ export default async function CanonicalProductPage({ params }: PageProps) {
       { "@type": "PropertyValue", name: "Condition filter", value: condition },
     ],
     url: `https://kelus.me${canonicalProductPath(criteria)}`,
+    ...(offers.length ? {
+      offers: offers.map((offer) => ({
+        "@type": "Offer",
+        price: offer.shippingCostKnown === false ? offer.price : Math.round((offer.price + offer.shippingCost) * 100) / 100,
+        priceCurrency: offer.currency,
+        itemCondition: `https://schema.org/${offer.condition === "new" ? "NewCondition" : offer.condition === "refurbished" ? "RefurbishedCondition" : "UsedCondition"}`,
+        availability: "https://schema.org/InStock",
+        url: offer.affiliateUrl ?? `https://kelus.me${canonicalProductPath(criteria)}`,
+        seller: offer.seller.name ? { "@type": "Organization", name: offer.seller.name } : undefined,
+      })),
+    } : {}),
   };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}/>

@@ -21,6 +21,26 @@ export function resolveSearchAttributeVariantId(product: Product, variants: Prod
   return configuredVariants[0]?.id;
 }
 
+const compact = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+
+export function resolveSearchAttributeVariantIdFromQuery(product: Product, variants: ProductVariant[], query: string, requestedVariantId?: string) {
+  const configuredVariants = getSearchAttributeVariants(product, variants);
+  const normalized = compact(query);
+  const tokens = normalized.split(" ").filter(Boolean);
+  const matched = configuredVariants.find((variant) => {
+    const evidence = [
+      variant.id,
+      variant.label,
+      variant.storage,
+      ...Object.values(variant.specifications),
+    ].filter((value): value is string => Boolean(value)).map(compact);
+    return evidence.some((value) => normalized.includes(value))
+      || evidence.some((value) => value.split(" ").filter(Boolean).every((token) => tokens.includes(token)));
+  });
+  if (matched) return matched.id;
+  return resolveSearchAttributeVariantId(product, variants, requestedVariantId);
+}
+
 export function isValidSearchConfiguration(product: Product, variants: ProductVariant[], variantId?: string) {
   const configuredVariants = getSearchAttributeVariants(product, variants);
   if (product.searchAttribute.type === "none" && configuredVariants.length === 0) return !variantId;

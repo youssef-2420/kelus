@@ -1,8 +1,11 @@
 import { KelusHeader } from "@/components/KelusHeader";
+import { LandingAnalytics } from "@/components/LandingAnalytics";
 import { SearchControls } from "@/components/SearchControls";
 import { TrustRow } from "@/components/TrustRow";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
+import { products } from "@/lib/demo-data";
+import { canonicalProductPath } from "@/lib/search-state";
 
 function HeroDevices() {
   return <div className="hero-devices" aria-hidden="true">
@@ -13,11 +16,16 @@ function HeroDevices() {
 }
 
 export default function Home() {
-  return <main><KelusHeader />
+  const discoverable = products.slice(0, 12).map((product) => ({
+    product,
+    href: canonicalProductPath({ productSlug: product.slug, variantId: product.searchAttribute.validVariantIds[0], condition: "new", market: "us" }),
+  }));
+  return <main><LandingAnalytics/><KelusHeader />
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
       <div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">Compare current offers, understand the trade-offs, and buy with confidence.</p></div><div id="product-search"><SearchControls deferProductSelection /></div><TrustRow />
     </section>
     <section className="how-section section"><div><p className="eyebrow">How Kelus helps</p><h2>Every price tells only part of the story.</h2><p className="section-copy">Kelus brings together the information that makes a purchase genuinely worth it, not just cheap.</p><Link className="text-link" href="/how-it-works">See how Kelus works <Icon name="arrow" size={15}/></Link></div><div className="feature-grid"><article><Icon name="search"/><h3>Search once</h3><p>Find comparable offers from live eBay listings.</p></article><article><Icon name="shield"/><h3>See the full deal</h3><p>Price, seller quality, shipping, and available retailer terms in one clear view.</p></article><article><Icon name="history"/><h3>Buy at the right time</h3><p>Use price history to decide whether to buy now or wait.</p></article></div></section>
+    <section className="catalog-links section"><p className="eyebrow">Popular searches</p><div>{discoverable.map(({ product, href }) => <Link key={product.slug} href={href}>{product.brand} {product.name}</Link>)}</div></section>
     <section className="demo-note"><Icon name="lock" size={17}/>Live eBay offers are labeled clearly. Price history appears only when enough real data exists.</section>
   </main>;
 }
