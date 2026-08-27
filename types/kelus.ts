@@ -1,6 +1,14 @@
 export const CONDITIONS = ["any", "new", "used", "refurbished"] as const;
 export type ConditionFilter = (typeof CONDITIONS)[number];
-export type OfferCondition = Exclude<ConditionFilter, "any">;
+export type OfferCondition = "new" | "open_box" | "refurbished" | "used";
+export type TrustConfidence = "HIGH" | "MEDIUM" | "LOW";
+export type OfferTrust = {
+  confidence: TrustConfidence;
+  reasons: string[];
+  suspiciousPrice: boolean;
+  eligibleForRecommendation: boolean;
+  eligibleForHistory: boolean;
+};
 export type Market = "us";
 
 export type ProductSearchAttributeType = "storage" | "size" | "edition" | "configuration" | "none";
@@ -28,6 +36,7 @@ export type Offer = {
   sourceTitle?: string;
   imageUrl?: string;
   itemLocation?: string;
+  trust?: OfferTrust;
 };
 
 export type PriceObservation = {

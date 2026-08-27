@@ -36,6 +36,17 @@ function comparableOffers(offers: Offer[]) {
   return known.length ? known : offers;
 }
 
+function trustedForPick(offer: Offer) {
+  if (offer.trust) return offer.trust.eligibleForRecommendation;
+  return offer.dataSource !== "live" || offer.sourceProvider !== "ebay";
+}
+
+function pickCandidates(offers: Offer[]) {
+  const trusted = offers.filter(trustedForPick);
+  const high = trusted.filter((offer) => offer.trust?.confidence === "HIGH");
+  return high.length ? high : trusted;
+}
+
 const rankingTotal = (offer: Offer) => knownOfferTotal(offer) ?? offer.price;
 const pickValue = (offer: Offer, cheapest: number) => evidenceValue(offer) - (rankingTotal(offer) - cheapest) * 0.35;
 
@@ -51,8 +62,9 @@ function reasonsFor(offer: Offer, kind: RecommendationKind) {
 
 export function getRecommendation(offers: Offer[], kind: RecommendationKind): Recommendation | null {
   if (!offers.length) return null;
-  if (kind === "kelus_pick" && !offers.some((offer) => knownOfferTotal(offer) !== null)) return null;
-  const eligible = comparableOffers(offers);
+  const candidates = kind === "kelus_pick" ? pickCandidates(offers) : offers;
+  if (!candidates.length || (kind === "kelus_pick" && !candidates.some((offer) => knownOfferTotal(offer) !== null))) return null;
+  const eligible = comparableOffers(candidates);
   const cheapestTotal = Math.min(...eligible.map(rankingTotal));
   const offer = kind === "cheapest"
     ? [...eligible].sort((a, b) => rankingTotal(a) - rankingTotal(b))[0]
@@ -70,7 +82,11 @@ export function getRecommendation(offers: Offer[], kind: RecommendationKind): Re
 export function getCheaperAlternative(offers: Offer[], pick: Offer, minimumSavings = 10) {
   const pickTotal = knownOfferTotal(pick);
   if (pickTotal === null) return null;
-  const candidates = offers.filter((offer) => offer.id !== pick.id && knownOfferTotal(offer) !== null && pickTotal - knownOfferTotal(offer)! >= minimumSavings).sort((a, b) => knownOfferTotal(a)! - knownOfferTotal(b)!);
+  const candidates = offers.filter((offer) => offer.id !== pick.id
+    && (!offer.trust || offer.trust.eligibleForRecommendation)
+    && knownOfferTotal(offer) !== null
+    && pickTotal - knownOfferTotal(offer)! >= minimumSavings)
+    .sort((a, b) => knownOfferTotal(a)! - knownOfferTotal(b)!);
   const offer = candidates[0];
   if (!offer) return null;
   const savings = Math.round((pickTotal - knownOfferTotal(offer)!) * 100) / 100;

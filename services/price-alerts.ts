@@ -41,7 +41,9 @@ export function alertId(criteria: SearchCriteria) {
 
 export function bestLiveOffer(offers: OfferSearchResult["offers"]) {
   return offers
-    .filter((offer) => offer.dataSource === "live" && knownOfferTotal(offer) !== null)
+    .filter((offer) => offer.dataSource === "live"
+      && (!offer.trust || offer.trust.eligibleForRecommendation)
+      && knownOfferTotal(offer) !== null)
     .sort((a, b) => knownOfferTotal(a)! - knownOfferTotal(b)!)[0] ?? null;
 }
 

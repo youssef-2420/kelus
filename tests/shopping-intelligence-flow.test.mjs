@@ -7,18 +7,19 @@ import { monitorAlertRecords } from "../services/alert-monitor.ts";
 import { getBuyWaitDecision } from "../services/buy-wait-decision.ts";
 import { getPriceContext } from "../services/price-context.ts";
 import { createAlert } from "../services/price-alerts.ts";
-import { matchesCanonicalEbayItem } from "../services/providers/ebay/matching.ts";
 import { normalizeEbayItem, observationForEbayOffer } from "../services/providers/ebay/normalize.ts";
+import { applyEbayPriceAnomalyDetection, validateEbayCandidate } from "../services/providers/ebay/trust-engine.ts";
 import { getRecommendation } from "../services/recommendations.ts";
 
 const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" };
 const product = getProductBySlug(criteria.productSlug);
 const variant = getVariantById(criteria.variantId);
 const item = (id, price, shipping = 0, extra = {}) => ({
-  itemId: `v1|${id}|0`, legacyItemId: id, title: "Apple iPhone 17 Pro 256GB Unlocked", shortDescription: "Apple smartphone 256GB",
+  itemId: `v1|${id}|0`, legacyItemId: id, title: "Apple iPhone 17 Pro 256GB Unlocked Brand New", shortDescription: "Apple smartphone 256GB",
   price: { value: String(price), currency: "USD" }, condition: "New", conditionId: "1000", buyingOptions: ["FIXED_PRICE"],
   categories: [{ categoryId: "9355", categoryName: "Cell Phones & Smartphones" }], itemWebUrl: `https://www.ebay.com/itm/${id}`,
   seller: { username: `seller-${id}`, feedbackPercentage: "99.8", feedbackScore: 2400 },
+  localizedAspects: [{ name: "Model", value: "Apple iPhone 17 Pro" }, { name: "Storage Capacity", value: "256 GB" }, { name: "Lock Status", value: "Factory Unlocked" }],
   shippingOptions: [{ shippingCost: { value: String(shipping), currency: "USD" } }],
   returnTerms: { returnsAccepted: true, returnPeriod: { value: 30, unit: "DAY" }, returnShippingCostPayer: "SELLER" },
   ...extra,
@@ -38,9 +39,12 @@ test("complete search to canonical product, recommendation, and authenticated tr
     item("accessory", 19, 0, { title: "Case for Apple iPhone 17 Pro 256GB" }),
     item("wrong-storage", 700, 0, { title: "Apple iPhone 17 Pro 512GB Unlocked", shortDescription: "" }),
   ];
-  const offers = candidates.filter((candidate) => matchesCanonicalEbayItem(candidate, product, variant, criteria.condition))
-    .map((candidate) => normalizeEbayItem(candidate, product, variant, "2026-08-26T12:00:00Z"))
-    .filter(Boolean);
+  const offers = applyEbayPriceAnomalyDetection(candidates.flatMap((candidate) => {
+    const validation = validateEbayCandidate(candidate, product, variant, criteria.condition);
+    if (!validation.accepted) return [];
+    const offer = normalizeEbayItem(candidate, product, variant, "2026-08-26T12:00:00Z");
+    return offer ? [{ offer, validation }] : [];
+  }));
   assert.equal(offers.length, 2);
   assert.equal(offers.every((offer) => offer.dataSource === "live" && offer.variantId === criteria.variantId), true);
 

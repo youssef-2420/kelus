@@ -16,6 +16,7 @@ export type EbayReturnTerms = {
   returnPeriod?: { value?: number; unit?: string };
   returnShippingCostPayer?: "BUYER" | "SELLER" | string;
 };
+export type EbayAspect = { name?: string; value?: string };
 export type EbayItemSummary = {
   itemId?: string;
   legacyItemId?: string;
@@ -38,6 +39,7 @@ export type EbayItemSummary = {
   shippingOptions?: EbayShippingOption[];
   topRatedBuyingExperience?: boolean;
   returnTerms?: EbayReturnTerms;
+  localizedAspects?: EbayAspect[];
 };
 export type EbayItemDetail = EbayItemSummary & { returnTerms?: EbayReturnTerms };
 export type EbaySearchResponse = {

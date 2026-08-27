@@ -22,7 +22,7 @@ import { readCachedSearch, retrySearch, startSearch } from "@/services/search-se
 import type { Offer, OfferSearchResult, PriceObservation } from "@/types/kelus";
 
 const knownTotal = (offer: Offer) => offer.shippingCostKnown === false ? null : offer.price + offer.shippingCost;
-const titleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
+const titleCase = (value: string) => value.split("_").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
 
 function updatedLabel(value?: string) {
   if (!value || Number.isNaN(Date.parse(value))) return "Update time unavailable";

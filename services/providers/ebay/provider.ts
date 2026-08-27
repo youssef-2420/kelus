@@ -4,8 +4,9 @@ import type { OfferProvider, ProviderRequestContext } from "@/services/providers
 import type { EbayProviderConfig } from "@/services/providers/ebay/config";
 import type { EbayItemDetail, EbayItemSummary, EbaySearchResponse } from "@/services/providers/ebay/types";
 import { clearEbayTokenCache, getEbayApplicationToken } from "./auth.ts";
-import { buildEbayQuery, matchesCanonicalEbayItem } from "./matching.ts";
+import { buildEbayQuery } from "./matching.ts";
 import { normalizeEbayItem, observationForEbayOffer } from "./normalize.ts";
+import { applyEbayPriceAnomalyDetection, validateEbayCandidate } from "./trust-engine.ts";
 
 type Logger = Pick<Console, "info" | "warn" | "error">;
 type CacheEntry = { expiresAt: number; value: ProviderResult };
@@ -94,32 +95,58 @@ export class EbayProvider implements OfferProvider {
     }
 
     const rawItems = payload.itemSummaries ?? [];
-    const matchedItems = rawItems.filter((item) => matchesCanonicalEbayItem(item, product, variant, criteria.condition));
+    const initiallyValidated = rawItems.flatMap((item) => {
+      const validation = validateEbayCandidate(item, product, variant, criteria.condition);
+      return validation.accepted ? [{ item, validation }] : [];
+    });
+    const matchedItems = initiallyValidated.map(({ item }) => item);
     const detailCandidates = [...matchedItems].sort((a, b) => estimatedKnownTotal(a) - estimatedKnownTotal(b)).slice(0, maxDetailRequests);
     const detailResults = await Promise.allSettled(detailCandidates.map((item) => this.getItemDetail(token, item.itemId!, context?.signal)));
     const details = new Map(detailResults.flatMap((result, index) => result.status === "fulfilled" && result.value ? [[detailCandidates[index].itemId, result.value] as const] : []));
     const detailFailures = detailResults.filter((result) => result.status === "rejected").length;
     if (detailFailures) this.logger.warn("[ebay-provider] detail_enrichment_partial", { attempted: detailCandidates.length, failed: detailFailures });
-    const normalizedOffers = matchedItems.flatMap((item) => {
+    const normalizedCandidates = matchedItems.flatMap((item) => {
       try {
         const detail = details.get(item.itemId);
-        const offer = normalizeEbayItem(detail ? { ...item, returnTerms: detail.returnTerms } : item, product, variant, fetchedAt);
-        return offer ? [offer] : [];
+        const enriched = detail ? {
+          ...item,
+          ...detail,
+          itemId: item.itemId,
+          title: detail.title ?? item.title,
+          localizedAspects: detail.localizedAspects ?? item.localizedAspects,
+          seller: detail.seller ?? item.seller,
+          shippingOptions: detail.shippingOptions ?? item.shippingOptions,
+          returnTerms: detail.returnTerms ?? item.returnTerms,
+        } : item;
+        const validation = validateEbayCandidate(enriched, product, variant, criteria.condition);
+        if (!validation.accepted) return [];
+        const offer = normalizeEbayItem(enriched, product, variant, fetchedAt);
+        return offer ? [{ offer, validation }] : [];
       } catch (error) {
         this.logger.warn("[ebay-provider] normalization_failure", { itemId: item.itemId, message: error instanceof Error ? error.message : "Unknown error" });
         return [];
       }
     });
-    const offers = [...new Map(normalizedOffers.map((offer) => [offer.id, offer])).values()];
+    const trustedOffers = applyEbayPriceAnomalyDetection(normalizedCandidates);
+    const offers = [...new Map(trustedOffers.map((offer) => [offer.id, offer])).values()];
+    const observations = offers.filter((offer) => offer.trust?.eligibleForHistory).map(observationForEbayOffer);
     const value: ProviderResult = {
       providerId: this.id,
       offers,
-      observations: offers.map(observationForEbayOffer),
+      observations,
       isDemo: false,
       fetchedAt,
     };
     this.cache.set(key, { expiresAt: this.now() + this.config.cacheTtlMs, value });
-    this.logger.info("[ebay-provider] request_completed", { rawItems: rawItems.length, matchedItems: matchedItems.length, normalizedOffers: offers.length, enrichedItems: details.size });
+    this.logger.info("[ebay-provider] request_completed", {
+      rawItems: rawItems.length,
+      matchedItems: matchedItems.length,
+      normalizedOffers: offers.length,
+      trustedForRecommendation: offers.filter((offer) => offer.trust?.eligibleForRecommendation).length,
+      suspiciousOffers: offers.filter((offer) => offer.trust?.suspiciousPrice).length,
+      rejectedItems: rawItems.length - matchedItems.length,
+      enrichedItems: details.size,
+    });
     return value;
   }
 

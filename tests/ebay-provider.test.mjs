@@ -59,6 +59,7 @@ test("application token helper rejects failed and malformed token responses", as
 
 test("eBay conditions normalize into Kelus conditions", () => {
   assert.equal(normalizeEbayCondition("1000", "New"), "new");
+  assert.equal(normalizeEbayCondition("1500", "Open box"), "open_box");
   assert.equal(normalizeEbayCondition("2020", "Very Good - Refurbished"), "refurbished");
   assert.equal(normalizeEbayCondition("3000", "Used"), "used");
   assert.equal(normalizeEbayCondition(undefined, "Unknown"), null);

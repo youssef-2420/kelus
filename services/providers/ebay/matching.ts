@@ -25,13 +25,15 @@ const itemTitle = (item: EbayItemSummary) => compact(item.title ?? "");
 
 export function normalizeEbayCondition(conditionId?: string, conditionText?: string): OfferCondition | null {
   const id = conditionId?.trim();
-  if (id === "1000" || id === "1500") return "new";
+  if (id === "1000") return "new";
+  if (id === "1500") return "open_box";
   if (["2000", "2010", "2020", "2030", "2500"].includes(id ?? "")) return "refurbished";
   if (["3000", "4000", "5000", "6000", "7000"].includes(id ?? "")) return "used";
   const text = compact(conditionText ?? "");
   if (!text) return null;
   if (text.includes("refurbished") || text.includes("renewed")) return "refurbished";
-  if (text.startsWith("new") || text.includes("open box")) return "new";
+  if (text.includes("open box") || text.includes("new other")) return "open_box";
+  if (text.startsWith("new")) return "new";
   if (text.includes("used") || text.includes("pre owned") || text.includes("preowned")) return "used";
   return null;
 }
