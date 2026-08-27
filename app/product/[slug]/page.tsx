@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
+import { getKelusRuntimeEnvironment } from "@/services/runtime-environment";
+import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
 import { CONDITIONS } from "@/types/kelus";
 
 type RouteParams = { slug: string };
@@ -43,6 +45,7 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   const resolved = exactProduct((await params).slug);
   if (!resolved) notFound();
   const { criteria, product, variant } = resolved;
+  const initialOutcome = await resolveInitialProductIntelligence(criteria, getKelusRuntimeEnvironment());
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
   const structuredData = {
     "@context": "https://schema.org",
@@ -59,6 +62,6 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   };
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}/>
-    <ProductIntelligenceView criteria={criteria}/>
+    <ProductIntelligenceView criteria={criteria} initialOutcome={initialOutcome}/>
   </>;
 }

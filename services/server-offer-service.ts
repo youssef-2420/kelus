@@ -6,7 +6,7 @@ import { EbayProvider } from "@/services/providers/ebay/provider";
 import { readLivePriceObservations, storeLivePriceObservations, type ObservationDatabase } from "@/services/price-observation-store";
 import { readSupabasePriceObservations, storeSupabasePriceObservations, type SupabaseObservationEnvironment } from "@/services/supabase-price-observation-store";
 
-type LiveOfferEnvironment = EbayEnvironment & SupabaseObservationEnvironment & { DB?: ObservationDatabase };
+export type LiveOfferEnvironment = EbayEnvironment & SupabaseObservationEnvironment & { DB?: ObservationDatabase };
 
 let providerState: { key: string; provider: EbayProvider } | null = null;
 

@@ -16,7 +16,7 @@ import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations } from "@/services/price-intelligence";
-import { settleProductOfferLoad } from "@/services/product-offer-load";
+import { settleProductOfferLoad, type ProductOfferLoadOutcome } from "@/services/product-offer-load";
 import { getCheaperAlternative, getRecommendation } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { Offer, OfferSearchResult, PriceObservation } from "@/types/kelus";
@@ -53,16 +53,18 @@ function NewResults() {
   return <main className="nr-page"><div className="nr-state">Opening the canonical product comparison…</div></main>;
 }
 
-export function ProductIntelligenceView({ criteria }: { criteria: ReturnType<typeof readSearchCriteria> }) {
+export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria: ReturnType<typeof readSearchCriteria>; initialOutcome?: ProductOfferLoadOutcome }) {
   const product = getProductBySlug(criteria.productSlug)!;
   const variant = getVariantById(criteria.variantId);
   const cachedResult = useMemo(() => readCachedSearch(criteria)?.result ?? null, [criteria]);
-  const [result, setResult] = useState<OfferSearchResult | null>(cachedResult);
-  const [loading, setLoading] = useState(!result);
-  const [error, setError] = useState("");
+  const serverResult = initialOutcome && initialOutcome.status !== "ERROR" ? initialOutcome.result : null;
+  const [result, setResult] = useState<OfferSearchResult | null>(serverResult ?? cachedResult);
+  const [loading, setLoading] = useState(!initialOutcome && !result);
+  const [error, setError] = useState(initialOutcome?.status === "ERROR" ? initialOutcome.message : "");
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
+    if (attempt === 0 && initialOutcome) return;
     let cancelled = false;
     const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
     settleProductOfferLoad(request).then((outcome) => {
@@ -76,7 +78,7 @@ export function ProductIntelligenceView({ criteria }: { criteria: ReturnType<typ
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [attempt, cachedResult, criteria]);
+  }, [attempt, cachedResult, criteria, initialOutcome]);
 
   const retry = () => {
     setResult(null);

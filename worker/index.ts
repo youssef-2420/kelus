@@ -5,6 +5,7 @@ import { getProductBySlug, getVariantById } from "../lib/demo-data";
 import { getLiveOffersForSearch } from "../services/server-offer-service";
 import { EbayProviderError } from "../services/providers/ebay/provider";
 import { authorizeAlertMonitor, runAlertMonitor } from "../services/server-alert-monitor";
+import { setKelusRuntimeEnvironment } from "../services/runtime-environment";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
 
 interface Env {
@@ -40,6 +41,7 @@ interface ExecutionContext {
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    setKelusRuntimeEnvironment(env);
     const url = new URL(request.url);
 
     if (url.pathname === "/api/offers") return handleOfferSearch(request, env);
