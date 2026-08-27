@@ -6,6 +6,7 @@ import { getLiveOffersForSearch } from "../services/server-offer-service";
 import { EbayProviderError } from "../services/providers/ebay/provider";
 import { authorizeAlertMonitor, runAlertMonitor } from "../services/server-alert-monitor";
 import { setKelusRuntimeEnvironment } from "../services/runtime-environment";
+import { applyCanonicalProductResponsePolicy } from "../services/product-response-policy";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
 
 interface Env {
@@ -58,7 +59,8 @@ const worker = {
       }, allowedWidths);
     }
 
-    return handler.fetch(request, env, ctx);
+    const response = await handler.fetch(request, env, ctx);
+    return applyCanonicalProductResponsePolicy(url.pathname, response);
   },
   async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(runAlertMonitor(env).then((result) => console.info("[alert-monitor] scheduled_complete", result)).catch((error) => {
