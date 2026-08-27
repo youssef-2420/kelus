@@ -64,8 +64,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    const refreshPersistedResult = attempt === 0 && Boolean(serverResult?.refreshRecommended);
-    if (attempt === 0 && initialOutcome && !refreshPersistedResult) return;
+    const refreshPersistedResult = attempt === 0 && Boolean(initialOutcome);
     let cancelled = false;
     const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
     settleProductOfferLoad(request).then((outcome) => {

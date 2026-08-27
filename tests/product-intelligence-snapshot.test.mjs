@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import {
+  clearProductIntelligenceSnapshotMemory,
   productIntelligenceSnapshotKey,
   readProductIntelligenceSnapshot,
   storeProductIntelligenceSnapshot,
@@ -39,6 +40,7 @@ test("offer snapshots use exact product, variant, condition, and market identity
 });
 
 test("live offer snapshots persist primary content without duplicating observation history", async () => {
+  clearProductIntelligenceSnapshotMemory();
   const database = new FakeSnapshotDatabase();
   assert.equal(await storeProductIntelligenceSnapshot(database, "apple-iphone-17-pro", criteria, liveResult), true);
   assert.equal(database.writes, 1);
@@ -53,6 +55,7 @@ test("live offer snapshots persist primary content without duplicating observati
 });
 
 test("expired or malformed snapshots never become product intelligence", async () => {
+  clearProductIntelligenceSnapshotMemory();
   const database = new FakeSnapshotDatabase();
   database.row = { result_json: JSON.stringify(liveResult), fetched_at: fetchedAt };
   assert.equal(await readProductIntelligenceSnapshot(database, criteria, {
@@ -60,7 +63,18 @@ test("expired or malformed snapshots never become product intelligence", async (
     now: () => Date.parse("2026-08-27T10:00:00.000Z"),
   }), null);
   database.row = { result_json: "not-json", fetched_at: fetchedAt };
+  clearProductIntelligenceSnapshotMemory();
   assert.equal(await readProductIntelligenceSnapshot(database, criteria, {
     now: () => Date.parse("2026-08-27T09:02:00.000Z"),
   }), null);
+});
+
+test("an honest zero-offer result is persisted as an EMPTY terminal state", async () => {
+  clearProductIntelligenceSnapshotMemory();
+  const database = new FakeSnapshotDatabase();
+  assert.equal(await storeProductIntelligenceSnapshot(database, "apple-iphone-17-pro", criteria, { ...liveResult, offers: [] }), true);
+  const restored = await readProductIntelligenceSnapshot(database, criteria, {
+    now: () => Date.parse("2026-08-27T09:02:00.000Z"),
+  });
+  assert.deepEqual(restored.offers, []);
 });
