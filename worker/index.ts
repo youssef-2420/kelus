@@ -59,7 +59,14 @@ const worker = {
       }, allowedWidths);
     }
 
+    const renderStartedAt = Date.now();
     const response = await handler.fetch(request, env, ctx);
+    if (url.pathname.startsWith("/product/")) {
+      console.info("[product-intelligence] response_rendered", {
+        durationMs: Date.now() - renderStartedAt,
+        status: response.status,
+      });
+    }
     return applyCanonicalProductResponsePolicy(url.pathname, response);
   },
   async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext) {

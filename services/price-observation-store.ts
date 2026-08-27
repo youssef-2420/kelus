@@ -76,8 +76,8 @@ export async function storeLivePriceObservations(db: ObservationDatabase, canoni
   return results.reduce((count, result) => count + (result.meta.changes ?? 0), 0);
 }
 
-export async function readLivePriceObservations(db: ObservationDatabase, canonicalProductId: string, variantId: string, condition: ConditionFilter, limit = 5_000): Promise<PriceObservation[]> {
-  await ensureObservationSchema(db);
+export async function readLivePriceObservations(db: ObservationDatabase, canonicalProductId: string, variantId: string, condition: ConditionFilter, limit = 5_000, ensureSchema = true): Promise<PriceObservation[]> {
+  if (ensureSchema) await ensureObservationSchema(db);
   const safeLimit = Math.max(1, Math.min(Math.floor(limit), 10_000));
   const result = await db.prepare(`SELECT offer_id, variant_id, provider_id, retailer_id, price_cents,
     shipping_cents, condition, availability, observed_at

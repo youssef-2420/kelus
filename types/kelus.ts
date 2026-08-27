@@ -53,6 +53,8 @@ export type OfferSearchResult = {
   offers: Offer[];
   observations: PriceObservation[];
   observationsStored?: boolean;
+  servedFromCache?: boolean;
+  refreshRecommended?: boolean;
   failedProviders: string[];
   isDemo: boolean;
   connectedProviders?: string[];

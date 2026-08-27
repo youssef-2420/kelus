@@ -64,21 +64,25 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (attempt === 0 && initialOutcome) return;
+    const refreshPersistedResult = attempt === 0 && Boolean(serverResult?.refreshRecommended);
+    if (attempt === 0 && initialOutcome && !refreshPersistedResult) return;
     let cancelled = false;
     const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
     settleProductOfferLoad(request).then((outcome) => {
       if (cancelled) return;
       if (outcome.status === "ERROR") {
-        setResult(null);
-        setError(outcome.message);
+        if (!refreshPersistedResult) {
+          setResult(null);
+          setError(outcome.message);
+        }
       } else {
         setResult(outcome.result);
+        setError("");
       }
       setLoading(false);
     });
     return () => { cancelled = true; };
-  }, [attempt, cachedResult, criteria, initialOutcome]);
+  }, [attempt, cachedResult, criteria, initialOutcome, serverResult?.refreshRecommended]);
 
   const retry = () => {
     setResult(null);

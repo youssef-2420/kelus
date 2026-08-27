@@ -18,3 +18,14 @@ export const priceObservations = sqliteTable("price_observations", {
   index("price_observations_variant_time_idx").on(table.variantId, table.observedAt),
   index("price_observations_product_variant_condition_time_idx").on(table.canonicalProductId, table.variantId, table.condition, table.observedAt),
 ]);
+
+export const productIntelligenceSnapshots = sqliteTable("product_intelligence_snapshots", {
+  cacheKey: text("cache_key").primaryKey(),
+  canonicalProductId: text("canonical_product_id").notNull(),
+  variantId: text("variant_id").notNull(),
+  condition: text("condition").notNull(),
+  market: text("market").notNull(),
+  resultJson: text("result_json").notNull(),
+  fetchedAt: text("fetched_at").notNull(),
+  updatedAt: text("updated_at").notNull(),
+});

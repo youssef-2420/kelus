@@ -15,6 +15,13 @@
       "when": 1787741500476,
       "tag": "0001_tiresome_thunderbolt_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1787824148008,
+      "tag": "0002_optimal_pretty_boy",
+      "breakpoints": true
     }
   ]
 }
