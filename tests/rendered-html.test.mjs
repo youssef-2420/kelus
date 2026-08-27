@@ -22,7 +22,7 @@ test("canonical product exports contain record-specific SEO and structured data"
   assert.match(html, /rel="canonical" href="https:\/\/kelus\.me\/product\/iphone-17-pro-256gb-new\/?"/);
   assert.doesNotMatch(html, /six-month low|manufacturer warranty/i);
   assert.match(html, /OUR PICK/);
-  assert.match(html, /Price context/);
+  assert.match(html, /When to Buy/);
   assert.match(html, /Track/);
   assert.match(html, /live offers checked/);
   assert.doesNotMatch(html, /Checking connected offers|Comparing live eBay offers/);
