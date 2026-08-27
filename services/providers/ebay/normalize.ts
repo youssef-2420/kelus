@@ -114,6 +114,9 @@ export function observationForEbayOffer(offer: Offer): PriceObservation {
     shippingCost: offer.shippingCostKnown === false ? null : offer.shippingCost,
     condition: offer.condition,
     availability: offer.availability,
+    trustConfidence: offer.trust?.confidence,
+    suspiciousPrice: offer.trust?.suspiciousPrice,
+    eligibleForHistory: offer.trust?.eligibleForHistory,
     timestamp: offer.lastUpdated,
     isDemo: false,
   };

@@ -14,10 +14,11 @@ import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById } from "@/lib/demo-data";
 import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
+import { buildKelusDecision, type KelusDecision } from "@/services/decision-engine";
 import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations } from "@/services/price-intelligence";
 import { settleProductOfferLoad, type ProductOfferLoadOutcome } from "@/services/product-offer-load";
-import { getCheaperAlternative, getRecommendation } from "@/services/recommendations";
+import { getCheaperAlternative } from "@/services/recommendations";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import type { Offer, OfferSearchResult, PriceObservation } from "@/types/kelus";
 
@@ -110,30 +111,51 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   };
 
   const offers = result?.offers ?? [];
-  const recommendation = getRecommendation(offers, "kelus_pick");
-  const pick = offers.find((offer) => offer.id === recommendation?.offerId);
-  const cheaperAlternative = pick ? getCheaperAlternative(offers, pick) : null;
-  const lowest = cheaperAlternative?.offer;
-  const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const storedObservations = result?.observationsStored ? result.observations : [];
   const context = getPriceContext(criteria, storedObservations);
+  const decision = buildKelusDecision(criteria, offers, context);
+  const pick = decision.pick;
+  const cheaperAlternative = pick ? getCheaperAlternative(offers, pick) : null;
+  const lowest = decision.cheapest && decision.cheapest.id !== pick?.id ? decision.cheapest : cheaperAlternative?.offer;
+  const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = result?.snapshotState === "stale" || result?.snapshotState === "expired" || result?.lastRefreshFailed || result?.lastRefreshReturnedEmpty;
 
   return <main className="nr-page">
     <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
     <div className="nr-content section">
-      <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading && !result ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked · ${staleSnapshot ? staleUpdatedLabel(result?.lastUpdated) : updatedLabel(result?.lastUpdated)}`}</span></div></section>
+      <section className="nr-product is-compact"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading && !result ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked · ${staleSnapshot ? staleUpdatedLabel(result?.lastUpdated) : updatedLabel(result?.lastUpdated)}`}</span></div></section>
       {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p><button type="button" className="button button-primary" onClick={retry}>Retry</button></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state"><p>No matching live eBay offers found.</p><button type="button" className="button button-primary" onClick={retry}>Retry</button></div> : <>
-        {pick && <section className="nr-section"><p className="nr-label is-accent">Our Pick</p><FeaturedOffer offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/></section>}
-        {lowest && cheaperAlternative && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p><b>Save ${cheaperAlternative.savings}</b></div><LowestOffer offer={lowest} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/></section>}
-        {otherOffers.length > 0 && <section className="nr-section"><p className="nr-label">Other offers</p><div className="nr-other-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name}/>)}</div></section>}
+        <DecisionSummary decision={decision} productName={product.name} criteria={criteria} result={result!}/>
+        {pick && <section className="nr-section"><p className="nr-label is-accent">Why this pick</p><FeaturedOffer offer={pick} productName={product.name} reasons={decision.reasons} tradeoff={decision.cheaperTradeoff}/></section>}
         <PriceContext context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })}/>
-        <section className="nr-section nr-alert-section"><div><p className="nr-label">Price alert</p><h2>Want a better price?</h2><p>Track this product and come back when the price changes.</p></div><WatchButton product={product.name} criteria={criteria} result={result}/></section>
+        {(lowest || otherOffers.length > 0) && <section className="nr-section"><p className="nr-label">Alternatives</p>{lowest && <LowestOffer offer={lowest} productName={product.name} tradeoff={decision.cheaperTradeoff ?? cheaperAlternative?.tradeoff ?? "Cheaper, but Kelus found weaker confidence, seller, shipping, or return evidence."}/>}<div className="nr-other-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name}/>)}</div></section>}
+        <section className={`nr-section nr-alert-section${decision.trackRecommended ? " is-recommended" : ""}`}><div><p className="nr-label">Track</p><h2>{decision.trackRecommended ? "Track this before deciding." : "Keep watching this product."}</h2><p>{decision.trackRecommended ? "Kelus needs more real history or sees a reason to wait, so tracking is the next best move." : "Track it to keep the decision connected to real future observations."}</p></div><WatchButton product={product.name} criteria={criteria} result={result}/></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
       </>}
     </div>
   </main>;
+}
+
+function DecisionSummary({ decision, productName, criteria, result }: { decision: KelusDecision; productName: string; criteria: ReturnType<typeof readSearchCriteria>; result: OfferSearchResult }) {
+  const pick = decision.pick;
+  const decisionLabel = decision.buyWaitDecision.label;
+  return <section className="nr-decision nr-section">
+    <div className="nr-decision-copy">
+      <p className="nr-label is-accent">Decision</p>
+      <h2>{pick ? "OUR PICK" : "NO PICK YET"}</h2>
+      <p className="nr-decision-sub">{pick ? `${decision.retailerName}${decision.sellerName !== "Seller unavailable" ? ` · ${decision.sellerName}` : ""}` : "Kelus did not find a recommendation-quality offer."}</p>
+      {decision.cheaperTradeoff && <p className="nr-decision-tradeoff">{decision.cheaperTradeoff}</p>}
+      <ul>{decision.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+    </div>
+    <div className="nr-decision-side">
+      <span className="nr-decision-price">{decision.totalPrice ? `$${decision.totalPrice}` : "—"}</span>
+      <span className={`nr-confidence is-${decision.confidence.toLowerCase()}`}>{decision.confidence} confidence</span>
+      <span className="nr-buywait">{decisionLabel}</span>
+      <p>{decision.buyWaitDecision.explanation}</p>
+      {pick ? <OutboundRetailerCTA offer={pick}/> : <WatchButton product={productName} criteria={criteria} result={result}/>}
+    </div>
+  </section>;
 }
 
 function ListingImage({ offer, productName, large = false }: { offer?: Offer; productName: string; large?: boolean }) {
@@ -146,8 +168,8 @@ function OfferIdentity({ offer, productName }: { offer: Offer; productName: stri
   return <div className="nr-offer-identity"><ListingImage offer={offer} productName={productName}/><div><div className="nr-retailer"><EbayWordmark/><b>{offer.retailer.name}</b></div><p>{titleCase(offer.condition)} · {offer.shippingCostKnown === false ? "Shipping unavailable" : offer.shippingCost ? `+$${offer.shippingCost} shipping` : "Free shipping"} · {offer.returnPolicy ?? "Return terms unavailable"}</p></div></div>;
 }
 
-function FeaturedOffer({ offer, productName, reasons }: { offer: Offer; productName: string; reasons: string[] }) {
-  return <article className="nr-feature-card"><div className="nr-feature-top"><OfferIdentity offer={offer} productName={productName}/><strong>${knownTotal(offer) ?? offer.price}</strong></div><div className="nr-why"><b>Why we picked it</b><p>{reasons.slice(0, 3).join(" · ") || "Strong balance of known price and seller terms among connected offers."}</p></div><span className="nr-cta"><OutboundRetailerCTA offer={offer}/></span></article>;
+function FeaturedOffer({ offer, productName, reasons, tradeoff }: { offer: Offer; productName: string; reasons: string[]; tradeoff: string | null }) {
+  return <article className="nr-feature-card"><div className="nr-feature-top"><OfferIdentity offer={offer} productName={productName}/><strong>${knownTotal(offer) ?? offer.price}</strong></div><div className="nr-why"><b>Why we picked it</b><p>{reasons.slice(0, 3).join(" · ") || "Strong balance of known price and seller terms among connected offers."}</p>{tradeoff && <p>{tradeoff}</p>}</div><span className="nr-cta"><OutboundRetailerCTA offer={offer}/></span></article>;
 }
 
 function LowestOffer({ offer, productName, tradeoff }: { offer: Offer; productName: string; tradeoff: string }) {

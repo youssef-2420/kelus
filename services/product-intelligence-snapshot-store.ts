@@ -1,4 +1,5 @@
 import type { OfferSearchResult, SearchCriteria } from "@/types/kelus";
+import { applySnapshotTrustGate } from "./snapshot-trust.ts";
 
 type SnapshotStatement = {
   bind(...values: unknown[]): SnapshotStatement;
@@ -214,8 +215,10 @@ export async function readProductIntelligenceSnapshot(
       : ageMs > (options.refreshAgeMs ?? defaultRefreshAgeMs)
         ? "stale" as const
         : "fresh" as const;
+    const trusted = applySnapshotTrustGate(criteria, result);
+    if (!trusted) return null;
     return {
-      ...result,
+      ...trusted,
       lastUpdated: result.lastUpdated ?? row.fetched_at,
       servedFromCache: true,
       refreshRecommended: snapshotState !== "fresh" || result.lastRefreshFailed || result.lastRefreshReturnedEmpty,

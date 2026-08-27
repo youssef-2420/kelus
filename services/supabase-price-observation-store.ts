@@ -35,6 +35,8 @@ export async function storeSupabasePriceObservations(env: SupabaseObservationEnv
     && observation.retailerId
     && observation.condition
     && observation.availability
+    && observation.eligibleForHistory !== false
+    && observation.trustConfidence !== "LOW"
     && Number.isFinite(observation.price)
     && !Number.isNaN(Date.parse(observation.timestamp)))
     .map((observation) => ({

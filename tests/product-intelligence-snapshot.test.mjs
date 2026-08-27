@@ -8,6 +8,7 @@ import {
   staleSnapshotAfterRefresh,
   storeProductIntelligenceSnapshot,
 } from "../services/product-intelligence-snapshot-store.ts";
+import { getRecommendation } from "../services/recommendations.ts";
 
 const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" };
 const fetchedAt = "2026-08-27T09:00:00.000Z";
@@ -20,6 +21,30 @@ const liveResult = {
   isDemo: false,
   lastUpdated: fetchedAt,
 };
+const retailer = { id: "ebay", name: "eBay", logo: "e", website: "https://www.ebay.com" };
+const snapshotOffer = (id, price, seller, sellerOverrides = {}) => ({
+  id,
+  productId: "apple-iphone-17-pro",
+  variantId: "iphone-17-pro-256gb",
+  retailer,
+  seller: { id: `ebay-seller-${seller}`, retailerId: "ebay", name: seller, sellerType: "marketplace_seller", feedbackPercentage: 99.7, feedbackScore: 1818, ...sellerOverrides },
+  price,
+  currency: "USD",
+  condition: "new",
+  shippingCost: 0,
+  shippingCostKnown: true,
+  delivery: "Free shipping",
+  availability: "Unknown",
+  warranty: "Warranty information unavailable",
+  returnPolicy: "Returns accepted · Seller-paid return shipping",
+  affiliateUrl: `https://www.ebay.com/itm/${id}`,
+  lastUpdated: fetchedAt,
+  dataSource: "live",
+  sourceProvider: "ebay",
+  sourceCondition: "New",
+  sourceTitle: "Apple iPhone 17 Pro - 256 GB - Silver (Unlocked) BRAND NEW - A3256",
+  trust: { confidence: "MEDIUM", reasons: ["Old snapshot trust."], suspiciousPrice: false, eligibleForRecommendation: true, eligibleForHistory: true },
+});
 
 class FakeStatement {
   constructor(database, sql) { this.database = database; this.sql = sql; this.args = []; }
@@ -76,6 +101,28 @@ test("stale and expired valid snapshots remain available and request refresh", a
   });
   assert.equal(expired.snapshotState, "expired");
   assert.equal(expired.offers[0].id, "ebay-1");
+});
+
+test("persisted eBay snapshots are rechecked before recommendation", async () => {
+  clearProductIntelligenceSnapshotMemory();
+  const database = new FakeSnapshotDatabase();
+  database.row = { result_json: JSON.stringify({
+    ...liveResult,
+    offers: [
+      snapshotOffer("ebay-v1|298590753075|0", 689, "marentech", { feedbackPercentage: 100, feedbackScore: 1 }),
+      snapshotOffer("ebay-v1|227439588255|0", 1204, "nycphonebuyer"),
+    ],
+  }), fetched_at: fetchedAt };
+  const restored = await readProductIntelligenceSnapshot(database, criteria, {
+    now: () => Date.parse("2026-08-27T09:02:00.000Z"),
+  });
+  const cheap = restored.offers.find((offer) => offer.id === "ebay-v1|298590753075|0");
+  assert.equal(cheap.trust.suspiciousPrice, true);
+  assert.equal(cheap.trust.confidence, "LOW");
+  assert.equal(cheap.trust.eligibleForRecommendation, false);
+  assert.equal(cheap.trust.eligibleForHistory, false);
+  assert.match(cheap.trust.reasons.join(" "), /Only 2 valid comparable offers/i);
+  assert.equal(getRecommendation(restored.offers, "kelus_pick")?.offerId, "ebay-v1|227439588255|0");
 });
 
 test("malformed snapshots never become product intelligence", async () => {

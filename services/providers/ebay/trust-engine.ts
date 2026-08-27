@@ -171,6 +171,22 @@ function knownTotal(offer: Offer) {
   return offer.shippingCostKnown === false ? null : offer.price + offer.shippingCost;
 }
 
+function lowPriceAnomaly(total: number | null, totals: number[]) {
+  if (total === null || totals.length < 2) return null;
+  if (totals.length >= 4) {
+    const clusterMedian = median(totals);
+    return clusterMedian - total >= 100 && total <= clusterMedian * 0.65
+      ? { benchmark: clusterMedian, comparisonCount: totals.length, insufficientComparison: false }
+      : null;
+  }
+  const sorted = [...totals].sort((a, b) => a - b);
+  if (total !== sorted[0]) return null;
+  const nextComparable = sorted.find((value) => value > total);
+  return nextComparable !== undefined && nextComparable - total >= 100 && total <= nextComparable * 0.65
+    ? { benchmark: nextComparable, comparisonCount: totals.length, insufficientComparison: true }
+    : null;
+}
+
 export function applyEbayPriceAnomalyDetection(candidates: Array<{ offer: Offer; validation: EbayTrustValidation }>) {
   const groups = new Map<string, Array<{ offer: Offer; validation: EbayTrustValidation }>>();
   for (const candidate of candidates) {
@@ -182,14 +198,16 @@ export function applyEbayPriceAnomalyDetection(candidates: Array<{ offer: Offer;
       .map((candidate) => knownTotal(candidate.offer))
       .filter((value): value is number => value !== null && Number.isFinite(value));
     const total = knownTotal(offer);
-    const clusterMedian = totals.length >= 4 ? median(totals) : null;
-    const suspiciousPrice = total !== null && clusterMedian !== null && clusterMedian - total >= 100 && total <= clusterMedian * 0.65;
-    const anomalyPassed = !suspiciousPrice || validation.strongerValidation;
-    const confidence: TrustConfidence = suspiciousPrice && !validation.strongerValidation ? "LOW" : validation.confidence;
+    const anomaly = lowPriceAnomaly(total, totals);
+    const suspiciousPrice = anomaly !== null;
+    const anomalyPassed = !suspiciousPrice || (!anomaly.insufficientComparison && validation.strongerValidation);
+    const confidence: TrustConfidence = suspiciousPrice && !anomalyPassed ? "LOW" : validation.confidence;
     const reasons = [...validation.reasons];
-    if (suspiciousPrice) reasons.push(validation.strongerValidation
-      ? `Price is unusually low versus the $${Math.round(clusterMedian)} comparable-offer median, but stronger structured and seller checks passed.`
-      : `Price is unusually low versus the $${Math.round(clusterMedian)} comparable-offer median and requires stronger validation.`);
+    if (suspiciousPrice && anomaly) reasons.push(anomaly.insufficientComparison
+      ? `Only ${anomaly.comparisonCount} valid comparable offers are available; this price is unusually low versus the $${Math.round(anomaly.benchmark)} next comparable offer and needs more corroboration.`
+      : validation.strongerValidation
+        ? `Price is unusually low versus the $${Math.round(anomaly.benchmark)} comparable-offer median, but stronger structured and seller checks passed.`
+        : `Price is unusually low versus the $${Math.round(anomaly.benchmark)} comparable-offer median and requires stronger validation.`);
     const trust: OfferTrust = {
       confidence,
       reasons,

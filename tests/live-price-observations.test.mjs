@@ -59,6 +59,16 @@ test("live observations persist canonical IDs and exact price/shipping cents", a
   assert.equal(insert.args[6], 1250);
 });
 
+test("live observation storage rejects observations marked ineligible by the trust gate", async () => {
+  const database = new FakeD1();
+  const rejected = [
+    { ...liveObservation, id: "rejected", offerId: "rejected", eligibleForHistory: false },
+    { ...liveObservation, id: "low", offerId: "low", trustConfidence: "LOW", eligibleForHistory: true },
+  ];
+  assert.equal(await storeLivePriceObservations(database, "apple-iphone-17-pro", rejected), 0);
+  assert.equal(database.batches.length, 0);
+});
+
 test("stored observations normalize back into live Kelus history", async () => {
   const database = new FakeD1([{
     offer_id: "ebay-offer-1",

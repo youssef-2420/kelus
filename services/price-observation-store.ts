@@ -51,6 +51,8 @@ export async function storeLivePriceObservations(db: ObservationDatabase, canoni
     && observation.retailerId
     && observation.condition
     && observation.availability
+    && observation.eligibleForHistory !== false
+    && observation.trustConfidence !== "LOW"
     && Number.isFinite(observation.price)
     && !Number.isNaN(Date.parse(observation.timestamp)));
   if (!live.length) return 0;

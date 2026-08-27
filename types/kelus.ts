@@ -51,6 +51,9 @@ export type PriceObservation = {
   shippingCost?: number | null;
   condition?: OfferCondition;
   availability?: Offer["availability"];
+  trustConfidence?: TrustConfidence;
+  suspiciousPrice?: boolean;
+  eligibleForHistory?: boolean;
 };
 export type PricePoint = { label: string; price: number };
 export type PriceVerdict = "Great price" | "Good price" | "Typical" | "Expensive" | "Price history is building";

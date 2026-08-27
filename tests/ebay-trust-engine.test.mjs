@@ -57,6 +57,17 @@ test("trust validation rejects wrong models and sibling models", () => {
   assert.match(wrong.reasons[0], /model conflicts|exact model/i);
 });
 
+test("trust validation accepts exact structured model, storage, unlocked, fixed-price New listings as HIGH confidence", () => {
+  const validation = validateEbayCandidate(item(), product, variant, "new");
+  assert.equal(validation.accepted, true);
+  assert.equal(validation.confidence, "HIGH");
+  assert.equal(validation.modelEvidence, "structured");
+  assert.equal(validation.storageEvidence, "structured");
+  assert.equal(validation.lockEvidence, "structured");
+  assert.equal(validation.strongerValidation, true);
+  assert.match(validation.reasons.join(" "), /exact model/i);
+});
+
 test("trust validation rejects wrong storage even when the model matches", () => {
   const wrong = validateEbayCandidate(item({
     title: "Apple iPhone 17 Pro 512GB Factory Unlocked Brand New",
@@ -74,6 +85,34 @@ test("Open Box title evidence cannot be mislabeled or stored as New", () => {
   const openBox = validateEbayCandidate(item({ conditionId: "1500", condition: "Open box", title: "Apple iPhone 17 Pro 256GB Unlocked Open Box" }), product, variant, "new");
   assert.equal(openBox.accepted, false);
   assert.match(openBox.reasons[0], /does not match requested new/i);
+});
+
+test("refurbished and used conditions stay separate from New and Open Box", () => {
+  const refurbished = validateEbayCandidate(item({
+    title: "Apple iPhone 17 Pro 256GB Factory Unlocked Refurbished",
+    conditionId: "2000",
+    condition: "Certified Refurbished",
+  }), product, variant, "new");
+  assert.equal(refurbished.accepted, false);
+  assert.match(refurbished.reasons[0], /refurbished does not match requested new/i);
+
+  const used = validateEbayCandidate(item({
+    title: "Apple iPhone 17 Pro 256GB Factory Unlocked Used",
+    conditionId: "3000",
+    condition: "Used",
+  }), product, variant, "new");
+  assert.equal(used.accepted, false);
+  assert.match(used.reasons[0], /used does not match requested new/i);
+});
+
+test("title condition evidence overrides contradictory structured New data", () => {
+  const conflict = validateEbayCandidate(item({
+    title: "Apple iPhone 17 Pro 256GB Factory Unlocked Refurbished",
+    conditionId: "1000",
+    condition: "New",
+  }), product, variant, "new");
+  assert.equal(conflict.accepted, false);
+  assert.match(conflict.reasons[0], /Condition conflict/i);
 });
 
 test("conflicting structured lock evidence and title evidence is rejected", () => {
@@ -104,6 +143,32 @@ test("dramatically cheap offers are blocked from Our Pick and price history", ()
   assert.equal(suspicious.trust.eligibleForHistory, false);
   assert.match(suspicious.trust.reasons.at(-1), /requires stronger validation/i);
   assert.notEqual(getRecommendation(trusted, "kelus_pick")?.offerId, "suspicious");
+});
+
+test("two-offer dramatic low price is accepted but blocked with insufficient-comparison confidence", () => {
+  const cheapValidation = { ...validateEbayCandidate(item({
+    itemId: "cheap",
+    title: "Apple iPhone 17 Pro - 256 GB - Deep Blue (Unlocked & Sealed)",
+    seller: { username: "thin-evidence", feedbackPercentage: "100", feedbackScore: 1 },
+    localizedAspects: [{ name: "Model", value: "Apple iPhone 17 Pro" }, { name: "Storage Capacity", value: "256 GB" }, { name: "Lock Status", value: "Factory Unlocked" }],
+  }), product, variant, "new"), strongerValidation: true };
+  const normalValidation = { ...validateEbayCandidate(item({
+    itemId: "normal",
+    title: "Apple iPhone 17 Pro - 256 GB - Silver (Unlocked) BRAND NEW - A3256",
+    seller: { username: "strong-seller", feedbackPercentage: "99.7", feedbackScore: 1819 },
+    localizedAspects: [{ name: "Model", value: "Apple iPhone 17 Pro" }, { name: "Storage Capacity", value: "256 GB" }, { name: "Lock Status", value: "Factory Unlocked" }],
+  }), product, variant, "new"), strongerValidation: true };
+  const trusted = applyEbayPriceAnomalyDetection([
+    { offer: offer("cheap", 689), validation: cheapValidation },
+    { offer: offer("normal", 1204), validation: normalValidation },
+  ]);
+  const cheap = trusted.find((candidate) => candidate.id === "cheap");
+  assert.equal(cheap.trust.suspiciousPrice, true);
+  assert.equal(cheap.trust.confidence, "LOW");
+  assert.equal(cheap.trust.eligibleForRecommendation, false);
+  assert.equal(cheap.trust.eligibleForHistory, false);
+  assert.match(cheap.trust.reasons.at(-1), /Only 2 valid comparable offers/i);
+  assert.equal(getRecommendation(trusted, "kelus_pick")?.offerId, "normal");
 });
 
 test("Our Pick prefers HIGH-confidence comparable offers over cheaper MEDIUM-confidence offers", () => {

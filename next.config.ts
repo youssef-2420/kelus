@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   basePath: useRepositoryPath ? "/kelus" : "",
   assetPrefix: useRepositoryPath ? "/kelus/" : undefined,
   trailingSlash: true,
+  turbopack: { root: process.cwd() },
 };
 
 export default nextConfig;
