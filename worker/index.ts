@@ -5,6 +5,7 @@ import { getProductBySlug, getVariantById } from "../lib/demo-data";
 import { getLiveOffersForSearch } from "../services/server-offer-service";
 import { EbayProviderError } from "../services/providers/ebay/provider";
 import { authorizeAlertMonitor, runAlertMonitor } from "../services/server-alert-monitor";
+import { refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh";
 import { setKelusRuntimeEnvironment } from "../services/runtime-environment";
 import { applyCanonicalProductResponsePolicy } from "../services/product-response-policy";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
@@ -70,9 +71,14 @@ const worker = {
     return applyCanonicalProductResponsePolicy(url.pathname, response);
   },
   async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext) {
-    ctx.waitUntil(runAlertMonitor(env).then((result) => console.info("[alert-monitor] scheduled_complete", result)).catch((error) => {
-      console.error("[alert-monitor] scheduled_failed", { message: error instanceof Error ? error.message : "Unknown error" });
-    }));
+    ctx.waitUntil(Promise.allSettled([
+      runAlertMonitor(env).then((result) => console.info("[alert-monitor] scheduled_complete", result)).catch((error) => {
+        console.error("[alert-monitor] scheduled_failed", { message: error instanceof Error ? error.message : "Unknown error" });
+      }),
+      refreshPersistedProductIntelligenceSnapshots(env, fetch, Date.now(), getLiveOffersForSearch).then((result) => console.info("[product-intelligence] scheduled_refresh_complete", result)).catch((error) => {
+        console.error("[product-intelligence] scheduled_refresh_failed", { message: error instanceof Error ? error.message : "Unknown error" });
+      }),
+    ]).then(() => undefined));
   },
 };
 
@@ -104,7 +110,7 @@ async function handleOfferSearch(request: Request, env: Env) {
   const criteria = criteriaFrom(new URL(request.url));
   if (!criteria) return json({ error: { code: "invalid_search", message: "Choose a supported iPhone model, storage, condition, and the United States market." } }, 400);
   try {
-    return json(await getLiveOffersForSearch(criteria, env), 200, "public, max-age=30, s-maxage=60, stale-while-revalidate=300");
+    return json(await getLiveOffersForSearch(criteria, env, fetch, { allowStaleFallback: true }), 200, "public, max-age=30, s-maxage=60, stale-while-revalidate=300");
   } catch (error) {
     const providerError = error instanceof EbayProviderError ? error : null;
     const code = providerError?.code ?? (error instanceof Error && error.message.includes("not configured") ? "provider_unconfigured" : "provider_error");

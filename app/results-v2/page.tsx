@@ -32,6 +32,16 @@ function updatedLabel(value?: string) {
   return "Updated recently";
 }
 
+function staleUpdatedLabel(value?: string) {
+  if (!value || Number.isNaN(Date.parse(value))) return "Stale snapshot · Last update unavailable";
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(new Date(value));
+  return `Stale snapshot · Last updated ${formatted} UTC`;
+}
+
 function realHistoryPoints(observations: PriceObservation[]) {
   const daily = new Map<string, number>();
   observations.filter((item) => !item.isDemo && item.shippingCost !== null && item.shippingCost !== undefined && !Number.isNaN(Date.parse(item.timestamp))).forEach((item) => {
@@ -75,7 +85,16 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
           setError(outcome.message);
         }
       } else {
-        setResult(outcome.result);
+        setResult((current) => outcome.status === "EMPTY" && current?.offers.length
+          ? {
+            ...current,
+            servedFromCache: true,
+            refreshRecommended: true,
+            snapshotState: current.snapshotState === "expired" ? "expired" : "stale",
+            lastRefreshAttemptAt: new Date().toISOString(),
+            lastRefreshReturnedEmpty: true,
+          }
+          : outcome.result);
         setError("");
       }
       setLoading(false);
@@ -99,11 +118,12 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const storedObservations = result?.observationsStored ? result.observations : [];
   const context = getPriceContext(criteria, storedObservations);
   const heroOffer = pick ?? offers[0];
+  const staleSnapshot = result?.snapshotState === "stale" || result?.snapshotState === "expired" || result?.lastRefreshFailed || result?.lastRefreshReturnedEmpty;
 
   return <main className="nr-page">
     <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
     <div className="nr-content section">
-      <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked · ${updatedLabel(result?.lastUpdated)}`}</span></div></section>
+      <section className="nr-product"><ListingImage offer={heroOffer} productName={product.name} large/><div><h1>{product.name}</h1><p>{[variant?.label, criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition), "Unlocked"].filter(Boolean).join(" · ")}</p><span>{loading && !result ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} checked · ${staleSnapshot ? staleUpdatedLabel(result?.lastUpdated) : updatedLabel(result?.lastUpdated)}`}</span></div></section>
       {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p><button type="button" className="button button-primary" onClick={retry}>Retry</button></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state"><p>No matching live eBay offers found.</p><button type="button" className="button button-primary" onClick={retry}>Retry</button></div> : <>
         {pick && <section className="nr-section"><p className="nr-label is-accent">Our Pick</p><FeaturedOffer offer={pick} productName={product.name} reasons={recommendation?.reasons ?? []}/></section>}
         {lowest && cheaperAlternative && <section className="nr-section"><div className="nr-label-row"><p className="nr-label">Lowest price</p><b>Save ${cheaperAlternative.savings}</b></div><LowestOffer offer={lowest} productName={product.name} tradeoff={cheaperAlternative.tradeoff}/></section>}

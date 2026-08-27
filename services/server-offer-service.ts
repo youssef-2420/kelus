@@ -5,11 +5,32 @@ import { getEbayProviderConfig } from "@/services/providers/ebay/config";
 import { EbayProvider } from "@/services/providers/ebay/provider";
 import { readLivePriceObservations, storeLivePriceObservations, type ObservationDatabase } from "@/services/price-observation-store";
 import { readSupabasePriceObservations, storeSupabasePriceObservations, type SupabaseObservationEnvironment } from "@/services/supabase-price-observation-store";
-import { storeProductIntelligenceSnapshot, type ProductIntelligenceSnapshotDatabase } from "@/services/product-intelligence-snapshot-store";
+import {
+  markProductIntelligenceRefreshEmpty,
+  markProductIntelligenceRefreshFailure,
+  readProductIntelligenceSnapshot,
+  staleSnapshotAfterRefresh,
+  storeProductIntelligenceSnapshot,
+  type ProductIntelligenceSnapshotDatabase,
+} from "@/services/product-intelligence-snapshot-store";
 
 export type LiveOfferEnvironment = EbayEnvironment & SupabaseObservationEnvironment & { DB?: ObservationDatabase & ProductIntelligenceSnapshotDatabase };
 
 let providerState: { key: string; provider: EbayProvider } | null = null;
+
+type LiveOfferOptions = { allowStaleFallback?: boolean; snapshotReadTimeoutMs?: number };
+
+async function within<T>(work: Promise<T>, timeoutMs: number, fallback: T) {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      work.catch(() => fallback),
+      new Promise<T>((resolve) => { timer = setTimeout(() => resolve(fallback), timeoutMs); }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 
 function providerFor(env: EbayEnvironment, fetcher: typeof fetch) {
   const config = getEbayProviderConfig(env);
@@ -18,15 +39,39 @@ function providerFor(env: EbayEnvironment, fetcher: typeof fetch) {
   return providerState.provider;
 }
 
-export async function getLiveOffersForSearch(criteria: SearchCriteria, env: LiveOfferEnvironment, fetcher: typeof fetch = fetch): Promise<OfferSearchResult> {
+export async function getLiveOffersForSearch(
+  criteria: SearchCriteria,
+  env: LiveOfferEnvironment,
+  fetcher: typeof fetch = fetch,
+  options: LiveOfferOptions = {},
+): Promise<OfferSearchResult> {
   const requestStartedAt = Date.now();
-  const provider = providerFor(env, fetcher);
+  const refreshAttemptedAt = new Date(requestStartedAt).toISOString();
+  const snapshotPromise = options.allowStaleFallback && env.DB
+    ? within(readProductIntelligenceSnapshot(env.DB, criteria), options.snapshotReadTimeoutMs ?? 500, null)
+    : Promise.resolve(null);
+  let provider: EbayProvider;
+  try {
+    provider = providerFor(env, fetcher);
+  } catch (error) {
+    const snapshot = await snapshotPromise;
+    if (env.DB) await markProductIntelligenceRefreshFailure(env.DB, criteria, refreshAttemptedAt).catch(() => false);
+    const stale = options.allowStaleFallback ? staleSnapshotAfterRefresh(snapshot, "failed", refreshAttemptedAt) : null;
+    if (stale) return stale;
+    throw error;
+  }
   const providers = [provider];
   const settled = await Promise.allSettled(providers.map((current) => current.getOffers(criteria)));
   const successful = settled.flatMap((result) => result.status === "fulfilled" ? [result.value] : []);
   const providerDurationMs = Date.now() - requestStartedAt;
   const failedProviders = settled.flatMap((result, index) => result.status === "rejected" ? [providers[index].id] : []);
-  if (!successful.length && failedProviders.length) throw settled[0].status === "rejected" ? settled[0].reason : new Error("eBay offers are unavailable.");
+  const persistedSnapshot = await snapshotPromise;
+  if (!successful.length && failedProviders.length) {
+    if (env.DB) await markProductIntelligenceRefreshFailure(env.DB, criteria, refreshAttemptedAt).catch(() => false);
+    const stale = options.allowStaleFallback ? staleSnapshotAfterRefresh(persistedSnapshot, "failed", refreshAttemptedAt) : null;
+    if (stale) return stale;
+    throw settled[0].status === "rejected" ? settled[0].reason : new Error("eBay offers are unavailable.");
+  }
   const currentObservations = successful.flatMap((result) => result.observations);
   const baseResult: OfferSearchResult = {
     offers: successful.flatMap((result) => result.offers),
@@ -40,6 +85,10 @@ export async function getLiveOffersForSearch(criteria: SearchCriteria, env: Live
   let observations = currentObservations;
   let observationsStored = false;
   const canonicalProductId = getProductBySlug(criteria.productSlug)?.id;
+  if (!baseResult.offers.length && persistedSnapshot?.offers.length) {
+    if (env.DB) await markProductIntelligenceRefreshEmpty(env.DB, criteria, refreshAttemptedAt).catch(() => false);
+    return staleSnapshotAfterRefresh(persistedSnapshot, "empty", refreshAttemptedAt)!;
+  }
   if (env.DB && canonicalProductId) {
     const snapshotStartedAt = Date.now();
     try {

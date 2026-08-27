@@ -55,6 +55,10 @@ export type OfferSearchResult = {
   observationsStored?: boolean;
   servedFromCache?: boolean;
   refreshRecommended?: boolean;
+  snapshotState?: "fresh" | "stale" | "expired";
+  lastRefreshAttemptAt?: string;
+  lastRefreshFailed?: boolean;
+  lastRefreshReturnedEmpty?: boolean;
   failedProviders: string[];
   isDemo: boolean;
   connectedProviders?: string[];

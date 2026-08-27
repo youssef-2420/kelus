@@ -8,7 +8,23 @@ function snapshotKey(criteria: SearchCriteria) {
   return [criteria.productSlug, criteria.variantId ?? "", criteria.condition, criteria.market].join(":");
 }
 
-export function readBundledProductIntelligenceSnapshot(criteria: SearchCriteria): OfferSearchResult | null {
-  return snapshots[snapshotKey(criteria)] ?? null;
+export function readBundledProductIntelligenceSnapshot(
+  criteria: SearchCriteria,
+  now = Date.now(),
+): OfferSearchResult | null {
+  const snapshot = snapshots[snapshotKey(criteria)];
+  if (!snapshot) return null;
+  const fetchedAt = snapshot.lastUpdated ? Date.parse(snapshot.lastUpdated) : Number.NaN;
+  const ageMs = Number.isNaN(fetchedAt) ? Number.POSITIVE_INFINITY : Math.max(0, now - fetchedAt);
+  const snapshotState = ageMs > 7 * 24 * 60 * 60 * 1_000
+    ? "expired" as const
+    : ageMs > 5 * 60 * 1_000
+      ? "stale" as const
+      : "fresh" as const;
+  return {
+    ...snapshot,
+    servedFromCache: true,
+    refreshRecommended: snapshotState !== "fresh",
+    snapshotState,
+  };
 }
-
