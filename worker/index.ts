@@ -7,7 +7,7 @@ import { EbayProviderError } from "../services/providers/ebay/provider";
 import { authorizeAlertMonitor, runAlertMonitor } from "../services/server-alert-monitor";
 import { refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh";
 import { setKelusRuntimeEnvironment } from "../services/runtime-environment";
-import { applyCanonicalProductResponsePolicy } from "../services/product-response-policy";
+import { applyCanonicalProductResponsePolicy, applyRootResponsePolicy, canonicalHostRedirect } from "../services/product-response-policy";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
 
 interface Env {
@@ -45,6 +45,8 @@ const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     setKelusRuntimeEnvironment(env);
     const url = new URL(request.url);
+    const hostRedirect = canonicalHostRedirect(request.url);
+    if (hostRedirect) return hostRedirect;
 
     if (url.pathname === "/api/offers") return handleOfferSearch(request, env);
     if (url.pathname === "/api/alerts/check") return handleAlertCheck(request, env, ctx);
@@ -68,7 +70,7 @@ const worker = {
         status: response.status,
       });
     }
-    return applyCanonicalProductResponsePolicy(url.pathname, response);
+    return applyRootResponsePolicy(url.pathname, applyCanonicalProductResponsePolicy(url.pathname, response));
   },
   async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(Promise.allSettled([
