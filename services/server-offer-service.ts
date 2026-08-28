@@ -89,44 +89,46 @@ export async function getLiveOffersForSearch(
     if (env.DB) await markProductIntelligenceRefreshEmpty(env.DB, criteria, refreshAttemptedAt).catch(() => false);
     return staleSnapshotAfterRefresh(persistedSnapshot, "empty", refreshAttemptedAt)!;
   }
-  if (env.DB && canonicalProductId) {
+  const snapshotTask = env.DB && canonicalProductId ? (async () => {
     const snapshotStartedAt = Date.now();
     try {
-      await storeProductIntelligenceSnapshot(env.DB, canonicalProductId, criteria, baseResult);
+      await storeProductIntelligenceSnapshot(env.DB!, canonicalProductId, criteria, baseResult);
     } catch (error) {
       console.warn("[product-intelligence] snapshot_store_unavailable", { message: error instanceof Error ? error.message : "Unknown error" });
     }
     console.info("[product-intelligence] snapshot_store_complete", { durationMs: Date.now() - snapshotStartedAt });
-  }
-  const histories: typeof currentObservations[] = [];
-  if (canonicalProductId) {
+  })() : Promise.resolve();
+  const supabaseTask = canonicalProductId ? (async () => {
     const supabaseStartedAt = Date.now();
     try {
       const stored = await storeSupabasePriceObservations(env, canonicalProductId, currentObservations);
       const history = await readSupabasePriceObservations(env, canonicalProductId, criteria.variantId ?? "", criteria.condition);
-      if (history) {
-        histories.push(history);
-        observationsStored = true;
-        console.info("[price-observations] supabase_stored", { provider: "ebay", inserted: stored, available: history.length });
-      }
+      if (history) console.info("[price-observations] supabase_stored", { provider: "ebay", inserted: stored, available: history.length });
+      return history;
     } catch (error) {
       console.warn("[price-observations] supabase_unavailable", { message: error instanceof Error ? error.message : "Unknown error" });
+      return null;
+    } finally {
+      console.info("[price-observations] supabase_complete", { durationMs: Date.now() - supabaseStartedAt });
     }
-    console.info("[price-observations] supabase_complete", { durationMs: Date.now() - supabaseStartedAt });
-  }
-  if (env.DB && canonicalProductId) {
+  })() : Promise.resolve(null);
+  const d1Task = env.DB && canonicalProductId ? (async () => {
     const d1StartedAt = Date.now();
     try {
-      const stored = await storeLivePriceObservations(env.DB, canonicalProductId, currentObservations);
-      const history = await readLivePriceObservations(env.DB, canonicalProductId, criteria.variantId ?? "", criteria.condition);
-      histories.push(history);
-      observationsStored = true;
+      const stored = await storeLivePriceObservations(env.DB!, canonicalProductId, currentObservations);
+      const history = await readLivePriceObservations(env.DB!, canonicalProductId, criteria.variantId ?? "", criteria.condition);
       console.info("[price-observations] d1_stored", { provider: "ebay", inserted: stored, available: history.length });
+      return history;
     } catch (error) {
       console.warn("[price-observations] d1_unavailable", { message: error instanceof Error ? error.message : "Unknown error" });
+      return null;
+    } finally {
+      console.info("[price-observations] d1_complete", { durationMs: Date.now() - d1StartedAt });
     }
-    console.info("[price-observations] d1_complete", { durationMs: Date.now() - d1StartedAt });
-  }
+  })() : Promise.resolve(null);
+  const [, supabaseHistory, d1History] = await Promise.all([snapshotTask, supabaseTask, d1Task]);
+  const histories = [supabaseHistory, d1History].filter((history): history is typeof currentObservations => history !== null);
+  observationsStored = histories.length > 0;
   if (histories.length) {
     observations = [...new Map(histories.flat().map((observation) => [
       [observation.providerId, observation.offerId, observation.timestamp].join("|"),

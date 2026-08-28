@@ -41,7 +41,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     if (event.key === "Enter" && open && activeIndex >= 0 && matches[activeIndex]) { event.preventDefault(); chooseProduct(matches[activeIndex]); }
     if (event.key === "Escape") { setOpen(false); setActiveIndex(-1); }
   }
-  async function submit(force = false) {
+  function submit(force = false) {
     if (searching && !force) return;
     const submittedProduct = productSelected ? selectedProduct : matches[0];
     if (!submittedProduct) {
@@ -60,9 +60,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     if (!criteria) return;
     setOpen(false); setSubmittedCriteria(criteria); setSearching(true); setSearchStatus("resolving_product");
     trackEvent({ name: "search_submitted", productSlug: criteria.productSlug, query });
-    await new Promise((resolve) => window.setTimeout(resolve, 220));
     setSearchStatus("fetching_offers");
-    await new Promise((resolve) => window.setTimeout(resolve, 200));
     window.location.assign(resultPath ? `${resultPath}?${searchCriteriaToQuery(criteria)}` : canonicalProductPath(criteria));
   }
   if (minimal) return <div className="rp-search-pill-wrap"><form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}><Icon name="search" size={19}/><input value={query} placeholder="Search for a product" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={onKeyDown} onChange={(event) => { setLoading(true); setProductSelected(false); setUnsupported(""); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); window.setTimeout(() => setLoading(false), 160); }} />{minimalAction ? <button type="submit" className="nr-search-action" disabled={searching}>{searching ? "Checking…" : actionLabel}</button> : <button type="submit" className="sr-only" disabled={searching}>Search</button>}</form>{open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{loading ? <p className="suggestion-state">Finding products…</p> : matches.length ? <>{matches.map((product, index) => <button type="button" role="option" aria-selected={index === activeIndex} id={`${listboxId}-${index}`} className={index === activeIndex ? "is-active" : ""} key={product.slug} onMouseDown={() => chooseProduct(product)}><ProductMark label={product.image} small/><span className="suggestion-copy"><b>{product.name}</b><small>{product.brand} · {product.category}</small></span><Icon name="arrow" size={16}/></button>)}<button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>View all results for “{query}” <Icon name="arrow" size={16}/></button></> : <p className="suggestion-state">Kelus does not support this product yet.</p>}</div>}{unsupported && <p className="unsupported-search">Kelus does not support “{unsupported}” yet.</p>}{searching && <SearchProgress criteria={submittedCriteria ?? { productSlug: selectedProduct.slug, variantId: variantId || undefined, condition, market }} status={searchStatus} failed={false} onRetry={() => { window.setTimeout(() => { void submit(true); }, 0); }} />}</div>;

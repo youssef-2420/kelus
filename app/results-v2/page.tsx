@@ -19,6 +19,7 @@ import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations } from "@/services/price-intelligence";
 import { settleProductOfferLoad, type ProductOfferLoadOutcome } from "@/services/product-offer-load";
 import { getCheaperAlternative } from "@/services/recommendations";
+import { optimizedRetailerImageUrl } from "@/services/retailer-image";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import { trackEvent } from "@/services/analytics";
 import type { ConditionFilter, Offer, OfferSearchResult, PriceObservation, ProductVariant, SearchCriteria } from "@/types/kelus";
@@ -217,8 +218,8 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
 
 function ListingImage({ offer, productName, large = false }: { offer?: Offer; productName: string; large?: boolean }) {
   const [failed, setFailed] = useState(false);
-  const source = offer?.imageUrl?.startsWith("https://") ? offer.imageUrl : undefined;
-  return <span className={`nr-image${large ? " is-large" : ""}`}>{source && !failed ? <>{/* Retailer image hosts change, so the native element is intentional. */}<img src={source} alt={`${productName} listing`} onError={() => setFailed(true)}/></> : <ProductMark label="IPH"/>}</span>;
+  const source = optimizedRetailerImageUrl(offer?.imageUrl, large ? 300 : 160);
+  return <span className={`nr-image${large ? " is-large" : ""}`}>{source && !failed ? <>{/* Retailer image hosts change, so the native element is intentional. */}<img src={source} alt={`${productName} listing`} width={large ? 180 : 80} height={large ? 180 : 80} loading={large ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)}/></> : <ProductMark label="IPH"/>}</span>;
 }
 
 function OtherOffer({ offer, productName }: { offer: Offer; productName: string }) {
