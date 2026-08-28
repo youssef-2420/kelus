@@ -4,7 +4,7 @@ import type { OfferProvider, ProviderRequestContext } from "@/services/providers
 import type { EbayProviderConfig } from "@/services/providers/ebay/config";
 import type { EbayItemDetail, EbayItemSummary, EbaySearchResponse } from "@/services/providers/ebay/types";
 import { clearEbayTokenCache, getEbayApplicationToken } from "./auth.ts";
-import { buildEbayQuery } from "./matching.ts";
+import { buildEbayQuery, ebayCategoryId } from "./matching.ts";
 import { normalizeEbayItem, observationForEbayOffer } from "./normalize.ts";
 import { applyEbayPriceAnomalyDetection, validateEbayCandidate } from "./trust-engine.ts";
 
@@ -54,7 +54,7 @@ export class EbayProvider implements OfferProvider {
   async getOffers(criteria: SearchCriteria, context?: ProviderRequestContext): Promise<ProviderResult> {
     const product = getProductBySlug(criteria.productSlug);
     const variant = getVariantById(criteria.variantId);
-    if (!product || !variant || variant.productId !== product.id || criteria.market !== "us" || !product.slug.startsWith("iphone-17")) {
+    if (!product || !variant || variant.productId !== product.id || criteria.market !== "us" || !product.searchAttribute.validVariantIds.includes(variant.id)) {
       throw new EbayProviderError("Unsupported or invalid product configuration.", "invalid_search", 400);
     }
     const key = [criteria.productSlug, variant.id, criteria.condition, criteria.market].join(":");
@@ -71,7 +71,7 @@ export class EbayProvider implements OfferProvider {
       throw new EbayProviderError("We couldn't authenticate with eBay right now.", "authentication");
     }
 
-    let response = await this.search(token, buildEbayQuery(product, variant), context?.signal);
+    let response = await this.search(token, buildEbayQuery(product, variant), ebayCategoryId(product), context?.signal);
     if (response.status === 401) {
       clearEbayTokenCache();
       try {
@@ -79,7 +79,7 @@ export class EbayProvider implements OfferProvider {
       } catch {
         throw new EbayProviderError("We couldn't authenticate with eBay right now.", "authentication", 401);
       }
-      response = await this.search(token, buildEbayQuery(product, variant), context?.signal);
+      response = await this.search(token, buildEbayQuery(product, variant), ebayCategoryId(product), context?.signal);
     }
     if (response.status === 429) throw new EbayProviderError("eBay is temporarily rate limiting requests.", "rate_limited", 429);
     if (!response.ok) throw new EbayProviderError("eBay offers are temporarily unavailable.", "provider_error", response.status);
@@ -171,10 +171,10 @@ export class EbayProvider implements OfferProvider {
     }
   }
 
-  private async search(token: string, query: string, externalSignal?: AbortSignal) {
+  private async search(token: string, query: string, categoryId?: string, externalSignal?: AbortSignal) {
     const url = new URL(this.config.apiBaseUrl + "/buy/browse/v1/item_summary/search");
     url.searchParams.set("q", query);
-    url.searchParams.set("category_ids", "9355");
+    if (categoryId) url.searchParams.set("category_ids", categoryId);
     url.searchParams.set("limit", "50");
     url.searchParams.set("fieldgroups", "EXTENDED");
     url.searchParams.set("filter", "buyingOptions:{FIXED_PRICE},deliveryCountry:US");

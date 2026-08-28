@@ -29,3 +29,17 @@ export const productIntelligenceSnapshots = sqliteTable("product_intelligence_sn
   fetchedAt: text("fetched_at").notNull(),
   updatedAt: text("updated_at").notNull(),
 });
+
+export const analyticsEvents = sqliteTable("analytics_events", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  eventName: text("event_name").notNull(),
+  productSlug: text("product_slug"),
+  variantId: text("variant_id"),
+  condition: text("condition"),
+  offerId: text("offer_id"),
+  query: text("query"),
+  occurredAt: text("occurred_at").notNull(),
+}, (table) => [
+  index("analytics_events_name_time_idx").on(table.eventName, table.occurredAt),
+  index("analytics_events_product_time_idx").on(table.productSlug, table.occurredAt),
+]);

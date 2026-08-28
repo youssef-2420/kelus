@@ -60,6 +60,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     if (!criteria) return;
     setOpen(false); setSubmittedCriteria(criteria); setSearching(true); setSearchStatus("resolving_product");
     trackEvent({ name: "search_submitted", productSlug: criteria.productSlug, query });
+    trackEvent({ name: "product_resolved", productSlug: criteria.productSlug, variantId: criteria.variantId, condition: criteria.condition });
     setSearchStatus("fetching_offers");
     window.location.assign(resultPath ? `${resultPath}?${searchCriteriaToQuery(criteria)}` : canonicalProductPath(criteria));
   }

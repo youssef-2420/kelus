@@ -212,7 +212,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
       <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
       <span>Cheapest</span><strong>{money(lowest ?? pick)}</strong><small>{lowest?.trust?.confidence ? `${titleCase(lowest.trust.confidence.toLowerCase())} confidence${savings !== null && savings > 0 ? ` · ${moneyAmount(savings, lowest.currency)} less` : ""}` : "Confidence unavailable"}</small>
     </div>
-    {pick && <div className="pi-primary-cta"><OutboundRetailerCTA offer={pick} label="View offer"/><span>Opens the live eBay listing</span></div>}
+    {pick && <div className="pi-primary-cta"><OutboundRetailerCTA offer={pick} label="View offer" ourPick/><span>Opens the live eBay listing</span></div>}
   </section>;
 }
 

@@ -15,7 +15,7 @@ export function applySnapshotTrustGate(criteria: SearchCriteria, result: OfferSe
       title: offer.sourceTitle ?? "",
       condition: offer.sourceCondition ?? offer.condition,
       buyingOptions: ["FIXED_PRICE"],
-      categories: [{ categoryId: "9355", categoryName: "Cell Phones & Smartphones" }],
+      categories: [{ categoryName: ({ Smartphone: "Cell Phones & Smartphones", Laptop: "Laptops & Netbooks", Tablet: "Tablets", Wearable: "Smart Watches", Audio: "Headphones", Console: "Video Game Consoles" } as Record<string, string>)[product.category] ?? product.category }],
       seller: {
         username: offer.seller.name ?? undefined,
         feedbackPercentage: offer.seller.feedbackPercentage?.toString(),

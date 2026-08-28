@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
-import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
+import { getProductBySlug, getVariantById } from "@/lib/demo-data";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
-import { CONDITIONS } from "@/types/kelus";
 
 type RouteParams = { slug: string };
 type PageProps = { params: Promise<RouteParams> };
+export const dynamic = "force-dynamic";
 
 function exactProduct(slug: string) {
   const criteria = readCanonicalProductSlug(slug);
@@ -15,12 +15,6 @@ function exactProduct(slug: string) {
   const product = getProductBySlug(criteria.productSlug);
   const variant = getVariantById(criteria.variantId);
   return product && variant ? { criteria, product, variant } : null;
-}
-
-export function generateStaticParams(): RouteParams[] {
-  return products.flatMap((product) => product.searchAttribute.validVariantIds.flatMap((variantId) =>
-    CONDITIONS.map((condition) => ({ slug: `${variantId}-${condition}` })),
-  ));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -65,9 +59,7 @@ export default async function CanonicalProductPage({ params }: PageProps) {
         price: offer.shippingCostKnown === false ? offer.price : Math.round((offer.price + offer.shippingCost) * 100) / 100,
         priceCurrency: offer.currency,
         itemCondition: `https://schema.org/${offer.condition === "new" ? "NewCondition" : offer.condition === "refurbished" ? "RefurbishedCondition" : "UsedCondition"}`,
-        availability: "https://schema.org/InStock",
         url: offer.affiliateUrl ?? `https://kelus.me${canonicalProductPath(criteria)}`,
-        seller: offer.seller.name ? { "@type": "Organization", name: offer.seller.name } : undefined,
       })),
     } : {}),
   };

@@ -8,6 +8,7 @@ import { authorizeAlertMonitor, runAlertMonitor } from "../services/server-alert
 import { refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh";
 import { setKelusRuntimeEnvironment } from "../services/runtime-environment";
 import { applyCanonicalProductResponsePolicy, applyRootResponsePolicy, canonicalHostRedirect } from "../services/product-response-policy";
+import { storeAnalyticsEvent } from "../services/server-analytics";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
 
 interface Env {
@@ -49,6 +50,7 @@ const worker = {
     if (hostRedirect) return hostRedirect;
 
     if (url.pathname === "/api/offers") return handleOfferSearch(request, env);
+    if (url.pathname === "/api/analytics") return handleAnalytics(request, env);
     if (url.pathname === "/api/alerts/check") return handleAlertCheck(request, env, ctx);
 
     if (url.pathname === "/_vinext/image") {
@@ -110,7 +112,7 @@ function criteriaFrom(url: URL): SearchCriteria | null {
 async function handleOfferSearch(request: Request, env: Env) {
   if (request.method !== "GET") return json({ error: { code: "method_not_allowed", message: "Only GET is supported." } }, 405);
   const criteria = criteriaFrom(new URL(request.url));
-  if (!criteria) return json({ error: { code: "invalid_search", message: "Choose a supported iPhone model, storage, condition, and the United States market." } }, 400);
+  if (!criteria) return json({ error: { code: "invalid_search", message: "Choose a supported product configuration, condition, and the United States market." } }, 400);
   try {
     return json(await getLiveOffersForSearch(criteria, env, fetch, { allowStaleFallback: true }), 200, "public, max-age=30, s-maxage=60, stale-while-revalidate=300");
   } catch (error) {
@@ -120,6 +122,17 @@ async function handleOfferSearch(request: Request, env: Env) {
     const message = code === "provider_unconfigured" ? "Live eBay offers are not configured yet." : providerError?.message ?? "We couldn't load eBay offers right now.";
     console.error("[ebay-provider] provider_error", { code, status: providerError?.status });
     return json({ error: { code, message } }, status);
+  }
+}
+
+async function handleAnalytics(request: Request, env: Env) {
+  if (request.method !== "POST") return json({ error: { code: "method_not_allowed", message: "Only POST is supported." } }, 405);
+  try {
+    const payload = await request.json();
+    const stored = await storeAnalyticsEvent(env.DB, payload);
+    return stored ? new Response(null, { status: 204 }) : json({ error: { code: "invalid_event", message: "Unsupported analytics event." } }, 400);
+  } catch {
+    return json({ error: { code: "invalid_event", message: "Invalid analytics payload." } }, 400);
   }
 }
 

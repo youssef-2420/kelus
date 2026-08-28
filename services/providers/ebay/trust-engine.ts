@@ -7,9 +7,10 @@ import {
   isFixedPrice,
   isPartsOnly,
   matchesModel,
-  matchesPhoneCategory,
+  matchesProductCategory,
   matchesStorage,
   matchesStructuredIdentifier,
+  matchesVariantAttributes,
   normalizeEbayCondition,
 } from "./matching.ts";
 
@@ -80,7 +81,7 @@ export function validateEbayCandidate(
   if (!item.itemId || !item.title || !ebayItemText(item)) return fail("Listing identity or title is missing.");
   if (isAccessory(item)) return fail("Listing title indicates an accessory rather than the product.");
   if (isPartsOnly(item)) return fail("Listing is for parts, repair, or a non-working product.");
-  if (!matchesPhoneCategory(item)) return fail("eBay category is not a phone category.");
+  if (!matchesProductCategory(item, product)) return fail(`eBay category does not match ${product.category.toLowerCase()}.`);
   if (!isFixedPrice(item)) return fail("Listing is not a fixed-price offer.");
   if (!isActiveListing(item)) return fail("Listing is no longer active.");
 
@@ -95,24 +96,26 @@ export function validateEbayCandidate(
   }
   const modelEvidence: Evidence = modelAspects.length ? "structured" : "title";
 
-  const storageAspects = aspectValues(item, ["Storage Capacity", "Storage", "Internal Storage"]);
-  if (storageAspects.some((value) => !matchesStorage({ title: value }, variant))) {
+  const requiresStorage = Boolean(variant.storage ?? variant.specifications.storage);
+  const storageAspects = requiresStorage ? aspectValues(item, ["Storage Capacity", "Storage", "Internal Storage", "Hard Drive Capacity", "SSD Capacity"]) : [];
+  if (requiresStorage && storageAspects.some((value) => !matchesStorage({ title: value }, variant))) {
     return fail("Structured eBay storage conflicts with the selected variant.", { modelEvidence, storageEvidence: "structured" });
   }
-  if (!matchesStorage(item, variant)) {
-    return fail(storageAspects.length ? "Listing title conflicts with the structured storage value." : "Listing title does not match the exact storage variant.", {
+  if (!matchesVariantAttributes(item, variant)) {
+    return fail(storageAspects.length ? "Listing title conflicts with the structured variant value." : "Listing title does not match the exact selected variant.", {
       modelEvidence,
       storageEvidence: storageAspects.length ? "structured" : "title",
     });
   }
   const storageEvidence: Evidence = storageAspects.length ? "structured" : "title";
 
-  const lockAspects = aspectValues(item, ["Lock Status", "Network", "Carrier", "Network Lock"]);
+  const requiresUnlocked = product.category === "Smartphone";
+  const lockAspects = requiresUnlocked ? aspectValues(item, ["Lock Status", "Network", "Carrier", "Network Lock"]) : [];
   const structuredLock = lockAspects.map(lockEvidence).find((value) => value !== null) ?? null;
-  const titleLock = lockEvidence(item.title);
+  const titleLock = requiresUnlocked ? lockEvidence(item.title) : null;
   if (structuredLock === false) return fail("Structured eBay lock status indicates a locked or carrier-specific phone.", { modelEvidence, storageEvidence, lockEvidence: "structured" });
   if (titleLock === false) return fail(structuredLock === true ? "Listing title conflicts with eBay's structured unlocked status." : "Listing title indicates a locked or carrier-specific phone.", { modelEvidence, storageEvidence, lockEvidence: structuredLock === null ? "title" : "structured" });
-  const resolvedLockEvidence: Evidence = structuredLock === true ? "structured" : titleLock === true ? "title" : "missing";
+  const resolvedLockEvidence: Evidence = !requiresUnlocked ? "missing" : structuredLock === true ? "structured" : titleLock === true ? "title" : "missing";
 
   const structuredCondition = normalizeEbayCondition(item.conditionId, item.condition);
   if (!structuredCondition) return fail("eBay condition is missing or unsupported.", { modelEvidence, storageEvidence, lockEvidence: resolvedLockEvidence });
@@ -136,25 +139,25 @@ export function validateEbayCandidate(
   let points = 1; // fixed-price listing
   points += modelEvidence === "structured" ? 3 : 1;
   points += storageEvidence === "structured" ? 3 : 1;
-  points += resolvedLockEvidence === "structured" ? 2 : resolvedLockEvidence === "title" ? 1 : 0;
+  points += !requiresUnlocked ? 2 : resolvedLockEvidence === "structured" ? 2 : resolvedLockEvidence === "title" ? 1 : 0;
   points += 2; // recognized structured eBay condition
   points += conditionInTitle ? 1 : 0;
   points += identifierMatch === true ? 2 : 0;
   points += completeSeller ? 1 : 0;
   let confidence: TrustConfidence = points >= 11 ? "HIGH" : points >= 7 ? "MEDIUM" : "LOW";
-  if (resolvedLockEvidence === "missing" || !sellerName) confidence = "LOW";
+  if ((requiresUnlocked && resolvedLockEvidence === "missing") || !sellerName) confidence = "LOW";
   else if (!completeSeller || feedback < 95) confidence = lowerConfidence(confidence, "MEDIUM");
 
   const reasons = [
     `${modelEvidence === "structured" ? "Structured eBay data and title" : "Listing title"} match the exact model.`,
-    `${storageEvidence === "structured" ? "Structured eBay data and title" : "Listing title"} match ${variant.storage ?? variant.label}.`,
-    resolvedLockEvidence === "structured" ? "Structured eBay lock status confirms unlocked." : resolvedLockEvidence === "title" ? "Listing title explicitly states unlocked." : "Lock status is not confirmed.",
+    `${storageEvidence === "structured" ? "Structured eBay data and title" : "Listing title"} match ${variant.label}.`,
+    requiresUnlocked ? (resolvedLockEvidence === "structured" ? "Structured eBay lock status confirms unlocked." : resolvedLockEvidence === "title" ? "Listing title explicitly states unlocked." : "Lock status is not confirmed.") : "Network lock status is not applicable to this category.",
     `eBay condition is ${structuredCondition.replace("_", " ")}${conditionInTitle ? " and the title is consistent" : ""}.`,
     completeSeller ? `Seller evidence is available (${feedback}% feedback, ${score} ratings).` : partialSeller ? "Seller evidence is incomplete." : "Seller identity and feedback evidence are missing.",
   ];
   const strongerValidation = modelEvidence === "structured"
     && storageEvidence === "structured"
-    && resolvedLockEvidence === "structured"
+    && (!requiresUnlocked || resolvedLockEvidence === "structured")
     && completeSeller
     && feedback >= 98
     && score >= 100;

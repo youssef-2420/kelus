@@ -3,32 +3,30 @@ import { access, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import test from "node:test";
 
-const outputFor = (route) => route === "/" ? join(process.cwd(), "out", "index.html") : join(process.cwd(), "out", route.slice(1), "index.html");
+const outputFor = (route) => route === "/" ? join(process.cwd(), ".next", "server", "app", "index.html") : join(process.cwd(), ".next", "server", "app", `${route.slice(1)}.html`);
 
-test("exports the Kelus comparison flow as static pages", async () => {
-  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"], ["/product/iphone-17-256-new", "iPhone 17"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/saved", "Keep an eye"]]) {
+test("builds static surfaces while canonical product intelligence remains server-rendered", async () => {
+  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/saved", "Keep an eye"]]) {
     const html = await readFile(outputFor(route), "utf8");
     assert.match(html, new RegExp(expected));
     assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/i);
   }
-  await assert.rejects(access(join(process.cwd(), "out", "checkout", "index.html")));
+  await assert.rejects(access(join(process.cwd(), ".next", "server", "app", "checkout.html")));
 });
 
-test("canonical product exports contain record-specific SEO and structured data", async () => {
-  const html = await readFile(outputFor("/product/iphone-17-pro-256gb-new"), "utf8");
-  assert.match(html, /iPhone 17 Pro 256GB prices \| Kelus/);
-  assert.match(html, /application\/ld\+json/);
-  assert.match(html, /https:\/\/schema\.org/);
-  assert.match(html, /rel="canonical" href="https:\/\/kelus\.me\/product\/iphone-17-pro-256gb-new\/?"/);
-  assert.doesNotMatch(html, /six-month low|manufacturer warranty/i);
-  assert.match(html, /Our Pick/);
-  assert.match(html, /Why this one/);
-  assert.match(html, /Our Pick vs Cheapest/);
-  assert.match(html, /View offer/);
-  assert.match(html, /When to Buy/);
-  assert.match(html, /Track/);
-  assert.match(html, /live offers/);
-  assert.doesNotMatch(html, /Checking connected offers|Comparing live eBay offers/);
+test("canonical product runtime contains record-specific SEO and structured-data wiring", async () => {
+  const [page, view] = await Promise.all([
+    readFile(new URL("../app/product/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /export const dynamic = "force-dynamic"/);
+  assert.match(page, /generateMetadata/);
+  assert.match(page, /application\/ld\+json/);
+  assert.match(page, /https:\/\/schema\.org/);
+  assert.match(page, /alternates: \{ canonical: canonicalUrl \}/);
+  assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);
+  for (const copy of [/Our Pick/, /Why this one/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
+  assert.match(page, /initialOutcome=\{initialOutcome\}/);
 });
 
 test("Product Intelligence presentation keeps production data wiring and the existing header", async () => {

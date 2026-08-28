@@ -57,7 +57,7 @@ export const products: Product[] = [
   product("bose-quietcomfort-ultra-earbuds", "bose-quietcomfort-ultra-earbuds", "QuietComfort Ultra Earbuds", "Audio", "Bose", "BQE", "none", ["bose-quietcomfort-ultra-earbuds"], ["bose qc ultra earbuds"], 299),
   product("beats-studio-pro", "beats-studio-pro", "Studio Pro", "Audio", "Beats", "BSP", "none", ["beats-studio-pro"], ["beats headphones"], 349),
   product("sony-playstation-5-slim", "playstation-5-slim", "PlayStation 5 Slim", "Console", "Sony", "PS5", "edition", ["playstation-5-slim-disc", "playstation-5-slim-digital"], ["ps5 slim", "playstation five slim"], 449),
-  product("sony-playstation-5-pro", "playstation-5-pro", "PlayStation 5 Pro", "Console", "Sony", "P5P", "edition", ["playstation-5-pro-disc"], ["ps5 pro"], 699),
+  product("sony-playstation-5-pro", "playstation-5-pro", "PlayStation 5 Pro", "Console", "Sony", "P5P", "configuration", ["playstation-5-pro-2tb"], ["ps5 pro"], 699),
   product("microsoft-xbox-series-x", "xbox-series-x", "Xbox Series X", "Console", "Microsoft", "XSX", "configuration", ["xbox-series-x-1tb", "xbox-series-x-2tb"], ["xbox x"], 499),
   product("microsoft-xbox-series-s", "xbox-series-s", "Xbox Series S", "Console", "Microsoft", "XSS", "configuration", ["xbox-series-s-512", "xbox-series-s-1tb"], ["xbox s"], 299),
   product("nintendo-switch-2", "nintendo-switch-2", "Nintendo Switch 2", "Console", "Nintendo", "NS2", "none", ["nintendo-switch-2"], ["switch 2"], 449),
@@ -104,7 +104,7 @@ export const productVariants: ProductVariant[] = [
   { id: "beats-studio-pro", productId: "beats-studio-pro", label: "Standard", specifications: {}, identifiers: {} },
   { id: "playstation-5-slim-disc", productId: "sony-playstation-5-slim", label: "Disc Edition", specifications: { edition: "Disc" }, identifiers: {} },
   { id: "playstation-5-slim-digital", productId: "sony-playstation-5-slim", label: "Digital Edition", specifications: { edition: "Digital" }, identifiers: {} },
-  { id: "playstation-5-pro-disc", productId: "sony-playstation-5-pro", label: "Disc Edition", specifications: { edition: "Disc" }, identifiers: {} },
+  { id: "playstation-5-pro-2tb", productId: "sony-playstation-5-pro", label: "2TB Digital Console", storage: "2TB", specifications: { storage: "2TB", edition: "Digital" }, identifiers: {} },
   { id: "xbox-series-x-1tb", productId: "microsoft-xbox-series-x", label: "1TB", storage: "1TB", specifications: { storage: "1TB" }, identifiers: {} },
   { id: "xbox-series-x-2tb", productId: "microsoft-xbox-series-x", label: "2TB", storage: "2TB", specifications: { storage: "2TB" }, identifiers: {} },
   { id: "xbox-series-s-512", productId: "microsoft-xbox-series-s", label: "512GB", storage: "512GB", specifications: { storage: "512GB" }, identifiers: {} },
@@ -115,15 +115,31 @@ export const productVariants: ProductVariant[] = [
 export const getProductBySlug = (slug: string) => products.find((product) => product.slug === slug);
 export const getVariantById = (id?: string) => productVariants.find((variant) => variant.id === id);
 export const getVariantsForProduct = (productId: string) => productVariants.filter((variant) => variant.productId === productId);
-const normalizeQuery = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const normalizeQuery = (value: string) => value.toLowerCase().replace(/([a-z])([0-9])/g, "$1 $2").replace(/([0-9])([a-z])/g, "$1 $2").replace(/[^a-z0-9]+/g, " ").trim();
+const condensedQuery = (value: string) => normalizeQuery(value).replace(/\s/g, "");
+const editDistance = (left: string, right: string) => {
+  const row = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= left.length; i += 1) {
+    let diagonal = row[0]; row[0] = i;
+    for (let j = 1; j <= right.length; j += 1) {
+      const previous = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, diagonal + (left[i - 1] === right[j - 1] ? 0 : 1));
+      diagonal = previous;
+    }
+  }
+  return row[right.length];
+};
 const scoreProduct = (query: string, product: Product) => {
   const haystack = [product.brand, product.name, product.slug, product.category, ...(product.aliases ?? [])].map(normalizeQuery);
   if (!query) return 0;
   if (haystack.some((value) => value === query)) return 100;
+  if (haystack.some((value) => condensedQuery(value) === condensedQuery(query))) return 95;
   if (haystack.some((value) => value.startsWith(query))) return 80;
   if (haystack.some((value) => value.includes(query))) return 60;
   const tokens = query.split(" ").filter(Boolean);
-  return tokens.length && tokens.every((token) => haystack.some((value) => value.includes(token))) ? 40 + tokens.length : 0;
+  if (tokens.length && tokens.every((token) => haystack.some((value) => value.includes(token)))) return 40 + tokens.length;
+  const compactQuery = condensedQuery(query);
+  return compactQuery.length >= 6 && haystack.some((value) => editDistance(compactQuery, condensedQuery(value)) <= 1) ? 30 : 0;
 };
 export const searchProducts = (query: string) => {
   const normalized = normalizeQuery(query);

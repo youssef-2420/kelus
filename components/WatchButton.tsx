@@ -45,7 +45,7 @@ export function WatchButton({ product = "iPhone 17", criteria, result }: Props) 
       if (user) await upsertUserAlerts(user.id, [alert]);
       else upsertPriceAlert(alert);
       setSaved(true);
-      trackEvent({ name: "price_alert_created", product });
+      trackEvent({ name: "price_alert_created", product, productSlug: criteria.productSlug, variantId: criteria.variantId, condition: criteria.condition });
     } catch {
       setMessage("Couldn’t check price");
     } finally { setChecking(false); }
