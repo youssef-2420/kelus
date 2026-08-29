@@ -64,6 +64,8 @@ export default async function CanonicalProductPage({ params }: PageProps) {
     } : {}),
   };
   return <>
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
+    <link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}/>
     <ProductIntelligenceView criteria={criteria} initialOutcome={initialOutcome}/>
   </>;

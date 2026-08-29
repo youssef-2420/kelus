@@ -1,3 +1,8 @@
+@font-face { font-family:"DM Sans"; font-style:normal; font-weight:400 700; font-display:swap; src:url("/fonts/dm-sans-latin.woff2") format("woff2"); }
+@font-face { font-family:Fraunces; font-style:normal; font-weight:600 700; font-display:swap; src:url("/fonts/fraunces-latin.woff2") format("woff2"); }
+@font-face { font-family:Inter; font-style:normal; font-weight:400 800; font-display:swap; src:url("/fonts/inter-latin.woff2") format("woff2"); }
+@font-face { font-family:"Playfair Display"; font-style:normal; font-weight:600 700; font-display:swap; src:url("/fonts/playfair-display-latin.woff2") format("woff2"); }
+
 :root { --ink:#112724; --forest:#0d4640; --green:#17675f; --mint:#d9eee9; --paper:#fdfcf8; --line:#d9dfdb; --muted:#65716e; --wash:#f1f5f2; }
 * { box-sizing:border-box; }
 html { background:var(--paper); scroll-behavior:smooth; }
