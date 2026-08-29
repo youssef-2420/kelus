@@ -1,2 +1,2 @@
 import { Icon } from "@/components/Icon";
-export function TrustRow() { return <div className="trust-row"><span><Icon name="shield"/>Live eBay offers</span><span><Icon name="tag"/>Comparable offers</span><span><Icon name="history"/>Price context</span><span><Icon name="lock"/>Available retailer terms</span></div>; }
+export function TrustRow() { return <div className="trust-row"><span><Icon name="history"/>Live prices</span><span><Icon name="shield"/>Trusted offers</span><span><Icon name="tag"/>Price context</span><span><Icon name="search"/>Independent picks</span></div>; }
