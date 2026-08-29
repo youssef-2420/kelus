@@ -90,11 +90,13 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
       const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
       settleProductOfferLoad(request).then((outcome) => {
         if (cancelled) return;
+        // A persisted server snapshot is already useful, validated primary content.
+        // Let the refresh update persistence without replacing the first rendered
+        // recommendation and creating a late LCP candidate for this visit.
+        if (refreshPersistedResult) return;
         if (outcome.status === "ERROR") {
-          if (!refreshPersistedResult) {
-            setResult(null);
-            setError(outcome.message);
-          }
+          setResult(null);
+          setError(outcome.message);
         } else {
           setResult((current) => outcome.status === "EMPTY" && current?.offers.length
             ? {

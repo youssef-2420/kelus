@@ -41,6 +41,8 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /decision\.reasons\.join/);
   assert.match(view, /knownTotal/);
   assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
+  assert.match(view, /if \(refreshPersistedResult\) return;/);
+  assert.match(styles, /font-family:Inter[\s\S]*\/fonts\/inter-latin\.woff2/);
   assert.match(styles, /\.pi-selectors/);
   assert.match(styles, /\.pi-offer-reveal/);
   assert.match(styles, /@media \(max-width:430px\)/);
