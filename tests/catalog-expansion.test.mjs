@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getProductBySlug, getVariantById, products, productVariants, searchProducts } from "../lib/demo-data.ts";
+import { getProductBySlug, getVariantById, getVariantsForProduct, products, productVariants, resolveProductSearch, searchProducts } from "../lib/demo-data.ts";
+import { resolveSearchAttributeVariantIdFromQuery } from "../lib/product-attributes.ts";
 import { canonicalProductPath } from "../lib/search-state.ts";
 import { buildEbayQuery, ebayCategoryId, matchesCanonicalEbayItem } from "../services/providers/ebay/matching.ts";
 import { validateEbayCandidate } from "../services/providers/ebay/trust-engine.ts";
@@ -42,6 +43,39 @@ test("spacing, casing, and one-character spelling aliases resolve to one product
   for (const query of ["iphone 17 pro", "iPhone17 Pro", "iphon 17 pro", "APPLE IPHONE 17 PRO"]) {
     assert.equal(searchProducts(query)[0]?.slug, "iphone-17-pro");
   }
+});
+
+test("natural catalog searches resolve product and exact configuration across categories", () => {
+  const cases = [
+    ["iphone 17 pro 256gb new", "iphone-17-pro", "iphone-17-pro-256gb"],
+    ["macbook air m4 16gb 512gb", "macbook-air-m4", "macbook-air-m4-16-512"],
+    ["ipad pro 11 512gb used", "ipad-pro-11-m4", "ipad-pro-11-m4-512"],
+    ["apple watch series 11 46mm", "apple-watch-series-11", "apple-watch-series-11-46mm-gps"],
+    ["galaxy s26 ultra 512gb unlocked", "galaxy-s26-ultra", "galaxy-s26-ultra-512"],
+    ["google pixel 10 pro 256gb", "pixel-10-pro", "pixel-10-pro-256"],
+    ["ps5 slim digital", "playstation-5-slim", "playstation-5-slim-digital"],
+    ["xbox series s 1tb", "xbox-series-s", "xbox-series-s-1tb"],
+    ["nintendo switch oled", "nintendo-switch-oled", "nintendo-switch-oled"],
+    ["dell xps 13 32gb 1tb", "dell-xps-13", "dell-xps-13-32-1tb"],
+  ];
+  for (const [query, slug, variantId] of cases) {
+    const resolution = resolveProductSearch(query);
+    assert.equal(resolution.status, "resolved", query);
+    if (resolution.status !== "resolved") continue;
+    assert.equal(resolution.product.slug, slug, query);
+    assert.equal(resolveSearchAttributeVariantIdFromQuery(resolution.product, getVariantsForProduct(resolution.product.id), query), variantId, query);
+  }
+});
+
+test("ambiguous, unsupported, carrier-locked, and incompatible searches do not silently route", () => {
+  assert.equal(resolveProductSearch("iphone").status, "ambiguous");
+  assert.equal(resolveProductSearch("ps5").status, "ambiguous");
+  assert.equal(resolveProductSearch("dyson headphones").status, "unsupported");
+  const iphone = getProductBySlug("iphone-17-pro");
+  const macbook = getProductBySlug("macbook-air-m4");
+  assert.ok(iphone && macbook);
+  assert.equal(resolveSearchAttributeVariantIdFromQuery(iphone, getVariantsForProduct(iphone.id), "iphone 17 pro verizon"), undefined);
+  assert.equal(resolveSearchAttributeVariantIdFromQuery(macbook, getVariantsForProduct(macbook.id), "macbook air m4 24gb 512gb"), undefined);
 });
 
 test("Trust Gate validates representative exact variants from every supported category", () => {

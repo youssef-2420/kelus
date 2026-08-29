@@ -45,6 +45,7 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(styles, /font-family:Inter[\s\S]*\/fonts\/inter-latin\.woff2/);
   assert.match(styles, /\.pi-selectors/);
   assert.match(styles, /\.pi-offer-reveal/);
+  assert.match(styles, /\.search-field > \.suggestions \{ display:flex; flex-direction:column;/);
   assert.match(styles, /@media \(max-width:430px\)/);
   assert.match(styles, /prefers-reduced-motion:reduce/);
   assert.doesNotMatch(view, /\$1,204|techprodeals|Apple warranty|12 offers/);

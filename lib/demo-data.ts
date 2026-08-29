@@ -134,21 +134,41 @@ const scoreProduct = (query: string, product: Product) => {
   if (!query) return 0;
   if (haystack.some((value) => value === query)) return 100;
   if (haystack.some((value) => condensedQuery(value) === condensedQuery(query))) return 95;
+  const embedded = haystack.filter((value) => value.length >= 4 && query.includes(value));
+  if (embedded.length) return 75 + Math.min(19, Math.max(...embedded.map((value) => condensedQuery(value).length)));
   if (haystack.some((value) => value.startsWith(query))) return 80;
   if (haystack.some((value) => value.includes(query))) return 60;
-  const tokens = query.split(" ").filter(Boolean);
-  if (tokens.length && tokens.every((token) => haystack.some((value) => value.includes(token)))) return 40 + tokens.length;
   const compactQuery = condensedQuery(query);
-  return compactQuery.length >= 6 && haystack.some((value) => editDistance(compactQuery, condensedQuery(value)) <= 1) ? 30 : 0;
+  if (compactQuery.length >= 6 && haystack.some((value) => editDistance(compactQuery, condensedQuery(value)) <= 1)) return 90;
+  const queryTokens = query.split(" ").filter(Boolean);
+  const fuzzyPhraseLengths = haystack.flatMap((value) => {
+    const phraseTokens = value.split(" ").filter(Boolean);
+    if (phraseTokens.length < 2 || queryTokens.length < phraseTokens.length) return [];
+    const matched = queryTokens.some((_, index) => {
+      const candidate = queryTokens.slice(index, index + phraseTokens.length).join("");
+      return candidate.length >= 6 && editDistance(candidate, condensedQuery(value)) <= 1;
+    });
+    return matched ? [condensedQuery(value).length] : [];
+  });
+  if (fuzzyPhraseLengths.length) return 70 + Math.min(19, Math.max(...fuzzyPhraseLengths));
+  const tokens = query.split(" ").filter(Boolean);
+  return tokens.length && tokens.every((token) => haystack.some((value) => value.includes(token))) ? 40 + tokens.length : 0;
 };
-export const searchProducts = (query: string) => {
+const rankedProducts = (query: string) => {
   const normalized = normalizeQuery(query);
   return products
     .map((product) => ({ product, score: scoreProduct(normalized, product) }))
     .filter((entry) => entry.score > 0)
-    .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name))
-    .map((entry) => entry.product)
-    .slice(0, 8);
+    .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name));
+};
+export const searchProducts = (query: string) => rankedProducts(query).slice(0, 8).map((entry) => entry.product);
+export type ProductSearchResolution = { status: "resolved"; product: Product } | { status: "ambiguous"; candidates: Product[] } | { status: "unsupported"; candidates: [] };
+export const resolveProductSearch = (query: string): ProductSearchResolution => {
+  const ranked = rankedProducts(query);
+  if (!ranked.length) return { status: "unsupported", candidates: [] };
+  const [first, second] = ranked;
+  if (first.score < 74 || (second && first.score - second.score < 2)) return { status: "ambiguous", candidates: ranked.slice(0, 8).map((entry) => entry.product) };
+  return { status: "resolved", product: first.product };
 };
 
 const retailers: Record<string, Retailer> = { amazon: { id: "amazon", name: "Amazon", logo: "A", website: "https://www.amazon.com" }, bestBuy: { id: "best-buy", name: "Best Buy", logo: "B", website: "https://www.bestbuy.com" }, ebay: { id: "ebay", name: "eBay", logo: "e", website: "https://www.ebay.com" } };

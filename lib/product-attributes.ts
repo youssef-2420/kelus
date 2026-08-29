@@ -22,23 +22,31 @@ export function resolveSearchAttributeVariantId(product: Product, variants: Prod
 }
 
 const compact = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+const containsValue = (query: string, value: string) => {
+  const normalized = compact(value);
+  return Boolean(normalized) && (` ${query} `.includes(` ${normalized} `) || query.replace(/\s/g, "").includes(normalized.replace(/\s/g, "")));
+};
 
 export function resolveSearchAttributeVariantIdFromQuery(product: Product, variants: ProductVariant[], query: string, requestedVariantId?: string) {
   const configuredVariants = getSearchAttributeVariants(product, variants);
   const normalized = compact(query);
-  const tokens = normalized.split(" ").filter(Boolean);
-  const matched = configuredVariants.find((variant) => {
-    const evidence = [
-      variant.id,
-      variant.label,
-      variant.storage,
-      ...Object.values(variant.specifications),
-    ].filter((value): value is string => Boolean(value)).map(compact);
-    return evidence.some((value) => normalized.includes(value))
-      || evidence.some((value) => value.split(" ").filter(Boolean).every((token) => tokens.includes(token)));
-  });
-  if (matched) return matched.id;
-  return resolveSearchAttributeVariantId(product, variants, requestedVariantId);
+  if (product.category === "Smartphone" && /\b(verizon|at t|att|t mobile|tmobile|sprint|cricket|boost mobile|straight talk|us cellular)\b/.test(normalized) && !/\bunlocked\b/.test(normalized)) return undefined;
+  const keys = new Set(configuredVariants.flatMap((variant) => ["storage", ...Object.keys(variant.specifications)]));
+  const selected = new Map<string, string>();
+  for (const key of keys) {
+    const values = [...new Set(configuredVariants.map((variant) => key === "storage" ? variant.storage ?? variant.specifications.storage : variant.specifications[key]).filter((value): value is string => Boolean(value) && value !== "Standard"))]
+      .sort((left, right) => compact(right).length - compact(left).length);
+    const found = values.find((value) => containsValue(normalized, value));
+    if (found) selected.set(key, found);
+  }
+  if (!selected.size) return resolveSearchAttributeVariantId(product, variants, requestedVariantId);
+  const compatible = configuredVariants.filter((variant) => [...selected].every(([key, value]) => {
+    const actual = key === "storage" ? variant.storage ?? variant.specifications.storage : variant.specifications[key];
+    return actual === value;
+  }));
+  if (!compatible.length) return undefined;
+  if (requestedVariantId && compatible.some((variant) => variant.id === requestedVariantId)) return requestedVariantId;
+  return compatible[0]?.id;
 }
 
 export function isValidSearchConfiguration(product: Product, variants: ProductVariant[], variantId?: string) {
