@@ -39,6 +39,31 @@ test("production catalog has deterministic unique identities for roughly fifty c
   }
 });
 
+test("every catalog configuration produces a Trust Gate-compatible exact query", () => {
+  const categoryNames = { Smartphone: "Cell Phones & Smartphones", Laptop: "Laptops & Netbooks", Tablet: "Tablets", Wearable: "Smart Watches", Audio: "Headphones", Console: "Video Game Consoles" };
+  for (const product of products) for (const variantId of product.searchAttribute.validVariantIds) {
+    const variant = getVariantById(variantId);
+    assert.ok(variant, variantId);
+    const item = listing(`${buildEbayQuery(product, variant)} Brand New`, categoryNames[product.category]);
+    assert.equal(matchesCanonicalEbayItem(item, product, variant, "new"), true, `${product.slug}/${variantId}`);
+    assert.equal(validateEbayCandidate(item, product, variant, "new").accepted, true, `${product.slug}/${variantId}`);
+  }
+});
+
+test("generation-specific Apple products reject older-generation listings", () => {
+  const cases = [
+    ["macbook-air-m4", "macbook-air-m4-16-512", "Apple MacBook Air M3 16GB RAM 512GB SSD Brand New", "Laptops & Netbooks"],
+    ["ipad-pro-11-m4", "ipad-pro-11-m4-256", "Apple iPad Pro 11 inch M2 256GB Brand New", "Tablets"],
+    ["ipad-air-11-m3", "ipad-air-11-m3-128", "Apple iPad Air 11 inch M2 128GB Brand New", "Tablets"],
+  ];
+  for (const [productSlug, variantId, title, category] of cases) {
+    const product = getProductBySlug(productSlug);
+    const variant = getVariantById(variantId);
+    assert.ok(product && variant);
+    assert.equal(matchesCanonicalEbayItem(listing(title, category), product, variant, "new"), false, title);
+  }
+});
+
 test("spacing, casing, and one-character spelling aliases resolve to one product", () => {
   for (const query of ["iphone 17 pro", "iPhone17 Pro", "iphon 17 pro", "APPLE IPHONE 17 PRO"]) {
     assert.equal(searchProducts(query)[0]?.slug, "iphone-17-pro");
