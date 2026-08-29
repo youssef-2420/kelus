@@ -14,6 +14,18 @@ test("builds static surfaces while canonical product intelligence remains server
   await assert.rejects(access(join(process.cwd(), ".next", "server", "app", "checkout.html")));
 });
 
+test("homepage keeps its explanation compact while How It Works preserves the full content", async () => {
+  const [home, how] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(home, /className="how-brief section"/);
+  assert.doesNotMatch(home, /className="feature-grid"/);
+  assert.match(how, /Every price tells only part of the story/);
+  assert.match(how, /Price, seller quality, shipping, and available retailer terms/);
+  assert.doesNotMatch(how, /manufacturer warranty/);
+});
+
 test("canonical product runtime contains record-specific SEO and structured-data wiring", async () => {
   const [page, view] = await Promise.all([
     readFile(new URL("../app/product/[slug]/page.tsx", import.meta.url), "utf8"),
