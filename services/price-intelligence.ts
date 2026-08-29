@@ -53,13 +53,16 @@ function snapshots(observations: PriceObservation[]) {
     .sort((a, b) => a.timestamp - b.timestamp);
 }
 
-function dailyLatest(values: Snapshot[]) {
-  const latestByDay = new Map<string, DailyPrice>();
+function dailyBest(values: Snapshot[]) {
+  const bestByDay = new Map<string, DailyPrice>();
   values.forEach((value) => {
     const day = new Date(value.timestamp).toISOString().slice(0, 10);
-    latestByDay.set(day, { day, timestamp: value.timestamp, total: value.total });
+    const current = bestByDay.get(day);
+    if (!current || value.total < current.total || (value.total === current.total && value.timestamp > current.timestamp)) {
+      bestByDay.set(day, { day, timestamp: value.timestamp, total: value.total });
+    }
   });
-  return [...latestByDay.values()].sort((a, b) => a.timestamp - b.timestamp);
+  return [...bestByDay.values()].sort((a, b) => a.timestamp - b.timestamp);
 }
 
 function hasCoverage(values: DailyPrice[], minimumSamples: number, minimumSpanDays: number) {
@@ -90,7 +93,7 @@ export function calculatePriceIntelligence(observations: PriceObservation[], inp
   }
 
   const latest = observedSnapshots.at(-1)!;
-  const daily = dailyLatest(observedSnapshots);
+  const daily = dailyBest(observedSnapshots);
   const last30 = daily.filter((value) => value.timestamp >= latest.timestamp - 30 * dayMs);
   const last90 = daily.filter((value) => value.timestamp >= latest.timestamp - 90 * dayMs);
   const ready30 = hasCoverage(last30, minimum30DaySamples, minimum30DaySpan);

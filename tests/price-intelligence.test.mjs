@@ -44,6 +44,18 @@ test("daily best totals drive 30-day context without counting every listing as a
   assert.equal(context.verdict, "Great price");
 });
 
+test("daily price intelligence keeps the lowest validated known total rather than the latest offer", () => {
+  const observations = [
+    observation(0, 820, { timestamp: "2026-08-01T09:00:00Z", variantId: "iphone-17-256" }),
+    observation(0, 850, { timestamp: "2026-08-01T18:00:00Z", variantId: "iphone-17-256" }),
+    ...Array.from({ length: 6 }, (_, index) => observation(index + 1, 820, { timestamp: `2026-08-${String(index + 2).padStart(2, "0")}T12:00:00Z`, variantId: "iphone-17-256" })),
+  ];
+  const context = calculatePriceIntelligence(observations, { variantId: "iphone-17-256", condition: "new" });
+  assert.equal(context.historyStatus, "ready");
+  assert.equal(context.average30Day, 820);
+  assert.equal(context.recentLow, 820);
+});
+
 test("only real observations for the exact variant and condition are eligible", () => {
   const eligible = Array.from({ length: 7 }, (_, index) => observation(index, 100));
   const ignored = [

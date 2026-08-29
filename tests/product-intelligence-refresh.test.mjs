@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh.ts";
+import { catalogRefreshCriteria, refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh.ts";
 
 class DueStatement {
   constructor(rows) { this.rows = rows; }
@@ -26,9 +26,15 @@ test("scheduled snapshot refresh deduplicates canonical configurations", async (
       searched.push(criteria);
       return { offers: [{ id: "offer-1" }], observations: [], failedProviders: [], isDemo: false };
     },
+    { catalogCriteria: [] },
   );
   assert.equal(searched.length, 1);
-  assert.deepEqual(result, { due: 1, refreshed: 1, empty: 0, failed: 0 });
+  assert.equal(result.due, 1);
+  assert.equal(result.catalogQueued, 0);
+  assert.equal(result.staleQueued, 1);
+  assert.equal(result.refreshed, 1);
+  assert.equal(result.empty, 0);
+  assert.equal(result.failed, 0);
 });
 
 test("scheduled snapshot refresh isolates provider failures", async () => {
@@ -43,8 +49,23 @@ test("scheduled snapshot refresh isolates provider failures", async () => {
     fetch,
     Date.parse("2026-08-27T12:00:00.000Z"),
     async () => { throw new Error("eBay unavailable"); },
+    { catalogCriteria: [] },
   );
-  assert.deepEqual(result, { due: 1, refreshed: 0, empty: 0, failed: 1 });
+  assert.equal(result.due, 1);
+  assert.equal(result.refreshed, 0);
+  assert.equal(result.empty, 0);
+  assert.equal(result.failed, 1);
+});
+
+test("catalog refresh rotates through all configurations without duplicate identities", () => {
+  const first = catalogRefreshCriteria(Date.parse("2026-08-29T00:00:00.000Z"));
+  const second = catalogRefreshCriteria(Date.parse("2026-08-29T06:00:00.000Z"));
+  const third = catalogRefreshCriteria(Date.parse("2026-08-29T12:00:00.000Z"));
+  const fourth = catalogRefreshCriteria(Date.parse("2026-08-29T18:00:00.000Z"));
+  const combined = [...first, ...second, ...third, ...fourth];
+  assert.equal(first.length, 16);
+  assert.equal(new Set(combined.map((criteria) => `${criteria.productSlug}:${criteria.variantId}`)).size, 64);
+  assert.ok(combined.every((criteria) => criteria.condition === "any" && criteria.market === "us"));
 });
 
 test("the deployed alert-monitor schedule starts snapshot refresh out of band", async () => {
