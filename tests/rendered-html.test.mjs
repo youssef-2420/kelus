@@ -59,7 +59,7 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(styles, /\.pi-offer-reveal/);
   assert.match(styles, /\.search-field > \.suggestions \{ display:flex; flex-direction:column;/);
   assert.match(styles, /max-height:min\(420px,45dvh\)/);
-  assert.match(styles, /\.hero-figma \{ min-height:760px; padding-top:122px; \}/);
+  assert.match(styles, /\.hero-figma \{ min-height:760px; padding-top:46px; \}/);
   assert.doesNotMatch(styles, /\.search-controls:has\(\.suggestions\)\{position:fixed/);
   assert.match(styles, /@media \(max-width:430px\)/);
   assert.match(styles, /prefers-reduced-motion:reduce/);

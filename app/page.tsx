@@ -22,7 +22,7 @@ export default function Home() {
   }));
   return <main><LandingAnalytics/><KelusHeader />
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
-      <div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">Compare current offers, understand the trade-offs, and buy with confidence.</p></div><div id="product-search"><SearchControls deferProductSelection /></div><TrustRow />
+      <div id="product-search"><SearchControls deferProductSelection /></div><div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">Compare current offers, understand the trade-offs, and buy with confidence.</p></div><TrustRow />
     </section>
     <section className="how-brief section"><p>See how Kelus finds and evaluates comparable offers.</p><Link className="text-link" href="/how-it-works">How Kelus works <Icon name="arrow" size={15}/></Link></section>
     <section className="catalog-links section"><p className="eyebrow">Popular searches</p><div>{discoverable.map(({ product, href }) => <Link key={product.slug} href={href}>{product.brand} {product.name}</Link>)}</div></section>
