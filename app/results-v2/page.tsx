@@ -14,6 +14,7 @@ import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
 import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
+import { clientOfferRefreshMode } from "@/services/client-offer-refresh-policy";
 import { buildKelusDecision, type KelusDecision } from "@/services/decision-engine";
 import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations } from "@/services/price-intelligence";
@@ -79,33 +80,52 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    const refreshPersistedResult = attempt === 0 && Boolean(initialOutcome);
+    const refreshMode = clientOfferRefreshMode(initialOutcome, attempt);
+    if (refreshMode === "none") return;
+    const refreshPersistedResult = attempt === 0 && Boolean(serverResult);
     let cancelled = false;
-    const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
-    settleProductOfferLoad(request).then((outcome) => {
-      if (cancelled) return;
-      if (outcome.status === "ERROR") {
-        if (!refreshPersistedResult) {
-          setResult(null);
-          setError(outcome.message);
-        }
-      } else {
-        setResult((current) => outcome.status === "EMPTY" && current?.offers.length
-          ? {
-            ...current,
-            servedFromCache: true,
-            refreshRecommended: true,
-            snapshotState: current.snapshotState === "expired" ? "expired" : "stale",
-            lastRefreshAttemptAt: new Date().toISOString(),
-            lastRefreshReturnedEmpty: true,
+    let idleId: number | undefined;
+    let timerId: number | undefined;
+    const refresh = () => {
+      const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
+      settleProductOfferLoad(request).then((outcome) => {
+        if (cancelled) return;
+        if (outcome.status === "ERROR") {
+          if (!refreshPersistedResult) {
+            setResult(null);
+            setError(outcome.message);
           }
-          : outcome.result);
-        setError("");
-      }
-      setLoading(false);
-    });
-    return () => { cancelled = true; };
-  }, [attempt, cachedResult, criteria, initialOutcome, serverResult?.refreshRecommended]);
+        } else {
+          setResult((current) => outcome.status === "EMPTY" && current?.offers.length
+            ? {
+              ...current,
+              servedFromCache: true,
+              refreshRecommended: true,
+              snapshotState: current.snapshotState === "expired" ? "expired" : "stale",
+              lastRefreshAttemptAt: new Date().toISOString(),
+              lastRefreshReturnedEmpty: true,
+            }
+            : outcome.result);
+          setError("");
+        }
+        setLoading(false);
+      });
+    };
+    if (refreshMode === "idle") {
+      const idleWindow = window as unknown as {
+        requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number;
+        cancelIdleCallback?: (id: number) => void;
+      };
+      if (idleWindow.requestIdleCallback) idleId = idleWindow.requestIdleCallback(refresh, { timeout: 3_000 });
+      else timerId = window.setTimeout(refresh, 1_500);
+    } else refresh();
+    return () => {
+      cancelled = true;
+      const idleWindow = window as unknown as { cancelIdleCallback?: (id: number) => void };
+      if (idleId !== undefined) idleWindow.cancelIdleCallback?.(idleId);
+      if (timerId !== undefined) window.clearTimeout(timerId);
+    };
+  }, [attempt, cachedResult, criteria, initialOutcome, serverResult]);
 
   const retry = () => {
     setResult(null);
