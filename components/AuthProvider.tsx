@@ -26,16 +26,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const client = getSupabaseBrowserClient();
     if (!client) { queueMicrotask(() => setLoading(false)); return; }
     let active = true;
+    const authTimeout = window.setTimeout(() => { if (active) setLoading(false); }, 3_500);
     client.auth.getUser().then(({ data }) => {
-      if (active) { setUser(data.user ?? null); setLoading(false); }
-    });
+      if (active) { window.clearTimeout(authTimeout); setUser(data.user ?? null); setLoading(false); }
+    }).catch(() => { if (active) { window.clearTimeout(authTimeout); setLoading(false); } });
     const { data } = client.auth.onAuthStateChange((event, session) => {
       if (!active) return;
+      window.clearTimeout(authTimeout);
       setUser(session?.user ?? null);
       setLoading(false);
       if (event === "PASSWORD_RECOVERY") setRecovery(true);
     });
-    return () => { active = false; data.subscription.unsubscribe(); };
+    return () => { active = false; window.clearTimeout(authTimeout); data.subscription.unsubscribe(); };
   }, []);
 
   useEffect(() => {
