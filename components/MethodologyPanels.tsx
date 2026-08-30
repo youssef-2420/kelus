@@ -12,14 +12,16 @@ const panels = [
 
 export function MethodologyPanels() {
   const [active, setActive] = useState(0);
-  const move = (step: number) => setActive((active + step + panels.length) % panels.length);
+  const [direction, setDirection] = useState<"forward" | "back">("forward");
+  const select = (index: number, nextDirection: "forward" | "back") => { setDirection(nextDirection); setActive(index); };
+  const move = (step: number) => select((active + step + panels.length) % panels.length, step > 0 ? "forward" : "back");
   const panel = panels[active];
-  return <div className="method-carousel">
+  return <div className={`method-carousel is-${direction}`}>
     <div className="method-carousel-controls" aria-label="Methodology carousel controls"><button type="button" onClick={() => move(-1)} aria-label="Previous methodology step">←</button><button type="button" onClick={() => move(1)} aria-label="Next methodology step">→</button></div>
     <div className="method-carousel-track">
-      <article className={`method-feature method-tone-${active + 1}`} aria-live="polite"><span>{panel.number} / 05</span><div className="method-feature-mark" aria-hidden="true">{panel.mark}</div><h3>{panel.title}</h3></article>
-      <div className="method-previews" aria-label="Choose a methodology step">{panels.map((item, index) => <button className={`method-preview method-tone-${index + 1}${index === active ? " is-active" : ""}`} type="button" onClick={() => setActive(index)} aria-label={`Show ${item.title}`} aria-current={index === active ? "step" : undefined} key={item.title}><span>{item.number}</span><strong>{item.title}</strong></button>)}</div>
+      <article className={`method-feature method-tone-${active + 1}`} aria-live="polite" key={`feature-${active}`}><span>{panel.number} / 05</span><div className="method-feature-mark" aria-hidden="true">{panel.mark}</div><h3>{panel.title}</h3></article>
+      <div className="method-previews" aria-label="Choose a methodology step">{panels.map((item, index) => <button className={`method-preview method-tone-${index + 1}${index === active ? " is-active" : ""}`} type="button" onClick={() => select(index, index >= active ? "forward" : "back")} aria-label={`Show ${item.title}`} aria-current={index === active ? "step" : undefined} key={item.title}><span>{item.number}</span><strong>{item.title}</strong></button>)}</div>
     </div>
-    <div className="method-carousel-copy"><h4>{panel.line}</h4><p>{panel.detail}</p></div>
+    <div className="method-carousel-copy" key={`copy-${active}`}><h4>{panel.line}</h4><p>{panel.detail}</p></div>
   </div>;
 }
