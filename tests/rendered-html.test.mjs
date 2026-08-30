@@ -118,8 +118,8 @@ test("Alerts leads with monitoring state and keeps secondary controls progressiv
   assert.match(alerts, /Price verified/);
   assert.match(alerts, /No validated offer/);
   assert.match(alerts, /Saved price may be stale/);
-  assert.match(alerts, /useState\(true\)/);
-  assert.match(alerts, /server-rendered page useful/);
+  assert.doesNotMatch(alerts, /Loading your alerts/);
+  assert.match(alerts, /aria-live="polite"/);
   assert.match(alerts, /View comparison/);
   assert.match(alerts, /<progress value=\{progress\}/);
   assert.match(styles, /\.alerts-overview/);
