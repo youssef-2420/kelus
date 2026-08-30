@@ -1,27 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { trackEvent } from "@/services/analytics";
-
-const key = "kelus-watched-products";
-
-function readWatchedProducts(): string[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const value: unknown = JSON.parse(window.localStorage.getItem(key) ?? "[]");
-    return Array.isArray(value) && value.every((item) => typeof item === "string") ? value : [];
-  } catch {
-    return [];
-  }
-}
+import { readWatchedProducts, writeWatchedProducts } from "@/lib/watchlist";
 
 export function WatchButton({ product = "iPhone 17" }: { product?: string }) {
-  const [saved, setSaved] = useState(() => readWatchedProducts().includes(product));
+  const [saved, setSaved] = useState(false);
+  useEffect(() => {
+    setSaved(readWatchedProducts().includes(product));
+  }, [product]);
+
   function toggle() {
     const current = readWatchedProducts();
     const next = current.includes(product) ? current.filter((item) => item !== product) : [...current, product];
-    window.localStorage.setItem(key, JSON.stringify(next));
+    writeWatchedProducts(next);
     setSaved(next.includes(product));
     if (next.includes(product)) trackEvent({ name: "price_alert_created", product });
   }

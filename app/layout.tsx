@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Kelus — Shop smarter. Know before you buy.",
   description: "Kelus compares price, warranty, retailer return terms, and history so you can choose the offer that is actually worth buying.",
   metadataBase: new URL(process.env.KELUS_CUSTOM_DOMAIN === "true" ? "https://kelus.me" : process.env.GITHUB_ACTIONS ? "https://youssef-2420.github.io/kelus" : "http://localhost:3000"),
-  openGraph: { title: "Kelus — Shop smarter. Know before you buy.", description: "Compare offers and buy with confidence.", images: ["/og.png"] },
+  openGraph: { title: "Kelus — Shop smarter. Know before you buy.", description: "Compare offers and buy with confidence.", images: [{ url: "/og.png", width: 1200, height: 630, alt: "Kelus — Shop smarter. Know before you buy." }] },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

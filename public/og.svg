@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">Kelus - Shop smarter</title>
+  <desc id="description">Kelus shopping intelligence social preview</desc>
+  <rect width="1200" height="630" fill="#f7f5ef"/>
+  <circle cx="1040" cy="110" r="230" fill="#dcefe9"/>
+  <circle cx="1090" cy="520" r="300" fill="#e8eee4"/>
+  <path d="M120 105h54l18 18-18 18h-54l-18-18z" fill="#1f6f64"/>
+  <text x="215" y="143" fill="#17211f" font-family="Arial, Helvetica, sans-serif" font-size="64" font-weight="700">kelus</text>
+  <text x="104" y="305" fill="#17211f" font-family="Georgia, serif" font-size="86" font-weight="700">Shop smarter.</text>
+  <text x="104" y="400" fill="#17211f" font-family="Georgia, serif" font-size="86" font-weight="700">Know before you buy.</text>
+  <text x="110" y="492" fill="#53615e" font-family="Arial, Helvetica, sans-serif" font-size="31">Compare trusted offers, trade-offs, and price context.</text>
+  <rect x="105" y="542" width="286" height="8" rx="4" fill="#1f6f64"/>
+</svg>

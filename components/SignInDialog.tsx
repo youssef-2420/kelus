@@ -5,7 +5,9 @@ import { Icon } from "@/components/Icon";
 
 export function SignInDialog() {
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
   const [mode, setMode] = useState<"signin" | "create">("signin");
   const [notice, setNotice] = useState("");
   function openDialog() { setNotice(""); setOpen(true); }
@@ -15,10 +17,26 @@ export function SignInDialog() {
     closeButtonRef.current?.focus();
     function handleEscape(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") setOpen(false);
+      if (event.key === "Tab") {
+        const focusable = dialogRef.current?.querySelectorAll<HTMLElement>("button, input, a[href]");
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
     }
     window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+      triggerRef.current?.focus();
+    };
   }, [open]);
-  return <><button type="button" className="header-signin" onClick={openDialog}><Icon name="lock" size={17} /> Sign in</button>
-    {open && <div className="modal-backdrop"><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={() => setOpen(false)} aria-label="Close sign in"><Icon name="close" size={20}/></button>{notice ? <div className="signin-confirm"><span><Icon name="check" size={23}/></span><h2>Thanks for trying Kelus.</h2><p>{notice}</p><button className="button button-primary" type="button" onClick={() => setOpen(false)}>Done</button></div> : <><p className="eyebrow">Welcome to Kelus</p><h2 id="signin-title">{mode === "signin" ? "Sign in to your account" : "Create your Kelus account"}</h2><p className="dialog-copy">Save price alerts and keep your shopping decisions in one place.</p><div className="signin-tabs"><button className={mode === "signin" ? "active" : ""} onClick={() => switchMode("signin")}>Sign in</button><button className={mode === "create" ? "active" : ""} onClick={() => switchMode("create")}>Create account</button></div><form onSubmit={(event) => { event.preventDefault(); setNotice(mode === "signin" ? "You are signed in for this demo. No account details were stored." : "Your demo account is ready. No account details were stored."); }}><label>Email address<input type="email" placeholder="you@example.com" autoComplete="email" required/></label><label>Password<input type="password" placeholder="••••••••" autoComplete={mode === "signin" ? "current-password" : "new-password"} required/></label>{mode === "signin" && <button className="forgot-link" type="button" onClick={() => setNotice("Password reset is not enabled in this demo.")}>Forgot password?</button>}<button className="button button-primary dialog-submit" type="submit">{mode === "signin" ? "Sign in" : "Create account"}<Icon name="arrow" size={17}/></button></form><div className="dialog-divider"><span>or continue with</span></div><div className="social-buttons"><button type="button" onClick={() => setNotice("Google sign-in will be available in the live product.")}><b>G</b>Google</button><button type="button" onClick={() => setNotice("Apple sign-in will be available in the live product.")}><b>●</b>Apple</button></div><p className="dialog-legal">Demo sign-in only — no account or password is stored.</p></>}</section></div>}</>;
+  return <><button ref={triggerRef} type="button" className="header-signin" onClick={openDialog}><Icon name="lock" size={17} /> Sign in</button>
+    {open && <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setOpen(false); }}><section ref={dialogRef} className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={() => setOpen(false)} aria-label="Close sign in"><Icon name="close" size={20}/></button>{notice ? <div className="signin-confirm"><span><Icon name="check" size={23}/></span><h2 id="signin-title">Thanks for trying Kelus.</h2><p>{notice}</p><button className="button button-primary" type="button" onClick={() => setOpen(false)}>Done</button></div> : <><p className="eyebrow">Welcome to Kelus</p><h2 id="signin-title">{mode === "signin" ? "Sign in to your account" : "Create your Kelus account"}</h2><p className="dialog-copy">Save price alerts and keep your shopping decisions in one place.</p><div className="signin-tabs" role="tablist" aria-label="Account action"><button type="button" role="tab" aria-selected={mode === "signin"} className={mode === "signin" ? "active" : ""} onClick={() => switchMode("signin")}>Sign in</button><button type="button" role="tab" aria-selected={mode === "create"} className={mode === "create" ? "active" : ""} onClick={() => switchMode("create")}>Create account</button></div><form onSubmit={(event) => { event.preventDefault(); setNotice(mode === "signin" ? "You are signed in for this demo. No account details were stored." : "Your demo account is ready. No account details were stored."); }}><label>Email address<input type="email" placeholder="you@example.com" autoComplete="email" required/></label><label>Password<input type="password" placeholder="••••••••" autoComplete={mode === "signin" ? "current-password" : "new-password"} required/></label>{mode === "signin" && <button className="forgot-link" type="button" onClick={() => setNotice("Password reset is not enabled in this demo.")}>Forgot password?</button>}<button className="button button-primary dialog-submit" type="submit">{mode === "signin" ? "Sign in" : "Create account"}<Icon name="arrow" size={17}/></button></form><div className="dialog-divider"><span>or continue with</span></div><div className="social-buttons"><button type="button" onClick={() => setNotice("Google sign-in will be available in the live product.")}><b>G</b>Google</button><button type="button" onClick={() => setNotice("Apple sign-in will be available in the live product.")}><b>●</b>Apple</button></div><p className="dialog-legal">Demo sign-in only — no account or password is stored.</p></>}</section></div>}</>;
 }

@@ -1,4 +1,4 @@
-import { offers } from "@/lib/demo-data";
+import { offers } from "../../lib/demo-data.ts";
 import type { PriceObservation, ProviderResult, SearchCriteria } from "@/types/kelus";
 import type { OfferProvider } from "@/services/providers/types";
 

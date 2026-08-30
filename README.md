@@ -9,7 +9,6 @@ Kelus helps shoppers compare trusted offers, understand the trade-offs, and buy 
 - **Results:** `app/results/page.tsx`
 - **Product:** `app/product/iphone-17/page.tsx`
 - **Compare offers:** `app/compare/iphone-17/page.tsx`
-- **Checkout:** `app/checkout/page.tsx`
 - **Price alerts:** `app/saved/page.tsx`
 
 ## Project structure
@@ -29,6 +28,13 @@ npm run dev
 
 Open the local address shown in the terminal.
 
-## Notes
+## Prototype status
 
-The sign-in and checkout pages are demonstration flows. Do not enter real payment information.
+Kelus currently uses clearly labeled demonstration offers. Sign-in, retailer links,
+analytics, and price alerts are non-production placeholders; alerts are stored only
+in the current browser. Do not enter real credentials.
+
+The production site is a static Next.js export deployed by
+`.github/workflows/deploy-pages.yml`. Production accounts, alerts, and retailer
+feeds will require a separately secured API, database, and background job service;
+those integrations are intentionally not simulated in this repository.
