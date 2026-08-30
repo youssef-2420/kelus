@@ -162,6 +162,22 @@ const rankedProducts = (query: string) => {
     .sort((a, b) => b.score - a.score || a.product.name.localeCompare(b.product.name));
 };
 export const searchProducts = (query: string) => rankedProducts(query).slice(0, 8).map((entry) => entry.product);
+const categoryIntent: Array<{ category: string; terms: string[] }> = [
+  { category: "Smartphone", terms: ["phone", "smartphone", "mobile"] },
+  { category: "Laptop", terms: ["laptop", "notebook", "computer"] },
+  { category: "Tablet", terms: ["tablet", "ipad"] },
+  { category: "Wearable", terms: ["watch", "smartwatch", "wearable"] },
+  { category: "Audio", terms: ["headphone", "headphones", "earbud", "earbuds", "audio"] },
+  { category: "Console", terms: ["console", "gaming", "playstation", "xbox", "nintendo"] },
+];
+export const suggestSupportedProducts = (query: string, limit = 3) => {
+  const normalized = normalizeQuery(query);
+  if (!normalized) return [];
+  const brandMatches = products.filter((item) => normalized.split(" ").includes(normalizeQuery(item.brand)));
+  if (brandMatches.length) return brandMatches.slice(0, limit);
+  const intent = categoryIntent.find((item) => item.terms.some((term) => normalized.split(" ").includes(term)));
+  return intent ? products.filter((item) => item.category === intent.category).slice(0, limit) : [];
+};
 export type ProductSearchResolution = { status: "resolved"; product: Product } | { status: "ambiguous"; candidates: Product[] } | { status: "unsupported"; candidates: [] };
 export const resolveProductSearch = (query: string): ProductSearchResolution => {
   const ranked = rankedProducts(query);

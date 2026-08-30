@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getProductBySlug, getVariantById, getVariantsForProduct, products, productVariants, resolveProductSearch, searchProducts } from "../lib/demo-data.ts";
+import { getProductBySlug, getVariantById, getVariantsForProduct, products, productVariants, resolveProductSearch, searchProducts, suggestSupportedProducts } from "../lib/demo-data.ts";
 import { resolveSearchAttributeVariantIdFromQuery } from "../lib/product-attributes.ts";
 import { canonicalProductPath } from "../lib/search-state.ts";
 import { buildEbayQuery, ebayCategoryId, matchesCanonicalEbayItem } from "../services/providers/ebay/matching.ts";
@@ -101,6 +101,12 @@ test("ambiguous, unsupported, carrier-locked, and incompatible searches do not s
   assert.ok(iphone && macbook);
   assert.equal(resolveSearchAttributeVariantIdFromQuery(iphone, getVariantsForProduct(iphone.id), "iphone 17 pro verizon"), undefined);
   assert.equal(resolveSearchAttributeVariantIdFromQuery(macbook, getVariantsForProduct(macbook.id), "macbook air m4 24gb 512gb"), undefined);
+});
+
+test("unsupported searches receive only conservative related catalog suggestions", () => {
+  assert.ok(suggestSupportedProducts("dyson headphones").every((product) => product.category === "Audio"));
+  assert.ok(suggestSupportedProducts("unknown samsung device").every((product) => product.brand === "Samsung"));
+  assert.deepEqual(suggestSupportedProducts("garden furniture"), []);
 });
 
 test("Trust Gate validates representative exact variants from every supported category", () => {
