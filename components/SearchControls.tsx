@@ -30,6 +30,7 @@ export function SearchControls({ compact = false, minimal = false, initialCriter
   const [searchStatus, setSearchStatus] = useState<SearchStatus>("idle");
   const [searchFailed, setSearchFailed] = useState(false);
   const matches = useMemo(() => query.trim() ? searchProducts(query) : [], [query]);
+  const typedProduct = matches.length === 1 ? matches[0] : null;
   const variants = useMemo(() => getVariantsForProduct(selectedProduct.id), [selectedProduct.id]);
 
   function chooseProduct(product: typeof selectedProduct) { setSelectedProduct(product); setVariantId(getVariantsForProduct(product.id)[0]?.id ?? ""); setQuery(product.name); setOpen(false); setActiveIndex(-1); trackEvent({ name: "product_selected", productSlug: product.slug }); }
@@ -41,7 +42,9 @@ export function SearchControls({ compact = false, minimal = false, initialCriter
   }
   async function submit(force = false) {
     if (searching && !force) return;
-    const criteria: SearchCriteria = { productSlug: selectedProduct.slug, variantId: variantId || undefined, condition, market };
+    const product = typedProduct ?? selectedProduct;
+    if (typedProduct && typedProduct.slug !== selectedProduct.slug) setSelectedProduct(typedProduct);
+    const criteria: SearchCriteria = { productSlug: product.slug, variantId: variantId || undefined, condition, market };
     const startedAt = performance.now();
     setOpen(false); setSearching(true); setSearchFailed(false); setSearchStatus("resolving_product");
     trackEvent({ name: "search_submitted", productSlug: criteria.productSlug });
