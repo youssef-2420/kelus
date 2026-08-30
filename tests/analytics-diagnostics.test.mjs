@@ -5,6 +5,7 @@ import { authorizeDiagnostics, getAnalyticsDiagnostics } from "../services/analy
 const resultSets = [
   [{ label: "landing_viewed", count: 100 }, { label: "search_submitted", count: 50 }, { label: "product_page_viewed", count: 40 }, { label: "recommendation_viewed", count: 30 }, { label: "retailer_clicked", count: 6 }, { label: "price_alert_created", count: 4 }],
   [{ label: "iphone-17-pro", count: 12 }], [{ label: "dyson headphones", count: 3 }], [{ label: "Zero valid offers", count: 2 }],
+  [],
 ];
 const db = { prepare: () => ({ bind: () => ({ all: async () => ({ results: resultSets.shift() }) }) }) };
 
@@ -14,6 +15,8 @@ test("diagnostics calculate factual funnel rates and preserve ranked rows", asyn
   assert.equal(report.funnel.alertConversionRate, 10);
   assert.equal(report.topProducts[0].label, "iphone-17-pro");
   assert.equal(report.unsupportedSearches[0].label, "dyson headphones");
+  assert.equal(report.recommendationQuality[0].status, "FAIL");
+  assert.match(report.recommendationQuality[0].reasons[0], /No persisted offer snapshot/);
 });
 
 test("diagnostics require the exact operations secret", () => {
