@@ -54,8 +54,11 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /knownTotal/);
   assert.match(view, /Known total/);
   assert.match(view, /No cheaper comparable offer passed Kelus validation/);
-  assert.match(view, /Live offer check is starting/);
-  assert.match(view, /saved validated snapshot/);
+  assert.match(view, /This comparison is being prepared/);
+  assert.match(view, /saved validated offer snapshot/);
+  assert.match(view, /no listing passed the current product, variant, condition, and trust checks/);
+  assert.match(view, /Try another supported configuration/);
+  assert.match(view, /Why Kelus may reject an offer/);
   assert.match(view, /How Kelus chose this/);
   assert.match(view, /See how Kelus picks an offer/);
   assert.match(view, /Why this offer won/);

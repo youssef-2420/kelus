@@ -167,6 +167,16 @@ button { cursor:pointer; }
 .pi-primary-cta .button { min-width:205px; background:#103e35; }
 .pi-primary-cta > span { color:#7a847f; font-size:10px; }
 .nr-state-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:8px; }
+.pi-fallback { align-content:center; gap:20px; }
+.pi-fallback-copy { max-width:660px; }
+.pi-fallback-copy h2 { margin:4px 0 10px; color:#102c25; font-family:"Fraunces",Georgia,serif; font-size:clamp(28px,4vw,42px); line-height:1.05; }
+.pi-fallback-copy > p:last-child { margin:0; color:#62706b; line-height:1.6; }
+.pi-fallback-alternatives { width:min(100%,720px); padding-top:20px; border-top:1px solid #dfe4df; }
+.pi-fallback-alternatives > p { margin:0 0 10px; color:#66736f; font-size:13px; font-weight:700; letter-spacing:.02em; }
+.pi-fallback-alternatives > div { display:flex; justify-content:center; flex-wrap:wrap; gap:8px; }
+.pi-fallback-alternatives a { display:inline-flex; align-items:center; gap:8px; min-height:42px; padding:9px 13px; border:1px solid #ccd8d3; border-radius:9px; color:#123f35; background:#fff; font-size:13px; font-weight:700; text-decoration:none; transition:border-color .18s ease,transform .18s ease,background .18s ease; }
+.pi-fallback-alternatives a:hover { border-color:#7fa59a; background:#f7faf8; transform:translateY(-1px); }
+.pi-fallback-method { justify-self:center; }
 .pi-section { padding:34px 0 36px; border-bottom:1px solid #ddd6ca; transition:opacity .2s ease; }
 .pi-section > .pi-label { margin-bottom:16px; }
 .pi-context { display:grid; grid-template-columns:minmax(0,1fr) minmax(250px,.8fr); gap:28px 34px; align-items:start; }
@@ -248,6 +258,8 @@ button { cursor:pointer; }
   .nr-state { min-height:240px; padding:28px 18px; }
   .nr-state-actions { width:100%; }
   .nr-state-actions .button { flex:1 1 130px; min-height:48px; }
+  .pi-fallback-alternatives > div { display:grid; }
+  .pi-fallback-alternatives a { justify-content:space-between; }
 }
 
 @media (prefers-reduced-motion:reduce) {

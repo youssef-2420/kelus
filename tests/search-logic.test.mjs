@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
 import { getProductIntelligenceOptions, getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId, resolveSearchAttributeVariantIdFromQuery } from "../lib/product-attributes.ts";
-import { canonicalProductPath, readCanonicalProductCriteria, readCanonicalProductSlug, readSearchCriteria, resolveConditionFromQuery, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
+import { canonicalProductPath, getAlternativeProductCriteria, readCanonicalProductCriteria, readCanonicalProductSlug, readSearchCriteria, resolveConditionFromQuery, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
 test("catalog search and variants are canonical rather than presentation strings", () => {
@@ -13,6 +13,22 @@ test("catalog search and variants are canonical rather than presentation strings
   assert.deepEqual(getVariantsForProduct("apple-iphone-17").map((variant) => variant.label), ["128GB", "256GB", "512GB"]);
   assert.ok(products.length >= 30);
   assert.ok(products.flatMap((product) => product.searchAttribute.validVariantIds).length >= 50);
+});
+
+test("empty product states suggest only valid canonical configurations", () => {
+  const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" };
+  const alternatives = getAlternativeProductCriteria(criteria, 3);
+  assert.equal(alternatives.length, 3);
+  assert.ok(alternatives.every((candidate) => validateSearchCriteria(candidate)));
+  assert.ok(alternatives.every((candidate) => candidate.productSlug === criteria.productSlug));
+  assert.ok(alternatives.every((candidate) => canonicalProductPath(candidate).startsWith("/product/")));
+  assert.ok(alternatives.every((candidate) => candidate.variantId !== criteria.variantId || candidate.condition !== criteria.condition));
+});
+
+test("alternative configurations are bounded and invalid products return none", () => {
+  const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" };
+  assert.equal(getAlternativeProductCriteria(criteria, 1).length, 1);
+  assert.deepEqual(getAlternativeProductCriteria({ ...criteria, productSlug: "missing-product" }), []);
 });
 
 test("catalog covers representative high-intent electronics categories", () => {

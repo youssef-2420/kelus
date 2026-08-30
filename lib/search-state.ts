@@ -38,6 +38,27 @@ export function canonicalProductPath(criteria: SearchCriteria) {
   return `/product/${encodeURIComponent(`${valid.variantId}-${valid.condition}`)}`;
 }
 
+export function getAlternativeProductCriteria(criteria: SearchCriteria, limit = 3): SearchCriteria[] {
+  const product = getProductBySlug(criteria.productSlug);
+  if (!product || limit <= 0) return [];
+  const variants = getSearchAttributeVariants(product, getVariantsForProduct(product.id));
+  const conditions: ConditionFilter[] = ["new", "refurbished", "used", "any"];
+  const alternatives: SearchCriteria[] = [];
+  const seen = new Set([`${criteria.variantId ?? ""}:${criteria.condition}`]);
+  const add = (variantId: string | undefined, condition: ConditionFilter) => {
+    const key = `${variantId ?? ""}:${condition}`;
+    if (seen.has(key)) return;
+    const candidate = validateSearchCriteria({ ...criteria, variantId, condition });
+    if (!candidate) return;
+    seen.add(key);
+    alternatives.push(candidate);
+  };
+
+  for (const condition of conditions) add(criteria.variantId, condition);
+  for (const variant of variants) add(variant.id, criteria.condition);
+  return alternatives.slice(0, limit);
+}
+
 export function readCanonicalProductCriteria(productSlug: string, variantId: string, condition: string): SearchCriteria | null {
   return validateSearchCriteria({
     productSlug: decodeURIComponent(productSlug),

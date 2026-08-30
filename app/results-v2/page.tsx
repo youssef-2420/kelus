@@ -13,7 +13,7 @@ import { WatchButton } from "@/components/WatchButton";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
 import { getProductIntelligenceOptions } from "@/lib/product-attributes";
-import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
+import { canonicalProductPath, getAlternativeProductCriteria, readSearchCriteria } from "@/lib/search-state";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { clientOfferRefreshMode } from "@/services/client-offer-refresh-policy";
 import { buildKelusDecision, type KelusDecision } from "@/services/decision-engine";
@@ -147,6 +147,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = result?.snapshotState === "stale" || result?.snapshotState === "expired" || result?.lastRefreshFailed || result?.lastRefreshReturnedEmpty;
+  const alternativeCriteria = useMemo(() => getAlternativeProductCriteria(criteria), [criteria]);
 
   useEffect(() => {
     trackEvent({ name: "product_page_viewed", productSlug: criteria.productSlug, variantId: criteria.variantId, condition: criteria.condition });
@@ -160,7 +161,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><p className="pi-subtitle">{loading && !result ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} · ${staleSnapshot ? staleUpdatedLabel(result?.lastUpdated) : updatedLabel(result?.lastUpdated)}`}</p><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
-      {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p><div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Retry</button><Link className="button button-secondary" href="/#product-search">Edit search</Link></div></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state"><h2>{result?.lastUpdated ? "No comparable offers right now." : "Live offer check is starting."}</h2><p>{result?.lastUpdated ? "Try refreshing the live results or adjust the product configuration." : "Kelus does not have a saved validated snapshot for this configuration yet. Live eBay offers are being checked now."}</p><div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Retry</button><Link className="button button-secondary" href="/#product-search">Edit search</Link></div></div> : <>
+      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} retry={retry}/> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} retry={retry}/> : <>
         <DecisionReport decision={decision} lowest={lowest}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
         {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image}/>)}</div></section>}
@@ -169,6 +170,26 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
       </>}
     </div>
   </main>;
+}
+
+function ProductFallbackState({ kind, detail, alternatives, retry }: { kind: "error" | "empty" | "starting"; detail?: string; alternatives: SearchCriteria[]; retry: () => void }) {
+  const copy = kind === "error"
+    ? { title: "We couldn’t refresh this comparison.", body: detail || "The connected offer source did not respond. No retailer information has been invented or replaced." }
+    : kind === "empty"
+      ? { title: "No comparable offers right now.", body: "Kelus checked this exact configuration, but no listing passed the current product, variant, condition, and trust checks." }
+      : { title: "This comparison is being prepared.", body: "Kelus has no saved validated offer snapshot for this exact configuration yet. A live check has started in the background." };
+  return <section className="nr-state pi-fallback" aria-live="polite">
+    <div className="pi-fallback-copy"><p className="pi-label">Offer status</p><h2>{copy.title}</h2><p>{copy.body}</p></div>
+    <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/#product-search">Edit search</Link></div>
+    {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => <Link key={`${alternative.variantId}-${alternative.condition}`} href={canonicalProductPath(alternative)}>{alternativeLabel(alternative)} <Icon name="arrow" size={13}/></Link>)}</div></div>}
+    <Link className="text-link pi-fallback-method" href="/methodology">Why Kelus may reject an offer <Icon name="arrow" size={14}/></Link>
+  </section>;
+}
+
+function alternativeLabel(criteria: SearchCriteria) {
+  const variant = getVariantById(criteria.variantId);
+  const condition = criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition);
+  return `${variant?.label ?? "Standard"} · ${condition}`;
 }
 
 function VariantSelectors({ product, variants, criteria, selectedVariant, onUpdating }: { product: Product; variants: ProductVariant[]; criteria: SearchCriteria; selectedVariant?: ProductVariant; onUpdating: () => void }) {
