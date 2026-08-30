@@ -6,10 +6,20 @@ import { trackEvent } from "@/services/analytics";
 
 const key = "kelus-watched-products";
 
+function readWatchedProducts(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const value: unknown = JSON.parse(window.localStorage.getItem(key) ?? "[]");
+    return Array.isArray(value) && value.every((item) => typeof item === "string") ? value : [];
+  } catch {
+    return [];
+  }
+}
+
 export function WatchButton({ product = "iPhone 17" }: { product?: string }) {
-  const [saved, setSaved] = useState(() => typeof window !== "undefined" && JSON.parse(window.localStorage.getItem(key) ?? "[]").includes(product));
+  const [saved, setSaved] = useState(() => readWatchedProducts().includes(product));
   function toggle() {
-    const current: string[] = JSON.parse(window.localStorage.getItem(key) ?? "[]");
+    const current = readWatchedProducts();
     const next = current.includes(product) ? current.filter((item) => item !== product) : [...current, product];
     window.localStorage.setItem(key, JSON.stringify(next));
     setSaved(next.includes(product));
