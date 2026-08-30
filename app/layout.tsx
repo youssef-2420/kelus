@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Kelus — Shop smarter. Know before you buy.",
-  description: "Kelus compares price, warranty, retailer return terms, and history so you can choose the offer that is actually worth buying.",
+  description: "Kelus evaluates exact product matches, known total price, seller evidence, available return terms, and real price history to identify the offer worth buying.",
   metadataBase: new URL("https://kelus.me"),
   openGraph: { title: "Kelus — Shop smarter. Know before you buy.", description: "Compare offers and buy with confidence.", images: ["/og.png"] },
   icons: {

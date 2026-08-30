@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { KelusHeader } from "@/components/KelusHeader";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
+
+export const metadata: Metadata = {
+  title: "How Kelus evaluates an electronics offer",
+  description: "See how Kelus checks exact product matches, known total price, seller evidence, available return terms, and real price history before making a recommendation.",
+};
 
 const steps = [
   { icon: "search", number: "01", title: "Tell us what you want", copy: "Search for a product and choose the configuration and condition that suit you." },

@@ -159,6 +159,10 @@ button { cursor:pointer; }
 .pi-pick-seller { max-width:330px; display:grid; gap:6px; justify-items:end; text-align:right; }
 .pi-pick-seller span { display:flex; align-items:center; justify-content:flex-end; gap:9px; font-size:16px; font-weight:800; }
 .pi-pick-seller small { color:#66726d; font-size:12px; line-height:1.5; }
+.pi-verdict { margin:26px 0 0; padding:20px 22px; border-left:3px solid #2c7a64; background:#eef6f2; }
+.pi-verdict .pi-label { margin-bottom:8px; }
+.pi-verdict h2 { margin:0; color:#153b32; font-family:Fraunces,"Playfair Display",Georgia,serif; font-size:clamp(24px,3vw,32px); line-height:1.08; letter-spacing:-.025em; }
+.pi-verdict > p:last-child { margin:8px 0 0; color:#49625b; font-size:13px; line-height:1.55; }
 .pi-why { margin:26px 0 0; padding:20px 0 21px; border-top:1px solid #e2ddd3; }
 .pi-why .pi-label { margin-bottom:10px; }
 .pi-evidence { margin:0; color:#61706a; font-size:13px; line-height:1.55; }

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { KelusHeader } from "@/components/KelusHeader";
 import { LandingAnalytics } from "@/components/LandingAnalytics";
 import { SearchControls } from "@/components/SearchControls";
@@ -6,6 +7,11 @@ import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { products } from "@/lib/demo-data";
 import { canonicalProductPath } from "@/lib/search-state";
+
+export const metadata: Metadata = {
+  title: "Kelus — Find the offer worth buying",
+  description: "Search popular electronics and see which validated eBay offer Kelus recommends after checking exact configuration, known shipping, seller evidence, returns, and price anomalies.",
+};
 
 function HeroDevices() {
   return <div className="hero-devices" aria-hidden="true">
@@ -22,7 +28,7 @@ export default function Home() {
   }));
   return <main><LandingAnalytics/><KelusHeader />
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
-      <div id="product-search"><SearchControls deferProductSelection /></div><div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">Compare current offers, understand the trade-offs, and buy with confidence.</p></div><TrustRow />
+      <div id="product-search"><SearchControls deferProductSelection /></div><div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p></div><TrustRow />
     </section>
     <section className="how-brief section"><p>See how Kelus finds and evaluates comparable offers.</p><div><Link className="text-link" href="/how-it-works">How Kelus works <Icon name="arrow" size={15}/></Link><Link className="text-link" href="/methodology">How Kelus picks <Icon name="arrow" size={15}/></Link></div></section>
     <section className="catalog-links section"><p className="eyebrow">Popular searches</p><div>{discoverable.map(({ product, href }) => <Link key={product.slug} href={href}>{product.brand} {product.name}</Link>)}</div></section>

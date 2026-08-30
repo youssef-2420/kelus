@@ -261,20 +261,37 @@ function EvidenceReveal({ pick, tradeoff }: { pick: Offer; tradeoff: string }) {
   </details>;
 }
 
+function kelusVerdict(decision: KelusDecision, lowest?: Offer | null) {
+  const pick = decision.pick;
+  if (!pick) return null;
+  if (!lowest || lowest.id === pick.id) {
+    return { title: "This is the strongest validated offer.", detail: "No cheaper comparable offer passed the current Kelus checks." };
+  }
+  if (lowest.trust?.suspiciousPrice) {
+    return { title: "Skip the cheapest offer.", detail: decision.cheaperTradeoff ?? "Its price is unusually low and the available evidence is not strong enough for Our Pick." };
+  }
+  if (lowest.trust?.confidence === "LOW" && decision.confidence !== "LOW") {
+    return { title: "The cheapest offer is not the stronger pick.", detail: decision.cheaperTradeoff ?? "Our Pick has stronger validation evidence for this exact configuration." };
+  }
+  return { title: "The lower price comes with a trade-off.", detail: decision.cheaperTradeoff ?? "Kelus found a cheaper comparable offer, but the available evidence favors Our Pick." };
+}
+
 function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?: Offer | null }) {
   const pick = decision.pick;
   const tradeoff = decision.cheaperTradeoff ?? "Kelus did not find a meaningfully cheaper comparable offer with different trade-offs.";
   const pickTotal = pick ? knownTotal(pick) : null;
   const lowestTotal = lowest ? knownTotal(lowest) : null;
   const savings = pickTotal !== null && lowestTotal !== null ? Math.max(0, pickTotal - lowestTotal) : null;
+  const verdict = kelusVerdict(decision, lowest);
   return <section className="pi-pick" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
     <div className="pi-pick-top">
       <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong><p className="pi-confidence">{titleCase(decision.confidence.toLowerCase())} confidence</p><p className="pi-confidence-copy">{confidenceCopy(decision.confidence)}</p><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
       {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span><b>{decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName}</b></span><small>{offerMeta(pick)}</small></div>}
     </div>
+    {verdict && <div className="pi-verdict"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
     <div className="pi-why">
-      <p className="pi-label">Why this one</p>
+      <p className="pi-label">Why this offer</p>
       <p className="pi-evidence">{decision.reasons.join(" · ")}</p>
       <p className="pi-tradeoff">{tradeoff}</p>
     </div>

@@ -43,7 +43,7 @@ test("canonical product runtime contains record-specific SEO and structured-data
   assert.match(page, /https:\/\/schema\.org/);
   assert.match(page, /alternates: \{ canonical: canonicalUrl \}/);
   assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);
-  for (const copy of [/Our Pick/, /Why this one/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
+  for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
   assert.match(page, /initialOutcome=\{initialOutcome\}/);
 });
 
@@ -72,6 +72,8 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /How Kelus chose this/);
   assert.match(view, /See how Kelus picks an offer/);
   assert.match(view, /Why this offer won/);
+  assert.match(view, /Skip the cheapest offer\./);
+  assert.match(view, /lowest\.trust\?\.suspiciousPrice/);
   assert.match(view, /No suspicious-price flag/);
   assert.match(view, /pi-retailer-logo/);
   assert.match(view, /getProductIntelligenceOptions/);
@@ -90,6 +92,20 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.doesNotMatch(styles, /search-transition|search-progress-card|brand-scan/);
   assert.match(styles, /is-search-leaving/);
   assert.doesNotMatch(view, /\$1,204|techprodeals|Apple warranty|12 offers/);
+});
+
+test("key pages use specific metadata and the homepage demonstrates the differentiator", async () => {
+  const [home, how, alerts, layout] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/alerts/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(home, /A cheaper listing can still lose/);
+  assert.match(home, /Kelus — Find the offer worth buying/);
+  assert.match(how, /How Kelus evaluates an electronics offer/);
+  assert.match(alerts, /My price alerts — Kelus/);
+  assert.doesNotMatch(layout, /warranty/);
 });
 
 test("Kelus source separates demo offers from recommendation and provider contracts", async () => {
