@@ -38,8 +38,10 @@ export const analyticsEvents = sqliteTable("analytics_events", {
   condition: text("condition"),
   offerId: text("offer_id"),
   query: text("query"),
+  offerCount: integer("offer_count"),
   occurredAt: text("occurred_at").notNull(),
 }, (table) => [
   index("analytics_events_name_time_idx").on(table.eventName, table.occurredAt),
   index("analytics_events_product_time_idx").on(table.productSlug, table.occurredAt),
+  index("analytics_events_offer_outcome_idx").on(table.eventName, table.offerCount, table.occurredAt),
 ]);

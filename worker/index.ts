@@ -9,6 +9,7 @@ import { refreshPersistedProductIntelligenceSnapshots } from "../services/server
 import { setKelusRuntimeEnvironment } from "../services/runtime-environment";
 import { applyCanonicalProductResponsePolicy, applyRootResponsePolicy, canonicalHostRedirect } from "../services/product-response-policy";
 import { storeAnalyticsEvent } from "../services/server-analytics";
+import { authorizeDiagnostics, getAnalyticsDiagnostics } from "../services/analytics-diagnostics";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
 
 interface Env {
@@ -51,6 +52,7 @@ const worker = {
 
     if (url.pathname === "/api/offers") return handleOfferSearch(request, env);
     if (url.pathname === "/api/analytics") return handleAnalytics(request, env);
+    if (url.pathname === "/api/internal/diagnostics") return handleDiagnostics(request, env);
     if (url.pathname === "/api/alerts/check") return handleAlertCheck(request, env, ctx);
 
     if (url.pathname === "/_vinext/image") {
@@ -133,6 +135,17 @@ async function handleAnalytics(request: Request, env: Env) {
     return stored ? new Response(null, { status: 204 }) : json({ error: { code: "invalid_event", message: "Unsupported analytics event." } }, 400);
   } catch {
     return json({ error: { code: "invalid_event", message: "Invalid analytics payload." } }, 400);
+  }
+}
+
+async function handleDiagnostics(request: Request, env: Env) {
+  if (request.method !== "GET") return json({ error: { code: "method_not_allowed", message: "Only GET is supported." } }, 405);
+  if (!authorizeDiagnostics(request, env.ALERT_MONITOR_SECRET)) return json({ error: { code: "unauthorized", message: "A valid Kelus operations key is required." } }, 401);
+  try {
+    return json(await getAnalyticsDiagnostics(env.DB));
+  } catch (error) {
+    console.error("[analytics] diagnostics_failed", { message: error instanceof Error ? error.message : "Unknown diagnostics error" });
+    return json({ error: { code: "diagnostics_error", message: "Diagnostics are unavailable right now." } }, 503);
   }
 }
 

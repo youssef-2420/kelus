@@ -29,7 +29,7 @@ export type StoredKelusAnalyticsEvent = KelusAnalyticsEvent & { occurredAt: stri
 const analyticsKey = "kelus:analytics:v1";
 const unsupportedKey = "kelus:unsupported-searches:v1";
 const maxStoredEvents = 200;
-const persistedEvents = new Set(["landing_viewed", "search_submitted", "product_resolved", "search_unsupported", "product_page_viewed", "recommendation_viewed", "our_pick_clicked", "retailer_clicked", "price_alert_created"]);
+const persistedEvents = new Set(["landing_viewed", "search_submitted", "product_resolved", "search_unsupported", "product_page_viewed", "recommendation_viewed", "our_pick_clicked", "retailer_clicked", "price_alert_created", "live_provider_search_completed", "live_provider_search_failed"]);
 
 const normalizedQuery = (query: string) => query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().slice(0, 120);
 

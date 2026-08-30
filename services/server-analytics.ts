@@ -1,6 +1,7 @@
 const allowedEvents = new Set([
   "landing_viewed", "search_submitted", "product_resolved", "search_unsupported", "product_page_viewed",
   "recommendation_viewed", "our_pick_clicked", "retailer_clicked", "price_alert_created",
+  "live_provider_search_completed", "live_provider_search_failed",
 ]);
 
 export type AnalyticsDatabase = { prepare(sql: string): { bind(...values: unknown[]): { run(): Promise<unknown> } } };
@@ -14,9 +15,9 @@ export async function storeAnalyticsEvent(db: AnalyticsDatabase | undefined, pay
   const eventName = clean(event.name, 48);
   if (!eventName || !allowedEvents.has(eventName)) return false;
   await db.prepare(`INSERT INTO analytics_events (
-    event_name, product_slug, variant_id, condition, offer_id, query, occurred_at
-  ) VALUES (?, ?, ?, ?, ?, ?, ?)`)
-    .bind(eventName, clean(event.productSlug, 100), clean(event.variantId, 120), clean(event.condition, 24), clean(event.offerId, 180), eventName === "search_unsupported" ? cleanQuery(event.query) : null, now.toISOString())
+    event_name, product_slug, variant_id, condition, offer_id, query, offer_count, occurred_at
+  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
+    .bind(eventName, clean(event.productSlug, 100), clean(event.variantId, 120), clean(event.condition, 24), clean(event.offerId, 180), eventName === "search_unsupported" ? cleanQuery(event.query) : null, Number.isInteger(event.offerCount) ? Math.max(0, Number(event.offerCount)) : null, now.toISOString())
     .run();
   return true;
 }
