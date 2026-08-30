@@ -12,6 +12,7 @@ import { SearchControls } from "@/components/SearchControls";
 import { WatchButton } from "@/components/WatchButton";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
+import { getProductIntelligenceOptions } from "@/lib/product-attributes";
 import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { clientOfferRefreshMode } from "@/services/client-offer-refresh-policy";
@@ -23,7 +24,7 @@ import { getCheaperAlternative } from "@/services/recommendations";
 import { optimizedRetailerImageUrl } from "@/services/retailer-image";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import { trackEvent } from "@/services/analytics";
-import type { ConditionFilter, Offer, OfferSearchResult, PriceObservation, ProductVariant, SearchCriteria } from "@/types/kelus";
+import type { ConditionFilter, Offer, OfferSearchResult, PriceObservation, Product, ProductVariant, SearchCriteria } from "@/types/kelus";
 
 const knownTotal = (offer: Offer) => offer.shippingCostKnown === false ? null : offer.price + offer.shippingCost;
 const titleCase = (value: string) => value.split("_").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
@@ -158,11 +159,11 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   return <main className={`nr-page pi-page${updating ? " is-updating" : ""}`}>
     <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
     <div className="pi-content section">
-      <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><p className="pi-subtitle">{loading && !result ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} · ${staleSnapshot ? staleUpdatedLabel(result?.lastUpdated) : updatedLabel(result?.lastUpdated)}`}</p><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
+      <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><p className="pi-subtitle">{loading && !result ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} · ${staleSnapshot ? staleUpdatedLabel(result?.lastUpdated) : updatedLabel(result?.lastUpdated)}`}</p><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
       {error ? <div className="nr-state"><h2>We couldn&apos;t load live offers.</h2><p>{error}</p><div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Retry</button><Link className="button button-secondary" href="/#product-search">Edit search</Link></div></div> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <div className="nr-state"><h2>No comparable offers right now.</h2><p>Try refreshing the live results or adjust the product configuration.</p><div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Retry</button><Link className="button button-secondary" href="/#product-search">Edit search</Link></div></div> : <>
         <DecisionReport decision={decision} lowest={lowest}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
-        {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name}/>)}</div></section>}
+        {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image}/>)}</div></section>}
         <section className="pi-method"><p className="pi-label">Methodology</p><p>Kelus uses persisted last-known-good eBay snapshots for the first render, then refreshes connected offers in the background. Recommendations only use comparable offers that pass product, variant, condition, seller, shipping, return, confidence, and anomaly checks.</p></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
       </>}
@@ -170,8 +171,9 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   </main>;
 }
 
-function VariantSelectors({ variants, criteria, selectedVariant, onUpdating }: { variants: ProductVariant[]; criteria: SearchCriteria; selectedVariant?: ProductVariant; onUpdating: () => void }) {
+function VariantSelectors({ product, variants, criteria, selectedVariant, onUpdating }: { product: Product; variants: ProductVariant[]; criteria: SearchCriteria; selectedVariant?: ProductVariant; onUpdating: () => void }) {
   const selectedLabel = selectedVariant?.label ?? "Unavailable";
+  const options = getProductIntelligenceOptions(product, variants);
   function navigate(next: Partial<SearchCriteria>) {
     const nextCriteria = { ...criteria, ...next };
     try {
@@ -182,10 +184,10 @@ function VariantSelectors({ variants, criteria, selectedVariant, onUpdating }: {
     }
   }
   return <div className="pi-selectors" aria-label="Product options">
-    <label><span className="sr-only">Storage</span><select aria-label="Storage" value={criteria.variantId ?? ""} onChange={(event) => navigate({ variantId: event.target.value })}>{variants.map((variant) => <option key={variant.id} value={variant.id}>{variant.label}</option>)}</select></label><i aria-hidden="true">·</i>
-    <label><span className="sr-only">Condition</span><select aria-label="Condition" value={criteria.condition} onChange={(event) => navigate({ condition: event.target.value as ConditionFilter })}>{(["any", "new", "used", "refurbished"] as ConditionFilter[]).map((condition) => <option key={condition} value={condition}>{condition === "any" ? "Any condition" : titleCase(condition)}</option>)}</select></label><i aria-hidden="true">·</i>
-    <label><span className="sr-only">Network</span><select aria-label="Network" value="unlocked" onChange={() => undefined}><option value="unlocked">Unlocked</option></select></label><i aria-hidden="true">·</i>
-    <details><summary>More options</summary><p>Color varies by live listing and is not part of the canonical configuration. Current identity: {selectedLabel} · {criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition)} · Unlocked.</p></details>
+    {options.attributeLabel && <><label><span className="sr-only">{options.attributeLabel}</span><select aria-label={options.attributeLabel} value={criteria.variantId ?? ""} onChange={(event) => navigate({ variantId: event.target.value })}>{variants.map((variant) => <option key={variant.id} value={variant.id}>{variant.label}</option>)}</select></label><i aria-hidden="true">·</i></>}
+    <label><span className="sr-only">Condition</span><select aria-label="Condition" value={criteria.condition} onChange={(event) => navigate({ condition: event.target.value as ConditionFilter })}>{(["any", "new", "used", "refurbished"] as ConditionFilter[]).map((condition) => <option key={condition} value={condition}>{condition === "any" ? "Any condition" : titleCase(condition)}</option>)}</select></label>
+    {options.showsUnlockedStatus && <><i aria-hidden="true">·</i><span className="pi-fixed-option" aria-label="Network: Unlocked">Unlocked</span></>}
+    <i aria-hidden="true">·</i><details><summary>More options</summary><p>Secondary details such as color vary by live listing and do not change this comparison. Current identity: {selectedLabel} · {criteria.condition === "any" ? "Any condition" : titleCase(criteria.condition)}{options.showsUnlockedStatus ? " · Unlocked" : ""}.</p></details>
   </div>;
 }
 
@@ -221,7 +223,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
   return <section className="pi-pick" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
     <div className="pi-pick-top">
-      <div><strong className="pi-pick-price">{money(pick)}</strong><p className="pi-confidence">{titleCase(decision.confidence.toLowerCase())} confidence</p><p className="pi-confidence-copy">{confidenceCopy(decision.confidence)}</p></div>
+      <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong><p className="pi-confidence">{titleCase(decision.confidence.toLowerCase())} confidence</p><p className="pi-confidence-copy">{confidenceCopy(decision.confidence)}</p></div>
       {pick && <div className="pi-pick-seller"><span><EbayWordmark/>{decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName}</span><small>{offerMeta(pick)}</small></div>}
     </div>
     <div className="pi-why">
@@ -229,29 +231,28 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
       <p className="pi-evidence">{decision.reasons.join(" · ")}</p>
       <p className="pi-tradeoff">{tradeoff}</p>
     </div>
-    <p className="pi-comparison-label">Our Pick vs Cheapest</p>
-    <div className="pi-comparison" aria-label="Our Pick compared with the cheapest offer">
+    {lowest && lowest.id !== pick?.id ? <><p className="pi-comparison-label">Our Pick vs Cheapest</p><div className="pi-comparison" aria-label="Our Pick compared with the cheapest offer">
       <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
       <span>Cheapest</span><strong>{money(lowest ?? pick)}</strong><small>{lowest?.trust?.confidence ? `${titleCase(lowest.trust.confidence.toLowerCase())} confidence${savings !== null && savings > 0 ? ` · ${moneyAmount(savings, lowest.currency)} less` : ""}` : "Confidence unavailable"}</small>
-    </div>
+    </div></> : <p className="pi-no-cheaper">No cheaper comparable offer passed Kelus validation.</p>}
     {pick && <div className="pi-primary-cta"><OutboundRetailerCTA offer={pick} label="View offer" ourPick/><span>Opens the live eBay listing</span></div>}
   </section>;
 }
 
-function ListingImage({ offer, productName, large = false }: { offer?: Offer; productName: string; large?: boolean }) {
+function ListingImage({ offer, productName, fallbackLabel, large = false }: { offer?: Offer; productName: string; fallbackLabel: string; large?: boolean }) {
   const [failed, setFailed] = useState(false);
   const source = optimizedRetailerImageUrl(offer?.imageUrl, large ? 300 : 160);
-  return <span className={`nr-image${large ? " is-large" : ""}`}>{source && !failed ? <>{/* Retailer image hosts change, so the native element is intentional. */}<img src={source} alt={`${productName} listing`} width={large ? 180 : 80} height={large ? 180 : 80} loading={large ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)}/></> : <ProductMark label="IPH"/>}</span>;
+  return <span className={`nr-image${large ? " is-large" : ""}`}>{source && !failed ? <>{/* Retailer image hosts change, so the native element is intentional. */}<img src={source} alt={`${productName} listing`} width={large ? 180 : 80} height={large ? 180 : 80} loading={large ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)}/></> : <ProductMark label={fallbackLabel}/>}</span>;
 }
 
-function OtherOffer({ offer, productName }: { offer: Offer; productName: string }) {
+function OtherOffer({ offer, productName, fallbackLabel }: { offer: Offer; productName: string; fallbackLabel: string }) {
   const [open, setOpen] = useState(false);
   const detailId = `offer-details-${offer.id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
   return <article className={`pi-offer${open ? " is-open" : ""}`}>
     <button className="pi-offer-summary" type="button" aria-expanded={open} aria-controls={detailId} onClick={() => setOpen((value) => !value)}>
       <strong>{money(offer)}</strong><span><b><EbayWordmark compact/>{offer.seller.name || offer.retailer.name}</b><small>{offerMeta(offer)}</small></span><em>{offer.trust?.confidence ? titleCase(offer.trust.confidence.toLowerCase()) : "Unrated"}</em><Icon name="chevron" size={17}/>
     </button>
-    <div className="pi-offer-reveal" id={detailId} aria-hidden={!open}><div><div className="pi-offer-detail"><ListingImage offer={offer} productName={productName}/><div><p>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</p><small>{offer.seller.feedbackPercentage ? `${offer.seller.feedbackPercentage}% positive · ` : ""}{updatedLabel(offer.lastUpdated)} · Live eBay offer</small><span className="pi-secondary-cta"><OutboundRetailerCTA offer={offer} compact label="View offer"/></span></div></div></div></div>
+    <div className="pi-offer-reveal" id={detailId} aria-hidden={!open}><div><div className="pi-offer-detail"><ListingImage offer={offer} productName={productName} fallbackLabel={fallbackLabel}/><div><p>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</p><small>{offer.seller.feedbackPercentage ? `${offer.seller.feedbackPercentage}% positive · ` : ""}{updatedLabel(offer.lastUpdated)} · Live eBay offer</small><span className="pi-secondary-cta"><OutboundRetailerCTA offer={offer} compact label="View offer"/></span></div></div></div></div>
   </article>;
 }
 

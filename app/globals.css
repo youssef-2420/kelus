@@ -134,6 +134,7 @@ button { cursor:pointer; }
 .pi-selectors i { color:#a6ada9; font-style:normal; }
 .pi-selectors select,.pi-selectors summary { min-height:26px; border:0; border-bottom:1px dashed #9aa7a2; border-radius:0; background:transparent; color:#1c302b; padding:1px 2px; font:650 13px/1.4 Inter,"DM Sans",Arial,sans-serif; cursor:pointer; }
 .pi-selectors select:focus-visible,.pi-selectors summary:focus-visible { outline:2px solid #9fcfc3; outline-offset:2px; }
+.pi-fixed-option { color:#43534e; font-size:13px; font-weight:650; }
 .pi-selectors details { position:relative; }
 .pi-selectors summary { list-style:none; }
 .pi-selectors summary::-webkit-details-marker { display:none; }
@@ -145,6 +146,7 @@ button { cursor:pointer; }
 .pi-pick { margin-top:34px; padding:30px 32px 32px; border:1px solid #d9d4c9; border-radius:12px; background:#fffefa; transition:opacity .2s ease; }
 .pi-pick-top { display:flex; justify-content:space-between; gap:34px; align-items:start; margin-top:18px; }
 .pi-pick-price { display:block; font-family:Fraunces,"Playfair Display",Georgia,serif; font-size:54px; line-height:.95; letter-spacing:-1.8px; color:#10221e; }
+.pi-total-label { display:block; margin-bottom:7px; color:#77827e; font-size:10px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; }
 .pi-confidence { margin:10px 0 0; color:#1b4239; font-size:13px; font-weight:800; }
 .pi-confidence-copy { max-width:360px; margin:5px 0 0; color:#68746f; font-size:12px; line-height:1.5; }
 .pi-pick-seller { max-width:330px; display:grid; gap:6px; justify-items:end; text-align:right; }
@@ -160,6 +162,7 @@ button { cursor:pointer; }
 .pi-comparison span { color:#5f6d68; font-size:11px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
 .pi-comparison strong { font-family:Fraunces,"Playfair Display",Georgia,serif; font-size:23px; letter-spacing:-.4px; }
 .pi-comparison small { overflow-wrap:anywhere; color:#77817d; font-size:11px; line-height:1.45; }
+.pi-no-cheaper { margin:18px 0 0; padding-top:18px; border-top:1px solid #e2ddd3; color:#61706a; font-size:12px; line-height:1.5; }
 .pi-primary-cta { display:flex; justify-content:flex-end; align-items:center; gap:14px; margin-top:24px; }
 .pi-primary-cta .button { min-width:205px; background:#103e35; }
 .pi-primary-cta > span { color:#7a847f; font-size:10px; }

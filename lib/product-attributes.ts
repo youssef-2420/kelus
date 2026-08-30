@@ -63,3 +63,10 @@ export function getRelevantAttributeLabel(product: Product, variants: ProductVar
 export function getVisibleSearchAttributeLabel(product: Product, variants: ProductVariant[], productSelected: boolean) {
   return productSelected ? getRelevantAttributeLabel(product, variants) : null;
 }
+
+export function getProductIntelligenceOptions(product: Product, variants: ProductVariant[]) {
+  return {
+    attributeLabel: getRelevantAttributeLabel(product, variants),
+    showsUnlockedStatus: product.category === "Smartphone",
+  };
+}

@@ -40,7 +40,6 @@ function cheapestAcceptedOffer(offers: Offer[]) {
 
 function decisionReasons(offer: Offer, recommendation: Recommendation | null) {
   const reasons = [...(recommendation?.reasons ?? [])];
-  if (offer.trust?.confidence) reasons.unshift(`${offer.trust.confidence} confidence`);
   if (!reasons.some((reason) => /condition/i.test(reason))) reasons.push(`${conditionLabel(offer.condition)} condition`);
   if (offer.seller.topRated && !reasons.some((reason) => /top rated/i.test(reason))) reasons.push("Top Rated seller");
   if (factual(offer.returnPolicy) && !reasons.includes(offer.returnPolicy)) reasons.push(offer.returnPolicy);

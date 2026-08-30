@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { getVariantsForProduct, offers, products, searchProducts } from "../lib/demo-data.ts";
-import { getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId, resolveSearchAttributeVariantIdFromQuery } from "../lib/product-attributes.ts";
+import { getProductIntelligenceOptions, getRelevantAttributeLabel, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId, resolveSearchAttributeVariantIdFromQuery } from "../lib/product-attributes.ts";
 import { canonicalProductPath, readCanonicalProductCriteria, readCanonicalProductSlug, readSearchCriteria, resolveConditionFromQuery, searchCriteriaToQuery, validateSearchCriteria } from "../lib/search-state.ts";
 import { getRecommendation, sortOffers } from "../services/recommendations.ts";
 
@@ -37,6 +37,17 @@ test("search asks only for a relevant product attribute", () => {
   assert.equal(getRelevantAttributeLabel(iphone, getVariantsForProduct(iphone.id)), "Storage");
   assert.equal(getRelevantAttributeLabel(laptop, getVariantsForProduct(laptop.id)), "Configuration");
   assert.equal(getRelevantAttributeLabel(audio, getVariantsForProduct(audio.id)), null);
+});
+
+test("Product Intelligence options follow category and explicit attribute definitions", () => {
+  const iphone = products.find((product) => product.slug === "iphone-17");
+  const laptop = products.find((product) => product.slug === "macbook-air-m4");
+  const console = products.find((product) => product.slug === "playstation-5-slim");
+  const audio = products.find((product) => product.slug === "airpods-pro-2");
+  assert.deepEqual(getProductIntelligenceOptions(iphone, getVariantsForProduct(iphone.id)), { attributeLabel: "Storage", showsUnlockedStatus: true });
+  assert.deepEqual(getProductIntelligenceOptions(laptop, getVariantsForProduct(laptop.id)), { attributeLabel: "Configuration", showsUnlockedStatus: false });
+  assert.deepEqual(getProductIntelligenceOptions(console, getVariantsForProduct(console.id)), { attributeLabel: "Edition", showsUnlockedStatus: false });
+  assert.deepEqual(getProductIntelligenceOptions(audio, getVariantsForProduct(audio.id)), { attributeLabel: null, showsUnlockedStatus: false });
 });
 
 test("homepage hides an attribute until a phone is selected", () => {
