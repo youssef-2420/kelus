@@ -54,6 +54,8 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /knownTotal/);
   assert.match(view, /Known total/);
   assert.match(view, /No cheaper comparable offer passed Kelus validation/);
+  assert.match(view, /Live offer check is starting/);
+  assert.match(view, /saved validated snapshot/);
   assert.match(view, /getProductIntelligenceOptions/);
   assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
   assert.match(view, /if \(refreshPersistedResult\) return;/);

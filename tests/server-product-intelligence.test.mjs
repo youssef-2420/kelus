@@ -67,7 +67,9 @@ test("canonical initial HTML resolves from its bundled real snapshot without tou
   assert.ok(Date.now() - startedAt < 100);
 });
 
-test("a canonical product without a bundled snapshot returns an immediate honest error", async () => {
+test("a canonical product without a snapshot returns an immediate refreshable empty state", async () => {
   const outcome = await resolveInitialProductIntelligence({ ...criteria, productSlug: "iphone-17", variantId: "iphone-17-128" }, undefined);
-  assert.equal(outcome.status, "ERROR");
+  assert.equal(outcome.status, "EMPTY");
+  assert.equal(outcome.result.refreshRecommended, true);
+  assert.deepEqual(outcome.result.offers, []);
 });

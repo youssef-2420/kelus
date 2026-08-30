@@ -21,9 +21,20 @@ export async function resolveInitialProductIntelligence(criteria: SearchCriteria
     }
   }
   if (!result) {
-    const outcome = { status: "ERROR", message: "Saved product intelligence is refreshing. Please try again shortly." } as const;
+    const outcome: ProductOfferLoadOutcome = {
+      status: "EMPTY",
+      result: {
+        offers: [],
+        observations: [],
+        observationsStored: false,
+        failedProviders: [],
+        connectedProviders: ["ebay"],
+        isDemo: false,
+        refreshRecommended: true,
+      },
+    };
     console.info("[product-intelligence] initial_resolved", {
-      source: "snapshot_unavailable",
+      source: "snapshot_not_yet_available",
       status: outcome.status,
       durationMs: Date.now() - startedAt,
       offers: 0,
