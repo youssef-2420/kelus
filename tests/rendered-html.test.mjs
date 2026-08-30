@@ -77,6 +77,8 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.doesNotMatch(styles, /\.search-controls:has\(\.suggestions\)\{position:fixed/);
   assert.match(styles, /@media \(max-width:430px\)/);
   assert.match(styles, /prefers-reduced-motion:reduce/);
+  assert.doesNotMatch(styles, /search-transition|search-progress-card|brand-scan/);
+  assert.match(styles, /is-search-leaving/);
   assert.doesNotMatch(view, /\$1,204|techprodeals|Apple warranty|12 offers/);
 });
 

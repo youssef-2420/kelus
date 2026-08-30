@@ -15,9 +15,13 @@ test("eBay listing thumbnails request a bounded image instead of the original la
   assert.equal(optimizedRetailerImageUrl("https://example.com/product.jpg", 300), "https://example.com/product.jpg");
 });
 
-test("homepage search navigation has no artificial pre-navigation delay", async () => {
+test("homepage search uses a synchronous quiet transition without an interstitial", async () => {
   const source = await readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8");
   assert.doesNotMatch(source, /setTimeout\(resolve,\s*220\)/);
   assert.doesNotMatch(source, /setTimeout\(resolve,\s*200\)/);
+  assert.doesNotMatch(source, /SearchProgress/);
+  assert.match(source, /flushSync/);
+  assert.match(source, /is-search-leaving/);
+  assert.match(source, /Finding offers…/);
   assert.match(source, /window\.location\.assign/);
 });
