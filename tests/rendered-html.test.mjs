@@ -108,6 +108,23 @@ test("key pages use specific metadata and the homepage demonstrates the differen
   assert.doesNotMatch(layout, /warranty/);
 });
 
+test("Alerts leads with monitoring state and keeps secondary controls progressive", async () => {
+  const [alerts, styles] = await Promise.all([
+    readFile(new URL("../app/alerts/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(alerts, /Know when it’s worth buying/);
+  assert.match(alerts, /Current best/);
+  assert.match(alerts, /Price verified/);
+  assert.match(alerts, /No validated offer/);
+  assert.match(alerts, /Saved price may be stale/);
+  assert.match(alerts, /View comparison/);
+  assert.match(alerts, /<progress value=\{progress\}/);
+  assert.match(styles, /\.alerts-overview/);
+  assert.match(styles, /\.alert-glance/);
+  assert.match(styles, /\.alert-check\.is-error/);
+});
+
 test("Kelus source separates demo offers from recommendation and provider contracts", async () => {
   const [data, recommendation, provider, offerCard] = await Promise.all([
     readFile(new URL("../lib/demo-data.ts", import.meta.url), "utf8"),

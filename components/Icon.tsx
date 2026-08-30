@@ -23,6 +23,7 @@ export function Icon({ name, size = 20 }: IconProps) {
     star: <path d="m12 3 2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6-4.5-4.2 6.1-.7Z" />,
     sparkle: <><path d="M12 3v4M12 17v4M3 12h4M17 12h4" /><path d="m6.5 6.5 2 2M15.5 15.5l2 2M17.5 6.5l-2 2M8.5 15.5l-2 2" /></>,
     info: <><circle cx="12" cy="12" r="8.5" /><path d="M12 11v5.2M12 8v.2" /></>,
+    plus: <><path d="M12 5v14M5 12h14" /></>,
   };
   return <svg {...common}>{paths[name] ?? paths.search}</svg>;
 }

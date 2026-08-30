@@ -22,6 +22,15 @@ function timeLabel(value?: string) {
   return `Updated ${new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(value))}`;
 }
 
+function checkTimeLabel(value?: string) {
+  if (!value || Number.isNaN(Date.parse(value))) return "time unavailable";
+  const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 60_000));
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 1_440) return `${Math.floor(minutes / 60)}h ago`;
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(value));
+}
+
 function statusLabel(alert: PriceAlertRecord) {
   const status = getAlertStatus(alert);
   return status === "target_reached" ? "Target reached" : status === "price_dropped" ? "Price dropped" : status === "paused" ? "Paused" : "Watching";
@@ -33,6 +42,20 @@ function contextLabel(alert: PriceAlertRecord) {
   if (new Date(alert.startedAt).toDateString() === new Date().toDateString()) return "Tracking started today";
   const change = getPriceChange(alert);
   return !change || change.amount === 0 ? "No verified price change yet" : "Compared with the first tracked live price";
+}
+
+function checkLabel(alert: PriceAlertRecord, refreshing: boolean, stale: boolean) {
+  if (refreshing) return "Checking now…";
+  if (alert.paused) return `Checks paused · ${checkTimeLabel(alert.lastCheckedAt)}`;
+  if (alert.state === "error") return `Check failed · ${checkTimeLabel(alert.lastCheckedAt)}`;
+  if (alert.state === "unavailable") return `Checked ${checkTimeLabel(alert.lastCheckedAt)} · No validated offer`;
+  if (stale) return `Last checked ${checkTimeLabel(alert.lastCheckedAt)} · Saved price may be stale`;
+  return `Checked ${checkTimeLabel(alert.lastCheckedAt)} · Price verified`;
+}
+
+function targetProgress(alert: PriceAlertRecord) {
+  if (alert.trackedPrice === null || alert.currentPrice === null || alert.targetPrice === null || alert.trackedPrice <= alert.targetPrice) return null;
+  return Math.max(0, Math.min(100, Math.round(((alert.trackedPrice - alert.currentPrice) / (alert.trackedPrice - alert.targetPrice)) * 100)));
 }
 
 function AlertImage({ alert }: { alert: PriceAlertRecord }) {
@@ -64,7 +87,7 @@ export default function AlertsPage() {
         return;
       }
       if (cancelled) return;
-      setAlerts(stored); setExpanded(stored[0]?.id ?? null); setReady(true);
+      setAlerts(stored); setExpanded(null); setReady(true);
       setRefreshing(new Set(stored.filter((alert) => !alert.paused).map((alert) => alert.id)));
       let updated: PriceAlertRecord[];
       if (user) {
@@ -107,10 +130,15 @@ export default function AlertsPage() {
     setEditing(null);
   }
 
+  const reachedCount = alerts.filter((alert) => getAlertStatus(alert) === "target_reached").length;
+  const droppedCount = alerts.filter((alert) => getAlertStatus(alert) === "price_dropped").length;
+  const activeCount = alerts.filter((alert) => !alert.paused).length;
+
   return <main className="app-page alerts-page"><KelusHeader />
     <section className="alerts-main section">
-      <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>My Alerts</h1><p>Track products you want and know when the price is worth buying.</p></div><Link href="/#product-search" className="alerts-add" aria-label="Add a new product">+</Link></div>
+      <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><Link href="/#product-search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link></div>
       {syncError && <p className="alerts-sync-error" role="alert">{syncError}</p>}
+      {ready && alerts.length > 0 && <div className="alerts-overview" aria-label="Price alert summary"><span><b>{activeCount}</b> actively watched</span><span><b>{droppedCount}</b> price dropped</span><span><b>{reachedCount}</b> target reached</span></div>}
       {!ready ? <div className="alerts-empty" role="status"><Icon name="refresh" size={28}/><h2>Loading your alerts…</h2></div> : alerts.length ? <div className="alerts-list">
         {alerts.map((alert) => {
           const open = expanded === alert.id;
@@ -118,26 +146,27 @@ export default function AlertsPage() {
           const change = getPriceChange(alert);
           const distance = getDistanceFromTarget(alert);
           const stale = isAlertStale(alert);
+          const progress = targetProgress(alert);
           return <article className={`alert-row${alert.paused ? " is-paused" : ""}${open ? " is-open" : ""}`} key={alert.id}>
             <button type="button" aria-expanded={open} onClick={() => setExpanded(open ? null : alert.id)}>
               <span className="alert-product"><AlertImage alert={alert}/><span><b>{alert.productName}</b><small>{alert.configuration}</small></span></span>
               <span className={`alert-status is-${status}`}>{statusLabel(alert)}</span>
-              {change && change.amount !== 0 ? <span className={`alert-change${change.amount > 0 ? " is-up" : ""}`}>{change.amount > 0 ? "↑" : "↓"} {money(Math.abs(change.amount))} ({Math.abs(change.percent)}%)</span> : <span className="alert-change is-neutral">No change</span>}
-              <strong>{alert.currentPrice === null ? "Unavailable" : money(alert.currentPrice)}</strong><Icon name="chevron" size={18}/>
+              <span className="alert-price"><small>Current best</small><strong>{alert.currentPrice === null ? "Unavailable" : money(alert.currentPrice)}</strong>{change && change.amount !== 0 ? <em className={`alert-change${change.amount > 0 ? " is-up" : ""}`}>{change.amount > 0 ? "↑" : "↓"} {money(Math.abs(change.amount))} ({Math.abs(change.percent)}%)</em> : <em className="alert-change is-neutral">No verified change</em>}</span><Icon name="chevron" size={18}/>
             </button>
+            <div className="alert-glance"><span className={`alert-check is-${alert.state}`}><i aria-hidden="true"/>{checkLabel(alert, refreshing.has(alert.id), stale)}</span><span className="alert-target-glance">Target <b>{alert.targetPrice === null ? "Not set" : money(alert.targetPrice)}</b>{distance !== null && distance > 0 ? ` · ${money(distance)} away` : distance === 0 ? " · Reached" : ""}</span><Link href={comparisonHref(alert)}>View comparison <Icon name="arrow" size={14}/></Link></div>
             {open && <div className="alert-detail">
               <div className="alert-detail-stats">
                 <span>Tracked at<strong>{alert.trackedPrice === null ? "Unavailable" : money(alert.trackedPrice)}</strong><small>{contextLabel(alert)}</small></span>
-                <span>Target<strong>{alert.targetPrice === null ? "Not set" : money(alert.targetPrice)}</strong><small>{alert.targetPrice === null ? "Set a target to get a clear status" : distance === 0 ? "Target reached" : distance === null ? "Price unavailable" : `${money(distance)} away from target`}</small></span>
+                <span>Target<strong>{alert.targetPrice === null ? "Not set" : money(alert.targetPrice)}</strong><small>{alert.targetPrice === null ? "Set a target to get a clear status" : distance === 0 ? "Target reached" : distance === null ? "Price unavailable" : `${money(distance)} away from target`}</small>{progress !== null && <progress value={progress} max="100" aria-label={`${progress}% of the way to the target price`}/>}</span>
                 <span>Last checked<strong>{refreshing.has(alert.id) ? "Checking now…" : timeLabel(alert.lastCheckedAt)}</strong><small>{stale ? "Last verified price may be stale" : alert.state === "ready" ? "Live eBay price" : "Last real price retained"}</small></span>
               </div>
               <p className="alert-source">{alert.currentRetailer ? `Live ${alert.currentRetailer} offer` : "Live eBay tracking"} · {timeLabel(alert.lastSuccessfulAt)}{alert.currentListingUrl ? " · Listing available" : ""}</p>
               {editing === alert.id && <form className="alert-target-form" onSubmit={(event) => saveTarget(event, alert)}><label>Target price ($)<input type="number" min="0.01" step="0.01" inputMode="decimal" value={target} placeholder="No target" onChange={(event) => setTarget(event.target.value)}/></label><button type="submit">Save target</button><button type="button" onClick={() => setEditing(null)}>Cancel</button></form>}
-              <div className="alert-actions"><Link href={comparisonHref(alert)}>View comparison <Icon name="arrow" size={15}/></Link><button type="button" onClick={() => beginEdit(alert)}>Edit alert</button><button type="button" onClick={() => togglePause(alert)}>{alert.paused ? "Resume" : "Pause"}</button><button type="button" className="is-danger" onClick={() => removeAlert(alert)}>Remove</button></div>
+              <div className="alert-actions"><button type="button" onClick={() => beginEdit(alert)}>Edit target</button><button type="button" onClick={() => togglePause(alert)}>{alert.paused ? "Resume tracking" : "Pause tracking"}</button><button type="button" className="is-danger" onClick={() => removeAlert(alert)}>Remove alert</button></div>
             </div>}
           </article>;
         })}
-      </div> : <div className="alerts-empty"><Icon name="bell" size={28}/><h2>No alerts yet</h2><p>Search for a product and track its live price to add it here.</p><Link className="button button-primary" href="/#product-search">+ Add Product <Icon name="arrow" size={17}/></Link></div>}
+      </div> : <div className="alerts-empty"><span className="alerts-empty-icon"><Icon name="bell" size={25}/></span><p className="eyebrow">Nothing to watch yet</p><h2>Let Kelus watch the price.</h2><p>Choose an exact product, configuration, and condition. Kelus will keep the real first price as your baseline—never an estimate.</p><Link className="button button-primary" href="/#product-search">Add your first product <Icon name="arrow" size={17}/></Link></div>}
     </section>
     <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account, persist across devices, and are checked automatically." : "Alerts are stored locally until you sign in. Active prices refresh when you open this page."}</p>
   </main>;
