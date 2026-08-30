@@ -242,7 +242,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
     <div className="pi-pick-top">
       <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong><p className="pi-confidence">{titleCase(decision.confidence.toLowerCase())} confidence</p><p className="pi-confidence-copy">{confidenceCopy(decision.confidence)}</p><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
-      {pick && <div className="pi-pick-seller"><span><EbayWordmark/>{decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName}</span><small>{offerMeta(pick)}</small></div>}
+      {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span><b>{decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName}</b></span><small>{offerMeta(pick)}</small></div>}
     </div>
     <div className="pi-why">
       <p className="pi-label">Why this one</p>
@@ -269,7 +269,7 @@ function OtherOffer({ offer, productName, fallbackLabel }: { offer: Offer; produ
   const detailId = `offer-details-${offer.id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
   return <article className={`pi-offer${open ? " is-open" : ""}`}>
     <button className="pi-offer-summary" type="button" aria-expanded={open} aria-controls={detailId} onClick={() => setOpen((value) => !value)}>
-      <strong>{money(offer)}</strong><span><b><EbayWordmark compact/>{offer.seller.name || offer.retailer.name}</b><small>{offerMeta(offer)}</small></span><em>{offer.trust?.confidence ? titleCase(offer.trust.confidence.toLowerCase()) : "Unrated"}</em><Icon name="chevron" size={17}/>
+      <strong>{money(offer)}</strong><span><b className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark compact/></span><span>{offer.seller.name || offer.retailer.name}</span></b><small>{offerMeta(offer)}</small></span><em>{offer.trust?.confidence ? titleCase(offer.trust.confidence.toLowerCase()) : "Unrated"}</em><Icon name="chevron" size={17}/>
     </button>
     <div className="pi-offer-reveal" id={detailId} aria-hidden={!open}><div><div className="pi-offer-detail"><ListingImage offer={offer} productName={productName} fallbackLabel={fallbackLabel}/><div><p>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</p><small>{offer.seller.feedbackPercentage ? `${offer.seller.feedbackPercentage}% positive · ` : ""}{updatedLabel(offer.lastUpdated)} · Live eBay offer</small><span className="pi-secondary-cta"><OutboundRetailerCTA offer={offer} compact label="View offer"/></span></div></div></div></div>
   </article>;

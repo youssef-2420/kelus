@@ -3,7 +3,7 @@ import { MobileNavigation } from "@/components/MobileNavigation";
 import { SafeLink as Link } from "@/components/SafeLink";
 
 export function KelusHeader() {
-  const navItems = [{ href: "/how-it-works", label: "How it works" }, { href: "/alerts", label: "My alerts" }];
+  const navItems = [{ href: "/how-it-works", label: "How it works" }, { href: "/methodology", label: "Methodology" }, { href: "/alerts", label: "My alerts" }];
   return <header className="site-header">
     <Link className="wordmark" href="/" aria-label="Kelus home">kelus</Link>
     <nav aria-label="Main navigation">

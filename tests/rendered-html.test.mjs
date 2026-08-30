@@ -60,6 +60,7 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /See how Kelus picks an offer/);
   assert.match(view, /Why this offer won/);
   assert.match(view, /No suspicious-price flag/);
+  assert.match(view, /pi-retailer-logo/);
   assert.match(view, /getProductIntelligenceOptions/);
   assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
   assert.match(view, /if \(refreshPersistedResult\) return;/);
@@ -98,6 +99,7 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   ]);
   assert.doesNotMatch(header + results, /from ["']next\/link["']/);
   assert.match(header, /SafeLink/);
+  assert.match(header, /Methodology/);
   assert.match(results + search, /window\.location\.assign/);
   assert.match(search, /canonicalProductPath\(criteria\)/);
   assert.doesNotMatch(search, /startSearch/);
