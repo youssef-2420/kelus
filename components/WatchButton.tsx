@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { useAuth } from "@/components/AuthProvider";
 import { trackEvent } from "@/services/analytics";
-import { alertId, createAlert, PRICE_ALERTS_CHANGED, readPriceAlerts, upsertPriceAlert, writePriceAlerts } from "@/services/price-alerts";
+import { alertId, createAlert, createUnavailableAlert, PRICE_ALERTS_CHANGED, readPriceAlerts, upsertPriceAlert, writePriceAlerts } from "@/services/price-alerts";
 import { startSearch } from "@/services/search-session";
 import { deleteUserAlert, readUserAlerts, upsertUserAlerts } from "@/services/user-alerts";
 import type { OfferSearchResult, SearchCriteria } from "@/types/kelus";
 
-type Props = { product?: string; criteria: SearchCriteria; result?: OfferSearchResult | null };
+type Props = { product?: string; criteria: SearchCriteria; result?: OfferSearchResult | null; allowUnavailable?: boolean };
 
-export function WatchButton({ product = "iPhone 17", criteria, result }: Props) {
+export function WatchButton({ product = "iPhone 17", criteria, result, allowUnavailable = false }: Props) {
   const { user } = useAuth();
   const id = alertId(criteria);
   const [saved, setSaved] = useState(false);
@@ -40,7 +40,7 @@ export function WatchButton({ product = "iPhone 17", criteria, result }: Props) 
     setChecking(true);
     try {
       const liveResult = result && !result.isDemo ? result : await startSearch(criteria);
-      const alert = createAlert(criteria, liveResult);
+      const alert = createAlert(criteria, liveResult) ?? (allowUnavailable ? createUnavailableAlert(criteria) : null);
       if (!alert) { setMessage("Live price unavailable"); return; }
       if (user) await upsertUserAlerts(user.id, [alert]);
       else upsertPriceAlert(alert);
@@ -50,6 +50,6 @@ export function WatchButton({ product = "iPhone 17", criteria, result }: Props) 
       setMessage("Couldn’t check price");
     } finally { setChecking(false); }
   }
-  const label = checking ? "Checking price…" : message || (saved ? "Watching price" : "Track price");
+  const label = checking ? "Checking price…" : message || (saved ? (allowUnavailable ? "Tracking availability" : "Watching price") : (allowUnavailable ? "Track availability" : "Track price"));
   return <button className={saved ? "watch-button is-saved" : "watch-button"} type="button" disabled={checking} onClick={toggle}><Icon name={saved ? "check" : "bell"} size={16} />{label}</button>;
 }

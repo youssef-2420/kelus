@@ -80,6 +80,25 @@ export function createAlert(criteria: SearchCriteria, result: OfferSearchResult,
   };
 }
 
+export function createUnavailableAlert(criteria: SearchCriteria, now = new Date().toISOString()): PriceAlertRecord {
+  const product = getProductBySlug(criteria.productSlug);
+  const variant = getVariantById(criteria.variantId);
+  return {
+    id: alertId(criteria), criteria,
+    productName: product?.name ?? criteria.productSlug,
+    configuration: [variant?.label, criteria.condition === "any" ? "Any condition" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`].filter(Boolean).join(" · "),
+    imageLabel: product?.image ?? "K",
+    trackedPrice: null,
+    currentPrice: null,
+    targetPrice: null,
+    startedAt: now,
+    lastCheckedAt: now,
+    paused: false,
+    state: "unavailable",
+    errorMessage: "No matching validated offer is available yet.",
+  };
+}
+
 export function updateAlertFromResult(alert: PriceAlertRecord, result: OfferSearchResult, checkedAt = new Date().toISOString()): PriceAlertRecord {
   const offer = !result.isDemo ? bestLiveOffer(result.offers) : null;
   const total = offer ? knownOfferTotal(offer) : null;
@@ -87,6 +106,7 @@ export function updateAlertFromResult(alert: PriceAlertRecord, result: OfferSear
   const intelligence = alertPriceIntelligence(alert.criteria, result);
   return {
     ...alert,
+    trackedPrice: alert.trackedPrice ?? total,
     currentPrice: total,
     imageUrl: offer.imageUrl ?? alert.imageUrl,
     lastCheckedAt: checkedAt,

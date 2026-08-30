@@ -140,6 +140,13 @@ button { cursor:pointer; }
 .pi-selectors summary::-webkit-details-marker { display:none; }
 .pi-selectors details p { position:absolute; z-index:12; top:34px; right:0; width:min(330px,calc(100vw - 36px)); margin:0; padding:14px 15px; border:1px solid #d2ccc0; border-radius:8px; background:#fffefa; color:#5d6964; font-size:12px; line-height:1.5; box-shadow:0 14px 30px rgba(19,35,31,.11); }
 .pi-subtitle { margin:13px 0 0; color:#74807b; font-size:12px; line-height:1.5; }
+.pi-freshness { display:flex; flex-wrap:wrap; align-items:center; gap:7px 11px; margin:13px 0 0; color:#74807b; }
+.pi-freshness > span { display:inline-flex; align-items:center; gap:7px; font-size:9px; font-weight:850; letter-spacing:.09em; }
+.pi-freshness i { width:7px; height:7px; border-radius:50%; background:#788680; box-shadow:0 0 0 3px #e7ece9; }
+.pi-freshness small { color:#78837f; font-size:11px; line-height:1.45; }
+.pi-freshness.is-live > span { color:#146b4d; }.pi-freshness.is-live i { background:#1f9d68; box-shadow:0 0 0 3px #dff2e9; }
+.pi-freshness.is-snapshot > span { color:#8a6321; }.pi-freshness.is-snapshot i { background:#c58b2b; box-shadow:0 0 0 3px #f4ead5; }
+.pi-freshness.is-checking i { animation:status-breathe 1.2s ease-in-out infinite; }
 .pi-updating { min-height:20px; margin:4px 0 0; color:#315b50; font-size:11px; font-weight:750; opacity:0; transition:opacity .16s ease; }
 .pi-updating.is-visible { opacity:1; }
 .pi-page.is-updating .pi-pick,.pi-page.is-updating .pi-section { opacity:.45; transition:opacity .2s ease; }
@@ -177,6 +184,9 @@ button { cursor:pointer; }
 .pi-fallback-alternatives a { display:inline-flex; align-items:center; gap:8px; min-height:42px; padding:9px 13px; border:1px solid #ccd8d3; border-radius:9px; color:#123f35; background:#fff; font-size:13px; font-weight:700; text-decoration:none; transition:border-color .18s ease,transform .18s ease,background .18s ease; }
 .pi-fallback-alternatives a:hover { border-color:#7fa59a; background:#f7faf8; transform:translateY(-1px); }
 .pi-fallback-method { justify-self:center; }
+.pi-fallback-track { width:min(100%,720px); display:flex; align-items:center; justify-content:space-between; gap:24px; padding:17px 18px; border:1px solid #d6e1dc; border-radius:10px; background:#f5faf7; text-align:left; }
+.pi-fallback-track > div { display:grid; gap:4px; }.pi-fallback-track b { color:#183c33; font-size:13px; }.pi-fallback-track span { color:#687670; font-size:11px; line-height:1.45; }
+.pi-fallback-track .watch-button { flex:none; }
 .pi-section { padding:34px 0 36px; border-bottom:1px solid #ddd6ca; transition:opacity .2s ease; }
 .pi-section > .pi-label { margin-bottom:16px; }
 .pi-context { display:grid; grid-template-columns:minmax(0,1fr) minmax(250px,.8fr); gap:28px 34px; align-items:start; }
@@ -260,6 +270,7 @@ button { cursor:pointer; }
   .nr-state-actions .button { flex:1 1 130px; min-height:48px; }
   .pi-fallback-alternatives > div { display:grid; }
   .pi-fallback-alternatives a { justify-content:space-between; }
+  .pi-fallback-track { align-items:stretch; flex-direction:column; gap:13px; }.pi-fallback-track .watch-button { width:100%; justify-content:center; }
 }
 
 @media (prefers-reduced-motion:reduce) {

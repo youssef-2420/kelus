@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { bestLiveOffer, comparisonHref, createAlert, getAlertStatus, getDistanceFromTarget, getPriceChange, updateAlertFromError, updateAlertFromResult } from "../services/price-alerts.ts";
+import { bestLiveOffer, comparisonHref, createAlert, createUnavailableAlert, getAlertStatus, getDistanceFromTarget, getPriceChange, updateAlertFromError, updateAlertFromResult } from "../services/price-alerts.ts";
 
 const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" };
 const offer = (id, price, shippingCost, extra = {}) => ({
@@ -34,6 +34,17 @@ test("new live prices update change and target status while preserving baseline"
   assert.deepEqual(getPriceChange(updated), { amount: -75, percent: -8.3 });
   assert.equal(getDistanceFromTarget(updated), 0);
   assert.equal(getAlertStatus(updated), "target_reached");
+});
+
+test("availability tracking starts without invented prices and adopts the first real baseline", () => {
+  const waiting = createUnavailableAlert(criteria, "2026-08-24T10:00:00Z");
+  assert.equal(waiting.trackedPrice, null);
+  assert.equal(waiting.currentPrice, null);
+  assert.equal(waiting.state, "unavailable");
+  const firstOffer = updateAlertFromResult(waiting, result([offer("first", 829, 0)]), "2026-08-25T10:00:00Z");
+  assert.equal(firstOffer.trackedPrice, 829);
+  assert.equal(firstOffer.currentPrice, 829);
+  assert.deepEqual(getPriceChange(firstOffer), { amount: 0, percent: 0 });
 });
 
 test("empty and failed refreshes retain the last real price", () => {

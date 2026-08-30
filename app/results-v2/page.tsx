@@ -160,11 +160,11 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   return <main className={`nr-page pi-page${updating ? " is-updating" : ""}`}>
     <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
     <div className="pi-content section">
-      <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><p className="pi-subtitle">{loading && !result ? "Checking connected offers…" : `${offers.length} live offer${offers.length === 1 ? "" : "s"} · ${staleSnapshot ? staleUpdatedLabel(result?.lastUpdated) : updatedLabel(result?.lastUpdated)}`}</p><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
-      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} retry={retry}/> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} retry={retry}/> : <>
+      <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
+      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <>
         <DecisionReport decision={decision} lowest={lowest}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
-        {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image}/>)}</div></section>}
+        {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image} stale={Boolean(staleSnapshot)}/>)}</div></section>}
         <section className="pi-method"><p className="pi-label">Methodology</p><p>Kelus uses persisted last-known-good eBay snapshots for the first render, then refreshes connected offers in the background. Recommendations only use comparable offers that pass product, variant, condition, seller, shipping, return, confidence, and anomaly checks.</p><Link className="text-link" href="/methodology">See how Kelus picks an offer <Icon name="arrow" size={14}/></Link></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
       </>}
@@ -172,7 +172,14 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   </main>;
 }
 
-function ProductFallbackState({ kind, detail, alternatives, retry }: { kind: "error" | "empty" | "starting"; detail?: string; alternatives: SearchCriteria[]; retry: () => void }) {
+function DataFreshness({ result, offerCount, loading, stale }: { result: OfferSearchResult | null; offerCount: number; loading: boolean; stale: boolean }) {
+  const state = loading && !result ? "checking" : stale && offerCount ? "snapshot" : offerCount ? "live" : "empty";
+  const label = state === "checking" ? "CHECKING EBAY" : state === "snapshot" ? "SAVED EBAY SNAPSHOT" : state === "live" ? "LIVE EBAY OFFERS" : "NO VALIDATED OFFERS";
+  const detail = state === "checking" ? "Resolving this configuration" : state === "snapshot" ? staleUpdatedLabel(result?.lastUpdated) : state === "live" ? `${offerCount} offer${offerCount === 1 ? "" : "s"} · ${updatedLabel(result?.lastUpdated)}` : updatedLabel(result?.lastUpdated);
+  return <p className={`pi-freshness is-${state}`}><span><i aria-hidden="true"/>{label}</span><small>{detail}</small></p>;
+}
+
+function ProductFallbackState({ kind, detail, alternatives, criteria, productName, retry }: { kind: "error" | "empty" | "starting"; detail?: string; alternatives: SearchCriteria[]; criteria: SearchCriteria; productName: string; retry: () => void }) {
   const copy = kind === "error"
     ? { title: "We couldn’t refresh this comparison.", body: detail || "The connected offer source did not respond. No retailer information has been invented or replaced." }
     : kind === "empty"
@@ -181,6 +188,7 @@ function ProductFallbackState({ kind, detail, alternatives, retry }: { kind: "er
   return <section className="nr-state pi-fallback" aria-live="polite">
     <div className="pi-fallback-copy"><p className="pi-label">Offer status</p><h2>{copy.title}</h2><p>{copy.body}</p></div>
     <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/#product-search">Edit search</Link></div>
+    <div className="pi-fallback-track"><div><b>Keep this exact configuration</b><span>Save it to My Alerts so Kelus can check again when validated offers become available.</span></div><WatchButton product={productName} criteria={criteria} allowUnavailable/></div>
     {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => <Link key={`${alternative.variantId}-${alternative.condition}`} href={canonicalProductPath(alternative)}>{alternativeLabel(alternative)} <Icon name="arrow" size={13}/></Link>)}</div></div>}
     <Link className="text-link pi-fallback-method" href="/methodology">Why Kelus may reject an offer <Icon name="arrow" size={14}/></Link>
   </section>;
@@ -241,7 +249,7 @@ function EvidenceReveal({ pick, tradeoff }: { pick: Offer; tradeoff: string }) {
   const returns = pick.returnPolicy && !/unavailable|unknown/i.test(pick.returnPolicy) ? pick.returnPolicy : "Not supplied by eBay";
   const match = pick.trust?.reasons?.length ? pick.trust.reasons.slice(0, 2).join(" · ") : "Comparable offer accepted by the current matching rules";
   const anomaly = pick.trust ? pick.trust.suspiciousPrice ? "Price anomaly detected" : "No suspicious-price flag" : "Price-anomaly evidence unavailable";
-  return <details className="pi-proof">
+  return <details className="pi-proof" open>
     <summary><span><b>Why this offer won</b><small>See the evidence behind Our Pick</small></span><Icon name="chevron" size={18}/></summary>
     <div className="pi-proof-reveal"><dl>
       <div><dt>Match</dt><dd>{match}</dd></div>
@@ -285,14 +293,14 @@ function ListingImage({ offer, productName, fallbackLabel, large = false }: { of
   return <span className={`nr-image${large ? " is-large" : ""}`}>{source && !failed ? <>{/* Retailer image hosts change, so the native element is intentional. */}<img src={source} alt={`${productName} listing`} width={large ? 180 : 80} height={large ? 180 : 80} loading={large ? "eager" : "lazy"} decoding="async" onError={() => setFailed(true)}/></> : <ProductMark label={fallbackLabel}/>}</span>;
 }
 
-function OtherOffer({ offer, productName, fallbackLabel }: { offer: Offer; productName: string; fallbackLabel: string }) {
+function OtherOffer({ offer, productName, fallbackLabel, stale }: { offer: Offer; productName: string; fallbackLabel: string; stale: boolean }) {
   const [open, setOpen] = useState(false);
   const detailId = `offer-details-${offer.id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
   return <article className={`pi-offer${open ? " is-open" : ""}`}>
     <button className="pi-offer-summary" type="button" aria-expanded={open} aria-controls={detailId} onClick={() => setOpen((value) => !value)}>
       <strong>{money(offer)}</strong><span><b className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark compact/></span><span>{offer.seller.name || offer.retailer.name}</span></b><small>{offerMeta(offer)}</small></span><em>{offer.trust?.confidence ? titleCase(offer.trust.confidence.toLowerCase()) : "Unrated"}</em><Icon name="chevron" size={17}/>
     </button>
-    <div className="pi-offer-reveal" id={detailId} aria-hidden={!open}><div><div className="pi-offer-detail"><ListingImage offer={offer} productName={productName} fallbackLabel={fallbackLabel}/><div><p>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</p><small>{offer.seller.feedbackPercentage ? `${offer.seller.feedbackPercentage}% positive · ` : ""}{updatedLabel(offer.lastUpdated)} · Live eBay offer</small><span className="pi-secondary-cta"><OutboundRetailerCTA offer={offer} compact label="View offer"/></span></div></div></div></div>
+    <div className="pi-offer-reveal" id={detailId} aria-hidden={!open}><div><div className="pi-offer-detail"><ListingImage offer={offer} productName={productName} fallbackLabel={fallbackLabel}/><div><p>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</p><small>{offer.seller.feedbackPercentage ? `${offer.seller.feedbackPercentage}% positive · ` : ""}{updatedLabel(offer.lastUpdated)} · {stale ? "Saved eBay offer" : "Live eBay offer"}</small><span className="pi-secondary-cta"><OutboundRetailerCTA offer={offer} compact label="View offer"/></span></div></div></div></div>
   </article>;
 }
 

@@ -6,12 +6,18 @@ import test from "node:test";
 const outputFor = (route) => route === "/" ? join(process.cwd(), ".next", "server", "app", "index.html") : join(process.cwd(), ".next", "server", "app", `${route.slice(1)}.html`);
 
 test("builds static surfaces while canonical product intelligence remains server-rendered", async () => {
-  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/methodology", "See what Kelus checks"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/saved", "Keep an eye"]]) {
+  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/methodology", "See what Kelus checks"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"], ["/compare/iphone-17", "See the trade-offs clearly"]]) {
     const html = await readFile(outputFor(route), "utf8");
     assert.match(html, new RegExp(expected));
     assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/i);
   }
   await assert.rejects(access(join(process.cwd(), ".next", "server", "app", "checkout.html")));
+});
+
+test("legacy saved route consistently redirects to My Alerts", async () => {
+  const saved = await readFile(new URL("../app/saved/page.tsx", import.meta.url), "utf8");
+  assert.match(saved, /redirect\("\/alerts"\)/);
+  assert.doesNotMatch(saved, /Illustrative best offer|kelus-watched-products/);
 });
 
 test("homepage keeps its explanation compact while How It Works preserves the full content", async () => {
@@ -59,6 +65,10 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /no listing passed the current product, variant, condition, and trust checks/);
   assert.match(view, /Try another supported configuration/);
   assert.match(view, /Why Kelus may reject an offer/);
+  assert.match(view, /SAVED EBAY SNAPSHOT/);
+  assert.match(view, /LIVE EBAY OFFERS/);
+  assert.match(view, /allowUnavailable/);
+  assert.match(view, /<details className="pi-proof" open>/);
   assert.match(view, /How Kelus chose this/);
   assert.match(view, /See how Kelus picks an offer/);
   assert.match(view, /Why this offer won/);
