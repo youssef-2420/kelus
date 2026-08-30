@@ -66,7 +66,9 @@ function AlertImage({ alert }: { alert: PriceAlertRecord }) {
 export default function AlertsPage() {
   const { loading: authLoading, user } = useAuth();
   const [alerts, setAlerts] = useState<PriceAlertRecord[]>([]);
-  const [ready, setReady] = useState(false);
+  // Keep the server-rendered page useful even when auth hydration is delayed.
+  // The authenticated/local load switches this to false only while real data is read.
+  const [ready, setReady] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<string | null>(null);
