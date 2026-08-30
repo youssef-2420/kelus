@@ -47,12 +47,12 @@ button { cursor:pointer; }
 .button-primary { background:var(--forest); color:#fff; }
 .button-secondary { background:#fff; border-color:#bdcfca; color:var(--forest); }
 .button-secondary:hover { border-color:var(--forest); background:#f4f9f7; }
-.suggestions { position:absolute; z-index:8; top:calc(100% - 2px); left:-1px; width:calc(100% + 2px); max-height:min(420px,45dvh); background:#fff; border:1px solid #c5d3ce; border-radius:0 0 11px 11px; box-shadow:0 18px 28px rgba(16,37,34,.15); overflow-x:hidden; overflow-y:auto; overscroll-behavior:contain; }
+.suggestions { position:absolute; z-index:8; top:calc(100% - 2px); left:-1px; width:min(620px,calc(100vw - 32px)); max-height:min(480px,56dvh); background:#fff; border:1px solid #c5d3ce; border-radius:0 0 11px 11px; box-shadow:0 18px 28px rgba(16,37,34,.15); overflow-x:hidden; overflow-y:auto; overscroll-behavior:contain; }
 .search-field > .suggestions { display:flex; flex-direction:column; align-items:stretch; gap:0; }
-.suggestions button { width:100%; background:#fff; border:0; padding:11px 16px; text-align:left; display:flex; gap:10px; align-items:center; }
+.suggestions button { width:100%; background:#fff; border:0; padding:12px 16px; text-align:left; display:flex; gap:12px; align-items:center; }
 .suggestions button:hover { background:#f1f7f5; }.suggestions b,.suggestions em { display:block; font-size:13px; }.suggestions em { color:var(--muted); font-style:normal; margin-top:2px; font-size:11px; }
 .suggestions button.is-active { background:#eaf4f0; }.suggestion-state { margin:0; padding:17px; color:#63716d; font-size:13px; }
-.suggestions-heading { margin:0; padding:13px 16px 6px; color:#64716e; font-size:10px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; }.suggestions button { min-height:64px; }.suggestion-copy { display:grid; flex:1; gap:2px; }.suggestion-copy em { margin:0; order:-1; font-size:11px; }.suggestion-copy b { font-size:14px; color:var(--ink); }.suggestion-copy small { color:#687672; font-size:11px; }.suggestions-footer { min-height:49px !important; border-top:1px solid #e4ebe7 !important; color:var(--green) !important; font-size:12px; font-weight:700; justify-content:space-between; text-transform:uppercase; letter-spacing:.25px; }
+.suggestions-heading { margin:0; padding:13px 16px 6px; color:#64716e; font-size:10px; font-weight:700; letter-spacing:.7px; text-transform:uppercase; }.suggestions button { min-height:68px; }.suggestion-copy { display:grid; flex:1; min-width:0; gap:3px; }.suggestion-copy em { margin:0; order:-1; font-size:11px; }.suggestion-copy b { overflow-wrap:anywhere; font-size:15px; line-height:1.25; color:var(--ink); }.suggestion-copy small { color:#687672; font-size:11px; }.suggestions-footer { min-height:49px !important; border-top:1px solid #e4ebe7 !important; color:var(--green) !important; font-size:12px; font-weight:700; justify-content:space-between; text-transform:uppercase; letter-spacing:.25px; }
 .product-mark { width:54px; height:66px; border-radius:11px; background:linear-gradient(135deg,#1c3733,#6e968e); display:grid; place-items:center; border:3px solid #f0f4f0; box-shadow:0 6px 12px rgba(11,48,42,.16); color:#eaf3f1; font-size:10px; font-weight:700; letter-spacing:.8px; }
 .product-mark-small { width:30px; height:37px; border-width:2px; border-radius:6px; font-size:7px; }
 .product-mark-large { width:164px; height:216px; border-radius:24px; border-width:7px; font-size:24px; }
@@ -163,6 +163,7 @@ button { cursor:pointer; }
 .pi-primary-cta { display:flex; justify-content:flex-end; align-items:center; gap:14px; margin-top:24px; }
 .pi-primary-cta .button { min-width:205px; background:#103e35; }
 .pi-primary-cta > span { color:#7a847f; font-size:10px; }
+.nr-state-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:8px; }
 .pi-section { padding:34px 0 36px; border-bottom:1px solid #ddd6ca; transition:opacity .2s ease; }
 .pi-section > .pi-label { margin-bottom:16px; }
 .pi-context { display:grid; grid-template-columns:minmax(0,1fr) minmax(250px,.8fr); gap:28px 34px; align-items:start; }
@@ -178,7 +179,7 @@ button { cursor:pointer; }
 .pi-offer-summary { width:100%; min-height:72px; display:grid; grid-template-columns:96px minmax(0,1fr) 86px 18px; gap:14px; align-items:center; padding:13px 0; border:0; background:transparent; color:#17231f; text-align:left; cursor:pointer; }
 .pi-offer-summary:hover { background:rgba(255,254,250,.42); }
 .pi-offer-summary > span { min-width:0; }
-.pi-offer-summary b,.pi-offer-summary small { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pi-offer-summary b,.pi-offer-summary small { display:block; overflow-wrap:anywhere; }
 .pi-offer-summary b { font-size:14px; }
 .pi-offer-summary b .ebay-wordmark { margin-right:8px; vertical-align:middle; }
 .pi-offer-summary small { margin-top:4px; color:#69736f; font-size:11px; }
@@ -215,7 +216,7 @@ button { cursor:pointer; }
   .pi-comparison { grid-template-columns:67px 92px minmax(0,1fr); }
   .pi-comparison strong { font-size:21px; }
   .pi-primary-cta { display:grid; gap:8px; }
-  .pi-primary-cta .button { width:100%; }
+  .pi-primary-cta .button { width:100%; min-height:52px; }
   .pi-primary-cta > span { text-align:center; }
   .pi-context { grid-template-columns:1fr; }
   .pi-track { grid-column:auto; align-items:stretch; flex-direction:column; }
@@ -224,7 +225,7 @@ button { cursor:pointer; }
   .pi-offer-summary > em { grid-column:2; margin-top:-7px; }
   .pi-offer-summary > svg { grid-column:3; grid-row:1/3; }
   .pi-offer-summary b { font-size:13px; }
-  .pi-offer-summary small { font-size:10px; }
+  .pi-offer-summary small { margin-top:5px; font-size:10px; line-height:1.35; }
   .pi-offer-summary > strong { font-size:21px; }
   .pi-offer-detail { grid-template-columns:58px minmax(0,1fr); padding-left:0; }
   .pi-offer-detail .nr-image { width:58px; height:58px; }
@@ -236,6 +237,14 @@ button { cursor:pointer; }
   .pi-product h1 { font-size:31px; }
   .pi-comparison { grid-template-columns:63px 82px minmax(0,1fr); }
   .pi-offer-summary { grid-template-columns:76px minmax(0,1fr) 18px; }
+}
+
+@media (max-width:620px) {
+  .product-field > .suggestions { left:-1px; width:calc(100% + 2px); max-height:min(460px,58dvh); }
+  .suggestions button { min-height:70px; }
+  .nr-state { min-height:240px; padding:28px 18px; }
+  .nr-state-actions { width:100%; }
+  .nr-state-actions .button { flex:1 1 130px; min-height:48px; }
 }
 
 @media (prefers-reduced-motion:reduce) {
