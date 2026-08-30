@@ -58,6 +58,8 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /saved validated snapshot/);
   assert.match(view, /How Kelus chose this/);
   assert.match(view, /See how Kelus picks an offer/);
+  assert.match(view, /Why this offer won/);
+  assert.match(view, /No suspicious-price flag/);
   assert.match(view, /getProductIntelligenceOptions/);
   assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
   assert.match(view, /if \(refreshPersistedResult\) return;/);

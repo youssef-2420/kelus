@@ -214,6 +214,24 @@ function offerMeta(offer: Offer) {
   return `${titleCase(offer.condition)} · ${shipping} · ${returns}`;
 }
 
+function EvidenceReveal({ pick, tradeoff }: { pick: Offer; tradeoff: string }) {
+  const shipping = pick.shippingCostKnown === false ? "Not supplied by eBay" : pick.shippingCost ? `${moneyAmount(pick.shippingCost, pick.currency)} shipping included in the known total` : "Free shipping reported by eBay";
+  const seller = pick.seller.feedbackPercentage ? `${pick.seller.feedbackPercentage}% positive feedback${pick.seller.topRated ? " · Top Rated" : ""}` : pick.seller.topRated ? "Top Rated seller" : "Seller evidence is limited";
+  const returns = pick.returnPolicy && !/unavailable|unknown/i.test(pick.returnPolicy) ? pick.returnPolicy : "Not supplied by eBay";
+  const match = pick.trust?.reasons?.length ? pick.trust.reasons.slice(0, 2).join(" · ") : "Comparable offer accepted by the current matching rules";
+  const anomaly = pick.trust ? pick.trust.suspiciousPrice ? "Price anomaly detected" : "No suspicious-price flag" : "Price-anomaly evidence unavailable";
+  return <details className="pi-proof">
+    <summary><span><b>Why this offer won</b><small>See the evidence behind Our Pick</small></span><Icon name="chevron" size={18}/></summary>
+    <div className="pi-proof-reveal"><dl>
+      <div><dt>Match</dt><dd>{match}</dd></div>
+      <div><dt>Known total</dt><dd>{money(pick)} · {shipping}</dd></div>
+      <div><dt>Seller</dt><dd>{seller}</dd></div>
+      <div><dt>Returns</dt><dd>{returns}</dd></div>
+      <div><dt>Price check</dt><dd>{anomaly}</dd></div>
+    </dl><p>{tradeoff}</p><Link href="/methodology">Read the full methodology <Icon name="arrow" size={13}/></Link></div>
+  </details>;
+}
+
 function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?: Offer | null }) {
   const pick = decision.pick;
   const tradeoff = decision.cheaperTradeoff ?? "Kelus did not find a meaningfully cheaper comparable offer with different trade-offs.";
@@ -231,6 +249,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
       <p className="pi-evidence">{decision.reasons.join(" · ")}</p>
       <p className="pi-tradeoff">{tradeoff}</p>
     </div>
+    {pick && <EvidenceReveal pick={pick} tradeoff={tradeoff}/>}
     {lowest && lowest.id !== pick?.id ? <><p className="pi-comparison-label">Our Pick vs Cheapest</p><div className="pi-comparison" aria-label="Our Pick compared with the cheapest offer">
       <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
       <span>Cheapest</span><strong>{money(lowest ?? pick)}</strong><small>{lowest?.trust?.confidence ? `${titleCase(lowest.trust.confidence.toLowerCase())} confidence${savings !== null && savings > 0 ? ` · ${moneyAmount(savings, lowest.currency)} less` : ""}` : "Confidence unavailable"}</small>
