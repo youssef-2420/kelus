@@ -24,11 +24,17 @@ test("Supabase browser auth uses only public configuration", async () => {
 
 test("authentication dialog stays within desktop and mobile viewports", async () => {
   const styles = await read("app/globals.css");
-  assert.match(styles, /\.signin-dialog\{width:min\(540px,calc\(100vw - 28px\)\)/);
-  assert.match(styles, /max-height:calc\(100dvh - 44px\)/);
-  assert.match(styles, /overflow-y:auto/);
-  assert.match(styles, /@media\(max-width:620px\)\{\.signin-dialog\{max-height:calc\(100dvh - 94px\)\}\}/);
-  assert.match(styles, /@media\(max-height:760px\) and \(min-width:621px\)\{\.signin-dialog\{max-height:calc\(100dvh - 92px\)\}\}/);
+  const dialog = await read("components/SignInDialog.tsx");
+  assert.match(styles, /\.modal-backdrop \{[^}]*flex-direction:column/);
+  assert.match(styles, /\.modal-backdrop \{[^}]*overflow:auto/);
+  assert.match(styles, /\.auth-sheet \{[^}]*width:min\(420px,100%\)/);
+  assert.match(styles, /\.auth-sheet \{[^}]*margin:auto/);
+  assert.match(dialog, /className="auth-sheet"/);
+  assert.match(styles, /@media\(max-width:620px\)\{[\s\S]*\.signin-dialog\{padding:22px 16px 14px/);
+  assert.match(styles, /@media\(max-height:760px\)\{[\s\S]*\.dialog-legal\{display:none\}/);
+  assert.doesNotMatch(styles, /place-items:center; overflow:auto; padding:92px/);
+  assert.doesNotMatch(styles, /padding:52px 62px 28px/);
+  assert.doesNotMatch(styles, /\.modal-backdrop\{display:flex;align-items:center;justify-content:center;padding:22px\}/);
 });
 
 test("alert ownership is enforced by RLS for every operation", async () => {
