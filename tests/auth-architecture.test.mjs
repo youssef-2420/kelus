@@ -22,6 +22,21 @@ test("Supabase browser auth uses only public configuration", async () => {
   assert.match(dialog, /signOut/);
 });
 
+test("authentication dialog stays within desktop and mobile viewports", async () => {
+  const styles = await read("app/globals.css");
+  const dialog = await read("components/SignInDialog.tsx");
+  assert.match(styles, /\.modal-backdrop \{[^}]*overflow:auto/);
+  assert.match(styles, /\.auth-sheet \{[^}]*min-height:100dvh/);
+  assert.match(styles, /\.auth-sheet:before,\.auth-sheet:after \{[^}]*flex:1 0 12px/);
+  assert.match(styles, /\.signin-dialog \{[^}]*width:min\(400px,100%\)/);
+  assert.match(dialog, /className="auth-sheet"/);
+  assert.match(styles, /@media\(max-width:620px\)\{[\s\S]*\.signin-dialog\{padding:18px 14px 12px/);
+  assert.match(styles, /@media\(max-height:800px\)\{[\s\S]*\.dialog-legal\{display:none\}/);
+  assert.doesNotMatch(styles, /place-items:center; overflow:auto; padding:92px/);
+  assert.doesNotMatch(styles, /padding:52px 62px 28px/);
+  assert.doesNotMatch(styles, /\.modal-backdrop\{display:flex;align-items:center;justify-content:center;padding:22px\}/);
+});
+
 test("alert ownership is enforced by RLS for every operation", async () => {
   const sql = await read("supabase/migrations/202608250001_create_price_alerts.sql");
   assert.match(sql, /enable row level security/i);

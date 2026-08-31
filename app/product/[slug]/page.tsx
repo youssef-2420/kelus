@@ -1,13 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
-import { getProductBySlug, getVariantById } from "@/lib/demo-data";
+import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
+import { CONDITIONS } from "@/types/kelus";
 
 type RouteParams = { slug: string };
 type PageProps = { params: Promise<RouteParams> };
-export const dynamic = "force-dynamic";
+
+export function generateStaticParams(): RouteParams[] {
+  return products.flatMap((product) =>
+    product.searchAttribute.validVariantIds.flatMap((variantId) =>
+      CONDITIONS.map((condition) => ({ slug: `${variantId}-${condition}` })),
+    ),
+  );
+}
 
 function exactProduct(slug: string) {
   const criteria = readCanonicalProductSlug(slug);
