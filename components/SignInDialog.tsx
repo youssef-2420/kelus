@@ -7,14 +7,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 type Mode = "signin" | "create" | "forgot" | "reset";
-type SocialProvider = "google" | "apple";
-
 function GoogleMark() {
   return <svg className="social-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.8-5.6-4.2H3v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3a10 10 0 0 0 0 9l3.4-2.6Z"/><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 3 7.5l3.4 2.6C7.2 7.7 9.4 5.9 12 5.9Z"/></svg>;
-}
-
-function AppleMark() {
-  return <svg className="social-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.7 12.7c0-2.8 2.3-4.1 2.4-4.2a5.3 5.3 0 0 0-4.2-2.3c-1.8-.2-3.5 1-4.4 1-.9 0-2.3-1-3.8-1-2 0-3.8 1.1-4.8 2.9-2.1 3.6-.5 8.9 1.5 11.8 1 1.4 2.1 3 3.7 2.9 1.5-.1 2.1-1 3.9-1s2.3 1 3.9 1c1.6 0 2.6-1.4 3.5-2.9a13 13 0 0 0 1.6-3.3 4.8 4.8 0 0 1-3.3-4.9ZM13.7 4.3A4.8 4.8 0 0 0 14.8.8a5 5 0 0 0-3.3 1.7A4.6 4.6 0 0 0 10.4 6c1.2.1 2.4-.6 3.3-1.7Z"/></svg>;
 }
 
 export function SignInDialog() {
@@ -106,18 +100,18 @@ export function SignInDialog() {
     if (client) await client.auth.signOut();
   }
 
-  async function socialSignIn(provider: SocialProvider) {
+  async function socialSignIn() {
     setError(""); setNotice(""); setBusy(true);
     const client = getSupabaseBrowserClient();
     if (!client) { setError("Authentication is not configured yet."); setBusy(false); return; }
     try {
       const { error: authError } = await client.auth.signInWithOAuth({
-        provider,
+        provider: "google",
         options: { redirectTo: `${window.location.origin}/auth/callback?next=/` },
       });
       if (authError) throw authError;
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : `${provider === "google" ? "Google" : "Apple"} sign-in could not be started.`);
+      setError(reason instanceof Error ? reason.message : "Google sign-in could not be started.");
       setBusy(false);
     }
   }
@@ -146,7 +140,7 @@ export function SignInDialog() {
         {error && <p className="auth-message is-error" role="alert">{error}</p>}{notice && <p className="auth-message is-success" role="status">{notice}</p>}
         <button className="button button-primary dialog-submit" type="submit" disabled={busy || !configured}>{busy ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "create" ? "Create account" : mode === "forgot" ? "Send reset link" : "Update password"}<Icon name="arrow" size={17}/></button>
       </form>
-      {(mode === "signin" || mode === "create") && <><div className="dialog-divider"><span>or continue with</span></div><div className="social-buttons"><button type="button" onClick={() => socialSignIn("google")} disabled={busy || !configured}><GoogleMark/>Continue with Google</button><button type="button" onClick={() => socialSignIn("apple")} disabled={busy || !configured}><AppleMark/>Continue with Apple</button></div><p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p><div className="signin-mode-switch"><span>{mode === "signin" ? "New to Kelus?" : "Already have an account?"}</span><button type="button" onClick={() => switchMode(mode === "signin" ? "create" : "signin")}>{mode === "signin" ? "Create account" : "Sign in"}</button></div></>}
+      {(mode === "signin" || mode === "create") && <><div className="dialog-divider"><span>or continue with</span></div><div className="social-buttons"><button type="button" onClick={socialSignIn} disabled={busy || !configured}><GoogleMark/>Continue with Google</button></div><p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p><div className="signin-mode-switch"><span>{mode === "signin" ? "New to Kelus?" : "Already have an account?"}</span><button type="button" onClick={() => switchMode(mode === "signin" ? "create" : "signin")}>{mode === "signin" ? "Create account" : "Sign in"}</button></div></>}
       {(mode === "forgot" || mode === "reset") && !notice && <button className="auth-back" type="button" onClick={() => switchMode("signin")}>Back to sign in</button>}
       {(mode === "forgot" || mode === "reset") && <p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p>}
     </section></div>}
