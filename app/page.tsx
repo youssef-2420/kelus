@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { KelusHeader } from "@/components/KelusHeader";
 import { LandingAnalytics } from "@/components/LandingAnalytics";
+import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
 import { TrustRow } from "@/components/TrustRow";
 import { Icon } from "@/components/Icon";
@@ -26,7 +27,7 @@ export default function Home() {
     product,
     href: canonicalProductPath({ productSlug: product.slug, variantId: product.searchAttribute.validVariantIds[0], condition: "new", market: "us" }),
   }));
-  return <main><LandingAnalytics/><KelusHeader />
+  return <main><LandingAnalytics/><KelusHeader /><VerifiedNotice />
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
       <div id="product-search"><SearchControls deferProductSelection /></div><div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p></div><TrustRow />
     </section>

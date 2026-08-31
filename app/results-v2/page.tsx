@@ -8,8 +8,8 @@ import { EbayWordmark } from "@/components/EbayWordmark";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
 import { PriceChart } from "@/components/PriceChart";
 import { ProductMark } from "@/components/ProductMark";
-import { SearchControls } from "@/components/SearchControls";
 import { WatchButton } from "@/components/WatchButton";
+import { ProductHeader } from "@/components/ProductHeader";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
 import { getProductIntelligenceOptions } from "@/lib/product-attributes";
@@ -158,7 +158,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   }, [criteria.productSlug, decision.confidence, pick]);
 
   return <main className={`nr-page pi-page${updating ? " is-updating" : ""}`}>
-    <header className="nr-header section"><Link href="/" className="wordmark" aria-label="Kelus home">kelus</Link><SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search"/></header>
+    <ProductHeader criteria={criteria} />
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
       {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <>
