@@ -30,6 +30,7 @@ test("OAuth callback queues the global sign-in notice", async () => {
   const callback = await readFile(new URL("../app/auth/callback/page.tsx", import.meta.url), "utf8");
   const auth = await readFile(new URL("../components/AuthProvider.tsx", import.meta.url), "utf8");
   assert.match(callback, /kelus-sign-in-notice/);
+  assert.match(callback, /router\.replace\(next\)/);
   assert.match(auth, /kelus-sign-in-notice/);
 });
 
@@ -151,12 +152,14 @@ test("Alerts leads with monitoring state and keeps secondary controls progressiv
   assert.match(styles, /\.alert-check\.is-error/);
 });
 
-test("authentication cannot leave Alerts in an infinite loading state", async () => {
+test("authentication hydrates from local session and cannot leave Alerts stuck loading", async () => {
   const auth = await readFile(new URL("../components/AuthProvider.tsx", import.meta.url), "utf8");
+  assert.match(auth, /getSession/);
   assert.match(auth, /authTimeout/);
-  assert.match(auth, /3_500/);
+  assert.match(auth, /1_500/);
   assert.match(auth, /\.catch\(\(\) =>/);
   assert.match(auth, /clearTimeout\(authTimeout\)/);
+  assert.match(auth, /getUser\(\)/);
 });
 
 test("Kelus source separates demo offers from recommendation and provider contracts", async () => {

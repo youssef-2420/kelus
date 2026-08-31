@@ -38,10 +38,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const client = getSupabaseBrowserClient();
     if (!client) { queueMicrotask(() => setLoading(false)); return; }
     let active = true;
-    const authTimeout = window.setTimeout(() => { if (active) setLoading(false); }, 3_500);
-    client.auth.getUser().then(({ data }) => {
-      if (active) { window.clearTimeout(authTimeout); setUser(data.user ?? null); setLoading(false); }
-    }).catch(() => { if (active) { window.clearTimeout(authTimeout); setLoading(false); } });
+    const authTimeout = window.setTimeout(() => { if (active) setLoading(false); }, 1_500);
+
+    client.auth.getSession().then(({ data }) => {
+      if (!active) return;
+      window.clearTimeout(authTimeout);
+      setUser(data.session?.user ?? null);
+      setLoading(false);
+    }).catch(() => {
+      if (active) { window.clearTimeout(authTimeout); setLoading(false); }
+    });
+
     const { data } = client.auth.onAuthStateChange((event, session) => {
       if (!active) return;
       window.clearTimeout(authTimeout);
@@ -56,6 +63,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setSignInNotice("Signed in. Your alerts will sync across devices.");
       }
     });
+
+    void client.auth.getUser().then(({ data, error }) => {
+      if (!active) return;
+      if (error || !data.user) {
+        setUser(null);
+        return;
+      }
+      setUser(data.user);
+    });
+
     return () => { active = false; window.clearTimeout(authTimeout); data.subscription.unsubscribe(); };
   }, []);
 

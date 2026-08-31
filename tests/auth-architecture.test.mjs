@@ -20,6 +20,7 @@ test("Supabase browser auth uses only public configuration", async () => {
   assert.doesNotMatch(dialog, /provider: "apple"|Continue with Apple/);
   assert.match(dialog, /resetPasswordForEmail/);
   assert.match(dialog, /signOut/);
+  assert.doesNotMatch(dialog, /Checking account/);
 });
 
 test("authentication dialog stays within desktop and mobile viewports", async () => {
@@ -88,5 +89,5 @@ test("local alerts are deleted only after authenticated migration succeeds", asy
   const upsert = service.indexOf("await upsertUserAlerts(user.id, local)");
   const remove = service.indexOf("window.localStorage.removeItem(PRICE_ALERTS_KEY)");
   assert.ok(upsert >= 0 && remove > upsert);
-  assert.match(service, /data\.user\.id !== expectedUserId/);
+  assert.match(service, /data\.session\.user\.id !== expectedUserId/);
 });

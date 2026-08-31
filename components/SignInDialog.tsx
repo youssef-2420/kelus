@@ -12,7 +12,7 @@ function GoogleMark() {
 }
 
 export function SignInDialog({ label = "Sign in", className }: { label?: string; className?: string }) {
-  const { configured, loading: authLoading, user, recovery, clearRecovery } = useAuth();
+  const { configured, user, recovery, clearRecovery } = useAuth();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [mode, setMode] = useState<Mode>("signin");
@@ -87,9 +87,8 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
     const target = event.target as HTMLElement;
     if (!target.closest(".signin-dialog") && !target.closest(".auth-brand-mark")) closeDialog();
   }
-  function finishSignIn(message: string) {
-    setNotice(message);
-    window.setTimeout(() => setOpen(false), 1200);
+  function finishSignIn() {
+    setOpen(false);
   }
 
   async function submit(event: FormEvent) {
@@ -101,7 +100,7 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
       if (mode === "signin") {
         const { error: authError } = await client.auth.signInWithPassword({ email: email.trim(), password });
         if (authError) throw authError;
-        finishSignIn("Signed in. Welcome back to Kelus.");
+        finishSignIn();
       } else if (mode === "create") {
         const name = fullName.trim();
         if (!name) throw new Error("Enter your full name.");
@@ -114,7 +113,7 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
           },
         });
         if (authError) throw authError;
-        if (data.session) finishSignIn("Account created. Welcome to Kelus.");
+        if (data.session) finishSignIn();
         else setNotice("Check your email to verify your account, then return to Kelus to sign in.");
       } else if (mode === "forgot") {
         const { error: authError } = await client.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/auth/callback?next=/reset-password` });
@@ -153,8 +152,6 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
       setBusy(false);
     }
   }
-
-  if (authLoading) return <button type="button" className="header-signin" disabled aria-label="Checking account"><span className="auth-spinner"/> Account</button>;
 
   if (user) {
     const storedName = typeof user.user_metadata?.full_name === "string" ? user.user_metadata.full_name.trim() : "";

@@ -7,8 +7,8 @@ type AlertRow = { id: string; user_id: string; alert_data: PriceAlertRecord };
 async function authenticatedClient(expectedUserId: string) {
   const client = getSupabaseBrowserClient();
   if (!client) throw new Error("Supabase is not configured.");
-  const { data, error } = await client.auth.getUser();
-  if (error || !data.user || data.user.id !== expectedUserId) throw new Error("Your session is no longer valid. Please sign in again.");
+  const { data, error } = await client.auth.getSession();
+  if (error || !data.session?.user || data.session.user.id !== expectedUserId) throw new Error("Your session is no longer valid. Please sign in again.");
   return client;
 }
 
