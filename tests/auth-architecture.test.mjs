@@ -16,8 +16,8 @@ test("Supabase browser auth uses only public configuration", async () => {
   assert.match(dialog, /data: \{ full_name: name \}/);
   assert.match(dialog, /autoComplete="name"/);
   assert.match(dialog, /signInWithOAuth/);
-  assert.match(dialog, /socialSignIn\("google"\)/);
-  assert.match(dialog, /socialSignIn\("apple"\)/);
+  assert.match(dialog, /provider: "google"/);
+  assert.doesNotMatch(dialog, /provider: "apple"|Continue with Apple/);
   assert.match(dialog, /resetPasswordForEmail/);
   assert.match(dialog, /signOut/);
 });

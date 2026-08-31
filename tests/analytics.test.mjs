@@ -4,16 +4,19 @@ import { readStoredAnalyticsEvents, readUnsupportedSearches, trackEvent } from "
 
 function installStorage() {
   const store = new Map();
+  const googleEvents = [];
   globalThis.window = {
     localStorage: {
       getItem: (key) => store.get(key) ?? null,
       setItem: (key, value) => { store.set(key, value); },
     },
+    gtag: (...args) => { googleEvents.push(args); },
   };
+  return googleEvents;
 }
 
 test("analytics records core funnel events without sensitive payloads", () => {
-  installStorage();
+  const googleEvents = installStorage();
   trackEvent({ name: "landing_viewed" });
   trackEvent({ name: "search_submitted", productSlug: "macbook-pro-16-m4", query: "MacBook Pro 16 1TB" });
   trackEvent({ name: "product_page_viewed", productSlug: "macbook-pro-16-m4", variantId: "macbook-pro-16-m4-max-36-1tb", condition: "used" });
@@ -23,6 +26,8 @@ test("analytics records core funnel events without sensitive payloads", () => {
   const names = readStoredAnalyticsEvents().map((event) => event.name);
   assert.deepEqual(names, ["landing_viewed", "search_submitted", "product_page_viewed", "recommendation_viewed", "retailer_clicked", "price_alert_created"]);
   assert.equal(JSON.stringify(readStoredAnalyticsEvents()).includes("@"), false);
+  assert.equal(googleEvents.length, 6);
+  assert.deepEqual(googleEvents[1], ["event", "search_submitted", { productSlug: "macbook-pro-16-m4" }]);
 });
 
 test("unsupported searches are normalized for catalog prioritization", () => {
