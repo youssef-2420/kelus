@@ -47,11 +47,14 @@ export function SignInDialog() {
     if (!open) return;
     closeButtonRef.current?.focus();
     function handleEscape(event: globalThis.KeyboardEvent) {
-      if (event.key === "Escape") closeDialog();
+      if (event.key === "Escape") {
+        setOpen(false);
+        if (mode === "reset") clearRecovery();
+      }
     }
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
-  }, [open, mode]);
+  }, [clearRecovery, mode, open]);
 
   function openDialog() { setMode("signin"); setNotice(""); setError(""); setPassword(""); setOpen(true); }
   function switchMode(next: Mode) { setMode(next); setNotice(""); setError(""); setPassword(""); }
