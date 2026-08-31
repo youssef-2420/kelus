@@ -161,7 +161,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     <ProductHeader criteria={criteria} />
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
-      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <div className="nr-state">Comparing live eBay offers…</div> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <>
+      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <>
         <DecisionReport decision={decision} lowest={lowest}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
         {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image} stale={Boolean(staleSnapshot)}/>)}</div></section>}
@@ -170,6 +170,30 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
       </>}
     </div>
   </main>;
+}
+
+function ProductLoadingSkeleton() {
+  return <section className="pi-pick pi-loading" aria-busy="true" aria-live="polite">
+    <p className="pi-label">Our Pick</p>
+    <div className="pi-loading-body">
+      <div className="pi-loading-price">
+        <span className="pi-loading-block pi-loading-block--sm"/>
+        <span className="pi-loading-block pi-loading-block--lg"/>
+        <span className="pi-loading-block pi-loading-block--md"/>
+      </div>
+      <div className="pi-loading-seller">
+        <span className="pi-loading-block pi-loading-block--md"/>
+        <span className="pi-loading-block pi-loading-block--sm"/>
+      </div>
+    </div>
+    <div className="pi-loading-verdict">
+      <span className="pi-loading-block pi-loading-block--sm"/>
+      <span className="pi-loading-block pi-loading-block--md"/>
+      <span className="pi-loading-block pi-loading-block--sm"/>
+    </div>
+    <span className="pi-loading-block pi-loading-block--cta"/>
+    <p className="pi-loading-status" role="status">Comparing live eBay offers…</p>
+  </section>;
 }
 
 function DataFreshness({ result, offerCount, loading, stale }: { result: OfferSearchResult | null; offerCount: number; loading: boolean; stale: boolean }) {
@@ -300,7 +324,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
       <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
       <span>Cheapest</span><strong>{money(lowest ?? pick)}</strong><small>{lowest?.trust?.confidence ? `${titleCase(lowest.trust.confidence.toLowerCase())} confidence${savings !== null && savings > 0 ? ` · ${moneyAmount(savings, lowest.currency)} less` : ""}` : "Confidence unavailable"}</small>
     </div></> : <p className="pi-no-cheaper">No cheaper comparable offer passed Kelus validation.</p>}
-    {pick && <div className="pi-primary-cta"><OutboundRetailerCTA offer={pick} label="View offer" ourPick/><span>Opens the live eBay listing</span></div>}
+    {pick && <div className="pi-primary-cta"><OutboundRetailerCTA offer={pick} label="View offer" ourPick/><span>Opens the live eBay listing</span><p className="pi-cta-disclosure">Kelus may earn a commission from eligible retailer links.</p></div>}
   </section>;
 }
 
