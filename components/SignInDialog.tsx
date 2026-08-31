@@ -11,7 +11,7 @@ function GoogleMark() {
   return <svg className="social-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.9h5.4a4.6 4.6 0 0 1-2 3v2.5h3.3c1.9-1.8 2.9-4.4 2.9-7.4Z"/><path fill="#34A853" d="M12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.5c-.9.6-2.1 1-3.4 1-2.6 0-4.8-1.8-5.6-4.2H3v2.6A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3a10 10 0 0 0 0 9l3.4-2.6Z"/><path fill="#EA4335" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.8A9.7 9.7 0 0 0 3 7.5l3.4 2.6C7.2 7.7 9.4 5.9 12 5.9Z"/></svg>;
 }
 
-export function SignInDialog() {
+export function SignInDialog({ label = "Sign in", className }: { label?: string; className?: string }) {
   const { configured, loading: authLoading, user, recovery, clearRecovery } = useAuth();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -135,7 +135,7 @@ export function SignInDialog() {
     </div>;
   }
 
-  return <><button type="button" className="header-signin" onClick={openDialog}><Icon name="lock" size={17}/>Sign in</button>
+  return <><button type="button" className={className ? `header-signin ${className}` : "header-signin"} onClick={openDialog}><Icon name="lock" size={17}/>{label}</button>
     {open && <div className="modal-backdrop"><div className="auth-sheet"><Link href="/" className="auth-brand-mark" aria-label="Return to Kelus homepage" onClick={closeDialog}>kelus</Link><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
       <p className="eyebrow">{mode === "create" ? "Start tracking smarter" : mode === "forgot" || mode === "reset" ? "Secure account recovery" : "Welcome back"}</p><h2 id="signin-title">{mode === "signin" ? "Sign in to Kelus" : mode === "create" ? "Create your Kelus account" : mode === "forgot" ? "Reset your password" : "Choose a new password"}</h2>
       <p className="dialog-copy">{mode === "forgot" ? "We’ll send a secure reset link to your email." : mode === "reset" ? "Enter a new password for your Kelus account." : mode === "create" ? "Save exact products, set target prices, and keep your alerts across devices." : "Return to your tracked products and price decisions."}</p>

@@ -51,5 +51,9 @@ export function WatchButton({ product = "iPhone 17", criteria, result, allowUnav
     } finally { setChecking(false); }
   }
   const label = checking ? "Checking price…" : message || (saved ? (allowUnavailable ? "Tracking availability" : "Watching price") : (allowUnavailable ? "Track availability" : "Track price"));
-  return <button className={saved ? "watch-button is-saved" : "watch-button"} type="button" disabled={checking} onClick={toggle}><Icon name={saved ? "check" : "bell"} size={16} />{label}</button>;
+  return <div className="watch-button-wrap">
+    <button className={saved ? "watch-button is-saved" : "watch-button"} type="button" disabled={checking} onClick={toggle} aria-live="polite"><Icon name={saved ? "check" : "bell"} size={16} />{label}</button>
+    {message ? <p className="watch-button-message" role="alert">{message}</p> : null}
+    {saved && !user && !message ? <p className="watch-button-note">Saved on this device. Sign in from the header to sync across devices.</p> : null}
+  </div>;
 }

@@ -3,6 +3,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { KelusHeader } from "@/components/KelusHeader";
+import { GuestSyncBanner } from "@/components/GuestSyncBanner";
 import { useAuth } from "@/components/AuthProvider";
 import { Icon } from "@/components/Icon";
 import { ProductMark } from "@/components/ProductMark";
@@ -135,6 +136,7 @@ export default function AlertsPage() {
 
   return <main className="app-page alerts-page"><KelusHeader />
     <section className="alerts-main section">
+      <GuestSyncBanner />
       <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><Link href="/#product-search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link></div>
       {syncError && <p className="alerts-sync-error" role="alert">{syncError}</p>}
       {alerts.length > 0 && <div className="alerts-overview" aria-label="Price alert summary"><span><b>{activeCount}</b> actively watched</span><span><b>{droppedCount}</b> price dropped</span><span><b>{reachedCount}</b> target reached</span></div>}
@@ -147,7 +149,7 @@ export default function AlertsPage() {
           const stale = isAlertStale(alert);
           const progress = targetProgress(alert);
           return <article className={`alert-row${alert.paused ? " is-paused" : ""}${open ? " is-open" : ""}`} key={alert.id}>
-            <button type="button" aria-expanded={open} onClick={() => setExpanded(open ? null : alert.id)}>
+            <button type="button" aria-expanded={open} aria-label={`${alert.productName}, ${alert.configuration}. ${open ? "Collapse" : "Expand"} alert details`} onClick={() => setExpanded(open ? null : alert.id)}>
               <span className="alert-product"><AlertImage alert={alert}/><span><b>{alert.productName}</b><small>{alert.configuration}</small></span></span>
               <span className={`alert-status is-${status}`}>{statusLabel(alert)}</span>
               <span className="alert-price"><small>Current best</small><strong>{alert.currentPrice === null ? "Unavailable" : money(alert.currentPrice)}</strong>{change && change.amount !== 0 ? <em className={`alert-change${change.amount > 0 ? " is-up" : ""}`}>{change.amount > 0 ? "↑" : "↓"} {money(Math.abs(change.amount))} ({Math.abs(change.percent)}%)</em> : <em className="alert-change is-neutral">No verified change</em>}</span><Icon name="chevron" size={18}/>
