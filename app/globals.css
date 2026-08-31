@@ -654,3 +654,6 @@ html { scroll-behavior:smooth; }
 .pi-updating-overlay-card .pi-loading-block{background:linear-gradient(90deg,#edf1ee 25%,#f8faf8 50%,#edf1ee 75%);background-size:220% 100%;animation:rp-shimmer 1.45s ease-in-out infinite}
 .app-signin-toast{position:fixed;z-index:80;top:max(16px,env(safe-area-inset-top));left:50%;display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(560px,calc(100% - 32px));padding:12px 16px;border:1px solid #cfe4db;border-radius:10px;background:#e8f4ef;color:#1d4f44;transform:translateX(-50%);box-shadow:0 12px 30px rgba(19,35,31,.12)}
 .app-signin-toast p{margin:0;font-size:13px;line-height:1.45}
+.pi-refresh-banner{display:flex;align-items:flex-start;gap:8px;margin:0 0 18px;padding:10px 13px;border:1px solid #eadcae;border-radius:9px;background:#fffaf0;color:#725c17;font-size:12px;line-height:1.45}
+.pi-refresh-banner i{width:7px;height:7px;flex:none;margin-top:5px;border-radius:50%;background:#c58b2b;box-shadow:0 0 0 3px #f4ead5;animation:status-breathe 1.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.pi-refresh-banner i{animation:none}}

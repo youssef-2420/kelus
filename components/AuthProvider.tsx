@@ -27,6 +27,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const authReady = useRef(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("kelus-sign-in-notice") === "1") {
+      sessionStorage.removeItem("kelus-sign-in-notice");
+      queueMicrotask(() => setSignInNotice("Signed in. Your alerts will sync across devices."));
+    }
+  }, []);
+
+  useEffect(() => {
     const client = getSupabaseBrowserClient();
     if (!client) { queueMicrotask(() => setLoading(false)); return; }
     let active = true;

@@ -7,10 +7,10 @@ Kelus helps shoppers compare trusted offers, understand the trade-offs, and buy 
 - **Home:** `app/page.tsx`
 - **How it works:** `app/how-it-works/page.tsx`
 - **Results:** `app/results/page.tsx`
-- **Product:** `app/product/iphone-17/page.tsx`
-- **Compare offers:** `app/compare/iphone-17/page.tsx`
+- **Product:** `app/product/[slug]/page.tsx`
+- **Compare offers (legacy redirect):** `app/compare/iphone-17/page.tsx` → canonical product page
 - **Checkout:** `app/checkout/page.tsx`
-- **Price alerts:** `app/saved/page.tsx`
+- **Price alerts:** `app/alerts/page.tsx`
 
 ## Project structure
 

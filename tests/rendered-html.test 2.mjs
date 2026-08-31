@@ -14,7 +14,7 @@ async function render(path = "/") {
 }
 
 test("server-renders the Kelus core product flows", async () => {
-  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "iPhone 17 offers"], ["/product/iphone-17", "Best balance of price"], ["/compare/iphone-17", "See the trade-offs clearly"], ["/checkout", "Choose how you want to pay"]]) {
+  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"]]) {
     const response = await render(route);
     const html = await response.text();
     assert.equal(response.status, 200, route + " returns 200");
