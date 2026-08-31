@@ -23,7 +23,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:static
         env:
           KELUS_CUSTOM_DOMAIN: "true"
       - uses: actions/configure-pages@v5
