@@ -6,7 +6,7 @@ import { SearchControls } from "@/components/SearchControls";
 import { TrustRow } from "@/components/TrustRow";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
-import { products } from "@/lib/demo-data";
+import { getDiscoverableProducts } from "@/lib/demo-data";
 import { canonicalProductPath } from "@/lib/search-state";
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ function HeroDevices() {
 }
 
 export default function Home() {
-  const discoverable = products.slice(0, 12).map((product) => ({
+  const discoverable = getDiscoverableProducts(12).map((product) => ({
     product,
     href: canonicalProductPath({ productSlug: product.slug, variantId: product.searchAttribute.validVariantIds[0], condition: "new", market: "us" }),
   }));

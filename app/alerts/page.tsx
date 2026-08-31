@@ -77,11 +77,38 @@ export default function AlertsPage() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<Set<string>>(new Set());
+  const [refreshingAll, setRefreshingAll] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
   const [target, setTarget] = useState("");
   const [syncError, setSyncError] = useState("");
   const toggleRefs = useRef(new Map<string, HTMLButtonElement>());
   const detailRefs = useRef(new Map<string, HTMLDivElement>());
+
+  async function fetchGuestAlertUpdates(stored: PriceAlertRecord[]) {
+    return Promise.all(stored.map(async (alert) => {
+      if (alert.paused) return alert;
+      try { return updateAlertFromResult(alert, await retrySearch(alert.criteria)); }
+      catch (error) { return updateAlertFromError(alert, error instanceof Error ? error.message : "The latest price check failed."); }
+    }));
+  }
+
+  async function refreshGuestAlerts(stored: PriceAlertRecord[]) {
+    setRefreshing(new Set(stored.filter((alert) => !alert.paused).map((alert) => alert.id)));
+    const updated = await fetchGuestAlertUpdates(stored);
+    setAlerts(updated);
+    setRefreshing(new Set());
+    writePriceAlerts(updated);
+    return updated;
+  }
+
+  async function checkGuestPrices() {
+    if (!alerts.length || refreshingAll) return;
+    setSyncError("");
+    setRefreshingAll(true);
+    try { await refreshGuestAlerts(alerts); }
+    catch { setSyncError("Prices could not be checked right now. Please try again."); }
+    finally { setRefreshingAll(false); }
+  }
 
   useEffect(() => {
     if (authLoading) return;
@@ -104,16 +131,14 @@ export default function AlertsPage() {
         try { await refreshUserAlerts(user.id); updated = await readUserAlerts(user.id); }
         catch { updated = stored; if (!cancelled) setSyncError("Your saved alerts are safe, but prices could not be checked right now."); }
       } else {
-        updated = await Promise.all(stored.map(async (alert) => {
-          if (alert.paused) return alert;
-          try { return updateAlertFromResult(alert, await retrySearch(alert.criteria)); }
-          catch (error) { return updateAlertFromError(alert, error instanceof Error ? error.message : "The latest price check failed."); }
-        }));
+        updated = await refreshGuestAlerts(stored);
       }
       if (cancelled) return;
-      setAlerts(updated); setRefreshing(new Set()); setInitialLoading(false);
-      try { if (!user) writePriceAlerts(updated); }
-      catch { if (!cancelled) setSyncError("Prices were refreshed, but your account could not be synced yet."); }
+      if (user) {
+        setAlerts(updated);
+        setRefreshing(new Set());
+      }
+      setInitialLoading(false);
     }
     void loadAndRefresh();
     return () => { cancelled = true; };
@@ -166,7 +191,7 @@ export default function AlertsPage() {
   return <main className="app-page alerts-page"><KelusHeader />
     <section className="alerts-main section">
       <GuestSyncBanner />
-      <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><Link href="/#product-search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link></div>
+      <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><div className="alerts-heading-actions">{!user && alerts.length > 0 && <button type="button" className="alerts-refresh-button" onClick={() => { void checkGuestPrices(); }} disabled={refreshingAll || initialLoading} aria-busy={refreshingAll}><Icon name="search" size={16}/>{refreshingAll ? "Checking prices…" : "Check prices"}</button>}<Link href="/#product-search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link></div></div>
       {syncError && <p className="alerts-sync-error" role="alert">{syncError}</p>}
       {authLoading || initialLoading ? <AlertsLoadingSkeleton/> : alerts.length > 0 && <div className="alerts-overview" aria-label="Price alert summary"><span><b>{activeCount}</b> actively watched</span><span><b>{droppedCount}</b> price dropped</span><span><b>{reachedCount}</b> target reached</span></div>}
       {!authLoading && !initialLoading && (alerts.length ? <div className="alerts-list">
@@ -198,6 +223,6 @@ export default function AlertsPage() {
         })}
       </div> : <div className="alerts-empty" aria-live="polite"><span className="alerts-empty-icon"><Icon name="bell" size={25}/></span><p className="eyebrow">Nothing to watch yet</p><h2>Let Kelus watch the price.</h2><p>Choose an exact product, configuration, and condition. Kelus will keep the real first price as your baseline—never an estimate.</p><Link className="button button-primary" href="/#product-search">Add your first product <Icon name="arrow" size={17}/></Link></div>)}
     </section>
-    <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account, persist across devices, and are checked automatically." : "Alerts are stored locally until you sign in. Active prices refresh when you open this page."}</p>
+    <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account, persist across devices, and are checked automatically." : "Alerts are stored locally until you sign in. Use Check prices to refresh active alerts without reloading."}</p>
   </main>;
 }

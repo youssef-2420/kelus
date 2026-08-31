@@ -67,10 +67,11 @@ test("canonical product runtime contains record-specific SEO and structured-data
 });
 
 test("Product Intelligence presentation keeps production data wiring and the existing header", async () => {
-  const [view, header, styles] = await Promise.all([
+  const [view, header, styles, search] = await Promise.all([
     readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/ProductHeader.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(view, /ProductHeader criteria=\{criteria\}/);
   assert.match(header, /SearchControls minimal minimalAction initialCriteria=\{criteria\} actionLabel="Search"/);
@@ -107,6 +108,13 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(styles, /\.pi-selectors/);
   assert.match(styles, /\.pi-offer-reveal/);
   assert.match(styles, /\.search-field > \.suggestions \{ display:flex; flex-direction:column;/);
+  assert.match(search, /Closest match/);
+  assert.match(search, /configurationPreview/);
+  assert.match(search, /SuggestionLoading/);
+  assert.match(search, /Popular products/);
+  assert.match(search, /getDiscoverableProducts/);
+  assert.match(styles, /\.suggestions button\.is-primary/);
+  assert.match(styles, /\.hero-figma:before/);
   assert.match(styles, /max-height:min\(480px,56dvh\)/);
   assert.match(styles, /\.hero-figma \{ min-height:730px; padding-top:16px; \}/);
   assert.match(styles, /\.hero-content \{ position:relative; z-index:1; margin-top:44px; \}/);
@@ -127,6 +135,7 @@ test("key pages use specific metadata and the homepage demonstrates the differen
   ]);
   assert.match(home, /A cheaper listing can still lose/);
   assert.match(home, /Kelus — Find the offer worth buying/);
+  assert.match(home, /getDiscoverableProducts/);
   assert.match(how, /How Kelus evaluates an electronics offer/);
   assert.match(alerts, /My price alerts — Kelus/);
   assert.doesNotMatch(layout, /warranty/);
@@ -145,8 +154,11 @@ test("Alerts leads with monitoring state and keeps secondary controls progressiv
   assert.doesNotMatch(alerts, /Loading your alerts/);
   assert.match(alerts, /aria-live="polite"/);
   assert.match(alerts, /View comparison/);
+  assert.match(alerts, /Check prices/);
+  assert.match(alerts, /checkGuestPrices/);
   assert.match(alerts, /<progress value=\{progress\}/);
   assert.match(styles, /\.alerts-overview/);
+  assert.match(styles, /\.alerts-refresh-button/);
   assert.match(styles, /\.alert-glance/);
   assert.match(styles, /\.alert-check\.is-error/);
 });

@@ -64,6 +64,21 @@ export const products: Product[] = [
   product("nintendo-switch-oled", "nintendo-switch-oled", "Nintendo Switch OLED", "Console", "Nintendo", "NSO", "none", ["nintendo-switch-oled"], ["switch oled"], 349),
 ];
 export const featuredProduct = products[0];
+
+const discoverableCategoryOrder = ["Smartphone", "Laptop", "Tablet", "Wearable", "Audio", "Console"] as const;
+
+export function getDiscoverableProducts(limit = 12) {
+  const picked: Product[] = [];
+  for (const category of discoverableCategoryOrder) {
+    const match = products.find((product) => product.category === category && !picked.some((item) => item.id === product.id));
+    if (match) picked.push(match);
+  }
+  for (const product of products) {
+    if (picked.length >= limit) break;
+    if (!picked.some((item) => item.id === product.id)) picked.push(product);
+  }
+  return picked.slice(0, limit);
+}
 export const productVariants: ProductVariant[] = [
   ...["128GB", "256GB", "512GB"].map((storage) => ({ id: `iphone-17-${storage.slice(0, -2)}`, productId: "apple-iphone-17", label: storage, storage, specifications: { storage }, identifiers: {} })),
   ...["256GB", "512GB", "1TB"].map((storage) => ({ id: `iphone-17-pro-${storage.toLowerCase()}`, productId: "apple-iphone-17-pro", label: storage, storage, specifications: { storage }, identifiers: {} })),
