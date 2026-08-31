@@ -62,7 +62,7 @@ test("canonical product runtime contains record-specific SEO and structured-data
   assert.match(page, /https:\/\/schema\.org/);
   assert.match(page, /alternates: \{ canonical: canonicalUrl \}/);
   assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);
-  for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/, /pi-refresh-banner/, /Kelus is checking live eBay offers in the background/]) assert.match(view, copy);
+  for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
   assert.match(page, /initialOutcome=\{initialOutcome\}/);
 });
 
@@ -100,6 +100,9 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /getProductIntelligenceOptions/);
   assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
   assert.match(view, /if \(refreshPersistedResult\) return;/);
+  assert.match(view, /setRefreshingSnapshot\(true\)/);
+  assert.match(view, /Checking for newer offers/);
+  assert.match(styles, /\.pi-refreshing-status/);
   assert.match(styles, /font-family:Inter[\s\S]*\/fonts\/inter-latin\.woff2/);
   assert.match(styles, /\.pi-selectors/);
   assert.match(styles, /\.pi-offer-reveal/);
