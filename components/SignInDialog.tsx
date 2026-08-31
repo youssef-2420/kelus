@@ -29,6 +29,7 @@ export function SignInDialog() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (recovery) queueMicrotask(() => { setMode("reset"); setOpen(true); setNotice(""); setError(""); });
@@ -41,6 +42,16 @@ export function SignInDialog() {
     document.addEventListener("mousedown", closeMenu);
     return () => document.removeEventListener("mousedown", closeMenu);
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    closeButtonRef.current?.focus();
+    function handleEscape(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") closeDialog();
+    }
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [open, mode]);
 
   function openDialog() { setMode("signin"); setNotice(""); setError(""); setPassword(""); setOpen(true); }
   function switchMode(next: Mode) { setMode(next); setNotice(""); setError(""); setPassword(""); }
@@ -120,7 +131,7 @@ export function SignInDialog() {
   }
 
   return <><button type="button" className="header-signin" onClick={openDialog}><Icon name="lock" size={17}/>Sign in</button>
-    {open && <div className="modal-backdrop"><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
+    {open && <div className="modal-backdrop"><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
       <p className="eyebrow">Welcome to Kelus</p><h2 id="signin-title">{mode === "signin" ? "Sign in to your account" : mode === "create" ? "Create your Kelus account" : mode === "forgot" ? "Reset your password" : "Choose a new password"}</h2>
       <p className="dialog-copy">{mode === "forgot" ? "We’ll send a secure reset link to your email." : mode === "reset" ? "Enter a new password for your Kelus account." : "Save price alerts and keep your shopping decisions in one place."}</p>
       {!configured && <p className="auth-message is-error" role="alert">Supabase setup is required before sign-in can be used.</p>}
