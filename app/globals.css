@@ -227,6 +227,66 @@ button { cursor:pointer; }
 .pi-method .pi-label { margin-bottom:10px; }
 .pi-method p { margin:0; font-size:12px; }
 
+/* Product Intelligence hierarchy tokens. These remain scoped to the product
+   surface so shared navigation and the rest of Kelus keep their current scale. */
+.pi-page {
+  --pi-type-hero:clamp(44px,6vw,60px);
+  --pi-type-section:clamp(26px,3.2vw,34px);
+  --pi-type-body:14px;
+  --pi-type-utility:11px;
+  --pi-ink:#10221e;
+  --pi-body:#52615c;
+  --pi-muted:#78837f;
+  --pi-line:#d9d4c9;
+  --pi-action:#103e35;
+  --pi-success:#176b50;
+  --pi-success-wash:#eaf3ef;
+  --pi-warning:#8a6321;
+  --pi-warning-wash:#f4ead5;
+}
+.pi-product { padding-bottom:22px; border-bottom:0; }
+.pi-kicker,.pi-label,.pi-total-label,.pi-comparison-label { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+.pi-product h1 { font-size:clamp(40px,5vw,48px); color:var(--pi-ink); }
+.pi-selectors { color:var(--pi-muted); }
+.pi-selectors select,.pi-selectors summary,.pi-fixed-option { color:var(--pi-body); font-size:12px; font-weight:650; }
+.pi-freshness,.pi-freshness small,.pi-updating { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+.pi-freshness.is-live > span { color:var(--pi-success); }
+.pi-freshness.is-snapshot > span { color:var(--pi-warning); }
+.pi-pick { margin-top:18px; padding:32px 0 34px; border:0; border-top:1px solid var(--pi-line); border-bottom:1px solid var(--pi-line); border-radius:0; background:transparent; box-shadow:none; }
+.pi-pick-top { margin-top:15px; }
+.pi-pick-price { font-size:var(--pi-type-hero); color:var(--pi-ink); }
+.pi-confidence { color:var(--pi-success); font-size:12px; }
+.pi-confidence-copy,.pi-pick-seller small { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+.pi-pick-seller span { color:var(--pi-ink); font-size:var(--pi-type-body); }
+.pi-verdict { margin-top:28px; padding:22px 24px; border-left-color:var(--pi-action); background:var(--pi-success-wash); }
+.pi-verdict h2 { max-width:650px; color:var(--pi-ink); font-size:var(--pi-type-section); }
+.pi-verdict > p:last-child,.pi-evidence,.pi-tradeoff { color:var(--pi-body); font-size:var(--pi-type-body); }
+.pi-why { border-color:var(--pi-line); }
+.pi-tradeoff { color:#244b42; }
+.pi-proof { border-color:var(--pi-line); }
+.pi-proof summary b { color:var(--pi-ink); font-size:20px; }
+.pi-proof summary small,.pi-proof-reveal dt,.pi-proof-reveal dd { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+.pi-proof-reveal > p { color:var(--pi-body); background:transparent; border-left:2px solid var(--pi-line); border-radius:0; }
+.pi-comparison-label { border-color:var(--pi-line); }
+.pi-comparison { border-color:var(--pi-line); }
+.pi-comparison span,.pi-comparison small { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+.pi-comparison strong { color:var(--pi-ink); font-size:24px; }
+.pi-primary-cta { margin-top:28px; }
+.pi-primary-cta .button { min-width:220px; min-height:52px; border-color:var(--pi-action); background:var(--pi-action); box-shadow:0 9px 24px rgba(16,62,53,.14); }
+.pi-primary-cta > span { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+.pi-section { border-color:var(--pi-line); }
+.pi-context h2 { color:var(--pi-ink); font-size:var(--pi-type-section); }
+.pi-context p,.pi-method p,.pi-track p { color:var(--pi-body); font-size:var(--pi-type-body); }
+.pi-track { border-color:var(--pi-line); }
+.pi-track .watch-button { border:1px solid var(--pi-action); background:transparent; color:var(--pi-action); box-shadow:none; }
+.pi-offer-list,.pi-offer { border-color:var(--pi-line); }
+.pi-offer-summary b { color:var(--pi-ink); font-size:var(--pi-type-body); }
+.pi-offer-summary small,.pi-offer-summary em { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+.pi-offer-summary > strong { color:var(--pi-ink); font-size:24px; }
+.pi-method { color:var(--pi-muted); }
+.pi-method .text-link,.pi-method-link,.pi-proof-reveal>a { color:var(--pi-action); font-size:var(--pi-type-utility); }
+.nr-disclosure { color:var(--pi-muted); font-size:var(--pi-type-utility); }
+
 @media (max-width:760px) {
   .pi-content { width:calc(100% - 32px); padding:22px 0 66px; }
   .pi-product { grid-template-columns:78px minmax(0,1fr); gap:16px; padding:12px 0 26px; }
