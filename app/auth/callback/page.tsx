@@ -15,7 +15,10 @@ function Callback() {
     if (!client || !code) { queueMicrotask(() => setMessage("This authentication link is invalid or has expired.")); return; }
     client.auth.exchangeCodeForSession(code).then(({ error }) => {
       if (error) setMessage(error.message);
-      else window.location.replace(next);
+      else {
+        sessionStorage.setItem("kelus-sign-in-notice", "1");
+        window.location.replace(next);
+      }
     });
   }, [params]);
   return <main className="auth-callback"><span className="auth-spinner is-dark"/><p>{message}</p></main>;

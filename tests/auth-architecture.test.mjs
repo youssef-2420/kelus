@@ -31,7 +31,7 @@ test("authentication dialog stays within desktop and mobile viewports", async ()
   assert.match(styles, /\.signin-dialog \{[^}]*width:min\(400px,100%\)/);
   assert.match(dialog, /className="auth-sheet"/);
   assert.match(styles, /@media\(max-width:620px\)\{[\s\S]*\.signin-dialog\{padding:18px 14px 12px/);
-  assert.match(styles, /@media\(max-height:800px\)\{[\s\S]*\.dialog-legal\{display:none\}/);
+  assert.match(styles, /@media\(max-height:800px\)\{[\s\S]*\.dialog-legal\{font-size:10px/);
   assert.doesNotMatch(styles, /place-items:center; overflow:auto; padding:92px/);
   assert.doesNotMatch(styles, /padding:52px 62px 28px/);
   assert.doesNotMatch(styles, /\.modal-backdrop\{display:flex;align-items:center;justify-content:center;padding:22px\}/);

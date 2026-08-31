@@ -26,6 +26,13 @@ test("legacy compare demo redirects to the canonical product page", async () => 
   assert.match(compare, /redirect\(canonicalProductPath\(defaultSearch\)\)/);
 });
 
+test("OAuth callback queues the global sign-in notice", async () => {
+  const callback = await readFile(new URL("../app/auth/callback/page.tsx", import.meta.url), "utf8");
+  const auth = await readFile(new URL("../components/AuthProvider.tsx", import.meta.url), "utf8");
+  assert.match(callback, /kelus-sign-in-notice/);
+  assert.match(auth, /kelus-sign-in-notice/);
+});
+
 test("legacy saved route consistently redirects to My Alerts", async () => {
   const saved = await readFile(new URL("../app/saved/page.tsx", import.meta.url), "utf8");
   assert.match(saved, /redirect\("\/alerts"\)/);
@@ -55,18 +62,20 @@ test("canonical product runtime contains record-specific SEO and structured-data
   assert.match(page, /https:\/\/schema\.org/);
   assert.match(page, /alternates: \{ canonical: canonicalUrl \}/);
   assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);
-  for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
+  for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/, /pi-refresh-banner/, /Kelus is checking live eBay offers in the background/]) assert.match(view, copy);
   assert.match(page, /initialOutcome=\{initialOutcome\}/);
 });
 
 test("Product Intelligence presentation keeps production data wiring and the existing header", async () => {
-  const [view, styles] = await Promise.all([
+  const [view, header, styles] = await Promise.all([
     readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/ProductHeader.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(view, /<Link href="\/" className="wordmark" aria-label="Kelus home">kelus<\/Link><SearchControls minimal minimalAction initialCriteria=\{criteria\} actionLabel="Search"\/>/);
+  assert.match(view, /ProductHeader criteria=\{criteria\}/);
+  assert.match(header, /SearchControls minimal minimalAction initialCriteria=\{criteria\} actionLabel="Search"/);
   assert.match(view, /canonicalProductPath\(nextCriteria\)/);
-  assert.match(view, /window\.location\.assign/);
+  assert.match(view, /router\.push\(canonicalProductPath/);
   assert.match(view, /Updating recommendation…/);
   assert.match(view, /decision\.reasons\.join/);
   assert.match(view, /knownTotal/);
