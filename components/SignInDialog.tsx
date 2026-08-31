@@ -134,11 +134,10 @@ export function SignInDialog() {
   }
 
   return <><button type="button" className="header-signin" onClick={openDialog}><Icon name="lock" size={17}/>Sign in</button>
-    {open && <div className="modal-backdrop"><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
-      <p className="eyebrow">Welcome to Kelus</p><h2 id="signin-title">{mode === "signin" ? "Sign in to your account" : mode === "create" ? "Create your Kelus account" : mode === "forgot" ? "Reset your password" : "Choose a new password"}</h2>
-      <p className="dialog-copy">{mode === "forgot" ? "We’ll send a secure reset link to your email." : mode === "reset" ? "Enter a new password for your Kelus account." : "Save price alerts and keep your shopping decisions in one place."}</p>
+    {open && <div className="modal-backdrop"><div className="auth-brand-mark" aria-hidden="true">kelus</div><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
+      <p className="eyebrow">{mode === "create" ? "Start tracking smarter" : mode === "forgot" || mode === "reset" ? "Secure account recovery" : "Welcome back"}</p><h2 id="signin-title">{mode === "signin" ? "Sign in to Kelus" : mode === "create" ? "Create your Kelus account" : mode === "forgot" ? "Reset your password" : "Choose a new password"}</h2>
+      <p className="dialog-copy">{mode === "forgot" ? "We’ll send a secure reset link to your email." : mode === "reset" ? "Enter a new password for your Kelus account." : mode === "create" ? "Save exact products, set target prices, and keep your alerts across devices." : "Return to your tracked products and price decisions."}</p>
       {!configured && <p className="auth-message is-error" role="alert">Supabase setup is required before sign-in can be used.</p>}
-      {mode !== "forgot" && mode !== "reset" && <div className="signin-tabs"><button type="button" className={mode === "signin" ? "active" : ""} onClick={() => switchMode("signin")}>Sign in</button><button type="button" className={mode === "create" ? "active" : ""} onClick={() => switchMode("create")}>Create account</button></div>}
       <form onSubmit={submit}>
         {mode === "create" && <label>Full name<input type="text" value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Your full name" autoComplete="name" required disabled={busy}/></label>}
         {mode !== "reset" && <label>Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" required disabled={busy}/></label>}
@@ -147,9 +146,9 @@ export function SignInDialog() {
         {error && <p className="auth-message is-error" role="alert">{error}</p>}{notice && <p className="auth-message is-success" role="status">{notice}</p>}
         <button className="button button-primary dialog-submit" type="submit" disabled={busy || !configured}>{busy ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "create" ? "Create account" : mode === "forgot" ? "Send reset link" : "Update password"}<Icon name="arrow" size={17}/></button>
       </form>
-      {(mode === "signin" || mode === "create") && <><div className="dialog-divider"><span>or continue with</span></div><div className="social-buttons"><button type="button" onClick={() => socialSignIn("google")} disabled={busy || !configured}><GoogleMark/>Google</button><button type="button" onClick={() => socialSignIn("apple")} disabled={busy || !configured}><AppleMark/>Apple</button></div></>}
+      {(mode === "signin" || mode === "create") && <><div className="dialog-divider"><span>or continue with</span></div><div className="social-buttons"><button type="button" onClick={() => socialSignIn("google")} disabled={busy || !configured}><GoogleMark/>Continue with Google</button><button type="button" onClick={() => socialSignIn("apple")} disabled={busy || !configured}><AppleMark/>Continue with Apple</button></div><p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p><div className="signin-mode-switch"><span>{mode === "signin" ? "New to Kelus?" : "Already have an account?"}</span><button type="button" onClick={() => switchMode(mode === "signin" ? "create" : "signin")}>{mode === "signin" ? "Create account" : "Sign in"}</button></div></>}
       {(mode === "forgot" || mode === "reset") && !notice && <button className="auth-back" type="button" onClick={() => switchMode("signin")}>Back to sign in</button>}
-      <p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p>
+      {(mode === "forgot" || mode === "reset") && <p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p>}
     </section></div>}
   </>;
 }
