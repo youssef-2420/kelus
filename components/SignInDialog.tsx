@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { useAuth } from "@/components/AuthProvider";
@@ -24,6 +24,8 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
   const [notice, setNotice] = useState("");
   const menuRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (recovery) queueMicrotask(() => { setMode("reset"); setOpen(true); setNotice(""); setError(""); });
@@ -44,23 +46,51 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
     document.body.style.overflow = "hidden";
     document.documentElement.style.overflow = "hidden";
     closeButtonRef.current?.focus();
+    const dialog = dialogRef.current;
+    const trigger = triggerRef.current;
     function handleEscape(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") {
         setOpen(false);
         if (mode === "reset") clearRecovery();
       }
     }
+    function handleTab(event: globalThis.KeyboardEvent) {
+      if (event.key !== "Tab" || !dialog) return;
+      const focusable = dialog.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), textarea, input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      );
+      if (!focusable.length) { event.preventDefault(); return; }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey) {
+        if (document.activeElement === first) { event.preventDefault(); last.focus(); }
+      } else if (document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
     window.addEventListener("keydown", handleEscape);
+    dialog?.addEventListener("keydown", handleTab);
     return () => {
       window.removeEventListener("keydown", handleEscape);
+      dialog?.removeEventListener("keydown", handleTab);
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousDocumentOverflow;
+      trigger?.focus();
     };
   }, [clearRecovery, mode, open]);
 
   function openDialog() { setMode("signin"); setNotice(""); setError(""); setPassword(""); setOpen(true); }
   function switchMode(next: Mode) { setMode(next); setNotice(""); setError(""); setPassword(""); }
   function closeDialog() { setOpen(false); if (mode === "reset") clearRecovery(); }
+  function handleBackdropPointer(event: ReactMouseEvent<HTMLDivElement>) {
+    const target = event.target as HTMLElement;
+    if (!target.closest(".signin-dialog") && !target.closest(".auth-brand-mark")) closeDialog();
+  }
+  function finishSignIn(message: string) {
+    setNotice(message);
+    window.setTimeout(() => setOpen(false), 1200);
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault(); setError(""); setNotice("");
@@ -71,7 +101,7 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
       if (mode === "signin") {
         const { error: authError } = await client.auth.signInWithPassword({ email: email.trim(), password });
         if (authError) throw authError;
-        setOpen(false);
+        finishSignIn("Signed in. Welcome back to Kelus.");
       } else if (mode === "create") {
         const name = fullName.trim();
         if (!name) throw new Error("Enter your full name.");
@@ -84,7 +114,7 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
           },
         });
         if (authError) throw authError;
-        if (data.session) setOpen(false);
+        if (data.session) finishSignIn("Account created. Welcome to Kelus.");
         else setNotice("Check your email to verify your account, then return to Kelus to sign in.");
       } else if (mode === "forgot") {
         const { error: authError } = await client.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/auth/callback?next=/reset-password` });
@@ -135,8 +165,8 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
     </div>;
   }
 
-  return <><button type="button" className={className ? `header-signin ${className}` : "header-signin"} onClick={openDialog}><Icon name="lock" size={17}/>{label}</button>
-    {open && <div className="modal-backdrop"><div className="auth-sheet"><Link href="/" className="auth-brand-mark" aria-label="Return to Kelus homepage" onClick={closeDialog}>kelus</Link><section className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
+  return <><button ref={triggerRef} type="button" className={className ? `header-signin ${className}` : "header-signin"} onClick={openDialog}><Icon name="lock" size={17}/>{label}</button>
+    {open && <div className="modal-backdrop" onMouseDown={handleBackdropPointer} role="presentation"><div className="auth-sheet"><Link href="/" className="auth-brand-mark" aria-label="Return to Kelus homepage" onClick={closeDialog}>kelus</Link><section ref={dialogRef} className="signin-dialog" role="dialog" aria-modal="true" aria-labelledby="signin-title"><button ref={closeButtonRef} className="modal-close" type="button" onClick={closeDialog} aria-label="Close sign in"><Icon name="close" size={20}/></button>
       <p className="eyebrow">{mode === "create" ? "Start tracking smarter" : mode === "forgot" || mode === "reset" ? "Secure account recovery" : "Welcome back"}</p><h2 id="signin-title">{mode === "signin" ? "Sign in to Kelus" : mode === "create" ? "Create your Kelus account" : mode === "forgot" ? "Reset your password" : "Choose a new password"}</h2>
       <p className="dialog-copy">{mode === "forgot" ? "We’ll send a secure reset link to your email." : mode === "reset" ? "Enter a new password for your Kelus account." : mode === "create" ? "Save exact products, set target prices, and keep your alerts across devices." : "Return to your tracked products and price decisions."}</p>
       {!configured && <p className="auth-message is-error" role="alert">Supabase setup is required before sign-in can be used.</p>}

@@ -6,7 +6,7 @@ import test from "node:test";
 const outputFor = (route) => route === "/" ? join(process.cwd(), ".next", "server", "app", "index.html") : join(process.cwd(), ".next", "server", "app", `${route.slice(1)}.html`);
 
 test("builds static surfaces while canonical product intelligence remains server-rendered", async () => {
-  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/methodology", "See what Kelus checks"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"], ["/compare/iphone-17", "See the trade-offs clearly"]]) {
+  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/methodology", "See what Kelus checks"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"]]) {
     const html = await readFile(outputFor(route), "utf8");
     assert.match(html, new RegExp(expected));
     assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/i);
@@ -19,6 +19,11 @@ test("loads the configured Google Analytics property without automatic duplicate
   assert.match(html, /googletagmanager\.com\/gtag\/js\?id=G-B4WD58PYF6/);
   assert.match(html, /send_page_view/);
   assert.match(html, /false/);
+});
+
+test("legacy compare demo redirects to the canonical product page", async () => {
+  const compare = await readFile(new URL("../app/compare/iphone-17/page.tsx", import.meta.url), "utf8");
+  assert.match(compare, /redirect\(canonicalProductPath\(defaultSearch\)\)/);
 });
 
 test("legacy saved route consistently redirects to My Alerts", async () => {
