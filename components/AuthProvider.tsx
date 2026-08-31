@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { getSupabaseBrowserClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import { PRICE_ALERTS_CHANGED } from "@/services/price-alerts";
@@ -12,15 +12,19 @@ type AuthContextValue = {
   user: User | null;
   recovery: boolean;
   clearRecovery: () => void;
+  signInNotice: string | null;
+  clearSignInNotice: () => void;
 };
 
-const AuthContext = createContext<AuthContextValue>({ configured: false, loading: true, user: null, recovery: false, clearRecovery: () => undefined });
+const AuthContext = createContext<AuthContextValue>({ configured: false, loading: true, user: null, recovery: false, clearRecovery: () => undefined, signInNotice: null, clearSignInNotice: () => undefined });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const configured = isSupabaseConfigured();
   const [loading, setLoading] = useState(configured);
   const [user, setUser] = useState<User | null>(null);
   const [recovery, setRecovery] = useState(false);
+  const [signInNotice, setSignInNotice] = useState<string | null>(null);
+  const authReady = useRef(false);
 
   useEffect(() => {
     const client = getSupabaseBrowserClient();
@@ -36,6 +40,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null);
       setLoading(false);
       if (event === "PASSWORD_RECOVERY") setRecovery(true);
+      if (!authReady.current) {
+        authReady.current = true;
+        return;
+      }
+      if (event === "SIGNED_IN" && session?.user) {
+        setSignInNotice("Signed in. Your alerts will sync across devices.");
+      }
     });
     return () => { active = false; window.clearTimeout(authTimeout); data.subscription.unsubscribe(); };
   }, []);
@@ -47,7 +58,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   }, [user]);
 
-  const value = useMemo(() => ({ configured, loading, user, recovery, clearRecovery: () => setRecovery(false) }), [configured, loading, recovery, user]);
+  const value = useMemo(() => ({
+    configured,
+    loading,
+    user,
+    recovery,
+    clearRecovery: () => setRecovery(false),
+    signInNotice,
+    clearSignInNotice: () => setSignInNotice(null),
+  }), [configured, loading, recovery, signInNotice, user]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

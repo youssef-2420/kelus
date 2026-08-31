@@ -1,7 +1,8 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { Suspense, useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import { Icon } from "@/components/Icon";
 import { EbayWordmark } from "@/components/EbayWordmark";
@@ -78,7 +79,33 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const [loading, setLoading] = useState(!initialOutcome && !result);
   const [error, setError] = useState(initialOutcome?.status === "ERROR" ? initialOutcome.message : "");
   const [attempt, setAttempt] = useState(0);
-  const [updating, setUpdating] = useState(false);
+  const [updating, setUpdating] = useState(() => typeof window !== "undefined" && sessionStorage.getItem("kelus-pi-updating") === "1");
+  const criteriaKey = `${criteria.productSlug}:${criteria.variantId ?? ""}:${criteria.condition}`;
+  const previousCriteriaKey = useRef(criteriaKey);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (sessionStorage.getItem("kelus-pi-updating") === "1") sessionStorage.removeItem("kelus-pi-updating");
+  }, []);
+
+  useEffect(() => {
+    if (previousCriteriaKey.current === criteriaKey) return;
+    previousCriteriaKey.current = criteriaKey;
+    const cached = readCachedSearch(criteria)?.result ?? null;
+    queueMicrotask(() => {
+      setUpdating(true);
+      setResult(cached);
+      setLoading(!cached);
+      setError("");
+      setAttempt(0);
+      if (cached) setUpdating(false);
+    });
+  }, [criteriaKey, criteria]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || loading) return;
+    if (updating) queueMicrotask(() => setUpdating(false));
+  }, [loading, updating]);
 
   useEffect(() => {
     const refreshMode = clientOfferRefreshMode(initialOutcome, attempt);
@@ -112,6 +139,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
           setError("");
         }
         setLoading(false);
+        setUpdating(false);
       });
     };
     if (refreshMode === "idle") {
@@ -157,19 +185,28 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     if (pick) trackEvent({ name: "recommendation_viewed", productSlug: criteria.productSlug, offerId: pick.id, confidence: decision.confidence });
   }, [criteria.productSlug, decision.confidence, pick]);
 
-  return <main className={`nr-page pi-page${updating ? " is-updating" : ""}`}>
+  return <main className="nr-page pi-page">
     <ProductHeader criteria={criteria} />
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1>{product.name}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
-      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <>
+      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
+        {updating && loading && <div className="pi-updating-overlay" aria-busy="true" aria-live="polite"><ProductUpdatingOverlay/></div>}
         <DecisionReport decision={decision} lowest={lowest}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
         {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image} stale={Boolean(staleSnapshot)}/>)}</div></section>}
         <section className="pi-method"><p className="pi-label">Methodology</p><p>Kelus uses persisted last-known-good eBay snapshots for the first render, then refreshes connected offers in the background. Recommendations only use comparable offers that pass product, variant, condition, seller, shipping, return, confidence, and anomaly checks.</p><Link className="text-link" href="/methodology">See how Kelus picks an offer <Icon name="arrow" size={14}/></Link></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
-      </>}
+      </div>}
     </div>
   </main>;
+}
+
+function ProductUpdatingOverlay() {
+  return <div className="pi-updating-overlay-card">
+    <span className="pi-loading-block pi-loading-block--md"/>
+    <span className="pi-loading-block pi-loading-block--lg"/>
+    <p role="status">Updating recommendation…</p>
+  </div>;
 }
 
 function ProductLoadingSkeleton() {
@@ -225,15 +262,18 @@ function alternativeLabel(criteria: SearchCriteria) {
 }
 
 function VariantSelectors({ product, variants, criteria, selectedVariant, onUpdating }: { product: Product; variants: ProductVariant[]; criteria: SearchCriteria; selectedVariant?: ProductVariant; onUpdating: () => void }) {
+  const router = useRouter();
   const selectedLabel = selectedVariant?.label ?? "Unavailable";
   const options = getProductIntelligenceOptions(product, variants);
   function navigate(next: Partial<SearchCriteria>) {
     const nextCriteria = { ...criteria, ...next };
     try {
+      sessionStorage.setItem("kelus-pi-updating", "1");
       onUpdating();
-      window.location.assign(canonicalProductPath(nextCriteria));
+      router.push(canonicalProductPath(nextCriteria));
     } catch {
       onUpdating();
+      window.location.assign(canonicalProductPath(nextCriteria));
     }
   }
   return <div className="pi-selectors" aria-label="Product options">
