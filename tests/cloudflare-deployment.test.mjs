@@ -25,6 +25,13 @@ test("production deploys from main to a Cloudflare Worker with D1 and cron", asy
   assert.doesNotMatch(packageJson, /@openai\/sites-vite-plugin/);
 });
 
+test("production CI never forces D1-backed product pages into a static export", async () => {
+  const nextConfig = await read("next.config.ts");
+
+  assert.doesNotMatch(nextConfig, /output:\s*["']export["']/);
+  assert.doesNotMatch(nextConfig, /GITHUB_ACTIONS/);
+});
+
 test("deployment configuration validates required production values without embedding secrets", async () => {
   const [validator, prepare, example] = await Promise.all([
     read("scripts/validate-cloudflare-env.mjs"),
