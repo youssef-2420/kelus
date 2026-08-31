@@ -39,6 +39,10 @@ export function SignInDialog() {
 
   useEffect(() => {
     if (!open) return;
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousDocumentOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     closeButtonRef.current?.focus();
     function handleEscape(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") {
@@ -47,7 +51,11 @@ export function SignInDialog() {
       }
     }
     window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
+    return () => {
+      window.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousDocumentOverflow;
+    };
   }, [clearRecovery, mode, open]);
 
   function openDialog() { setMode("signin"); setNotice(""); setError(""); setPassword(""); setOpen(true); }
