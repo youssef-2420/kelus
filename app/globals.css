@@ -459,3 +459,6 @@ html { scroll-behavior:smooth; }
 @media(max-width:620px){.modal-backdrop{align-items:start;padding:76px 14px 18px}.modal-backdrop:before{width:600px;height:600px;top:-330px;right:-300px}.auth-brand-mark{top:24px;left:20px;font-size:29px}.signin-dialog{padding:39px 22px 24px;border-radius:14px}.signin-dialog h2{font-size:30px}.signin-mode-switch{margin:25px -22px -24px;border-radius:0 0 14px 14px}}
 @media(max-height:760px) and (min-width:621px){.modal-backdrop{align-items:start;padding-top:70px}.signin-dialog{padding-top:42px}.signin-dialog input{height:47px}.signin-dialog label{margin:12px 0}.social-buttons button{min-height:44px}.signin-mode-switch{padding-block:17px}}
 @media(prefers-reduced-motion:reduce){.signin-dialog,.modal-backdrop{animation:none}.social-buttons button{transition:none}}
+.modal-backdrop{padding:22px}.auth-brand-mark{text-decoration:none}.auth-brand-mark:focus-visible{outline:3px solid #8eb8aa;outline-offset:6px;border-radius:4px}
+@media(max-width:620px){.modal-backdrop{align-items:start;padding:76px 14px 18px}}
+@media(max-height:760px) and (min-width:621px){.modal-backdrop{align-items:start;padding:70px 22px 22px}}
