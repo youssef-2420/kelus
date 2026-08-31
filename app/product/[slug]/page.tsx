@@ -9,8 +9,6 @@ import { CONDITIONS } from "@/types/kelus";
 type RouteParams = { slug: string };
 type PageProps = { params: Promise<RouteParams> };
 
-export const dynamic = "force-dynamic";
-
 export function generateStaticParams(): RouteParams[] {
   return products.flatMap((product) =>
     product.searchAttribute.validVariantIds.flatMap((variantId) =>
