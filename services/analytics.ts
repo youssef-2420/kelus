@@ -33,6 +33,16 @@ const persistedEvents = new Set(["landing_viewed", "search_submitted", "product_
 
 const normalizedQuery = (query: string) => query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().slice(0, 120);
 
+export function toGoogleAnalyticsEvent(event: KelusAnalyticsEvent) {
+  const { name, ...values } = event;
+  const parameters = Object.fromEntries(
+    Object.entries(values).filter(([key, value]) =>
+      key !== "query" && ["string", "number", "boolean"].includes(typeof value)
+    ),
+  );
+  return { name, parameters };
+}
+
 function readArray<T>(key: string): T[] {
   if (typeof window === "undefined") return [];
   try {
@@ -54,6 +64,8 @@ function writeArray<T>(key: string, values: T[]) {
 
 export function trackEvent(event: KelusAnalyticsEvent) {
   if (typeof window === "undefined") return;
+  const googleEvent = toGoogleAnalyticsEvent(event);
+  window.gtag?.("event", googleEvent.name, googleEvent.parameters);
   const stored = { ...event, occurredAt: new Date().toISOString() } satisfies StoredKelusAnalyticsEvent;
   writeArray(analyticsKey, [...readArray<StoredKelusAnalyticsEvent>(analyticsKey), stored]);
   if (event.name === "search_unsupported") {
