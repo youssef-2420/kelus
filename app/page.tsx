@@ -6,7 +6,7 @@ import { SearchControls } from "@/components/SearchControls";
 import { TrustRow } from "@/components/TrustRow";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
-import { products } from "@/lib/demo-data";
+import { getDiscoverableProducts } from "@/lib/demo-data";
 import { canonicalProductPath } from "@/lib/search-state";
 
 export const metadata: Metadata = {
@@ -23,13 +23,16 @@ function HeroDevices() {
 }
 
 export default function Home() {
-  const discoverable = products.slice(0, 12).map((product) => ({
+  const discoverable = getDiscoverableProducts(12).map((product) => ({
     product,
     href: canonicalProductPath({ productSlug: product.slug, variantId: product.searchAttribute.validVariantIds[0], condition: "new", market: "us" }),
   }));
   return <main><LandingAnalytics/><KelusHeader /><VerifiedNotice />
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
-      <div id="product-search"><SearchControls deferProductSelection /></div><div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p></div><TrustRow />
+      <div id="product-search" className="hero-search-wrap">
+        <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
+        <Link className="hero-search-link" href="/search">Open full search <Icon name="arrow" size={15}/></Link>
+      </div><div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p></div><TrustRow />
     </section>
     <section className="how-brief section" aria-label="Learn about Kelus">
       <article>
