@@ -22,6 +22,15 @@ test("Supabase browser auth uses only public configuration", async () => {
   assert.match(dialog, /signOut/);
 });
 
+test("authentication dialog stays within desktop and mobile viewports", async () => {
+  const styles = await read("app/globals.css");
+  assert.match(styles, /\.signin-dialog\{width:min\(540px,calc\(100vw - 28px\)\)/);
+  assert.match(styles, /max-height:calc\(100dvh - 44px\)/);
+  assert.match(styles, /overflow-y:auto/);
+  assert.match(styles, /@media\(max-width:620px\)\{\.signin-dialog\{max-height:calc\(100dvh - 94px\)\}\}/);
+  assert.match(styles, /@media\(max-height:760px\) and \(min-width:621px\)\{\.signin-dialog\{max-height:calc\(100dvh - 92px\)\}\}/);
+});
+
 test("alert ownership is enforced by RLS for every operation", async () => {
   const sql = await read("supabase/migrations/202608250001_create_price_alerts.sql");
   assert.match(sql, /enable row level security/i);

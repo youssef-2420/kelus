@@ -462,3 +462,9 @@ html { scroll-behavior:smooth; }
 .modal-backdrop{display:flex;align-items:center;justify-content:center;padding:22px}.auth-brand-mark{text-decoration:none}.auth-brand-mark:focus-visible{outline:3px solid #8eb8aa;outline-offset:6px;border-radius:4px}
 @media(max-width:620px){.modal-backdrop{align-items:start;padding:76px 14px 18px}}
 @media(max-height:760px) and (min-width:621px){.modal-backdrop{align-items:start;padding:70px 22px 22px}}
+
+/* Keep every authentication mode inside the visible viewport. */
+.modal-backdrop{min-height:100dvh}
+.signin-dialog{width:min(540px,calc(100vw - 28px));max-height:calc(100dvh - 44px);overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;scrollbar-gutter:stable;-webkit-overflow-scrolling:touch}
+@media(max-width:620px){.signin-dialog{max-height:calc(100dvh - 94px)}}
+@media(max-height:760px) and (min-width:621px){.signin-dialog{max-height:calc(100dvh - 92px)}}
