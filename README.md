@@ -21,7 +21,7 @@ npm run build
 npm run build:static
 ```
 
-`npm run build` creates the Cloudflare Worker application in `dist/`. `npm run build:static` creates the GitHub Pages fallback in `out/`; that fallback cannot replace production because canonical product intelligence requires Worker SSR and D1.
+`npm run build` creates the deployable Cloudflare Worker application in `dist/`. `npm run build:static` remains a Next.js compatibility check; it is not a deployable static export because canonical product intelligence requires Worker SSR and D1.
 
 ## How Kelus deploys now
 
@@ -97,7 +97,3 @@ Cutover checklist:
 7. Disconnect `kelus.me` from ChatGPT Sites only after both custom domains are healthy.
 
 Rollback: remove the Worker custom domains and restore the previous DNS records. Do not delete the D1 database during rollback.
-
-## GitHub Pages fallback
-
-`.github/workflows/deploy-pages.yml` remains enabled as staging/disaster-recovery. It is not the canonical production host and does not provide Worker APIs, D1 snapshots, scheduled monitoring, or dynamic canonical product intelligence.

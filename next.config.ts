@@ -1,13 +1,8 @@
 import type { NextConfig } from "next";
 
-const useRepositoryPath = process.env.GITHUB_ACTIONS === "true" && process.env.KELUS_CUSTOM_DOMAIN !== "true";
-
 const nextConfig: NextConfig = {
-  // GitHub Pages remains a static fallback. The production Sites deployment
-  // keeps its server runtime so canonical product pages can read D1 snapshots.
-  output: process.env.GITHUB_ACTIONS === "true" ? "export" : undefined,
-  basePath: useRepositoryPath ? "/kelus" : "",
-  assetPrefix: useRepositoryPath ? "/kelus/" : undefined,
+  // Canonical product intelligence requires the Cloudflare Worker runtime and
+  // D1. Never switch production CI into Next.js static-export mode.
   trailingSlash: true,
   turbopack: { root: process.cwd() },
 };
