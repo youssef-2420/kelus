@@ -14,6 +14,13 @@ test("builds static surfaces while canonical product intelligence remains server
   await assert.rejects(access(join(process.cwd(), ".next", "server", "app", "checkout.html")));
 });
 
+test("loads the configured Google Analytics property without automatic duplicate page views", async () => {
+  const html = await readFile(outputFor("/"), "utf8");
+  assert.match(html, /googletagmanager\.com\/gtag\/js\?id=G-B4WD58PYF6/);
+  assert.match(html, /send_page_view/);
+  assert.match(html, /false/);
+});
+
 test("legacy saved route consistently redirects to My Alerts", async () => {
   const saved = await readFile(new URL("../app/saved/page.tsx", import.meta.url), "utf8");
   assert.match(saved, /redirect\("\/alerts"\)/);
