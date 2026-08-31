@@ -64,7 +64,7 @@ test("Product Intelligence presentation keeps production data wiring and the exi
     readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(view, /<Link href="\/" className="wordmark" aria-label="Kelus home">kelus<\/Link><SearchControls minimal minimalAction initialCriteria=\{criteria\} actionLabel="Search"\/>/);
+  assert.match(view, /<ProductHeader criteria=\{criteria\} \/>/);
   assert.match(view, /canonicalProductPath\(nextCriteria\)/);
   assert.match(view, /window\.location\.assign/);
   assert.match(view, /Updating recommendation…/);
@@ -91,6 +91,9 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /getProductIntelligenceOptions/);
   assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
   assert.match(view, /if \(refreshPersistedResult\) return;/);
+  assert.match(view, /setRefreshingSnapshot\(true\)/);
+  assert.match(view, /Checking for newer offers/);
+  assert.match(styles, /\.pi-refreshing-status/);
   assert.match(styles, /font-family:Inter[\s\S]*\/fonts\/inter-latin\.woff2/);
   assert.match(styles, /\.pi-selectors/);
   assert.match(styles, /\.pi-offer-reveal/);
