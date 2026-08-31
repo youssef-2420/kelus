@@ -163,8 +163,11 @@ test("Alerts leads with monitoring state and keeps secondary controls progressiv
   assert.doesNotMatch(alerts, /Loading your alerts/);
   assert.match(alerts, /aria-live="polite"/);
   assert.match(alerts, /View comparison/);
+  assert.match(alerts, /Check prices/);
+  assert.match(alerts, /checkGuestPrices/);
   assert.match(alerts, /<progress value=\{progress\}/);
   assert.match(styles, /\.alerts-overview/);
+  assert.match(styles, /\.alerts-refresh-button/);
   assert.match(styles, /\.alert-glance/);
   assert.match(styles, /\.alert-check\.is-error/);
 });
