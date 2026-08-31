@@ -45,6 +45,8 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
     readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /className="how-brief section"/);
+  assert.match(home, /minimal minimalAction deferProductSelection/);
+  assert.match(home, /href="\/search"/);
   assert.doesNotMatch(home, /className="feature-grid"/);
   assert.match(how, /Every price tells only part of the story/);
   assert.match(how, /Price, seller quality, shipping, and available retailer terms/);
@@ -118,6 +120,21 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.doesNotMatch(view, /\$1,204|techprodeals|Apple warranty|12 offers/);
 });
 
+test("dedicated search page keeps interactive browse and configuration chips", async () => {
+  const [page, experience, styles] = await Promise.all([
+    readFile(new URL("../app/search/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SearchExperience.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(page, /SearchExperience/);
+  assert.match(experience, /search-experience-grid/);
+  assert.match(experience, /search-experience-chips/);
+  assert.match(experience, /getProductsByCategory/);
+  assert.match(experience, /search-experience-logo/);
+  assert.match(styles, /\.search-page/);
+  assert.match(styles, /\.search-product-card/);
+});
+
 test("key pages use specific metadata and the homepage demonstrates the differentiator", async () => {
   const [home, how, alerts, layout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -181,6 +198,7 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   ]);
   assert.doesNotMatch(header + results, /from ["']next\/link["']/);
   assert.match(header, /SafeLink/);
+  assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(header, /Methodology/);
   assert.match(results + search, /window\.location\.assign/);
   assert.match(search, /canonicalProductPath\(criteria\)/);
