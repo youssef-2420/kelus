@@ -1,0 +1,25 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "kelus-production",
+  "main": "./worker/index.ts",
+  "compatibility_date": "2026-05-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": true,
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "kelus-production",
+      "database_id": "489dc877-c81a-4c03-b8cd-a14fef425766",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "images": { "binding": "IMAGES" },
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "vars": {
+    "EBAY_MARKETPLACE_ID": "EBAY_US",
+    "EBAY_CACHE_TTL_SECONDS": "60",
+    "EBAY_REQUEST_TIMEOUT_MS": "8000"
+  }
+}
