@@ -2,14 +2,14 @@ import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const configPath = resolve("dist/server/wrangler.json");
-const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID?.trim();
 const databaseName = process.env.CLOUDFLARE_D1_DATABASE_NAME?.trim() || "kelus-production";
 
-if (!databaseId || !/^[0-9a-f-]{32,36}$/i.test(databaseId)) {
-  throw new Error("CLOUDFLARE_D1_DATABASE_ID must contain the production D1 database ID.");
-}
-
 const config = JSON.parse(await readFile(configPath, "utf8"));
+const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID?.trim() || config.d1_databases?.[0]?.database_id;
+
+if (!databaseId || !/^[0-9a-f-]{32,36}$/i.test(databaseId)) {
+  throw new Error("The generated Worker config must contain the production D1 database ID.");
+}
 config.name = "kelus-production";
 config.workers_dev = true;
 config.preview_urls = true;

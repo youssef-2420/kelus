@@ -45,7 +45,6 @@ Environment secrets:
 | --- | --- |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account containing the Kelus zone and Worker |
 | `CLOUDFLARE_API_TOKEN` | Token with Account Workers Scripts:Edit and D1:Edit |
-| `CLOUDFLARE_D1_DATABASE_ID` | ID of the `kelus-production` D1 database |
 | `NEXT_PUBLIC_SUPABASE_URL` | Public Supabase project URL used at build time |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public Supabase browser key used at build time |
 
@@ -71,7 +70,7 @@ Also set `NEXT_PUBLIC_SUPABASE_URL` as a plain runtime variable if it is not alr
 
 ## D1 setup
 
-Create a D1 database named `kelus-production` in **Cloudflare → Storage & Databases → D1**. Copy its database ID into the GitHub production secret `CLOUDFLARE_D1_DATABASE_ID`. Deployment applies SQL files from `migrations/` automatically and binds the database as `DB`.
+The production D1 database is `kelus-production` (`489dc877-c81a-4c03-b8cd-a14fef425766`) and is bound as `DB` in `wrangler.jsonc`. Deployment applies SQL files from `migrations/` automatically.
 
 The scheduled Worker trigger runs every 15 minutes and reuses the existing deduplicated alert-monitor and product-snapshot refresh logic.
 

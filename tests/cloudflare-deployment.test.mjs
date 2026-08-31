@@ -35,7 +35,6 @@ test("deployment configuration validates required production values without embe
   for (const key of [
     "CLOUDFLARE_ACCOUNT_ID",
     "CLOUDFLARE_API_TOKEN",
-    "CLOUDFLARE_D1_DATABASE_ID",
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
   ]) {
@@ -44,5 +43,6 @@ test("deployment configuration validates required production values without embe
   }
 
   assert.match(prepare, /dist\/server\/wrangler\.json/);
+  assert.match(prepare, /config\.d1_databases/);
   assert.match(prepare, /migrations_dir: "\.\.\/\.\.\/migrations"/);
 });
