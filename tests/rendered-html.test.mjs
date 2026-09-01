@@ -46,7 +46,9 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
     readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /className="how-brief section"/);
-  assert.match(home, /minimal minimalAction deferProductSelection/);
+  assert.match(home, /SearchLauncher/);
+  assert.doesNotMatch(home, /SearchControls/);
+  assert.doesNotMatch(home, /catalog-links/);
   assert.doesNotMatch(home, /Open full search/);
   assert.doesNotMatch(home, /className="feature-grid"/);
   assert.match(how, /Every price tells only part of the story/);
@@ -121,24 +123,31 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.doesNotMatch(view, /\$1,204|techprodeals|Apple warranty|12 offers/);
 });
 
-test("search page reuses the homepage guided search control", async () => {
-  const [page, search, header, styles] = await Promise.all([
+test("search is the single canonical product discovery experience", async () => {
+  const [home, page, launcher, search, header, styles, alerts, results] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/search/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SearchLauncher.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/KelusHeader.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/alerts/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
   ]);
+  assert.match(home, /SearchLauncher/);
+  assert.doesNotMatch(home, /SearchControls/);
+  assert.match(launcher, /href="\/search"/);
   assert.match(page, /SearchControls minimal minimalAction deferProductSelection focusOnMount/);
+  assert.match(page, /search-quick-starts/);
   assert.match(page, /hero-search-wrap/);
-  assert.match(page, /search-page-hero/);
   assert.doesNotMatch(page, /redirect\(/);
-  assert.doesNotMatch(page, /SearchExperience/);
   assert.match(search, /hero-search-category/);
-  assert.match(search, /aria-label="Category"/);
-  assert.match(search, /nr-search-action is-icon/);
   assert.match(header, /href: "\/search", label: "Search"/);
-  assert.match(styles, /\.search-page-hero/);
-  assert.doesNotMatch(styles, /\.search-experience/);
+  assert.match(styles, /\.hero-search-launcher/);
+  assert.match(styles, /\.search-quick-starts/);
+  assert.match(alerts, /href="\/search"/);
+  assert.match(results, /href="\/search">Edit search/);
+  assert.doesNotMatch(alerts + results, /#product-search/);
 });
 
 test("key pages use specific metadata and the homepage demonstrates the differentiator", async () => {

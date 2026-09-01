@@ -256,7 +256,7 @@ function ProductFallbackState({ kind, detail, alternatives, criteria, productNam
       : { title: "This comparison is being prepared.", body: "Kelus has no saved validated offer snapshot for this exact configuration yet. A live check has started in the background." };
   return <section className="nr-state pi-fallback" aria-live="polite">
     <div className="pi-fallback-copy"><p className="pi-label">Offer status</p><h2>{copy.title}</h2><p>{copy.body}</p></div>
-    <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/#product-search">Edit search</Link></div>
+    <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/search">Edit search</Link></div>
     <div className="pi-fallback-track"><div><b>Keep this exact configuration</b><span>Save it to My Alerts so Kelus can check again when validated offers become available.</span></div><WatchButton product={productName} criteria={criteria} allowUnavailable/></div>
     {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => <Link key={`${alternative.variantId}-${alternative.condition}`} href={canonicalProductPath(alternative)}>{alternativeLabel(alternative)} <Icon name="arrow" size={13}/></Link>)}</div></div>}
     <Link className="text-link pi-fallback-method" href="/methodology">Why Kelus may reject an offer <Icon name="arrow" size={14}/></Link>

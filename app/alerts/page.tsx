@@ -191,7 +191,7 @@ export default function AlertsPage() {
   return <main className="app-page alerts-page"><KelusHeader />
     <section className="alerts-main section">
       <GuestSyncBanner />
-      <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><div className="alerts-heading-actions">{!user && alerts.length > 0 && <button type="button" className="alerts-refresh-button" onClick={() => { void checkGuestPrices(); }} disabled={refreshingAll || initialLoading} aria-busy={refreshingAll}><Icon name="search" size={16}/>{refreshingAll ? "Checking prices…" : "Check prices"}</button>}<Link href="/#product-search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link></div></div>
+      <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><div className="alerts-heading-actions">{!user && alerts.length > 0 && <button type="button" className="alerts-refresh-button" onClick={() => { void checkGuestPrices(); }} disabled={refreshingAll || initialLoading} aria-busy={refreshingAll}><Icon name="search" size={16}/>{refreshingAll ? "Checking prices…" : "Check prices"}</button>}<Link href="/search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link></div></div>
       {syncError && <p className="alerts-sync-error" role="alert">{syncError}</p>}
       {authLoading || initialLoading ? <AlertsLoadingSkeleton/> : alerts.length > 0 && <div className="alerts-overview" aria-label="Price alert summary"><span><b>{activeCount}</b> actively watched</span><span><b>{droppedCount}</b> price dropped</span><span><b>{reachedCount}</b> target reached</span></div>}
       {!authLoading && !initialLoading && (alerts.length ? <div className="alerts-list">
@@ -221,7 +221,7 @@ export default function AlertsPage() {
             </div>}
           </article>;
         })}
-      </div> : <div className="alerts-empty" aria-live="polite"><span className="alerts-empty-icon"><Icon name="bell" size={25}/></span><p className="eyebrow">Nothing to watch yet</p><h2>Let Kelus watch the price.</h2><p>Choose an exact product, configuration, and condition. Kelus will keep the real first price as your baseline—never an estimate.</p><Link className="button button-primary" href="/#product-search">Add your first product <Icon name="arrow" size={17}/></Link></div>)}
+      </div> : <div className="alerts-empty" aria-live="polite"><span className="alerts-empty-icon"><Icon name="bell" size={25}/></span><p className="eyebrow">Nothing to watch yet</p><h2>Let Kelus watch the price.</h2><p>Choose an exact product, configuration, and condition. Kelus will keep the real first price as your baseline—never an estimate.</p><Link className="button button-primary" href="/search">Add your first product <Icon name="arrow" size={17}/></Link></div>)}
     </section>
     <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account, persist across devices, and are checked automatically." : "Alerts are stored locally until you sign in. Use Check prices to refresh active alerts without reloading."}</p>
   </main>;
