@@ -88545,5 +88545,1061 @@
     ],
     "isDemo": false,
     "lastUpdated": "2026-09-01T16:37:57.049Z"
+  },
+  "pixel-watch-3:pixel-watch-3-41mm:used:us": {
+    "offers": [
+      {
+        "id": "ebay-v1|277688046814|2560705618715",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-fonelogics",
+          "retailerId": "ebay",
+          "name": "fonelogics",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.1,
+          "feedbackScore": 9188,
+          "topRated": true
+        },
+        "price": 109.99,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/277688046814?_skw=Google+Pixel+Watch+3+41mm&hash=item40a77f54de:g:6-UAAeSwjFppRPlm&amdata=enc%3AAQALAAABAACCtXRWQnOEpyOqnQQ8KGaSd%2FjQmBlKBVa0cCx3V%2BxnSl4CULcCJ0MPo642k4ICQH79jdNd7QgjGehkosx3VC2nn8TSPTN0YH6KUK%2FnA4Heg0wCqJvBK7r28YktbR1XV%2BQQcMThcFKgPWzNtgmMv%2Fg4U1LehLADIlykGSyAswUM0JxW%2Bc2CC32cnztGger8jZW2G9QwRIXvRTd9Alk504fUo%2BVepSaqgGDf7hHB%2Br%2FaH1SqGLF2QJ7ztduxmbyof644YoP1lUiaJc8pHJT8OIP4qLeZBGxCjPWoQVRul1gsCv%2FPaCobSjwZ96%2BHGKI%2BSkYGSoYz8WiIZdi9V%2BifQrk%3D",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm GPS + WiFi + Bluetooth + LTE You Choose B+",
+        "imageUrl": "https://i.ebayimg.com/images/g/6-UAAeSwjFppRPlm/s-l225.jpg",
+        "itemLocation": "Houston, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.1% feedback, 9188 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|147496807048|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-smartphonesplusllc",
+          "retailerId": "ebay",
+          "name": "smartphonesplusllc",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.5,
+          "feedbackScore": 13917,
+          "topRated": true
+        },
+        "price": 55.95,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/147496807048?_skw=Google+Pixel+Watch+3+41mm&hash=item22577eaa88:g:07oAAeSwocpqeqGj",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm 32GB GBDU9 Polished Silver (Unlocked)Software Modified",
+        "imageUrl": "https://i.ebayimg.com/images/g/07oAAeSwocpqeqGj/s-l225.jpg",
+        "itemLocation": "Hiawatha, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.5% feedback, 13917 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|128054259674|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-1010gory",
+          "retailerId": "ebay",
+          "name": "1010gory",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 100,
+          "feedbackScore": 606
+        },
+        "price": 149.99,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/128054259674?_skw=Google+Pixel+Watch+3+41mm&hash=item1dd0a0efda:g:24oAAeSwkhFqleW5",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 (41mm) Wi-Fi + LTE Tested and Works Unlocked",
+        "imageUrl": "https://i.ebayimg.com/images/g/24oAAeSwkhFqleW5/s-l225.jpg",
+        "itemLocation": "Calexico, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (100% feedback, 606 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|336450439702|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-azing_electronics",
+          "retailerId": "ebay",
+          "name": "azing_electronics",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.7,
+          "feedbackScore": 146453,
+          "topRated": true
+        },
+        "price": 87.99,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 4",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/336450439702?_skw=Google+Pixel+Watch+3+41mm&hash=item4e56024a16:g:pQEAAeSwUulqeda7",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm Champagne Gold w/ Hazel Band GA05758-US",
+        "imageUrl": "https://i.ebayimg.com/images/g/pQEAAeSwUulqeda7/s-l225.jpg",
+        "itemLocation": "Solon, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.7% feedback, 146453 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|147496763156|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-smartphonesplusllc",
+          "retailerId": "ebay",
+          "name": "smartphonesplusllc",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.5,
+          "feedbackScore": 13917,
+          "topRated": true
+        },
+        "price": 50.95,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/147496763156?_skw=Google+Pixel+Watch+3+41mm&hash=item22577dff14:g:i9AAAeSwcflqeppa",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm 32GB GG3HH Matte Black (GPS Only) Software Modified",
+        "imageUrl": "https://i.ebayimg.com/images/g/i9AAAeSwcflqeppa/s-l225.jpg",
+        "itemLocation": "Hiawatha, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.5% feedback, 13917 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|278289086329|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-theluminousthings",
+          "retailerId": "ebay",
+          "name": "theluminousthings",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 100,
+          "feedbackScore": 694
+        },
+        "price": 105,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/278289086329?_skw=Google+Pixel+Watch+3+41mm&hash=item40cb527779:g:zSAAAeSwYspqgt~X",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm Large Hazel Band - Matte Black (GA05757-US) Wi-Fi",
+        "imageUrl": "https://i.ebayimg.com/images/g/zSAAAeSwYspqgt~X/s-l225.jpg",
+        "itemLocation": "North Hollywood, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (100% feedback, 694 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|188855464014|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-jaime2136",
+          "retailerId": "ebay",
+          "name": "jaime2136",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.9,
+          "feedbackScore": 869,
+          "topRated": true
+        },
+        "price": 135.99,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": false,
+        "delivery": "Shipping details unavailable",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/188855464014?_skw=Google+Pixel+Watch+3+41mm&hash=item2bf8a9b04e:g:--AAAeSw3h9qkjTc",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm WiFi Matte Black Obsidian Active Band with Box WORKS!",
+        "imageUrl": "https://i.ebayimg.com/images/g/--AAAeSw3h9qkjTc/s-l225.jpg",
+        "itemLocation": "Milan, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.9% feedback, 869 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|318788592594|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-jhab07",
+          "retailerId": "ebay",
+          "name": "jhab07",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 100,
+          "feedbackScore": 12
+        },
+        "price": 140,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 8,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 4",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/318788592594?_skw=Google+Pixel+Watch+3+41mm&hash=item4a3947e3d2:g:XAcAAeSw8NRqkKux",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm Like N, Gray Nylon Band HR 32GB",
+        "imageUrl": "https://i.ebayimg.com/images/g/XAcAAeSw8NRqkKux/s-l225.jpg",
+        "itemLocation": "Woodhaven, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (100% feedback, 12 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|158243755215|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-te01_559",
+          "retailerId": "ebay",
+          "name": "te01_559",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 100,
+          "feedbackScore": 283
+        },
+        "price": 150,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": false,
+        "delivery": "Shipping details unavailable",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/158243755215?_skw=Google+Pixel+Watch+3+41mm&hash=item24d81014cf:g:344AAeSwrBFqlcCE",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm WiFi Polished Silver w/4 extra bands",
+        "imageUrl": "https://i.ebayimg.com/images/g/344AAeSwrBFqlcCE/s-l225.jpg",
+        "itemLocation": "Auburn, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (100% feedback, 283 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|158230823563|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-**green.tech**",
+          "retailerId": "ebay",
+          "name": "**green.tech**",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 100,
+          "feedbackScore": 2033,
+          "topRated": true
+        },
+        "price": 136,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 4",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/158230823563?_skw=Google+Pixel+Watch+3+41mm&hash=item24d74ac28b:g:xD0AAeSwkAlqkMWo",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm GBDU9 LTE T-Mobile GPS Bluetooth Wi-Fi 2024",
+        "imageUrl": "https://i.ebayimg.com/images/g/xD0AAeSwkAlqkMWo/s-l225.jpg",
+        "itemLocation": "Brooklyn, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (100% feedback, 2033 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|147496802171|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-smartphonesplusllc",
+          "retailerId": "ebay",
+          "name": "smartphonesplusllc",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.5,
+          "feedbackScore": 13917,
+          "topRated": true
+        },
+        "price": 55.95,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/147496802171?_skw=Google+Pixel+Watch+3+41mm&hash=item22577e977b:g:16cAAeSwYVRqeqBa",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm 32GB GBDU9 Champagne Gold (Unlocked) Software Modified",
+        "imageUrl": "https://i.ebayimg.com/images/g/16cAAeSwYVRqeqBa/s-l225.jpg",
+        "itemLocation": "Hiawatha, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.5% feedback, 13917 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|366509057189|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-d_d-deals",
+          "retailerId": "ebay",
+          "name": "d_d-deals",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.6,
+          "feedbackScore": 6610,
+          "topRated": true
+        },
+        "price": 72.19,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/366509057189?_skw=Google+Pixel+Watch+3+41mm&hash=item5555a464a5:g:LowAAeSwxsNqQKqG",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm (Bluetooth/WiFi) GA05757-US Matte Black - WATCH ONLY",
+        "imageUrl": "https://i.ebayimg.com/images/g/LowAAeSwxsNqQKqG/s-l225.jpg",
+        "itemLocation": "Stockton, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.6% feedback, 6610 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|366509449082|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-d_d-deals",
+          "retailerId": "ebay",
+          "name": "d_d-deals",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.6,
+          "feedbackScore": 6610,
+          "topRated": true
+        },
+        "price": 83.49,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/366509449082?_skw=Google+Pixel+Watch+3+41mm&hash=item5555aa5f7a:g:ZfQAAeSwuMZqQX4z",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google - Pixel Watch 3 (41mm) Smartwatch - Wi-Fi - Matte Black",
+        "imageUrl": "https://i.ebayimg.com/images/g/ZfQAAeSwuMZqQX4z/s-l225.jpg",
+        "itemLocation": "Stockton, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.6% feedback, 6610 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|366514204185|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-d_d-deals",
+          "retailerId": "ebay",
+          "name": "d_d-deals",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.6,
+          "feedbackScore": 6610,
+          "topRated": true
+        },
+        "price": 78.07,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/366514204185?_skw=Google+Pixel+Watch+3+41mm&hash=item5555f2ee19:g:SIwAAeSwENBqREID",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google - Pixel Watch 3 (41mm) Smartwatch - Wi-Fi - Polished Silver (2024) *READ*",
+        "imageUrl": "https://i.ebayimg.com/images/g/SIwAAeSwENBqREID/s-l225.jpg",
+        "itemLocation": "Stockton, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.6% feedback, 6610 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|147496826542|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-smartphonesplusllc",
+          "retailerId": "ebay",
+          "name": "smartphonesplusllc",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.5,
+          "feedbackScore": 13917,
+          "topRated": true
+        },
+        "price": 55.95,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/147496826542?_skw=Google+Pixel+Watch+3+41mm&hash=item22577ef6ae:g:UEAAAeSwtEFqeqQM",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm 32GB GBDU9 Polished Silver(Unlocked) Software Modified",
+        "imageUrl": "https://i.ebayimg.com/images/g/UEAAAeSwtEFqeqQM/s-l225.jpg",
+        "itemLocation": "Hiawatha, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.5% feedback, 13917 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|800568531722|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-granttoe",
+          "retailerId": "ebay",
+          "name": "granttoe",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 100,
+          "feedbackScore": 24
+        },
+        "price": 120,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 5.58,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 4",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/800568531722?_skw=Google+Pixel+Watch+3+41mm&hash=itemba659a5b0a:g:slAAAeSw~vdqj4Y6",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3, 41mm, Wi-Fi, Black",
+        "imageUrl": "https://i.ebayimg.com/images/g/slAAAeSw~vdqj4Y6/s-l225.jpg",
+        "itemLocation": "Sand Springs, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (100% feedback, 24 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|287548134034|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-oscarpalka",
+          "retailerId": "ebay",
+          "name": "oscarpalka",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 100,
+          "feedbackScore": 14
+        },
+        "price": 100,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": false,
+        "delivery": "Shipping details unavailable",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/287548134034?_skw=Google+Pixel+Watch+3+41mm&hash=item42f3345292:g:cu4AAeSwk7Fqh8Cw&amdata=enc%3AAQALAAAA8ACCtXRWQnOEpyOqnQQ8KGbNsZXzLu6mw8B7kN%2Fv5SyJAW70xxVv1V%2BxPIiPysrRV8oA5mg%2BOQFNFaT4%2B09fsQnTyWdPx9barfr6jqv%2BkUrjyAecHlmMbgig%2BBnGYjKt1wYW2F8UpQn4c42qGihV0AxRVp9cfhgDSi0jImC%2FXfhmucWhAFL7alq0kZQQS2n%2B9yQOTd2BiDZjk3aaYhiXpdNr477Waq48tqktz9qzziLO5lez6DsWJ2ZqFb1Z5bftQRJP2dZkmakVSYnsXZQZ0Np4YW8pEkByMyb2Oedm98nslKmrOFctKH6r%2FzHHGz0wtw%3D%3D",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41MM wifi Matte black Obsidian band Good",
+        "imageUrl": "https://i.ebayimg.com/images/g/cu4AAeSwk7Fqh8Cw/s-l225.jpg",
+        "itemLocation": "Madison, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (100% feedback, 14 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|366509063514|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-d_d-deals",
+          "retailerId": "ebay",
+          "name": "d_d-deals",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.6,
+          "feedbackScore": 6610,
+          "topRated": true
+        },
+        "price": 72.19,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/366509063514?_skw=Google+Pixel+Watch+3+41mm&hash=item5555a47d5a:g:u1IAAeSwetZqQT2y",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm (Bluetooth/WiFi) GA05757-US Matte Black - WATCH ONLY",
+        "imageUrl": "https://i.ebayimg.com/images/g/u1IAAeSwetZqQT2y/s-l225.jpg",
+        "itemLocation": "Stockton, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.6% feedback, 6610 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|147496819405|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-smartphonesplusllc",
+          "retailerId": "ebay",
+          "name": "smartphonesplusllc",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.5,
+          "feedbackScore": 13917,
+          "topRated": true
+        },
+        "price": 54.95,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/147496819405?_skw=Google+Pixel+Watch+3+41mm&hash=item22577edacd:g:68EAAeSw3DNqeqLG",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm 32GB GBDU9 Champagne Gold (Unlocked) Software Modified",
+        "imageUrl": "https://i.ebayimg.com/images/g/68EAAeSw3DNqeqLG/s-l225.jpg",
+        "itemLocation": "Hiawatha, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.5% feedback, 13917 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|147496764796|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-smartphonesplusllc",
+          "retailerId": "ebay",
+          "name": "smartphonesplusllc",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.5,
+          "feedbackScore": 13917,
+          "topRated": true
+        },
+        "price": 50.95,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/147496764796?_skw=Google+Pixel+Watch+3+41mm&hash=item22577e057c:g:4HkAAeSw8ChqeprO",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm 32GB GG3HH Champagne Gold (GPS Only) Software Modified",
+        "imageUrl": "https://i.ebayimg.com/images/g/4HkAAeSw8ChqeprO/s-l225.jpg",
+        "itemLocation": "Hiawatha, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.5% feedback, 13917 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      },
+      {
+        "id": "ebay-v1|188071818086|0",
+        "productId": "google-pixel-watch-3",
+        "variantId": "pixel-watch-3-41mm",
+        "retailer": {
+          "id": "ebay",
+          "name": "eBay",
+          "logo": "e",
+          "website": "https://www.ebay.com"
+        },
+        "seller": {
+          "id": "ebay-seller-la.tronics",
+          "retailerId": "ebay",
+          "name": "la.tronics",
+          "sellerType": "marketplace_seller",
+          "feedbackPercentage": 99.1,
+          "feedbackScore": 35790,
+          "topRated": true
+        },
+        "price": 106.65,
+        "currency": "USD",
+        "condition": "used",
+        "shippingCost": 0,
+        "shippingCostKnown": true,
+        "delivery": "Delivery by Sep 3",
+        "availability": "Unknown",
+        "warranty": "Warranty information unavailable",
+        "returnPolicy": "Return terms unavailable",
+        "affiliateUrl": "https://www.ebay.com/itm/188071818086?_skw=Google+Pixel+Watch+3+41mm&hash=item2bc9f43366:g:SlkAAeSwD-lqaWFj",
+        "lastUpdated": "2026-09-01T20:57:37.354Z",
+        "dataSource": "live",
+        "sourceProvider": "ebay",
+        "sourceCondition": "Used",
+        "sourceTitle": "Google Pixel Watch 3 41mm WiFi Polished Silver Active Band Obsidian Blue",
+        "imageUrl": "https://i.ebayimg.com/images/g/SlkAAeSwD-lqaWFj/s-l225.jpg",
+        "itemLocation": "Los Angeles, US",
+        "trust": {
+          "confidence": "MEDIUM",
+          "reasons": [
+            "Listing title match the exact model.",
+            "Listing title match 41mm.",
+            "Network lock status is not applicable to this category.",
+            "eBay condition is used.",
+            "Seller evidence is available (99.1% feedback, 35790 ratings)."
+          ],
+          "suspiciousPrice": false,
+          "eligibleForRecommendation": true,
+          "eligibleForHistory": true
+        }
+      }
+    ],
+    "observations": [],
+    "observationsStored": false,
+    "failedProviders": [],
+    "connectedProviders": [
+      "ebay"
+    ],
+    "isDemo": false,
+    "lastUpdated": "2026-09-01T20:57:37.354Z"
   }
 }
