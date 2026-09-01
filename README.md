@@ -74,6 +74,10 @@ The production D1 database is `kelus-production` (`489dc877-c81a-4c03-b8cd-a14fe
 
 The scheduled Worker trigger runs every 15 minutes and reuses the existing deduplicated alert-monitor and product-snapshot refresh logic.
 
+To refresh the cold-start/SEO bundle manually, set `EBAY_CLIENT_ID` and `EBAY_CLIENT_SECRET`, run
+`EBAY_CLIENT_ID=... EBAY_CLIENT_SECRET=... npm run snapshots:warm:bundled`, and commit the updated
+`data/bundled-product-intelligence-snapshots.json`. The script refuses to run without both credentials and reports the number of snapshot keys saved.
+
 The former Sites-managed D1 database is not automatically transferable to a different Cloudflare account. If an export is available, import it before cutover. Otherwise deploy the new Worker on its `workers.dev` URL, configure eBay secrets, and allow the refresh scheduler to build validated snapshots before moving the domain. Supabase authentication and user alerts remain in the existing Supabase project and are not reset by this migration.
 
 ## Domain cutover

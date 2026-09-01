@@ -56,4 +56,7 @@ const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
 
 await Promise.all(workers);
 console.info("[production-warm] complete", { baseUrl, targets: targets.length, warmed, empty, failed });
-if (failed > 0) process.exitCode = 1;
+if (failed > 0 && warmed === 0) {
+  console.error("[production-warm] no snapshots warmed; refusing to hide a completely failed production refresh");
+  process.exitCode = 1;
+}

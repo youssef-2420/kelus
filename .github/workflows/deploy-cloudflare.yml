@@ -53,7 +53,6 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Warm production product snapshots
-        continue-on-error: true
         run: npm run snapshots:warm:production
         env:
           KELUS_BASE_URL: https://kelus.me
