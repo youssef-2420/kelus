@@ -1,6 +1,6 @@
 "use client";
 
-import { KeyboardEvent, useEffect, useId, useMemo, useState } from "react";
+import { KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import { getDiscoverableProducts, getProductBySlug, getVariantsForProduct, resolveProductSearch, searchProducts, suggestSupportedProducts } from "@/lib/demo-data";
 import { getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId, resolveSearchAttributeVariantIdFromQuery } from "@/lib/product-attributes";
@@ -34,6 +34,7 @@ function ProductSuggestion({ product, index, listboxId, active, chooseProduct, h
 
 export function SearchControls({ compact = false, minimal = false, minimalAction = false, deferProductSelection = false, initialCriteria = defaultSearch, resultPath, actionLabel = "Search" }: Props) {
   const listboxId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const initialProduct = getProductBySlug(initialCriteria.productSlug) ?? getProductBySlug(defaultSearch.productSlug)!;
   const initialVariants = getVariantsForProduct(initialProduct.id);
   const [selectedProduct, setSelectedProduct] = useState(initialProduct);
@@ -54,6 +55,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const showCondition = !deferProductSelection || productSelected;
   const variants = useMemo(() => getSearchAttributeVariants(selectedProduct, getVariantsForProduct(selectedProduct.id)), [selectedProduct]);
   const attributeLabel = getVisibleSearchAttributeLabel(selectedProduct, variants, productSelected);
+  const minimalActionLabel = searching ? "Checking…" : !trimmedQuery ? "Explore" : productSelected ? "View offers" : "Find match";
 
   useEffect(() => {
     const resetTransition = () => document.documentElement.classList.remove("is-search-leaving");
@@ -77,6 +79,13 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   }
   function submit() {
     if (searching) return;
+    if (deferProductSelection && !trimmedQuery) {
+      setSearchIssue(null);
+      setOpen(true);
+      setActiveIndex(0);
+      inputRef.current?.focus();
+      return;
+    }
     const resolution = productSelected ? null : resolveProductSearch(query);
     const submittedProduct = productSelected ? selectedProduct : resolution?.status === "resolved" ? resolution.product : undefined;
     if (!submittedProduct) {
@@ -111,9 +120,9 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     {showSearchResults && <button type="submit" className="suggestions-footer">Compare offers for “{query}” <Icon name="arrow" size={16}/></button>}
   </div>;
   const issuePanel = searchIssue && <div className="unsupported-search" role="status"><strong>{searchIssue.kind === "ambiguous" ? `Choose a specific product for “${searchIssue.query}”.` : searchIssue.kind === "invalid" ? `That configuration is not available for “${searchIssue.query}”.` : `Kelus does not support “${searchIssue.query}” yet.`}</strong><span>Kelus currently compares selected phones, computers, tablets, audio products, wearables, and consoles.</span>{Boolean(searchIssue.candidates?.length) && <div><small>{searchIssue.kind === "ambiguous" ? "Did you mean:" : "Related supported products:"}</small>{searchIssue.candidates!.map((product) => <button type="button" key={product.slug} onMouseDown={() => chooseProduct(product)}>{product.name}</button>)}</div>}</div>;
-  if (minimal) return <div className="rp-search-pill-wrap"><form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}><Icon name="search" size={19}/><input value={query} placeholder="Search for a product" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setSearchIssue(null); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} />{minimalAction ? <button type="submit" className="nr-search-action" disabled={searching}>{searching ? "Finding offers…" : actionLabel}</button> : <button type="submit" className="sr-only" disabled={searching}>Search</button>}</form>{open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{suggestionProducts.length ? <>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>Compare offers for “{query}” <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet.</p> : null}</div>}{issuePanel}</div>;
+  if (minimal) return <div className="rp-search-pill-wrap"><form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}><Icon name="search" size={19}/><input ref={inputRef} value={query} placeholder="Search for a product" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setSearchIssue(null); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} />{minimalAction ? <button type="submit" className="nr-search-action" disabled={searching}>{deferProductSelection ? minimalActionLabel : searching ? "Finding offers…" : actionLabel}</button> : <button type="submit" className="sr-only" disabled={searching}>Search</button>}</form>{open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{suggestionProducts.length ? <><p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>Compare offers for “{query}” <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet. Try a model name such as “iPhone 17 Pro”.</p> : null}</div>}{issuePanel}</div>;
   return <><form className={`${compact ? "search-controls compact" : "search-controls"}${attributeLabel ? " has-attribute" : " no-attribute"}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} aria-busy={searching}>
-    <label className="search-field product-field"><span>Product</span><div><Icon name="search" size={20}/><input value={query} placeholder="Search for a product" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => { setOpen(true); setActiveIndex(-1); }} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setSearchIssue(null); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} /></div>
+    <label className="search-field product-field"><span>Product</span><div><Icon name="search" size={20}/><input ref={inputRef} value={query} placeholder="Search for a product" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => { setOpen(true); setActiveIndex(-1); }} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setSearchIssue(null); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} /></div>
       {suggestionsPanel}
       {open && trimmedQuery && !suggestionProducts.length && <div className="suggestions" id={listboxId} role="listbox" aria-label="Product suggestions"><p className="suggestion-state">Kelus does not support this product yet.</p></div>}
       {issuePanel}

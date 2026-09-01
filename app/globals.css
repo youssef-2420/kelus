@@ -729,8 +729,12 @@ html { scroll-behavior:smooth; }
 .hero-search-wrap{position:relative;z-index:3;display:grid;justify-items:center;width:min(720px,calc(100% - 32px));margin-inline:auto}
 .hero-search-wrap .rp-search-pill-wrap{width:100%;max-width:720px;min-width:0}
 .hero-search-wrap .rp-search-pill{min-height:56px;padding:6px 7px 6px 20px;background:#fffefa;box-shadow:0 12px 32px rgba(13,47,41,.08)}
-.hero-search-wrap .nr-search-action{min-width:140px;border-radius:999px}
+.hero-search-wrap .nr-search-action{min-width:140px;border-radius:999px;transition:min-width .24s cubic-bezier(.22,1,.36,1),background-color .18s ease,transform .18s ease}
+.hero-search-wrap .nr-search-action:hover{background:#0a3834;transform:translateY(-1px)}
+.hero-search-wrap .rp-search-suggestions{transform-origin:top center;animation:hero-suggestions-in .24s cubic-bezier(.22,1,.36,1) both}
+@keyframes hero-suggestions-in{from{opacity:0;transform:translateY(-7px) scale(.985)}to{opacity:1;transform:none}}
 @media(max-width:620px){.hero-search-wrap .rp-search-pill-wrap{max-width:100%}.hero-search-wrap .rp-search-pill{min-width:0}.hero-search-wrap .nr-search-action{min-width:92px;min-height:42px;padding-inline:16px}}
+@media(prefers-reduced-motion:reduce){.hero-search-wrap .nr-search-action{transition:none}.hero-search-wrap .rp-search-suggestions{animation:none}}
 @media(hover:hover){.search-product-card:hover{border-color:#9ebfae;transform:translateY(-2px);box-shadow:0 10px 24px rgba(16,37,34,.08)}.search-product-card:hover>svg{color:var(--green);transform:translateX(2px)}}
 @media(max-width:760px){.search-experience{padding-inline:16px}.search-experience-grid{grid-template-columns:1fr 1fr}.search-experience-input-wrap input{font-size:16px}}
 @media(max-width:520px){.search-experience-grid{grid-template-columns:1fr}.search-experience-selected{grid-template-columns:auto 1fr}.search-experience-selected button{grid-column:1/-1;justify-self:start}}
