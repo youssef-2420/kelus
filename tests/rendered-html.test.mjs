@@ -45,9 +45,11 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(home, /className="how-brief section"/);
-  assert.match(home, /SearchLauncher/);
-  assert.doesNotMatch(home, /SearchControls/);
+  assert.match(home, /className="home-learn section"/);
+  assert.match(home, /SearchControls/);
+  assert.match(home, /HomeTrustStrip/);
+  assert.doesNotMatch(home, /SearchLauncher/);
+  assert.doesNotMatch(home, /LiveShowcase/);
   assert.doesNotMatch(home, /catalog-links/);
   assert.doesNotMatch(home, /Open full search/);
   assert.doesNotMatch(home, /className="feature-grid"/);
@@ -135,10 +137,9 @@ test("Product Intelligence presentation keeps production data wiring and the exi
 });
 
 test("search is the single canonical product discovery experience", async () => {
-  const [home, page, launcher, search, header, styles, alerts, results, layout] = await Promise.all([
+  const [home, page, search, header, styles, alerts, results, layout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/search/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../components/SearchLauncher.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/KelusHeader.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
@@ -146,23 +147,22 @@ test("search is the single canonical product discovery experience", async () => 
     readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(home, /SearchLauncher/);
-  assert.match(home, /SearchLauncher/);
-  assert.match(home, /LiveShowcase compact/);
-  assert.match(home, /HomepageSocialProof/);
+  assert.match(home, /SearchControls minimal minimalAction deferProductSelection/);
+  assert.match(home, /HomeTrustStrip/);
   assert.match(home, /OnboardingTour/);
-  assert.match(home, /trust-disclosure/);
-  assert.doesNotMatch(home, /SearchControls/);
-  assert.match(launcher, /href="\/search"/);
+  assert.doesNotMatch(home, /LiveShowcase/);
   assert.match(page, /SearchControls minimal minimalAction deferProductSelection focusOnMount/);
+  assert.match(page, /SearchPickPreview/);
   assert.match(page, /search-category-nav/);
   assert.match(page, /alternates: \{ canonical: "https:\/\/kelus\.me\/search" \}/);
-  assert.match(page, /LiveShowcase/);
   assert.match(page, /getSearchQuickStarts/);
+  assert.doesNotMatch(page, /LiveShowcase/);
   assert.doesNotMatch(page, /redirect\(/);
   assert.match(search, /hero-search-category/);
   assert.match(header, /href: "\/search", label: "Search"/);
-  assert.match(styles, /\.hero-search-launcher/);
+  assert.match(styles, /\.home-hero/);
+  assert.match(styles, /\.search-page-shell/);
+  assert.match(styles, /\.search-pick-preview/);
   assert.match(styles, /\.category-hub/);
   assert.match(alerts, /emailed when your target is reached/);
   assert.match(results, /href="\/search">Edit search/);

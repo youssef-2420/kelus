@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { KelusHeader } from "@/components/KelusHeader";
 import { SearchControls } from "@/components/SearchControls";
-import { Icon } from "@/components/Icon";
-import { SafeLink as Link } from "@/components/SafeLink";
-import { LiveShowcase } from "@/components/LiveShowcase";
+import { SearchPickPreview } from "@/components/SearchPickPreview";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SafeLink as Link } from "@/components/SafeLink";
 import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
 import { getSearchQuickStarts } from "@/lib/search-quick-starts";
 import { formatFromPrice } from "@/lib/bundled-snapshot-catalog";
@@ -22,42 +21,40 @@ export default function SearchPage() {
   return (
     <main className="search-page">
       <KelusHeader />
-      <section className="search-page-hero hero-figma" aria-label="Product search">
-        <div className="search-page-intro">
-          <p className="eyebrow">Product search</p>
+      <section className="search-page-shell section" aria-label="Product search">
+        <div className="search-page-focus">
           <h1>Find the offer worth buying.</h1>
-          <p>Search exact configurations across phones, laptops, tablets, audio, wearables, and consoles.</p>
+          <p>Search the exact product, storage, and condition you want. Kelus compares validated eBay offers and recommends one worth buying.</p>
+          <div id="product-search" className="hero-search-wrap">
+            <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
+          </div>
         </div>
-        <div id="product-search" className="hero-search-wrap">
-          <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
-        </div>
+        <SearchPickPreview />
         <section className="search-quick-starts" aria-label="Popular products">
-          <p className="eyebrow">Popular right now</p>
-          <div>
+          <p className="search-section-label">Popular right now</p>
+          <div className="search-quick-grid">
             {quickStarts.map(({ product, href, fromPrice, live }) => {
-              const status = live && fromPrice ? { label: `From ${formatFromPrice(fromPrice)}`, detail: "Validated comparison available" } : getProductCardStatus(product.slug);
+              const status = live && fromPrice
+                ? { label: `From ${formatFromPrice(fromPrice)}`, detail: "Validated comparison available" }
+                : getProductCardStatus(product.slug);
               return (
-              <Link key={`${product.slug}-${href}`} href={href} title={status.detail}>
-                {product.brand} {product.name}
-                <em>{status.label}</em>
-              </Link>
-            );})}
+                <Link key={`${product.slug}-${href}`} className="search-quick-card" href={href} title={status.detail}>
+                  <strong>{product.brand} {product.name}</strong>
+                  <span>{status.label}</span>
+                </Link>
+              );
+            })}
           </div>
         </section>
-        <LiveShowcase compact />
         <nav className="search-category-nav" aria-label="Browse by category">
-          <p className="eyebrow">Browse by category</p>
-          <div>
+          <p className="search-section-label">Browse by category</p>
+          <div className="search-category-grid">
             {categoryHubs.map((hub) => (
               <Link key={hub.slug} href={categoryHubPath(hub.slug)}>{hub.label}</Link>
             ))}
           </div>
         </nav>
       </section>
-      <p className="search-page-note">
-        <Icon name="lock" size={15} />
-        Kelus compares exact configuration, known shipping, seller evidence, and price anomalies before recommending an offer.
-      </p>
       <SiteFooter />
     </main>
   );
