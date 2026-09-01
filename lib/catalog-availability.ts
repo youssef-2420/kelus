@@ -22,11 +22,11 @@ export function getCriteriaListingPreview(criteria: SearchCriteria) {
 
 export function getProductCardStatus(productSlug: string) {
   const preview = getProductListingPreview(productSlug);
-  if (!preview) return { status: "indexed" as const, href: `/product/${productSlug}`, label: "View comparison", detail: "Indexed — comparison not saved yet" };
+  if (!preview) return { status: "indexed" as const, href: `/product/${productSlug}`, label: "View comparison", detail: "Indexed — comparison not saved yet", listingImageUrl: undefined, imageLabel: "K" };
   if (preview.live && preview.fromPrice) {
-    return { status: "validated" as const, href: preview.href, label: `From ${formatFromPrice(preview.fromPrice)}`, detail: "Validated comparison available" };
+    return { status: "validated" as const, href: preview.href, label: `From ${formatFromPrice(preview.fromPrice)}`, detail: "Validated comparison available", listingImageUrl: preview.listingImageUrl, imageLabel: preview.image };
   }
-  return { status: "indexed" as const, href: preview.href, label: "View comparison", detail: "Indexed — comparison not saved yet" };
+  return { status: "indexed" as const, href: preview.href, label: "View comparison", detail: "Indexed — comparison not saved yet", listingImageUrl: preview.listingImageUrl, imageLabel: preview.image };
 }
 
 export function rankAlternativeCriteria(criteria: SearchCriteria, alternatives: SearchCriteria[]) {

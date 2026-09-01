@@ -11,6 +11,14 @@ const data = {
   comparisonHref: "/product/iphone-17-pro/iphone-17-pro-256gb/new",
 };
 
+test("target-reached emails can include a listing image when available", () => {
+  const email = buildTargetReachedEmail({
+    ...data,
+    imageUrl: "https://i.ebayimg.com/images/g/example/s-l500.jpg",
+  });
+  assert.match(email.html, /i\.ebayimg\.com/);
+});
+
 test("target-reached email contains only exact persisted product and price facts", () => {
   const email = buildTargetReachedEmail(data);
   assert.match(email.subject, /iPhone 17 Pro/);

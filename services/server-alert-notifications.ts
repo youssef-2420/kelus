@@ -60,6 +60,7 @@ function emailData(event: PriceAlertEvent["data"]): TargetReachedEmailData | nul
     currentPrice: event.currentPrice,
     priceDrop: event.priceDrop,
     comparisonHref: event.comparisonHref,
+    imageUrl: event.imageUrl,
   };
 }
 
