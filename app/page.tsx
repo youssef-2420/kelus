@@ -3,7 +3,6 @@ import { KelusHeader } from "@/components/KelusHeader";
 import { LandingAnalytics } from "@/components/LandingAnalytics";
 import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchLauncher } from "@/components/SearchLauncher";
-import { LiveShowcase } from "@/components/LiveShowcase";
 import { TrustRow } from "@/components/TrustRow";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
@@ -26,7 +25,6 @@ export default function Home() {
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
       <SearchLauncher />
       <div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p></div><TrustRow />
-      <LiveShowcase compact />
     </section>
     <section className="how-brief section" aria-label="Learn about Kelus">
       <article>
