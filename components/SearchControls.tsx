@@ -9,7 +9,7 @@ import { trackEvent } from "@/services/analytics";
 import type { ConditionFilter, Product, SearchCriteria } from "@/types/kelus";
 import { Icon } from "@/components/Icon";
 
-type Props = { compact?: boolean; minimal?: boolean; minimalAction?: boolean; deferProductSelection?: boolean; initialCriteria?: SearchCriteria; resultPath?: string; actionLabel?: string };
+type Props = { compact?: boolean; minimal?: boolean; minimalAction?: boolean; deferProductSelection?: boolean; focusOnMount?: boolean; initialCriteria?: SearchCriteria; resultPath?: string; actionLabel?: string };
 const conditionLabels: Record<ConditionFilter, string> = { any: "Any", new: "New", used: "Used", refurbished: "Refurbished" };
 const exactConditions: ConditionFilter[] = ["any", "new", "refurbished", "used"];
 
@@ -31,7 +31,7 @@ function ProductSuggestion({ product, index, listboxId, active, chooseProduct, h
   </button>;
 }
 
-export function SearchControls({ compact = false, minimal = false, minimalAction = false, deferProductSelection = false, initialCriteria = defaultSearch, resultPath, actionLabel = "Search" }: Props) {
+export function SearchControls({ compact = false, minimal = false, minimalAction = false, deferProductSelection = false, focusOnMount = false, initialCriteria = defaultSearch, resultPath, actionLabel = "Search" }: Props) {
   const listboxId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const initialProduct = getProductBySlug(initialCriteria.productSlug) ?? getProductBySlug(defaultSearch.productSlug)!;
@@ -64,6 +64,10 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     window.addEventListener("pageshow", resetTransition);
     return () => window.removeEventListener("pageshow", resetTransition);
   }, []);
+
+  useEffect(() => {
+    if (focusOnMount) inputRef.current?.focus();
+  }, [focusOnMount]);
 
   function chooseProduct(product: typeof selectedProduct) { const productVariants = getVariantsForProduct(product.id); setSelectedProduct(product); setProductSelected(true); setVariantId(resolveSearchAttributeVariantId(product, productVariants) ?? ""); setQuery(product.name); setSearchIssue(null); setOpen(false); setActiveIndex(-1); trackEvent({ name: "product_selected", productSlug: product.slug }); }
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {

@@ -121,15 +121,24 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.doesNotMatch(view, /\$1,204|techprodeals|Apple warranty|12 offers/);
 });
 
-test("search is consolidated into the homepage Amazon-style control", async () => {
-  const [page, search] = await Promise.all([
+test("search page reuses the homepage guided search control", async () => {
+  const [page, search, header, styles] = await Promise.all([
     readFile(new URL("../app/search/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/KelusHeader.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
-  assert.match(page, /redirect\("\/#product-search"\)/);
+  assert.match(page, /SearchControls minimal minimalAction deferProductSelection focusOnMount/);
+  assert.match(page, /hero-search-wrap/);
+  assert.match(page, /search-page-hero/);
+  assert.doesNotMatch(page, /redirect\(/);
+  assert.doesNotMatch(page, /SearchExperience/);
   assert.match(search, /hero-search-category/);
   assert.match(search, /aria-label="Category"/);
   assert.match(search, /nr-search-action is-icon/);
+  assert.match(header, /href: "\/search", label: "Search"/);
+  assert.match(styles, /\.search-page-hero/);
+  assert.doesNotMatch(styles, /\.search-experience/);
 });
 
 test("key pages use specific metadata and the homepage demonstrates the differentiator", async () => {
@@ -200,7 +209,7 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   ]);
   assert.doesNotMatch(header + results, /from ["']next\/link["']/);
   assert.match(header, /SafeLink/);
-  assert.match(header, /href: "\/#product-search", label: "Search"/);
+  assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(header, /Methodology/);
   assert.match(results + search, /window\.location\.assign/);
   assert.match(search, /canonicalProductPath\(criteria\)/);
