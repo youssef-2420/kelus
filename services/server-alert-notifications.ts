@@ -59,7 +59,6 @@ function emailData(event: PriceAlertEvent["data"]): TargetReachedEmailData | nul
     trackedPrice: event.trackedPrice,
     currentPrice: event.currentPrice,
     priceDrop: event.priceDrop,
-    imageUrl: event.imageUrl,
     comparisonHref: event.comparisonHref,
     imageUrl: event.imageUrl,
   };

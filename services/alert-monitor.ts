@@ -21,7 +21,6 @@ export type PriceAlertEvent = {
     currentPrice: number | null;
     priceDrop: number | null;
     targetPrice: number | null;
-    imageUrl: string | null;
     comparisonHref: string;
     imageUrl?: string;
   };
@@ -63,7 +62,6 @@ function eventFor(owner: OwnedPriceAlert, next: PriceAlertRecord, type: PriceAle
         ? null
         : Math.max(0, roundMoney(next.trackedPrice - next.currentPrice)),
       targetPrice: next.targetPrice,
-      imageUrl: next.imageUrl?.startsWith("https://") ? next.imageUrl : null,
       comparisonHref: canonicalProductPath(next.criteria),
       imageUrl: next.imageUrl,
     },
