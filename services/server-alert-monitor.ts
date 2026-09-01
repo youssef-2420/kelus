@@ -42,7 +42,12 @@ export async function authorizeAlertMonitor(request: Request, env: MonitorEnviro
   const token = bearerToken(request);
   if (!token) return null;
   if (env.ALERT_MONITOR_SECRET && safeEqual(token, env.ALERT_MONITOR_SECRET)) return {};
-  const client = serviceClient(env);
+  let client: SupabaseClient;
+  try {
+    client = serviceClient(env);
+  } catch {
+    return null;
+  }
   const { data, error } = await client.auth.getUser(token);
   if (error || !data.user) return null;
   return { userId: data.user.id };
