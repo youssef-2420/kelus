@@ -36,6 +36,12 @@ import type { ConditionFilter, Offer, OfferSearchResult, PriceObservation, Produ
 const knownTotal = (offer: Offer) => offer.shippingCostKnown === false ? null : offer.price + offer.shippingCost;
 const titleCase = (value: string) => value.split("_").map((part) => part[0].toUpperCase() + part.slice(1)).join(" ");
 
+function productPageHeading(product: Product, variant?: ProductVariant, condition?: SearchCriteria["condition"]) {
+  const name = [product.name, variant?.label].filter(Boolean).join(" ");
+  if (!condition || condition === "any") return name;
+  return `${name} — ${titleCase(condition)}`;
+}
+
 function updatedLabel(value?: string) {
   if (!value || Number.isNaN(Date.parse(value))) return "Update time unavailable";
   const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 60_000));
@@ -212,7 +218,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   return <main className="nr-page pi-page">
     <ProductHeader criteria={criteria} />
     <div className="pi-content section">
-      <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h2 className="pi-title">{product.name}</h2><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)} refreshing={refreshingSnapshot}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
+      <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1 className="pi-title">{productPageHeading(product, variant, criteria.condition)}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)} refreshing={refreshingSnapshot}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
       {error && offers.length ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : error ? <ProductFallbackState kind="empty" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "pending"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
         {showRefreshBanner && <p className="pi-refresh-banner" role="status" aria-live="polite"><i aria-hidden="true"/>Kelus is checking live eBay offers in the background. Prices shown may update when the check completes.</p>}
         {updating && loading && <div className="pi-updating-overlay" aria-busy="true" aria-live="polite"><ProductUpdatingOverlay/></div>}

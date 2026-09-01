@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
-import { ProductSeoIntro } from "@/components/ProductSeoIntro";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
-import type { SeoIndexedCondition } from "@/lib/catalog-snapshot-targets";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
 import { shouldRedirectToValidatedAlternative } from "@/lib/preferred-product-criteria";
-import { hasBundledSnapshot } from "@/lib/bundled-snapshot-catalog";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
 import { CONDITIONS } from "@/types/kelus";
 
@@ -81,14 +78,10 @@ export default async function CanonicalProductPage({ params }: PageProps) {
       })),
     } : {}),
   };
-  const seoCondition = criteria.condition === "new" || criteria.condition === "used"
-    ? criteria.condition as SeoIndexedCondition
-    : "new";
   return <>
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
     <link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}/>
-    <ProductSeoIntro product={product} variant={variant} condition={seoCondition} hasLiveSnapshot={hasBundledSnapshot(criteria) || offers.length > 0}/>
     <ProductIntelligenceView criteria={criteria} initialOutcome={initialOutcome}/>
   </>;
 }
