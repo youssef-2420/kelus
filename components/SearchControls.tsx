@@ -138,7 +138,14 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
       {attributeLabel && <fieldset><legend>{attributeLabel}</legend><div className="hero-config-options">{variants.map((variant) => <button type="button" key={variant.id} className={variant.id === variantId ? "is-selected" : ""} aria-pressed={variant.id === variantId} onClick={() => setVariantId(variant.id)}>{variant.label}</button>)}</div></fieldset>}
       <fieldset><legend>Condition</legend><div className="hero-config-options">{exactConditions.map((value) => <button type="button" key={value} className={condition === value ? "is-selected" : ""} aria-pressed={condition === value} onClick={() => setCondition(value)}>{conditionLabels[value]}</button>)}</div></fieldset>
       {intelligenceOptions.showsUnlockedStatus && <p className="hero-config-network"><Icon name="lock" size={15}/><span><b>Network</b> Unlocked listings only</span></p>}
-      <div className="hero-config-confirm"><span>{[selectedVariant?.label, conditionLabels[condition], intelligenceOptions.showsUnlockedStatus ? "Unlocked" : null].filter(Boolean).join(" · ")}</span><button type="button" className="button button-primary" onClick={submit} disabled={searching}>{searching ? "Checking offers…" : "Check this configuration"}<Icon name="arrow" size={17}/></button></div>
+      <div className="hero-intelligence-visual" role="img" aria-label="Kelus filters multiple listings and highlights one trusted offer">
+        <span className="visual-listings" aria-hidden="true"><i/><i/><i/></span>
+        <span className="visual-flow" aria-hidden="true"><i/><i/><i/></span>
+        <span className="visual-gate" aria-hidden="true"><Icon name="shield" size={22}/></span>
+        <span className="visual-flow visual-flow-out" aria-hidden="true"><i/></span>
+        <span className="visual-pick" aria-hidden="true"><Icon name="star" size={23}/><b><i/><i/></b></span>
+      </div>
+      <div className="hero-config-confirm"><span>{[selectedVariant?.label, conditionLabels[condition], intelligenceOptions.showsUnlockedStatus ? "Unlocked" : null].filter(Boolean).join(" · ")}</span><button type="button" className="button button-primary" onClick={submit} disabled={searching}>{searching ? "Checking offers…" : "Find the smartest offer"}<Icon name="arrow" size={17}/></button></div>
     </section>}
     {issuePanel}
   </div>;
