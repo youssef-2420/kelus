@@ -2,6 +2,7 @@
 
 import { searchCriteriaToQuery } from "@/lib/search-state";
 import { trackEvent } from "@/services/analytics";
+import { userFacingOfferError } from "@/services/user-facing-errors";
 import type { OfferSearchResult, SearchCriteria, SearchStatus } from "@/types/kelus";
 
 type ApiErrorBody = { error?: { code?: string; message?: string } };
@@ -59,7 +60,7 @@ export async function getOffersForSearch(criteria: SearchCriteria, onStatus?: (s
     const timedOut = error instanceof DOMException && error.name === "AbortError";
     const malformed = error instanceof SyntaxError;
     throw new OfferSearchError(
-      timedOut ? "The live search took too long. Please try again." : malformed ? "The eBay offer service returned an invalid response." : "We couldn't reach the eBay offer service.",
+      userFacingOfferError(timedOut ? "timeout" : malformed ? "malformed_response" : "network", undefined, timedOut ? "The live search took too long. Please try again." : malformed ? "The eBay offer service returned an invalid response." : "We couldn't reach the eBay offer service."),
       timedOut ? "timeout" : malformed ? "malformed_response" : "network",
     );
   }
@@ -68,7 +69,7 @@ export async function getOffersForSearch(criteria: SearchCriteria, onStatus?: (s
     const error = "error" in body ? body.error : undefined;
     trackEvent({ name: "live_provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
     trackEvent({ name: "provider_search_failed", provider: "ebay", productSlug: criteria.productSlug });
-    throw new OfferSearchError(error?.message ?? "We couldn't load eBay offers right now.", error?.code, response.status);
+    throw new OfferSearchError(userFacingOfferError(error?.code, response.status, error?.message), error?.code, response.status);
   }
   onStatus?.("normalizing_offers");
   onStatus?.("ranking");

@@ -3,9 +3,10 @@ import { KelusHeader } from "@/components/KelusHeader";
 import { SearchControls } from "@/components/SearchControls";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
-import { getDiscoverableProducts } from "@/lib/demo-data";
+import { LiveShowcase } from "@/components/LiveShowcase";
 import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
-import { canonicalProductPath } from "@/lib/search-state";
+import { getSearchQuickStarts } from "@/lib/search-quick-starts";
+import { formatFromPrice } from "@/lib/bundled-snapshot-catalog";
 
 export const metadata: Metadata = {
   title: "Search — Kelus",
@@ -14,15 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default function SearchPage() {
-  const quickStarts = getDiscoverableProducts(8).map((product) => ({
-    product,
-    href: canonicalProductPath({
-      productSlug: product.slug,
-      variantId: product.searchAttribute.validVariantIds[0],
-      condition: "new",
-      market: "us",
-    }),
-  }));
+  const quickStarts = getSearchQuickStarts(8);
 
   return (
     <main className="search-page">
@@ -39,11 +32,15 @@ export default function SearchPage() {
         <section className="search-quick-starts" aria-label="Popular products">
           <p className="eyebrow">Popular right now</p>
           <div>
-            {quickStarts.map(({ product, href }) => (
-              <Link key={product.slug} href={href}>{product.brand} {product.name}</Link>
+            {quickStarts.map(({ product, href, fromPrice, live }) => (
+              <Link key={`${product.slug}-${href}`} href={href}>
+                {product.brand} {product.name}
+                {live && fromPrice ? <em>From {formatFromPrice(fromPrice)}</em> : <em>Check availability</em>}
+              </Link>
             ))}
           </div>
         </section>
+        <LiveShowcase compact />
         <nav className="search-category-nav" aria-label="Browse by category">
           <p className="eyebrow">Browse by category</p>
           <div>

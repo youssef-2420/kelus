@@ -78,7 +78,7 @@ export function ProductInterestCapture({ query }: Props) {
   }
 
   if (saved) {
-    return <p className="product-interest-note">We&apos;ll email you when Kelus adds support for this product.</p>;
+    return <p className="product-interest-note">Request saved. We&apos;ll notify you when this product is available on Kelus.</p>;
   }
 
   return <div className="product-interest-capture">

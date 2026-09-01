@@ -91,8 +91,7 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /knownTotal/);
   assert.match(view, /Known total/);
   assert.match(view, /No cheaper comparable offer passed Kelus validation/);
-  assert.match(view, /This comparison is being prepared/);
-  assert.match(view, /saved validated offer snapshot/);
+  assert.match(view, /No saved comparison yet/);
   assert.match(view, /no listing passed the current product, variant, condition, and trust checks/);
   assert.match(view, /Try another supported configuration/);
   assert.match(view, /Why Kelus may reject an offer/);
@@ -141,12 +140,15 @@ test("search is the single canonical product discovery experience", async () => 
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /SearchLauncher/);
+  assert.match(home, /LiveShowcase/);
+  assert.match(home, /trust-disclosure/);
   assert.doesNotMatch(home, /SearchControls/);
   assert.match(launcher, /href="\/search"/);
   assert.match(page, /SearchControls minimal minimalAction deferProductSelection focusOnMount/);
   assert.match(page, /search-category-nav/);
   assert.match(page, /alternates: \{ canonical: "https:\/\/kelus\.me\/search" \}/);
-  assert.match(page, /hero-search-wrap/);
+  assert.match(page, /LiveShowcase/);
+  assert.match(page, /getSearchQuickStarts/);
   assert.doesNotMatch(page, /redirect\(/);
   assert.match(search, /hero-search-category/);
   assert.match(header, /href: "\/search", label: "Search"/);
@@ -231,6 +233,6 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   assert.match(results + search, /window\.location\.assign/);
   assert.match(search, /canonicalProductPath\(criteria\)/);
   assert.match(search, /ProductInterestCapture/);
-  assert.match(search, /searchIssue\.kind === "unsupported"/);
+  assert.match(search, /searchIssue\.kind === "unsupported" \|\| searchIssue\.kind === "ambiguous"/);
   assert.doesNotMatch(search, /startSearch/);
 });

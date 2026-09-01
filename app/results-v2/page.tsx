@@ -59,7 +59,7 @@ function realHistoryPoints(observations: PriceObservation[]) {
 }
 
 export default function NewResultsPage() {
-  return <Suspense fallback={<main className="nr-page"><div className="nr-state">Preparing your comparison…</div></main>}><NewResults/></Suspense>;
+  return <Suspense fallback={<main className="nr-page"><div className="nr-state">Opening your comparison…</div></main>}><NewResults/></Suspense>;
 }
 
 function NewResults() {
@@ -127,6 +127,12 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
         // recommendation and creating a late LCP candidate for this visit.
         if (refreshPersistedResult) return;
         if (outcome.status === "ERROR") {
+          if (!result?.offers.length && !serverResult?.offers.length) {
+            setError("");
+            setLoading(false);
+            setUpdating(false);
+            return;
+          }
           setResult(null);
           setError(outcome.message);
         } else {
@@ -193,7 +199,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     <ProductHeader criteria={criteria} />
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h2 className="pi-title">{product.name}</h2><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)} refreshing={refreshingSnapshot}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
-      {error ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "starting"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
+      {error && offers.length ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : error ? <ProductFallbackState kind="empty" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "pending"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
         {updating && loading && <div className="pi-updating-overlay" aria-busy="true" aria-live="polite"><ProductUpdatingOverlay/></div>}
         <DecisionReport decision={decision} lowest={lowest}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
@@ -233,27 +239,38 @@ function ProductLoadingSkeleton() {
       <span className="pi-loading-block pi-loading-block--sm"/>
     </div>
     <span className="pi-loading-block pi-loading-block--cta"/>
-    <p className="pi-loading-status" role="status">Comparing live eBay offers…</p>
+    <p className="pi-loading-status" role="status">Loading saved comparison…</p>
   </section>;
 }
 
 function DataFreshness({ result, offerCount, loading, stale, refreshing }: { result: OfferSearchResult | null; offerCount: number; loading: boolean; stale: boolean; refreshing: boolean }) {
-  const state = loading && !result ? "checking" : stale && offerCount ? "snapshot" : offerCount ? "live" : "empty";
-  const label = state === "checking" ? "CHECKING EBAY" : state === "snapshot" ? "SAVED EBAY SNAPSHOT" : state === "live" ? "LIVE EBAY OFFERS" : "NO VALIDATED OFFERS";
-  const detail = state === "checking" ? "Resolving this configuration" : state === "snapshot" ? staleUpdatedLabel(result?.lastUpdated) : state === "live" ? `${offerCount} offer${offerCount === 1 ? "" : "s"} · ${updatedLabel(result?.lastUpdated)}` : updatedLabel(result?.lastUpdated);
+  const savedSnapshot = Boolean(result?.servedFromCache || result?.snapshotState);
+  const state = loading && !result ? "checking" : offerCount
+    ? stale || savedSnapshot
+      ? "snapshot"
+      : "live"
+    : "empty";
+  const label = state === "checking" ? "CHECKING OFFERS" : state === "snapshot" ? "SAVED EBAY SNAPSHOT" : state === "live" ? "LIVE EBAY OFFERS" : "NO SAVED COMPARISON";
+  const detail = state === "checking"
+    ? "Looking for a saved or live comparison"
+    : state === "snapshot"
+      ? staleUpdatedLabel(result?.lastUpdated)
+      : state === "live"
+        ? `${offerCount} offer${offerCount === 1 ? "" : "s"} · ${updatedLabel(result?.lastUpdated)}`
+        : "Kelus has not saved validated offers for this configuration yet";
   return <p className={`pi-freshness is-${state}`} aria-busy={refreshing}>
     <span><i aria-hidden="true"/>{label}</span>
     <small>{detail}</small>
-    {refreshing && <em className="pi-refreshing-status" role="status" aria-live="polite"><i aria-hidden="true"/>Checking for newer offers</em>}
+    {refreshing && offerCount > 0 && <em className="pi-refreshing-status" role="status" aria-live="polite"><i aria-hidden="true"/>Checking for newer offers</em>}
   </p>;
 }
 
-function ProductFallbackState({ kind, detail, alternatives, criteria, productName, retry }: { kind: "error" | "empty" | "starting"; detail?: string; alternatives: SearchCriteria[]; criteria: SearchCriteria; productName: string; retry: () => void }) {
+function ProductFallbackState({ kind, detail, alternatives, criteria, productName, retry }: { kind: "error" | "empty" | "pending"; detail?: string; alternatives: SearchCriteria[]; criteria: SearchCriteria; productName: string; retry: () => void }) {
   const copy = kind === "error"
-    ? { title: "We couldn’t refresh this comparison.", body: detail || "The connected offer source did not respond. No retailer information has been invented or replaced." }
+    ? { title: "Live refresh unavailable.", body: detail || "Kelus could not reach the live offer source. Any saved comparison above is still shown when available." }
     : kind === "empty"
-      ? { title: "No comparable offers right now.", body: "Kelus checked this exact configuration, but no listing passed the current product, variant, condition, and trust checks." }
-      : { title: "This comparison is being prepared.", body: "Kelus has no saved validated offer snapshot for this exact configuration yet. A live check has started in the background." };
+      ? { title: "No comparable offers right now.", body: detail || "Kelus checked this exact configuration, but no listing passed the current product, variant, condition, and trust checks." }
+      : { title: "No saved comparison yet.", body: "Kelus does not have validated offers saved for this exact configuration. Try again later, track availability, or switch to a nearby configuration below." };
   return <section className="nr-state pi-fallback" aria-live="polite">
     <div className="pi-fallback-copy"><p className="pi-label">Offer status</p><h2>{copy.title}</h2><p>{copy.body}</p></div>
     <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/search">Edit search</Link></div>

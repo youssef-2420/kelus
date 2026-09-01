@@ -123,7 +123,9 @@ async function handleOfferSearch(request: Request, env: Env) {
     const providerError = error instanceof EbayProviderError ? error : null;
     const code = providerError?.code ?? (error instanceof Error && error.message.includes("not configured") ? "provider_unconfigured" : "provider_error");
     const status = code === "invalid_search" ? 400 : code === "rate_limited" ? 429 : 503;
-    const message = code === "provider_unconfigured" ? "Live eBay offers are not configured yet." : providerError?.message ?? "We couldn't load eBay offers right now.";
+    const message = code === "provider_unconfigured"
+      ? "Live price checks are temporarily unavailable."
+      : providerError?.message ?? "We couldn't load eBay offers right now.";
     console.error("[ebay-provider] provider_error", { code, status: providerError?.status });
     return json({ error: { code, message } }, status);
   }
