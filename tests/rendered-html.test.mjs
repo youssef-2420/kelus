@@ -140,7 +140,8 @@ test("search is the single canonical product discovery experience", async () => 
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /SearchLauncher/);
-  assert.match(home, /LiveShowcase/);
+  assert.match(home, /SearchLauncher/);
+  assert.doesNotMatch(home, /LiveShowcase/);
   assert.match(home, /trust-disclosure/);
   assert.doesNotMatch(home, /SearchControls/);
   assert.match(launcher, /href="\/search"/);

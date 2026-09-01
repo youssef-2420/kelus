@@ -64,6 +64,10 @@ button { cursor:pointer; }
 .demo-note,.trust-disclosure { display:flex; align-items:center; justify-content:center; gap:9px; color:#52615e; background:#edf4f1; min-height:48px; font-size:13px; }
 .live-showcase { width:min(1120px,calc(100% - 48px)); margin:0 auto; padding:0 0 28px; }
 .live-showcase.is-compact { width:100%; padding:18px 0 0; }
+.live-showcase-inline { display:flex; flex-direction:column; align-items:center; gap:8px; margin:18px auto 0; max-width:640px; text-align:center; }
+.live-showcase-inline .eyebrow { margin:0; }
+.live-showcase-inline a { display:inline-flex; align-items:center; gap:6px; color:#174d43; font-size:14px; font-weight:700; text-decoration:none; }
+.live-showcase-inline a:hover,.live-showcase-inline a:focus-visible { color:var(--green); outline:none; }
 .live-showcase-heading { margin-bottom:14px; }
 .live-showcase-copy { margin:6px 0 0; color:#52615e; font-size:14px; line-height:1.5; }
 .live-showcase-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
