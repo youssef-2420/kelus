@@ -10,6 +10,7 @@ import { setKelusRuntimeEnvironment } from "../services/runtime-environment";
 import { applyCanonicalProductResponsePolicy, applyRootResponsePolicy, canonicalHostRedirect } from "../services/product-response-policy";
 import { storeAnalyticsEvent } from "../services/server-analytics";
 import { authorizeDiagnostics, getAnalyticsDiagnostics } from "../services/analytics-diagnostics";
+import { storeProductInterestRequest } from "../services/server-product-interest";
 import type { ConditionFilter, SearchCriteria } from "../types/kelus";
 
 interface Env {
@@ -52,6 +53,7 @@ const worker = {
 
     if (url.pathname === "/api/offers") return handleOfferSearch(request, env);
     if (url.pathname === "/api/analytics") return handleAnalytics(request, env);
+    if (url.pathname === "/api/product-interest") return handleProductInterest(request, env);
     if (url.pathname === "/api/internal/diagnostics") return handleDiagnostics(request, env);
     if (url.pathname === "/api/alerts/check") return handleAlertCheck(request, env, ctx);
 
@@ -135,6 +137,43 @@ async function handleAnalytics(request: Request, env: Env) {
     return stored ? new Response(null, { status: 204 }) : json({ error: { code: "invalid_event", message: "Unsupported analytics event." } }, 400);
   } catch {
     return json({ error: { code: "invalid_event", message: "Invalid analytics payload." } }, 400);
+  }
+}
+
+async function handleProductInterest(request: Request, env: Env) {
+  if (request.method !== "POST") return json({ error: { code: "method_not_allowed", message: "Only POST is supported." } }, 405);
+  try {
+    const payload = await request.json() as { query?: string; email?: string };
+    if (!payload || typeof payload.query !== "string") return json({ error: { code: "invalid_request", message: "A product search query is required." } }, 400);
+    const scope = await authorizeAlertMonitor(request, env);
+    let userEmail: string | undefined;
+    if (scope?.userId && env.NEXT_PUBLIC_SUPABASE_URL && env.SUPABASE_SECRET_KEY) {
+      const token = (request.headers.get("Authorization") ?? "").replace(/^Bearer\s+/i, "").trim();
+      if (token) {
+        const { createClient } = await import("@supabase/supabase-js");
+        const client = createClient(env.NEXT_PUBLIC_SUPABASE_URL, env.SUPABASE_SECRET_KEY, { auth: { autoRefreshToken: false, persistSession: false } });
+        const { data } = await client.auth.getUser(token);
+        userEmail = data.user?.email ?? undefined;
+      }
+    }
+    const result = await storeProductInterestRequest(env.DB, {
+      query: payload.query,
+      email: typeof payload.email === "string" ? payload.email : undefined,
+      userId: scope?.userId,
+      userEmail,
+    });
+    if (!result.ok) {
+      const status = result.code === "storage_unavailable" ? 503 : 400;
+      const message = result.code === "invalid_query"
+        ? "Enter a product name to request."
+        : result.code === "invalid_email"
+          ? "Enter a valid email address."
+          : "Product interest requests are unavailable right now.";
+      return json({ error: { code: result.code, message } }, status);
+    }
+    return new Response(null, { status: result.duplicate ? 200 : 201 });
+  } catch {
+    return json({ error: { code: "invalid_request", message: "Invalid product interest payload." } }, 400);
   }
 }
 

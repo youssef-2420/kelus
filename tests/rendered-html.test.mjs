@@ -230,5 +230,7 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   assert.match(header, /Methodology/);
   assert.match(results + search, /window\.location\.assign/);
   assert.match(search, /canonicalProductPath\(criteria\)/);
+  assert.match(search, /ProductInterestCapture/);
+  assert.match(search, /searchIssue\.kind === "unsupported"/);
   assert.doesNotMatch(search, /startSearch/);
 });

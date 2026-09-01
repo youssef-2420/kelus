@@ -1,6 +1,7 @@
 import { getProductBySlug } from "../lib/demo-data.ts";
 import { applySnapshotTrustGate } from "./snapshot-trust.ts";
 import { getRecommendation, knownOfferTotal } from "./recommendations.ts";
+import { listTopProductInterestRequests } from "./server-product-interest.ts";
 import type { OfferSearchResult, SearchCriteria } from "../types/kelus.ts";
 
 type QueryResult<T> = { results?: T[] };
@@ -66,10 +67,11 @@ async function recommendationQualityAudits(db: DiagnosticsDatabase, products: Co
 export async function getAnalyticsDiagnostics(db: DiagnosticsDatabase | undefined, now = new Date()) {
   if (!db) throw new Error("Analytics storage is unavailable.");
   const since = new Date(now.getTime() - 30 * 86_400_000).toISOString();
-  const [events, products, unsupported, outcomes] = await Promise.all([
+  const [events, products, unsupported, interestRequests, outcomes] = await Promise.all([
     rows<CountRow>(db, `SELECT event_name AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? GROUP BY event_name`, since),
     rows<CountRow>(db, `SELECT product_slug AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? AND event_name = 'product_resolved' AND product_slug IS NOT NULL GROUP BY product_slug ORDER BY count DESC LIMIT 10`, since),
     rows<CountRow>(db, `SELECT query AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? AND event_name = 'search_unsupported' AND query IS NOT NULL GROUP BY query ORDER BY count DESC LIMIT 10`, since),
+    listTopProductInterestRequests(db, since, 10),
     rows<CountRow>(db, `SELECT CASE WHEN event_name = 'live_provider_search_failed' THEN 'Provider failures' WHEN offer_count = 0 THEN 'Zero valid offers' ELSE 'Successful offer refreshes' END AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? AND event_name IN ('live_provider_search_completed','live_provider_search_failed') GROUP BY label`, since),
   ]);
   const counts = Object.fromEntries(events.map((row) => [row.label, Number(row.count)]));
@@ -85,11 +87,14 @@ export async function getAnalyticsDiagnostics(db: DiagnosticsDatabase | undefine
       recommendations: counts.recommendation_viewed ?? 0,
       retailerClicks: counts.retailer_clicked ?? 0,
       alertsCreated: counts.price_alert_created ?? 0,
+      interestCaptured: counts.product_interest_captured ?? 0,
       retailerClickRate: ratio(counts.retailer_clicked ?? 0, counts.recommendation_viewed ?? 0),
       alertConversionRate: ratio(counts.price_alert_created ?? 0, counts.product_page_viewed ?? 0),
+      interestCaptureRate: ratio(counts.product_interest_captured ?? 0, counts.search_unsupported ?? 0),
     },
     topProducts: products.map((row) => ({ label: row.label, count: Number(row.count) })),
     unsupportedSearches: unsupported.map((row) => ({ label: row.label, count: Number(row.count) })),
+    productInterestRequests: interestRequests,
     providerOutcomes: outcomes.map((row) => ({ label: row.label, count: Number(row.count) })),
     recommendationQuality,
   };
