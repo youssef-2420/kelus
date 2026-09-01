@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { categoryHubPath, categoryHubs, getCategoryHub, getCategoryHubProducts } from "@/lib/category-routes";
-import { formatFromPrice, getProductListingPreview } from "@/lib/bundled-snapshot-catalog";
+import { getProductCardStatus } from "@/lib/catalog-availability";
 import { canonicalProductPath } from "@/lib/search-state";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -68,22 +68,14 @@ export default async function CategoryHubPage({ params }: PageProps) {
         </div>
         <div className="category-hub-grid">
           {products.map((product) => {
-            const preview = getProductListingPreview(product.slug);
-            const href = preview?.href ?? canonicalProductPath({
-              productSlug: product.slug,
-              variantId: product.searchAttribute.validVariantIds[0],
-              condition: "new",
-              market: "us",
-            });
+            const status = getProductCardStatus(product.slug);
             return (
-              <Link key={product.slug} href={href} className="category-hub-card">
+              <Link key={product.slug} href={status.href} className="category-hub-card" title={status.detail}>
                 <span className="category-hub-card-mark" aria-hidden="true">{product.image}</span>
                 <span className="category-hub-card-copy">
                   <b>{product.name}</b>
                   <small>{product.brand}</small>
-                  {preview?.live && preview.fromPrice
-                    ? <em>From {formatFromPrice(preview.fromPrice)}</em>
-                    : <em>Compare live offers</em>}
+                  <em className={status.status === "validated" ? "is-validated" : "is-indexed"}>{status.label}</em>
                 </span>
                 <Icon name="arrow" size={16} />
               </Link>

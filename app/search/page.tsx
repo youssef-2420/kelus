@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
 import { getSearchQuickStarts } from "@/lib/search-quick-starts";
 import { formatFromPrice } from "@/lib/bundled-snapshot-catalog";
+import { getProductCardStatus } from "@/lib/catalog-availability";
 
 export const metadata: Metadata = {
   title: "Search — Kelus",
@@ -33,12 +34,14 @@ export default function SearchPage() {
         <section className="search-quick-starts" aria-label="Popular products">
           <p className="eyebrow">Popular right now</p>
           <div>
-            {quickStarts.map(({ product, href, fromPrice, live }) => (
-              <Link key={`${product.slug}-${href}`} href={href}>
+            {quickStarts.map(({ product, href, fromPrice, live }) => {
+              const status = live && fromPrice ? { label: `From ${formatFromPrice(fromPrice)}`, detail: "Validated comparison available" } : getProductCardStatus(product.slug);
+              return (
+              <Link key={`${product.slug}-${href}`} href={href} title={status.detail}>
                 {product.brand} {product.name}
-                {live && fromPrice ? <em>From {formatFromPrice(fromPrice)}</em> : <em>Check availability</em>}
+                <em>{status.label}</em>
               </Link>
-            ))}
+            );})}
           </div>
         </section>
         <LiveShowcase compact />

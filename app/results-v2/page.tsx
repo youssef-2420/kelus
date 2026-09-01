@@ -4,6 +4,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
+import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { Icon } from "@/components/Icon";
 import { EbayWordmark } from "@/components/EbayWordmark";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
@@ -15,11 +16,13 @@ import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
 import { getProductIntelligenceOptions } from "@/lib/product-attributes";
 import { canonicalProductPath, getAlternativeProductCriteria, readSearchCriteria } from "@/lib/search-state";
+import { getCriteriaListingPreview, rankAlternativeCriteria } from "@/lib/catalog-availability";
+import { ebaySellerProfileUrl } from "@/lib/seller-links";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { clientOfferRefreshMode } from "@/services/client-offer-refresh-policy";
 import { buildKelusDecision, type KelusDecision } from "@/services/decision-engine";
 import { getPriceContext } from "@/services/price-context";
-import { exactRealPriceObservations } from "@/services/price-intelligence";
+import { exactRealPriceObservations, minimum30DaySamples } from "@/services/price-intelligence";
 import { settleProductOfferLoad, type ProductOfferLoadOutcome } from "@/services/product-offer-load";
 import { getCheaperAlternative } from "@/services/recommendations";
 import { optimizedRetailerImageUrl } from "@/services/retailer-image";
@@ -198,7 +201,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = snapshotLooksVisuallyStale(result);
-  const alternativeCriteria = useMemo(() => getAlternativeProductCriteria(criteria), [criteria]);
+  const alternativeCriteria = useMemo(() => rankAlternativeCriteria(criteria, getAlternativeProductCriteria(criteria)), [criteria]);
 
   useEffect(() => {
     trackEvent({ name: "product_page_viewed", productSlug: criteria.productSlug, variantId: criteria.variantId, condition: criteria.condition });
@@ -279,16 +282,21 @@ function DataFreshness({ result, offerCount, loading, stale, refreshing }: { res
 }
 
 function ProductFallbackState({ kind, detail, alternatives, criteria, productName, retry }: { kind: "error" | "empty" | "pending"; detail?: string; alternatives: SearchCriteria[]; criteria: SearchCriteria; productName: string; retry: () => void }) {
+  const liveAlternative = alternatives.map((alternative) => ({ alternative, preview: getCriteriaListingPreview(alternative) })).find((item) => item.preview.live);
   const copy = kind === "error"
     ? { title: "Live refresh unavailable.", body: detail || "Kelus could not reach the live offer source. Any saved comparison above is still shown when available." }
     : kind === "empty"
       ? { title: "No comparable offers right now.", body: detail || "Kelus checked this exact configuration, but no listing passed the current product, variant, condition, and trust checks." }
-      : { title: "No saved comparison yet.", body: "Kelus does not have validated offers saved for this exact configuration. Try again later, track availability, or switch to a nearby configuration below." };
+      : { title: "Comparison not ready yet.", body: "Kelus has not saved validated offers for this exact configuration yet. Kelus refreshes coverage on a schedule — track this setup or open a nearby configuration that already has live data." };
   return <section className="nr-state pi-fallback" aria-live="polite">
     <div className="pi-fallback-copy"><p className="pi-label">Offer status</p><h2>{copy.title}</h2><p>{copy.body}</p></div>
+    {liveAlternative && <div className="pi-fallback-nearest"><p className="pi-label">Available now</p><Link href={liveAlternative.preview.href} className="pi-fallback-nearest-card">{alternativeLabel(liveAlternative.alternative)} · From {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(liveAlternative.preview.fromPrice)} <Icon name="arrow" size={14}/></Link><small>Same product with a nearby configuration Kelus has already validated.</small></div>}
     <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/search">Edit search</Link></div>
-    <div className="pi-fallback-track"><div><b>Keep this exact configuration</b><span>Save it to My Alerts so Kelus can check again when validated offers become available.</span></div><WatchButton product={productName} criteria={criteria} allowUnavailable/></div>
-    {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => <Link key={`${alternative.variantId}-${alternative.condition}`} href={canonicalProductPath(alternative)}>{alternativeLabel(alternative)} <Icon name="arrow" size={13}/></Link>)}</div></div>}
+    <div className="pi-fallback-track"><div><b>Get notified when this configuration is ready</b><span>Save it to My Alerts and Kelus will check again when validated offers appear.</span></div><WatchButton product={productName} criteria={criteria} allowUnavailable/></div>
+    {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => {
+      const preview = getCriteriaListingPreview(alternative);
+      return <Link key={`${alternative.variantId}-${alternative.condition}`} href={preview.href}>{alternativeLabel(alternative)}{preview.live && preview.fromPrice ? ` · From ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}` : ""} <Icon name="arrow" size={13}/></Link>;
+    })}</div></div>}
     <Link className="text-link pi-fallback-method" href="/methodology">Why Kelus may reject an offer <Icon name="arrow" size={14}/></Link>
   </section>;
 }
@@ -330,13 +338,6 @@ function money(offer?: Offer | null) {
 
 function moneyAmount(value: number, currency = "USD") {
   return new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: Number.isInteger(value) ? 0 : 2 }).format(value);
-}
-
-function confidenceCopy(confidence: KelusDecision["confidence"]) {
-  if (confidence === "HIGH") return "Strong structured product, condition, and seller evidence.";
-  if (confidence === "MEDIUM") return "The product match is supported, but some market evidence is limited.";
-  if (confidence === "LOW") return "Important listing evidence is limited or needs stronger validation.";
-  return "No recommendation-quality offer is available yet.";
 }
 
 function offerMeta(offer: Offer) {
@@ -385,11 +386,13 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
   const lowestTotal = lowest ? knownTotal(lowest) : null;
   const savings = pickTotal !== null && lowestTotal !== null ? Math.max(0, pickTotal - lowestTotal) : null;
   const verdict = kelusVerdict(decision, lowest);
+  const sellerName = decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName;
+  const sellerHref = pick ? ebaySellerProfileUrl(pick.seller.name || sellerName) : null;
   return <section className="pi-pick" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
     <div className="pi-pick-top">
-      <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong><p className="pi-confidence">{titleCase(decision.confidence.toLowerCase())} confidence</p><p className="pi-confidence-copy">{confidenceCopy(decision.confidence)}</p><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
-      {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span><b>{decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName}</b></span><small>{offerMeta(pick)}</small></div>}
+      <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong><ConfidenceBadge confidence={decision.confidence}/><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
+      {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span>{sellerHref ? <a href={sellerHref} target="_blank" rel="noopener noreferrer">{sellerName}</a> : <b>{sellerName}</b>}</span><small>{offerMeta(pick)}</small></div>}
     </div>
     {verdict && <div className="pi-verdict"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
     <div className="pi-why">
@@ -417,7 +420,7 @@ function OtherOffer({ offer, productName, fallbackLabel, stale }: { offer: Offer
   const detailId = `offer-details-${offer.id.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
   return <article className={`pi-offer${open ? " is-open" : ""}`}>
     <button className="pi-offer-summary" type="button" aria-expanded={open} aria-controls={detailId} onClick={() => setOpen((value) => !value)}>
-      <strong>{money(offer)}</strong><span><b className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark compact/></span><span>{offer.seller.name || offer.retailer.name}</span></b><small>{offerMeta(offer)}</small></span><em>{offer.trust?.confidence ? titleCase(offer.trust.confidence.toLowerCase()) : "Unrated"}</em><Icon name="chevron" size={17}/>
+      <strong>{money(offer)}</strong><span><b className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark compact/></span><span>{ebaySellerProfileUrl(offer.seller.name || offer.retailer.name) ? <a href={ebaySellerProfileUrl(offer.seller.name || offer.retailer.name)!} target="_blank" rel="noopener noreferrer">{offer.seller.name || offer.retailer.name}</a> : (offer.seller.name || offer.retailer.name)}</span></b><small>{offerMeta(offer)}</small></span><ConfidenceBadge confidence={offer.trust?.confidence ?? "UNAVAILABLE"} compact/><Icon name="chevron" size={17}/>
     </button>
     <div className="pi-offer-reveal" id={detailId} aria-hidden={!open}><div><div className="pi-offer-detail"><ListingImage offer={offer} productName={productName} fallbackLabel={fallbackLabel}/><div><p>{offer.sourceTitle || `${productName} · ${titleCase(offer.condition)} listing`}</p><small>{offer.seller.feedbackPercentage ? `${offer.seller.feedbackPercentage}% positive · ` : ""}{updatedLabel(offer.lastUpdated)} · {stale ? "Saved eBay offer" : "Live eBay offer"}</small><span className="pi-secondary-cta"><OutboundRetailerCTA offer={offer} compact label="View offer"/></span></div></div></div></div>
   </article>;
@@ -428,5 +431,8 @@ function TimingAndTrack({ context, observations, productName, criteria, result }
   const ready = context.historyStatus === "ready" && points.length > 1;
   const average = context.average90Day ?? context.average30Day;
   const decision = getBuyWaitDecision(context);
-  return <section className="pi-section pi-context"><div><p className="pi-label">When to Buy</p><h2>{decision.label}</h2><p>{decision.explanation}</p><div className="nr-context-stats"><span>Current<strong>{context.currentTrustedPrice ? `$${context.currentTrustedPrice}` : "—"}</strong></span><span>Typical<strong>{average ? `$${average}` : "—"}</strong></span><span>Recent low<strong>{context.recentLow ? `$${context.recentLow}` : "—"}</strong></span></div></div>{ready && <PriceChart points={points}/>}<div className="pi-track"><div><p className="pi-label">Track price</p><p>Keep this exact configuration connected to future real price observations.</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></section>;
+  const building = decision.label === "HISTORY BUILDING";
+  const progress = Math.min(100, Math.round((context.observationCount / minimum30DaySamples) * 100));
+  const stat = (value: number | null) => building ? "Collecting" : value ? `$${value}` : "—";
+  return <section className="pi-section pi-context"><div><p className="pi-label">When to Buy</p><h2>{building ? "Collecting price data" : decision.label}</h2><p>{decision.explanation}</p>{building && <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, context.observationCount > 0 ? 12 : 4)}%` }} /></div><em>{context.observationCount} of {minimum30DaySamples} observations logged toward buy/wait guidance</em></div>}<div className="nr-context-stats"><span>Current<strong>{stat(context.currentTrustedPrice)}</strong></span><span>Typical<strong>{stat(average)}</strong></span><span>Recent low<strong>{stat(context.recentLow)}</strong></span></div></div>{ready && <PriceChart points={points}/>}<div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Tracking helps Kelus store more real observations for this exact configuration." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></section>;
 }

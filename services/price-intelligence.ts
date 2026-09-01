@@ -1,7 +1,7 @@
 import type { ConditionFilter, PriceContext, PriceObservation } from "@/types/kelus";
 
 const dayMs = 86_400_000;
-const minimum30DaySamples = 7;
+export const minimum30DaySamples = 7;
 const minimum30DaySpan = 6;
 const minimum90DaySamples = 30;
 const minimum90DaySpan = 60;
