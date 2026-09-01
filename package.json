@@ -15,6 +15,7 @@
     "typecheck": "tsc --noEmit --incremental false -p tsconfig.typecheck.json",
     "db:generate": "drizzle-kit generate",
     "snapshots:warm:bundled": "node --experimental-strip-types scripts/warm-bundled-snapshots.mjs",
+    "snapshots:harvest:production": "node --experimental-strip-types scripts/harvest-production-bundled-snapshots.mjs",
     "snapshots:warm:production": "node --experimental-strip-types scripts/warm-production-snapshots.mjs"
   },
   "dependencies": {

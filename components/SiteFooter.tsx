@@ -12,6 +12,7 @@ export function SiteFooter() {
         <div>
           <p className="site-footer-label">Browse</p>
           <Link href="/search">Search</Link>
+          <Link href="/products">All products</Link>
           <Link href="/coverage">What Kelus covers</Link>
           {categoryHubs.map((hub) => (
             <Link key={hub.slug} href={`/category/${hub.slug}`}>{hub.label}</Link>

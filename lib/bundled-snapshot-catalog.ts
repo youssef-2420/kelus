@@ -1,8 +1,9 @@
 import snapshots from "../data/bundled-product-intelligence-snapshots.json" with { type: "json" };
-import { getProductBySlug, getVariantById } from "./demo-data.ts";
+import { getProductBySlug, getVariantById, products } from "./demo-data.ts";
 import { canonicalProductPath } from "./search-state.ts";
 import type { ConditionFilter, Offer, OfferSearchResult, SearchCriteria } from "../types/kelus.ts";
 import { catalogSnapshotTargetKey } from "./catalog-snapshot-targets.ts";
+import { getRecommendation } from "../services/recommendations.ts";
 
 const bundledSnapshots = snapshots as Record<string, OfferSearchResult>;
 
@@ -13,6 +14,20 @@ function lowestKnownTotal(offers: Offer[]) {
     if (total === null) return best;
     return best === null || total < best ? total : best;
   }, null);
+}
+
+function pickKnownTotal(snapshot: OfferSearchResult) {
+  const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
+  const recommendation = getRecommendation(liveOffers, "kelus_pick");
+  const pick = liveOffers.find((offer) => offer.id === recommendation?.offerId) ?? liveOffers[0];
+  if (!pick) return null;
+  return pick.shippingCostKnown === false ? pick.price : pick.price + pick.shippingCost;
+}
+
+function parseSnapshotKey(key: string) {
+  const [productSlug, variantId, condition, market] = key.split(":");
+  if (!productSlug || !variantId || !condition || market !== "us") return null;
+  return { productSlug, variantId, condition: condition as ConditionFilter, market: "us" as const };
 }
 
 export function readBundledSnapshot(criteria: SearchCriteria) {
@@ -32,32 +47,58 @@ export type BundledShowcase = {
   condition: ConditionFilter;
   href: string;
   fromPrice: number;
+  pickPrice?: number;
   offerCount: number;
   lastUpdated?: string;
 };
 
+export type ProductListingPreview = {
+  productSlug: string;
+  productName: string;
+  brand: string;
+  category: string;
+  image: string;
+  href: string;
+  variantLabel: string;
+  condition: ConditionFilter;
+  fromPrice: number;
+  pickPrice?: number;
+  offerCount: number;
+  live: boolean;
+  lastUpdated?: string;
+};
+
+function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase | null {
+  const parsed = parseSnapshotKey(key);
+  if (!parsed) return null;
+  const product = getProductBySlug(parsed.productSlug);
+  const variant = getVariantById(parsed.variantId);
+  if (!product || !variant) return null;
+  const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
+  const fromPrice = lowestKnownTotal(liveOffers);
+  if (fromPrice === null) return null;
+  return {
+    productSlug: parsed.productSlug,
+    productName: product.name,
+    brand: product.brand,
+    variantLabel: variant.label,
+    condition: parsed.condition,
+    href: canonicalProductPath(parsed),
+    fromPrice,
+    pickPrice: pickKnownTotal(snapshot) ?? undefined,
+    offerCount: liveOffers.length,
+    lastUpdated: snapshot.lastUpdated,
+  };
+}
+
 export function listBundledShowcases(limit = 6): BundledShowcase[] {
-  return Object.entries(bundledSnapshots).flatMap(([key, snapshot]) => {
-    const [productSlug, variantId, condition, market] = key.split(":");
-    if (!productSlug || !variantId || !condition || market !== "us") return [];
-    const product = getProductBySlug(productSlug);
-    const variant = getVariantById(variantId);
-    if (!product || !variant) return [];
-    const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
-    const fromPrice = lowestKnownTotal(liveOffers);
-    if (fromPrice === null) return [];
-    return [{
-      productSlug,
-      productName: product.name,
-      brand: product.brand,
-      variantLabel: variant.label,
-      condition: condition as ConditionFilter,
-      href: canonicalProductPath({ productSlug, variantId, condition: condition as ConditionFilter, market: "us" }),
-      fromPrice,
-      offerCount: liveOffers.length,
-      lastUpdated: snapshot.lastUpdated,
-    }];
-  }).sort((left, right) => left.fromPrice - right.fromPrice).slice(0, Math.max(1, limit));
+  return Object.entries(bundledSnapshots)
+    .flatMap(([key, snapshot]) => {
+      const showcase = toShowcase(key, snapshot);
+      return showcase ? [showcase] : [];
+    })
+    .sort((left, right) => left.fromPrice - right.fromPrice)
+    .slice(0, Math.max(1, limit));
 }
 
 export function formatFromPrice(value: number) {
@@ -65,37 +106,62 @@ export function formatFromPrice(value: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
 }
 
-export function getProductListingPreview(productSlug: string) {
+export function getProductListingPreview(productSlug: string): ProductListingPreview | null {
   const product = getProductBySlug(productSlug);
   if (!product) return null;
   const matches = Object.entries(bundledSnapshots).flatMap(([key, snapshot]) => {
-    const [slug, variantId, condition, market] = key.split(":");
-    if (slug !== productSlug || market !== "us" || !variantId || !condition) return [];
-    const variant = getVariantById(variantId);
-    if (!variant) return [];
-    const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
-    const fromPrice = lowestKnownTotal(liveOffers);
-    if (fromPrice === null) return [];
-    return [{
-      href: canonicalProductPath({ productSlug, variantId, condition: condition as ConditionFilter, market: "us" }),
-      fromPrice,
-      live: true,
-    }];
+    const showcase = toShowcase(key, snapshot);
+    return showcase?.productSlug === productSlug ? [showcase] : [];
   });
   if (matches.length) {
     const best = matches.sort((left, right) => left.fromPrice - right.fromPrice)[0];
-    return { ...best, productName: product.name, brand: product.brand };
+    return {
+      productSlug,
+      productName: product.name,
+      brand: product.brand,
+      category: product.category,
+      image: product.image,
+      href: best.href,
+      variantLabel: best.variantLabel,
+      condition: best.condition,
+      fromPrice: best.fromPrice,
+      pickPrice: best.pickPrice,
+      offerCount: best.offerCount,
+      live: true,
+      lastUpdated: best.lastUpdated,
+    };
   }
   const variantId = product.searchAttribute.validVariantIds[0];
   const variant = getVariantById(variantId);
   if (!variant) return null;
   return {
-    href: canonicalProductPath({ productSlug, variantId, condition: "new", market: "us" }),
-    fromPrice: 0,
-    live: false,
+    productSlug,
     productName: product.name,
     brand: product.brand,
+    category: product.category,
+    image: product.image,
+    href: canonicalProductPath({ productSlug, variantId, condition: "new", market: "us" }),
+    variantLabel: variant.label,
+    condition: "new",
+    fromPrice: 0,
+    offerCount: 0,
+    live: false,
   };
+}
+
+export function listProductListingPreviews() {
+  return products
+    .map((product) => getProductListingPreview(product.slug))
+    .filter((preview): preview is ProductListingPreview => Boolean(preview));
+}
+
+export function snapshotSitemapEntry(criteria: SearchCriteria) {
+  const snapshot = readBundledSnapshot(criteria);
+  const live = Boolean(snapshot?.offers.some((offer) => offer.dataSource === "live"));
+  const lastUpdated = snapshot?.lastUpdated && !Number.isNaN(Date.parse(snapshot.lastUpdated))
+    ? new Date(snapshot.lastUpdated)
+    : new Date();
+  return { live, lastUpdated, priority: live ? 0.85 : 0.55 };
 }
 
 export function countLiveCatalogProducts() {

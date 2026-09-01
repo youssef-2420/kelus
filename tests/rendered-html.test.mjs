@@ -244,6 +244,19 @@ test("outstanding UX surfaces explain confidence, history progress, and catalog 
   assert.match(availability, /View comparison/);
 });
 
+test("growth surfaces expose the product directory and snapshot-aware sitemap", async () => {
+  const [productsPage, sitemapSource, listingCard] = await Promise.all([
+    readFile(new URL("../app/products/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/ProductListingCard.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(productsPage, /listProductListingPreviews/);
+  assert.match(productsPage, /ProductListingCard/);
+  assert.match(sitemapSource, /snapshotSitemapEntry/);
+  assert.match(sitemapSource, /\/products/);
+  assert.match(listingCard, /getProductCardStatus/);
+});
+
 test("trust surfaces expose footer links and coverage catalog", async () => {
   const [home, coverage, privacy, terms, footer, sitemap] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -258,6 +271,7 @@ test("trust surfaces expose footer links and coverage catalog", async () => {
   assert.match(coverage, /getProductCardStatus/);
   assert.match(privacy, /Privacy policy/);
   assert.match(terms, /Terms of use/);
+  assert.match(footer, /href="\/products"/);
   assert.match(footer, /href="\/coverage"/);
   assert.match(footer, /href="\/privacy"/);
   assert.match(footer, /href="\/terms"/);
