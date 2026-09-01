@@ -25,6 +25,7 @@ export function LiveShowcase({ compact = false }: { compact?: boolean }) {
             <strong>{item.productName}</strong>
             <small>{item.variantLabel}</small>
             <span className="live-showcase-price">From {formatFromPrice(item.fromPrice)}</span>
+            {item.pickPrice && item.pickPrice !== item.fromPrice ? <span className="live-showcase-pick">Kelus pick {formatFromPrice(item.pickPrice)}</span> : null}
             <em>{item.offerCount} validated offer{item.offerCount === 1 ? "" : "s"} · {freshnessLabel(item.lastUpdated)}</em>
             <span className="live-showcase-cta">See Kelus pick <Icon name="arrow" size={14}/></span>
           </Link>

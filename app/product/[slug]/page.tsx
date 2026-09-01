@@ -5,7 +5,7 @@ import { ProductSeoIntro } from "@/components/ProductSeoIntro";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
 import type { SeoIndexedCondition } from "@/lib/catalog-snapshot-targets";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
-import { hasBundledSnapshot } from "@/lib/bundled-snapshot-catalog";
+import { absoluteOgImage, formatFromPrice, getCriteriaListingPreview, hasBundledSnapshot } from "@/lib/bundled-snapshot-catalog";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
 import { CONDITIONS } from "@/types/kelus";
 
@@ -34,16 +34,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const resolved = exactProduct((await params).slug);
   if (!resolved) return { title: "Product not found | Kelus", robots: { index: false, follow: false } };
   const { criteria, product, variant } = resolved;
-  const condition = criteria.condition === "any" ? "all conditions" : criteria.condition;
-  const title = `${product.name} ${variant.label} prices | Kelus`;
-  const description = `Compare matching live eBay offers for ${product.name} ${variant.label} in ${condition}. See Kelus's current pick and real price context when available.`;
+  const preview = getCriteriaListingPreview(criteria);
+  const hasLive = hasBundledSnapshot(criteria) || Boolean(preview?.live);
+  const conditionLabel = criteria.condition === "any" ? "any condition" : criteria.condition;
+  const priceHint = preview?.fromPrice ? ` from ${formatFromPrice(preview.fromPrice)}` : "";
+  const title = `${product.name} ${variant.label}${priceHint} | Kelus`;
+  const description = hasLive
+    ? `Compare validated eBay offers for ${product.name} ${variant.label} in ${conditionLabel}. Kelus pick, known totals, and seller trust evidence updated when available.`
+    : `Check ${product.name} ${variant.label} prices on Kelus. Compare matching eBay offers with known shipping, seller evidence, and return terms when available.`;
   const canonicalUrl = `https://kelus.me${canonicalProductPath(criteria)}`;
+  const ogImage = absoluteOgImage();
   return {
     title,
     description,
     alternates: { canonical: canonicalUrl },
-    openGraph: { title, description, type: "website", url: canonicalUrl, images: [] },
-    twitter: { card: "summary", title, description, images: [] },
+    openGraph: { title, description, type: "website", url: canonicalUrl, images: [ogImage] },
+    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
   };
 }
 
@@ -54,6 +60,7 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   const initialOutcome = await resolveInitialProductIntelligence(criteria);
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
   const offers = initialOutcome.status === "SUCCESS" ? initialOutcome.result.offers.filter((offer) => offer.dataSource === "live").slice(0, 5) : [];
+  const listingPreview = getCriteriaListingPreview(criteria);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -66,7 +73,16 @@ export default async function CanonicalProductPage({ params }: PageProps) {
       { "@type": "PropertyValue", name: "Condition filter", value: condition },
     ],
     url: `https://kelus.me${canonicalProductPath(criteria)}`,
-    ...(offers.length ? {
+    ...(listingPreview?.fromPrice ? {
+      offers: {
+        "@type": "AggregateOffer",
+        lowPrice: listingPreview.fromPrice,
+        highPrice: offers.length ? Math.max(...offers.map((offer) => offer.shippingCostKnown === false ? offer.price : offer.price + offer.shippingCost)) : listingPreview.fromPrice,
+        priceCurrency: "USD",
+        offerCount: listingPreview.offerCount,
+        url: `https://kelus.me${canonicalProductPath(criteria)}`,
+      },
+    } : offers.length ? {
       offers: offers.map((offer) => ({
         "@type": "Offer",
         price: offer.shippingCostKnown === false ? offer.price : Math.round((offer.price + offer.shippingCost) * 100) / 100,

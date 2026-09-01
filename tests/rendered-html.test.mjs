@@ -141,6 +141,7 @@ test("search is the single canonical product discovery experience", async () => 
   ]);
   assert.match(home, /SearchLauncher/);
   assert.match(home, /LiveShowcase/);
+  assert.match(home, /SiteFooter/);
   assert.match(home, /trust-disclosure/);
   assert.doesNotMatch(home, /SearchControls/);
   assert.match(launcher, /href="\/search"/);
@@ -148,12 +149,17 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(page, /search-category-nav/);
   assert.match(page, /alternates: \{ canonical: "https:\/\/kelus\.me\/search" \}/);
   assert.match(page, /LiveShowcase/);
+  assert.match(page, /SiteFooter/);
   assert.match(page, /getSearchQuickStarts/);
   assert.doesNotMatch(page, /redirect\(/);
   assert.match(search, /hero-search-category/);
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(styles, /\.hero-search-launcher/);
   assert.match(styles, /\.category-hub/);
+  assert.match(styles, /\.product-listing-card/);
+  assert.match(styles, /\.site-footer/);
+  assert.match(styles, /\.products-page/);
+  assert.match(styles, /\.live-showcase-pick/);
   assert.match(alerts, /href="\/search"/);
   assert.match(results, /href="\/search">Edit search/);
   assert.match(layout, /SiteJsonLd/);

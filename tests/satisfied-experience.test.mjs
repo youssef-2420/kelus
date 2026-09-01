@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { hasBundledSnapshot, listBundledShowcases } from "../lib/bundled-snapshot-catalog.ts";
+import { hasBundledSnapshot, listBundledShowcases, listProductListingPreviews } from "../lib/bundled-snapshot-catalog.ts";
 import { getSearchQuickStarts } from "../lib/search-quick-starts.ts";
 import { userFacingOfferError } from "../services/user-facing-errors.ts";
 
@@ -15,6 +15,13 @@ test("bundled snapshot catalog exposes live showcase cards", () => {
     condition: "new",
     market: "us",
   }), true);
+});
+
+test("product directory previews cover the full catalog", () => {
+  const previews = listProductListingPreviews();
+  assert.ok(previews.length >= 30);
+  assert.ok(previews.some((preview) => preview.live && preview.fromPrice > 0));
+  assert.ok(previews.some((preview) => !preview.live));
 });
 
 test("search quick starts prioritize live comparisons", () => {

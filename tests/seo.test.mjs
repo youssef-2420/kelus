@@ -6,6 +6,7 @@ import sitemap from "../app/sitemap.ts";
 test("sitemap contains discovery and canonical product URLs", () => {
   const urls = sitemap().map((entry) => entry.url);
   assert.ok(urls.includes("https://kelus.me/search"));
+  assert.ok(urls.includes("https://kelus.me/products"));
   assert.ok(urls.includes("https://kelus.me/category/smartphones"));
   assert.ok(urls.includes("https://kelus.me/product/iphone-17-pro-256gb-new"));
   assert.ok(urls.includes("https://kelus.me/product/macbook-pro-16-m4-max-36-1tb-used"));

@@ -3,7 +3,10 @@ import { notFound } from "next/navigation";
 import { KelusHeader } from "@/components/KelusHeader";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
+import { ProductListingCard } from "@/components/ProductListingCard";
+import { SiteFooter } from "@/components/SiteFooter";
 import { categoryHubPath, categoryHubs, getCategoryHub, getCategoryHubProducts } from "@/lib/category-routes";
+import { getProductListingPreview } from "@/lib/bundled-snapshot-catalog";
 import { canonicalProductPath } from "@/lib/search-state";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -66,26 +69,13 @@ export default async function CategoryHubPage({ params }: PageProps) {
         </div>
         <div className="category-hub-grid">
           {products.map((product) => {
-            const href = canonicalProductPath({
-              productSlug: product.slug,
-              variantId: product.searchAttribute.validVariantIds[0],
-              condition: "new",
-              market: "us",
-            });
-            return (
-              <Link key={product.slug} href={href} className="category-hub-card">
-                <span className="category-hub-card-mark" aria-hidden="true">{product.image}</span>
-                <span className="category-hub-card-copy">
-                  <b>{product.name}</b>
-                  <small>{product.brand}</small>
-                  <em>Compare live offers</em>
-                </span>
-                <Icon name="arrow" size={16} />
-              </Link>
-            );
+            const preview = getProductListingPreview(product.slug);
+            if (!preview) return null;
+            return <ProductListingCard key={product.slug} preview={preview} mark={product.image} />;
           })}
         </div>
       </section>
+      <SiteFooter />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     </main>
   );
