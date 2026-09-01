@@ -2,7 +2,7 @@
 
 import { KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
-import { getDiscoverableProducts, getProductBySlug, getVariantsForProduct, resolveProductSearch, searchProducts, suggestSupportedProducts } from "@/lib/demo-data";
+import { getDiscoverableProducts, getProductBySlug, getVariantsForProduct, productCategories, resolveProductSearch, searchProducts, suggestSupportedProducts } from "@/lib/demo-data";
 import { getProductIntelligenceOptions, getSearchAttributeVariants, getVisibleSearchAttributeLabel, isValidSearchConfiguration, resolveSearchAttributeVariantId, resolveSearchAttributeVariantIdFromQuery } from "@/lib/product-attributes";
 import { canonicalProductPath, defaultSearch, resolveConditionFromQuery, searchCriteriaToQuery, validateSearchCriteria } from "@/lib/search-state";
 import { trackEvent } from "@/services/analytics";
@@ -46,9 +46,10 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const [activeIndex, setActiveIndex] = useState(-1);
   const [searching, setSearching] = useState(false);
   const [searchIssue, setSearchIssue] = useState<{ kind: "unsupported" | "ambiguous" | "invalid"; query: string; candidates?: Product[] } | null>(null);
+  const [category, setCategory] = useState("All");
   const trimmedQuery = query.trim();
-  const matches = useMemo(() => trimmedQuery ? searchProducts(query) : [], [query, trimmedQuery]);
-  const featuredMatches = useMemo(() => deferProductSelection && !trimmedQuery ? getDiscoverableProducts(6) : [], [deferProductSelection, trimmedQuery]);
+  const matches = useMemo(() => trimmedQuery ? searchProducts(query).filter((product) => category === "All" || product.category === category) : [], [category, query, trimmedQuery]);
+  const featuredMatches = useMemo(() => deferProductSelection && !trimmedQuery ? getDiscoverableProducts(50).filter((product) => category === "All" || product.category === category).slice(0, 6) : [], [category, deferProductSelection, trimmedQuery]);
   const suggestionProducts = trimmedQuery ? matches.slice(0, 6) : featuredMatches;
   const showSearchResults = Boolean(trimmedQuery);
   const showCondition = !deferProductSelection || productSelected;
@@ -56,7 +57,6 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const attributeLabel = getVisibleSearchAttributeLabel(selectedProduct, variants, productSelected);
   const intelligenceOptions = useMemo(() => getProductIntelligenceOptions(selectedProduct, getVariantsForProduct(selectedProduct.id)), [selectedProduct]);
   const selectedVariant = variants.find((variant) => variant.id === variantId);
-  const minimalActionLabel = searching ? "Checking…" : !trimmedQuery ? "Explore" : "Find match";
 
   useEffect(() => {
     const resetTransition = () => document.documentElement.classList.remove("is-search-leaving");
@@ -123,11 +123,13 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const issuePanel = searchIssue && <div className="unsupported-search" role="status"><strong>{searchIssue.kind === "ambiguous" ? `Choose a specific product for “${searchIssue.query}”.` : searchIssue.kind === "invalid" ? `That configuration is not available for “${searchIssue.query}”.` : `Kelus does not support “${searchIssue.query}” yet.`}</strong><span>Kelus currently compares selected phones, computers, tablets, audio products, wearables, and consoles.</span>{Boolean(searchIssue.candidates?.length) && <div><small>{searchIssue.kind === "ambiguous" ? "Did you mean:" : "Related supported products:"}</small>{searchIssue.candidates!.map((product) => <button type="button" key={product.slug} onMouseDown={() => chooseProduct(product)}>{product.name}</button>)}</div>}</div>;
   if (minimal) return <div className={`rp-search-pill-wrap${productSelected && deferProductSelection ? " has-selected-product" : ""}`}>
     <form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}>
-      <Icon name="search" size={19}/>
+      {deferProductSelection
+        ? <label className="hero-search-category"><span className="sr-only">Category</span><select aria-label="Category" value={category} onChange={(event) => { setCategory(event.target.value); setProductSelected(false); setQuery(""); setVariantId(""); setSearchIssue(null); setOpen(true); setActiveIndex(-1); inputRef.current?.focus(); }}><option value="All">All</option>{productCategories.map((value) => <option key={value} value={value}>{value}</option>)}</select><Icon name="chevron" size={14}/></label>
+        : <Icon name="search" size={19}/>}
       <input ref={inputRef} value={query} placeholder="Search for a product" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => setOpen(true)} onBlur={() => window.setTimeout(() => setOpen(false), 120)} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setSearchIssue(null); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} />
-      {minimalAction && (productSelected && deferProductSelection
-        ? <button type="button" className="nr-search-action is-change" onClick={() => { setProductSelected(false); setOpen(true); setActiveIndex(-1); window.requestAnimationFrame(() => { inputRef.current?.focus(); inputRef.current?.select(); }); }}>Change</button>
-        : <button type="submit" className="nr-search-action" disabled={searching}>{deferProductSelection ? minimalActionLabel : searching ? "Finding offers…" : actionLabel}</button>)}
+      {minimalAction && (deferProductSelection
+        ? <button type="submit" className="nr-search-action is-icon" disabled={searching} aria-label={productSelected ? "Find offers for selected configuration" : "Search products"}><Icon name="search" size={20}/></button>
+        : <button type="submit" className="nr-search-action" disabled={searching}>{searching ? "Finding offers…" : actionLabel}</button>)}
       {!minimalAction && <button type="submit" className="sr-only" disabled={searching}>Search</button>}
     </form>
     {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{suggestionProducts.length ? <><p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet. Try a model name such as “iPhone 17 Pro”.</p> : null}</div>}
