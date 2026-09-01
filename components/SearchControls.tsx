@@ -8,7 +8,6 @@ import { canonicalProductPath, defaultSearch, resolveConditionFromQuery, searchC
 import { trackEvent } from "@/services/analytics";
 import type { ConditionFilter, Product, SearchCriteria } from "@/types/kelus";
 import { Icon } from "@/components/Icon";
-import { ProductMark } from "@/components/ProductMark";
 
 type Props = { compact?: boolean; minimal?: boolean; minimalAction?: boolean; deferProductSelection?: boolean; initialCriteria?: SearchCriteria; resultPath?: string; actionLabel?: string };
 const conditionLabels: Record<ConditionFilter, string> = { any: "Any", new: "New", used: "Used", refurbished: "Refurbished" };
@@ -22,7 +21,6 @@ function configurationPreview(product: Product) {
 
 function ProductSuggestion({ product, index, listboxId, active, chooseProduct, highlightPrimary }: { product: Product; index: number; listboxId: string; active: boolean; chooseProduct: (product: Product) => void; highlightPrimary: boolean }) {
   return <button type="button" role="option" aria-selected={active} id={`${listboxId}-${index}`} className={`${active ? "is-active " : ""}${highlightPrimary && index === 0 ? "is-primary" : ""}`.trim()} onMouseDown={() => chooseProduct(product)}>
-    <ProductMark label={product.image} small/>
     <span className="suggestion-copy">
       {highlightPrimary && index === 0 && <em>Closest match</em>}
       <b>{product.name}</b>
@@ -134,7 +132,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     </form>
     {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{suggestionProducts.length ? <><p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet. Try a model name such as “iPhone 17 Pro”.</p> : null}</div>}
     {productSelected && deferProductSelection && <section className="hero-config-panel" aria-label={`Configure ${selectedProduct.name}`}>
-      <div className="hero-config-product"><ProductMark label={selectedProduct.image} small/><span><small>Selected product</small><b>{selectedProduct.name}</b><em>{selectedProduct.brand} · {selectedProduct.category}</em></span></div>
+      <div className="hero-config-product"><span><small>Selected product</small><b>{selectedProduct.name}</b><em>{selectedProduct.brand} · {selectedProduct.category}</em></span></div>
       {attributeLabel && <fieldset><legend>{attributeLabel}</legend><div className="hero-config-options">{variants.map((variant) => <button type="button" key={variant.id} className={variant.id === variantId ? "is-selected" : ""} aria-pressed={variant.id === variantId} onClick={() => setVariantId(variant.id)}>{variant.label}</button>)}</div></fieldset>}
       <fieldset><legend>Condition</legend><div className="hero-config-options">{exactConditions.map((value) => <button type="button" key={value} className={condition === value ? "is-selected" : ""} aria-pressed={condition === value} onClick={() => setCondition(value)}>{conditionLabels[value]}</button>)}</div></fieldset>
       {intelligenceOptions.showsUnlockedStatus && <p className="hero-config-network"><Icon name="lock" size={15}/><span><b>Network</b> Unlocked listings only</span></p>}
