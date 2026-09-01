@@ -3,6 +3,7 @@ import { KelusHeader } from "@/components/KelusHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
+import { CatalogProductImage } from "@/components/CatalogProductImage";
 import { categoryHubs } from "@/lib/category-routes";
 import { CatalogAvailabilityLegend } from "@/components/CatalogAvailabilityLegend";
 import { countLiveCatalogProducts } from "@/lib/bundled-snapshot-catalog";
@@ -48,7 +49,7 @@ export default function CoveragePage() {
             const status = getProductCardStatus(product.slug);
             return (
               <Link key={product.slug} href={status.href} className="coverage-card" title={status.detail}>
-                <span className="coverage-card-mark" aria-hidden="true">{product.image}</span>
+                <CatalogProductImage listingImageUrl={status.listingImageUrl} fallbackLabel={status.imageLabel} className="coverage-card-mark" />
                 <span className="coverage-card-copy">
                   <b>{product.name}</b>
                   <small>{product.brand} · {product.category}</small>

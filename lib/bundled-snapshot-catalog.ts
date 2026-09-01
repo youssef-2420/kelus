@@ -24,6 +24,15 @@ function pickKnownTotal(snapshot: OfferSearchResult) {
   return pick.shippingCostKnown === false ? pick.price : pick.price + pick.shippingCost;
 }
 
+function listingImageFromSnapshot(snapshot: OfferSearchResult) {
+  const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
+  const recommendation = getRecommendation(liveOffers, "kelus_pick");
+  const pick = liveOffers.find((offer) => offer.id === recommendation?.offerId)
+    ?? liveOffers.find((offer) => offer.imageUrl)
+    ?? liveOffers[0];
+  return pick?.imageUrl;
+}
+
 function parseSnapshotKey(key: string) {
   const [productSlug, variantId, condition, market] = key.split(":");
   if (!productSlug || !variantId || !condition || market !== "us") return null;
@@ -50,6 +59,7 @@ export type BundledShowcase = {
   pickPrice?: number;
   offerCount: number;
   lastUpdated?: string;
+  listingImageUrl?: string;
 };
 
 export type ProductListingPreview = {
@@ -66,6 +76,7 @@ export type ProductListingPreview = {
   offerCount: number;
   live: boolean;
   lastUpdated?: string;
+  listingImageUrl?: string;
 };
 
 function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase | null {
@@ -88,6 +99,7 @@ function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase |
     pickPrice: pickKnownTotal(snapshot) ?? undefined,
     offerCount: liveOffers.length,
     lastUpdated: snapshot.lastUpdated,
+    listingImageUrl: listingImageFromSnapshot(snapshot),
   };
 }
 
@@ -129,6 +141,7 @@ export function getProductListingPreview(productSlug: string): ProductListingPre
       offerCount: best.offerCount,
       live: true,
       lastUpdated: best.lastUpdated,
+      listingImageUrl: best.listingImageUrl,
     };
   }
   const variantId = product.searchAttribute.validVariantIds[0];

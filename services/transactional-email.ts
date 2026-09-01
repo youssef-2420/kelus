@@ -10,6 +10,7 @@ export type TargetReachedEmailData = {
   currentPrice: number;
   priceDrop: number;
   comparisonHref: string;
+  imageUrl?: string;
 };
 
 type ResendResponse = { id?: string; message?: string; name?: string };
@@ -25,6 +26,9 @@ export function buildTargetReachedEmail(data: TargetReachedEmailData) {
   const product = escapeHtml(data.productName);
   const configuration = escapeHtml(data.configuration);
   const comparisonUrl = new URL(data.comparisonHref, "https://kelus.me").toString();
+  const imageBlock = data.imageUrl?.startsWith("https://")
+    ? `<p style="margin:0 0 20px"><img src="${escapeHtml(data.imageUrl)}" alt="" width="120" height="120" style="display:block;border-radius:12px;border:1px solid #dbe7e2;object-fit:contain;background:#fff"/></p>`
+    : "";
   const subject = `Target reached: ${data.productName}`;
   const text = [
     `Your Kelus target price has been reached for ${data.productName} · ${data.configuration}.`,
@@ -35,7 +39,7 @@ export function buildTargetReachedEmail(data: TargetReachedEmailData) {
   ].join("\n");
   const html = `<div style="font-family:Arial,sans-serif;color:#102c27;line-height:1.5;max-width:560px;margin:auto">
     <p style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#0d6b5d">Target reached</p>
-    <h1 style="font-size:28px;margin:0 0 8px">${product}</h1>
+    ${imageBlock}<h1 style="font-size:28px;margin:0 0 8px">${product}</h1>
     <p style="color:#5f6f6b;margin:0 0 24px">${configuration}</p>
     <p>Tracked at: <strong>${money(data.trackedPrice)}</strong><br>Current best comparable price: <strong>${money(data.currentPrice)}</strong><br>Price drop: <strong>${money(data.priceDrop)}</strong></p>
     <p style="margin-top:28px"><a href="${comparisonUrl}" style="display:inline-block;background:#0b5147;color:#fff;text-decoration:none;padding:13px 20px;border-radius:8px">View on Kelus →</a></p>

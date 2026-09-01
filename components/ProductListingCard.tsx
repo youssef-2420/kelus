@@ -1,3 +1,4 @@
+import { CatalogProductImage } from "@/components/CatalogProductImage";
 import { Icon } from "@/components/Icon";
 import { formatFromPrice, type ProductListingPreview } from "@/lib/bundled-snapshot-catalog";
 import { getProductCardStatus } from "@/lib/catalog-availability";
@@ -14,7 +15,7 @@ export function ProductListingCard({ preview, compact = false }: Props) {
 
   return (
     <Link href={preview.href} className={`product-listing-card${compact ? " is-compact" : ""}`} title={cardStatus.detail}>
-      <span className="product-listing-mark" aria-hidden="true">{preview.image}</span>
+      <CatalogProductImage listingImageUrl={preview.listingImageUrl} fallbackLabel={preview.image} className="product-listing-mark" />
       <span className="product-listing-copy">
         <span className="product-listing-kicker">
           {preview.brand}

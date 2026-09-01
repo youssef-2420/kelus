@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { categoryHubPath, categoryHubs, getCategoryHub, getCategoryHubProducts } from "@/lib/category-routes";
+import { CatalogProductImage } from "@/components/CatalogProductImage";
 import { getProductCardStatus } from "@/lib/catalog-availability";
 import { canonicalProductPath } from "@/lib/search-state";
 
@@ -71,7 +72,7 @@ export default async function CategoryHubPage({ params }: PageProps) {
             const status = getProductCardStatus(product.slug);
             return (
               <Link key={product.slug} href={status.href} className="category-hub-card" title={status.detail}>
-                <span className="category-hub-card-mark" aria-hidden="true">{product.image}</span>
+                <CatalogProductImage listingImageUrl={status.listingImageUrl} fallbackLabel={status.imageLabel} className="category-hub-card-mark" />
                 <span className="category-hub-card-copy">
                   <b>{product.name}</b>
                   <small>{product.brand}</small>

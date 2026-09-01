@@ -793,6 +793,11 @@ html { scroll-behavior:smooth; }
 .products-directory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
 .product-listing-card{display:flex;align-items:center;gap:12px;min-height:78px;padding:12px 14px;border:1px solid #d9d8d0;border-radius:10px;background:#fffefa;color:inherit;text-decoration:none;transition:border-color .18s ease,background-color .18s ease,transform .18s ease}
 .product-listing-card.is-compact{min-height:68px}
+.product-listing-mark,.coverage-card-mark,.category-hub-card-mark{display:block;overflow:hidden}
+.product-listing-mark,.coverage-card-mark,.category-hub-card-mark{width:44px;height:52px;flex:0 0 44px;border-radius:8px;background:linear-gradient(145deg,#173a33,#71978e)}
+.catalog-product-image,.product-listing-mark,.coverage-card-mark,.category-hub-card-mark{display:grid;place-items:center}
+.catalog-product-image img,.product-listing-mark img,.coverage-card-mark img,.category-hub-card-mark img{width:100%;height:100%;object-fit:cover;border-radius:8px;background:#fff}
+.catalog-product-image.is-fallback,.product-listing-mark.is-fallback,.coverage-card-mark.is-fallback,.category-hub-card-mark.is-fallback{color:#fff}
 .product-listing-mark{width:44px;height:52px;flex:0 0 44px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(145deg,#173a33,#71978e);color:#fff;font-size:11px;font-weight:800;letter-spacing:.04em}
 .product-listing-copy{display:grid;gap:3px;flex:1;min-width:0}
 .product-listing-kicker{display:flex;align-items:center;gap:8px;color:#6f7a76;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}

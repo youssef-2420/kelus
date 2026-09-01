@@ -158,7 +158,7 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(styles, /\.hero-search-launcher/);
   assert.match(styles, /\.category-hub/);
-  assert.match(alerts, /href="\/search"/);
+  assert.match(alerts, /emailed when your target price is reached/);
   assert.match(results, /href="\/search">Edit search/);
   assert.match(layout, /SiteJsonLd/);
   assert.doesNotMatch(alerts + results, /#product-search/);
@@ -242,6 +242,18 @@ test("outstanding UX surfaces explain confidence, history progress, and catalog 
   assert.match(search, /getProductCardStatus/);
   assert.match(confidence, /How Kelus scores confidence/);
   assert.match(availability, /View comparison/);
+});
+
+test("discovery cards can show listing images from bundled snapshots", async () => {
+  const [catalog, image, card] = await Promise.all([
+    readFile(new URL("../lib/bundled-snapshot-catalog.ts", import.meta.url), "utf8"),
+    readFile(new URL("../components/CatalogProductImage.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/ProductListingCard.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(catalog, /listingImageFromSnapshot/);
+  assert.match(catalog, /listingImageUrl/);
+  assert.match(image, /optimizedRetailerImageUrl/);
+  assert.match(card, /CatalogProductImage/);
 });
 
 test("growth surfaces expose the product directory and snapshot-aware sitemap", async () => {

@@ -41,6 +41,22 @@ function snapshotFromResponse(body) {
   };
 }
 
+async function fetchOffers(url) {
+  const maxAttempts = Number(process.env.HARVEST_MAX_ATTEMPTS ?? 4);
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const response = await fetch(url, { headers: { accept: "application/json" } });
+    const body = await response.json().catch(() => null);
+    if (response.status === 429 && attempt < maxAttempts) {
+      const waitMs = delayMs * (2 ** attempt);
+      console.warn(`[harvest-production] rate limited, retrying in ${waitMs}ms`);
+      await sleep(waitMs);
+      continue;
+    }
+    return { response, body };
+  }
+  throw new Error("Harvest retries exhausted");
+}
+
 let targets = allCatalogSnapshotTargets();
 if (productFilter.length) {
   targets = targets.filter((criteria) => productFilter.includes(criteria.productSlug));
@@ -75,8 +91,7 @@ const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
     const product = getProductBySlug(criteria.productSlug);
     const url = `${baseUrl}/api/offers?${searchCriteriaToQuery(criteria)}`;
     try {
-      const response = await fetch(url, { headers: { accept: "application/json" } });
-      const body = await response.json().catch(() => null);
+      const { response, body } = await fetchOffers(url);
       if (!response.ok) {
         failed += 1;
         console.warn(`[harvest-production] failed ${key} status=${response.status} code=${body?.error?.code ?? "unknown"}`);
