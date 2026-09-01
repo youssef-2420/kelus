@@ -4,6 +4,7 @@ import { SearchControls } from "@/components/SearchControls";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { LiveShowcase } from "@/components/LiveShowcase";
+import { SiteFooter } from "@/components/SiteFooter";
 import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
 import { getSearchQuickStarts } from "@/lib/search-quick-starts";
 import { formatFromPrice } from "@/lib/bundled-snapshot-catalog";
@@ -54,6 +55,7 @@ export default function SearchPage() {
         <Icon name="lock" size={15} />
         Kelus compares exact configuration, known shipping, seller evidence, and price anomalies before recommending an offer.
       </p>
+      <SiteFooter />
     </main>
   );
 }

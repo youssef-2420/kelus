@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { KelusHeader } from "@/components/KelusHeader";
+import { SiteFooter } from "@/components/SiteFooter";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { categoryHubPath, categoryHubs, getCategoryHub, getCategoryHubProducts } from "@/lib/category-routes";
+import { formatFromPrice, getProductListingPreview } from "@/lib/bundled-snapshot-catalog";
 import { canonicalProductPath } from "@/lib/search-state";
 
 type PageProps = { params: Promise<{ slug: string }> };
@@ -66,7 +68,8 @@ export default async function CategoryHubPage({ params }: PageProps) {
         </div>
         <div className="category-hub-grid">
           {products.map((product) => {
-            const href = canonicalProductPath({
+            const preview = getProductListingPreview(product.slug);
+            const href = preview?.href ?? canonicalProductPath({
               productSlug: product.slug,
               variantId: product.searchAttribute.validVariantIds[0],
               condition: "new",
@@ -78,7 +81,9 @@ export default async function CategoryHubPage({ params }: PageProps) {
                 <span className="category-hub-card-copy">
                   <b>{product.name}</b>
                   <small>{product.brand}</small>
-                  <em>Compare live offers</em>
+                  {preview?.live && preview.fromPrice
+                    ? <em>From {formatFromPrice(preview.fromPrice)}</em>
+                    : <em>Compare live offers</em>}
                 </span>
                 <Icon name="arrow" size={16} />
               </Link>
@@ -86,6 +91,7 @@ export default async function CategoryHubPage({ params }: PageProps) {
           })}
         </div>
       </section>
+      <SiteFooter />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
     </main>
   );

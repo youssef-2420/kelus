@@ -38,14 +38,27 @@ function updatedLabel(value?: string) {
   return "Updated recently";
 }
 
-function staleUpdatedLabel(value?: string) {
-  if (!value || Number.isNaN(Date.parse(value))) return "Stale snapshot · Last update unavailable";
-  const formatted = new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "UTC",
-  }).format(new Date(value));
-  return `Stale snapshot · Last updated ${formatted} UTC`;
+function staleUpdatedLabel(value?: string, snapshotState?: OfferSearchResult["snapshotState"]) {
+  if (!value || Number.isNaN(Date.parse(value))) return "Validated comparison · Last update unavailable";
+  const ageMs = Math.max(0, Date.now() - Date.parse(value));
+  const minutes = Math.floor(ageMs / 60_000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  if (snapshotState === "expired" || days >= 7) {
+    const formatted = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }).format(new Date(value));
+    return `Older snapshot · Last updated ${formatted} UTC`;
+  }
+  if (days >= 1) return `Saved comparison · Updated ${days} day${days === 1 ? "" : "s"} ago`;
+  if (hours >= 1) return `Saved comparison · Updated ${hours} hr ago`;
+  if (minutes >= 1) return `Saved comparison · Updated ${minutes} min ago`;
+  return "Saved comparison · Updated just now";
+}
+
+function snapshotLooksVisuallyStale(result: OfferSearchResult | null) {
+  if (!result) return false;
+  if (result.snapshotState === "expired" || result.lastRefreshFailed || result.lastRefreshReturnedEmpty) return true;
+  if (!result.lastUpdated || Number.isNaN(Date.parse(result.lastUpdated))) return false;
+  return Date.now() - Date.parse(result.lastUpdated) > 24 * 60 * 60 * 1_000;
 }
 
 function realHistoryPoints(observations: PriceObservation[]) {
@@ -184,7 +197,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const lowest = decision.cheapest && decision.cheapest.id !== pick?.id ? decision.cheapest : cheaperAlternative?.offer;
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
-  const staleSnapshot = result?.snapshotState === "stale" || result?.snapshotState === "expired" || result?.lastRefreshFailed || result?.lastRefreshReturnedEmpty;
+  const staleSnapshot = snapshotLooksVisuallyStale(result);
   const alternativeCriteria = useMemo(() => getAlternativeProductCriteria(criteria), [criteria]);
 
   useEffect(() => {
@@ -250,11 +263,11 @@ function DataFreshness({ result, offerCount, loading, stale, refreshing }: { res
       ? "snapshot"
       : "live"
     : "empty";
-  const label = state === "checking" ? "CHECKING OFFERS" : state === "snapshot" ? "SAVED EBAY SNAPSHOT" : state === "live" ? "LIVE EBAY OFFERS" : "NO SAVED COMPARISON";
+  const label = state === "checking" ? "CHECKING OFFERS" : state === "snapshot" ? "VALIDATED COMPARISON" : state === "live" ? "LIVE EBAY OFFERS" : "NO SAVED COMPARISON";
   const detail = state === "checking"
     ? "Looking for a saved or live comparison"
     : state === "snapshot"
-      ? staleUpdatedLabel(result?.lastUpdated)
+      ? staleUpdatedLabel(result?.lastUpdated, result?.snapshotState)
       : state === "live"
         ? `${offerCount} offer${offerCount === 1 ? "" : "s"} · ${updatedLabel(result?.lastUpdated)}`
         : "Kelus has not saved validated offers for this configuration yet";
