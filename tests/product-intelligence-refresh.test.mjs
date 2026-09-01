@@ -62,10 +62,14 @@ test("catalog refresh rotates through all configurations without duplicate ident
   const second = catalogRefreshCriteria(Date.parse("2026-08-29T06:00:00.000Z"));
   const third = catalogRefreshCriteria(Date.parse("2026-08-29T12:00:00.000Z"));
   const fourth = catalogRefreshCriteria(Date.parse("2026-08-29T18:00:00.000Z"));
-  const combined = [...first, ...second, ...third, ...fourth];
+  const fifth = catalogRefreshCriteria(Date.parse("2026-08-30T00:00:00.000Z"));
+  const sixth = catalogRefreshCriteria(Date.parse("2026-08-30T06:00:00.000Z"));
+  const seventh = catalogRefreshCriteria(Date.parse("2026-08-30T12:00:00.000Z"));
+  const eighth = catalogRefreshCriteria(Date.parse("2026-08-30T18:00:00.000Z"));
+  const combined = [...first, ...second, ...third, ...fourth, ...fifth, ...sixth, ...seventh, ...eighth];
   assert.equal(first.length, 16);
-  assert.equal(new Set(combined.map((criteria) => `${criteria.productSlug}:${criteria.variantId}`)).size, 64);
-  assert.ok(combined.every((criteria) => criteria.condition === "any" && criteria.market === "us"));
+  assert.equal(new Set(combined.map((criteria) => `${criteria.productSlug}:${criteria.variantId}:${criteria.condition}`)).size, 128);
+  assert.ok(combined.every((criteria) => (criteria.condition === "new" || criteria.condition === "used") && criteria.market === "us"));
 });
 
 test("the deployed alert-monitor schedule starts snapshot refresh out of band", async () => {

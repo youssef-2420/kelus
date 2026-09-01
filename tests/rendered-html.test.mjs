@@ -57,18 +57,23 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
 });
 
 test("canonical product runtime contains record-specific SEO and structured-data wiring", async () => {
-  const [page, view] = await Promise.all([
+  const [page, view, intro] = await Promise.all([
     readFile(new URL("../app/product/[slug]/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/ProductSeoIntro.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(page, /export const dynamic = "force-dynamic"/);
   assert.match(page, /generateMetadata/);
   assert.match(page, /application\/ld\+json/);
   assert.match(page, /https:\/\/schema\.org/);
   assert.match(page, /alternates: \{ canonical: canonicalUrl \}/);
+  assert.match(page, /ProductSeoIntro/);
+  assert.match(intro, /product-seo-title/);
+  assert.match(intro, /validated live eBay offers/);
   assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);
   for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
   assert.match(page, /initialOutcome=\{initialOutcome\}/);
+  assert.match(view, /<h2 className="pi-title">/);
 });
 
 test("Product Intelligence presentation keeps production data wiring and the existing header", async () => {

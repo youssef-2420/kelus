@@ -13,7 +13,9 @@
     "test": "npm run build:static && node --experimental-strip-types --test tests/*.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "tsc --noEmit --incremental false -p tsconfig.typecheck.json",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "snapshots:warm:bundled": "node --experimental-strip-types scripts/warm-bundled-snapshots.mjs",
+    "snapshots:warm:production": "node --experimental-strip-types scripts/warm-production-snapshots.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.5",

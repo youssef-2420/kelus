@@ -1,13 +1,12 @@
 import type { SearchCriteria, OfferSearchResult } from "../types/kelus.ts";
+import { rotateCatalogSnapshotTargets } from "../lib/catalog-snapshot-targets.ts";
 import type { LiveOfferEnvironment } from "./server-offer-service.ts";
 import { listProductIntelligenceSnapshotsDue } from "./product-intelligence-snapshot-store.ts";
-import { products } from "../lib/demo-data.ts";
 import { productIntelligenceSnapshotKey } from "./product-intelligence-snapshot-store.ts";
 
 const refreshIntervalMs = 5 * 60 * 1_000;
 const maxSnapshotsPerRun = 20;
 const catalogSnapshotsPerRun = 16;
-const catalogRotationIntervalMs = 6 * 60 * 60 * 1_000;
 const concurrency = 3;
 
 type SnapshotSearch = (
@@ -17,17 +16,7 @@ type SnapshotSearch = (
 ) => Promise<OfferSearchResult>;
 
 export function catalogRefreshCriteria(now = Date.now(), limit = catalogSnapshotsPerRun): SearchCriteria[] {
-  const catalog = products.flatMap((product) => product.searchAttribute.validVariantIds.map((variantId): SearchCriteria => ({
-    productSlug: product.slug,
-    variantId,
-    condition: "any",
-    market: "us",
-  })));
-  if (!catalog.length) return [];
-  const safeLimit = Math.max(1, Math.min(Math.floor(limit), catalog.length));
-  const rotation = Math.floor(now / catalogRotationIntervalMs);
-  const start = (rotation * safeLimit) % catalog.length;
-  return Array.from({ length: safeLimit }, (_, index) => catalog[(start + index) % catalog.length]);
+  return rotateCatalogSnapshotTargets(now, limit);
 }
 
 async function recordRefreshRun(environment: LiveOfferEnvironment, summary: Record<string, number>, completedAt: string) {
