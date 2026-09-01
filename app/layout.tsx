@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { AuthProvider } from "@/components/AuthProvider";
 import { AppSignInToast } from "@/components/AppSignInToast";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { SiteJsonLd } from "@/components/SiteJsonLd";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,5 +18,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><head><GoogleAnalytics /></head><body><AuthProvider><AppSignInToast/>{children}</AuthProvider></body></html>;
+  return <html lang="en"><head><GoogleAnalytics /><SiteJsonLd /></head><body><AuthProvider><AppSignInToast/>{children}</AuthProvider></body></html>;
 }

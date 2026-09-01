@@ -124,7 +124,7 @@ test("Product Intelligence presentation keeps production data wiring and the exi
 });
 
 test("search is the single canonical product discovery experience", async () => {
-  const [home, page, launcher, search, header, styles, alerts, results] = await Promise.all([
+  const [home, page, launcher, search, header, styles, alerts, results, layout] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/search/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SearchLauncher.tsx", import.meta.url), "utf8"),
@@ -133,20 +133,23 @@ test("search is the single canonical product discovery experience", async () => 
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../app/alerts/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /SearchLauncher/);
   assert.doesNotMatch(home, /SearchControls/);
   assert.match(launcher, /href="\/search"/);
   assert.match(page, /SearchControls minimal minimalAction deferProductSelection focusOnMount/);
-  assert.match(page, /search-quick-starts/);
+  assert.match(page, /search-category-nav/);
+  assert.match(page, /alternates: \{ canonical: "https:\/\/kelus\.me\/search" \}/);
   assert.match(page, /hero-search-wrap/);
   assert.doesNotMatch(page, /redirect\(/);
   assert.match(search, /hero-search-category/);
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(styles, /\.hero-search-launcher/);
-  assert.match(styles, /\.search-quick-starts/);
+  assert.match(styles, /\.category-hub/);
   assert.match(alerts, /href="\/search"/);
   assert.match(results, /href="\/search">Edit search/);
+  assert.match(layout, /SiteJsonLd/);
   assert.doesNotMatch(alerts + results, /#product-search/);
 });
 

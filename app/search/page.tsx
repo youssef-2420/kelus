@@ -4,11 +4,13 @@ import { SearchControls } from "@/components/SearchControls";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { getDiscoverableProducts } from "@/lib/demo-data";
+import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
 import { canonicalProductPath } from "@/lib/search-state";
 
 export const metadata: Metadata = {
   title: "Search — Kelus",
   description: "Search supported electronics and compare validated eBay offers for the exact product, configuration, and condition you want.",
+  alternates: { canonical: "https://kelus.me/search" },
 };
 
 export default function SearchPage() {
@@ -42,6 +44,14 @@ export default function SearchPage() {
             ))}
           </div>
         </section>
+        <nav className="search-category-nav" aria-label="Browse by category">
+          <p className="eyebrow">Browse by category</p>
+          <div>
+            {categoryHubs.map((hub) => (
+              <Link key={hub.slug} href={categoryHubPath(hub.slug)}>{hub.label}</Link>
+            ))}
+          </div>
+        </nav>
       </section>
       <p className="search-page-note">
         <Icon name="lock" size={15} />
