@@ -71,9 +71,10 @@ test("canonical initial HTML resolves from its bundled real snapshot without tou
 
 test("canonical initial HTML prefers a fresher D1 snapshot over an older bundled snapshot", async () => {
   clearProductIntelligenceSnapshotMemory();
-  const bundled = readBundledProductIntelligenceSnapshot(criteria, Date.parse("2026-09-01T12:00:00.000Z"));
+  const bundled = readBundledProductIntelligenceSnapshot(criteria);
   assert.ok(bundled?.offers.length);
-  const fetchedAt = "2026-09-01T11:55:00.000Z";
+  assert.ok(bundled.lastUpdated);
+  const fetchedAt = new Date(Date.parse(bundled.lastUpdated) + 60_000).toISOString();
   const d1Result = { ...bundled, lastUpdated: fetchedAt };
   const statement = { bind() { return this; }, async first() { return { result_json: JSON.stringify(d1Result), fetched_at: fetchedAt }; } };
   const outcome = await resolveInitialProductIntelligence(criteria, { DB: { prepare: () => statement } }, 20);
