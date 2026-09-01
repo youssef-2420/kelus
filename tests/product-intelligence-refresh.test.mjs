@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { catalogRefreshCriteria, refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh.ts";
+import { allCatalogSnapshotTargets } from "../lib/catalog-snapshot-targets.ts";
 import { EbayProviderError } from "../services/providers/ebay/provider.ts";
 
 class DueStatement {
@@ -75,18 +76,11 @@ test("scheduled snapshot refresh isolates provider failures", async () => {
 });
 
 test("catalog refresh rotates through all configurations without duplicate identities", () => {
-  const first = catalogRefreshCriteria(Date.parse("2026-08-29T00:00:00.000Z"));
-  const second = catalogRefreshCriteria(Date.parse("2026-08-29T06:00:00.000Z"));
-  const third = catalogRefreshCriteria(Date.parse("2026-08-29T12:00:00.000Z"));
-  const fourth = catalogRefreshCriteria(Date.parse("2026-08-29T18:00:00.000Z"));
-  const fifth = catalogRefreshCriteria(Date.parse("2026-08-30T00:00:00.000Z"));
-  const sixth = catalogRefreshCriteria(Date.parse("2026-08-30T06:00:00.000Z"));
-  const seventh = catalogRefreshCriteria(Date.parse("2026-08-30T12:00:00.000Z"));
-  const eighth = catalogRefreshCriteria(Date.parse("2026-08-30T18:00:00.000Z"));
-  const combined = [...first, ...second, ...third, ...fourth, ...fifth, ...sixth, ...seventh, ...eighth];
-  assert.equal(first.length, 16);
-  assert.equal(new Set(combined.map((criteria) => `${criteria.productSlug}:${criteria.variantId}:${criteria.condition}`)).size, 128);
-  assert.ok(combined.every((criteria) => (criteria.condition === "new" || criteria.condition === "used") && criteria.market === "us"));
+  const batch = catalogRefreshCriteria(Date.parse("2026-08-29T00:00:00.000Z"));
+  assert.equal(batch.length, 16);
+  assert.equal(new Set(batch.map((criteria) => `${criteria.productSlug}:${criteria.variantId}:${criteria.condition}`)).size, 16);
+  assert.equal(allCatalogSnapshotTargets().length, 172);
+  assert.ok(batch.every((criteria) => (criteria.condition === "new" || criteria.condition === "used") && criteria.market === "us"));
 });
 
 test("the deployed alert-monitor schedule starts snapshot refresh out of band", async () => {

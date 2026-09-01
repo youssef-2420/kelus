@@ -1,12 +1,12 @@
 import { getProductsByCategory, productCategories } from "./demo-data.ts";
 
 export const categoryHubs = [
-  { slug: "smartphones", label: "Smartphones", category: "Smartphone", description: "Compare exact iPhone, Galaxy, and Pixel configurations with validated live eBay offers." },
-  { slug: "laptops", label: "Laptops", category: "Laptop", description: "Find the smartest MacBook, XPS, Spectre, and ThinkPad offer after Kelus checks configuration and seller evidence." },
-  { slug: "tablets", label: "Tablets", category: "Tablet", description: "Compare iPad Pro and iPad Air storage options with known totals and seller trust signals." },
-  { slug: "wearables", label: "Wearables", category: "Wearable", description: "Track Apple Watch Series and Ultra configurations with validated marketplace pricing." },
-  { slug: "audio", label: "Audio", category: "Audio", description: "Compare AirPods, Sony, Bose, and Beats offers with shipping and return terms included." },
-  { slug: "consoles", label: "Consoles", category: "Console", description: "See which PlayStation, Xbox, and Nintendo listing is actually worth buying." },
+  { slug: "smartphones", label: "Smartphones", category: "Smartphone", description: "Compare exact iPhone, Galaxy, Pixel, OnePlus, and foldable configurations with validated live eBay offers." },
+  { slug: "laptops", label: "Laptops", category: "Laptop", description: "Find the smartest MacBook, ROG, Yoga, XPS, Spectre, and ThinkPad offer after Kelus checks configuration and seller evidence." },
+  { slug: "tablets", label: "Tablets", category: "Tablet", description: "Compare iPad Pro, iPad mini, iPad Air, and Galaxy Tab storage options with known totals and seller trust signals." },
+  { slug: "wearables", label: "Wearables", category: "Wearable", description: "Track Apple Watch, Galaxy Watch, and Pixel Watch configurations with validated marketplace pricing." },
+  { slug: "audio", label: "Audio", category: "Audio", description: "Compare AirPods, Sony, Bose, Beats, and Sennheiser offers with shipping and return terms included." },
+  { slug: "consoles", label: "Consoles", category: "Console", description: "See which PlayStation, Xbox, Nintendo, or Steam Deck listing is actually worth buying." },
 ] as const;
 
 export type CategoryHubSlug = (typeof categoryHubs)[number]["slug"];

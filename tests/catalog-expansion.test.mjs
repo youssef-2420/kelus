@@ -29,7 +29,7 @@ function listing(title, categoryName) {
 }
 
 test("production catalog has deterministic unique identities for roughly fifty configurations", () => {
-  assert.ok(productVariants.length >= 50 && productVariants.length <= 80);
+  assert.ok(productVariants.length >= 50 && productVariants.length <= 100);
   assert.equal(new Set(products.map((product) => product.slug)).size, products.length);
   assert.equal(new Set(productVariants.map((variant) => variant.id)).size, productVariants.length);
   for (const product of products) for (const variantId of product.searchAttribute.validVariantIds) {
@@ -82,6 +82,10 @@ test("natural catalog searches resolve product and exact configuration across ca
     ["xbox series s 1tb", "xbox-series-s", "xbox-series-s-1tb"],
     ["nintendo switch oled", "nintendo-switch-oled", "nintendo-switch-oled"],
     ["dell xps 13 32gb 1tb", "dell-xps-13", "dell-xps-13-32-1tb"],
+    ["steam deck oled 1tb", "steam-deck-oled", "steam-deck-oled-1tb"],
+    ["galaxy z flip 7 256gb", "galaxy-z-flip-7", "galaxy-z-flip-7-256"],
+    ["airpods max", "airpods-max", "airpods-max-usbc"],
+    ["ipad mini 128gb", "ipad-mini-7", "ipad-mini-7-128"],
   ];
   for (const [query, slug, variantId] of cases) {
     const resolution = resolveProductSearch(query);
