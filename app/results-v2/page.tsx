@@ -90,6 +90,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const [attempt, setAttempt] = useState(0);
   const [updating, setUpdating] = useState(() => typeof window !== "undefined" && sessionStorage.getItem("kelus-pi-updating") === "1");
   const [refreshingSnapshot, setRefreshingSnapshot] = useState(false);
+  const [backgroundRefreshing, setBackgroundRefreshing] = useState(false);
   const criteriaKey = `${criteria.productSlug}:${criteria.variantId ?? ""}:${criteria.condition}`;
   const previousCriteriaKey = useRef(criteriaKey);
 
@@ -126,6 +127,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     let idleId: number | undefined;
     let timerId: number | undefined;
     const refresh = () => {
+      setBackgroundRefreshing(true);
       if (refreshPersistedResult) setRefreshingSnapshot(true);
       const request = attempt > 0 || cachedResult ? retrySearch(criteria) : startSearch(criteria);
       settleProductOfferLoad(request).then((outcome) => {
@@ -159,6 +161,8 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
         }
         setLoading(false);
         setUpdating(false);
+      }).finally(() => {
+        if (!cancelled) setBackgroundRefreshing(false);
       });
     };
     if (refreshMode === "idle") {
@@ -194,6 +198,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = snapshotLooksVisuallyStale(result);
+  const showRefreshBanner = backgroundRefreshing || (Boolean(staleSnapshot && offers.length && result?.refreshRecommended));
   const alternativeCriteria = useMemo(() => rankAlternativeCriteria(criteria, getAlternativeProductCriteria(criteria)), [criteria]);
 
   useEffect(() => {
@@ -209,6 +214,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h2 className="pi-title">{product.name}</h2><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)} refreshing={refreshingSnapshot}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
       {error && offers.length ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : error ? <ProductFallbackState kind="empty" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "pending"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
+        {showRefreshBanner && <p className="pi-refresh-banner" role="status" aria-live="polite"><i aria-hidden="true"/>Kelus is checking live eBay offers in the background. Prices shown may update when the check completes.</p>}
         {updating && loading && <div className="pi-updating-overlay" aria-busy="true" aria-live="polite"><ProductUpdatingOverlay/></div>}
         <DecisionReport decision={decision} lowest={lowest}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>

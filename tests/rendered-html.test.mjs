@@ -116,8 +116,11 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /OutboundRetailerCTA offer=\{pick\} label="View offer"/);
   assert.match(view, /if \(refreshPersistedResult\) return;/);
   assert.match(view, /setRefreshingSnapshot\(true\)/);
+  assert.match(view, /pi-refresh-banner/);
+  assert.match(view, /Kelus is checking live eBay offers in the background/);
   assert.match(view, /Checking for newer offers/);
   assert.match(styles, /\.pi-refreshing-status/);
+  assert.match(styles, /\.pi-refresh-banner/);
   assert.match(styles, /font-family:Inter[\s\S]*\/fonts\/inter-latin\.woff2/);
   assert.match(styles, /\.pi-selectors/);
   assert.match(styles, /\.pi-offer-reveal/);
