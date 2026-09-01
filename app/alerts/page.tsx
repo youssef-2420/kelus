@@ -165,8 +165,13 @@ export default function AlertsPage() {
     event.preventDefault();
     const parsed = target.trim() ? Number(target) : null;
     if (parsed !== null && (!Number.isFinite(parsed) || parsed <= 0)) return;
-    persist(alerts.map((item) => item.id === alert.id ? { ...item, targetPrice: parsed === null ? null : Math.round(parsed * 100) / 100 } : item));
+    const nextTarget = parsed === null ? null : Math.round(parsed * 100) / 100;
+    const updated = { ...alert, targetPrice: nextTarget };
+    persist(alerts.map((item) => item.id === alert.id ? updated : item));
     setEditing(null);
+    if (user && getAlertStatus(updated) === "target_reached") {
+      void refreshUserAlerts(user.id).catch(() => setSyncError("Your target was saved, but the notification could not be sent right now."));
+    }
   }
 
   function toggleExpanded(alertId: string, open: boolean) {

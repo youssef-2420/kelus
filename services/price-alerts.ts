@@ -22,6 +22,7 @@ export type PriceAlertRecord = {
   trackedPrice: number | null;
   currentPrice: number | null;
   targetPrice: number | null;
+  targetNotifiedAtPrice?: number | null;
   startedAt: string;
   lastCheckedAt?: string;
   lastSuccessfulAt?: string;

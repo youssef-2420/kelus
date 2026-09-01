@@ -43,11 +43,27 @@ function meaningfulDrop(previous: number | null, current: number | null) {
   return amount >= MEANINGFUL_DROP_MIN_DOLLARS && percent >= MEANINGFUL_DROP_MIN_PERCENT;
 }
 
+export function shouldEmitTargetReachedEvent(before: PriceAlertRecord, after: PriceAlertRecord) {
+  if (getAlertStatus(after) !== "target_reached" || after.state !== "ready" || after.targetPrice === null) return false;
+  if (getAlertStatus(before) !== "target_reached") return true;
+  if (before.targetNotifiedAtPrice === after.targetPrice) return false;
+  if (before.targetPrice !== after.targetPrice) {
+    return before.targetPrice === null
+      || before.currentPrice === null
+      || before.currentPrice > before.targetPrice;
+  }
+  return before.targetNotifiedAtPrice == null;
+}
+
 function eventFor(owner: OwnedPriceAlert, next: PriceAlertRecord, type: PriceAlertEventType, checkedAt: string): PriceAlertEvent {
   return {
+<<<<<<< HEAD
     eventKey: type === "target_reached"
       ? `${owner.userId}|${owner.alert.id}|${type}|${next.targetPrice ?? "unknown"}|${next.currentPrice ?? "unknown"}`
       : `${owner.userId}|${owner.alert.id}|${type}|${next.currentPrice ?? "unknown"}|${checkedAt}`,
+=======
+    eventKey: `${owner.userId}|${owner.alert.id}|${type}|${next.targetPrice ?? "none"}|${next.currentPrice ?? "unknown"}`,
+>>>>>>> 13e93eb (Fix target-reached email for alerts already at target)
     userId: owner.userId,
     alertId: owner.alert.id,
     type,
@@ -89,10 +105,13 @@ export async function monitorAlertRecords(
       const result = await search(group[0].alert.criteria);
       for (const owner of group) {
         const next = updateAlertFromResult(owner.alert, result, checkedAt);
-        const nextStatus = getAlertStatus(next);
         updates.push({ userId: owner.userId, alert: next });
         if (next.state !== "ready") continue;
+<<<<<<< HEAD
         if (nextStatus === "target_reached") events.push(eventFor(owner, next, "target_reached", checkedAt));
+=======
+        if (shouldEmitTargetReachedEvent(owner.alert, next)) events.push(eventFor(owner, next, "target_reached", checkedAt));
+>>>>>>> 13e93eb (Fix target-reached email for alerts already at target)
         else if (meaningfulDrop(owner.alert.currentPrice, next.currentPrice)) events.push(eventFor(owner, next, "price_drop", checkedAt));
       }
     } catch (reason) {

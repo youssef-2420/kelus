@@ -74,10 +74,45 @@ test("paused alerts are not fetched or changed", async () => {
   assert.equal(monitored.searchedConfigurations, 0);
 });
 
+<<<<<<< HEAD
 test("target-reached events use a stable key so repeated checks cannot duplicate email", async () => {
   const alert = { ...createAlert(criteria, result([offer("start", 899)])), targetPrice: 900 };
   const first = await monitorAlertRecords([{ userId: "user-a", alert }], async () => result([offer("same", 899)]), "2026-08-25T12:00:00Z");
   const second = await monitorAlertRecords([{ userId: "user-a", alert }], async () => result([offer("same", 899)]), "2026-08-25T13:00:00Z");
   assert.equal(first.events.length, 1);
   assert.equal(first.events[0].eventKey, second.events[0].eventKey);
+=======
+test("monitor emits target reached when an alert is already at target but has not been notified", async () => {
+  const alert = {
+    ...createAlert(criteria, result([offer("start", 1049.99)]), "2026-08-24T10:00:00Z"),
+    targetPrice: 1100,
+    currentPrice: 1049.99,
+    trackedPrice: 1099.99,
+  };
+  const monitored = await monitorAlertRecords(
+    [{ userId: "user-a", alert }],
+    async () => result([offer("fresh", 1049.99)]),
+    "2026-08-25T12:00:00Z",
+  );
+  assert.equal(monitored.events.length, 1);
+  assert.equal(monitored.events[0].type, "target_reached");
+  assert.equal(monitored.events[0].data.targetPrice, 1100);
+  assert.equal(monitored.events[0].data.currentPrice, 1049.99);
+});
+
+test("monitor does not re-emit target reached after notification was recorded", async () => {
+  const alert = {
+    ...createAlert(criteria, result([offer("start", 1049.99)]), "2026-08-24T10:00:00Z"),
+    targetPrice: 1100,
+    currentPrice: 1049.99,
+    trackedPrice: 1099.99,
+    targetNotifiedAtPrice: 1100,
+  };
+  const monitored = await monitorAlertRecords(
+    [{ userId: "user-a", alert }],
+    async () => result([offer("fresh", 1049.99)]),
+    "2026-08-25T12:00:00Z",
+  );
+  assert.equal(monitored.events.length, 0);
+>>>>>>> 13e93eb (Fix target-reached email for alerts already at target)
 });

@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PriceAlertRecord } from "./price-alerts.ts";
 import type { PriceAlertEvent } from "./alert-monitor.ts";
 import { emailDeliveryConfigured, sendTargetReachedEmail, type TargetReachedEmailData, type TransactionalEmailEnvironment } from "./transactional-email.ts";
 
@@ -30,6 +31,20 @@ async function claimNotifications(client: SupabaseClient) {
   return (data ?? []) as ClaimedNotification[];
 }
 
+async function markTargetNotified(client: SupabaseClient, notification: ClaimedNotification) {
+  const targetPrice = notification.event_data.targetPrice;
+  if (targetPrice === null) return;
+  const { data, error: readError } = await client.from("price_alerts").select("alert_data").eq("user_id", notification.user_id).eq("id", notification.alert_id).maybeSingle();
+  if (readError || !data?.alert_data) return;
+  const alert = data.alert_data as PriceAlertRecord;
+  if (alert.targetNotifiedAtPrice === targetPrice) return;
+  const { error } = await client.from("price_alerts").update({
+    alert_data: { ...alert, targetNotifiedAtPrice: targetPrice },
+    updated_at: new Date().toISOString(),
+  }).eq("user_id", notification.user_id).eq("id", notification.alert_id);
+  if (error) console.error("[alert-email] target_notified_update_failed", { alertId: notification.alert_id, message: error.message });
+}
+
 async function markSent(client: SupabaseClient, notification: ClaimedNotification, providerMessageId: string) {
   const { error } = await client.from("price_alert_notifications").update({
     status: "sent",
@@ -39,6 +54,7 @@ async function markSent(client: SupabaseClient, notification: ClaimedNotificatio
     provider_message_id: providerMessageId,
   }).eq("id", notification.notification_id).eq("status", "sending");
   if (error) throw error;
+  await markTargetNotified(client, notification);
 }
 
 async function markFailed(client: SupabaseClient, notification: ClaimedNotification, message: string) {
