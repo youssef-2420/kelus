@@ -9,6 +9,7 @@ export type TargetReachedEmailData = {
   trackedPrice: number;
   currentPrice: number;
   priceDrop: number;
+  imageUrl?: string | null;
   comparisonHref: string;
   imageUrl?: string;
 };
@@ -30,6 +31,7 @@ export function buildTargetReachedEmail(data: TargetReachedEmailData) {
     ? `<p style="margin:0 0 20px"><img src="${escapeHtml(data.imageUrl)}" alt="" width="120" height="120" style="display:block;border-radius:12px;border:1px solid #dbe7e2;object-fit:contain;background:#fff"/></p>`
     : "";
   const subject = `Target reached: ${data.productName}`;
+  const imageUrl = data.imageUrl?.startsWith("https://") ? escapeHtml(data.imageUrl) : null;
   const text = [
     `Your Kelus target price has been reached for ${data.productName} · ${data.configuration}.`,
     `Tracked at: ${money(data.trackedPrice)}`,
@@ -41,6 +43,7 @@ export function buildTargetReachedEmail(data: TargetReachedEmailData) {
     <p style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#0d6b5d">Target reached</p>
     ${imageBlock}<h1 style="font-size:28px;margin:0 0 8px">${product}</h1>
     <p style="color:#5f6f6b;margin:0 0 24px">${configuration}</p>
+    ${imageUrl ? `<img src="${imageUrl}" alt="" width="180" height="180" style="display:block;width:180px;height:180px;object-fit:contain;border:1px solid #e0e6e2;border-radius:12px;margin:0 0 24px;background:#fff">` : ""}
     <p>Tracked at: <strong>${money(data.trackedPrice)}</strong><br>Current best comparable price: <strong>${money(data.currentPrice)}</strong><br>Price drop: <strong>${money(data.priceDrop)}</strong></p>
     <p style="margin-top:28px"><a href="${comparisonUrl}" style="display:inline-block;background:#0b5147;color:#fff;text-decoration:none;padding:13px 20px;border-radius:8px">View on Kelus →</a></p>
     <p style="font-size:12px;color:#7b8885;margin-top:28px">This transactional email was sent because you created a Kelus price alert.</p>

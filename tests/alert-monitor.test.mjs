@@ -73,3 +73,11 @@ test("paused alerts are not fetched or changed", async () => {
   assert.equal(monitored.updates.length, 0);
   assert.equal(monitored.searchedConfigurations, 0);
 });
+
+test("target-reached events use a stable key so repeated checks cannot duplicate email", async () => {
+  const alert = { ...createAlert(criteria, result([offer("start", 899)])), targetPrice: 900 };
+  const first = await monitorAlertRecords([{ userId: "user-a", alert }], async () => result([offer("same", 899)]), "2026-08-25T12:00:00Z");
+  const second = await monitorAlertRecords([{ userId: "user-a", alert }], async () => result([offer("same", 899)]), "2026-08-25T13:00:00Z");
+  assert.equal(first.events.length, 1);
+  assert.equal(first.events[0].eventKey, second.events[0].eventKey);
+});

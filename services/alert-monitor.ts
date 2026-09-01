@@ -21,6 +21,7 @@ export type PriceAlertEvent = {
     currentPrice: number | null;
     priceDrop: number | null;
     targetPrice: number | null;
+    imageUrl: string | null;
     comparisonHref: string;
     imageUrl?: string;
   };
@@ -45,7 +46,9 @@ function meaningfulDrop(previous: number | null, current: number | null) {
 
 function eventFor(owner: OwnedPriceAlert, next: PriceAlertRecord, type: PriceAlertEventType, checkedAt: string): PriceAlertEvent {
   return {
-    eventKey: `${owner.userId}|${owner.alert.id}|${type}|${next.currentPrice ?? "unknown"}|${checkedAt}`,
+    eventKey: type === "target_reached"
+      ? `${owner.userId}|${owner.alert.id}|${type}|${next.targetPrice ?? "unknown"}|${next.currentPrice ?? "unknown"}`
+      : `${owner.userId}|${owner.alert.id}|${type}|${next.currentPrice ?? "unknown"}|${checkedAt}`,
     userId: owner.userId,
     alertId: owner.alert.id,
     type,
@@ -60,6 +63,7 @@ function eventFor(owner: OwnedPriceAlert, next: PriceAlertRecord, type: PriceAle
         ? null
         : Math.max(0, roundMoney(next.trackedPrice - next.currentPrice)),
       targetPrice: next.targetPrice,
+      imageUrl: next.imageUrl?.startsWith("https://") ? next.imageUrl : null,
       comparisonHref: canonicalProductPath(next.criteria),
       imageUrl: next.imageUrl,
     },
@@ -86,12 +90,11 @@ export async function monitorAlertRecords(
     try {
       const result = await search(group[0].alert.criteria);
       for (const owner of group) {
-        const previousStatus = getAlertStatus(owner.alert);
         const next = updateAlertFromResult(owner.alert, result, checkedAt);
         const nextStatus = getAlertStatus(next);
         updates.push({ userId: owner.userId, alert: next });
         if (next.state !== "ready") continue;
-        if (nextStatus === "target_reached" && previousStatus !== "target_reached") events.push(eventFor(owner, next, "target_reached", checkedAt));
+        if (nextStatus === "target_reached") events.push(eventFor(owner, next, "target_reached", checkedAt));
         else if (meaningfulDrop(owner.alert.currentPrice, next.currentPrice)) events.push(eventFor(owner, next, "price_drop", checkedAt));
       }
     } catch (reason) {

@@ -8,6 +8,7 @@ const data = {
   trackedPrice: 899,
   currentPrice: 799,
   priceDrop: 100,
+  imageUrl: "https://i.ebayimg.com/images/g/example/s-l500.jpg",
   comparisonHref: "/product/iphone-17-pro/iphone-17-pro-256gb/new",
 };
 
@@ -27,7 +28,13 @@ test("target-reached email contains only exact persisted product and price facts
   assert.match(email.text, /Current best comparable price: \$799/);
   assert.match(email.text, /Price drop: \$100/);
   assert.equal(email.comparisonUrl, `https://kelus.me${data.comparisonHref}`);
+  assert.match(email.html, /<img[^>]+i\.ebayimg\.com/);
   assert.doesNotMatch(email.text + email.html, /warranty|entire market|marketing/i);
+});
+
+test("target-reached email omits an unavailable or unsafe product image", () => {
+  assert.doesNotMatch(buildTargetReachedEmail({ ...data, imageUrl: null }).html, /<img/);
+  assert.doesNotMatch(buildTargetReachedEmail({ ...data, imageUrl: "javascript:alert(1)" }).html, /<img/);
 });
 
 test("Resend request uses a stable provider idempotency key", async () => {
