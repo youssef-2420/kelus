@@ -15,6 +15,17 @@ type SnapshotSearch = (
   fetcher?: typeof fetch,
 ) => Promise<OfferSearchResult>;
 
+function refreshFailure(error: unknown) {
+  const message = error instanceof Error ? error.message : "Unknown error";
+  const providerCode = typeof error === "object" && error !== null && "code" in error && typeof error.code === "string"
+    ? error.code
+    : undefined;
+  return {
+    code: providerCode ?? (message.includes("not configured") ? "provider_unconfigured" : "provider_error"),
+    message,
+  };
+}
+
 export function catalogRefreshCriteria(now = Date.now(), limit = catalogSnapshotsPerRun): SearchCriteria[] {
   return rotateCatalogSnapshotTargets(now, limit);
 }
@@ -71,8 +82,14 @@ export async function refreshPersistedProductIntelligenceSnapshots(
         const result = await search(criteria, environment, fetcher);
         if (result.offers.length) refreshed += 1;
         else empty += 1;
-      } catch {
+      } catch (error) {
         failed += 1;
+        console.warn("[product-intelligence] catalog_refresh_failed", {
+          productSlug: criteria.productSlug,
+          variantId: criteria.variantId,
+          condition: criteria.condition,
+          ...refreshFailure(error),
+        });
       }
     }
   };
@@ -88,5 +105,6 @@ export async function refreshPersistedProductIntelligenceSnapshots(
     durationMs: Date.now() - startedAt,
   };
   await recordRefreshRun(environment, summary, new Date().toISOString());
+  console.info("[product-intelligence] catalog_refresh_complete", summary);
   return summary;
 }

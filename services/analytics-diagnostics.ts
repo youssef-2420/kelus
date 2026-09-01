@@ -9,6 +9,7 @@ export type DiagnosticsDatabase = { prepare(sql: string): { bind(...values: unkn
 
 type CountRow = { label: string; count: number };
 type SnapshotAuditRow = { canonical_product_id: string; variant_id: string; condition: string; market: string; result_json: string; fetched_at: string };
+type CatalogRefreshRunRow = { completed_at: string; queued: number; refreshed: number; empty: number; failed: number; duration_ms: number };
 export type RecommendationQualityAudit = { product: string; configuration: string; condition: string; status: "PASS" | "REVIEW" | "FAIL"; offerCount: number; confidence: string; lastUpdated: string | null; reasons: string[] };
 
 async function rows<T>(db: DiagnosticsDatabase, sql: string, ...bindings: unknown[]) {
@@ -67,12 +68,13 @@ async function recommendationQualityAudits(db: DiagnosticsDatabase, products: Co
 export async function getAnalyticsDiagnostics(db: DiagnosticsDatabase | undefined, now = new Date()) {
   if (!db) throw new Error("Analytics storage is unavailable.");
   const since = new Date(now.getTime() - 30 * 86_400_000).toISOString();
-  const [events, products, unsupported, interestRequests, outcomes] = await Promise.all([
+  const [events, products, unsupported, interestRequests, outcomes, catalogRefreshRows] = await Promise.all([
     rows<CountRow>(db, `SELECT event_name AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? GROUP BY event_name`, since),
     rows<CountRow>(db, `SELECT product_slug AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? AND event_name = 'product_resolved' AND product_slug IS NOT NULL GROUP BY product_slug ORDER BY count DESC LIMIT 10`, since),
     rows<CountRow>(db, `SELECT query AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? AND event_name = 'search_unsupported' AND query IS NOT NULL GROUP BY query ORDER BY count DESC LIMIT 10`, since),
     listTopProductInterestRequests(db, since, 10),
     rows<CountRow>(db, `SELECT CASE WHEN event_name = 'live_provider_search_failed' THEN 'Provider failures' WHEN offer_count = 0 THEN 'Zero valid offers' ELSE 'Successful offer refreshes' END AS label, COUNT(*) AS count FROM analytics_events WHERE occurred_at >= ? AND event_name IN ('live_provider_search_completed','live_provider_search_failed') GROUP BY label`, since),
+    rows<CatalogRefreshRunRow>(db, `SELECT completed_at, queued, refreshed, empty, failed, duration_ms FROM catalog_refresh_runs ORDER BY completed_at DESC LIMIT 10`),
   ]);
   const counts = Object.fromEntries(events.map((row) => [row.label, Number(row.count)]));
   const recommendationQuality = await recommendationQualityAudits(db, products, now);
@@ -96,6 +98,14 @@ export async function getAnalyticsDiagnostics(db: DiagnosticsDatabase | undefine
     unsupportedSearches: unsupported.map((row) => ({ label: row.label, count: Number(row.count) })),
     productInterestRequests: interestRequests,
     providerOutcomes: outcomes.map((row) => ({ label: row.label, count: Number(row.count) })),
+    catalogRefreshRuns: catalogRefreshRows.map((row) => ({
+      completedAt: row.completed_at,
+      queued: Number(row.queued),
+      refreshed: Number(row.refreshed),
+      empty: Number(row.empty),
+      failed: Number(row.failed),
+      durationMs: Number(row.duration_ms),
+    })),
     recommendationQuality,
   };
 }

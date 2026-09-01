@@ -2,24 +2,35 @@ import type { ProductOfferLoadOutcome } from "./product-offer-load.ts";
 import { readBundledProductIntelligenceSnapshot } from "./bundled-product-intelligence-snapshots.ts";
 import { readProductIntelligenceSnapshot } from "./product-intelligence-snapshot-store.ts";
 import { getKelusRuntimeEnvironment } from "./runtime-environment.ts";
-import type { SearchCriteria } from "../types/kelus.ts";
+import type { OfferSearchResult, SearchCriteria } from "../types/kelus.ts";
 
-export async function resolveInitialProductIntelligence(criteria: SearchCriteria): Promise<ProductOfferLoadOutcome> {
+function snapshotTime(result: OfferSearchResult | null) {
+  const value = result?.lastUpdated ? Date.parse(result.lastUpdated) : Number.NaN;
+  return Number.isNaN(value) ? Number.NEGATIVE_INFINITY : value;
+}
+
+export async function resolveInitialProductIntelligence(
+  criteria: SearchCriteria,
+  environmentOverride = getKelusRuntimeEnvironment(),
+  persistedTimeoutMs = 500,
+): Promise<ProductOfferLoadOutcome> {
   const startedAt = Date.now();
   const bundled = readBundledProductIntelligenceSnapshot(criteria);
-  const environment = getKelusRuntimeEnvironment();
-  let result = bundled;
-  if (!result && environment?.DB) {
+  const environment = environmentOverride;
+  let persisted: OfferSearchResult | null = null;
+  if (environment?.DB) {
     let timeout: ReturnType<typeof setTimeout> | undefined;
     try {
-      result = await Promise.race([
+      persisted = await Promise.race([
         readProductIntelligenceSnapshot(environment.DB, criteria).catch(() => null),
-        new Promise<null>((resolve) => { timeout = setTimeout(() => resolve(null), 500); }),
+        new Promise<null>((resolve) => { timeout = setTimeout(() => resolve(null), persistedTimeoutMs); }),
       ]);
     } finally {
       if (timeout) clearTimeout(timeout);
     }
   }
+  const result = persisted && (!bundled || snapshotTime(persisted) >= snapshotTime(bundled)) ? persisted : bundled;
+  const source = result === persisted ? "d1_snapshot" : result === bundled ? "bundled_snapshot" : "snapshot_not_yet_available";
   if (!result) {
     const outcome: ProductOfferLoadOutcome = {
       status: "EMPTY",
@@ -34,7 +45,7 @@ export async function resolveInitialProductIntelligence(criteria: SearchCriteria
       },
     };
     console.info("[product-intelligence] initial_resolved", {
-      source: "snapshot_not_yet_available",
+      source,
       status: outcome.status,
       durationMs: Date.now() - startedAt,
       offers: 0,
@@ -45,7 +56,7 @@ export async function resolveInitialProductIntelligence(criteria: SearchCriteria
     ? { status: "SUCCESS", result }
     : { status: "EMPTY", result };
   console.info("[product-intelligence] initial_resolved", {
-    source: bundled ? "bundled_snapshot" : "d1_snapshot",
+    source,
     status: outcome.status,
     durationMs: Date.now() - startedAt,
     offers: result.offers.length,

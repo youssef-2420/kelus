@@ -3,6 +3,8 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { resolveInitialProductIntelligenceCacheFirst, resolveInitialProductIntelligenceWithLoader } from "../services/server-product-intelligence-core.ts";
 import { resolveInitialProductIntelligence } from "../services/server-product-intelligence.ts";
+import { readBundledProductIntelligenceSnapshot } from "../services/bundled-product-intelligence-snapshots.ts";
+import { clearProductIntelligenceSnapshotMemory } from "../services/product-intelligence-snapshot-store.ts";
 
 const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" };
 const result = (offers) => ({ offers, observations: [], observationsStored: false, failedProviders: [], connectedProviders: ["ebay"], isDemo: false });
@@ -65,6 +67,19 @@ test("canonical initial HTML resolves from its bundled real snapshot without tou
   assert.equal(outcome.status, "SUCCESS");
   assert.ok(outcome.result.offers.length > 0);
   assert.ok(Date.now() - startedAt < 100);
+});
+
+test("canonical initial HTML prefers a fresher D1 snapshot over an older bundled snapshot", async () => {
+  clearProductIntelligenceSnapshotMemory();
+  const bundled = readBundledProductIntelligenceSnapshot(criteria, Date.parse("2026-09-01T12:00:00.000Z"));
+  assert.ok(bundled?.offers.length);
+  const fetchedAt = "2026-09-01T11:55:00.000Z";
+  const d1Result = { ...bundled, lastUpdated: fetchedAt };
+  const statement = { bind() { return this; }, async first() { return { result_json: JSON.stringify(d1Result), fetched_at: fetchedAt }; } };
+  const outcome = await resolveInitialProductIntelligence(criteria, { DB: { prepare: () => statement } }, 20);
+  assert.equal(outcome.status, "SUCCESS");
+  assert.equal(outcome.result.lastUpdated, fetchedAt);
+  clearProductIntelligenceSnapshotMemory();
 });
 
 test("a canonical product without a snapshot returns an immediate refreshable empty state", async () => {

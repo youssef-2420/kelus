@@ -8,6 +8,7 @@ const resultSets = [
   [{ label: "dyson headphones", count: 3 }],
   [{ label: "steam deck", count: 2 }],
   [{ label: "Zero valid offers", count: 2 }],
+  [{ completed_at: "2026-08-30T11:45:00Z", queued: 20, refreshed: 18, empty: 1, failed: 1, duration_ms: 1250 }],
   [],
 ];
 const db = { prepare: () => ({ bind: () => ({ all: async () => ({ results: resultSets.shift() }) }) }) };
@@ -20,6 +21,7 @@ test("diagnostics calculate factual funnel rates and preserve ranked rows", asyn
   assert.equal(report.topProducts[0].label, "iphone-17-pro");
   assert.equal(report.unsupportedSearches[0].label, "dyson headphones");
   assert.equal(report.productInterestRequests[0].label, "steam deck");
+  assert.deepEqual(report.catalogRefreshRuns[0], { completedAt: "2026-08-30T11:45:00Z", queued: 20, refreshed: 18, empty: 1, failed: 1, durationMs: 1250 });
   assert.equal(report.recommendationQuality[0].status, "FAIL");
   assert.match(report.recommendationQuality[0].reasons[0], /No persisted offer snapshot/);
 });

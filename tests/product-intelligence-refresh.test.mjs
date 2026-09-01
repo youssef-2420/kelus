@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { catalogRefreshCriteria, refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh.ts";
+import { EbayProviderError } from "../services/providers/ebay/provider.ts";
 
 class DueStatement {
   constructor(rows) { this.rows = rows; }
@@ -44,17 +45,33 @@ test("scheduled snapshot refresh isolates provider failures", async () => {
     condition: "new",
     market: "us",
   }]) };
-  const result = await refreshPersistedProductIntelligenceSnapshots(
-    { DB: database },
-    fetch,
-    Date.parse("2026-08-27T12:00:00.000Z"),
-    async () => { throw new Error("eBay unavailable"); },
-    { catalogCriteria: [] },
-  );
-  assert.equal(result.due, 1);
-  assert.equal(result.refreshed, 0);
-  assert.equal(result.empty, 0);
-  assert.equal(result.failed, 1);
+  const warnings = [];
+  const originalWarn = console.warn;
+  console.warn = (...values) => warnings.push(values);
+  try {
+    const result = await refreshPersistedProductIntelligenceSnapshots(
+      { DB: database },
+      fetch,
+      Date.parse("2026-08-27T12:00:00.000Z"),
+      async () => { throw new EbayProviderError("eBay quota reached", "rate_limited", 429); },
+      { catalogCriteria: [] },
+    );
+    assert.equal(result.due, 1);
+    assert.equal(result.refreshed, 0);
+    assert.equal(result.empty, 0);
+    assert.equal(result.failed, 1);
+  } finally {
+    console.warn = originalWarn;
+  }
+  const failure = warnings.find(([event]) => event === "[product-intelligence] catalog_refresh_failed");
+  assert.ok(failure);
+  assert.deepEqual(failure[1], {
+    productSlug: "iphone-17-pro",
+    variantId: "iphone-17-pro-256gb",
+    condition: "new",
+    code: "rate_limited",
+    message: "eBay quota reached",
+  });
 });
 
 test("catalog refresh rotates through all configurations without duplicate identities", () => {
