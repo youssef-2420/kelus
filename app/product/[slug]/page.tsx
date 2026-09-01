@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
 import { ProductSeoIntro } from "@/components/ProductSeoIntro";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
 import type { SeoIndexedCondition } from "@/lib/catalog-snapshot-targets";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
+import { shouldRedirectToValidatedAlternative } from "@/lib/preferred-product-criteria";
 import { hasBundledSnapshot } from "@/lib/bundled-snapshot-catalog";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
 import { CONDITIONS } from "@/types/kelus";
@@ -52,6 +53,10 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   if (!resolved) notFound();
   const { criteria, product, variant } = resolved;
   const initialOutcome = await resolveInitialProductIntelligence(criteria);
+  const hasLiveOffers = initialOutcome.status === "SUCCESS"
+    && initialOutcome.result.offers.some((offer) => offer.dataSource === "live");
+  const redirectCriteria = shouldRedirectToValidatedAlternative(criteria, hasLiveOffers);
+  if (redirectCriteria) redirect(canonicalProductPath(redirectCriteria));
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
   const offers = initialOutcome.status === "SUCCESS" ? initialOutcome.result.offers.filter((offer) => offer.dataSource === "live").slice(0, 5) : [];
   const structuredData = {

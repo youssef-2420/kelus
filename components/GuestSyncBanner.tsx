@@ -11,13 +11,13 @@ export function GuestSyncBanner() {
   return (
     <div className="guest-sync-banner" role="status">
       <div className="guest-sync-banner-copy">
-        <Icon name="lock" size={18} />
+        <Icon name="bell" size={18} />
         <div>
-          <b>Sign in to sync alerts across devices</b>
-          <p>Tracked products stay on this browser until you sign in. Kelus can then check prices in the background.</p>
+          <b>Guest alerts work on this device</b>
+          <p>Create up to a few price alerts without signing in. Sign in when you want email notifications and background price checks across devices.</p>
         </div>
       </div>
-      <SignInDialog label="Sign in" className="guest-sync-banner-action" />
+      <SignInDialog label="Sign in for email alerts" className="guest-sync-banner-action" />
     </div>
   );
 }

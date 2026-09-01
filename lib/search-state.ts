@@ -3,7 +3,7 @@ import { getProductBySlug, getVariantById, getVariantsForProduct, products } fro
 import { getSearchAttributeVariants, isValidSearchConfiguration } from "./product-attributes.ts";
 
 const validConditions: ConditionFilter[] = ["any", "new", "used", "refurbished"];
-export const defaultSearch: SearchCriteria = { productSlug: "iphone-17", variantId: "iphone-17-256", condition: "any", market: "us" };
+export const defaultSearch: SearchCriteria = { productSlug: "iphone-17", variantId: "iphone-17-256", condition: "new", market: "us" };
 
 export function resolveConditionFromQuery(query: string, fallback: ConditionFilter = defaultSearch.condition): ConditionFilter {
   const normalized = query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();

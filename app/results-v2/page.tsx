@@ -290,7 +290,14 @@ function ProductFallbackState({ kind, detail, alternatives, criteria, productNam
       : { title: "Comparison not ready yet.", body: "Kelus has not saved validated offers for this exact configuration yet. Kelus refreshes coverage on a schedule — track this setup or open a nearby configuration that already has live data." };
   return <section className="nr-state pi-fallback" aria-live="polite">
     <div className="pi-fallback-copy"><p className="pi-label">Offer status</p><h2>{copy.title}</h2><p>{copy.body}</p></div>
-    {liveAlternative && <div className="pi-fallback-nearest"><p className="pi-label">Available now</p><Link href={liveAlternative.preview.href} className="pi-fallback-nearest-card">{alternativeLabel(liveAlternative.alternative)} · From {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(liveAlternative.preview.fromPrice)} <Icon name="arrow" size={14}/></Link><small>Same product with a nearby configuration Kelus has already validated.</small></div>}
+    {liveAlternative && <div className="pi-fallback-nearest is-primary">
+      <p className="pi-label">Live comparison available</p>
+      <Link href={liveAlternative.preview.href} className="pi-fallback-nearest-card pi-fallback-nearest-card--primary">
+        <span><strong>{alternativeLabel(liveAlternative.alternative)}</strong><small>Validated now · From {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(liveAlternative.preview.fromPrice)}</small></span>
+        <Icon name="arrow" size={16}/>
+      </Link>
+      <small>We opened the closest configuration Kelus already tracks for this product.</small>
+    </div>}
     <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/search">Edit search</Link></div>
     <div className="pi-fallback-track"><div><b>Get notified when this configuration is ready</b><span>Save it to My Alerts and Kelus will check again when validated offers appear.</span></div><WatchButton product={productName} criteria={criteria} allowUnavailable/></div>
     {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => {

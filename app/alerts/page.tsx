@@ -228,6 +228,6 @@ export default function AlertsPage() {
         })}
       </div> : <div className="alerts-empty" aria-live="polite"><span className="alerts-empty-icon"><Icon name="bell" size={25}/></span><p className="eyebrow">Nothing to watch yet</p><h2>Let Kelus watch the price.</h2><p>Choose an exact product, configuration, and condition. Kelus will keep the real first price as your baseline—never an estimate.</p><Link className="button button-primary" href="/search">Add your first product <Icon name="arrow" size={17}/></Link></div>)}
     </section>
-    <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account, persist across devices, and are checked automatically. Kelus emails you when a saved target price is reached." : "Alerts are stored locally until you sign in. Sign in to get emailed when your target price is reached, and use Check prices to refresh active alerts without reloading."}</p>
+    <p className="alerts-local-note"><Icon name="lock" size={16}/>{user ? "Your alerts are protected by your Kelus account, persist across devices, and are checked automatically. Kelus emails you when a saved target price is reached." : "Guest alerts save on this device. Sign in to get emailed when your target is reached and to run automatic background price checks."}</p>
   </main>;
 }
