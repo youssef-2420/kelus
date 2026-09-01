@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { KelusHeader } from "@/components/KelusHeader";
-import { ProductListingCard } from "@/components/ProductListingCard";
+import { ProductsDirectory } from "@/components/ProductsDirectory";
 import { SiteFooter } from "@/components/SiteFooter";
 import { CatalogAvailabilityLegend } from "@/components/CatalogAvailabilityLegend";
 import { Icon } from "@/components/Icon";
@@ -58,20 +58,7 @@ export default function ProductsPage() {
           <Link className="text-link" href="/coverage">Coverage overview <Icon name="arrow" size={15} /></Link>
         </div>
         <CatalogAvailabilityLegend />
-        {productCategories.map((category) => {
-          const items = previews.filter((preview) => preview.category === category);
-          if (!items.length) return null;
-          return (
-            <section key={category} className="products-directory-group" aria-label={category}>
-              <h2>{category}</h2>
-              <div className="products-directory-grid">
-                {items.map((preview) => (
-                  <ProductListingCard key={preview.productSlug} preview={preview} />
-                ))}
-              </div>
-            </section>
-          );
-        })}
+        <ProductsDirectory previews={previews} categories={productCategories} />
       </section>
       <SiteFooter />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />

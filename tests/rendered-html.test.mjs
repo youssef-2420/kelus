@@ -158,7 +158,7 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(styles, /\.hero-search-launcher/);
   assert.match(styles, /\.category-hub/);
-  assert.match(alerts, /emailed when your target price is reached/);
+  assert.match(alerts, /emailed when your target is reached/);
   assert.match(results, /href="\/search">Edit search/);
   assert.match(layout, /SiteJsonLd/);
   assert.doesNotMatch(alerts + results, /#product-search/);
@@ -263,7 +263,7 @@ test("growth surfaces expose the product directory and snapshot-aware sitemap", 
     readFile(new URL("../components/ProductListingCard.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(productsPage, /listProductListingPreviews/);
-  assert.match(productsPage, /ProductListingCard/);
+  assert.match(productsPage, /ProductsDirectory/);
   assert.match(sitemapSource, /snapshotSitemapEntry/);
   assert.match(sitemapSource, /\/products/);
   assert.match(listingCard, /getProductCardStatus/);

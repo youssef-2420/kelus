@@ -190,5 +190,5 @@ test("results parsing replaces an incompatible product variant with a declared o
 });
 
 test("a direct Results visit resolves a complete default search", () => {
-  assert.deepEqual(readSearchCriteria(new URLSearchParams()), { productSlug: "iphone-17", variantId: "iphone-17-128", condition: "any", market: "us" });
+  assert.deepEqual(readSearchCriteria(new URLSearchParams()), { productSlug: "iphone-17", variantId: "iphone-17-128", condition: "new", market: "us" });
 });

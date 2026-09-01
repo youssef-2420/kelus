@@ -19,7 +19,7 @@ export function ProductListingCard({ preview, compact = false }: Props) {
       <span className="product-listing-copy">
         <span className="product-listing-kicker">
           {preview.brand}
-          {validated ? <em className="product-listing-live">Validated</em> : null}
+          {validated ? <em className="product-listing-live">Validated</em> : <em className="product-listing-indexed">Indexed</em>}
         </span>
         <b>{preview.productName}</b>
         <small>{preview.variantLabel} · {preview.condition === "new" ? "New" : preview.condition === "used" ? "Used" : preview.condition}</small>
