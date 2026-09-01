@@ -31,7 +31,6 @@ export default function Home() {
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
       <div id="product-search" className="hero-search-wrap">
         <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
-        <Link className="hero-search-link" href="/search">Open full search <Icon name="arrow" size={15}/></Link>
       </div><div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p></div><TrustRow />
     </section>
     <section className="how-brief section" aria-label="Learn about Kelus">

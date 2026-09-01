@@ -47,7 +47,7 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
   ]);
   assert.match(home, /className="how-brief section"/);
   assert.match(home, /minimal minimalAction deferProductSelection/);
-  assert.match(home, /href="\/search"/);
+  assert.doesNotMatch(home, /Open full search/);
   assert.doesNotMatch(home, /className="feature-grid"/);
   assert.match(how, /Every price tells only part of the story/);
   assert.match(how, /Price, seller quality, shipping, and available retailer terms/);
