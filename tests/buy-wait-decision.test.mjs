@@ -18,7 +18,7 @@ const ready = {
 test("HISTORY BUILDING never produces a buy or wait verdict without sufficient history", () => {
   const decision = getBuyWaitDecision({ ...ready, average30Day: null, recentLow: null, historyStatus: "building", verdict: "Price history is building" });
   assert.equal(decision.label, "HISTORY BUILDING");
-  assert.match(decision.explanation, /not enough real stored price history/i);
+  assert.match(decision.explanation, /collecting real price observations|not stored enough real price history/i);
 });
 
 test("BUY NOW requires a below-average price close to the recent low", () => {

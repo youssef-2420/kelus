@@ -4,7 +4,9 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { categoryHubs } from "@/lib/category-routes";
-import { countLiveCatalogProducts, formatFromPrice, getProductListingPreview } from "@/lib/bundled-snapshot-catalog";
+import { CatalogAvailabilityLegend } from "@/components/CatalogAvailabilityLegend";
+import { countLiveCatalogProducts } from "@/lib/bundled-snapshot-catalog";
+import { getProductCardStatus } from "@/lib/catalog-availability";
 import { products } from "@/lib/demo-data";
 
 export const metadata: Metadata = {
@@ -40,19 +42,17 @@ export default function CoveragePage() {
             <span>Category hubs</span>
           </div>
         </div>
+        <CatalogAvailabilityLegend />
         <div className="coverage-grid">
           {sorted.map((product) => {
-            const preview = getProductListingPreview(product.slug);
-            const href = preview?.href ?? `/product/${product.slug}`;
+            const status = getProductCardStatus(product.slug);
             return (
-              <Link key={product.slug} href={href} className="coverage-card">
+              <Link key={product.slug} href={status.href} className="coverage-card" title={status.detail}>
                 <span className="coverage-card-mark" aria-hidden="true">{product.image}</span>
                 <span className="coverage-card-copy">
                   <b>{product.name}</b>
                   <small>{product.brand} · {product.category}</small>
-                  {preview?.live && preview.fromPrice
-                    ? <em>From {formatFromPrice(preview.fromPrice)}</em>
-                    : <em>Check availability</em>}
+                  <em className={status.status === "validated" ? "is-validated" : "is-indexed"}>{status.label}</em>
                 </span>
                 <Icon name="arrow" size={16} />
               </Link>

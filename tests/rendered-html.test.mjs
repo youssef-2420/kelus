@@ -91,10 +91,13 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /knownTotal/);
   assert.match(view, /Known total/);
   assert.match(view, /No cheaper comparable offer passed Kelus validation/);
-  assert.match(view, /No saved comparison yet/);
+  assert.match(view, /Comparison not ready yet/);
   assert.match(view, /no listing passed the current product, variant, condition, and trust checks/);
   assert.match(view, /Try another supported configuration/);
   assert.match(view, /Why Kelus may reject an offer/);
+  assert.match(view, /ConfidenceBadge/);
+  assert.match(view, /Collecting price data/);
+  assert.match(view, /pi-fallback-nearest/);
   assert.match(view, /VALIDATED COMPARISON/);
   assert.match(view, /LIVE EBAY OFFERS/);
   assert.match(view, /allowUnavailable/);
@@ -141,7 +144,7 @@ test("search is the single canonical product discovery experience", async () => 
   ]);
   assert.match(home, /SearchLauncher/);
   assert.match(home, /SearchLauncher/);
-  assert.doesNotMatch(home, /LiveShowcase/);
+  assert.match(home, /LiveShowcase compact/);
   assert.match(home, /trust-disclosure/);
   assert.doesNotMatch(home, /SearchControls/);
   assert.match(launcher, /href="\/search"/);
@@ -221,6 +224,26 @@ test("Kelus source separates demo offers from recommendation and provider contra
   assert.doesNotMatch(offerCard, /Kelus score|score/);
 });
 
+test("outstanding UX surfaces explain confidence, history progress, and catalog availability", async () => {
+  const [view, coverage, category, search, confidence, availability] = await Promise.all([
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/coverage/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/category/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/search/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/ConfidenceBadge.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../lib/catalog-availability.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(view, /ConfidenceBadge/);
+  assert.match(view, /Collecting price data/);
+  assert.match(view, /Comparison not ready yet/);
+  assert.match(coverage, /CatalogAvailabilityLegend/);
+  assert.match(coverage, /getProductCardStatus/);
+  assert.match(category, /getProductCardStatus/);
+  assert.match(search, /getProductCardStatus/);
+  assert.match(confidence, /How Kelus scores confidence/);
+  assert.match(availability, /View comparison/);
+});
+
 test("trust surfaces expose footer links and coverage catalog", async () => {
   const [home, coverage, privacy, terms, footer, sitemap] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
@@ -232,7 +255,7 @@ test("trust surfaces expose footer links and coverage catalog", async () => {
   ]);
   assert.match(home, /SiteFooter/);
   assert.match(coverage, /What Kelus covers/);
-  assert.match(coverage, /getProductListingPreview/);
+  assert.match(coverage, /getProductCardStatus/);
   assert.match(privacy, /Privacy policy/);
   assert.match(terms, /Terms of use/);
   assert.match(footer, /href="\/coverage"/);
