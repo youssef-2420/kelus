@@ -9,10 +9,26 @@ import { searchCriteriaToQuery } from "../lib/search-state.ts";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const outputPath = join(root, "data", "bundled-product-intelligence-snapshots.json");
 const baseUrl = (process.env.KELUS_BASE_URL ?? "https://kelus.me").replace(/\/$/, "");
-const concurrency = Number(process.env.SNAPSHOT_WARM_CONCURRENCY ?? 2);
-const delayMs = Number(process.env.SNAPSHOT_WARM_DELAY_MS ?? 600);
+const isProductionHarvest = /kelus\.me$/i.test(new URL(baseUrl).hostname);
+const concurrency = Number(process.env.SNAPSHOT_WARM_CONCURRENCY ?? (isProductionHarvest ? 1 : 2));
+const delayMs = Number(process.env.SNAPSHOT_WARM_DELAY_MS ?? (isProductionHarvest ? 2500 : 600));
+const cooldownMs = Number(process.env.HARVEST_COOLDOWN_MS ?? (isProductionHarvest ? 15000 : 0));
 const productFilter = process.env.HARVEST_PRODUCT_SLUGS?.split(",").map((value) => value.trim()).filter(Boolean) ?? [];
 const onlyMissing = process.env.HARVEST_ONLY_MISSING !== "0";
+
+let pauseUntil = 0;
+
+async function waitForCooldown() {
+  const wait = pauseUntil - Date.now();
+  if (wait > 0) {
+    console.warn(`[harvest-production] cooling down for ${wait}ms after rate limiting`);
+    await sleep(wait);
+  }
+}
+
+function noteRateLimit() {
+  if (cooldownMs > 0) pauseUntil = Math.max(pauseUntil, Date.now() + cooldownMs);
+}
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -44,13 +60,17 @@ function snapshotFromResponse(body) {
 async function fetchOffers(url) {
   const maxAttempts = Number(process.env.HARVEST_MAX_ATTEMPTS ?? 4);
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    await waitForCooldown();
     const response = await fetch(url, { headers: { accept: "application/json" } });
     const body = await response.json().catch(() => null);
-    if (response.status === 429 && attempt < maxAttempts) {
-      const waitMs = delayMs * (2 ** attempt);
-      console.warn(`[harvest-production] rate limited, retrying in ${waitMs}ms`);
-      await sleep(waitMs);
-      continue;
+    if (response.status === 429) {
+      noteRateLimit();
+      if (attempt < maxAttempts) {
+        const waitMs = delayMs * (2 ** attempt);
+        console.warn(`[harvest-production] rate limited, retrying in ${waitMs}ms`);
+        await sleep(waitMs);
+        continue;
+      }
     }
     return { response, body };
   }
@@ -94,6 +114,7 @@ const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
       const { response, body } = await fetchOffers(url);
       if (!response.ok) {
         failed += 1;
+        if (response.status === 429) noteRateLimit();
         console.warn(`[harvest-production] failed ${key} status=${response.status} code=${body?.error?.code ?? "unknown"}`);
         continue;
       }
@@ -124,4 +145,5 @@ console.info("[harvest-production] complete", {
   empty,
   failed,
   savedKeys: Object.keys(snapshots).length,
+  productionPacing: isProductionHarvest ? { concurrency, delayMs, cooldownMs } : null,
 });
