@@ -8,7 +8,8 @@ import { ConfidenceBadge } from "@/components/ConfidenceBadge";
 import { Icon } from "@/components/Icon";
 import { EbayWordmark } from "@/components/EbayWordmark";
 import { OutboundRetailerCTA } from "@/components/OutboundRetailerCTA";
-import { PriceChart } from "@/components/PriceChart";
+import { PriceHistorySparkline } from "@/components/PriceHistorySparkline";
+import { NotifyWhenLive } from "@/components/NotifyWhenLive";
 import { ProductMark } from "@/components/ProductMark";
 import { WatchButton } from "@/components/WatchButton";
 import { ProductHeader } from "@/components/ProductHeader";
@@ -17,6 +18,8 @@ import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/d
 import { getProductIntelligenceOptions } from "@/lib/product-attributes";
 import { canonicalProductPath, getAlternativeProductCriteria, readSearchCriteria } from "@/lib/search-state";
 import { getCriteriaListingPreview, rankAlternativeCriteria } from "@/lib/catalog-availability";
+import { readBundledSnapshot } from "@/lib/bundled-snapshot-catalog";
+import { historyPointsFromObservations } from "@/lib/price-history-points";
 import { ebaySellerProfileUrl } from "@/lib/seller-links";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
 import { clientOfferRefreshMode } from "@/services/client-offer-refresh-policy";
@@ -62,16 +65,6 @@ function snapshotLooksVisuallyStale(result: OfferSearchResult | null) {
   if (result.snapshotState === "expired" || result.lastRefreshFailed || result.lastRefreshReturnedEmpty) return true;
   if (!result.lastUpdated || Number.isNaN(Date.parse(result.lastUpdated))) return false;
   return Date.now() - Date.parse(result.lastUpdated) > 24 * 60 * 60 * 1_000;
-}
-
-function realHistoryPoints(observations: PriceObservation[]) {
-  const daily = new Map<string, number>();
-  observations.filter((item) => !item.isDemo && item.shippingCost !== null && item.shippingCost !== undefined && !Number.isNaN(Date.parse(item.timestamp))).forEach((item) => {
-    const day = item.timestamp.slice(0, 10);
-    const total = item.price + (item.shippingCost ?? 0);
-    daily.set(day, Math.min(daily.get(day) ?? Number.POSITIVE_INFINITY, total));
-  });
-  return [...daily.entries()].sort(([a], [b]) => a.localeCompare(b)).slice(-6).map(([day, price]) => ({ label: day.slice(5), price: Math.round(price) }));
 }
 
 export default function NewResultsPage() {
@@ -299,7 +292,12 @@ function ProductFallbackState({ kind, detail, alternatives, criteria, productNam
       <small>We opened the closest configuration Kelus already tracks for this product.</small>
     </div>}
     <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/search">Edit search</Link></div>
-    <div className="pi-fallback-track"><div><b>Get notified when this configuration is ready</b><span>Save it to My Alerts and Kelus will check again when validated offers appear.</span></div><WatchButton product={productName} criteria={criteria} allowUnavailable/></div>
+    <PriceHistorySparkline
+      compact
+      points={historyPointsFromObservations(readBundledSnapshot(criteria)?.observations ?? [], criteria)}
+      detail="Saved observations for this configuration, even before a live comparison is ready."
+    />
+    <NotifyWhenLive criteria={criteria} productName={productName} />
     {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => {
       const preview = getCriteriaListingPreview(alternative);
       return <Link key={`${alternative.variantId}-${alternative.condition}`} href={preview.href}>{alternativeLabel(alternative)}{preview.live && preview.fromPrice ? ` · From ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}` : ""} <Icon name="arrow" size={13}/></Link>;
@@ -434,12 +432,11 @@ function OtherOffer({ offer, productName, fallbackLabel, stale }: { offer: Offer
 }
 
 function TimingAndTrack({ context, observations, productName, criteria, result }: { context: ReturnType<typeof getPriceContext>; observations: PriceObservation[]; productName: string; criteria: SearchCriteria; result: OfferSearchResult }) {
-  const points = realHistoryPoints(observations);
-  const ready = context.historyStatus === "ready" && points.length > 1;
+  const points = historyPointsFromObservations(observations, criteria);
   const average = context.average90Day ?? context.average30Day;
   const decision = getBuyWaitDecision(context);
   const building = decision.label === "HISTORY BUILDING";
   const progress = Math.min(100, Math.round((context.observationCount / minimum30DaySamples) * 100));
   const stat = (value: number | null) => building ? "Collecting" : value ? `$${value}` : "—";
-  return <section className="pi-section pi-context"><div><p className="pi-label">When to Buy</p><h2>{building ? "Collecting price data" : decision.label}</h2><p>{decision.explanation}</p>{building && <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, context.observationCount > 0 ? 12 : 4)}%` }} /></div><em>{context.observationCount} of {minimum30DaySamples} observations logged toward buy/wait guidance</em></div>}<div className="nr-context-stats"><span>Current<strong>{stat(context.currentTrustedPrice)}</strong></span><span>Typical<strong>{stat(average)}</strong></span><span>Recent low<strong>{stat(context.recentLow)}</strong></span></div></div>{ready && <PriceChart points={points}/>}<div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Tracking helps Kelus store more real observations for this exact configuration." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></section>;
+  return <section className="pi-section pi-context"><div><p className="pi-label">When to Buy</p><h2>{building ? "Collecting price data" : decision.label}</h2><p>{decision.explanation}</p>{building && <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, context.observationCount > 0 ? 12 : 4)}%` }} /></div><em>{context.observationCount} of {minimum30DaySamples} observations logged toward buy/wait guidance</em></div>}<div className="nr-context-stats"><span>Current<strong>{stat(context.currentTrustedPrice)}</strong></span><span>Typical<strong>{stat(average)}</strong></span><span>Recent low<strong>{stat(context.recentLow)}</strong></span></div></div><PriceHistorySparkline points={points} detail={points.length >= 2 ? `Based on ${context.observationCount} real observations for this configuration.` : undefined} /><div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Tracking helps Kelus store more real observations for this exact configuration." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></section>;
 }

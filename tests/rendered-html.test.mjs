@@ -77,9 +77,10 @@ test("canonical product runtime contains record-specific SEO and structured-data
 });
 
 test("Product Intelligence presentation keeps production data wiring and the existing header", async () => {
-  const [view, header, styles] = await Promise.all([
+  const [view, header, notifyWhenLive, styles] = await Promise.all([
     readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/ProductHeader.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/NotifyWhenLive.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
   assert.match(view, /ProductHeader criteria=\{criteria\}/);
@@ -100,7 +101,9 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /pi-fallback-nearest/);
   assert.match(view, /VALIDATED COMPARISON/);
   assert.match(view, /LIVE EBAY OFFERS/);
-  assert.match(view, /allowUnavailable/);
+  assert.match(view, /PriceHistorySparkline/);
+  assert.match(view, /NotifyWhenLive/);
+  assert.match(notifyWhenLive, /allowUnavailable/);
   assert.match(view, /<details className="pi-proof" open>/);
   assert.match(view, /How Kelus chose this/);
   assert.match(view, /See how Kelus picks an offer/);
@@ -145,6 +148,8 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(home, /SearchLauncher/);
   assert.match(home, /SearchLauncher/);
   assert.match(home, /LiveShowcase compact/);
+  assert.match(home, /HomepageSocialProof/);
+  assert.match(home, /OnboardingTour/);
   assert.match(home, /trust-disclosure/);
   assert.doesNotMatch(home, /SearchControls/);
   assert.match(launcher, /href="\/search"/);

@@ -5,6 +5,8 @@ import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchLauncher } from "@/components/SearchLauncher";
 import { TrustRow } from "@/components/TrustRow";
 import { LiveShowcase } from "@/components/LiveShowcase";
+import { HomepageSocialProof } from "@/components/HomepageSocialProof";
+import { OnboardingTour } from "@/components/OnboardingTour";
 import { SiteFooter } from "@/components/SiteFooter";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
@@ -23,10 +25,10 @@ function HeroDevices() {
 }
 
 export default function Home() {
-  return <main><LandingAnalytics/><KelusHeader /><VerifiedNotice />
+  return <main><LandingAnalytics/><KelusHeader /><VerifiedNotice /><OnboardingTour />
     <section className="hero hero-figma"><HeroDevices /><div className="hero-line line-a"/><div className="hero-line line-b"/>
       <SearchLauncher />
-      <div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p></div><TrustRow />
+      <div className="hero-content"><p className="eyebrow">Independent shopping intelligence</p><h1>Shop smarter.<br/>Know before you buy.</h1><p className="hero-copy">A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.</p><HomepageSocialProof /></div><TrustRow />
     </section>
     <section className="how-brief section" aria-label="Learn about Kelus">
       <article>
