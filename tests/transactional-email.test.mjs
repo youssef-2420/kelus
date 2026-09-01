@@ -5,6 +5,7 @@ import { buildTargetReachedEmail, sendTargetReachedEmail } from "../services/tra
 const data = {
   productName: "iPhone 17 Pro",
   configuration: "256GB · New",
+  targetPrice: 829,
   trackedPrice: 899,
   currentPrice: 799,
   priceDrop: 100,
@@ -24,9 +25,10 @@ test("target-reached email contains only exact persisted product and price facts
   const email = buildTargetReachedEmail(data);
   assert.match(email.subject, /iPhone 17 Pro/);
   assert.match(email.text, /256GB · New/);
+  assert.match(email.text, /Your target: \$829/);
   assert.match(email.text, /Tracked at: \$899/);
   assert.match(email.text, /Current best comparable price: \$799/);
-  assert.match(email.text, /Price drop: \$100/);
+  assert.match(email.text, /Price drop since tracking: \$100/);
   assert.equal(email.comparisonUrl, `https://kelus.me${data.comparisonHref}`);
   assert.match(email.html, /<img[^>]+i\.ebayimg\.com/);
   assert.doesNotMatch(email.text + email.html, /warranty|entire market|marketing/i);
@@ -35,6 +37,19 @@ test("target-reached email contains only exact persisted product and price facts
 test("target-reached email omits an unavailable or unsafe product image", () => {
   assert.doesNotMatch(buildTargetReachedEmail({ ...data, imageUrl: null }).html, /<img/);
   assert.doesNotMatch(buildTargetReachedEmail({ ...data, imageUrl: "javascript:alert(1)" }).html, /<img/);
+});
+
+test("target-reached email highlights headroom when the target is above the current price", () => {
+  const email = buildTargetReachedEmail({
+    ...data,
+    targetPrice: 1100,
+    trackedPrice: 1049.99,
+    currentPrice: 1049.99,
+    priceDrop: 0,
+  });
+  assert.match(email.text, /Your target: \$1,100/);
+  assert.match(email.text, /Under your target by: \$50\.01/);
+  assert.doesNotMatch(email.text, /Price drop/);
 });
 
 test("Resend request uses a stable provider idempotency key", async () => {
