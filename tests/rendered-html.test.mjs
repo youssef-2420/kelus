@@ -95,7 +95,7 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /no listing passed the current product, variant, condition, and trust checks/);
   assert.match(view, /Try another supported configuration/);
   assert.match(view, /Why Kelus may reject an offer/);
-  assert.match(view, /SAVED EBAY SNAPSHOT/);
+  assert.match(view, /VALIDATED COMPARISON/);
   assert.match(view, /LIVE EBAY OFFERS/);
   assert.match(view, /allowUnavailable/);
   assert.match(view, /<details className="pi-proof" open>/);
@@ -219,6 +219,28 @@ test("Kelus source separates demo offers from recommendation and provider contra
   assert.match(provider, /SearchCriteria/);
   assert.match(offerCard, /OutboundRetailerCTA/);
   assert.doesNotMatch(offerCard, /Kelus score|score/);
+});
+
+test("trust surfaces expose footer links and coverage catalog", async () => {
+  const [home, coverage, privacy, terms, footer, sitemap] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/coverage/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/privacy/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/terms/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SiteFooter.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
+  ]);
+  assert.match(home, /SiteFooter/);
+  assert.match(coverage, /What Kelus covers/);
+  assert.match(coverage, /getProductListingPreview/);
+  assert.match(privacy, /Privacy policy/);
+  assert.match(terms, /Terms of use/);
+  assert.match(footer, /href="\/coverage"/);
+  assert.match(footer, /href="\/privacy"/);
+  assert.match(footer, /href="\/terms"/);
+  assert.match(sitemap, /\/coverage/);
+  assert.match(sitemap, /\/privacy/);
+  assert.match(sitemap, /\/terms/);
 });
 
 test("production navigation avoids the incompatible client-side link shim", async () => {

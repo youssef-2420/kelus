@@ -4,6 +4,7 @@ import { LandingAnalytics } from "@/components/LandingAnalytics";
 import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchLauncher } from "@/components/SearchLauncher";
 import { TrustRow } from "@/components/TrustRow";
+import { SiteFooter } from "@/components/SiteFooter";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 
@@ -41,5 +42,6 @@ export default function Home() {
       </article>
     </section>
     <section className="trust-disclosure"><Icon name="lock" size={17}/>Live eBay offers are labeled clearly. Price history appears only when enough real data exists.</section>
+    <SiteFooter />
   </main>;
 }

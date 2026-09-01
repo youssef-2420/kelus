@@ -61,5 +61,43 @@ export function listBundledShowcases(limit = 6): BundledShowcase[] {
 }
 
 export function formatFromPrice(value: number) {
+  if (!value) return "";
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
+}
+
+export function getProductListingPreview(productSlug: string) {
+  const product = getProductBySlug(productSlug);
+  if (!product) return null;
+  const matches = Object.entries(bundledSnapshots).flatMap(([key, snapshot]) => {
+    const [slug, variantId, condition, market] = key.split(":");
+    if (slug !== productSlug || market !== "us" || !variantId || !condition) return [];
+    const variant = getVariantById(variantId);
+    if (!variant) return [];
+    const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
+    const fromPrice = lowestKnownTotal(liveOffers);
+    if (fromPrice === null) return [];
+    return [{
+      href: canonicalProductPath({ productSlug, variantId, condition: condition as ConditionFilter, market: "us" }),
+      fromPrice,
+      live: true,
+    }];
+  });
+  if (matches.length) {
+    const best = matches.sort((left, right) => left.fromPrice - right.fromPrice)[0];
+    return { ...best, productName: product.name, brand: product.brand };
+  }
+  const variantId = product.searchAttribute.validVariantIds[0];
+  const variant = getVariantById(variantId);
+  if (!variant) return null;
+  return {
+    href: canonicalProductPath({ productSlug, variantId, condition: "new", market: "us" }),
+    fromPrice: 0,
+    live: false,
+    productName: product.name,
+    brand: product.brand,
+  };
+}
+
+export function countLiveCatalogProducts() {
+  return new Set(Object.keys(bundledSnapshots).map((key) => key.split(":")[0]).filter(Boolean)).size;
 }
