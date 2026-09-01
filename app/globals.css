@@ -514,7 +514,7 @@ html { scroll-behavior:smooth; }
 @media(max-width:360px){.pi-pick{padding-inline:16px}.pi-pick-price{font-size:38px}.pi-retailer-logo{width:49px;flex-basis:49px}.pi-pick-seller small{padding-left:59px}.pi-offer-summary{grid-template-columns:minmax(0,1fr) auto 16px;gap:7px}.pi-offer-summary>strong{font-size:19px}}
 
 /* Homepage discovery polish: clearer suggestions and calmer responsive rhythm. */
-.hero-figma{min-height:650px;padding-top:18px}
+.hero-figma{min-height:540px;padding:18px 32px 32px}
 .hero-figma:before{content:"";position:absolute;z-index:0;top:-330px;left:50%;width:min(1040px,88vw);height:520px;transform:translateX(-50%);border:1px solid rgba(84,155,141,.14);border-radius:50%;background:rgba(217,238,233,.2);box-shadow:0 0 0 70px rgba(217,238,233,.1),0 0 0 140px rgba(217,238,233,.05);pointer-events:none}
 .hero-figma .hero-content{margin-top:30px}
 .hero-figma .device-laptop{top:96px;right:-2%;opacity:.62;transform:scale(.86) rotate(3deg);transform-origin:top right}
@@ -542,7 +542,7 @@ html { scroll-behavior:smooth; }
   .catalog-links a:hover{border-color:#91b7ad;background:#f2f8f5;transform:translateY(-2px)}
 }
 @media(max-width:620px){
-  .hero-figma{min-height:620px;padding-top:10px}
+  .hero-figma{min-height:auto;padding:10px 16px 34px}
   .hero-search-wrap{width:100%}
   .hero-search-wrap .rp-search-pill{min-height:54px;padding-left:16px}
   .hero-search-wrap .nr-search-action{min-width:92px;min-height:42px;padding-inline:16px}
