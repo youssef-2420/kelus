@@ -6,6 +6,7 @@ export type TransactionalEmailEnvironment = {
 export type TargetReachedEmailData = {
   productName: string;
   configuration: string;
+  targetPrice: number;
   trackedPrice: number;
   currentPrice: number;
   priceDrop: number;
@@ -26,22 +27,30 @@ export function buildTargetReachedEmail(data: TargetReachedEmailData) {
   const product = escapeHtml(data.productName);
   const configuration = escapeHtml(data.configuration);
   const comparisonUrl = new URL(data.comparisonHref, "https://kelus.me").toString();
+  const underTarget = Math.max(0, Math.round((data.targetPrice - data.currentPrice) * 100) / 100);
+  const savingsLine = data.priceDrop > 0
+    ? { label: "Price drop since tracking", value: money(data.priceDrop) }
+    : underTarget > 0
+      ? { label: "Under your target by", value: money(underTarget) }
+      : null;
   const imageBlock = data.imageUrl?.startsWith("https://")
     ? `<p style="margin:0 0 20px"><img src="${escapeHtml(data.imageUrl)}" alt="" width="120" height="120" style="display:block;border-radius:12px;border:1px solid #dbe7e2;object-fit:contain;background:#fff"/></p>`
     : "";
   const subject = `Target reached: ${data.productName}`;
   const text = [
     `Your Kelus target price has been reached for ${data.productName} · ${data.configuration}.`,
-    `Tracked at: ${money(data.trackedPrice)}`,
+    `Your target: ${money(data.targetPrice)}`,
     `Current best comparable price: ${money(data.currentPrice)}`,
-    `Price drop: ${money(data.priceDrop)}`,
+    `Tracked at: ${money(data.trackedPrice)}`,
+    ...(savingsLine ? [`${savingsLine.label}: ${savingsLine.value}`] : []),
     `View on Kelus: ${comparisonUrl}`,
   ].join("\n");
+  const savingsHtml = savingsLine ? `<br>${escapeHtml(savingsLine.label)}: <strong>${savingsLine.value}</strong>` : "";
   const html = `<div style="font-family:Arial,sans-serif;color:#102c27;line-height:1.5;max-width:560px;margin:auto">
     <p style="font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#0d6b5d">Target reached</p>
     ${imageBlock}<h1 style="font-size:28px;margin:0 0 8px">${product}</h1>
     <p style="color:#5f6f6b;margin:0 0 24px">${configuration}</p>
-    <p>Tracked at: <strong>${money(data.trackedPrice)}</strong><br>Current best comparable price: <strong>${money(data.currentPrice)}</strong><br>Price drop: <strong>${money(data.priceDrop)}</strong></p>
+    <p>Your target: <strong>${money(data.targetPrice)}</strong><br>Current best comparable price: <strong>${money(data.currentPrice)}</strong><br>Tracked at: <strong>${money(data.trackedPrice)}</strong>${savingsHtml}</p>
     <p style="margin-top:28px"><a href="${comparisonUrl}" style="display:inline-block;background:#0b5147;color:#fff;text-decoration:none;padding:13px 20px;border-radius:8px">View on Kelus →</a></p>
     <p style="font-size:12px;color:#7b8885;margin-top:28px">This transactional email was sent because you created a Kelus price alert.</p>
   </div>`;

@@ -57,13 +57,9 @@ export function shouldEmitTargetReachedEvent(before: PriceAlertRecord, after: Pr
 
 function eventFor(owner: OwnedPriceAlert, next: PriceAlertRecord, type: PriceAlertEventType, checkedAt: string): PriceAlertEvent {
   return {
-<<<<<<< HEAD
     eventKey: type === "target_reached"
       ? `${owner.userId}|${owner.alert.id}|${type}|${next.targetPrice ?? "unknown"}|${next.currentPrice ?? "unknown"}`
       : `${owner.userId}|${owner.alert.id}|${type}|${next.currentPrice ?? "unknown"}|${checkedAt}`,
-=======
-    eventKey: `${owner.userId}|${owner.alert.id}|${type}|${next.targetPrice ?? "none"}|${next.currentPrice ?? "unknown"}`,
->>>>>>> 13e93eb (Fix target-reached email for alerts already at target)
     userId: owner.userId,
     alertId: owner.alert.id,
     type,
@@ -107,11 +103,7 @@ export async function monitorAlertRecords(
         const next = updateAlertFromResult(owner.alert, result, checkedAt);
         updates.push({ userId: owner.userId, alert: next });
         if (next.state !== "ready") continue;
-<<<<<<< HEAD
-        if (nextStatus === "target_reached") events.push(eventFor(owner, next, "target_reached", checkedAt));
-=======
         if (shouldEmitTargetReachedEvent(owner.alert, next)) events.push(eventFor(owner, next, "target_reached", checkedAt));
->>>>>>> 13e93eb (Fix target-reached email for alerts already at target)
         else if (meaningfulDrop(owner.alert.currentPrice, next.currentPrice)) events.push(eventFor(owner, next, "price_drop", checkedAt));
       }
     } catch (reason) {
