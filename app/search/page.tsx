@@ -20,12 +20,12 @@ export default function SearchPage() {
 
   return (
     <main className="search-page">
-      <KelusHeader />
+      <KelusHeader shell="search" />
       <section className="search-page-shell section" aria-label="Product search">
         <div className="search-page-focus">
-          <h1>Find the offer worth buying.</h1>
-          <p>Search the exact product, storage, and condition you want. Kelus compares validated eBay offers and recommends one worth buying.</p>
-          <div id="product-search" className="hero-search-wrap">
+          <h1>What are you shopping for?</h1>
+          <p>Pick the exact product, storage, and condition. Kelus compares validated eBay offers and recommends one worth buying.</p>
+          <div id="product-search" className="hero-search-wrap search-page-search">
             <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
           </div>
         </div>

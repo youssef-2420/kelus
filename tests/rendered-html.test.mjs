@@ -45,7 +45,7 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(home, /className="home-learn section"/);
+  assert.match(home, /HomeLearnSection/);
   assert.match(home, /SearchControls/);
   assert.match(home, /HomeTrustStrip/);
   assert.doesNotMatch(home, /SearchLauncher/);
@@ -160,7 +160,12 @@ test("search is the single canonical product discovery experience", async () => 
   assert.doesNotMatch(page, /redirect\(/);
   assert.match(search, /hero-search-category/);
   assert.match(header, /href: "\/search", label: "Search"/);
+  assert.match(header, /shell === "search"/);
+  assert.match(page, /KelusHeader shell="search"/);
   assert.match(styles, /\.home-hero/);
+  assert.match(styles, /\.home-learn-grid/);
+  assert.match(styles, /\.home-learn-icon/);
+  assert.match(styles, /\.site-header\.is-search-shell/);
   assert.match(styles, /\.search-page-shell/);
   assert.match(styles, /\.search-pick-preview/);
   assert.match(styles, /\.category-hub/);

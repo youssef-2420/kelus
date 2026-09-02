@@ -4,10 +4,9 @@ import { LandingAnalytics } from "@/components/LandingAnalytics";
 import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
 import { HomeTrustStrip } from "@/components/HomeTrustStrip";
+import { HomeLearnSection } from "@/components/HomeLearnSection";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { SiteFooter } from "@/components/SiteFooter";
-import { Icon } from "@/components/Icon";
-import { SafeLink as Link } from "@/components/SafeLink";
 
 export const metadata: Metadata = {
   title: "Kelus — Find the offer worth buying",
@@ -33,24 +32,7 @@ export default function Home() {
         </div>
         <HomeTrustStrip />
       </section>
-      <section className="home-learn section" aria-label="Learn about Kelus">
-        <Link className="home-learn-card" href="/how-it-works">
-          <Icon name="grid" size={20} />
-          <span>
-            <strong>How Kelus works</strong>
-            <small>From search to a clear comparison</small>
-          </span>
-          <Icon name="arrow" size={15} />
-        </Link>
-        <Link className="home-learn-card" href="/methodology">
-          <Icon name="shield" size={20} />
-          <span>
-            <strong>How Kelus picks</strong>
-            <small>Evidence behind every recommendation</small>
-          </span>
-          <Icon name="arrow" size={15} />
-        </Link>
-      </section>
+      <HomeLearnSection />
       <SiteFooter />
     </main>
   );
