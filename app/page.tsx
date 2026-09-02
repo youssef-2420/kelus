@@ -27,17 +27,17 @@ export default function Home() {
       <LandingAnalytics />
       <KelusHeader />
       <VerifiedNotice />
-      <OnboardingTour />
-      <section className="desk section" aria-label="Search and live Kelus pick">
+      <section className="desk section" aria-label="Search and example Kelus pick">
         <div className="desk-rail">
-          <p className="desk-kicker">Price is only the first filter</p>
-          <h1>Find the offer worth buying.</h1>
+          <h1>What are you buying?</h1>
           <p>
-            A cheap listing can still lose after shipping, weak seller evidence, or a suspicious price. Search once. Kelus checks the rest.
+            A cheap listing can still lose after shipping, weak seller evidence, or a suspicious price. Search the exact setup — Kelus checks the rest.
           </p>
           <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
           </div>
+          <p className="desk-coverage-hint">Phones, computers, tablets, audio, wearables, and consoles.</p>
+          <OnboardingTour />
         </div>
         <ComparisonStage layout="desk" />
       </section>
