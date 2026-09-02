@@ -438,7 +438,7 @@ function DecisionReport({ decision, lowest, productName, criteria, result, conte
           ? `${timing.label === "HISTORY BUILDING" ? "Price history is still building." : "Timing says wait may help."} Track this configuration, or open the live listing now.`
           : "Opens the live eBay listing · Track keeps this exact configuration watched"}
       </p>
-    </div>
+    </div>}
     <div className="pi-why">
       <p className="pi-label">Why this offer</p>
       <p className="pi-evidence">{decision.reasons.join(" · ")}</p>
