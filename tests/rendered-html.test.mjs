@@ -163,7 +163,8 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(header, /shell === "search"/);
   assert.match(page, /KelusHeader shell="search"/);
   assert.match(page, /search-workbench/);
-  assert.match(page, /search-page-intro/);
+  assert.match(page, /search-section-heading/);
+  assert.match(page, /search-quick-list/);
   assert.match(home, /SearchPickPreview variant="hero"/);
   assert.match(styles, /\.home-hero-grid/);
   assert.match(styles, /\.search-workbench/);

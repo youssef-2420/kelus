@@ -12,9 +12,8 @@ export function SearchPickPreview({ variant = "default" }: Props) {
   return (
     <aside className={`search-pick-preview${variant === "hero" ? " is-hero" : ""}`} aria-label="Example Kelus comparison">
       <div className="search-pick-preview-card">
-        <p className="search-pick-preview-label">{variant === "hero" ? "Live example" : "What you&apos;ll see"}</p>
+        <p className="search-pick-preview-kicker">Our Pick · {example.brand}</p>
         <div className="search-pick-preview-body">
-          <span className="search-pick-preview-kicker">Our Pick · {example.brand}</span>
           <strong>{example.productName} {example.variantLabel}</strong>
           <p>Known total from <em>{formatFromPrice(example.pickPrice ?? example.fromPrice)}</em> · {example.offerCount} validated offer{example.offerCount === 1 ? "" : "s"}</p>
           <Link href={example.href}>Open live comparison <Icon name="arrow" size={14} /></Link>

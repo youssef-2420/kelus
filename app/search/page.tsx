@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { KelusHeader } from "@/components/KelusHeader";
+import { Icon } from "@/components/Icon";
 import { SearchControls } from "@/components/SearchControls";
 import { SearchPickPreview } from "@/components/SearchPickPreview";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -31,24 +32,29 @@ export default function SearchPage() {
             <div id="product-search" className="hero-search-wrap search-page-search">
               <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
             </div>
-            <section className="search-quick-starts" aria-label="Popular products">
-              <p className="search-section-label">Popular right now</p>
-              <div className="search-quick-grid">
+            <section className="search-quick-starts" aria-labelledby="search-popular-heading">
+              <h2 id="search-popular-heading" className="search-section-heading">Popular right now</h2>
+              <ul className="search-quick-list">
                 {quickStarts.map(({ product, href, fromPrice, live }) => {
                   const status = live && fromPrice
                     ? { label: `From ${formatFromPrice(fromPrice)}`, detail: "Validated comparison available" }
                     : getProductCardStatus(product.slug);
                   return (
-                    <Link key={`${product.slug}-${href}`} className="search-quick-card" href={href} title={status.detail}>
-                      <strong>{product.brand} {product.name}</strong>
-                      <span>{status.label}</span>
-                    </Link>
+                    <li key={`${product.slug}-${href}`}>
+                      <Link className="search-quick-row" href={href} title={status.detail}>
+                        <span className="search-quick-row-copy">
+                          <strong>{product.brand} {product.name}</strong>
+                          <small>{status.label}</small>
+                        </span>
+                        <Icon name="arrow" size={14} />
+                      </Link>
+                    </li>
                   );
                 })}
-              </div>
+              </ul>
             </section>
-            <nav className="search-category-nav" aria-label="Browse by category">
-              <p className="search-section-label">Browse by category</p>
+            <nav className="search-category-nav" aria-labelledby="search-category-heading">
+              <h2 id="search-category-heading" className="search-section-heading">Browse by category</h2>
               <div className="search-category-grid">
                 {categoryHubs.map((hub) => (
                   <Link key={hub.slug} href={categoryHubPath(hub.slug)}>{hub.label}</Link>
