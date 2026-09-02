@@ -45,9 +45,12 @@ function productPageHeading(product: Product, variant?: ProductVariant, conditio
 function updatedLabel(value?: string) {
   if (!value || Number.isNaN(Date.parse(value))) return "Update time unavailable";
   const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(value)) / 60_000));
-  if (minutes < 1) return "Updated now";
+  if (minutes < 1) return "Updated just now";
   if (minutes < 60) return `Updated ${minutes} min ago`;
-  return "Updated recently";
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `Updated ${hours} hr ago`;
+  const days = Math.floor(hours / 24);
+  return `Updated ${days} day${days === 1 ? "" : "s"} ago`;
 }
 
 function staleUpdatedLabel(value?: string, snapshotState?: OfferSearchResult["snapshotState"]) {
@@ -408,7 +411,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
   return <section className="pi-pick" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
     <div className="pi-pick-top">
-      <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong><ConfidenceBadge confidence={decision.confidence}/><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
+      <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong>{savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}<ConfidenceBadge confidence={decision.confidence}/><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
       {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span>{sellerHref ? <a href={sellerHref} target="_blank" rel="noopener noreferrer">{sellerName}</a> : <b>{sellerName}</b>}</span><small>{offerMeta(pick)}</small></div>}
     </div>
     {verdict && <div className="pi-verdict"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
@@ -449,6 +452,22 @@ function TimingAndTrack({ context, observations, productName, criteria, result }
   const decision = getBuyWaitDecision(context);
   const building = decision.label === "HISTORY BUILDING";
   const progress = Math.min(100, Math.round((context.observationCount / minimum30DaySamples) * 100));
-  const stat = (value: number | null) => building ? "Collecting" : value ? `$${value}` : "—";
-  return <section className="pi-section pi-context"><div><p className="pi-label">When to Buy</p><h2>{building ? "Collecting price data" : decision.label}</h2><p>{decision.explanation}</p>{building && <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, context.observationCount > 0 ? 12 : 4)}%` }} /></div><em>{context.observationCount} of {minimum30DaySamples} observations logged toward buy/wait guidance</em></div>}<div className="nr-context-stats"><span>Current<strong>{stat(context.currentTrustedPrice)}</strong></span><span>Typical<strong>{stat(average)}</strong></span><span>Recent low<strong>{stat(context.recentLow)}</strong></span></div></div><PriceHistorySparkline points={points} detail={points.length >= 2 ? `Based on ${context.observationCount} real observations for this configuration.` : undefined} /><div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Tracking helps Kelus store more real observations for this exact configuration." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></section>;
+  const stat = (value: number | null) => value ? `$${value}` : "—";
+  const track = <div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Save this configuration to help Kelus build buy/wait guidance from real observations." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div>;
+
+  if (building && context.observationCount === 0) {
+    return <section className="pi-section pi-context pi-context-track-only">{track}</section>;
+  }
+
+  return <section className="pi-section pi-context">
+    <div>
+      <p className="pi-label">When to Buy</p>
+      <h2>{building ? "Building price history" : decision.label}</h2>
+      <p>{decision.explanation}</p>
+      {building && context.observationCount > 0 ? <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, 12)}%` }} /></div><em>{context.observationCount} of {minimum30DaySamples} observations logged toward buy/wait guidance</em></div> : null}
+      {!building ? <div className="nr-context-stats"><span>Current<strong>{stat(context.currentTrustedPrice)}</strong></span><span>Typical<strong>{stat(average)}</strong></span><span>Recent low<strong>{stat(context.recentLow)}</strong></span></div> : null}
+    </div>
+    <PriceHistorySparkline points={points} detail={points.length >= 2 ? `Based on ${context.observationCount} real observations for this configuration.` : undefined} />
+    {track}
+  </section>;
 }

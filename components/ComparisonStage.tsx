@@ -1,6 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
+
 import { Icon } from "@/components/Icon";
+import { ProductMark } from "@/components/ProductMark";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { formatFromPrice, getComparisonDemo, type ComparisonDemoRow } from "@/lib/bundled-snapshot-catalog";
+import { optimizedRetailerImageUrl } from "@/services/retailer-image";
 
 type Props = {
   compact?: boolean;
@@ -52,16 +56,31 @@ function comparisonFootnote(demo: NonNullable<ReturnType<typeof getComparisonDem
   return <p>Kelus surfaces known totals before you commit to a listing.</p>;
 }
 
+function StageImage({ imageUrl, label }: { imageUrl?: string; label: string }) {
+  const source = optimizedRetailerImageUrl(imageUrl, 96);
+  if (!source) return <ProductMark label={label} />;
+  return <img src={source} alt="" width={56} height={56} loading="lazy" decoding="async" />;
+}
+
 export function ComparisonStage({ compact = false }: Props) {
   const demo = getComparisonDemo();
   if (!demo) return null;
+  const savingsLabel = demo.savingsGap !== null && demo.savingsGap > 0
+    ? `${formatMoney(demo.savingsGap)} cheaper listing failed validation`
+    : null;
   return (
     <aside className={`comparison-stage${compact ? " is-compact" : ""}`} aria-label="Live comparison example">
       <header className="comparison-stage-head">
-        <div>
-          <p className="comparison-stage-label">Live example</p>
-          <p className="comparison-stage-product">{demo.brand} {demo.productName}</p>
-          <p className="comparison-stage-variant">{demo.variantLabel} · {demo.offerCount} validated offers</p>
+        <div className="comparison-stage-intro">
+          <span className="comparison-stage-thumb" aria-hidden="true">
+            <StageImage imageUrl={demo.listingImageUrl} label={demo.productName.slice(0, 2).toUpperCase()} />
+          </span>
+          <div>
+            <p className="comparison-stage-label">Live example</p>
+            <p className="comparison-stage-product">{demo.brand} {demo.productName}</p>
+            <p className="comparison-stage-variant">{demo.variantLabel} · {demo.offerCount} validated offers</p>
+            {savingsLabel ? <p className="comparison-stage-savings">{savingsLabel}</p> : null}
+          </div>
         </div>
         <Link className="comparison-stage-open" href={demo.href}>
           Open comparison <Icon name="arrow" size={14} />

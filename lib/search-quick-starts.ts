@@ -14,9 +14,10 @@ export type SearchQuickStart = {
 };
 
 export function formatQuickStartLabel(item: SearchQuickStart) {
-  const base = `${item.product.brand} ${item.product.name}`;
+  const { product } = item;
+  const base = product.name.startsWith(product.brand) ? product.name : `${product.brand} ${product.name}`;
   const parts = [base];
-  if (item.variantLabel && item.variantLabel !== item.product.name) parts.push(item.variantLabel);
+  if (item.variantLabel && item.variantLabel !== product.name) parts.push(item.variantLabel);
   if (item.condition === "used") parts.push("Used");
   else if (item.condition === "new") parts.push("New");
   return parts.join(" · ");

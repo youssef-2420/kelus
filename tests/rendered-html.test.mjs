@@ -98,7 +98,9 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /Try another supported configuration/);
   assert.match(view, /Why Kelus may reject an offer/);
   assert.match(view, /ConfidenceBadge/);
-  assert.match(view, /Collecting price data/);
+  assert.match(view, /Building price history/);
+  assert.match(view, /pi-context-track-only/);
+  assert.match(view, /pi-savings-callout/);
   assert.match(view, /pi-fallback-nearest/);
   assert.match(view, /VALIDATED COMPARISON/);
   assert.match(view, /LIVE EBAY OFFERS/);
@@ -248,7 +250,9 @@ test("outstanding UX surfaces explain confidence, history progress, and catalog 
     readFile(new URL("../lib/catalog-availability.ts", import.meta.url), "utf8"),
   ]);
   assert.match(view, /ConfidenceBadge/);
-  assert.match(view, /Collecting price data/);
+  assert.match(view, /Building price history/);
+  assert.match(view, /pi-context-track-only/);
+  assert.match(view, /pi-savings-callout/);
   assert.match(view, /Comparison not ready yet/);
   assert.match(coverage, /CatalogAvailabilityLegend/);
   assert.match(coverage, /getProductCardStatus/);

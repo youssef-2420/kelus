@@ -31,13 +31,10 @@ export function ConfidenceBadge({ confidence, compact = false }: { confidence: T
     return <span className="confidence-badge is-compact" title={`${detail.title}: ${detail.body}`}>{titleCase(confidence.toLowerCase())}</span>;
   }
   return (
-    <details className="confidence-badge">
-      <summary>
-        <span>{titleCase(confidence.toLowerCase())} confidence</span>
-        <Icon name="chevron" size={14} />
-      </summary>
-      <p>{detail.body}</p>
-      <Link href="/methodology">How Kelus scores confidence <Icon name="arrow" size={12} /></Link>
-    </details>
+    <div className="confidence-badge">
+      <p className="confidence-badge-label">{titleCase(confidence.toLowerCase())} confidence</p>
+      <p className="confidence-badge-body">{detail.body}</p>
+      <Link className="confidence-badge-link" href="/methodology">How Kelus scores confidence <Icon name="arrow" size={12} /></Link>
+    </div>
   );
 }

@@ -26,6 +26,14 @@ test("search quick starts prioritize live comparisons", () => {
   assert.equal(new Set(quickStarts.map((item) => item.product.slug)).size, quickStarts.filter((item) => item.live).length);
 });
 
+test("quick start labels avoid duplicate brand prefixes", () => {
+  const quickStarts = getSearchQuickStarts(8);
+  for (const item of quickStarts) {
+    const label = formatQuickStartLabel(item);
+    assert.doesNotMatch(label, new RegExp(`${item.product.brand}\\s+${item.product.brand}`, "i"));
+  }
+});
+
 test("comparison demo shows a pick that beat the cheapest known total", () => {
   const demo = getComparisonDemo();
   assert.ok(demo);

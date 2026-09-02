@@ -202,6 +202,7 @@ export type ComparisonDemo = {
   cheapestTotal: number | null;
   savingsGap: number | null;
   cheaperOfferCount: number;
+  listingImageUrl?: string;
   rows: ComparisonDemoRow[];
 };
 
@@ -291,6 +292,7 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
     cheapestTotal,
     savingsGap,
     cheaperOfferCount,
+    listingImageUrl: showcase.listingImageUrl,
     rows,
   };
 }
