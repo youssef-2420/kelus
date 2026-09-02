@@ -176,6 +176,9 @@ export type ComparisonDemoRow = {
   knownTotal: number | null;
   role: "pick" | "cheapest" | "sample";
   note?: string;
+  feedbackPercentage?: number;
+  feedbackScore?: number;
+  suspiciousPrice?: boolean;
 };
 
 export type ComparisonDemo = {
@@ -225,6 +228,12 @@ function demoScoreForSnapshot(key: string, snapshot: OfferSearchResult) {
   if (offerSellerLabel(pick) !== offerSellerLabel(cheapest)) score += 20;
   if (liveOffers.length >= 15) score += 15;
   if (gap >= 15) score += 10;
+  const cheaperSellers = new Set(
+    withTotals
+      .filter((entry) => entry.offer.id !== pick.id && entry.total < pickTotal)
+      .map((entry) => offerSellerLabel(entry.offer)),
+  );
+  if (cheaperSellers.size >= 2) score += 35;
   return score;
 }
 
@@ -249,28 +258,46 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
   const cheaperOfferCount = pickTotal === null
     ? 0
     : withTotals.filter((entry) => entry.offer.id !== pick.id && entry.total < pickTotal).length;
+
+  function toRow(offer: Offer, role: ComparisonDemoRow["role"], note?: string): ComparisonDemoRow {
+    return {
+      id: offer.id,
+      seller: offerSellerLabel(offer),
+      listPrice: offer.price,
+      shipping: offer.shippingCostKnown === false ? null : offer.shippingCost,
+      shippingKnown: offer.shippingCostKnown !== false,
+      knownTotal: knownTotalForOffer(offer),
+      role,
+      note,
+      feedbackPercentage: offer.seller.feedbackPercentage,
+      feedbackScore: offer.seller.feedbackScore,
+      suspiciousPrice: Boolean(offer.trust?.suspiciousPrice),
+    };
+  }
+
   const rows: ComparisonDemoRow[] = [];
   if (cheapest && cheapest.id !== pick.id) {
-    rows.push({
-      id: cheapest.id,
-      seller: offerSellerLabel(cheapest),
-      listPrice: cheapest.price,
-      shipping: cheapest.shippingCostKnown === false ? null : cheapest.shippingCost,
-      shippingKnown: cheapest.shippingCostKnown !== false,
-      knownTotal: cheapestTotal,
-      role: "cheapest",
-      note: cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest known total",
-    });
+    rows.push(toRow(
+      cheapest,
+      "cheapest",
+      cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest known total — did not clear checks",
+    ));
   }
-  rows.push({
-    id: pick.id,
-    seller: offerSellerLabel(pick),
-    listPrice: pick.price,
-    shipping: pick.shippingCostKnown === false ? null : pick.shippingCost,
-    shippingKnown: pick.shippingCostKnown !== false,
-    knownTotal: pickTotal,
-    role: "pick",
+  // Prefer another cheaper-than-pick listing with a different seller (real tradeoff, not a duplicate row).
+  const sample = withTotals.find((entry) => {
+    if (entry.offer.id === pick.id || entry.offer.id === cheapest?.id) return false;
+    if (pickTotal !== null && entry.total >= pickTotal) return false;
+    if (!cheapest) return true;
+    return offerSellerLabel(entry.offer) !== offerSellerLabel(cheapest);
   });
+  if (sample) {
+    rows.push(toRow(
+      sample.offer,
+      "sample",
+      sample.offer.trust?.suspiciousPrice ? "Flagged price anomaly" : "Cheaper — passed over",
+    ));
+  }
+  rows.push(toRow(pick, "pick"));
   return {
     brand: showcase.brand,
     productName: showcase.productName,
@@ -302,6 +329,31 @@ export function getComparisonDemo(): ComparisonDemo | null {
   }
   comparisonDemoCache = bestKey ? buildComparisonDemo(bestKey) : null;
   return comparisonDemoCache;
+}
+
+/** Homepage browse: prefer products where the Kelus pick beat the cheapest known total, with category spread. */
+export function listHomeComparisonPreviews(limit = 8): ProductListingPreview[] {
+  const live = listProductListingPreviews().filter((preview) => preview.live && preview.fromPrice > 0);
+  const proof = live
+    .filter((preview) => typeof preview.pickPrice === "number" && preview.pickPrice > preview.fromPrice + 5)
+    .sort((left, right) => ((right.pickPrice ?? 0) - right.fromPrice) - ((left.pickPrice ?? 0) - left.fromPrice));
+  const picked: ProductListingPreview[] = [];
+  for (const preview of proof) {
+    if (picked.length >= limit) break;
+    const sameCategory = picked.filter((item) => item.category === preview.category).length;
+    if (sameCategory >= 2) continue;
+    picked.push(preview);
+  }
+  if (picked.length < limit) {
+    const rest = live
+      .filter((preview) => !picked.some((item) => item.productSlug === preview.productSlug))
+      .sort((left, right) => right.offerCount - left.offerCount || right.fromPrice - left.fromPrice);
+    for (const preview of rest) {
+      if (picked.length >= limit) break;
+      picked.push(preview);
+    }
+  }
+  return picked;
 }
 
 let comparisonDemoCache: ComparisonDemo | null | undefined;
