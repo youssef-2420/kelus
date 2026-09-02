@@ -4,6 +4,7 @@ import { ProductIntelligenceView } from "@/app/results-v2/page";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
 import { shouldRedirectToValidatedAlternative } from "@/lib/preferred-product-criteria";
+import { absoluteCanonicalUrl } from "@/lib/seo-url";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
 import { CONDITIONS } from "@/types/kelus";
 
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const condition = criteria.condition === "any" ? "all conditions" : criteria.condition;
   const title = `${product.name} ${variant.label} prices | Kelus`;
   const description = `Compare matching live eBay offers for ${product.name} ${variant.label} in ${condition}. See Kelus's current pick and real price context when available.`;
-  const canonicalUrl = `https://kelus.me${canonicalProductPath(criteria)}`;
+  const canonicalUrl = absoluteCanonicalUrl(canonicalProductPath(criteria));
   return {
     title,
     description,
@@ -56,7 +57,7 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   if (redirectCriteria) redirect(canonicalProductPath(redirectCriteria));
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
   const offers = initialOutcome.status === "SUCCESS" ? initialOutcome.result.offers.filter((offer) => offer.dataSource === "live").slice(0, 5) : [];
-  const canonicalUrl = `https://kelus.me${canonicalProductPath(criteria)}`;
+  const canonicalUrl = absoluteCanonicalUrl(canonicalProductPath(criteria));
   const productName = `${product.name} ${variant.label}`;
   const productImage = offers.find((offer) => offer.imageUrl)?.imageUrl;
   const structuredData = {
@@ -65,8 +66,8 @@ export default async function CanonicalProductPage({ params }: PageProps) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: "https://kelus.me" },
-          { "@type": "ListItem", position: 2, name: "Products", item: "https://kelus.me/products" },
+          { "@type": "ListItem", position: 1, name: "Home", item: absoluteCanonicalUrl() },
+          { "@type": "ListItem", position: 2, name: "Products", item: absoluteCanonicalUrl("/products") },
           { "@type": "ListItem", position: 3, name: productName, item: canonicalUrl },
         ],
       },

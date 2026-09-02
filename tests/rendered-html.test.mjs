@@ -193,7 +193,7 @@ test("key pages use specific metadata and the homepage demonstrates the differen
   ]);
   assert.match(home, /Find the offer worth buying/);
   assert.match(home, /Kelus — Find the offer worth buying/);
-  assert.match(home, /alternates: \{ canonical: "https:\/\/kelus\.me" \}/);
+  assert.match(home, /alternates: \{ canonical: "https:\/\/kelus\.me\/" \}/);
   assert.match(how, /How Kelus evaluates an electronics offer/);
   assert.match(alerts, /My price alerts — Kelus/);
   assert.doesNotMatch(layout, /warranty/);

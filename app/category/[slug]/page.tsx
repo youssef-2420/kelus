@@ -8,6 +8,7 @@ import { categoryHubPath, categoryHubs, getCategoryHub, getCategoryHubProducts }
 import { CatalogProductImage } from "@/components/CatalogProductImage";
 import { getProductCardStatus } from "@/lib/catalog-availability";
 import { canonicalProductPath } from "@/lib/search-state";
+import { absoluteCanonicalUrl } from "@/lib/seo-url";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!hub) return { title: "Category not found | Kelus", robots: { index: false, follow: false } };
   const title = `${hub.label} price comparisons | Kelus`;
   const description = hub.description;
-  const canonicalUrl = `https://kelus.me${categoryHubPath(hub.slug)}`;
+  const canonicalUrl = absoluteCanonicalUrl(categoryHubPath(hub.slug));
   return {
     title,
     description,
@@ -33,7 +34,7 @@ export default async function CategoryHubPage({ params }: PageProps) {
   const hub = getCategoryHub((await params).slug);
   if (!hub) notFound();
   const products = getCategoryHubProducts(hub.slug);
-  const canonicalUrl = `https://kelus.me${categoryHubPath(hub.slug)}`;
+  const canonicalUrl = absoluteCanonicalUrl(categoryHubPath(hub.slug));
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -46,12 +47,12 @@ export default async function CategoryHubPage({ params }: PageProps) {
         "@type": "ListItem",
         position: index + 1,
         name: `${product.brand} ${product.name}`,
-        url: `https://kelus.me${canonicalProductPath({
+        url: absoluteCanonicalUrl(canonicalProductPath({
           productSlug: product.slug,
           variantId: product.searchAttribute.validVariantIds[0],
           condition: "new",
           market: "us",
-        })}`,
+        })),
       })),
     },
   };

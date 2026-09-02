@@ -5,14 +5,14 @@ export function SiteJsonLd() {
       {
         "@type": "Organization",
         name: "Kelus",
-        url: "https://kelus.me",
+        url: "https://kelus.me/",
         logo: "https://kelus.me/kelus-icon.png",
         description: "Kelus compares exact electronics configurations and validated eBay offers so shoppers know before they buy.",
       },
       {
         "@type": "WebSite",
         name: "Kelus",
-        url: "https://kelus.me",
+        url: "https://kelus.me/",
       },
     ],
   };

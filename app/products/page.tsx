@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { productCategories } from "@/lib/demo-data";
 import { listProductListingPreviews } from "@/lib/bundled-snapshot-catalog";
+import { absoluteCanonicalUrl } from "@/lib/seo-url";
 
 export const metadata: Metadata = {
   title: "All supported products — Kelus price comparisons",
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "All supported products — Kelus",
     description: "Browse validated eBay price comparisons across Kelus-supported electronics.",
-    url: "https://kelus.me/products",
+    url: absoluteCanonicalUrl("/products"),
     type: "website",
     images: ["/og.png"],
   },
@@ -37,7 +38,7 @@ export default function ProductsPage() {
         "@type": "ListItem",
         position: index + 1,
         name: `${preview.brand} ${preview.productName}`,
-        url: `https://kelus.me${preview.href}`,
+        url: absoluteCanonicalUrl(preview.href),
       })),
     },
   };

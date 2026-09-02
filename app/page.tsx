@@ -12,11 +12,11 @@ import { SiteFooter } from "@/components/SiteFooter";
 export const metadata: Metadata = {
   title: "Kelus — Find the offer worth buying",
   description: "Search popular electronics and see which validated eBay offer Kelus recommends after checking exact configuration, known shipping, seller evidence, returns, and price anomalies.",
-  alternates: { canonical: "https://kelus.me" },
+  alternates: { canonical: "https://kelus.me/" },
   openGraph: {
     title: "Kelus — Find the offer worth buying",
     description: "Search popular electronics and see which validated eBay offer is worth buying.",
-    url: "https://kelus.me",
+    url: "https://kelus.me/",
     type: "website",
     images: ["/og.png"],
   },
