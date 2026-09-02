@@ -6,7 +6,7 @@ import test from "node:test";
 const outputFor = (route) => route === "/" ? join(process.cwd(), ".next", "server", "app", "index.html") : join(process.cwd(), ".next", "server", "app", `${route.slice(1)}.html`);
 
 test("builds static surfaces while canonical product intelligence remains server-rendered", async () => {
-  for (const [route, expected] of [["/", "Shop smarter"], ["/how-it-works", "Shopping clarity"], ["/methodology", "See what Kelus checks"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"]]) {
+  for (const [route, expected] of [["/", "Find the offer worth buying"], ["/how-it-works", "Shopping clarity"], ["/methodology", "See what Kelus checks"], ["/results", "Preparing your comparison"], ["/product/iphone-17", "Opening the current iPhone 17 comparison"]]) {
     const html = await readFile(outputFor(route), "utf8");
     assert.match(html, new RegExp(expected));
     assert.doesNotMatch(html, /Your site is taking shape|codex-preview|react-loading-skeleton/i);
@@ -69,6 +69,9 @@ test("canonical product runtime contains record-specific SEO and structured-data
   assert.match(page, /application\/ld\+json/);
   assert.match(page, /https:\/\/schema\.org/);
   assert.match(page, /alternates: \{ canonical: canonicalUrl \}/);
+  assert.match(page, /"@type": "BreadcrumbList"/);
+  assert.match(page, /productImage \? \{ image: productImage \}/);
+  assert.match(page, /sku: criteria\.variantId/);
   assert.doesNotMatch(page, /ProductSeoIntro/);
   assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);
   for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
@@ -181,17 +184,20 @@ test("search is the single canonical product discovery experience", async () => 
 });
 
 test("key pages use specific metadata and the homepage demonstrates the differentiator", async () => {
-  const [home, how, alerts, layout] = await Promise.all([
+  const [home, how, alerts, layout, siteJsonLd] = await Promise.all([
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/alerts/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SiteJsonLd.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /Find the offer worth buying/);
   assert.match(home, /Kelus — Find the offer worth buying/);
+  assert.match(home, /alternates: \{ canonical: "https:\/\/kelus\.me" \}/);
   assert.match(how, /How Kelus evaluates an electronics offer/);
   assert.match(alerts, /My price alerts — Kelus/);
   assert.doesNotMatch(layout, /warranty/);
+  assert.doesNotMatch(siteJsonLd, /SearchAction/);
 });
 
 test("Alerts leads with monitoring state and keeps secondary controls progressive", async () => {

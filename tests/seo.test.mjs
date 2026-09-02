@@ -4,7 +4,8 @@ import robots from "../app/robots.ts";
 import sitemap from "../app/sitemap.ts";
 
 test("sitemap contains discovery and canonical product URLs", () => {
-  const urls = sitemap().map((entry) => entry.url);
+  const entries = sitemap();
+  const urls = entries.map((entry) => entry.url);
   assert.ok(urls.includes("https://kelus.me/search"));
   assert.ok(urls.includes("https://kelus.me/products"));
   assert.ok(urls.includes("https://kelus.me/coverage"));
@@ -14,6 +15,8 @@ test("sitemap contains discovery and canonical product URLs", () => {
   assert.ok(urls.includes("https://kelus.me/product/playstation-5-slim-disc-new"));
   assert.doesNotMatch(urls.join("\n"), /-any$/);
   assert.equal(new Set(urls).size, urls.length);
+  assert.equal(entries.find((entry) => entry.url === "https://kelus.me")?.lastModified, undefined);
+  assert.ok(entries.find((entry) => entry.url === "https://kelus.me/product/iphone-17-pro-256gb-new")?.lastModified);
 });
 
 test("robots exposes the canonical sitemap and blocks private routes", () => {
