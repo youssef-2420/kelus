@@ -216,10 +216,33 @@ test("Alerts leads with monitoring state and keeps secondary controls progressiv
   assert.match(alerts, /Check prices/);
   assert.match(alerts, /checkGuestPrices/);
   assert.match(alerts, /<progress value=\{progress\}/);
+  assert.match(alerts, /alerts-empty-steps/);
+  assert.match(alerts, /alerts-empty-signin/);
   assert.match(styles, /\.alerts-overview/);
   assert.match(styles, /\.alerts-refresh-button/);
   assert.match(styles, /\.alert-glance/);
   assert.match(styles, /\.alert-check\.is-error/);
+  assert.match(styles, /\.alerts-empty-steps/);
+});
+
+test("phase 2 UX polish covers sign-in toast and mobile search overlay", async () => {
+  const [toast, search, signIn, styles] = await Promise.all([
+    readFile(new URL("../components/AppSignInToast.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SignInDialog.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(toast, /setTimeout\(clearSignInNotice/);
+  assert.match(toast, /name="shield"/);
+  assert.match(search, /search-overlay-scrim/);
+  assert.match(search, /is-overlay-open/);
+  assert.match(search, /closeOverlay/);
+  assert.match(search, /scrollIntoView/);
+  assert.match(search, /body\.style\.overflow = "hidden"/);
+  assert.match(signIn, /Signed in successfully/);
+  assert.match(styles, /\.search-overlay-scrim/);
+  assert.match(styles, /hero-suggestions-sheet-in/);
+  assert.match(styles, /\.app-signin-toast/);
 });
 
 test("authentication hydrates from local session and cannot leave Alerts stuck loading", async () => {
