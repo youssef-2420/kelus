@@ -630,9 +630,15 @@ html { scroll-behavior:smooth; }
 @media(prefers-reduced-motion:reduce){.signin-dialog,.modal-backdrop{animation:none}.social-buttons button{transition:none}}
 
 /* Product page chrome, guest sync prompts, and verification notice. */
-.product-page-header{border-bottom:1px solid #e7ebe8;background:#fffefa}
-.product-search-bar{padding:18px 0 22px}
-.product-search-bar .rp-search-pill-wrap{max-width:760px;margin:0 auto}
+.product-search-dock{border-block:1px solid #dfe7e3;background:#f1f5f2}
+.product-search-dock-inner{display:grid;grid-template-columns:180px minmax(0,760px);justify-content:space-between;align-items:center;gap:28px;padding-block:14px}
+.product-search-dock-copy{display:grid;gap:3px}
+.product-search-dock-copy span{color:#6a7a75;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.product-search-dock-copy strong{color:#173a33;font-size:13px;line-height:1.25}
+.product-search-bar{width:100%}
+.product-search-bar .rp-search-pill-wrap{max-width:760px;margin:0}
+.product-search-bar .rp-search-pill{min-height:52px;border-color:#cad8d3;background:#fffefa;box-shadow:0 7px 18px rgba(16,34,30,.05)}
+.product-search-bar .nr-search-action{min-height:42px}
 .watch-button-wrap{display:grid;gap:8px;justify-items:start}
 .watch-button-wrap.is-saved .watch-button{border-color:var(--forest);background:#ebf5f1}
 .watch-button-message,.watch-button-note{margin:0;font-size:12px;line-height:1.45}
@@ -661,7 +667,9 @@ html { scroll-behavior:smooth; }
   .verified-notice{width:calc(100% - 32px)}
 }
 @media(max-width:620px){
-  .product-search-bar{padding:14px 0 18px}
+  .product-search-dock-inner{display:block;padding-block:10px}
+  .product-search-dock-copy{display:none}
+  .product-search-bar .rp-search-pill{min-height:50px}
 }
 
 /* Product intelligence and alerts loading skeletons */

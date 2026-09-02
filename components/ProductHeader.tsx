@@ -8,11 +8,19 @@ type Props = {
 
 export function ProductHeader({ criteria }: Props) {
   return (
-    <div className="product-page-header">
+    <>
       <KelusHeader />
-      <div className="product-search-bar section">
-        <SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search" />
-      </div>
-    </div>
+      <section className="product-search-dock" aria-label="Search another product">
+        <div className="product-search-dock-inner section">
+          <div className="product-search-dock-copy">
+            <span>Comparing now</span>
+            <strong>Search another product</strong>
+          </div>
+          <div className="product-search-bar">
+            <SearchControls minimal minimalAction initialCriteria={criteria} actionLabel="Search" />
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
