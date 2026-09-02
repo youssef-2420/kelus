@@ -202,7 +202,7 @@ export default function AlertsPage() {
   };
   const sortedAlerts = [...alerts].sort((left, right) => statusRank(left) - statusRank(right));
 
-  return <main className="app-page alerts-page"><KelusHeader />
+  return <main id="main-content" className="app-page alerts-page"><KelusHeader />
     <section className="alerts-main section">
       <GuestSyncBanner />
       <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><div className="alerts-heading-actions">{!user && alerts.length > 0 && <button type="button" className="alerts-refresh-button" onClick={() => { void checkGuestPrices(); }} disabled={refreshingAll || initialLoading} aria-busy={refreshingAll}><Icon name="search" size={16}/>{refreshingAll ? "Checking prices…" : "Check prices"}</button>}{alerts.length > 0 && <Link href="/search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link>}</div></div>

@@ -5,6 +5,7 @@ import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
 import { ComparisonStage } from "@/components/ComparisonStage";
 import { HomeLearnSection } from "@/components/HomeLearnSection";
+import { HomeTaskPath } from "@/components/HomeTaskPath";
 import { HomepageSocialProof } from "@/components/HomepageSocialProof";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="home-page">
+    <main id="main-content" className="home-page">
       <LandingAnalytics />
       <KelusHeader />
       <VerifiedNotice />
@@ -36,6 +37,7 @@ export default function Home() {
             <p>
               Kelus compares matching eBay listings for the exact product you want, adds known shipping, and recommends one offer that passes seller and price checks.
             </p>
+            <HomeTaskPath />
           </div>
           <div id="product-search" className="hero-search-wrap home-stage-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />

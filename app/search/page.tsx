@@ -20,7 +20,7 @@ export default function SearchPage() {
   const quickStarts = getSearchQuickStarts(8);
 
   return (
-    <main className="search-page">
+    <main id="main-content" className="search-page">
       <KelusHeader shell="search" />
       <section className="search-stage section" aria-label="Product search">
         <header className="search-stage-intro">

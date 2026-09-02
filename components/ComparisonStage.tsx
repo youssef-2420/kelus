@@ -15,10 +15,14 @@ function formatMoney(value: number, fractionDigits = 0) {
 }
 
 function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
+  const badge = row.role === "pick" ? "Our pick" : row.role === "cheapest" ? "Cheapest" : null;
   return (
     <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`} role="listitem">
       <div className="comparison-row-main">
-        <span className="comparison-row-seller">{row.seller}</span>
+        <span className="comparison-row-seller">
+          {badge ? <span className={`comparison-row-badge is-${row.role}`}>{badge}</span> : null}
+          {row.seller}
+        </span>
         <span className="comparison-row-meta">
           {formatMoney(row.listPrice)} listing
           {row.shippingKnown ? ` + ${formatMoney(row.shipping ?? 0)} ship` : " · shipping unknown"}

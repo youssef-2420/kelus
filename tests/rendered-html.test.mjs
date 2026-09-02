@@ -402,3 +402,22 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   assert.match(search, /searchIssue\.kind === "unsupported" \|\| searchIssue\.kind === "ambiguous"/);
   assert.doesNotMatch(search, /startSearch/);
 });
+
+test("kit-guided UX adds skip link, homepage task path, and comparison badges", async () => {
+  const [layout, skipLink, home, comparison, styles] = await Promise.all([
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SkipLink.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/ComparisonStage.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(layout, /SkipLink/);
+  assert.match(skipLink, /Skip to main content/);
+  assert.match(home, /HomeTaskPath/);
+  assert.match(home, /id="main-content"/);
+  assert.match(comparison, /comparison-row-badge/);
+  assert.match(styles, /\.skip-link/);
+  assert.match(styles, /\.home-task-path/);
+  assert.match(styles, /\.comparison-row-badge/);
+  assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);
+});
