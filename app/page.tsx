@@ -24,25 +24,24 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="home-page">
+    <main id="main-content" className="home-page home-desk">
       <LandingAnalytics />
       <KelusHeader />
       <VerifiedNotice />
       <OnboardingTour />
-      <section className="home-stage section" aria-label="Search Kelus">
-        <div className="home-stage-command">
-          <div className="home-stage-copy">
-            <h1>Find the offer worth buying.</h1>
-            <p>
-              Kelus compares matching eBay listings for the exact product you want, adds known shipping, and recommends one offer that passes seller and price checks.
-            </p>
-          </div>
-          <div id="product-search" className="hero-search-wrap home-stage-search">
+      <section className="desk section" aria-label="Search and live Kelus pick">
+        <div className="desk-rail">
+          <p className="desk-kicker">Search → compare → buy</p>
+          <h1>What are you buying?</h1>
+          <p>
+            Search the exact product and configuration. Kelus compares matching eBay offers with known shipping, then recommends one that clears seller and price checks.
+          </p>
+          <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
           </div>
           <HomepageSocialProof />
         </div>
-        <ComparisonStage />
+        <ComparisonStage layout="desk" />
       </section>
       <HomeLearnSection />
       <SiteFooter />

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { KelusHeader } from "@/components/KelusHeader";
-import { Icon } from "@/components/Icon";
 import { SearchControls } from "@/components/SearchControls";
+import { ProductListingCard } from "@/components/ProductListingCard";
 import { ComparisonStage } from "@/components/ComparisonStage";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
-import { getSearchQuickStarts, formatQuickStartLabel } from "@/lib/search-quick-starts";
-import { formatFromPrice } from "@/lib/bundled-snapshot-catalog";
+import { listProductListingPreviews } from "@/lib/bundled-snapshot-catalog";
 import { getProductCardStatus } from "@/lib/catalog-availability";
 
 export const metadata: Metadata = {
@@ -17,54 +16,50 @@ export const metadata: Metadata = {
 };
 
 export default function SearchPage() {
-  const quickStarts = getSearchQuickStarts(8);
+  const previews = listProductListingPreviews()
+    .map((preview) => ({ preview, status: getProductCardStatus(preview.productSlug) }))
+    .sort((left, right) => {
+      const leftLive = left.status.status === "validated" ? 1 : 0;
+      const rightLive = right.status.status === "validated" ? 1 : 0;
+      if (leftLive !== rightLive) return rightLive - leftLive;
+      return (right.preview.fromPrice ?? 0) - (left.preview.fromPrice ?? 0);
+    })
+    .slice(0, 8)
+    .map((entry) => entry.preview);
 
   return (
-    <main className="search-page">
-      <KelusHeader shell="search" />
-      <section className="search-stage section" aria-label="Product search">
-        <header className="search-stage-intro">
-          <h1>Search supported electronics</h1>
-          <p>Choose the exact configuration and condition. Kelus validates matching eBay offers and recommends one worth buying.</p>
+    <main id="main-content" className="search-page search-desk">
+      <KelusHeader activeHref="/search" />
+      <section className="search-console section" aria-label="Product search">
+        <header className="search-console-copy">
+          <p className="search-console-kicker">Catalog search</p>
+          <h1>Find the exact product</h1>
+          <p>Search a supported model, choose the configuration, then open a comparison with known totals and one validated pick.</p>
         </header>
-        <div id="product-search" className="hero-search-wrap search-stage-search">
-          <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
-        </div>
-        <div className="search-stage-body">
-          <div className="search-stage-index">
-            <section className="search-index-block" aria-labelledby="search-popular-heading">
-              <h2 id="search-popular-heading">Popular right now</h2>
-              <ul className="search-index-list">
-                {quickStarts.map((item) => {
-                  const { product, href, fromPrice, live } = item;
-                  const status = live && fromPrice
-                    ? { label: `From ${formatFromPrice(fromPrice)}`, detail: "Validated comparison available" }
-                    : getProductCardStatus(product.slug);
-                  return (
-                    <li key={`${product.slug}-${href}`}>
-                      <Link className="search-index-row" href={href} title={status.detail}>
-                        <span>{formatQuickStartLabel(item)}</span>
-                        <span>{status.label}</span>
-                        <Icon name="arrow" size={14} />
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-            <nav className="search-index-block" aria-labelledby="search-category-heading">
-              <h2 id="search-category-heading">Categories</h2>
-              <p className="search-category-line">
-                {categoryHubs.map((hub, index) => (
-                  <span key={hub.slug}>
-                    {index > 0 ? <span className="search-category-sep" aria-hidden="true">·</span> : null}
-                    <Link href={categoryHubPath(hub.slug)}>{hub.label}</Link>
-                  </span>
-                ))}
-              </p>
-            </nav>
+        <div className="search-console-panel">
+          <div id="product-search" className="hero-search-wrap search-console-bar">
+            <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
           </div>
-          <ComparisonStage compact />
+          <nav className="search-console-categories" aria-label="Categories">
+            <span className="search-console-categories-label">Browse</span>
+            {categoryHubs.map((hub) => (
+              <Link key={hub.slug} href={categoryHubPath(hub.slug)}>{hub.label}</Link>
+            ))}
+          </nav>
+        </div>
+      </section>
+      <section className="search-featured section" aria-label="Live comparison">
+        <ComparisonStage compact />
+      </section>
+      <section className="search-browse section" aria-labelledby="search-browse-heading">
+        <div className="search-browse-head">
+          <h2 id="search-browse-heading">Popular comparisons</h2>
+          <p>Open a product to see the current pick, known totals, and why cheaper listings were passed over.</p>
+        </div>
+        <div className="search-browse-grid">
+          {previews.map((preview) => (
+            <ProductListingCard key={`${preview.productSlug}-${preview.href}`} preview={preview} layout="tile" />
+          ))}
         </div>
       </section>
       <SiteFooter />

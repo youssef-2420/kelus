@@ -8,6 +8,7 @@ import { optimizedRetailerImageUrl } from "@/services/retailer-image";
 
 type Props = {
   compact?: boolean;
+  layout?: "default" | "desk";
 };
 
 function formatMoney(value: number, fractionDigits = 0) {
@@ -15,10 +16,14 @@ function formatMoney(value: number, fractionDigits = 0) {
 }
 
 function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
+  const badge = row.role === "pick" ? "Our pick" : row.role === "cheapest" ? "Cheapest" : null;
   return (
-    <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`}>
+    <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`} role="listitem">
       <div className="comparison-row-main">
-        <span className="comparison-row-seller">{row.seller}</span>
+        <span className="comparison-row-seller">
+          {badge ? <span className={`comparison-row-badge is-${row.role}`}>{badge}</span> : null}
+          {row.seller}
+        </span>
         <span className="comparison-row-meta">
           {formatMoney(row.listPrice)} listing
           {row.shippingKnown ? ` + ${formatMoney(row.shipping ?? 0)} ship` : " · shipping unknown"}
@@ -56,15 +61,60 @@ function comparisonFootnote(demo: NonNullable<ReturnType<typeof getComparisonDem
   return <p>Kelus surfaces known totals before you commit to a listing.</p>;
 }
 
-function StageImage({ imageUrl, label }: { imageUrl?: string; label: string }) {
-  const source = optimizedRetailerImageUrl(imageUrl, 96);
+function StageImage({ imageUrl, label, large = false }: { imageUrl?: string; label: string; large?: boolean }) {
+  const source = optimizedRetailerImageUrl(imageUrl, large ? 220 : 96);
   if (!source) return <ProductMark label={label} />;
-  return <img src={source} alt="" width={56} height={56} loading="lazy" decoding="async" />;
+  return <img src={source} alt="" width={large ? 160 : 56} height={large ? 160 : 56} loading="lazy" decoding="async" />;
 }
 
-export function ComparisonStage({ compact = false }: Props) {
+function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonDemo>> }) {
+  const pick = demo.rows.find((row) => row.role === "pick");
+  const cheapest = demo.rows.find((row) => row.role === "cheapest");
+  const savingsLabel = demo.savingsGap !== null && demo.savingsGap > 0
+    ? `${formatMoney(demo.savingsGap)} cheaper listing failed validation`
+    : null;
+
+  return (
+    <aside className="desk-pick" aria-label="Live Kelus pick">
+      <p className="desk-pick-kicker">Live Kelus pick</p>
+      <div className="desk-pick-product">
+        <span className="desk-pick-thumb" aria-hidden="true">
+          <StageImage imageUrl={demo.listingImageUrl} label={demo.productName.slice(0, 2).toUpperCase()} large />
+        </span>
+        <div>
+          <p className="desk-pick-brand">{demo.brand}</p>
+          <h2 className="desk-pick-title">{demo.productName}</h2>
+          <p className="desk-pick-meta">{demo.variantLabel} · {demo.offerCount} validated offers</p>
+        </div>
+      </div>
+      <div className="desk-pick-totals">
+        <div className="desk-pick-total is-pick">
+          <span>Our pick · known total</span>
+          <strong>{demo.pickTotal !== null ? formatMoney(demo.pickTotal) : "—"}</strong>
+          {pick ? <em>{pick.seller}</em> : null}
+        </div>
+        {cheapest && cheapest.knownTotal !== null ? (
+          <div className="desk-pick-total is-cheapest">
+            <span>Cheapest listing</span>
+            <strong>{formatMoney(cheapest.knownTotal)}</strong>
+            <em>{cheapest.seller}</em>
+          </div>
+        ) : null}
+      </div>
+      {savingsLabel ? <p className="desk-pick-note">{savingsLabel}</p> : null}
+      <div className="desk-pick-foot">{comparisonFootnote(demo)}</div>
+      <Link className="button button-primary desk-pick-cta" href={demo.href}>
+        Open this comparison <Icon name="arrow" size={17} />
+      </Link>
+    </aside>
+  );
+}
+
+export function ComparisonStage({ compact = false, layout = "default" }: Props) {
   const demo = getComparisonDemo();
   if (!demo) return null;
+  if (layout === "desk") return <DeskPick demo={demo} />;
+
   const savingsLabel = demo.savingsGap !== null && demo.savingsGap > 0
     ? `${formatMoney(demo.savingsGap)} cheaper listing failed validation`
     : null;
@@ -86,7 +136,7 @@ export function ComparisonStage({ compact = false }: Props) {
           Open comparison <Icon name="arrow" size={14} />
         </Link>
       </header>
-      <div className="comparison-stage-rows">
+      <div className="comparison-stage-rows" role="list">
         {demo.rows.map((row) => <Row key={row.id} row={row} compact={compact} />)}
       </div>
       <footer className="comparison-stage-foot">

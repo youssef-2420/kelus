@@ -88,7 +88,12 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
     if (!target.closest(".signin-dialog") && !target.closest(".auth-brand-mark")) closeDialog();
   }
   function finishSignIn() {
-    setOpen(false);
+    setNotice("Signed in successfully");
+    setBusy(false);
+    window.setTimeout(() => {
+      setOpen(false);
+      setNotice("");
+    }, 420);
   }
 
   async function submit(event: FormEvent) {
@@ -167,6 +172,10 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
       <p className="eyebrow">{mode === "create" ? "Start tracking smarter" : mode === "forgot" || mode === "reset" ? "Secure account recovery" : "Welcome back"}</p><h2 id="signin-title">{mode === "signin" ? "Sign in to Kelus" : mode === "create" ? "Create your Kelus account" : mode === "forgot" ? "Reset your password" : "Choose a new password"}</h2>
       <p className="dialog-copy">{mode === "forgot" ? "We’ll send a secure reset link to your email." : mode === "reset" ? "Enter a new password for your Kelus account." : mode === "create" ? "Save exact products, set target prices, and keep your alerts across devices." : "Return to your tracked products and price decisions."}</p>
       {!configured && <p className="auth-message is-error" role="alert">Sign-in is temporarily unavailable.</p>}
+      {(mode === "signin" || mode === "create") && <>
+        <div className="social-buttons social-buttons-first"><button type="button" onClick={socialSignIn} disabled={busy || !configured}><GoogleMark/>Continue with Google</button></div>
+        <div className="dialog-divider"><span>or use email</span></div>
+      </>}
       <form onSubmit={submit}>
         {mode === "create" && <label>Full name<input type="text" value={fullName} onChange={(event) => setFullName(event.target.value)} placeholder="Your full name" autoComplete="name" required disabled={busy}/></label>}
         {mode !== "reset" && <label>Email address<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" autoComplete="email" required disabled={busy}/></label>}
@@ -175,7 +184,7 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
         {error && <p className="auth-message is-error" role="alert">{error}</p>}{notice && <p className="auth-message is-success" role="status">{notice}</p>}
         <button className="button button-primary dialog-submit" type="submit" disabled={busy || !configured}>{busy ? "Please wait…" : mode === "signin" ? "Sign in" : mode === "create" ? "Create account" : mode === "forgot" ? "Send reset link" : "Update password"}<Icon name="arrow" size={17}/></button>
       </form>
-      {(mode === "signin" || mode === "create") && <><div className="dialog-divider"><span>or continue with</span></div><div className="social-buttons"><button type="button" onClick={socialSignIn} disabled={busy || !configured}><GoogleMark/>Continue with Google</button></div><p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p><div className="signin-mode-switch"><span>{mode === "signin" ? "New to Kelus?" : "Already have an account?"}</span><button type="button" onClick={() => switchMode(mode === "signin" ? "create" : "signin")}>{mode === "signin" ? "Create account" : "Sign in"}</button></div></>}
+      {(mode === "signin" || mode === "create") && <><p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p><div className="signin-mode-switch"><span>{mode === "signin" ? "New to Kelus?" : "Already have an account?"}</span><button type="button" onClick={() => switchMode(mode === "signin" ? "create" : "signin")}>{mode === "signin" ? "Create account" : "Sign in"}</button></div></>}
       {(mode === "forgot" || mode === "reset") && !notice && <button className="auth-back" type="button" onClick={() => switchMode("signin")}>Back to sign in</button>}
       {(mode === "forgot" || mode === "reset") && <p className="dialog-legal">Authentication is securely handled by Supabase. Kelus never stores your password.</p>}
     </section></div></div>}

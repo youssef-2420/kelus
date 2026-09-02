@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "hallmark": {
+      "source": "nutlope/hallmark",
+      "sourceType": "github",
+      "skillPath": "skills/hallmark/SKILL.md",
+      "computedHash": "579f86b27cdd7eb972107f7aecedd537f472891c5fd7c7c821bea15f64e0fe86"
+    },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/impeccable/SKILL.md",
+      "computedHash": "af37c935f1b3a0aa885a8a027771e7ba9c7a7b46dcb89874ecfeb9a97fe1c042"
+    }
+  }
+}

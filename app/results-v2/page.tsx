@@ -207,7 +207,9 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = snapshotLooksVisuallyStale(result);
-  const showRefreshBanner = backgroundRefreshing || (Boolean(staleSnapshot && offers.length && result?.refreshRecommended));
+  // Only interrupt the decision moment while a live recheck is actively running.
+  // Saved/stale state stays in DataFreshness so the pick is not prefaced with a warning.
+  const showRefreshBanner = backgroundRefreshing;
   const alternativeCriteria = useMemo(() => rankAlternativeCriteria(criteria, getAlternativeProductCriteria(criteria)), [criteria]);
 
   useEffect(() => {
@@ -218,18 +220,19 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     if (pick) trackEvent({ name: "recommendation_viewed", productSlug: criteria.productSlug, offerId: pick.id, confidence: decision.confidence });
   }, [criteria.productSlug, decision.confidence, pick]);
 
-  return <main className="nr-page pi-page">
+  return <main id="main-content" className="nr-page pi-page">
     <ProductHeader criteria={criteria} />
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1 className="pi-title">{productPageHeading(product, variant, criteria.condition)}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)} refreshing={refreshingSnapshot}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
       {error && offers.length ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : error ? <ProductFallbackState kind="empty" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "pending"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
-        {showRefreshBanner && <p className="pi-refresh-banner" role="status" aria-live="polite"><i aria-hidden="true"/>Kelus is checking live eBay offers in the background. Prices shown may update when the check completes.</p>}
+        {showRefreshBanner && <p className="pi-refresh-banner" role="status" aria-live="polite"><i aria-hidden="true"/>{backgroundRefreshing ? "Checking live eBay offers now. The pick below stays until a newer validated offer is ready." : "This comparison was saved earlier. Prices can move — Kelus rechecks in the background."}</p>}
         {updating && loading && <div className="pi-updating-overlay" aria-busy="true" aria-live="polite"><ProductUpdatingOverlay/></div>}
-        <DecisionReport decision={decision} lowest={lowest}/>
+        <DecisionReport decision={decision} lowest={lowest} productName={product.name} criteria={criteria} result={result!} context={context}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
         {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image} stale={Boolean(staleSnapshot)}/>)}</div></section>}
         <section className="pi-method"><p className="pi-label">Methodology</p><p>Kelus uses persisted last-known-good eBay snapshots for the first render, then refreshes connected offers in the background. Recommendations only use comparable offers that pass product, variant, condition, seller, shipping, return, confidence, and anomaly checks.</p><Link className="text-link" href="/methodology">See how Kelus picks an offer <Icon name="arrow" size={14}/></Link></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
+        {pick && <ProductMobileCTA offer={pick} />}
       </div>}
     </div>
   </main>;
@@ -285,7 +288,8 @@ function DataFreshness({ result, offerCount, loading, stale, refreshing }: { res
   return <p className={`pi-freshness is-${state}`} aria-busy={refreshing}>
     <span><i aria-hidden="true"/>{label}</span>
     <small>{detail}</small>
-    {refreshing && offerCount > 0 && <em className="pi-refreshing-status" role="status" aria-live="polite"><i aria-hidden="true"/>Checking for newer offers</em>}
+    {refreshing && offerCount > 0 && <em className="pi-refreshing-status" role="status" aria-live="polite"><i aria-hidden="true"/>Checking for newer offers — pick stays until a newer validated offer is ready</em>}
+    {!refreshing && stale && offerCount > 0 && <em className="pi-refreshing-status is-idle" role="status">Saved comparison — Kelus rechecks quietly in the background</em>}
   </p>;
 }
 
@@ -372,7 +376,7 @@ function EvidenceReveal({ pick, tradeoff }: { pick: Offer; tradeoff: string }) {
   const returns = pick.returnPolicy && !/unavailable|unknown/i.test(pick.returnPolicy) ? pick.returnPolicy : "Not supplied by eBay";
   const match = pick.trust?.reasons?.length ? pick.trust.reasons.slice(0, 2).join(" · ") : "Comparable offer accepted by the current matching rules";
   const anomaly = pick.trust ? pick.trust.suspiciousPrice ? "Price anomaly detected" : "No suspicious-price flag" : "Price-anomaly evidence unavailable";
-  return <details className="pi-proof" open>
+  return <details className="pi-proof">
     <summary><span><b>Why this offer won</b><small>See the evidence behind Our Pick</small></span><Icon name="chevron" size={18}/></summary>
     <div className="pi-proof-reveal"><dl>
       <div><dt>Match</dt><dd>{match}</dd></div>
@@ -399,7 +403,14 @@ function kelusVerdict(decision: KelusDecision, lowest?: Offer | null) {
   return { title: "The lower price comes with a trade-off.", detail: decision.cheaperTradeoff ?? "Kelus found a cheaper comparable offer, but the available evidence favors Our Pick." };
 }
 
-function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?: Offer | null }) {
+function DecisionReport({ decision, lowest, productName, criteria, result, context }: {
+  decision: KelusDecision;
+  lowest?: Offer | null;
+  productName: string;
+  criteria: SearchCriteria;
+  result: OfferSearchResult;
+  context: ReturnType<typeof getPriceContext>;
+}) {
   const pick = decision.pick;
   const tradeoff = decision.cheaperTradeoff ?? "Kelus did not find a meaningfully cheaper comparable offer with different trade-offs.";
   const pickTotal = pick ? knownTotal(pick) : null;
@@ -408,13 +419,26 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
   const verdict = kelusVerdict(decision, lowest);
   const sellerName = decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName;
   const sellerHref = pick ? ebaySellerProfileUrl(pick.seller.name || sellerName) : null;
-  return <section className="pi-pick" aria-labelledby="our-pick-heading">
+  const timing = getBuyWaitDecision(context);
+  const preferTrack = timing.label === "CONSIDER WAITING" || timing.label === "HISTORY BUILDING";
+  return <section className="pi-pick pi-pick-reveal" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
+    {verdict && <div className="pi-verdict pi-verdict-lead"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
     <div className="pi-pick-top">
       <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong>{savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}<ConfidenceBadge confidence={decision.confidence}/><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
       {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span>{sellerHref ? <a href={sellerHref} target="_blank" rel="noopener noreferrer">{sellerName}</a> : <b>{sellerName}</b>}</span><small>{offerMeta(pick)}</small></div>}
     </div>
-    {verdict && <div className="pi-verdict"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
+    {pick && <div className={`pi-decision-strip pi-primary-cta pi-primary-cta--early${preferTrack ? " prefers-track" : ""}`}>
+      <div className="pi-decision-strip-actions">
+        <OutboundRetailerCTA offer={pick} label="View offer" ourPick/>
+        <WatchButton product={productName} criteria={criteria} result={result}/>
+      </div>
+      <p className="pi-decision-strip-note">
+        {preferTrack
+          ? `${timing.label === "HISTORY BUILDING" ? "Price history is still building." : "Timing says wait may help."} Track this configuration, or open the live listing now.`
+          : "Opens the live eBay listing · Track keeps this exact configuration watched"}
+      </p>
+    </div>}
     <div className="pi-why">
       <p className="pi-label">Why this offer</p>
       <p className="pi-evidence">{decision.reasons.join(" · ")}</p>
@@ -425,7 +449,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
       <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
       <span>Cheapest</span><strong>{money(lowest ?? pick)}</strong><small>{lowest?.trust?.confidence ? `${titleCase(lowest.trust.confidence.toLowerCase())} confidence${savings !== null && savings > 0 ? ` · ${moneyAmount(savings, lowest.currency)} less` : ""}` : "Confidence unavailable"}</small>
     </div></> : <p className="pi-no-cheaper">No cheaper comparable offer passed Kelus validation.</p>}
-    {pick && <div className="pi-primary-cta"><OutboundRetailerCTA offer={pick} label="View offer" ourPick/><span>Opens the live eBay listing</span><p className="pi-cta-disclosure">Kelus may earn a commission from eligible retailer links.</p></div>}
+    <p className="pi-cta-disclosure pi-pick-foot-note">Kelus may earn a commission from eligible retailer links.</p>
   </section>;
 }
 
@@ -446,6 +470,16 @@ function OtherOffer({ offer, productName, fallbackLabel, stale }: { offer: Offer
   </article>;
 }
 
+function ProductMobileCTA({ offer }: { offer: Offer }) {
+  return <div className="pi-mobile-cta" aria-label="Quick action">
+    <div className="pi-mobile-cta-copy">
+      <span>Our Pick</span>
+      <strong>{money(offer)}</strong>
+    </div>
+    <OutboundRetailerCTA offer={offer} label="View offer" ourPick/>
+  </div>;
+}
+
 function TimingAndTrack({ context, observations, productName, criteria, result }: { context: ReturnType<typeof getPriceContext>; observations: PriceObservation[]; productName: string; criteria: SearchCriteria; result: OfferSearchResult }) {
   const points = historyPointsFromObservations(observations, criteria);
   const average = context.average90Day ?? context.average30Day;
@@ -453,16 +487,17 @@ function TimingAndTrack({ context, observations, productName, criteria, result }
   const building = decision.label === "HISTORY BUILDING";
   const progress = Math.min(100, Math.round((context.observationCount / minimum30DaySamples) * 100));
   const stat = (value: number | null) => value ? `$${value}` : "—";
-  const track = <div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Save this configuration to help Kelus build buy/wait guidance from real observations." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div>;
+  const track = <div className="pi-track-card"><div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Kelus will watch this exact configuration and email you when a target is reached." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></div>;
 
   if (building && context.observationCount === 0) {
     return <section className="pi-section pi-context pi-context-track-only">{track}</section>;
   }
 
-  return <section className="pi-section pi-context">
+  const waiting = decision.label === "CONSIDER WAITING";
+  return <section className={`pi-section pi-context${waiting || building ? " is-guidance" : ""}`}>
     <div>
       <p className="pi-label">When to Buy</p>
-      <h2>{building ? "Building price history" : decision.label}</h2>
+      <h2>{building ? "Building price history" : waiting ? "Waiting may help" : decision.label}</h2>
       <p>{decision.explanation}</p>
       {building && context.observationCount > 0 ? <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, 12)}%` }} /></div><em>{context.observationCount} of {minimum30DaySamples} observations logged toward buy/wait guidance</em></div> : null}
       {!building ? <div className="nr-context-stats"><span>Current<strong>{stat(context.currentTrustedPrice)}</strong></span><span>Typical<strong>{stat(average)}</strong></span><span>Recent low<strong>{stat(context.recentLow)}</strong></span></div> : null}

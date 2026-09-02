@@ -7,15 +7,17 @@ import { SafeLink as Link } from "@/components/SafeLink";
 type Props = {
   preview: ProductListingPreview;
   compact?: boolean;
+  layout?: "row" | "tile";
 };
 
-export function ProductListingCard({ preview, compact = false }: Props) {
+export function ProductListingCard({ preview, compact = false, layout = "row" }: Props) {
   const cardStatus = getProductCardStatus(preview.productSlug);
   const validated = cardStatus.status === "validated";
+  const tile = layout === "tile";
 
   return (
-    <Link href={preview.href} className={`product-listing-card${compact ? " is-compact" : ""}`} title={cardStatus.detail}>
-      <CatalogProductImage listingImageUrl={preview.listingImageUrl} fallbackLabel={preview.image} className="product-listing-mark" />
+    <Link href={preview.href} className={`product-listing-card${compact ? " is-compact" : ""}${tile ? " is-tile" : ""}`} title={cardStatus.detail}>
+      <CatalogProductImage listingImageUrl={preview.listingImageUrl} fallbackLabel={preview.image} className="product-listing-mark" size={tile ? 220 : 120} />
       <span className="product-listing-copy">
         <span className="product-listing-kicker">
           {preview.brand}
