@@ -1,0 +1,19 @@
+---
+description: Use the ui-ux-kit for any UI/design task
+alwaysApply: false
+globs:
+  - "**/*.tsx"
+  - "**/*.css"
+  - "app/**"
+  - "components/**"
+---
+
+When designing, building, redesigning, or auditing any interface, follow
+`.cursor/ui-ux-kit/SKILL.md` and its referenced kit files.
+
+Priority for Kelus:
+1. Preserve existing tokens and components in `app/globals.css` and `components/`
+2. Load `.cursor/skills/ui-ux-pro-max/SKILL.md` for design-system decisions
+3. Load `.agents/skills/impeccable/SKILL.md` for polish, motion, and Operate-mode UX
+4. Apply `.cursor/rules/design/` and `.cursor/rules/design-bible/` for a11y and anti-patterns
+5. Do not invent metrics, testimonials, or SEO copy
