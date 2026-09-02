@@ -36,7 +36,7 @@ export default function SearchPage() {
               <h2 id="search-popular-heading">Popular right now</h2>
               <ul className="search-index-list">
                 {quickStarts.map((item) => {
-                  const { product, href, fromPrice, live, variantLabel, condition } = item;
+                  const { product, href, fromPrice, live } = item;
                   const status = live && fromPrice
                     ? { label: `From ${formatFromPrice(fromPrice)}`, detail: "Validated comparison available" }
                     : getProductCardStatus(product.slug);

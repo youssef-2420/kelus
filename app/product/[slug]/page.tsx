@@ -40,8 +40,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     title,
     description,
     alternates: { canonical: canonicalUrl },
-    openGraph: { title, description, type: "website", url: canonicalUrl, images: [] },
-    twitter: { card: "summary", title, description, images: [] },
+    openGraph: { title, description, type: "website", url: canonicalUrl, images: ["/og.png"] },
+    twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
   };
 }
 
@@ -56,27 +56,44 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   if (redirectCriteria) redirect(canonicalProductPath(redirectCriteria));
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
   const offers = initialOutcome.status === "SUCCESS" ? initialOutcome.result.offers.filter((offer) => offer.dataSource === "live").slice(0, 5) : [];
+  const canonicalUrl = `https://kelus.me${canonicalProductPath(criteria)}`;
+  const productName = `${product.name} ${variant.label}`;
+  const productImage = offers.find((offer) => offer.imageUrl)?.imageUrl;
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "Product",
-    name: `${product.name} ${variant.label}`,
-    brand: { "@type": "Brand", name: product.brand },
-    model: product.name,
-    category: product.category,
-    additionalProperty: [
-      { "@type": "PropertyValue", name: "Configuration", value: variant.label },
-      { "@type": "PropertyValue", name: "Condition filter", value: condition },
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: "https://kelus.me" },
+          { "@type": "ListItem", position: 2, name: "Products", item: "https://kelus.me/products" },
+          { "@type": "ListItem", position: 3, name: productName, item: canonicalUrl },
+        ],
+      },
+      {
+        "@type": "Product",
+        name: productName,
+        brand: { "@type": "Brand", name: product.brand },
+        model: product.name,
+        sku: criteria.variantId,
+        category: product.category,
+        ...(productImage ? { image: productImage } : {}),
+        additionalProperty: [
+          { "@type": "PropertyValue", name: "Configuration", value: variant.label },
+          { "@type": "PropertyValue", name: "Condition filter", value: condition },
+        ],
+        url: canonicalUrl,
+        ...(offers.length ? {
+          offers: offers.map((offer) => ({
+            "@type": "Offer",
+            price: offer.shippingCostKnown === false ? offer.price : Math.round((offer.price + offer.shippingCost) * 100) / 100,
+            priceCurrency: offer.currency,
+            itemCondition: `https://schema.org/${offer.condition === "new" ? "NewCondition" : offer.condition === "refurbished" ? "RefurbishedCondition" : "UsedCondition"}`,
+            url: offer.affiliateUrl ?? canonicalUrl,
+          })),
+        } : {}),
+      },
     ],
-    url: `https://kelus.me${canonicalProductPath(criteria)}`,
-    ...(offers.length ? {
-      offers: offers.map((offer) => ({
-        "@type": "Offer",
-        price: offer.shippingCostKnown === false ? offer.price : Math.round((offer.price + offer.shippingCost) * 100) / 100,
-        priceCurrency: offer.currency,
-        itemCondition: `https://schema.org/${offer.condition === "new" ? "NewCondition" : offer.condition === "refurbished" ? "RefurbishedCondition" : "UsedCondition"}`,
-        url: offer.affiliateUrl ?? `https://kelus.me${canonicalProductPath(criteria)}`,
-      })),
-    } : {}),
   };
   return <>
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>

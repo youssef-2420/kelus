@@ -13,11 +13,6 @@ export function SiteJsonLd() {
         "@type": "WebSite",
         name: "Kelus",
         url: "https://kelus.me",
-        potentialAction: {
-          "@type": "SearchAction",
-          target: "https://kelus.me/search",
-          "query-input": "required name=search_term_string",
-        },
       },
     ],
   };
