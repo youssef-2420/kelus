@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
   globalIgnores([
     ".agents/**",
     ".cursor/**",
+    "scripts/hooks/**",
+    "scripts/lib/**",
     ".next/**",
     "dist/**",
     "out/**",

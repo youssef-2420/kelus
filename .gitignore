@@ -40,3 +40,6 @@ yarn-error.log*
 /outputs/
 /work/
 .seo-cache/
+
+# Cursor hook session data (ECC agent home, if configured project-local)
+/.cursor/ecc/
