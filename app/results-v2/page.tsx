@@ -14,6 +14,7 @@ import { ProductMark } from "@/components/ProductMark";
 import { WatchButton } from "@/components/WatchButton";
 import { ProductHeader } from "@/components/ProductHeader";
 import { SafeLink as Link } from "@/components/SafeLink";
+import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
 import type { AlternativeCriteriaPreview } from "@/lib/catalog-preview-types";
 import { getProductIntelligenceOptions } from "@/lib/product-attributes";
@@ -236,8 +237,73 @@ export function ProductIntelligenceView({ criteria, initialOutcome, alternatives
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
         {pick && <ProductMobileCTA offer={pick} />}
       </div>}
+      <ProductSearchGuide product={product} variant={variant} criteria={criteria} offers={offers} decision={decision} alternatives={alternatives}/>
     </div>
   </main>;
+}
+
+const categoryFocus: Record<string, string> = {
+  Smartphone: "For phones, Kelus checks the exact model and storage and requires compatible network evidence where the catalog specifies an unlocked device.",
+  Laptop: "For laptops, Kelus keeps processor, memory, and storage configurations separate so a lower-spec machine cannot win on price alone.",
+  Tablet: "For tablets, Kelus keeps model generation, screen size, storage, and condition aligned before comparing known totals.",
+  Wearable: "For wearables, Kelus separates case size and connectivity configurations before evaluating price and seller evidence.",
+  Audio: "For audio products, Kelus rejects accessories, replacement parts, and conflicting model or condition evidence before ranking offers.",
+  Console: "For consoles, Kelus separates disc, digital, storage, and hardware editions before an offer can enter the comparison.",
+};
+
+function productConditionLabel(condition: ConditionFilter) {
+  return condition === "any" ? "Any listed condition" : titleCase(condition);
+}
+
+function specificationLabel(value: string) {
+  return value.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/_/g, " ").replace(/^./, (letter) => letter.toUpperCase());
+}
+
+function ProductSearchGuide({ product, variant, criteria, offers, decision, alternatives }: {
+  product: Product;
+  variant?: ProductVariant;
+  criteria: SearchCriteria;
+  offers: Offer[];
+  decision: KelusDecision;
+  alternatives: AlternativeCriteriaPreview[];
+}) {
+  const exactName = `${product.name}${variant ? ` ${variant.label}` : ""}`;
+  const condition = productConditionLabel(criteria.condition);
+  const pick = decision.pick;
+  const pickTotal = pick ? knownTotal(pick) : null;
+  const specs = Object.entries(variant?.specifications ?? {}).filter(([, value]) => Boolean(value));
+  const category = categoryHubs.find((hub) => hub.category === product.category);
+  const related = alternatives.slice(0, 4);
+  const reasonSummary = decision.reasons.slice(0, 2).map((reason) => reason.replace(/[.!?]+$/, "")).join(" · ");
+
+  return <section className="pi-search-guide" aria-labelledby="product-comparison-guide">
+    <div className="pi-search-guide-copy">
+      <p className="pi-label">About this comparison</p>
+      <h2 id="product-comparison-guide">{exactName} price comparison</h2>
+      <p>Kelus compares {condition.toLowerCase()} eBay listings for the exact {exactName} configuration. Item price and shipping are combined only when eBay supplies the shipping cost; unavailable facts remain unavailable.</p>
+      <p>{categoryFocus[product.category] ?? "Kelus checks the declared product configuration and condition before an offer can enter the comparison."}</p>
+      {pick && pickTotal !== null ? <p className="pi-search-guide-finding">At the last saved check, Kelus evaluated {offers.length} comparable offer{offers.length === 1 ? "" : "s"}. The current Our Pick has a known total of <strong>{moneyAmount(pickTotal, pick.currency)}</strong>{pick.seller.name ? ` from ${pick.seller.name}` : ""}.{reasonSummary ? ` Evidence: ${reasonSummary}.` : ""}</p> : <p className="pi-search-guide-finding">Kelus does not currently have a saved comparable offer for this exact configuration. The page remains available so the configuration can be checked again and tracked without inventing a price.</p>}
+    </div>
+    <aside className="pi-search-guide-facts" aria-label={`${exactName} comparison details`}>
+      <p className="pi-label">Exact configuration</p>
+      <dl>
+        <div><dt>Product</dt><dd>{product.brand} {product.name}</dd></div>
+        {specs.map(([label, value]) => <div key={label}><dt>{specificationLabel(label)}</dt><dd>{value}</dd></div>)}
+        {!specs.length && variant ? <div><dt>Variant</dt><dd>{variant.label}</dd></div> : null}
+        <div><dt>Condition</dt><dd>{condition}</dd></div>
+        <div><dt>Marketplace</dt><dd>eBay US</dd></div>
+      </dl>
+      <nav aria-label="Related product comparisons">
+        <strong>Explore related comparisons</strong>
+        {related.map(({ criteria: relatedCriteria }) => {
+          const relatedVariant = getVariantById(relatedCriteria.variantId);
+          return <Link key={`${relatedCriteria.variantId}-${relatedCriteria.condition}`} href={canonicalProductPath(relatedCriteria)}>{relatedVariant?.label ?? "Standard"} · {productConditionLabel(relatedCriteria.condition)} <Icon name="arrow" size={13}/></Link>;
+        })}
+        {category ? <Link href={categoryHubPath(category.slug)}>Browse all {category.label.toLowerCase()} <Icon name="arrow" size={13}/></Link> : null}
+        <Link href="/products">Browse every supported product <Icon name="arrow" size={13}/></Link>
+      </nav>
+    </aside>
+  </section>;
 }
 
 function ProductUpdatingOverlay() {

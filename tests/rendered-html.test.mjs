@@ -72,12 +72,18 @@ test("canonical product runtime contains record-specific SEO and structured-data
   assert.match(page, /"@type": "BreadcrumbList"/);
   assert.match(page, /productImage \? \{ image: productImage \}/);
   assert.match(page, /sku: criteria\.variantId/);
+  assert.match(page, /Last saved validated prices start at/);
+  assert.match(page, /description: `Kelus comparison of matching/);
   assert.doesNotMatch(page, /ProductSeoIntro/);
   assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);
   for (const copy of [/Our Pick/, /Kelus verdict/, /Why this offer/, /Our Pick vs Cheapest/, /View offer/, /When to Buy/, /Track/]) assert.match(view, copy);
   assert.match(page, /initialOutcome=\{initialOutcome\}/);
   assert.match(view, /<h1 className="pi-title">/);
   assert.match(view, /productPageHeading/);
+  assert.match(view, /ProductSearchGuide/);
+  assert.match(view, /About this comparison/);
+  assert.match(view, /Explore related comparisons/);
+  assert.match(view, /unavailable facts remain unavailable/);
 });
 
 test("Product Intelligence presentation keeps production data wiring and the existing header", async () => {

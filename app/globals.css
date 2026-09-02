@@ -261,6 +261,20 @@ button { cursor:pointer; }
 .pi-method { padding:34px 0 12px; }
 .pi-method .pi-label { margin-bottom:10px; }
 .pi-method p { margin:0; font-size:12px; }
+.pi-search-guide{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(240px,.75fr);gap:48px;padding:54px 0 8px;border-top:1px solid var(--pi-line,#d9d4ca)}
+.pi-search-guide h2{max-width:620px;margin:8px 0 18px;color:var(--pi-ink,#10221e);font-family:Fraunces,"Playfair Display",Georgia,serif;font-size:clamp(28px,3.4vw,38px);line-height:1.08;letter-spacing:-.035em}
+.pi-search-guide-copy>p:not(.pi-label){max-width:65ch;margin:0 0 14px;color:var(--pi-body,#53615e);font-size:14px;line-height:1.68}
+.pi-search-guide-copy .pi-search-guide-finding{margin-top:22px;padding-top:18px;border-top:1px solid var(--pi-line,#d9d4ca);color:var(--pi-ink,#10221e)}
+.pi-search-guide-finding strong{color:var(--pi-action,var(--green));font-weight:800;font-variant-numeric:tabular-nums}
+.pi-search-guide-facts{align-self:start;padding-left:28px;border-left:1px solid var(--pi-line,#d9d4ca)}
+.pi-search-guide-facts dl{display:grid;margin:13px 0 26px}
+.pi-search-guide-facts dl div{display:grid;grid-template-columns:minmax(80px,.8fr) minmax(0,1.2fr);gap:12px;padding:9px 0;border-bottom:1px solid #e8e3da}
+.pi-search-guide-facts dt{color:var(--pi-muted,#73817c);font-size:11px}
+.pi-search-guide-facts dd{margin:0;color:var(--pi-ink,#10221e);font-size:11px;font-weight:750;text-align:right;overflow-wrap:anywhere}
+.pi-search-guide-facts nav{display:grid;gap:10px}
+.pi-search-guide-facts nav>strong{margin-bottom:2px;color:var(--pi-ink,#10221e);font-size:11px}
+.pi-search-guide-facts nav a{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--pi-action,var(--green));font-size:11px;font-weight:700;text-decoration:none}
+.pi-search-guide-facts nav a:hover{text-decoration:underline;text-underline-offset:3px}
 
 /* Product Intelligence hierarchy tokens. These remain scoped to the product
    surface so shared navigation and the rest of Kelus keep their current scale. */
@@ -324,6 +338,8 @@ button { cursor:pointer; }
 
 @media (max-width:760px) {
   .pi-content { width:calc(100% - 32px); padding:22px 0 66px; }
+  .pi-search-guide{grid-template-columns:1fr;gap:30px;padding-top:40px}
+  .pi-search-guide-facts{padding:26px 0 0;border-top:1px solid var(--pi-line,#d9d4ca);border-left:0}
   .pi-product { grid-template-columns:78px minmax(0,1fr); gap:16px; padding:12px 0 26px; }
   .pi-product .nr-image.is-large { width:78px; height:98px; }
   .pi-product h1,.pi-product h2.pi-title { margin-top:6px; font-size:35px; letter-spacing:-1.1px; }

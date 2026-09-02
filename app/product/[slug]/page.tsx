@@ -36,8 +36,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!resolved) return { title: "Product not found | Kelus", robots: { index: false, follow: false } };
   const { criteria, product, variant } = resolved;
   const condition = criteria.condition === "any" ? "all conditions" : criteria.condition;
-  const title = `${product.name} ${variant.label} prices | Kelus`;
-  const description = `Compare matching live eBay offers for ${product.name} ${variant.label} in ${condition}. See Kelus's current pick and real price context when available.`;
+  const conditionLabel = criteria.condition === "any" ? "All conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
+  const preview = getCriteriaListingPreview(criteria);
+  const savedPrice = preview.live && preview.fromPrice
+    ? ` Last saved validated prices start at ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}.`
+    : "";
+  const title = `${product.name} ${variant.label} ${conditionLabel} price | Kelus`;
+  const description = `Compare matching eBay offers for ${product.name} ${variant.label} in ${condition}.${savedPrice} See known totals, seller evidence, and Kelus's current pick.`;
   const canonicalUrl = absoluteCanonicalUrl(canonicalProductPath(criteria));
   return {
     title,
@@ -81,6 +86,7 @@ export default async function CanonicalProductPage({ params }: PageProps) {
       {
         "@type": "Product",
         name: productName,
+        description: `Kelus comparison of matching ${condition.toLowerCase()} eBay offers for ${productName}, using known total price and available seller evidence.`,
         brand: { "@type": "Brand", name: product.brand },
         model: product.name,
         sku: criteria.variantId,
