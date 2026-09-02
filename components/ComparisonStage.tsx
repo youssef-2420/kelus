@@ -27,8 +27,17 @@ function formatSnapshotLabel(lastUpdated?: string) {
   return `Saved example · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 }
 
+function formatSellerEvidence(row: ComparisonDemoRow) {
+  if (typeof row.feedbackPercentage !== "number" || typeof row.feedbackScore !== "number") return null;
+  const score = row.feedbackScore >= 1000
+    ? `${(row.feedbackScore / 1000).toFixed(row.feedbackScore >= 10000 ? 0 : 1).replace(/\.0$/, "")}k`
+    : String(row.feedbackScore);
+  return `${row.feedbackPercentage}% · ${score} feedback`;
+}
+
 function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
   const badge = row.role === "pick" ? "Our pick" : row.role === "cheapest" ? "Cheapest" : null;
+  const evidence = formatSellerEvidence(row);
   return (
     <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`} role="listitem">
       <div className="comparison-row-main">
@@ -39,6 +48,7 @@ function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
         <span className="comparison-row-meta">
           {formatMoney(row.listPrice)} listing
           {row.shippingKnown ? ` + ${formatMoney(row.shipping ?? 0)} ship` : " · shipping unknown"}
+          {evidence ? ` · ${evidence}` : ""}
         </span>
       </div>
       <div className="comparison-row-total">
@@ -47,7 +57,7 @@ function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
         ) : (
           <strong className="is-unknown">—</strong>
         )}
-        {row.role === "pick" ? <em>Our Pick</em> : row.role === "cheapest" ? <em>Cheapest</em> : null}
+        {row.role === "pick" ? <em>Our Pick</em> : row.role === "cheapest" ? <em>Cheapest</em> : <em>Skipped</em>}
       </div>
       {row.note ? <p className="comparison-row-note">{row.note}</p> : null}
     </div>
@@ -80,10 +90,6 @@ function StageImage({ imageUrl, label, large = false }: { imageUrl?: string; lab
 }
 
 function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonDemo>> }) {
-  const pick = demo.rows.find((row) => row.role === "pick");
-  const cheapest = demo.rows.find((row) => row.role === "cheapest");
-  const topReason = demo.pickReasons[0];
-
   return (
     <aside className="desk-pick" aria-label="Example Kelus pick">
       <p className="desk-pick-status">{formatSnapshotLabel(demo.lastUpdated)}</p>
@@ -100,21 +106,20 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
         </div>
       </div>
       <p className="desk-pick-verdict">Not the cheapest. The offer that passed.</p>
-      <div className="desk-pick-totals">
-        <div className="desk-pick-total is-pick">
-          <span>Our pick · known total</span>
-          <strong>{demo.pickTotal !== null ? formatMoney(demo.pickTotal) : "—"}</strong>
-          {pick ? <em>{pick.seller}</em> : null}
-        </div>
-        {cheapest && cheapest.knownTotal !== null ? (
-          <div className="desk-pick-total is-cheapest">
-            <span>Cheapest listing</span>
-            <strong>{formatMoney(cheapest.knownTotal)}</strong>
-            <em>{cheapest.seller}</em>
-          </div>
-        ) : null}
+      {demo.savingsGap !== null && demo.savingsGap > 0 && demo.cheapestTotal !== null ? (
+        <p className="desk-pick-gap">
+          Cheapest known total was <strong>{formatMoney(demo.cheapestTotal)}</strong>
+          {" "}— <strong>{formatMoney(demo.savingsGap)}</strong> less, but it did not clear checks.
+        </p>
+      ) : null}
+      <div className="desk-pick-rows comparison-stage-rows" role="list">
+        {demo.rows.map((row) => <Row key={row.id} row={row} compact />)}
       </div>
-      {topReason ? <p className="desk-pick-reason">{topReason}</p> : null}
+      {demo.pickReasons.length ? (
+        <ul className="desk-pick-reasons">
+          {demo.pickReasons.map((reason) => <li key={reason}>{reason}</li>)}
+        </ul>
+      ) : null}
       <div className="desk-pick-foot">{comparisonFootnote(demo)}</div>
       <Link className="button button-secondary desk-pick-cta" href={demo.href}>
         View this example <Icon name="arrow" size={17} />
@@ -142,7 +147,7 @@ export function ComparisonStage({ compact = false, layout = "default" }: Props) 
             <p className="comparison-stage-label">Example comparison</p>
             <p className="comparison-stage-product">{demo.brand} {demo.productName}</p>
             <p className="comparison-stage-variant">
-              {demo.variantLabel} · {formatConditionLabel(demo.condition)} · {demo.offerCount} offers
+              {demo.variantLabel} · {formatConditionLabel(demo.condition)} · {demo.offerCount} listings in this example
             </p>
             {savingsLabel ? <p className="comparison-stage-savings">{savingsLabel}</p> : null}
           </div>

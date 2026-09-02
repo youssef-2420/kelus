@@ -440,12 +440,13 @@ test("production navigation avoids the incompatible client-side link shim", asyn
 });
 
 test("kit-guided UX adds skip link, homepage desk, and comparison badges", async () => {
-  const [layout, skipLink, home, comparison, styles] = await Promise.all([
+  const [layout, skipLink, home, comparison, styles, homeLearn] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SkipLink.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/ComparisonStage.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../components/HomeLearnSection.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(layout, /SkipLink/);
   assert.match(skipLink, /Skip to main content/);
@@ -464,15 +465,19 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(home, /HomeLearnSection/);
   assert.match(styles, /\.skip-link/);
   assert.match(styles, /\.desk-rail/);
-  assert.match(styles, /\.desk-pick-totals/);
+  assert.match(styles, /\.desk-pick-rows/);
+  assert.match(styles, /\.desk-pick-reasons/);
   assert.match(styles, /\.desk-coverage-hint/);
   assert.match(styles, /\.desk-tour-trigger/);
   assert.match(styles, /@keyframes desk-rise/);
-  assert.match(styles, /@keyframes desk-pick-lock/);
-  assert.match(styles, /@keyframes desk-cheapest-strike/);
   assert.match(styles, /onboarding-tour-copy/);
   assert.match(styles, /animation:desk-rise[^;]*backwards/);
   assert.match(comparison, /listings in this example/);
+  assert.match(comparison, /desk-pick-rows/);
+  assert.match(comparison, /desk-pick-reasons/);
+  assert.match(homeLearn, /Open a comparison/);
+  assert.match(homeLearn, /listHomeComparisonPreviews/);
+  assert.match(homeLearn, /ProductListingCard/);
   assert.doesNotMatch(styles, /\.home-learn-icon|\.desk-pick-map|\.desk-kicker/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);

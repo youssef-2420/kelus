@@ -31,7 +31,7 @@ export default function Home() {
         <div className="desk-rail">
           <h1>What are you buying?</h1>
           <p>
-            A cheap listing can still lose after shipping, weak seller evidence, or a suspicious price. Search the exact setup — Kelus checks the rest.
+            Search the exact setup. Kelus compares matching eBay listings with known totals, then shows which offer cleared the checks — not just the lowest price.
           </p>
           <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />

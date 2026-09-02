@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getComparisonDemo, hasBundledSnapshot, listBundledShowcases, listProductListingPreviews } from "../lib/bundled-snapshot-catalog.ts";
+import { getComparisonDemo, hasBundledSnapshot, listBundledShowcases, listHomeComparisonPreviews, listProductListingPreviews } from "../lib/bundled-snapshot-catalog.ts";
 import { formatQuickStartLabel, getSearchQuickStarts } from "../lib/search-quick-starts.ts";
 import { userFacingOfferError } from "../services/user-facing-errors.ts";
 
@@ -46,8 +46,18 @@ test("comparison demo shows a pick that beat the cheapest known total", () => {
   assert.ok(pick);
   assert.ok(cheapest);
   assert.ok(demo.pickReasons.length >= 1);
+  assert.ok(demo.rows.length >= 3);
+  assert.ok(demo.rows.some((row) => row.role === "sample"));
   assert.notEqual(pick.id, cheapest.id);
   assert.ok(pick.knownTotal && cheapest.knownTotal && pick.knownTotal > cheapest.knownTotal);
+});
+
+test("homepage comparison previews prefer proof over cheapest accessories", () => {
+  const previews = listHomeComparisonPreviews(8);
+  assert.ok(previews.length >= 6);
+  assert.ok(previews.every((preview) => preview.live && preview.fromPrice > 0));
+  assert.ok(previews.some((preview) => typeof preview.pickPrice === "number" && preview.pickPrice > preview.fromPrice));
+  assert.ok(new Set(previews.map((preview) => preview.category)).size >= 2);
 });
 
 test("provider errors map to shopper-safe copy", () => {
