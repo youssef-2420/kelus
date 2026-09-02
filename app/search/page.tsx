@@ -29,20 +29,24 @@ export default function SearchPage() {
 
   return (
     <main id="main-content" className="search-page search-desk">
-      <KelusHeader shell="search" />
+      <KelusHeader activeHref="/search" />
       <section className="search-console section" aria-label="Product search">
         <header className="search-console-copy">
-          <h1>Search the catalog</h1>
-          <p>Pick a supported product, then the exact configuration. Kelus opens a comparison with known totals and one validated pick.</p>
+          <p className="search-console-kicker">Catalog search</p>
+          <h1>Find the exact product</h1>
+          <p>Search a supported model, choose the configuration, then open a comparison with known totals and one validated pick.</p>
         </header>
-        <div id="product-search" className="hero-search-wrap search-console-bar">
-          <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
+        <div className="search-console-panel">
+          <div id="product-search" className="hero-search-wrap search-console-bar">
+            <SearchControls minimal minimalAction deferProductSelection focusOnMount actionLabel="Search" />
+          </div>
+          <nav className="search-console-categories" aria-label="Categories">
+            <span className="search-console-categories-label">Browse</span>
+            {categoryHubs.map((hub) => (
+              <Link key={hub.slug} href={categoryHubPath(hub.slug)}>{hub.label}</Link>
+            ))}
+          </nav>
         </div>
-        <nav className="search-console-categories" aria-label="Categories">
-          {categoryHubs.map((hub) => (
-            <Link key={hub.slug} href={categoryHubPath(hub.slug)}>{hub.label}</Link>
-          ))}
-        </nav>
       </section>
       <section className="search-featured section" aria-label="Live comparison">
         <ComparisonStage compact />
