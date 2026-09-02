@@ -445,6 +445,11 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(styles, /\.desk-rail/);
   assert.match(styles, /\.home-learn-flow/);
   assert.match(styles, /@keyframes home-flow-arrow/);
+  assert.match(styles, /@keyframes desk-cheapest-recede/);
+  assert.match(styles, /@keyframes desk-pick-lock/);
+  assert.match(styles, /@keyframes search-finding-ring/);
+  assert.doesNotMatch(styles, /home-flow-line 2\.8s[\s\S]*infinite/);
+  assert.match(styles, /\.desk-pick-total\.is-cheapest\{[^}]*opacity:\.62/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);
 });

@@ -418,6 +418,10 @@ html { scroll-behavior:smooth; }
 .text-link.outbound-cta { border:0; background:transparent; padding:0; }
 .search-controls,.rp-search-pill,.hero-content,.home-stage-command,.home-stage-copy,.comparison-stage,.home-learn,.search-stage-intro,.search-stage-body,.search-index-block,.trust-row,.how-brief,.pi-content,.desk-rail,.desk-pick,.search-console,.search-browse,.search-featured { transition:opacity .18s ease,transform .22s cubic-bezier(.22,.61,.36,1),filter .18s ease; }
 .search-controls.is-searching,.rp-search-pill.is-searching { opacity:.84; filter:saturate(.88); transform:scale(.997); }
+.rp-search-pill.is-searching .nr-search-action.is-icon { animation:search-finding-ring 1s ease-in-out infinite; }
+.rp-search-pill.is-searching .nr-search-action.is-icon svg { animation:search-finding-icon .9s ease-in-out infinite; }
+@keyframes search-finding-ring { 0%,100% { box-shadow:0 0 0 0 rgba(23,103,95,.38); } 50% { box-shadow:0 0 0 7px rgba(23,103,95,0); } }
+@keyframes search-finding-icon { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.55; transform:scale(.92); } }
 .search-submit:disabled,.nr-search-action:disabled { cursor:progress; opacity:.96; transform:none; }
 .is-search-leaving .hero-content,.is-search-leaving .home-stage-command,.is-search-leaving .home-stage-copy,.is-search-leaving .comparison-stage,.is-search-leaving .home-learn,.is-search-leaving .search-stage-intro,.is-search-leaving .search-stage-body,.is-search-leaving .search-index-block,.is-search-leaving .trust-row,.is-search-leaving .how-brief,.is-search-leaving .desk-rail,.is-search-leaving .desk-pick,.is-search-leaving .search-console,.is-search-leaving .search-browse,.is-search-leaving .search-featured { opacity:.68; transform:translateY(-7px); }
 .is-search-leaving .pi-content { opacity:.72; transform:translateY(-5px); }
@@ -785,10 +789,10 @@ html { scroll-behavior:smooth; }
 .home-learn-link svg{transition:transform .18s ease}
 .home-learn-link:hover{color:var(--green)}.home-learn-link:hover svg{transform:translateX(3px)}
 .home-learn-flow{display:flex;align-items:center;color:var(--green)}
-.home-learn-flow>span{height:1px;flex:1;background:linear-gradient(90deg,#c8ddd7,var(--green));transform-origin:left;animation:home-flow-line 2.8s cubic-bezier(.22,1,.36,1) infinite}
-.home-learn-flow>svg{flex:none;animation:home-flow-arrow 2.8s cubic-bezier(.22,1,.36,1) infinite}
-@keyframes home-flow-line{0%,18%{transform:scaleX(.25);opacity:.35}55%,78%{transform:scaleX(1);opacity:1}100%{transform:scaleX(.25);opacity:.35}}
-@keyframes home-flow-arrow{0%,18%{transform:translateX(-8px);opacity:.35}55%,78%{transform:translateX(2px);opacity:1}100%{transform:translateX(-8px);opacity:.35}}
+.home-learn-flow>span{height:1px;flex:1;background:linear-gradient(90deg,#c8ddd7,var(--green));transform-origin:left;animation:home-flow-line 1.05s cubic-bezier(.22,1,.36,1) 1 both}
+.home-learn-flow>svg{flex:none;animation:home-flow-arrow 1.05s cubic-bezier(.22,1,.36,1) 1 both}
+@keyframes home-flow-line{from{transform:scaleX(.2);opacity:.35}to{transform:scaleX(1);opacity:1}}
+@keyframes home-flow-arrow{from{transform:translateX(-8px);opacity:.35}to{transform:translateX(2px);opacity:1}}
 .search-stage{padding:32px 32px 52px}
 .search-stage-intro{text-align:left;max-width:42rem}
 .search-stage-intro h1{margin:0;font-size:clamp(30px,3.8vw,40px);line-height:1.06;letter-spacing:-.035em;font-weight:700;color:#10221e;overflow-wrap:anywhere;text-wrap:balance}
@@ -1111,24 +1115,34 @@ html { scroll-behavior:smooth; }
 .desk-pick-brand{margin:0;color:#9eb5ae;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
 .desk-pick-title{margin:4px 0 0;font-family:Fraunces,"Playfair Display",Georgia,serif;font-size:clamp(22px,2.4vw,28px);line-height:1.12;letter-spacing:-.03em;color:#f7fcfa}
 .desk-pick-meta{margin:6px 0 0;color:#b8cdc7;font-size:13px;line-height:1.4}
-.desk-pick-verdict{margin:0;color:#f7fcfa;font-family:Fraunces,"Playfair Display",Georgia,serif;font-size:22px;line-height:1.15;letter-spacing:-.025em}
+.desk-pick-verdict{margin:0;color:#f7fcfa;font-family:Fraunces,"Playfair Display",Georgia,serif;font-size:22px;line-height:1.15;letter-spacing:-.025em;animation:desk-verdict-in .55s cubic-bezier(.16,1,.3,1) .06s both}
 .desk-pick-totals{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .desk-pick-total{display:grid;gap:4px;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.06)}
 .desk-pick-total span{color:#9eb5ae;font-size:11px;font-weight:700}
 .desk-pick-total strong{font-size:22px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:#fff}
 .desk-pick-total em{font-style:normal;color:#c8e4dc;font-size:12px}
-.desk-pick-total.is-pick{border:1px solid rgba(217,238,233,.28);background:rgba(23,103,95,.28)}
-.desk-pick-total.is-cheapest strong{color:#f4efcf}
+.desk-pick-total.is-pick{border:1px solid rgba(217,238,233,.28);background:rgba(23,103,95,.28);animation:desk-pick-lock .7s cubic-bezier(.16,1,.3,1) both}
+.desk-pick-total.is-cheapest{opacity:.62;filter:grayscale(.28);animation:desk-cheapest-recede .62s cubic-bezier(.22,1,.36,1) .1s both}
+.desk-pick-total.is-cheapest strong{position:relative;color:#d9d4b6}
+.desk-pick-total.is-cheapest strong:after{content:"";position:absolute;left:0;top:52%;width:100%;height:1px;background:rgba(217,212,182,.7);transform-origin:left center;pointer-events:none;animation:desk-cheapest-strike .5s cubic-bezier(.22,1,.36,1) .28s both}
+@keyframes desk-pick-lock{from{box-shadow:0 0 0 0 rgba(143,208,191,0);background:rgba(23,103,95,.12)}to{box-shadow:0 0 0 1px rgba(143,208,191,.22);background:rgba(23,103,95,.28)}}
+@keyframes desk-cheapest-recede{from{opacity:1;filter:none}to{opacity:.62;filter:grayscale(.28)}}
+@keyframes desk-cheapest-strike{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes desk-verdict-in{from{opacity:0;filter:blur(3px)}to{opacity:1;filter:none}}
+@keyframes desk-check-in{from{opacity:0;clip-path:inset(0 100% 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
 .desk-pick-note{margin:0;padding:8px 12px;border-radius:8px;background:#faf6ed;color:#725c17;font-size:12px;font-weight:700;line-height:1.4}
 .desk-pick-checks{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0;padding:0;list-style:none;color:#c8e4dc;font-size:12px;line-height:1.35}
-.desk-pick-checks li{display:flex;align-items:center;gap:5px}
+.desk-pick-checks li{display:flex;align-items:center;gap:5px;animation:desk-check-in .38s cubic-bezier(.16,1,.3,1) both}
+.desk-pick-checks li:nth-child(2){animation-delay:.08s}
+.desk-pick-checks li:nth-child(3){animation-delay:.16s}
 .desk-pick-checks svg{color:#8fd0bf}
 .desk-pick-foot{margin:0;color:#b8cdc7;font-size:13px;line-height:1.5}
 .desk-pick-foot p{margin:0}
 .desk-pick-foot strong{color:#f0faf6}
 .desk-pick-cta{justify-self:stretch;min-height:52px;margin-top:4px;box-shadow:0 12px 28px rgba(0,0,0,.18)}
 .desk-pick-cta:hover{transform:translateY(-1px)}
-.desk:has(.rp-search-suggestions) .desk-pick,.desk:has(.hero-config-panel) .desk-pick,.home-desk:has(.hero-config-panel) .home-learn{opacity:.22;filter:blur(1px);pointer-events:none}
+.desk:has(.rp-search-suggestions) .desk-pick,.desk:has(.hero-config-panel) .desk-pick{opacity:.22;filter:blur(1px);transform:translateX(12px) scale(.985);pointer-events:none}
+.home-desk:has(.hero-config-panel) .home-learn{opacity:.22;filter:blur(1px);pointer-events:none}
 .search-desk{min-height:100vh;background:var(--paper)}
 .search-console{display:grid;gap:0;padding:8px 0 28px}
 .search-console-copy{max-width:42rem;margin:0 0 22px}
@@ -1186,5 +1200,8 @@ html { scroll-behavior:smooth; }
   .desk-search .rp-search-pill,.search-console-bar .rp-search-pill{min-height:52px}
 }
 @media(prefers-reduced-motion:reduce){
-  .desk-search .rp-search-suggestions,.search-console-bar .rp-search-suggestions,.home-learn-flow>span,.home-learn-flow>svg{animation:none}
+  .desk-search .rp-search-suggestions,.search-console-bar .rp-search-suggestions,.home-learn-flow>span,.home-learn-flow>svg,.desk-pick-total.is-pick,.desk-pick-total.is-cheapest,.desk-pick-total.is-cheapest strong:after,.desk-pick-verdict,.desk-pick-checks li,.rp-search-pill.is-searching .nr-search-action.is-icon,.rp-search-pill.is-searching .nr-search-action.is-icon svg{animation:none}
+  .desk-pick-total.is-cheapest strong:after{transform:scaleX(1)}
+  .desk:has(.rp-search-suggestions) .desk-pick,.desk:has(.hero-config-panel) .desk-pick{transform:none}
+  .rp-search-pill.is-searching .nr-search-action.is-icon{box-shadow:0 0 0 3px rgba(23,103,95,.22)}
 }
