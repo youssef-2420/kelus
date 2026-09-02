@@ -1018,8 +1018,13 @@ html { scroll-behavior:smooth; }
 .app-signin-toast{align-items:center;gap:12px;animation:dialog-in .28s cubic-bezier(.22,1,.36,1) both}
 .app-signin-toast p{margin:0;font-size:13px;line-height:1.45}
 .app-signin-toast svg{flex:none;color:#22705d}
-.search-overlay-scrim{position:fixed;inset:0;z-index:25;border:0;padding:0;background:rgba(15,40,35,.44);cursor:pointer;animation:fade-in .2s ease both}
+/* Scrim must stay BELOW suggestions/config inside the overlay wrap (both share that stacking context). */
+.search-overlay-scrim{position:fixed;inset:0;z-index:1;border:0;padding:0;background:rgba(15,40,35,.44);cursor:pointer;animation:fade-in .2s ease both}
 .rp-search-pill-wrap.is-overlay-open{z-index:30}
+.rp-search-pill-wrap.is-overlay-open .rp-search-pill{position:relative;z-index:3}
+.rp-search-pill-wrap.is-overlay-open .rp-search-suggestions{z-index:4}
+.rp-search-pill-wrap.is-overlay-open .hero-config-panel{z-index:5}
+.rp-search-pill-wrap.is-overlay-open .unsupported-search{position:relative;z-index:5}
 @media(max-width:620px){
   .search-stage-search .rp-search-suggestions,.home-stage-search .rp-search-suggestions{transform-origin:bottom center;animation:hero-suggestions-sheet-in .26s cubic-bezier(.22,1,.36,1) both;padding-top:18px}
   .search-stage-search .rp-search-suggestions::before,.home-stage-search .rp-search-suggestions::before{content:"";display:block;width:36px;height:4px;margin:0 auto 14px;border-radius:999px;background:#d5e0dc}
