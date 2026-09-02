@@ -230,6 +230,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
         {otherOffers.length > 0 && <section className="pi-section"><p className="pi-label">Other offers</p><div className="pi-offer-list">{otherOffers.map((offer) => <OtherOffer key={offer.id} offer={offer} productName={product.name} fallbackLabel={product.image} stale={Boolean(staleSnapshot)}/>)}</div></section>}
         <section className="pi-method"><p className="pi-label">Methodology</p><p>Kelus uses persisted last-known-good eBay snapshots for the first render, then refreshes connected offers in the background. Recommendations only use comparable offers that pass product, variant, condition, seller, shipping, return, confidence, and anomaly checks.</p><Link className="text-link" href="/methodology">See how Kelus picks an offer <Icon name="arrow" size={14}/></Link></section>
         <p className="nr-disclosure">Live results currently cover matching eBay listings, not the entire market. Kelus may earn a commission from eligible retailer links.</p>
+        {pick && <ProductMobileCTA offer={pick} />}
       </div>}
     </div>
   </main>;
@@ -446,6 +447,16 @@ function OtherOffer({ offer, productName, fallbackLabel, stale }: { offer: Offer
   </article>;
 }
 
+function ProductMobileCTA({ offer }: { offer: Offer }) {
+  return <div className="pi-mobile-cta" aria-label="Quick action">
+    <div className="pi-mobile-cta-copy">
+      <span>Our Pick</span>
+      <strong>{money(offer)}</strong>
+    </div>
+    <OutboundRetailerCTA offer={offer} label="View offer" ourPick/>
+  </div>;
+}
+
 function TimingAndTrack({ context, observations, productName, criteria, result }: { context: ReturnType<typeof getPriceContext>; observations: PriceObservation[]; productName: string; criteria: SearchCriteria; result: OfferSearchResult }) {
   const points = historyPointsFromObservations(observations, criteria);
   const average = context.average90Day ?? context.average30Day;
@@ -453,7 +464,7 @@ function TimingAndTrack({ context, observations, productName, criteria, result }
   const building = decision.label === "HISTORY BUILDING";
   const progress = Math.min(100, Math.round((context.observationCount / minimum30DaySamples) * 100));
   const stat = (value: number | null) => value ? `$${value}` : "—";
-  const track = <div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Save this configuration to help Kelus build buy/wait guidance from real observations." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div>;
+  const track = <div className="pi-track-card"><div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Kelus will watch this exact configuration and email you when a target is reached." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></div>;
 
   if (building && context.observationCount === 0) {
     return <section className="pi-section pi-context pi-context-track-only">{track}</section>;

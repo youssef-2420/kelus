@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 
-const storageKey = "kelus:onboarding:v1";
+const storageKey = "kelus:onboarding:v2";
 
 const steps = [
   {
@@ -14,8 +14,8 @@ const steps = [
   },
   {
     title: "Compare validated offers",
-    body: "Kelus shows known totals, seller evidence, and price context before recommending Our Pick.",
-    cta: { href: "/products", label: "Browse validated products" },
+    body: "Kelus shows known totals, seller evidence, and why Our Pick beat cheaper listings.",
+    cta: { href: "/products", label: "Browse live comparisons" },
   },
   {
     title: "Track and get notified",
@@ -31,12 +31,21 @@ export function OnboardingTour() {
   useEffect(() => {
     try {
       if (window.localStorage.getItem(storageKey) === "done") return;
-      const timer = window.setTimeout(() => setOpen(true), 900);
+      const timer = window.setTimeout(() => setOpen(true), 1400);
       return () => window.clearTimeout(timer);
     } catch {
       return undefined;
     }
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") finish();
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   function finish() {
     try { window.localStorage.setItem(storageKey, "done"); } catch { /* ignore */ }
@@ -50,7 +59,7 @@ export function OnboardingTour() {
   return <div className="onboarding-tour" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
     <button type="button" className="onboarding-tour-backdrop" aria-label="Dismiss tour" onClick={finish} />
     <div className="onboarding-tour-card">
-      <p className="eyebrow">New to Kelus</p>
+      <p className="onboarding-tour-step">Step {step + 1} of {steps.length}</p>
       <h2 id="onboarding-title">{current.title}</h2>
       <p>{current.body}</p>
       <div className="onboarding-tour-steps" aria-hidden="true">
@@ -61,7 +70,7 @@ export function OnboardingTour() {
         {last
           ? <button type="button" className="button button-primary" onClick={finish}>Get started</button>
           : <button type="button" className="button button-primary" onClick={() => setStep((value) => value + 1)}>Next</button>}
-        <Link className="text-link onboarding-tour-link" href={current.cta.href}>{current.cta.label} <Icon name="arrow" size={14}/></Link>
+        <Link className="text-link onboarding-tour-link" href={current.cta.href} onClick={finish}>{current.cta.label} <Icon name="arrow" size={14}/></Link>
       </div>
     </div>
   </div>;

@@ -216,12 +216,20 @@ test("Alerts leads with monitoring state and keeps secondary controls progressiv
   assert.match(alerts, /Check prices/);
   assert.match(alerts, /checkGuestPrices/);
   assert.match(alerts, /<progress value=\{progress\}/);
+<<<<<<< HEAD
   assert.match(alerts, /alerts-empty-steps/);
   assert.match(alerts, /alerts-empty-signin/);
+=======
+  assert.match(alerts, /alerts-reached-banner/);
+  assert.match(alerts, /is-reached/);
+  assert.match(alerts, /alert-reached-note/);
+  assert.match(alerts, /statusRank/);
+>>>>>>> 20fe336 (Polish retention UX: alerts, sign-in, onboarding, mobile CTA)
   assert.match(styles, /\.alerts-overview/);
   assert.match(styles, /\.alerts-refresh-button/);
   assert.match(styles, /\.alert-glance/);
   assert.match(styles, /\.alert-check\.is-error/);
+<<<<<<< HEAD
   assert.match(styles, /\.alerts-empty-steps/);
 });
 
@@ -243,6 +251,37 @@ test("phase 2 UX polish covers sign-in toast and mobile search overlay", async (
   assert.match(styles, /\.search-overlay-scrim/);
   assert.match(styles, /hero-suggestions-sheet-in/);
   assert.match(styles, /\.app-signin-toast/);
+=======
+  assert.match(styles, /\.alerts-reached-banner/);
+  assert.match(styles, /\.alert-row\.is-reached/);
+});
+
+test("retention UX surfaces prioritize sign-in, onboarding, and mobile conversion", async () => {
+  const [onboarding, signIn, watchButton, results, styles] = await Promise.all([
+    readFile(new URL("../components/OnboardingTour.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/SignInDialog.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/WatchButton.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(onboarding, /kelus:onboarding:v2/);
+  assert.match(onboarding, /Step \{step \+ 1\} of/);
+  assert.match(onboarding, /event\.key === "Escape"/);
+  assert.match(signIn, /social-buttons-first/);
+  assert.match(signIn, /or use email/);
+  assert.match(signIn, /Continue with Google/);
+  assert.match(watchButton, /watch-button-wrap/);
+  assert.match(watchButton, /Sign in for email alerts/);
+  assert.match(watchButton, /<div className="watch-button-note">/);
+  assert.doesNotMatch(watchButton, /<p className="watch-button-note">/);
+  assert.match(results, /ProductMobileCTA/);
+  assert.match(results, /pi-mobile-cta/);
+  assert.match(results, /pi-track-card/);
+  assert.match(styles, /\.pi-mobile-cta/);
+  assert.match(styles, /\.watch-button-signin/);
+  assert.match(styles, /\.social-buttons-first/);
+  assert.match(styles, /\.onboarding-tour-step/);
+>>>>>>> 20fe336 (Polish retention UX: alerts, sign-in, onboarding, mobile CTA)
 });
 
 test("authentication hydrates from local session and cannot leave Alerts stuck loading", async () => {
