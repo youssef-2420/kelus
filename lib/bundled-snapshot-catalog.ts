@@ -182,6 +182,8 @@ export type ComparisonDemo = {
   brand: string;
   productName: string;
   variantLabel: string;
+  condition: ConditionFilter;
+  lastUpdated?: string;
   href: string;
   offerCount: number;
   pickTotal: number | null;
@@ -272,6 +274,8 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
     brand: showcase.brand,
     productName: showcase.productName,
     variantLabel: showcase.variantLabel,
+    condition: showcase.condition,
+    lastUpdated: showcase.lastUpdated,
     href: showcase.href,
     offerCount: liveOffers.length,
     pickTotal,

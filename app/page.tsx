@@ -27,10 +27,8 @@ export default function Home() {
       <LandingAnalytics />
       <KelusHeader />
       <VerifiedNotice />
-      <OnboardingTour />
-      <section className="desk section" aria-label="Search and live Kelus pick">
+      <section className="desk section" aria-label="Search and example Kelus pick">
         <div className="desk-rail">
-          <p className="desk-kicker">Search → compare → buy</p>
           <h1>What are you buying?</h1>
           <p>
             Search the exact product and configuration. Kelus compares matching eBay offers with known shipping, then recommends one that clears seller and price checks.
@@ -38,6 +36,8 @@ export default function Home() {
           <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
           </div>
+          <p className="desk-coverage-hint">Phones, computers, tablets, audio, wearables, and consoles.</p>
+          <OnboardingTour />
         </div>
         <ComparisonStage layout="desk" />
       </section>
