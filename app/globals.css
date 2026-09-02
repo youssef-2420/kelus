@@ -859,8 +859,10 @@ html { scroll-behavior:smooth; }
 /* Site footer: browse + trust links on key surfaces */
 .site-footer{max-width:none;width:min(1180px,calc(100% - 64px));margin:0 auto;padding:0 0 56px;border-top:1px solid var(--line);text-align:left}
 .site-footer.section{width:min(1180px,calc(100% - 64px))}
-.site-footer-grid{display:grid;grid-template-columns:minmax(220px,1.2fr) repeat(2,minmax(140px,0.7fr));justify-content:start;gap:28px 48px;padding-top:34px;text-align:left}
-.site-footer-grid>div{min-width:0;justify-self:start}
+.site-footer-grid{display:flex;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start;gap:28px 64px;padding-top:34px;text-align:left}
+.site-footer-grid>div{min-width:0;flex:0 0 auto}
+.site-footer-grid>div:first-child{flex:0 1 280px;max-width:300px}
+.site-footer-grid>div:nth-child(2),.site-footer-grid>div:nth-child(3){flex:0 0 148px}
 .site-footer-grid p{margin:10px 0 0;max-width:280px;color:#67736f;font-size:14px;line-height:1.55}
 .site-footer-grid a{display:block;width:max-content;margin-top:8px;color:#40524d;font-size:14px;font-weight:600}
 .site-footer-grid a.wordmark{display:inline-block;margin:0;font-size:34px;font-weight:800;letter-spacing:-2px;color:var(--ink)}
