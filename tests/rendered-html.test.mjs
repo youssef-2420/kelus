@@ -124,7 +124,8 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /if \(refreshPersistedResult\) return;/);
   assert.match(view, /setRefreshingSnapshot\(true\)/);
   assert.match(view, /pi-refresh-banner/);
-  assert.match(view, /Kelus is checking live eBay offers in the background/);
+  assert.match(view, /Checking live eBay offers now/);
+  assert.match(view, /This comparison was saved earlier/);
   assert.match(view, /Checking for newer offers/);
   assert.match(styles, /\.pi-refreshing-status/);
   assert.match(styles, /\.pi-refresh-banner/);
@@ -245,6 +246,10 @@ test("phase 2 UX polish covers sign-in toast and mobile search overlay", async (
   assert.match(search, /is-overlay-open/);
   assert.match(search, /closeOverlay/);
   assert.match(search, /scrollIntoView/);
+  assert.match(search, /hero-config-close/);
+  assert.match(search, /Opening comparison/);
+  assert.match(search, /This is not loading/);
+  assert.match(search, /event\.key === "Escape"/);
   assert.match(search, /body\.style\.overflow = "hidden"/);
   assert.match(signIn, /Signed in successfully/);
   assert.match(styles, /\.search-overlay-scrim/);

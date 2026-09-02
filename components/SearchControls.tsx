@@ -88,6 +88,15 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   }, [overlayActive]);
 
   useEffect(() => {
+    if (!overlayActive) return undefined;
+    function onKey(event: KeyboardEvent) {
+      if (event.key === "Escape") closeOverlay();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [overlayActive]);
+
+  useEffect(() => {
     if (!open || activeIndex < 0) return;
     document.getElementById(`${listboxId}-${activeIndex}`)?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, listboxId, open]);
@@ -173,18 +182,12 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     </form>
     {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions" onPointerDown={(event) => event.preventDefault()}>{suggestionProducts.length ? <><p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet. Try a model name such as “iPhone 17 Pro”.</p> : null}</div>}
     {productSelected && deferProductSelection && <section className="hero-config-panel" aria-label={`Configure ${selectedProduct.name}`}>
-      <div className="hero-config-product"><span><small>Selected product</small><b>{selectedProduct.name}</b><em>{selectedProduct.brand} · {selectedProduct.category}</em></span></div>
+      <div className="hero-config-product"><span><small>Selected product</small><b>{selectedProduct.name}</b><em>{selectedProduct.brand} · {selectedProduct.category}</em></span><button type="button" className="hero-config-close" aria-label="Close configuration" onClick={closeOverlay}><Icon name="close" size={16}/></button></div>
       {attributeLabel && <fieldset><legend>{attributeLabel}</legend><div className="hero-config-options">{variants.map((variant) => <button type="button" key={variant.id} className={variant.id === variantId ? "is-selected" : ""} aria-pressed={variant.id === variantId} onClick={() => setVariantId(variant.id)}>{variant.label}</button>)}</div></fieldset>}
       <fieldset><legend>Condition</legend><div className="hero-config-options">{exactConditions.map((value) => <button type="button" key={value} className={condition === value ? "is-selected" : ""} aria-pressed={condition === value} onClick={() => setCondition(value)}>{conditionLabels[value]}</button>)}</div></fieldset>
       {intelligenceOptions.showsUnlockedStatus && <p className="hero-config-network"><Icon name="lock" size={15}/><span><b>Network</b> Unlocked listings only</span></p>}
-      <div className="hero-intelligence-visual" role="img" aria-label="Kelus filters multiple listings and highlights one trusted offer">
-        <span className="visual-listings" aria-hidden="true"><i/><i/><i/></span>
-        <span className="visual-flow" aria-hidden="true"><i/><i/><i/></span>
-        <span className="visual-gate" aria-hidden="true"><Icon name="shield" size={22}/></span>
-        <span className="visual-flow visual-flow-out" aria-hidden="true"><i/></span>
-        <span className="visual-pick" aria-hidden="true"><Icon name="star" size={23}/><b><i/><i/></b></span>
-      </div>
-      <div className="hero-config-confirm"><span>{[selectedVariant?.label, conditionLabels[condition], intelligenceOptions.showsUnlockedStatus ? "Unlocked" : null].filter(Boolean).join(" · ")}</span><button type="button" className="button button-primary" onClick={submit} disabled={searching}>{searching ? "Checking offers…" : "Find the smartest offer"}<Icon name="arrow" size={17}/></button></div>
+      <p className="hero-config-hint">Choose the exact setup, then open the comparison. This is not loading — Kelus is waiting for your pick.</p>
+      <div className="hero-config-confirm"><span>{[selectedVariant?.label, conditionLabels[condition], intelligenceOptions.showsUnlockedStatus ? "Unlocked" : null].filter(Boolean).join(" · ")}</span><button type="button" className="button button-primary" onClick={submit} disabled={searching}>{searching ? "Opening comparison…" : "Compare offers"}<Icon name="arrow" size={17}/></button></div>
     </section>}
     {issuePanel}
   </div>;
