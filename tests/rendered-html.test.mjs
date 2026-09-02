@@ -47,7 +47,8 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
   ]);
   assert.match(home, /HomeLearnSection/);
   assert.match(home, /SearchControls/);
-  assert.match(home, /HomeTrustStrip/);
+  assert.match(home, /ComparisonStage/);
+  assert.match(home, /HomepageSocialProof/);
   assert.doesNotMatch(home, /SearchLauncher/);
   assert.doesNotMatch(home, /LiveShowcase/);
   assert.doesNotMatch(home, /catalog-links/);
@@ -148,12 +149,12 @@ test("search is the single canonical product discovery experience", async () => 
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /SearchControls minimal minimalAction deferProductSelection/);
-  assert.match(home, /HomeTrustStrip/);
+  assert.match(home, /ComparisonStage/);
   assert.match(home, /OnboardingTour/);
   assert.doesNotMatch(home, /LiveShowcase/);
   assert.match(page, /SearchControls minimal minimalAction deferProductSelection focusOnMount/);
-  assert.match(page, /SearchPickPreview/);
-  assert.match(page, /search-category-nav/);
+  assert.match(page, /ComparisonStage compact/);
+  assert.match(page, /search-index-list/);
   assert.match(page, /alternates: \{ canonical: "https:\/\/kelus\.me\/search" \}/);
   assert.match(page, /getSearchQuickStarts/);
   assert.doesNotMatch(page, /LiveShowcase/);
@@ -162,16 +163,14 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(header, /shell === "search"/);
   assert.match(page, /KelusHeader shell="search"/);
-  assert.match(page, /search-workbench/);
-  assert.match(page, /search-section-heading/);
-  assert.match(page, /search-quick-list/);
-  assert.match(home, /SearchPickPreview variant="hero"/);
-  assert.match(styles, /\.home-hero-grid/);
-  assert.match(styles, /\.search-workbench/);
-  assert.match(styles, /\.home-learn-icon/);
+  assert.match(page, /search-stage/);
+  assert.match(page, /search-category-line/);
+  assert.match(home, /home-stage/);
+  assert.match(styles, /\.comparison-stage/);
+  assert.match(styles, /\.home-stage-command/);
+  assert.match(styles, /\.search-stage-body/);
   assert.match(styles, /\.site-header\.is-search-shell/);
-  assert.match(styles, /\.search-page-shell/);
-  assert.match(styles, /\.search-pick-preview/);
+  assert.doesNotMatch(styles, /\.home-learn-icon/);
   assert.match(styles, /\.category-hub/);
   assert.match(alerts, /emailed when your target is reached/);
   assert.match(results, /href="\/search">Edit search/);
@@ -186,7 +185,7 @@ test("key pages use specific metadata and the homepage demonstrates the differen
     readFile(new URL("../app/alerts/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(home, /A cheaper listing can still lose/);
+  assert.match(home, /Find the offer worth buying/);
   assert.match(home, /Kelus — Find the offer worth buying/);
   assert.match(how, /How Kelus evaluates an electronics offer/);
   assert.match(alerts, /My price alerts — Kelus/);

@@ -3,9 +3,9 @@ import { KelusHeader } from "@/components/KelusHeader";
 import { LandingAnalytics } from "@/components/LandingAnalytics";
 import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
-import { HomeTrustStrip } from "@/components/HomeTrustStrip";
+import { ComparisonStage } from "@/components/ComparisonStage";
 import { HomeLearnSection } from "@/components/HomeLearnSection";
-import { SearchPickPreview } from "@/components/SearchPickPreview";
+import { HomepageSocialProof } from "@/components/HomepageSocialProof";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -21,22 +21,20 @@ export default function Home() {
       <KelusHeader />
       <VerifiedNotice />
       <OnboardingTour />
-      <section className="home-hero section" aria-label="Search Kelus">
-        <div className="home-hero-grid">
-          <div className="home-hero-main">
-            <div className="home-hero-copy">
-              <h1>Shop smarter.<br />Know before you buy.</h1>
-              <p className="home-hero-lead">
-                A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.
-              </p>
-            </div>
-            <div id="product-search" className="hero-search-wrap home-hero-search">
-              <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
-            </div>
-            <HomeTrustStrip />
+      <section className="home-stage section" aria-label="Search Kelus">
+        <div className="home-stage-command">
+          <div className="home-stage-copy">
+            <h1>Find the offer worth buying.</h1>
+            <p>
+              Kelus compares matching eBay listings for the exact product you want, adds known shipping, and recommends one offer that passes seller and price checks.
+            </p>
           </div>
-          <SearchPickPreview variant="hero" />
+          <div id="product-search" className="hero-search-wrap home-stage-search">
+            <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
+          </div>
+          <HomepageSocialProof />
         </div>
+        <ComparisonStage />
       </section>
       <HomeLearnSection />
       <SiteFooter />

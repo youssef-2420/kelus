@@ -180,3 +180,111 @@ export function snapshotSitemapEntry(criteria: SearchCriteria) {
 export function countLiveCatalogProducts() {
   return new Set(Object.keys(bundledSnapshots).map((key) => key.split(":")[0]).filter(Boolean)).size;
 }
+
+export type ComparisonDemoRow = {
+  id: string;
+  seller: string;
+  listPrice: number;
+  shipping: number | null;
+  shippingKnown: boolean;
+  knownTotal: number | null;
+  role: "pick" | "cheapest" | "sample";
+  note?: string;
+};
+
+export type ComparisonDemo = {
+  brand: string;
+  productName: string;
+  variantLabel: string;
+  href: string;
+  offerCount: number;
+  pickTotal: number | null;
+  cheapestTotal: number | null;
+  rows: ComparisonDemoRow[];
+};
+
+function knownTotalForOffer(offer: Offer) {
+  if (offer.shippingCostKnown === false) return null;
+  return offer.price + offer.shippingCost;
+}
+
+function offerSellerLabel(offer: Offer) {
+  return offer.seller.name?.trim() || offer.retailer.name;
+}
+
+export function getComparisonDemo(preferredHref = "/product/pixel-watch-3-41mm-used"): ComparisonDemo | null {
+  let bestKey: string | null = null;
+  let bestCount = 0;
+  for (const [key, snapshot] of Object.entries(bundledSnapshots)) {
+    const showcase = toShowcase(key, snapshot);
+    if (!showcase) continue;
+    if (showcase.href === preferredHref || showcase.offerCount > bestCount) {
+      if (showcase.href === preferredHref || showcase.offerCount > bestCount) {
+        bestKey = key;
+        bestCount = showcase.offerCount;
+        if (showcase.href === preferredHref) break;
+      }
+    }
+  }
+  if (!bestKey) return null;
+  const snapshot = bundledSnapshots[bestKey];
+  const showcase = toShowcase(bestKey, snapshot);
+  if (!showcase) return null;
+  const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
+  if (!liveOffers.length) return null;
+  const recommendation = getRecommendation(liveOffers, "kelus_pick");
+  const pick = liveOffers.find((offer) => offer.id === recommendation?.offerId) ?? liveOffers[0];
+  const withTotals = liveOffers
+    .map((offer) => ({ offer, total: knownTotalForOffer(offer) }))
+    .filter((entry): entry is { offer: Offer; total: number } => entry.total !== null)
+    .sort((left, right) => left.total - right.total);
+  const cheapest = withTotals[0]?.offer;
+  const pickTotal = knownTotalForOffer(pick);
+  const cheapestTotal = cheapest ? knownTotalForOffer(cheapest) : null;
+  const sample = withTotals.find((entry) => entry.offer.id !== pick.id && entry.offer.id !== cheapest?.id)?.offer
+    ?? withTotals[Math.min(2, withTotals.length - 1)]?.offer;
+  const rows: ComparisonDemoRow[] = [];
+  if (cheapest && cheapest.id !== pick.id) {
+    rows.push({
+      id: cheapest.id,
+      seller: offerSellerLabel(cheapest),
+      listPrice: cheapest.price,
+      shipping: cheapest.shippingCostKnown === false ? null : cheapest.shippingCost,
+      shippingKnown: cheapest.shippingCostKnown !== false,
+      knownTotal: cheapestTotal,
+      role: "cheapest",
+      note: cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest list price",
+    });
+  }
+  if (sample && sample.id !== pick.id && sample.id !== cheapest?.id) {
+    rows.push({
+      id: sample.id,
+      seller: offerSellerLabel(sample),
+      listPrice: sample.price,
+      shipping: sample.shippingCostKnown === false ? null : sample.shippingCost,
+      shippingKnown: sample.shippingCostKnown !== false,
+      knownTotal: knownTotalForOffer(sample),
+      role: "sample",
+    });
+  }
+  rows.push({
+    id: pick.id,
+    seller: offerSellerLabel(pick),
+    listPrice: pick.price,
+    shipping: pick.shippingCostKnown === false ? null : pick.shippingCost,
+    shippingKnown: pick.shippingCostKnown !== false,
+    knownTotal: pickTotal,
+    role: "pick",
+    note: recommendation?.reasons?.[0],
+  });
+  return {
+    brand: showcase.brand,
+    productName: showcase.productName,
+    variantLabel: showcase.variantLabel,
+    href: showcase.href,
+    offerCount: liveOffers.length,
+    pickTotal,
+    cheapestTotal,
+    rows,
+  };
+}
