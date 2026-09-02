@@ -277,12 +277,20 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
       cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest known total — did not clear checks",
     ));
   }
-  const sample = withTotals.find((entry) => entry.offer.id !== pick.id && entry.offer.id !== cheapest?.id);
+  // Prefer another cheaper-than-pick listing so the desk shows real tradeoffs, not a pricier skip.
+  const sample = withTotals.find((entry) => {
+    if (entry.offer.id === pick.id || entry.offer.id === cheapest?.id) return false;
+    if (pickTotal !== null && entry.total >= pickTotal) return false;
+    if (cheapest && offerSellerLabel(entry.offer) === offerSellerLabel(cheapest) && entry.total === cheapestTotal) {
+      return false;
+    }
+    return true;
+  });
   if (sample) {
     rows.push(toRow(
       sample.offer,
       "sample",
-      sample.offer.trust?.suspiciousPrice ? "Flagged price anomaly" : "Passed over",
+      sample.offer.trust?.suspiciousPrice ? "Flagged price anomaly" : "Cheaper — passed over",
     ));
   }
   rows.push(toRow(pick, "pick"));
