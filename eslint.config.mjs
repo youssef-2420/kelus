@@ -9,6 +9,8 @@ import tseslint from "typescript-eslint";
 
 const eslintConfig = defineConfig([
   globalIgnores([
+    ".agents/**",
+    ".cursor/**",
     ".next/**",
     "dist/**",
     "out/**",
