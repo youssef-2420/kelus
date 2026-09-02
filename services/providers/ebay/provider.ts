@@ -81,8 +81,14 @@ export class EbayProvider implements OfferProvider {
       }
       response = await this.search(token, buildEbayQuery(product, variant), ebayCategoryId(product), context?.signal);
     }
-    if (response.status === 429) throw new EbayProviderError("eBay is temporarily rate limiting requests.", "rate_limited", 429);
-    if (!response.ok) throw new EbayProviderError("eBay offers are temporarily unavailable.", "provider_error", response.status);
+    if (response.status === 429) {
+      this.logger.warn("[ebay-provider] search_failed", { status: response.status, code: "rate_limited" });
+      throw new EbayProviderError("eBay is temporarily rate limiting requests.", "rate_limited", 429);
+    }
+    if (!response.ok) {
+      this.logger.warn("[ebay-provider] search_failed", { status: response.status, code: "provider_error" });
+      throw new EbayProviderError("eBay offers are temporarily unavailable.", "provider_error", response.status);
+    }
 
     let payload: EbaySearchResponse;
     try {

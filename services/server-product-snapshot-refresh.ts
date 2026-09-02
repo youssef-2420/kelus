@@ -5,8 +5,11 @@ import { listProductIntelligenceSnapshotsDue } from "./product-intelligence-snap
 import { productIntelligenceSnapshotKey } from "./product-intelligence-snapshot-store.ts";
 
 const refreshIntervalMs = 5 * 60 * 1_000;
-const maxSnapshotsPerRun = 20;
-const catalogSnapshotsPerRun = 16;
+// A Browse search plus detail enrichment can consume up to 13 eBay calls.
+// Keep each 15-minute cron run below the common 50-subrequest Worker ceiling
+// and leave capacity for tracked-product checks and user-triggered refreshes.
+export const maxSnapshotsPerRun = 3;
+const catalogSnapshotsPerRun = 3;
 const concurrency = 3;
 
 type SnapshotSearch = (
@@ -67,8 +70,10 @@ export async function refreshPersistedProductIntelligenceSnapshots(
   if (!environment.DB) return { due: 0, catalogQueued: 0, staleQueued: 0, refreshed: 0, empty: 0, failed: 0, durationMs: 0 };
   const before = new Date(now - refreshIntervalMs).toISOString();
   const catalog = options.catalogCriteria ?? catalogRefreshCriteria(now);
-  const staleLimit = Math.max(1, maxSnapshotsPerRun - catalog.length);
-  const stale = await listProductIntelligenceSnapshotsDue(environment.DB, before, staleLimit);
+  const staleLimit = Math.max(0, maxSnapshotsPerRun - catalog.length);
+  const stale = staleLimit > 0
+    ? await listProductIntelligenceSnapshotsDue(environment.DB, before, staleLimit)
+    : [];
   const due = [...new Map([...catalog, ...stale].map((criteria) => [productIntelligenceSnapshotKey(criteria), criteria])).values()].slice(0, maxSnapshotsPerRun);
   let refreshed = 0;
   let empty = 0;

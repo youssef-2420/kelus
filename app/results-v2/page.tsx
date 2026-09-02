@@ -202,7 +202,11 @@ export function ProductIntelligenceView({ criteria, initialOutcome, alternatives
   const decision = buildKelusDecision(criteria, offers, context);
   const pick = decision.pick;
   const cheaperAlternative = pick ? getCheaperAlternative(offers, pick) : null;
-  const lowest = decision.cheapest && decision.cheapest.id !== pick?.id ? decision.cheapest : cheaperAlternative?.offer;
+  const pickTotal = pick ? knownTotal(pick) : null;
+  const decisionCheapestTotal = decision.cheapest ? knownTotal(decision.cheapest) : null;
+  const lowest = pickTotal !== null && decisionCheapestTotal !== null && decisionCheapestTotal < pickTotal
+    ? decision.cheapest
+    : cheaperAlternative?.offer;
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = snapshotLooksVisuallyStale(result);

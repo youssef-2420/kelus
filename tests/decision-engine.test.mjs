@@ -81,6 +81,17 @@ test("decision keeps tracking as the natural action while history is insufficien
   assert.equal(decision.trackRecommended, true);
 });
 
+test("a tied listing is not presented as a cheaper trade-off", () => {
+  const best = offer("best", 1000);
+  const tied = offer("tied", 1000, {
+    trust: { confidence: "MEDIUM", reasons: ["Validated title evidence."], suspiciousPrice: false, eligibleForRecommendation: true, eligibleForHistory: true },
+  });
+  const decision = buildKelusDecision(criteria, [tied, best], readyContext);
+  assert.equal(decision.pick?.id, "best");
+  assert.equal(decision.cheapest?.id, "best");
+  assert.equal(decision.cheaperTradeoff, null);
+});
+
 test("decision uses ready stored history for Buy Now and waiting verdicts", () => {
   const buy = buildKelusDecision(criteria, [offer("buy", 990)], { ...readyContext, currentTrustedPrice: 990, average30Day: 1100, recentLow: 980 });
   const wait = buildKelusDecision(criteria, [offer("wait", 1130)], { ...readyContext, currentTrustedPrice: 1130, average30Day: 1000, recentLow: 950 });

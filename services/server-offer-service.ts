@@ -65,6 +65,20 @@ export async function getLiveOffersForSearch(
   const successful = settled.flatMap((result) => result.status === "fulfilled" ? [result.value] : []);
   const providerDurationMs = Date.now() - requestStartedAt;
   const failedProviders = settled.flatMap((result, index) => result.status === "rejected" ? [providers[index].id] : []);
+  for (const [index, outcome] of settled.entries()) {
+    if (outcome.status !== "rejected") continue;
+    const reason = outcome.reason;
+    console.warn("[product-intelligence] provider_refresh_failed", {
+      provider: providers[index].id,
+      productSlug: criteria.productSlug,
+      variantId: criteria.variantId,
+      condition: criteria.condition,
+      code: typeof reason === "object" && reason !== null && "code" in reason ? reason.code : "provider_error",
+      status: typeof reason === "object" && reason !== null && "status" in reason ? reason.status : undefined,
+      message: reason instanceof Error ? reason.message : "Unknown provider failure",
+      durationMs: providerDurationMs,
+    });
+  }
   const persistedSnapshot = await snapshotPromise;
   if (!successful.length && failedProviders.length) {
     if (env.DB) await markProductIntelligenceRefreshFailure(env.DB, criteria, refreshAttemptedAt).catch(() => false);

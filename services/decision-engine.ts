@@ -68,9 +68,16 @@ export function buildKelusDecision(criteria: SearchCriteria, offers: Offer[], pr
   const pickRecommendation = getRecommendation(offers, "kelus_pick");
   const pick = offers.find((offer) => offer.id === pickRecommendation?.offerId) ?? null;
   const cheapestRecommendation = getRecommendation(offers.filter(eligibleForRecommendation), "cheapest");
-  const cheapest = cheapestAcceptedOffer(offers) ?? offers.find((offer) => offer.id === cheapestRecommendation?.offerId) ?? cheapestEligibleOffer(offers);
+  const cheapestCandidate = cheapestAcceptedOffer(offers) ?? offers.find((offer) => offer.id === cheapestRecommendation?.offerId) ?? cheapestEligibleOffer(offers);
+  const pickTotal = pick ? knownOfferTotal(pick) : null;
+  const cheapestTotal = cheapestCandidate ? knownOfferTotal(cheapestCandidate) : null;
+  // A tied listing is not a cheaper alternative. Keep the recommendation as the
+  // comparison baseline so the UI never invents a price trade-off that is not real.
+  const cheapest = pick && pickTotal !== null && cheapestTotal !== null && cheapestTotal >= pickTotal
+    ? pick
+    : cheapestCandidate;
   const buyWaitDecision = getBuyWaitDecision(priceContext);
-  const totalPrice = pick ? knownOfferTotal(pick) : null;
+  const totalPrice = pickTotal;
   return {
     pick,
     cheapest,

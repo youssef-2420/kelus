@@ -243,14 +243,16 @@ test("provider deduplicates repeated eBay item identities", async () => {
 
 test("provider surfaces rate limiting as a typed failure", async () => {
   clearEbayTokenCache();
+  const warnings = [];
   const fetcher = async (input) => String(input).includes("/oauth2/token")
     ? new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 })
     : new Response(JSON.stringify({ errors: [] }), { status: 429 });
-  const provider = new EbayProvider(config, fetcher, silentLogger);
+  const provider = new EbayProvider(config, fetcher, { ...silentLogger, warn: (...values) => warnings.push(values) });
   await assert.rejects(
     provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" }),
     (error) => error instanceof EbayProviderError && error.code === "rate_limited",
   );
+  assert.deepEqual(warnings[0], ["[ebay-provider] search_failed", { status: 429, code: "rate_limited" }]);
 });
 
 test("provider surfaces malformed search responses and timeouts as typed failures", async () => {

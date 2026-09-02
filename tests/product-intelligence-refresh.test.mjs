@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
-import { catalogRefreshCriteria, refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh.ts";
+import { catalogRefreshCriteria, maxSnapshotsPerRun, refreshPersistedProductIntelligenceSnapshots } from "../services/server-product-snapshot-refresh.ts";
 import { allCatalogSnapshotTargets } from "../lib/catalog-snapshot-targets.ts";
 import { EbayProviderError } from "../services/providers/ebay/provider.ts";
 
@@ -77,10 +77,27 @@ test("scheduled snapshot refresh isolates provider failures", async () => {
 
 test("catalog refresh rotates through all configurations without duplicate identities", () => {
   const batch = catalogRefreshCriteria(Date.parse("2026-08-29T00:00:00.000Z"));
-  assert.equal(batch.length, 16);
-  assert.equal(new Set(batch.map((criteria) => `${criteria.productSlug}:${criteria.variantId}:${criteria.condition}`)).size, 16);
+  assert.equal(maxSnapshotsPerRun, 3);
+  assert.equal(batch.length, 3);
+  assert.equal(new Set(batch.map((criteria) => `${criteria.productSlug}:${criteria.variantId}:${criteria.condition}`)).size, 3);
   assert.equal(allCatalogSnapshotTargets().length, 172);
   assert.ok(batch.every((criteria) => (criteria.condition === "new" || criteria.condition === "used") && criteria.market === "us"));
+});
+
+test("production-sized catalog refresh never exceeds the provider call budget", async () => {
+  const database = { prepare: () => new DueStatement([]) };
+  let searches = 0;
+  const result = await refreshPersistedProductIntelligenceSnapshots(
+    { DB: database },
+    fetch,
+    Date.parse("2026-08-29T00:00:00.000Z"),
+    async () => {
+      searches += 1;
+      return { offers: [{ id: `offer-${searches}` }], observations: [], failedProviders: [], isDemo: false };
+    },
+  );
+  assert.equal(searches, 3);
+  assert.equal(result.due, 3);
 });
 
 test("the deployed alert-monitor schedule starts snapshot refresh out of band", async () => {
