@@ -110,7 +110,8 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /PriceHistorySparkline/);
   assert.match(view, /NotifyWhenLive/);
   assert.match(notifyWhenLive, /allowUnavailable/);
-  assert.match(view, /<details className="pi-proof" open>/);
+  assert.match(view, /<details className="pi-proof">/);
+  assert.doesNotMatch(view, /<details className="pi-proof" open>/);
   assert.match(view, /How Kelus chose this/);
   assert.match(view, /See how Kelus picks an offer/);
   assert.match(view, /Why this offer won/);
@@ -420,4 +421,24 @@ test("kit-guided UX adds skip link, homepage task path, and comparison badges", 
   assert.match(styles, /\.home-task-path/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);
+});
+
+test("9/10 UX pass adds design memory and verdict-first product hierarchy", async () => {
+  const [product, results, styles] = await Promise.all([
+    readFile(new URL("../PRODUCT.md", import.meta.url), "utf8"),
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  const design = await readFile(new URL("../DESIGN.md", import.meta.url), "utf8");
+  assert.match(product, /impeccable:product-schema/);
+  assert.match(product, /Operate mode/);
+  assert.match(design, /name: Kelus/);
+  assert.match(design, /Verdict callout/);
+  assert.match(results, /pi-verdict-lead/);
+  assert.match(results, /pi-primary-cta--early/);
+  assert.match(results, /id="main-content"/);
+  assert.match(results, /<details className="pi-proof">/);
+  assert.doesNotMatch(results, /<details className="pi-proof" open>/);
+  assert.match(styles, /\.pi-verdict-lead/);
+  assert.match(styles, /\.pi-offer-summary:focus-visible/);
 });

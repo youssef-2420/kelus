@@ -232,6 +232,7 @@ button { cursor:pointer; }
 .pi-offer { border-bottom:1px solid #d8d1c4; }
 .pi-offer-summary { width:100%; min-height:72px; display:grid; grid-template-columns:96px minmax(0,1fr) 86px 18px; gap:14px; align-items:center; padding:13px 0; border:0; background:transparent; color:#17231f; text-align:left; cursor:pointer; }
 .pi-offer-summary:hover { background:rgba(255,254,250,.42); }
+.pi-offer-summary:focus-visible { outline:3px solid #9fcfc3; outline-offset:2px; background:#f3f8f5; }
 .pi-offer-summary > span { min-width:0; }
 .pi-offer-summary b,.pi-offer-summary small { display:block; overflow-wrap:anywhere; }
 .pi-offer-summary b { font-size:14px; }
@@ -1031,4 +1032,18 @@ html { scroll-behavior:smooth; }
 @keyframes pi-mobile-cta-in{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:none}}
 @media(prefers-reduced-motion:reduce){
   .comparison-stage-rows .comparison-row,.pi-results .pi-pick-reveal,.pi-mobile-cta,.pi-primary-cta .button{animation:none;transition:none}
+}
+
+/* 9/10 UX: verdict-first product decision hierarchy */
+.pi-verdict-lead{margin:12px 0 0;padding:20px 22px;border:1px solid #cfe4db;border-left:4px solid var(--pi-action);border-radius:12px;background:linear-gradient(135deg,#eef6f2,#f9fcfa)}
+.pi-verdict-lead .pi-label{margin-bottom:6px}
+.pi-verdict-lead h2{margin:0;font-size:clamp(22px,2.8vw,30px);line-height:1.12}
+.pi-verdict-lead>p:last-child{margin:8px 0 0}
+.pi-primary-cta--early{display:flex;justify-content:flex-end;align-items:center;gap:14px;margin-top:20px;padding-top:18px;border-top:1px solid var(--pi-line)}
+.pi-primary-cta--early>span{color:var(--pi-muted);font-size:10px}
+.pi-primary-cta--early .button{min-width:205px;min-height:52px;background:var(--pi-action);box-shadow:0 9px 24px rgba(16,62,53,.14)}
+@media(max-width:760px){
+  .pi-verdict-lead{margin-top:10px;padding:16px 18px}
+  .pi-primary-cta--early{display:none}
+  .pi-page{padding-bottom:calc(88px + env(safe-area-inset-bottom))}
 }

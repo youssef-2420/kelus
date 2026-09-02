@@ -218,7 +218,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     if (pick) trackEvent({ name: "recommendation_viewed", productSlug: criteria.productSlug, offerId: pick.id, confidence: decision.confidence });
   }, [criteria.productSlug, decision.confidence, pick]);
 
-  return <main className="nr-page pi-page">
+  return <main id="main-content" className="nr-page pi-page">
     <ProductHeader criteria={criteria} />
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1 className="pi-title">{productPageHeading(product, variant, criteria.condition)}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)} refreshing={refreshingSnapshot}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
@@ -373,7 +373,7 @@ function EvidenceReveal({ pick, tradeoff }: { pick: Offer; tradeoff: string }) {
   const returns = pick.returnPolicy && !/unavailable|unknown/i.test(pick.returnPolicy) ? pick.returnPolicy : "Not supplied by eBay";
   const match = pick.trust?.reasons?.length ? pick.trust.reasons.slice(0, 2).join(" · ") : "Comparable offer accepted by the current matching rules";
   const anomaly = pick.trust ? pick.trust.suspiciousPrice ? "Price anomaly detected" : "No suspicious-price flag" : "Price-anomaly evidence unavailable";
-  return <details className="pi-proof" open>
+  return <details className="pi-proof">
     <summary><span><b>Why this offer won</b><small>See the evidence behind Our Pick</small></span><Icon name="chevron" size={18}/></summary>
     <div className="pi-proof-reveal"><dl>
       <div><dt>Match</dt><dd>{match}</dd></div>
@@ -411,11 +411,12 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
   const sellerHref = pick ? ebaySellerProfileUrl(pick.seller.name || sellerName) : null;
   return <section className="pi-pick pi-pick-reveal" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
+    {verdict && <div className="pi-verdict pi-verdict-lead"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
     <div className="pi-pick-top">
       <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong>{savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}<ConfidenceBadge confidence={decision.confidence}/><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
       {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span>{sellerHref ? <a href={sellerHref} target="_blank" rel="noopener noreferrer">{sellerName}</a> : <b>{sellerName}</b>}</span><small>{offerMeta(pick)}</small></div>}
     </div>
-    {verdict && <div className="pi-verdict"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
+    {pick && <div className="pi-primary-cta pi-primary-cta--early"><OutboundRetailerCTA offer={pick} label="View offer" ourPick/><span>Opens the live eBay listing</span></div>}
     <div className="pi-why">
       <p className="pi-label">Why this offer</p>
       <p className="pi-evidence">{decision.reasons.join(" · ")}</p>
