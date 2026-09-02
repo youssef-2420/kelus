@@ -647,7 +647,11 @@ html { scroll-behavior:smooth; }
 .guest-sync-banner-copy svg{flex:none;margin-top:2px;color:var(--green)}
 .guest-sync-banner-copy b{display:block;font-size:14px}
 .guest-sync-banner-copy p{margin:4px 0 0;color:#4f6660;font-size:13px;line-height:1.45}
-.guest-sync-banner-action{flex:none;background:#fff}
+.guest-sync-banner-action{flex:none;background:#fff;color:var(--ink);border:1px solid #c8d5d0}
+.guest-sync-banner-action svg{color:var(--ink)}
+.guest-sync-banner-action:hover{background:#f3f8f5;color:var(--ink);border-color:#91b7ad;transform:translateY(-1px)}
+.guest-sync-banner-action:focus-visible,.guest-sync-banner-action:active{background:#e8f4ef;color:var(--ink)}
+.guest-sync-banner-action:focus-visible svg,.guest-sync-banner-action:active svg{color:var(--green)}
 .verified-notice{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(1180px,calc(100% - 64px));margin:0 auto;padding:12px 16px;border:1px solid #cfe4db;border-radius:10px;background:#e8f4ef;color:#1d4f44}
 .verified-notice p{margin:0;font-size:13px;line-height:1.45}
 .verified-notice-dismiss{width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:50%;background:#fff;color:#4d6a62;font-size:20px;line-height:1}
@@ -801,6 +805,12 @@ html { scroll-behavior:smooth; }
 @media(max-width:900px){.search-stage-body{grid-template-columns:1fr;gap:32px}.search-stage-body .comparison-stage{position:static}}
 @media(max-width:620px){.home-stage-command{padding:28px 16px 32px}.home-task-path{grid-template-columns:1fr;gap:8px}.home-task-step{padding:11px 12px}.comparison-stage{padding-inline:16px}.home-learn{padding:40px 16px 48px}.home-learn-grid{grid-template-columns:1fr;gap:36px}.homepage-social-proof{flex-direction:column;gap:10px}.homepage-social-proof>span{border-right:0;margin-right:0;padding-right:0}.site-header.is-search-shell{height:68px;width:calc(100% - 32px)}.site-header.is-search-shell .wordmark{font-size:34px}.search-stage{padding:20px 16px 40px}.search-stage-body{gap:24px;margin-top:28px}.search-page .search-stage-search .hero-search-wrap,.home-stage-search.hero-search-wrap{width:calc(100% - 32px);max-width:none}.search-stage:has(.rp-search-suggestions)::before,.search-stage:has(.hero-config-panel)::before,.home-stage:has(.rp-search-suggestions)::before,.home-stage:has(.hero-config-panel)::before{content:"";position:fixed;inset:0;background:rgba(15,40,35,.44);z-index:25;pointer-events:none}.search-stage-search .rp-search-pill-wrap,.home-stage-search .rp-search-pill-wrap{z-index:30}.search-stage-search .rp-search-suggestions,.home-stage-search .rp-search-suggestions{position:fixed;left:16px;right:16px;bottom:max(16px,env(safe-area-inset-bottom));top:auto;max-height:min(54dvh,440px);z-index:32;overflow-y:auto;-webkit-overflow-scrolling:touch}.search-stage-search .hero-config-panel,.home-stage-search .hero-config-panel{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));top:max(72px,env(safe-area-inset-top));width:auto;max-height:none;z-index:35;overflow-y:auto;-webkit-overflow-scrolling:touch}.search-stage:has(.rp-search-suggestions) .search-stage-intro,.search-stage:has(.hero-config-panel) .search-stage-intro{opacity:.28;filter:blur(1px);pointer-events:none}.home-stage:has(.rp-search-suggestions) .comparison-stage,.home-stage:has(.hero-config-panel) .comparison-stage{opacity:.2;filter:blur(1px);pointer-events:none}.hero-config-panel .hero-intelligence-visual{display:none}.search-stage-search .rp-search-pill,.home-stage-search .rp-search-pill{min-height:52px}.suggestions button{min-height:58px;padding:10px 14px}}
 @media(hover:hover){.search-index-row:hover{background:#f8fcfa}.search-index-row:hover>svg{color:var(--green);transform:translateX(2px)}.comparison-stage-open:hover{color:var(--green)}}
+.search-index-row:focus-visible{outline:3px solid #9fcfc3;outline-offset:-3px;background:#f3f8f5}
+.search-index-row:focus-visible>svg{color:var(--green)}
+.alert-glance>a:focus-visible{outline:3px solid #9fcfc3;outline-offset:2px;border-radius:6px}
+.alert-actions button:focus-visible,.alert-actions a:focus-visible,.alert-target-form button:focus-visible{outline:3px solid #9fcfc3;outline-offset:2px}
+.alerts-refresh-button:focus-visible,.alerts-refresh-button:active{color:var(--ink);background:#e8f4ef;border-color:#91b7ad}
+.alerts-refresh-button:focus-visible svg,.alerts-refresh-button:active svg{color:var(--green)}
 
 /* Dedicated search page: single canonical search experience */
 .search-page{min-height:100vh;background:var(--paper)}

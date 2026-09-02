@@ -442,3 +442,14 @@ test("9/10 UX pass adds design memory and verdict-first product hierarchy", asyn
   assert.match(styles, /\.pi-verdict-lead/);
   assert.match(styles, /\.pi-offer-summary:focus-visible/);
 });
+
+test("alerts guest sign-in button keeps black text on white background", async () => {
+  const [banner, styles] = await Promise.all([
+    readFile(new URL("../components/GuestSyncBanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(banner, /guest-sync-banner-action/);
+  assert.match(styles, /\.guest-sync-banner-action\{[^}]*color:var\(--ink\)/);
+  assert.match(styles, /\.guest-sync-banner-action svg\{color:var\(--ink\)\}/);
+  assert.match(styles, /\.guest-sync-banner-action:focus-visible svg/);
+});
