@@ -15,6 +15,18 @@ function formatMoney(value: number, fractionDigits = 0) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: fractionDigits }).format(value);
 }
 
+function formatConditionLabel(condition: string) {
+  if (condition === "any") return "Any condition";
+  return condition.charAt(0).toUpperCase() + condition.slice(1);
+}
+
+function formatSnapshotLabel(lastUpdated?: string) {
+  if (!lastUpdated) return "Saved example";
+  const date = new Date(lastUpdated);
+  if (Number.isNaN(date.getTime())) return "Saved example";
+  return `Saved example · ${date.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
+}
+
 function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
   const badge = row.role === "pick" ? "Our pick" : row.role === "cheapest" ? "Cheapest" : null;
   return (
@@ -70,16 +82,11 @@ function StageImage({ imageUrl, label, large = false }: { imageUrl?: string; lab
 function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonDemo>> }) {
   const pick = demo.rows.find((row) => row.role === "pick");
   const cheapest = demo.rows.find((row) => row.role === "cheapest");
-  const savingsLabel = demo.savingsGap !== null && demo.savingsGap > 0
-    ? `${formatMoney(demo.savingsGap)} cheaper listing failed validation`
-    : null;
+  const topReason = demo.pickReasons[0];
 
   return (
-    <aside className="desk-pick" aria-label="A real Kelus comparison">
-      <header className="desk-pick-head">
-        <p className="desk-pick-kicker">A real Kelus decision</p>
-        <span>{demo.offerCount} comparable offers checked</span>
-      </header>
+    <aside className="desk-pick" aria-label="Example Kelus pick">
+      <p className="desk-pick-status">{formatSnapshotLabel(demo.lastUpdated)}</p>
       <div className="desk-pick-product">
         <span className="desk-pick-thumb" aria-hidden="true">
           <StageImage imageUrl={demo.listingImageUrl} label={demo.productName.slice(0, 2).toUpperCase()} large />
@@ -87,44 +94,30 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
         <div>
           <p className="desk-pick-brand">{demo.brand}</p>
           <h2 className="desk-pick-title">{demo.productName}</h2>
-          <p className="desk-pick-meta">{demo.variantLabel}</p>
+          <p className="desk-pick-meta">
+            {demo.variantLabel} · {formatConditionLabel(demo.condition)} · {demo.offerCount} listings in this example
+          </p>
         </div>
       </div>
       <p className="desk-pick-verdict">Not the cheapest. The offer that passed.</p>
-      <div className="desk-pick-map" aria-label="From lowest price to Kelus pick">
-        {cheapest && cheapest.knownTotal !== null ? (
-          <div className="desk-pick-node is-cheapest">
-            <span>Lowest known total</span>
-            <strong>{formatMoney(cheapest.knownTotal)}</strong>
-            <em>{cheapest.seller}</em>
-            <small>Price alone doesn’t win</small>
-          </div>
-        ) : null}
-        <div className="desk-pick-gate" aria-label="Kelus validation checks">
-          <span><Icon name="check" size={14} /> Exact configuration matched</span>
-          <span><Icon name="check" size={14} /> Known shipping</span>
-          <span><Icon name="check" size={14} /> Seller evidence</span>
-          <span><Icon name="check" size={14} /> Price anomalies</span>
-        </div>
-        <div className="desk-pick-node is-pick">
-          <span>Our Pick · known total</span>
+      <div className="desk-pick-totals">
+        <div className="desk-pick-total is-pick">
+          <span>Our pick · known total</span>
           <strong>{demo.pickTotal !== null ? formatMoney(demo.pickTotal) : "—"}</strong>
           {pick ? <em>{pick.seller}</em> : null}
-          <small>Best supported offer</small>
         </div>
+        {cheapest && cheapest.knownTotal !== null ? (
+          <div className="desk-pick-total is-cheapest">
+            <span>Cheapest listing</span>
+            <strong>{formatMoney(cheapest.knownTotal)}</strong>
+            <em>{cheapest.seller}</em>
+          </div>
+        ) : null}
       </div>
-      {savingsLabel ? <p className="desk-pick-note">{savingsLabel}</p> : null}
-      {demo.pickReasons.length ? (
-        <div className="desk-pick-reasons">
-          <span>Why this one</span>
-          <ul>
-            {demo.pickReasons.map((reason) => <li key={reason}>{reason}</li>)}
-          </ul>
-        </div>
-      ) : null}
+      {topReason ? <p className="desk-pick-reason">{topReason}</p> : null}
       <div className="desk-pick-foot">{comparisonFootnote(demo)}</div>
-      <Link className="button button-primary desk-pick-cta" href={demo.href}>
-        See why it won <Icon name="arrow" size={17} />
+      <Link className="button button-secondary desk-pick-cta" href={demo.href}>
+        View this example <Icon name="arrow" size={17} />
       </Link>
     </aside>
   );
@@ -139,16 +132,18 @@ export function ComparisonStage({ compact = false, layout = "default" }: Props) 
     ? `${formatMoney(demo.savingsGap)} cheaper listing failed validation`
     : null;
   return (
-    <aside className={`comparison-stage${compact ? " is-compact" : ""}`} aria-label="Live comparison example">
+    <aside className={`comparison-stage${compact ? " is-compact" : ""}`} aria-label="Example comparison">
       <header className="comparison-stage-head">
         <div className="comparison-stage-intro">
           <span className="comparison-stage-thumb" aria-hidden="true">
             <StageImage imageUrl={demo.listingImageUrl} label={demo.productName.slice(0, 2).toUpperCase()} />
           </span>
           <div>
-            <p className="comparison-stage-label">Live example</p>
+            <p className="comparison-stage-label">Example comparison</p>
             <p className="comparison-stage-product">{demo.brand} {demo.productName}</p>
-            <p className="comparison-stage-variant">{demo.variantLabel} · {demo.offerCount} validated offers</p>
+            <p className="comparison-stage-variant">
+              {demo.variantLabel} · {formatConditionLabel(demo.condition)} · {demo.offerCount} offers
+            </p>
             {savingsLabel ? <p className="comparison-stage-savings">{savingsLabel}</p> : null}
           </div>
         </div>

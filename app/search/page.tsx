@@ -48,7 +48,7 @@ export default function SearchPage() {
           </nav>
         </div>
       </section>
-      <section className="search-featured section" aria-label="Live comparison">
+      <section className="search-featured section" aria-label="Example comparison">
         <ComparisonStage compact />
       </section>
       <section className="search-browse section" aria-labelledby="search-browse-heading">

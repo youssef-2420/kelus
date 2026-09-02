@@ -1,47 +1,35 @@
-import { SafeLink as Link } from "@/components/SafeLink";
 import { Icon } from "@/components/Icon";
+import { SafeLink as Link } from "@/components/SafeLink";
 
 const learnItems = [
   {
-    icon: "search",
-    title: "Name the exact product",
-    description: "Choose the model, configuration, and condition you actually want.",
+    title: "How Kelus works",
+    description: "See how a search becomes a comparison of matching offers, with known totals and seller evidence surfaced up front.",
+    href: "/how-it-works",
+    cta: "Read the process",
   },
   {
-    icon: "shield",
-    title: "Reject the messy listings",
-    description: "Wrong variants, unknown totals, and suspicious offers do not become Our Pick.",
-  },
-  {
-    icon: "check",
-    title: "Get one clear answer",
-    description: "See the recommended offer, the known total, and the evidence behind it.",
+    title: "How Kelus picks",
+    description: "See the checks on product match, shipping, returns, seller trust, and price anomalies before one offer is recommended.",
+    href: "/methodology",
+    cta: "Read the methodology",
   },
 ];
 
 export function HomeLearnSection() {
   return (
     <section className="home-learn section" aria-label="Learn about Kelus">
-      <header className="home-learn-head">
-        <p>How Kelus gets to one answer</p>
-        <h2>The complicated checks happen before you click.</h2>
-      </header>
       <div className="home-learn-grid">
-        {learnItems.map((item, index) => (
-          <article key={item.title} className="home-learn-column">
-            <span className="home-learn-icon" aria-hidden="true"><Icon name={item.icon} size={20} /></span>
-            <div>
-              <small>0{index + 1}</small>
-              <h3>{item.title}</h3>
-            </div>
+        {learnItems.map((item) => (
+          <article key={item.href} className="home-learn-column">
+            <h2>{item.title}</h2>
             <p>{item.description}</p>
+            <Link className="home-learn-link" href={item.href}>
+              {item.cta} <Icon name="arrow" size={14} />
+            </Link>
           </article>
         ))}
       </div>
-      <nav className="home-learn-links" aria-label="Learn more about Kelus">
-        <Link className="home-learn-link" href="/how-it-works">How Kelus works <Icon name="arrow" size={14} /></Link>
-        <Link className="home-learn-link" href="/methodology">How Kelus picks <Icon name="arrow" size={14} /></Link>
-      </nav>
     </section>
   );
 }
