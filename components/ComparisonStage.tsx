@@ -95,7 +95,7 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
           <p className="desk-pick-brand">{demo.brand}</p>
           <h2 className="desk-pick-title">{demo.productName}</h2>
           <p className="desk-pick-meta">
-            {demo.variantLabel} · {formatConditionLabel(demo.condition)} · {demo.offerCount} offers
+            {demo.variantLabel} · {formatConditionLabel(demo.condition)} · {demo.offerCount} listings in this example
           </p>
         </div>
       </div>

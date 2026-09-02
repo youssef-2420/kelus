@@ -279,6 +279,8 @@ test("retention UX surfaces prioritize sign-in, onboarding, and mobile conversio
   assert.match(onboarding, /Step \{step \+ 1\} of/);
   assert.match(onboarding, /event\.key === "Escape"/);
   assert.match(onboarding, /desk-tour-trigger/);
+  assert.match(onboarding, /document\.body\.style\.overflow = "hidden"/);
+  assert.match(onboarding, /handleTab/);
   assert.doesNotMatch(onboarding, /setTimeout\(\(\) => setOpen\(true\)/);
   assert.match(signIn, /social-buttons-first/);
   assert.match(signIn, /or use email/);
@@ -460,6 +462,8 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(styles, /@keyframes desk-pick-lock/);
   assert.match(styles, /@keyframes desk-cheapest-strike/);
   assert.match(styles, /onboarding-tour-copy/);
+  assert.match(styles, /animation:desk-rise[^;]*backwards/);
+  assert.match(comparison, /listings in this example/);
   assert.doesNotMatch(styles, /\.home-learn-icon|\.desk-pick-map|\.desk-kicker/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);

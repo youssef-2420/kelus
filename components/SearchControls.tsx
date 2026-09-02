@@ -210,7 +210,9 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     document.documentElement.classList.add("is-search-leaving");
     trackEvent({ name: "search_submitted", productSlug: criteria.productSlug, query });
     trackEvent({ name: "product_resolved", productSlug: criteria.productSlug, variantId: criteria.variantId, condition: criteria.condition });
-    window.location.assign(resultPath ? `${resultPath}?${searchCriteriaToQuery(criteria)}` : canonicalProductPath(criteria));
+    const href = resultPath ? `${resultPath}?${searchCriteriaToQuery(criteria)}` : canonicalProductPath(criteria);
+    const reduceMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.setTimeout(() => { window.location.assign(href); }, reduceMotion ? 0 : 180);
   }
   const suggestionsPanel = open && suggestionProducts.length > 0 && <div className="suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">
     <p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>
