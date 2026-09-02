@@ -56,8 +56,8 @@ jobs:
         run: npm run snapshots:warm:production
         env:
           KELUS_BASE_URL: https://kelus.me
-          SNAPSHOT_WARM_CONCURRENCY: "3"
-          SNAPSHOT_WARM_DELAY_MS: "500"
+          SNAPSHOT_WARM_CONCURRENCY: "1"
+          SNAPSHOT_WARM_DELAY_MS: "2000"
           # Deployment is a provider-health smoke test, not a second catalog crawler.
           # Scheduled rotation maintains the complete catalog within its API budget.
           SNAPSHOT_WARM_LIMIT: "3"

@@ -17,6 +17,7 @@ test("production deploys from main to a Cloudflare Worker with D1 and cron", asy
   assert.match(workflow, /wrangler deploy --config dist\/server\/wrangler\.json --keep-vars/);
   assert.match(workflow, /validate-cloudflare-env\.mjs/);
   assert.match(workflow, /SNAPSHOT_WARM_LIMIT: "3"/);
+  assert.match(workflow, /SNAPSHOT_WARM_CONCURRENCY: "1"/);
   assert.match(workflow, /snapshots:warm:production/);
 
   assert.match(config, /"binding": "DB"/);
@@ -25,6 +26,15 @@ test("production deploys from main to a Cloudflare Worker with D1 and cron", asy
   assert.match(viteConfig, /configPath: "\.\/wrangler\.jsonc"/);
   assert.doesNotMatch(viteConfig, /@openai\/sites-vite-plugin/);
   assert.doesNotMatch(packageJson, /@openai\/sites-vite-plugin/);
+});
+
+test("post-deploy warming preserves a successful deployment during provider rate limiting", async () => {
+  const warmer = await read("scripts/warm-production-snapshots.mjs");
+
+  assert.match(warmer, /rateLimited \+= 1/);
+  assert.match(warmer, /existing snapshots remain available/);
+  assert.match(warmer, /provider unavailable after deploy; keeping last-known-good snapshots/);
+  assert.match(warmer, /if \(failed > 0 && warmed === 0\)/);
 });
 
 test("production CI never forces D1-backed product pages into a static export", async () => {
