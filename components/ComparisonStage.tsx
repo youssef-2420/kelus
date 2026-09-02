@@ -6,8 +6,8 @@ type Props = {
   compact?: boolean;
 };
 
-function formatMoney(value: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
+function formatMoney(value: number, fractionDigits = 0) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: fractionDigits }).format(value);
 }
 
 function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
@@ -33,16 +33,33 @@ function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
   );
 }
 
+function comparisonFootnote(demo: NonNullable<ReturnType<typeof getComparisonDemo>>) {
+  if (demo.savingsGap !== null && demo.savingsGap > 0 && demo.cheapestTotal !== null && demo.pickTotal !== null) {
+    const skipped = demo.cheaperOfferCount;
+    const skippedCopy = skipped > 1
+      ? `Kelus passed over ${skipped} cheaper listings`
+      : "Kelus passed over the cheapest listing";
+    return (
+      <p>
+        {skippedCopy} — the lowest known total was <strong>{formatMoney(demo.cheapestTotal)}</strong>.
+        {" "}Our Pick cleared seller and match checks at <strong>{formatMoney(demo.pickTotal)}</strong>.
+      </p>
+    );
+  }
+  if (demo.pickTotal !== null) {
+    return <p>Known total from <strong>{formatFromPrice(demo.pickTotal)}</strong> after shipping is included.</p>;
+  }
+  return <p>Kelus surfaces known totals before you commit to a listing.</p>;
+}
+
 export function ComparisonStage({ compact = false }: Props) {
   const demo = getComparisonDemo();
   if (!demo) return null;
-  const savings = demo.cheapestTotal !== null && demo.pickTotal !== null && demo.cheapestTotal < demo.pickTotal
-    ? demo.pickTotal - demo.cheapestTotal
-    : null;
   return (
     <aside className={`comparison-stage${compact ? " is-compact" : ""}`} aria-label="Live comparison example">
       <header className="comparison-stage-head">
         <div>
+          <p className="comparison-stage-label">Live example</p>
           <p className="comparison-stage-product">{demo.brand} {demo.productName}</p>
           <p className="comparison-stage-variant">{demo.variantLabel} · {demo.offerCount} validated offers</p>
         </div>
@@ -54,13 +71,7 @@ export function ComparisonStage({ compact = false }: Props) {
         {demo.rows.map((row) => <Row key={row.id} row={row} compact={compact} />)}
       </div>
       <footer className="comparison-stage-foot">
-        {savings !== null && savings > 0 ? (
-          <p>Kelus skipped the cheapest known total — it failed validation checks.</p>
-        ) : demo.pickTotal !== null ? (
-          <p>Known total from <strong>{formatFromPrice(demo.pickTotal)}</strong> after shipping is included.</p>
-        ) : (
-          <p>Kelus surfaces known totals before you commit to a listing.</p>
-        )}
+        {comparisonFootnote(demo)}
       </footer>
     </aside>
   );

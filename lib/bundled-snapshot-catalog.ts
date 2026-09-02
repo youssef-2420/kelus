@@ -200,6 +200,8 @@ export type ComparisonDemo = {
   offerCount: number;
   pickTotal: number | null;
   cheapestTotal: number | null;
+  savingsGap: number | null;
+  cheaperOfferCount: number;
   rows: ComparisonDemoRow[];
 };
 
@@ -212,23 +214,33 @@ function offerSellerLabel(offer: Offer) {
   return offer.seller.name?.trim() || offer.retailer.name;
 }
 
-export function getComparisonDemo(preferredHref = "/product/pixel-watch-3-41mm-used"): ComparisonDemo | null {
-  let bestKey: string | null = null;
-  let bestCount = 0;
-  for (const [key, snapshot] of Object.entries(bundledSnapshots)) {
-    const showcase = toShowcase(key, snapshot);
-    if (!showcase) continue;
-    if (showcase.href === preferredHref || showcase.offerCount > bestCount) {
-      if (showcase.href === preferredHref || showcase.offerCount > bestCount) {
-        bestKey = key;
-        bestCount = showcase.offerCount;
-        if (showcase.href === preferredHref) break;
-      }
-    }
-  }
-  if (!bestKey) return null;
-  const snapshot = bundledSnapshots[bestKey];
-  const showcase = toShowcase(bestKey, snapshot);
+function demoScoreForSnapshot(key: string, snapshot: OfferSearchResult) {
+  const showcase = toShowcase(key, snapshot);
+  if (!showcase) return null;
+  const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
+  if (liveOffers.length < 8) return null;
+  const recommendation = getRecommendation(liveOffers, "kelus_pick");
+  const pick = liveOffers.find((offer) => offer.id === recommendation?.offerId) ?? liveOffers[0];
+  const withTotals = liveOffers
+    .map((offer) => ({ offer, total: knownTotalForOffer(offer) }))
+    .filter((entry): entry is { offer: Offer; total: number } => entry.total !== null)
+    .sort((left, right) => left.total - right.total);
+  const cheapest = withTotals[0]?.offer;
+  if (!cheapest || cheapest.id === pick.id) return null;
+  const pickTotal = knownTotalForOffer(pick);
+  const cheapestTotal = knownTotalForOffer(cheapest);
+  if (pickTotal === null || cheapestTotal === null || pickTotal <= cheapestTotal) return null;
+  const gap = pickTotal - cheapestTotal;
+  let score = gap;
+  if (offerSellerLabel(pick) !== offerSellerLabel(cheapest)) score += 20;
+  if (liveOffers.length >= 15) score += 15;
+  if (gap >= 15) score += 10;
+  return score;
+}
+
+function buildComparisonDemo(key: string): ComparisonDemo | null {
+  const snapshot = bundledSnapshots[key];
+  const showcase = toShowcase(key, snapshot);
   if (!showcase) return null;
   const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
   if (!liveOffers.length) return null;
@@ -241,8 +253,12 @@ export function getComparisonDemo(preferredHref = "/product/pixel-watch-3-41mm-u
   const cheapest = withTotals[0]?.offer;
   const pickTotal = knownTotalForOffer(pick);
   const cheapestTotal = cheapest ? knownTotalForOffer(cheapest) : null;
-  const sample = withTotals.find((entry) => entry.offer.id !== pick.id && entry.offer.id !== cheapest?.id)?.offer
-    ?? withTotals[Math.min(2, withTotals.length - 1)]?.offer;
+  const savingsGap = pickTotal !== null && cheapestTotal !== null && pickTotal > cheapestTotal
+    ? pickTotal - cheapestTotal
+    : null;
+  const cheaperOfferCount = pickTotal === null
+    ? 0
+    : withTotals.filter((entry) => entry.offer.id !== pick.id && entry.total < pickTotal).length;
   const rows: ComparisonDemoRow[] = [];
   if (cheapest && cheapest.id !== pick.id) {
     rows.push({
@@ -253,18 +269,7 @@ export function getComparisonDemo(preferredHref = "/product/pixel-watch-3-41mm-u
       shippingKnown: cheapest.shippingCostKnown !== false,
       knownTotal: cheapestTotal,
       role: "cheapest",
-      note: cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest list price",
-    });
-  }
-  if (sample && sample.id !== pick.id && sample.id !== cheapest?.id) {
-    rows.push({
-      id: sample.id,
-      seller: offerSellerLabel(sample),
-      listPrice: sample.price,
-      shipping: sample.shippingCostKnown === false ? null : sample.shippingCost,
-      shippingKnown: sample.shippingCostKnown !== false,
-      knownTotal: knownTotalForOffer(sample),
-      role: "sample",
+      note: cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest known total",
     });
   }
   rows.push({
@@ -275,7 +280,6 @@ export function getComparisonDemo(preferredHref = "/product/pixel-watch-3-41mm-u
     shippingKnown: pick.shippingCostKnown !== false,
     knownTotal: pickTotal,
     role: "pick",
-    note: recommendation?.reasons?.[0],
   });
   return {
     brand: showcase.brand,
@@ -285,6 +289,21 @@ export function getComparisonDemo(preferredHref = "/product/pixel-watch-3-41mm-u
     offerCount: liveOffers.length,
     pickTotal,
     cheapestTotal,
+    savingsGap,
+    cheaperOfferCount,
     rows,
   };
+}
+
+export function getComparisonDemo(): ComparisonDemo | null {
+  let bestKey: string | null = null;
+  let bestScore = -1;
+  for (const [key, snapshot] of Object.entries(bundledSnapshots)) {
+    const score = demoScoreForSnapshot(key, snapshot);
+    if (score !== null && score > bestScore) {
+      bestKey = key;
+      bestScore = score;
+    }
+  }
+  return bestKey ? buildComparisonDemo(bestKey) : null;
 }

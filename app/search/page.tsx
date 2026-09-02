@@ -6,7 +6,7 @@ import { ComparisonStage } from "@/components/ComparisonStage";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { categoryHubPath, categoryHubs } from "@/lib/category-routes";
-import { getSearchQuickStarts } from "@/lib/search-quick-starts";
+import { getSearchQuickStarts, formatQuickStartLabel } from "@/lib/search-quick-starts";
 import { formatFromPrice } from "@/lib/bundled-snapshot-catalog";
 import { getProductCardStatus } from "@/lib/catalog-availability";
 
@@ -35,14 +35,15 @@ export default function SearchPage() {
             <section className="search-index-block" aria-labelledby="search-popular-heading">
               <h2 id="search-popular-heading">Popular right now</h2>
               <ul className="search-index-list">
-                {quickStarts.map(({ product, href, fromPrice, live }) => {
+                {quickStarts.map((item) => {
+                  const { product, href, fromPrice, live, variantLabel, condition } = item;
                   const status = live && fromPrice
                     ? { label: `From ${formatFromPrice(fromPrice)}`, detail: "Validated comparison available" }
                     : getProductCardStatus(product.slug);
                   return (
                     <li key={`${product.slug}-${href}`}>
                       <Link className="search-index-row" href={href} title={status.detail}>
-                        <span>{product.brand} {product.name}</span>
+                        <span>{formatQuickStartLabel(item)}</span>
                         <span>{status.label}</span>
                         <Icon name="arrow" size={14} />
                       </Link>
