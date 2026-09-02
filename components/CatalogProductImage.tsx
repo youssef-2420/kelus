@@ -9,11 +9,12 @@ type Props = {
   listingImageUrl?: string;
   fallbackLabel: string;
   className?: string;
+  size?: number;
 };
 
-export function CatalogProductImage({ listingImageUrl, fallbackLabel, className = "catalog-product-image" }: Props) {
+export function CatalogProductImage({ listingImageUrl, fallbackLabel, className = "catalog-product-image", size = 120 }: Props) {
   const [failed, setFailed] = useState(false);
-  const source = optimizedRetailerImageUrl(listingImageUrl, 120);
+  const source = optimizedRetailerImageUrl(listingImageUrl, size);
   if (source && !failed) {
     return (
       <span className={className}>

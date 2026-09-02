@@ -161,21 +161,23 @@ test("search is the single canonical product discovery experience", async () => 
   assert.doesNotMatch(home, /LiveShowcase/);
   assert.match(page, /SearchControls minimal minimalAction deferProductSelection focusOnMount/);
   assert.match(page, /ComparisonStage compact/);
-  assert.match(page, /search-index-list/);
+  assert.match(page, /search-browse-grid/);
+  assert.match(page, /layout="tile"/);
   assert.match(page, /alternates: \{ canonical: "https:\/\/kelus\.me\/search" \}/);
-  assert.match(page, /getSearchQuickStarts/);
+  assert.match(page, /listProductListingPreviews/);
   assert.doesNotMatch(page, /LiveShowcase/);
   assert.doesNotMatch(page, /redirect\(/);
   assert.match(search, /hero-search-category/);
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(header, /shell === "search"/);
   assert.match(page, /KelusHeader shell="search"/);
-  assert.match(page, /search-stage/);
-  assert.match(page, /search-category-line/);
-  assert.match(home, /home-stage/);
-  assert.match(styles, /\.comparison-stage/);
-  assert.match(styles, /\.home-stage-command/);
-  assert.match(styles, /\.search-stage-body/);
+  assert.match(page, /search-desk/);
+  assert.match(page, /search-console-categories/);
+  assert.match(home, /home-desk/);
+  assert.match(home, /layout="desk"/);
+  assert.match(styles, /\.desk-pick/);
+  assert.match(styles, /\.search-console/);
+  assert.match(styles, /\.search-browse-grid/);
   assert.match(styles, /\.site-header\.is-search-shell/);
   assert.doesNotMatch(styles, /\.home-learn-icon/);
   assert.match(styles, /\.category-hub/);
@@ -409,7 +411,7 @@ test("production navigation avoids the incompatible client-side link shim", asyn
   assert.doesNotMatch(search, /startSearch/);
 });
 
-test("kit-guided UX adds skip link, homepage task path, and comparison badges", async () => {
+test("kit-guided UX adds skip link, homepage desk, and comparison badges", async () => {
   const [layout, skipLink, home, comparison, styles] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SkipLink.tsx", import.meta.url), "utf8"),
@@ -419,11 +421,12 @@ test("kit-guided UX adds skip link, homepage task path, and comparison badges", 
   ]);
   assert.match(layout, /SkipLink/);
   assert.match(skipLink, /Skip to main content/);
-  assert.match(home, /HomeTaskPath/);
+  assert.match(home, /ComparisonStage layout="desk"/);
   assert.match(home, /id="main-content"/);
   assert.match(comparison, /comparison-row-badge/);
+  assert.match(comparison, /DeskPick/);
   assert.match(styles, /\.skip-link/);
-  assert.match(styles, /\.home-task-path/);
+  assert.match(styles, /\.desk-rail/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);
 });
