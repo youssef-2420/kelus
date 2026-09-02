@@ -447,10 +447,13 @@ test("9/10 UX pass adds design memory and verdict-first product hierarchy", asyn
   assert.match(design, /Verdict callout/);
   assert.match(results, /pi-verdict-lead/);
   assert.match(results, /pi-primary-cta--early/);
+  assert.match(results, /pi-decision-strip/);
+  assert.match(results, /WatchButton product=\{productName\}/);
   assert.match(results, /id="main-content"/);
   assert.match(results, /<details className="pi-proof">/);
   assert.doesNotMatch(results, /<details className="pi-proof" open>/);
   assert.match(styles, /\.pi-verdict-lead/);
+  assert.match(styles, /\.pi-decision-strip/);
   assert.match(styles, /\.pi-offer-summary:focus-visible/);
 });
 

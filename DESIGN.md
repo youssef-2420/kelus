@@ -83,7 +83,9 @@ Accent color is for **primary actions and state only**—not decorative gradient
 ## Layout
 
 - Content max-width: `1180px` (`.section`), product content `860px` (`.pi-content`)
-- Home stage: command band (dark forest gradient) + comparison example below
+- Home desk: split work surface — search rail left, live pick card right
+- Search console: full header + distinct search panel (not header-embedded)
+- Product decision strip: one View offer + Track pair after verdict/known total; proof and comparison below
 - Mobile: bottom-sheet search overlay, sticky product CTA (`pi-mobile-cta`)
 - Grid gaps: 12–28px for cards; 48–64px between major sections
 
@@ -121,7 +123,7 @@ Accent color is for **primary actions and state only**—not decorative gradient
 - Icon in circle, headline, 3-step list, primary CTA + secondary sign-in
 
 ### Product pick (`pi-pick`)
-- Verdict callout → price → early CTA → evidence (collapsed) → comparison → footer CTA
+- Verdict callout → known total → decision strip (View offer + Track) → evidence (collapsed) → comparison → quiet commission note
 
 ## Do's and Don'ts
 
