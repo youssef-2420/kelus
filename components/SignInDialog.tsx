@@ -88,7 +88,12 @@ export function SignInDialog({ label = "Sign in", className }: { label?: string;
     if (!target.closest(".signin-dialog") && !target.closest(".auth-brand-mark")) closeDialog();
   }
   function finishSignIn() {
-    setOpen(false);
+    setNotice("Signed in successfully");
+    setBusy(false);
+    window.setTimeout(() => {
+      setOpen(false);
+      setNotice("");
+    }, 420);
   }
 
   async function submit(event: FormEvent) {
