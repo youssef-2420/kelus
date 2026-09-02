@@ -71,9 +71,11 @@ export function OnboardingTour() {
         <div className="onboarding-tour" role="dialog" aria-modal="true" aria-labelledby="onboarding-title">
           <button type="button" className="onboarding-tour-backdrop" aria-label="Dismiss tour" onClick={finish} />
           <div className="onboarding-tour-card">
-            <p className="onboarding-tour-step">Step {step + 1} of {steps.length}</p>
-            <h2 id="onboarding-title">{current.title}</h2>
-            <p>{current.body}</p>
+            <div key={step} className="onboarding-tour-copy">
+              <p className="onboarding-tour-step">Step {step + 1} of {steps.length}</p>
+              <h2 id="onboarding-title">{current.title}</h2>
+              <p>{current.body}</p>
+            </div>
             <div className="onboarding-tour-steps" aria-hidden="true">
               {steps.map((item, index) => (
                 <span key={item.title} className={index === step ? "is-active" : index < step ? "is-done" : ""} />
