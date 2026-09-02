@@ -21,15 +21,29 @@ function configurationPreview(product: Product) {
 }
 
 function ProductSuggestion({ product, index, listboxId, active, chooseProduct, highlightPrimary }: { product: Product; index: number; listboxId: string; active: boolean; chooseProduct: (product: Product) => void; highlightPrimary: boolean }) {
-  return <button type="button" role="option" aria-selected={active} id={`${listboxId}-${index}`} className={`${active ? "is-active " : ""}${highlightPrimary && index === 0 ? "is-primary" : ""}`.trim()} onMouseDown={() => chooseProduct(product)}>
-    <span className="suggestion-copy">
-      {highlightPrimary && index === 0 && <em>Closest match</em>}
-      <b>{product.name}</b>
-      <small>{product.brand} · {product.category}</small>
-      <small className="suggestion-options">{configurationPreview(product)}</small>
-    </span>
-    <Icon name="arrow" size={16}/>
-  </button>;
+  return (
+    <button
+      type="button"
+      role="option"
+      aria-selected={active}
+      id={`${listboxId}-${index}`}
+      className={`${active ? "is-active " : ""}${highlightPrimary && index === 0 ? "is-primary" : ""}`.trim()}
+      onPointerDown={(event) => {
+        // preventDefault keeps the input focused; calling choose here (not onMouseDown/click)
+        // is required because parent listbox also preventDefaults pointerdown, which suppresses mouse events.
+        event.preventDefault();
+        chooseProduct(product);
+      }}
+    >
+      <span className="suggestion-copy">
+        {highlightPrimary && index === 0 && <em>Closest match</em>}
+        <b>{product.name}</b>
+        <small>{product.brand} · {product.category}</small>
+        <small className="suggestion-options">{configurationPreview(product)}</small>
+      </span>
+      <Icon name="arrow" size={16}/>
+    </button>
+  );
 }
 
 export function SearchControls({ compact = false, minimal = false, minimalAction = false, deferProductSelection = false, focusOnMount = false, initialCriteria = defaultSearch, resultPath, actionLabel = "Search" }: Props) {
@@ -167,7 +181,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     {suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}
     {showSearchResults && <button type="submit" className="suggestions-footer">Compare offers for “{query}” <Icon name="arrow" size={16}/></button>}
   </div>;
-  const issuePanel = searchIssue && <div className="unsupported-search" role="status"><strong>{searchIssue.kind === "ambiguous" ? `Choose a specific product for “${searchIssue.query}”.` : searchIssue.kind === "invalid" ? `That configuration is not available for “${searchIssue.query}”.` : `Kelus does not support “${searchIssue.query}” yet.`}</strong><span>Kelus currently compares selected phones, computers, tablets, audio products, wearables, and consoles.</span>{Boolean(searchIssue.candidates?.length) && <div><small>{searchIssue.kind === "ambiguous" ? "Did you mean:" : "Related supported products:"}</small>{searchIssue.candidates!.map((product) => <button type="button" key={product.slug} onMouseDown={() => chooseProduct(product)}>{product.name}</button>)}</div>}{searchIssue.kind === "unsupported" || searchIssue.kind === "ambiguous" ? <ProductInterestCapture query={searchIssue.query}/> : null}</div>;
+  const issuePanel = searchIssue && <div className="unsupported-search" role="status"><strong>{searchIssue.kind === "ambiguous" ? `Choose a specific product for “${searchIssue.query}”.` : searchIssue.kind === "invalid" ? `That configuration is not available for “${searchIssue.query}”.` : `Kelus does not support “${searchIssue.query}” yet.`}</strong><span>Kelus currently compares selected phones, computers, tablets, audio products, wearables, and consoles.</span>{Boolean(searchIssue.candidates?.length) && <div><small>{searchIssue.kind === "ambiguous" ? "Did you mean:" : "Related supported products:"}</small>{searchIssue.candidates!.map((product) => <button type="button" key={product.slug} onPointerDown={(event) => { event.preventDefault(); chooseProduct(product); }}>{product.name}</button>)}</div>}{searchIssue.kind === "unsupported" || searchIssue.kind === "ambiguous" ? <ProductInterestCapture query={searchIssue.query}/> : null}</div>;
   if (minimal) return <div className={`rp-search-pill-wrap${productSelected && deferProductSelection ? " has-selected-product" : ""}${overlayActive ? " is-overlay-open" : ""}`}>
     {overlayActive && <button type="button" className="search-overlay-scrim" aria-label="Close search overlay" onClick={closeOverlay}/>}
     <form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}>
@@ -180,14 +194,14 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
         : <button type="submit" className="nr-search-action" disabled={searching}>{searching ? "Finding offers…" : actionLabel}</button>)}
       {!minimalAction && <button type="submit" className="sr-only" disabled={searching}>Search</button>}
     </form>
-    {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions" onPointerDown={(event) => event.preventDefault()}>{suggestionProducts.length ? <><p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onMouseDown={() => { void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet. Try a model name such as “iPhone 17 Pro”.</p> : null}</div>}
-    {productSelected && deferProductSelection && <section className="hero-config-panel" aria-label={`Configure ${selectedProduct.name}`}>
+    {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions" onPointerDown={(event) => event.preventDefault()}>{suggestionProducts.length ? <><p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onPointerDown={(event) => { event.preventDefault(); void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet. Try a model name such as “iPhone 17 Pro”.</p> : null}</div>}
+    {productSelected && deferProductSelection && <section className="hero-config-panel" aria-label={`Configure ${selectedProduct.name}`} onPointerDown={(event) => event.stopPropagation()}>
       <div className="hero-config-product"><span><small>Selected product</small><b>{selectedProduct.name}</b><em>{selectedProduct.brand} · {selectedProduct.category}</em></span><button type="button" className="hero-config-close" aria-label="Close configuration" onClick={closeOverlay}><Icon name="close" size={16}/></button></div>
       {attributeLabel && <fieldset><legend>{attributeLabel}</legend><div className="hero-config-options">{variants.map((variant) => <button type="button" key={variant.id} className={variant.id === variantId ? "is-selected" : ""} aria-pressed={variant.id === variantId} onClick={() => setVariantId(variant.id)}>{variant.label}</button>)}</div></fieldset>}
       <fieldset><legend>Condition</legend><div className="hero-config-options">{exactConditions.map((value) => <button type="button" key={value} className={condition === value ? "is-selected" : ""} aria-pressed={condition === value} onClick={() => setCondition(value)}>{conditionLabels[value]}</button>)}</div></fieldset>
       {intelligenceOptions.showsUnlockedStatus && <p className="hero-config-network"><Icon name="lock" size={15}/><span><b>Network</b> Unlocked listings only</span></p>}
       <p className="hero-config-hint">Choose the exact setup, then open the comparison. This is not loading — Kelus is waiting for your pick.</p>
-      <div className="hero-config-confirm"><span>{[selectedVariant?.label, conditionLabels[condition], intelligenceOptions.showsUnlockedStatus ? "Unlocked" : null].filter(Boolean).join(" · ")}</span><button type="button" className="button button-primary" onClick={submit} disabled={searching}>{searching ? "Opening comparison…" : "Compare offers"}<Icon name="arrow" size={17}/></button></div>
+      <div className="hero-config-confirm"><span>{[selectedVariant?.label, conditionLabels[condition], intelligenceOptions.showsUnlockedStatus ? "Unlocked" : null].filter(Boolean).join(" · ")}</span><button type="button" className="button button-primary" onClick={() => { void submit(); }} disabled={searching}>{searching ? "Opening comparison…" : "Compare offers"}<Icon name="arrow" size={17}/></button></div>
     </section>}
     {issuePanel}
   </div>;
