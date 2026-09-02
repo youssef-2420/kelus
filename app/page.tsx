@@ -5,6 +5,7 @@ import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
 import { HomeTrustStrip } from "@/components/HomeTrustStrip";
 import { HomeLearnSection } from "@/components/HomeLearnSection";
+import { SearchPickPreview } from "@/components/SearchPickPreview";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -21,16 +22,21 @@ export default function Home() {
       <VerifiedNotice />
       <OnboardingTour />
       <section className="home-hero section" aria-label="Search Kelus">
-        <div className="home-hero-copy">
-          <h1>Shop smarter.<br />Know before you buy.</h1>
-          <p className="home-hero-lead">
-            A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.
-          </p>
+        <div className="home-hero-grid">
+          <div className="home-hero-main">
+            <div className="home-hero-copy">
+              <h1>Shop smarter.<br />Know before you buy.</h1>
+              <p className="home-hero-lead">
+                A cheaper listing can still lose when shipping raises the total, the configuration is wrong, or seller evidence is weak. Kelus checks before it recommends.
+              </p>
+            </div>
+            <div id="product-search" className="hero-search-wrap home-hero-search">
+              <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
+            </div>
+            <HomeTrustStrip />
+          </div>
+          <SearchPickPreview variant="hero" />
         </div>
-        <div id="product-search" className="hero-search-wrap">
-          <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
-        </div>
-        <HomeTrustStrip />
       </section>
       <HomeLearnSection />
       <SiteFooter />

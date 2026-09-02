@@ -14,7 +14,7 @@ export function HomeTrustStrip() {
       <HomepageSocialProof />
       <ul className="home-trust-benefits" aria-label="How Kelus compares offers">
         {benefits.map((item) => (
-          <li key={item.label}><Icon name={item.icon} size={16} />{item.label}</li>
+          <li key={item.label}><Icon name={item.icon} size={15} />{item.label}</li>
         ))}
       </ul>
     </div>
