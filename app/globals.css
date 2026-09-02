@@ -1137,7 +1137,9 @@ html { scroll-behavior:smooth; }
   .desk-pick-product{grid-template-columns:72px minmax(0,1fr)}
   .desk-pick-thumb{width:72px;height:72px}
   .desk-pick-totals{grid-template-columns:1fr}
+  .search-console{padding-bottom:20px}
   .search-console-copy h1{font-size:30px}
+  .search-console-panel{padding:16px;border-radius:14px}
   .search-browse-grid{grid-template-columns:1fr}
   .desk:has(.rp-search-suggestions)::before,.desk:has(.hero-config-panel)::before,.search-console:has(.rp-search-suggestions)::before,.search-console:has(.hero-config-panel)::before{content:"";position:fixed;inset:0;background:rgba(15,40,35,.44);z-index:25;pointer-events:none}
   .desk-search .rp-search-pill-wrap,.search-console-bar .rp-search-pill-wrap{z-index:30}
