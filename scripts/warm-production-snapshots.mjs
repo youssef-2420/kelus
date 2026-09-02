@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { allCatalogSnapshotTargets, catalogSnapshotTargetKey } from "../lib/catalog-snapshot-targets.ts";
+import { allCatalogSnapshotTargets, catalogSnapshotTargetKey, priorityCatalogSnapshotTargets } from "../lib/catalog-snapshot-targets.ts";
 import { searchCriteriaToQuery } from "../lib/search-state.ts";
 
 const baseUrl = (process.env.KELUS_BASE_URL ?? "https://kelus.me").replace(/\/$/, "");
@@ -20,10 +20,15 @@ async function warmOne(criteria) {
     status: response.status,
     offers: Array.isArray(body?.offers) ? body.offers.length : 0,
     error: body?.error?.code,
+    refreshFailed: body?.lastRefreshFailed === true,
+    refreshReturnedEmpty: body?.lastRefreshReturnedEmpty === true,
   };
 }
 
-const targets = limit && Number.isFinite(limit) ? allCatalogSnapshotTargets().slice(0, limit) : allCatalogSnapshotTargets();
+const priority = priorityCatalogSnapshotTargets();
+const priorityKeys = new Set(priority.map(catalogSnapshotTargetKey));
+const orderedTargets = [...priority, ...allCatalogSnapshotTargets().filter((target) => !priorityKeys.has(catalogSnapshotTargetKey(target)))];
+const targets = limit && Number.isFinite(limit) ? orderedTargets.slice(0, limit) : orderedTargets;
 let warmed = 0;
 let empty = 0;
 let failed = 0;
@@ -36,9 +41,12 @@ const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
     const criteria = targets[index];
     try {
       const result = await warmOne(criteria);
-      if (result.status >= 200 && result.status < 300 && result.offers > 0) {
+      if (result.status >= 200 && result.status < 300 && result.offers > 0 && !result.refreshFailed && !result.refreshReturnedEmpty) {
         warmed += 1;
         console.info(`[production-warm] ${result.key} (${result.offers} offers)`);
+      } else if (result.refreshFailed || result.refreshReturnedEmpty) {
+        failed += 1;
+        console.warn(`[production-warm] stale fallback ${result.key} refresh=${result.refreshFailed ? "failed" : "empty"}`);
       } else if (result.status >= 200 && result.status < 300) {
         empty += 1;
         console.warn(`[production-warm] empty ${result.key}`);

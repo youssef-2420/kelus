@@ -16,6 +16,8 @@ test("production deploys from main to a Cloudflare Worker with D1 and cron", asy
   assert.match(workflow, /wrangler d1 migrations apply kelus-production --remote/);
   assert.match(workflow, /wrangler deploy --config dist\/server\/wrangler\.json --keep-vars/);
   assert.match(workflow, /validate-cloudflare-env\.mjs/);
+  assert.match(workflow, /SNAPSHOT_WARM_LIMIT: "3"/);
+  assert.match(workflow, /snapshots:warm:production/);
 
   assert.match(config, /"binding": "DB"/);
   assert.match(config, /"binding": "IMAGES"/);
