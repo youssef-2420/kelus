@@ -277,11 +277,14 @@ test("retention UX surfaces prioritize sign-in, onboarding, and mobile conversio
   ]);
   assert.match(onboarding, /kelus:onboarding:v2/);
   assert.match(onboarding, /Step \{step \+ 1\} of/);
-  assert.match(onboarding, /event\.key === "Escape"/);
+  assert.match(onboarding, /"Escape"/);
   assert.match(onboarding, /desk-tour-trigger/);
   assert.match(onboarding, /document\.body\.style\.overflow = "hidden"/);
   assert.match(onboarding, /handleTab/);
+  assert.match(onboarding, /\[open, step\]/);
+  assert.match(onboarding, /How searching works/);
   assert.doesNotMatch(onboarding, /setTimeout\(\(\) => setOpen\(true\)/);
+  assert.doesNotMatch(onboarding, /!dismissed && !open/);
   assert.match(signIn, /social-buttons-first/);
   assert.match(signIn, /or use email/);
   assert.match(signIn, /Continue with Google/);
