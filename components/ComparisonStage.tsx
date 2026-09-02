@@ -16,7 +16,7 @@ function formatMoney(value: number, fractionDigits = 0) {
 
 function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
   return (
-    <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`}>
+    <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`} role="listitem">
       <div className="comparison-row-main">
         <span className="comparison-row-seller">{row.seller}</span>
         <span className="comparison-row-meta">
@@ -86,7 +86,7 @@ export function ComparisonStage({ compact = false }: Props) {
           Open comparison <Icon name="arrow" size={14} />
         </Link>
       </header>
-      <div className="comparison-stage-rows">
+      <div className="comparison-stage-rows" role="list">
         {demo.rows.map((row) => <Row key={row.id} row={row} compact={compact} />)}
       </div>
       <footer className="comparison-stage-foot">

@@ -216,21 +216,19 @@ test("Alerts leads with monitoring state and keeps secondary controls progressiv
   assert.match(alerts, /Check prices/);
   assert.match(alerts, /checkGuestPrices/);
   assert.match(alerts, /<progress value=\{progress\}/);
-<<<<<<< HEAD
   assert.match(alerts, /alerts-empty-steps/);
   assert.match(alerts, /alerts-empty-signin/);
-=======
   assert.match(alerts, /alerts-reached-banner/);
   assert.match(alerts, /is-reached/);
   assert.match(alerts, /alert-reached-note/);
   assert.match(alerts, /statusRank/);
->>>>>>> 20fe336 (Polish retention UX: alerts, sign-in, onboarding, mobile CTA)
   assert.match(styles, /\.alerts-overview/);
   assert.match(styles, /\.alerts-refresh-button/);
   assert.match(styles, /\.alert-glance/);
   assert.match(styles, /\.alert-check\.is-error/);
-<<<<<<< HEAD
   assert.match(styles, /\.alerts-empty-steps/);
+  assert.match(styles, /\.alerts-reached-banner/);
+  assert.match(styles, /\.alert-row\.is-reached/);
 });
 
 test("phase 2 UX polish covers sign-in toast and mobile search overlay", async () => {
@@ -251,9 +249,6 @@ test("phase 2 UX polish covers sign-in toast and mobile search overlay", async (
   assert.match(styles, /\.search-overlay-scrim/);
   assert.match(styles, /hero-suggestions-sheet-in/);
   assert.match(styles, /\.app-signin-toast/);
-=======
-  assert.match(styles, /\.alerts-reached-banner/);
-  assert.match(styles, /\.alert-row\.is-reached/);
 });
 
 test("retention UX surfaces prioritize sign-in, onboarding, and mobile conversion", async () => {
@@ -281,7 +276,20 @@ test("retention UX surfaces prioritize sign-in, onboarding, and mobile conversio
   assert.match(styles, /\.watch-button-signin/);
   assert.match(styles, /\.social-buttons-first/);
   assert.match(styles, /\.onboarding-tour-step/);
->>>>>>> 20fe336 (Polish retention UX: alerts, sign-in, onboarding, mobile CTA)
+});
+
+test("phase 3 UX adds comparison and product conversion motion", async () => {
+  const [comparison, results, styles] = await Promise.all([
+    readFile(new URL("../components/ComparisonStage.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(comparison, /role="list"/);
+  assert.match(comparison, /role="listitem"/);
+  assert.match(results, /pi-pick-reveal/);
+  assert.match(styles, /comparison-row-in/);
+  assert.match(styles, /pi-pick-in/);
+  assert.match(styles, /pi-mobile-cta-in/);
 });
 
 test("authentication hydrates from local session and cannot leave Alerts stuck loading", async () => {

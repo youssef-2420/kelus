@@ -409,7 +409,7 @@ function DecisionReport({ decision, lowest }: { decision: KelusDecision; lowest?
   const verdict = kelusVerdict(decision, lowest);
   const sellerName = decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName;
   const sellerHref = pick ? ebaySellerProfileUrl(pick.seller.name || sellerName) : null;
-  return <section className="pi-pick" aria-labelledby="our-pick-heading">
+  return <section className="pi-pick pi-pick-reveal" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
     <div className="pi-pick-top">
       <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong>{savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}<ConfidenceBadge confidence={decision.confidence}/><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>

@@ -1000,3 +1000,21 @@ html { scroll-behavior:smooth; }
   .alerts-empty,.app-signin-toast,.search-overlay-scrim,.search-stage-search .rp-search-suggestions,.home-stage-search .rp-search-suggestions{animation:none}
   .alerts-empty-icon{animation:none}
 }
+
+/* Phase 3 UX: product conversion moments and comparison stage motion */
+.comparison-stage-rows .comparison-row{animation:comparison-row-in .34s cubic-bezier(.22,1,.36,1) both}
+.comparison-stage-rows .comparison-row:nth-child(1){animation-delay:60ms}
+.comparison-stage-rows .comparison-row:nth-child(2){animation-delay:130ms}
+.comparison-stage-rows .comparison-row:nth-child(3){animation-delay:200ms}
+.comparison-stage-rows .comparison-row.is-pick{box-shadow:inset 0 0 0 1px rgba(23,103,95,.12)}
+@keyframes comparison-row-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pi-results .pi-pick-reveal{animation:pi-pick-in .38s cubic-bezier(.22,1,.36,1) both}
+@keyframes pi-pick-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.pi-primary-cta .button{transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease}
+.pi-primary-cta .button:hover{transform:translateY(-2px);box-shadow:0 14px 28px rgba(16,62,53,.18)}
+.pi-primary-cta .button:active{transform:translateY(0)}
+.pi-mobile-cta{animation:pi-mobile-cta-in .3s cubic-bezier(.22,1,.36,1) both}
+@keyframes pi-mobile-cta-in{from{opacity:0;transform:translateY(100%)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .comparison-stage-rows .comparison-row,.pi-results .pi-pick-reveal,.pi-mobile-cta,.pi-primary-cta .button{animation:none;transition:none}
+}
