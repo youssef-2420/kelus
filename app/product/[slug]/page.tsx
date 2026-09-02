@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
+import { getCriteriaListingPreview, rankAlternativeCriteria } from "@/lib/catalog-availability";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
+import { getAlternativeProductCriteria } from "@/lib/search-state";
 import { shouldRedirectToValidatedAlternative } from "@/lib/preferred-product-criteria";
 import { absoluteCanonicalUrl } from "@/lib/seo-url";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
@@ -51,6 +53,11 @@ export default async function CanonicalProductPage({ params }: PageProps) {
   if (!resolved) notFound();
   const { criteria, product, variant } = resolved;
   const initialOutcome = await resolveInitialProductIntelligence(criteria);
+  const alternatives = rankAlternativeCriteria(criteria, getAlternativeProductCriteria(criteria))
+    .map((alternativeCriteria) => ({
+      criteria: alternativeCriteria,
+      preview: getCriteriaListingPreview(alternativeCriteria),
+    }));
   const hasLiveOffers = initialOutcome.status === "SUCCESS"
     && initialOutcome.result.offers.some((offer) => offer.dataSource === "live");
   const redirectCriteria = shouldRedirectToValidatedAlternative(criteria, hasLiveOffers);
@@ -100,6 +107,6 @@ export default async function CanonicalProductPage({ params }: PageProps) {
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
     <link rel="preload" href="/fonts/fraunces-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}/>
-    <ProductIntelligenceView criteria={criteria} initialOutcome={initialOutcome}/>
+    <ProductIntelligenceView criteria={criteria} initialOutcome={initialOutcome} alternatives={alternatives}/>
   </>;
 }

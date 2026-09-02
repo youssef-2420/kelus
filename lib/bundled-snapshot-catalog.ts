@@ -4,6 +4,9 @@ import { canonicalProductPath } from "./search-state.ts";
 import type { ConditionFilter, Offer, OfferSearchResult, SearchCriteria } from "../types/kelus.ts";
 import { catalogSnapshotTargetKey } from "./catalog-snapshot-targets.ts";
 import { getRecommendation } from "../services/recommendations.ts";
+import type { BundledShowcase, ProductListingPreview } from "./catalog-preview-types.ts";
+
+export type { BundledShowcase, ProductListingPreview } from "./catalog-preview-types.ts";
 
 const bundledSnapshots = snapshots as Record<string, OfferSearchResult>;
 
@@ -44,37 +47,6 @@ export function hasBundledSnapshot(criteria: SearchCriteria) {
   const snapshot = readBundledSnapshot(criteria);
   return Boolean(snapshot?.offers.some((offer) => offer.dataSource === "live"));
 }
-
-export type BundledShowcase = {
-  productSlug: string;
-  productName: string;
-  brand: string;
-  variantLabel: string;
-  condition: ConditionFilter;
-  href: string;
-  fromPrice: number;
-  pickPrice?: number;
-  offerCount: number;
-  lastUpdated?: string;
-  listingImageUrl?: string;
-};
-
-export type ProductListingPreview = {
-  productSlug: string;
-  productName: string;
-  brand: string;
-  category: string;
-  image: string;
-  href: string;
-  variantLabel: string;
-  condition: ConditionFilter;
-  fromPrice: number;
-  pickPrice?: number;
-  offerCount: number;
-  live: boolean;
-  lastUpdated?: string;
-  listingImageUrl?: string;
-};
 
 function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase | null {
   const parsed = parseSnapshotKey(key);

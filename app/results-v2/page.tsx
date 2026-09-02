@@ -15,10 +15,9 @@ import { WatchButton } from "@/components/WatchButton";
 import { ProductHeader } from "@/components/ProductHeader";
 import { SafeLink as Link } from "@/components/SafeLink";
 import { getProductBySlug, getVariantById, getVariantsForProduct } from "@/lib/demo-data";
+import type { AlternativeCriteriaPreview } from "@/lib/catalog-preview-types";
 import { getProductIntelligenceOptions } from "@/lib/product-attributes";
-import { canonicalProductPath, getAlternativeProductCriteria, readSearchCriteria } from "@/lib/search-state";
-import { getCriteriaListingPreview, rankAlternativeCriteria } from "@/lib/catalog-availability";
-import { readBundledSnapshot } from "@/lib/bundled-snapshot-catalog";
+import { canonicalProductPath, readSearchCriteria } from "@/lib/search-state";
 import { historyPointsFromObservations } from "@/lib/price-history-points";
 import { ebaySellerProfileUrl } from "@/lib/seller-links";
 import { getBuyWaitDecision } from "@/services/buy-wait-decision";
@@ -87,7 +86,7 @@ function NewResults() {
   return <main className="nr-page"><div className="nr-state">Opening the canonical product comparison…</div></main>;
 }
 
-export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria: ReturnType<typeof readSearchCriteria>; initialOutcome?: ProductOfferLoadOutcome }) {
+export function ProductIntelligenceView({ criteria, initialOutcome, alternatives = [] }: { criteria: ReturnType<typeof readSearchCriteria>; initialOutcome?: ProductOfferLoadOutcome; alternatives?: AlternativeCriteriaPreview[] }) {
   const product = getProductBySlug(criteria.productSlug)!;
   const variant = getVariantById(criteria.variantId);
   const variants = useMemo(() => getVariantsForProduct(product.id).filter((item) => product.searchAttribute.validVariantIds.includes(item.id)), [product]);
@@ -210,7 +209,6 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
   // Only interrupt the decision moment while a live recheck is actively running.
   // Saved/stale state stays in DataFreshness so the pick is not prefaced with a warning.
   const showRefreshBanner = backgroundRefreshing;
-  const alternativeCriteria = useMemo(() => rankAlternativeCriteria(criteria, getAlternativeProductCriteria(criteria)), [criteria]);
 
   useEffect(() => {
     trackEvent({ name: "product_page_viewed", productSlug: criteria.productSlug, variantId: criteria.variantId, condition: criteria.condition });
@@ -224,8 +222,8 @@ export function ProductIntelligenceView({ criteria, initialOutcome }: { criteria
     <ProductHeader criteria={criteria} />
     <div className="pi-content section">
       <section className="pi-product"><ListingImage offer={heroOffer} productName={product.name} fallbackLabel={product.image} large/><div className="pi-product-copy"><p className="pi-kicker">{product.brand} · {product.category}</p><h1 className="pi-title">{productPageHeading(product, variant, criteria.condition)}</h1><VariantSelectors product={product} variants={variants} criteria={criteria} selectedVariant={variant} onUpdating={() => setUpdating(true)}/><DataFreshness result={result} offerCount={offers.length} loading={loading} stale={Boolean(staleSnapshot)} refreshing={refreshingSnapshot}/><p className={`pi-updating${updating ? " is-visible" : ""}`} role="status" aria-live="polite">Updating recommendation…</p></div></section>
-      {error && offers.length ? <ProductFallbackState kind="error" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : error ? <ProductFallbackState kind="empty" detail={error} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "pending"} alternatives={alternativeCriteria} criteria={criteria} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
-        {showRefreshBanner && <p className="pi-refresh-banner" role="status" aria-live="polite"><i aria-hidden="true"/>{backgroundRefreshing ? "Checking live eBay offers now. The pick below stays until a newer validated offer is ready." : "This comparison was saved earlier. Prices can move — Kelus rechecks in the background."}</p>}
+      {error && offers.length ? <ProductFallbackState kind="error" detail={error} alternatives={alternatives} criteria={criteria} observations={storedObservations} productName={product.name} retry={retry}/> : error ? <ProductFallbackState kind="empty" detail={error} alternatives={alternatives} criteria={criteria} observations={storedObservations} productName={product.name} retry={retry}/> : loading && !result ? <ProductLoadingSkeleton/> : !offers.length ? <ProductFallbackState kind={result?.lastUpdated ? "empty" : "pending"} alternatives={alternatives} criteria={criteria} observations={storedObservations} productName={product.name} retry={retry}/> : <div className={`pi-results${updating ? " is-updating" : ""}`}>
+        {showRefreshBanner && <p className="pi-refresh-banner" role="status" aria-live="polite"><i aria-hidden="true"/>Checking live eBay offers now. The pick below stays until a newer validated offer is ready.</p>}
         {updating && loading && <div className="pi-updating-overlay" aria-busy="true" aria-live="polite"><ProductUpdatingOverlay/></div>}
         <DecisionReport decision={decision} lowest={lowest} productName={product.name} criteria={criteria} result={result!} context={context}/>
         <TimingAndTrack context={context} observations={exactRealPriceObservations(storedObservations, { variantId: criteria.variantId ?? "", condition: criteria.condition })} productName={product.name} criteria={criteria} result={result!}/>
@@ -293,8 +291,8 @@ function DataFreshness({ result, offerCount, loading, stale, refreshing }: { res
   </p>;
 }
 
-function ProductFallbackState({ kind, detail, alternatives, criteria, productName, retry }: { kind: "error" | "empty" | "pending"; detail?: string; alternatives: SearchCriteria[]; criteria: SearchCriteria; productName: string; retry: () => void }) {
-  const liveAlternative = alternatives.map((alternative) => ({ alternative, preview: getCriteriaListingPreview(alternative) })).find((item) => item.preview.live);
+function ProductFallbackState({ kind, detail, alternatives, criteria, observations, productName, retry }: { kind: "error" | "empty" | "pending"; detail?: string; alternatives: AlternativeCriteriaPreview[]; criteria: SearchCriteria; observations: PriceObservation[]; productName: string; retry: () => void }) {
+  const liveAlternative = alternatives.find((item) => item.preview.live);
   const copy = kind === "error"
     ? { title: "Live refresh unavailable.", body: detail || "Kelus could not reach the live offer source. Any saved comparison above is still shown when available." }
     : kind === "empty"
@@ -305,7 +303,7 @@ function ProductFallbackState({ kind, detail, alternatives, criteria, productNam
     {liveAlternative && <div className="pi-fallback-nearest is-primary">
       <p className="pi-label">Live comparison available</p>
       <Link href={liveAlternative.preview.href} className="pi-fallback-nearest-card pi-fallback-nearest-card--primary">
-        <span><strong>{alternativeLabel(liveAlternative.alternative)}</strong><small>Validated now · From {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(liveAlternative.preview.fromPrice)}</small></span>
+        <span><strong>{alternativeLabel(liveAlternative.criteria)}</strong><small>Validated now · From {new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(liveAlternative.preview.fromPrice)}</small></span>
         <Icon name="arrow" size={16}/>
       </Link>
       <small>We opened the closest configuration Kelus already tracks for this product.</small>
@@ -313,12 +311,11 @@ function ProductFallbackState({ kind, detail, alternatives, criteria, productNam
     <div className="nr-state-actions"><button type="button" className="button button-primary" onClick={retry}>Check again</button><Link className="button button-secondary" href="/search">Edit search</Link></div>
     <PriceHistorySparkline
       compact
-      points={historyPointsFromObservations(readBundledSnapshot(criteria)?.observations ?? [], criteria)}
+      points={historyPointsFromObservations(observations, criteria)}
       detail="Saved observations for this configuration, even before a live comparison is ready."
     />
     <NotifyWhenLive criteria={criteria} productName={productName} />
-    {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map((alternative) => {
-      const preview = getCriteriaListingPreview(alternative);
+    {alternatives.length > 0 && <div className="pi-fallback-alternatives"><p>Try another supported configuration</p><div>{alternatives.map(({ criteria: alternative, preview }) => {
       return <Link key={`${alternative.variantId}-${alternative.condition}`} href={preview.href}>{alternativeLabel(alternative)}{preview.live && preview.fromPrice ? ` · From ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}` : ""} <Icon name="arrow" size={13}/></Link>;
     })}</div></div>}
     <Link className="text-link pi-fallback-method" href="/methodology">Why Kelus may reject an offer <Icon name="arrow" size={14}/></Link>

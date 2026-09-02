@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ProductListingCard } from "@/components/ProductListingCard";
-import type { ProductListingPreview } from "@/lib/bundled-snapshot-catalog";
+import type { ProductListingPreview } from "@/lib/catalog-preview-types";
 
 type SortMode = "price" | "name";
 

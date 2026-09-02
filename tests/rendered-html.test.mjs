@@ -125,7 +125,6 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /setRefreshingSnapshot\(true\)/);
   assert.match(view, /pi-refresh-banner/);
   assert.match(view, /Checking live eBay offers now/);
-  assert.match(view, /This comparison was saved earlier/);
   assert.match(view, /Checking for newer offers/);
   assert.match(styles, /\.pi-refreshing-status/);
   assert.match(styles, /\.pi-refresh-banner/);
@@ -363,16 +362,22 @@ test("discovery cards use an indexed snapshot summary with listing images", asyn
 });
 
 test("growth surfaces expose the product directory and snapshot-aware sitemap", async () => {
-  const [productsPage, sitemapSource, listingCard] = await Promise.all([
+  const [productsPage, sitemapSource, listingCard, productView, productRoute] = await Promise.all([
     readFile(new URL("../app/products/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/sitemap.ts", import.meta.url), "utf8"),
     readFile(new URL("../components/ProductListingCard.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/results-v2/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/product/[slug]/page.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(productsPage, /listProductListingPreviews/);
   assert.match(productsPage, /ProductsDirectory/);
   assert.match(sitemapSource, /snapshotSitemapEntry/);
   assert.match(sitemapSource, /\/products/);
-  assert.match(listingCard, /getProductCardStatus/);
+  assert.match(listingCard, /preview\.live/);
+  assert.doesNotMatch(listingCard, /bundled-snapshot-catalog|catalog-availability/);
+  assert.doesNotMatch(productView, /bundled-snapshot-catalog|catalog-availability/);
+  assert.match(productRoute, /getCriteriaListingPreview/);
+  assert.match(productRoute, /alternatives=\{alternatives\}/);
 });
 
 test("trust surfaces expose footer links and coverage catalog", async () => {

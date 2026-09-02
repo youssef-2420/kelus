@@ -1,10 +1,11 @@
 import { formatFromPrice, getProductListingPreview, readBundledSnapshot } from "./bundled-snapshot-catalog.ts";
 import { canonicalProductPath } from "./search-state.ts";
+import type { CriteriaListingPreview } from "./catalog-preview-types.ts";
 import type { SearchCriteria } from "../types/kelus.ts";
 
 export type CatalogCardStatus = "validated" | "indexed";
 
-export function getCriteriaListingPreview(criteria: SearchCriteria) {
+export function getCriteriaListingPreview(criteria: SearchCriteria): CriteriaListingPreview {
   const snapshot = readBundledSnapshot(criteria);
   const liveOffers = snapshot?.offers.filter((offer) => offer.dataSource === "live") ?? [];
   const fromPrice = liveOffers.reduce<number | null>((best, offer) => {
