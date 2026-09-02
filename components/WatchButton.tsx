@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
+import { SignInDialog } from "@/components/SignInDialog";
 import { useAuth } from "@/components/AuthProvider";
 import { trackEvent } from "@/services/analytics";
 import { alertId, createAlert, createUnavailableAlert, PRICE_ALERTS_CHANGED, readPriceAlerts, upsertPriceAlert, writePriceAlerts } from "@/services/price-alerts";
@@ -51,9 +52,9 @@ export function WatchButton({ product = "iPhone 17", criteria, result, allowUnav
     } finally { setChecking(false); }
   }
   const label = checking ? "Checking price…" : message || (saved ? (allowUnavailable ? "Tracking availability" : "Watching price") : (allowUnavailable ? "Track availability" : "Track price"));
-  return <div className="watch-button-wrap">
+  return <div className={`watch-button-wrap${saved ? " is-saved" : ""}`}>
     <button className={saved ? "watch-button is-saved" : "watch-button"} type="button" disabled={checking} onClick={toggle} aria-live="polite"><Icon name={saved ? "check" : "bell"} size={16} />{label}</button>
     {message ? <p className="watch-button-message" role="alert">{message}</p> : null}
-    {saved && !user && !message ? <p className="watch-button-note">Saved on this device. Sign in from the header to sync across devices.</p> : null}
+    {saved && !user && !message ? <div className="watch-button-note">Saved on this device. <SignInDialog label="Sign in for email alerts" className="watch-button-signin"/></div> : null}
   </div>;
 }

@@ -192,6 +192,14 @@ export default function AlertsPage() {
   const reachedCount = alerts.filter((alert) => getAlertStatus(alert) === "target_reached").length;
   const droppedCount = alerts.filter((alert) => getAlertStatus(alert) === "price_dropped").length;
   const activeCount = alerts.filter((alert) => !alert.paused).length;
+  const statusRank = (alert: PriceAlertRecord) => {
+    const status = getAlertStatus(alert);
+    if (status === "target_reached") return 0;
+    if (status === "price_dropped") return 1;
+    if (alert.paused) return 3;
+    return 2;
+  };
+  const sortedAlerts = [...alerts].sort((left, right) => statusRank(left) - statusRank(right));
 
   return <main className="app-page alerts-page"><KelusHeader />
     <section className="alerts-main section">
@@ -199,15 +207,22 @@ export default function AlertsPage() {
       <div className="alerts-heading"><div><p className="eyebrow">Your price alerts</p><h1>Know when it’s worth buying.</h1><p>Kelus watches the exact configuration—not just the product name.</p></div><div className="alerts-heading-actions">{!user && alerts.length > 0 && <button type="button" className="alerts-refresh-button" onClick={() => { void checkGuestPrices(); }} disabled={refreshingAll || initialLoading} aria-busy={refreshingAll}><Icon name="search" size={16}/>{refreshingAll ? "Checking prices…" : "Check prices"}</button>}<Link href="/search" className="alerts-add-button"><Icon name="plus" size={17}/> Add product</Link></div></div>
       {syncError && <p className="alerts-sync-error" role="alert">{syncError}</p>}
       {authLoading || initialLoading ? <AlertsLoadingSkeleton/> : alerts.length > 0 && <div className="alerts-overview" aria-label="Price alert summary"><span><b>{activeCount}</b> actively watched</span><span><b>{droppedCount}</b> price dropped</span><span><b>{reachedCount}</b> target reached</span></div>}
+      {!authLoading && !initialLoading && reachedCount > 0 && <div className="alerts-reached-banner" role="status">
+        <Icon name="star" size={18}/>
+        <div>
+          <strong>{reachedCount === 1 ? "A target price was reached" : `${reachedCount} target prices were reached`}</strong>
+          <p>Open the comparison while the offer is still live.</p>
+        </div>
+      </div>}
       {!authLoading && !initialLoading && (alerts.length ? <div className="alerts-list">
-        {alerts.map((alert) => {
+        {sortedAlerts.map((alert) => {
           const open = expanded === alert.id;
           const status = getAlertStatus(alert);
           const change = getPriceChange(alert);
           const distance = getDistanceFromTarget(alert);
           const stale = isAlertStale(alert);
           const progress = targetProgress(alert);
-          return <article className={`alert-row${alert.paused ? " is-paused" : ""}${open ? " is-open" : ""}`} key={alert.id}>
+          return <article className={`alert-row${alert.paused ? " is-paused" : ""}${status === "target_reached" ? " is-reached" : ""}${open ? " is-open" : ""}`} key={alert.id}>
             <button ref={(node) => { if (node) toggleRefs.current.set(alert.id, node); else toggleRefs.current.delete(alert.id); }} type="button" aria-expanded={open} aria-controls={`alert-detail-${alert.id}`} aria-label={`${alert.productName}, ${alert.configuration}. ${open ? "Collapse" : "Expand"} alert details`} onClick={() => toggleExpanded(alert.id, !open)}>
               <span className="alert-product"><AlertImage alert={alert}/><span><b>{alert.productName}</b><small>{alert.configuration}</small></span></span>
               <span className={`alert-status is-${status}`}>{statusLabel(alert)}</span>
@@ -215,6 +230,7 @@ export default function AlertsPage() {
             </button>
             <div className="alert-glance"><span className={`alert-check is-${alert.state}`}><i aria-hidden="true"/>{checkLabel(alert, refreshing.has(alert.id), stale)}</span><span className="alert-target-glance">Target <b>{alert.targetPrice === null ? "Not set" : money(alert.targetPrice)}</b>{distance !== null && distance > 0 ? ` · ${money(distance)} away` : distance === 0 ? " · Reached" : ""}</span><Link href={comparisonHref(alert)}>View comparison <Icon name="arrow" size={14}/></Link></div>
             {open && <div className="alert-detail" id={`alert-detail-${alert.id}`} ref={(node) => { if (node) detailRefs.current.set(alert.id, node); else detailRefs.current.delete(alert.id); }}>
+              {status === "target_reached" && <p className="alert-reached-note" role="status">Target reached — this is a good moment to open the comparison and buy if the offer still checks out.</p>}
               <div className="alert-detail-stats">
                 <span>Tracked at<strong>{alert.trackedPrice === null ? "Unavailable" : money(alert.trackedPrice)}</strong><small>{contextLabel(alert)}</small></span>
                 <span>Target<strong>{alert.targetPrice === null ? "Not set" : money(alert.targetPrice)}</strong><small>{alert.targetPrice === null ? "Set a target to get a clear status" : distance === 0 ? "Target reached" : distance === null ? "Price unavailable" : `${money(distance)} away from target`}</small>{progress !== null && <progress value={progress} max="100" aria-label={`${progress}% of the way to the target price`}/>}</span>
