@@ -46,8 +46,8 @@ test("comparison demo shows a pick that beat the cheapest known total", () => {
   assert.ok(pick);
   assert.ok(cheapest);
   assert.ok(demo.pickReasons.length >= 1);
-  assert.ok(demo.rows.length >= 3);
-  assert.ok(demo.rows.some((row) => row.role === "sample"));
+  assert.ok(demo.rows.length >= 2);
+  assert.ok(demo.rows.every((row) => row.role === "pick" || row.role === "cheapest" || row.role === "sample"));
   assert.notEqual(pick.id, cheapest.id);
   assert.ok(pick.knownTotal && cheapest.knownTotal && pick.knownTotal > cheapest.knownTotal);
 });

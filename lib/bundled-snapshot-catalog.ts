@@ -228,6 +228,12 @@ function demoScoreForSnapshot(key: string, snapshot: OfferSearchResult) {
   if (offerSellerLabel(pick) !== offerSellerLabel(cheapest)) score += 20;
   if (liveOffers.length >= 15) score += 15;
   if (gap >= 15) score += 10;
+  const cheaperSellers = new Set(
+    withTotals
+      .filter((entry) => entry.offer.id !== pick.id && entry.total < pickTotal)
+      .map((entry) => offerSellerLabel(entry.offer)),
+  );
+  if (cheaperSellers.size >= 2) score += 35;
   return score;
 }
 
@@ -277,14 +283,12 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
       cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest known total — did not clear checks",
     ));
   }
-  // Prefer another cheaper-than-pick listing so the desk shows real tradeoffs, not a pricier skip.
+  // Prefer another cheaper-than-pick listing with a different seller (real tradeoff, not a duplicate row).
   const sample = withTotals.find((entry) => {
     if (entry.offer.id === pick.id || entry.offer.id === cheapest?.id) return false;
     if (pickTotal !== null && entry.total >= pickTotal) return false;
-    if (cheapest && offerSellerLabel(entry.offer) === offerSellerLabel(cheapest) && entry.total === cheapestTotal) {
-      return false;
-    }
-    return true;
+    if (!cheapest) return true;
+    return offerSellerLabel(entry.offer) !== offerSellerLabel(cheapest);
   });
   if (sample) {
     rows.push(toRow(
