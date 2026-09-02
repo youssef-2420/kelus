@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { getComparisonDemo, hasBundledSnapshot, listBundledShowcases } from "../lib/bundled-snapshot-catalog.ts";
+import { getComparisonDemo, hasBundledSnapshot, listBundledShowcases, listProductListingPreviews } from "../lib/bundled-snapshot-catalog.ts";
 import { formatQuickStartLabel, getSearchQuickStarts } from "../lib/search-quick-starts.ts";
 import { userFacingOfferError } from "../services/user-facing-errors.ts";
 
@@ -9,6 +9,9 @@ test("bundled snapshot catalog exposes live showcase cards", () => {
   assert.ok(showcases.length >= 1);
   assert.ok(showcases[0].fromPrice > 0);
   assert.ok(showcases[0].href.includes("/product/"));
+  const previews = listProductListingPreviews();
+  const liveProducts = previews.filter((preview) => preview.live).length;
+  assert.ok(liveProducts >= 45, `expected broad catalog coverage, got ${liveProducts}`);
   assert.equal(hasBundledSnapshot({
     productSlug: "iphone-17-pro",
     variantId: "iphone-17-pro-256gb",
