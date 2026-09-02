@@ -889,7 +889,7 @@ html { scroll-behavior:smooth; }
 .coverage-card-copy small{color:#6f7a76;font-size:11px}
 .coverage-card-copy em{color:#22705d;font-size:10px;font-style:normal;font-weight:700}
 @media(hover:hover){.site-footer-grid a:hover{color:var(--green)}.coverage-card:hover{border-color:#91b7ad;background:#f2f8f5;transform:translateY(-2px)}}
-@media(max-width:720px){.site-footer-grid{grid-template-columns:1fr;gap:22px}.coverage-page,.legal-page,.products-directory{padding:24px 16px 48px}.coverage-grid,.products-directory-grid{grid-template-columns:1fr}}
+@media(max-width:720px){.site-footer-grid{flex-direction:column;gap:22px}.site-footer-grid>div:first-child,.site-footer-grid>div:nth-child(2),.site-footer-grid>div:nth-child(3){flex:0 0 auto;max-width:none}.coverage-page,.legal-page,.products-directory{padding:24px 16px 48px}.coverage-grid,.products-directory-grid{grid-template-columns:1fr}}
 
 .products-page{min-height:100vh;background:var(--paper)}
 .products-directory{max-width:980px;margin:0 auto;padding:34px 24px 48px}
