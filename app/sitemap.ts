@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { snapshotSitemapEntry } from "../lib/bundled-snapshot-catalog.ts";
 import { allCategoryHubPaths } from "../lib/category-routes.ts";
 import { products } from "../lib/demo-data.ts";
+import { shouldRedirectToValidatedAlternative } from "../lib/preferred-product-criteria.ts";
 import { canonicalProductPath } from "../lib/search-state.ts";
 import { absoluteCanonicalUrl } from "../lib/seo-url.ts";
 
@@ -11,6 +12,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const productUrls = products.flatMap((product) => product.searchAttribute.validVariantIds.flatMap((variantId) => (["new", "used"] as const).flatMap((condition) => {
     const criteria = { productSlug: product.slug, variantId, condition, market: "us" as const };
     const snapshotMeta = snapshotSitemapEntry(criteria);
+    // Product routes without a validated snapshot can redirect to a nearby
+    // configuration that does have one. Do not publish those redirect sources
+    // to search engines as if they were canonical, indexable URLs.
+    if (shouldRedirectToValidatedAlternative(criteria, snapshotMeta.live)) return [];
     return [{
       url: absoluteCanonicalUrl(canonicalProductPath(criteria)),
       lastModified: snapshotMeta.lastUpdated,
