@@ -89,7 +89,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
 
   useEffect(() => {
     if (!overlayActive) return undefined;
-    function onKey(event: KeyboardEvent) {
+    function onKey(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") closeOverlay();
     }
     window.addEventListener("keydown", onKey);
