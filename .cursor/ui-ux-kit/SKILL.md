@@ -19,6 +19,7 @@ Use this skill as the **entry point** for all UI and UX work on Kelus. Read this
 
 | Kit | Path | Best for |
 |-----|------|----------|
+| **UI Design Brain** | `.cursor/skills/ui-design-brain/SKILL.md` | 60+ component patterns, SaaS-quality UI, anti-generic output |
 | **UI UX Pro Max** | `.cursor/skills/ui-ux-pro-max/SKILL.md` | Design systems, palettes, typography, UX guidelines, stack patterns |
 | **Impeccable** | `.agents/skills/impeccable/SKILL.md` | Polish, animate, onboard, critique, audit, Operate-mode app UI |
 | **Hallmark** | `.agents/skills/hallmark/SKILL.md` | Anti-slop guardrails, structural variety on new pages |
@@ -39,10 +40,11 @@ Before generating UI:
 
 ## Workflow
 
-1. Load **ui-ux-pro-max** for palette/typography/UX guideline search when direction is unclear.
-2. Load **impeccable** for polish, motion, empty states, and conversion moments.
-3. Apply **design** + **design-bible** rules for forms, a11y, buttons, and anti-patterns.
-4. Use **hallmark** only when building a **new** page or major section — not for small surgical fixes.
+1. Load **ui-design-brain** when building or refining components (forms, tables, nav, modals, empty states). Read `components.md` before writing UI code.
+2. Load **ui-ux-pro-max** for palette/typography/UX guideline search when direction is unclear.
+3. Load **impeccable** for polish, motion, empty states, and conversion moments.
+4. Apply **design** + **design-bible** rules for forms, a11y, buttons, and anti-patterns.
+5. Use **hallmark** only when building a **new** page or major section — not for small surgical fixes.
 
 ## Vendor sources (refresh)
 

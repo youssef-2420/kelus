@@ -12,6 +12,7 @@ Downloaded design kits for Kelus. **Active installs** live in:
 
 | Kit | Repo | Size | Role |
 |-----|------|------|------|
+| **UI Design Brain** | [carmahhawwari/ui-design-brain](https://github.com/carmahhawwari/ui-design-brain) | ~50KB | 60+ component patterns from component.gallery |
 | UI UX Pro Max | [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | ~30MB | Design intelligence DB + search scripts |
 | Impeccable | [pbakaus/impeccable](https://github.com/pbakaus/impeccable) | ~104MB | Polish, audit, animate, onboard |
 | Hallmark | [Nutlope/hallmark](https://github.com/Nutlope/hallmark) | ~32MB | Anti-AI-slop, macrostructure |
@@ -30,6 +31,9 @@ git clone --depth 1 https://github.com/Nutlope/hallmark.git
 ## Refresh active skills
 
 ```bash
+# UI Design Brain
+git clone --depth 1 https://github.com/carmahhawwari/ui-design-brain.git .cursor/skills/ui-design-brain
+
 # UI UX Pro Max (recommended)
 npx -y ui-ux-pro-max-cli init --ai cursor
 npx -y ui-ux-pro-max-cli init --ai universal
