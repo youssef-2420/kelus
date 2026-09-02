@@ -5,7 +5,6 @@ import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
 import { ComparisonStage } from "@/components/ComparisonStage";
 import { HomeLearnSection } from "@/components/HomeLearnSection";
-import { HomepageSocialProof } from "@/components/HomepageSocialProof";
 import { OnboardingTour } from "@/components/OnboardingTour";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -39,7 +38,6 @@ export default function Home() {
           <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
           </div>
-          <HomepageSocialProof />
         </div>
         <ComparisonStage layout="desk" />
       </section>

@@ -48,7 +48,7 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
   assert.match(home, /HomeLearnSection/);
   assert.match(home, /SearchControls/);
   assert.match(home, /ComparisonStage/);
-  assert.match(home, /HomepageSocialProof/);
+  assert.doesNotMatch(home, /HomepageSocialProof|Prices rechecked|live comparisons/);
   assert.doesNotMatch(home, /SearchLauncher/);
   assert.doesNotMatch(home, /LiveShowcase/);
   assert.doesNotMatch(home, /catalog-links/);
