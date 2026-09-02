@@ -30,10 +30,10 @@ export default function Home() {
       <OnboardingTour />
       <section className="desk section" aria-label="Search and live Kelus pick">
         <div className="desk-rail">
-          <p className="desk-kicker">Search → compare → buy</p>
-          <h1>What are you buying?</h1>
+          <p className="desk-kicker">Price is only the first filter</p>
+          <h1>Find the offer worth buying.</h1>
           <p>
-            Search the exact product and configuration. Kelus compares matching eBay offers with known shipping, then recommends one that clears seller and price checks.
+            A cheap listing can still lose after shipping, weak seller evidence, or a suspicious price. Search once. Kelus checks the rest.
           </p>
           <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />

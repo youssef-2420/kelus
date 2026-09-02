@@ -45,6 +45,7 @@ test("comparison demo shows a pick that beat the cheapest known total", () => {
   const cheapest = demo.rows.find((row) => row.role === "cheapest");
   assert.ok(pick);
   assert.ok(cheapest);
+  assert.ok(demo.pickReasons.length >= 1);
   assert.notEqual(pick.id, cheapest.id);
   assert.ok(pick.knownTotal && cheapest.knownTotal && pick.knownTotal > cheapest.knownTotal);
 });

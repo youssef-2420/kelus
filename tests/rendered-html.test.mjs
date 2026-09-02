@@ -181,7 +181,7 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(styles, /\.search-browse-grid/);
   assert.match(styles, /\.site-footer-grid/);
   assert.match(header, /activeHref/);
-  assert.doesNotMatch(styles, /\.home-learn-icon/);
+  assert.match(styles, /\.home-learn-icon/);
   assert.match(styles, /\.category-hub/);
   assert.match(alerts, /emailed when your target is reached/);
   assert.match(results, /href="\/search">Edit search/);
@@ -435,16 +435,17 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(layout, /SkipLink/);
   assert.match(skipLink, /Skip to main content/);
   assert.match(home, /ComparisonStage layout="desk"/);
+  assert.match(home, /Find the offer worth buying/);
   assert.match(home, /id="main-content"/);
   assert.match(comparison, /comparison-row-badge/);
   assert.match(comparison, /DeskPick/);
   assert.match(comparison, /Not the cheapest\. The offer that passed\./);
   assert.match(comparison, /Exact configuration matched/);
   assert.match(home, /HomeLearnSection/);
+  assert.match(comparison, /Why this one/);
   assert.match(styles, /\.skip-link/);
   assert.match(styles, /\.desk-rail/);
-  assert.match(styles, /\.home-learn-flow/);
-  assert.match(styles, /@keyframes home-flow-arrow/);
+  assert.match(styles, /\.home-learn-icon/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);
 });

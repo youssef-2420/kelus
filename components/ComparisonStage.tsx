@@ -75,8 +75,11 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
     : null;
 
   return (
-    <aside className="desk-pick" aria-label="Live Kelus pick">
-      <p className="desk-pick-kicker">Live Kelus pick</p>
+    <aside className="desk-pick" aria-label="A real Kelus comparison">
+      <header className="desk-pick-head">
+        <p className="desk-pick-kicker">A real Kelus decision</p>
+        <span>{demo.offerCount} comparable offers checked</span>
+      </header>
       <div className="desk-pick-product">
         <span className="desk-pick-thumb" aria-hidden="true">
           <StageImage imageUrl={demo.listingImageUrl} label={demo.productName.slice(0, 2).toUpperCase()} large />
@@ -84,33 +87,44 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
         <div>
           <p className="desk-pick-brand">{demo.brand}</p>
           <h2 className="desk-pick-title">{demo.productName}</h2>
-          <p className="desk-pick-meta">{demo.variantLabel} · {demo.offerCount} validated offers</p>
+          <p className="desk-pick-meta">{demo.variantLabel}</p>
         </div>
       </div>
       <p className="desk-pick-verdict">Not the cheapest. The offer that passed.</p>
-      <div className="desk-pick-totals">
-        <div className="desk-pick-total is-pick">
-          <span>Our pick · known total</span>
-          <strong>{demo.pickTotal !== null ? formatMoney(demo.pickTotal) : "—"}</strong>
-          {pick ? <em>{pick.seller}</em> : null}
-        </div>
+      <div className="desk-pick-map" aria-label="From lowest price to Kelus pick">
         {cheapest && cheapest.knownTotal !== null ? (
-          <div className="desk-pick-total is-cheapest">
-            <span>Cheapest listing</span>
+          <div className="desk-pick-node is-cheapest">
+            <span>Lowest known total</span>
             <strong>{formatMoney(cheapest.knownTotal)}</strong>
             <em>{cheapest.seller}</em>
+            <small>Price alone doesn’t win</small>
           </div>
         ) : null}
+        <div className="desk-pick-gate" aria-label="Kelus validation checks">
+          <span><Icon name="check" size={14} /> Exact configuration matched</span>
+          <span><Icon name="check" size={14} /> Known shipping</span>
+          <span><Icon name="check" size={14} /> Seller evidence</span>
+          <span><Icon name="check" size={14} /> Price anomalies</span>
+        </div>
+        <div className="desk-pick-node is-pick">
+          <span>Our Pick · known total</span>
+          <strong>{demo.pickTotal !== null ? formatMoney(demo.pickTotal) : "—"}</strong>
+          {pick ? <em>{pick.seller}</em> : null}
+          <small>Best supported offer</small>
+        </div>
       </div>
       {savingsLabel ? <p className="desk-pick-note">{savingsLabel}</p> : null}
-      <ul className="desk-pick-checks" aria-label="Checks cleared by Our Pick">
-        <li><Icon name="check" size={14} />Exact configuration matched</li>
-        {pick?.shippingKnown ? <li><Icon name="check" size={14} />Shipping included in total</li> : null}
-        <li><Icon name="check" size={14} />Seller evidence checked</li>
-      </ul>
+      {demo.pickReasons.length ? (
+        <div className="desk-pick-reasons">
+          <span>Why this one</span>
+          <ul>
+            {demo.pickReasons.map((reason) => <li key={reason}>{reason}</li>)}
+          </ul>
+        </div>
+      ) : null}
       <div className="desk-pick-foot">{comparisonFootnote(demo)}</div>
       <Link className="button button-primary desk-pick-cta" href={demo.href}>
-        Open this comparison <Icon name="arrow" size={17} />
+        See why it won <Icon name="arrow" size={17} />
       </Link>
     </aside>
   );

@@ -188,6 +188,7 @@ export type ComparisonDemo = {
   cheapestTotal: number | null;
   savingsGap: number | null;
   cheaperOfferCount: number;
+  pickReasons: string[];
   listingImageUrl?: string;
   rows: ComparisonDemoRow[];
 };
@@ -278,6 +279,7 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
     cheapestTotal,
     savingsGap,
     cheaperOfferCount,
+    pickReasons: recommendation?.reasons ?? [],
     listingImageUrl: showcase.listingImageUrl,
     rows,
   };
