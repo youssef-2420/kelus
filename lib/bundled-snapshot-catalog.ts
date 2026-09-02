@@ -16,21 +16,18 @@ function lowestKnownTotal(offers: Offer[]) {
   }, null);
 }
 
-function pickKnownTotal(snapshot: OfferSearchResult) {
+function summarizeSnapshot(snapshot: OfferSearchResult) {
   const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
   const recommendation = getRecommendation(liveOffers, "kelus_pick");
   const pick = liveOffers.find((offer) => offer.id === recommendation?.offerId) ?? liveOffers[0];
-  if (!pick) return null;
-  return pick.shippingCostKnown === false ? pick.price : pick.price + pick.shippingCost;
-}
-
-function listingImageFromSnapshot(snapshot: OfferSearchResult) {
-  const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
-  const recommendation = getRecommendation(liveOffers, "kelus_pick");
-  const pick = liveOffers.find((offer) => offer.id === recommendation?.offerId)
-    ?? liveOffers.find((offer) => offer.imageUrl)
-    ?? liveOffers[0];
-  return pick?.imageUrl;
+  return {
+    liveOffers,
+    fromPrice: lowestKnownTotal(liveOffers),
+    pickPrice: pick
+      ? pick.shippingCostKnown === false ? pick.price : pick.price + pick.shippingCost
+      : null,
+    listingImageUrl: (pick?.imageUrl ? pick : liveOffers.find((offer) => offer.imageUrl))?.imageUrl,
+  };
 }
 
 function parseSnapshotKey(key: string) {
@@ -85,8 +82,7 @@ function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase |
   const product = getProductBySlug(parsed.productSlug);
   const variant = getVariantById(parsed.variantId);
   if (!product || !variant) return null;
-  const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
-  const fromPrice = lowestKnownTotal(liveOffers);
+  const { liveOffers, fromPrice, pickPrice, listingImageUrl } = summarizeSnapshot(snapshot);
   if (fromPrice === null) return null;
   return {
     productSlug: parsed.productSlug,
@@ -96,21 +92,29 @@ function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase |
     condition: parsed.condition,
     href: canonicalProductPath(parsed),
     fromPrice,
-    pickPrice: pickKnownTotal(snapshot) ?? undefined,
+    pickPrice: pickPrice ?? undefined,
     offerCount: liveOffers.length,
     lastUpdated: snapshot.lastUpdated,
-    listingImageUrl: listingImageFromSnapshot(snapshot),
+    listingImageUrl,
   };
 }
 
+let showcasesCache: BundledShowcase[] | undefined;
+
+function allBundledShowcases() {
+  if (!showcasesCache) {
+    showcasesCache = Object.entries(bundledSnapshots)
+      .flatMap(([key, snapshot]) => {
+        const showcase = toShowcase(key, snapshot);
+        return showcase ? [showcase] : [];
+      })
+      .sort((left, right) => left.fromPrice - right.fromPrice);
+  }
+  return showcasesCache;
+}
+
 export function listBundledShowcases(limit = 6): BundledShowcase[] {
-  return Object.entries(bundledSnapshots)
-    .flatMap(([key, snapshot]) => {
-      const showcase = toShowcase(key, snapshot);
-      return showcase ? [showcase] : [];
-    })
-    .sort((left, right) => left.fromPrice - right.fromPrice)
-    .slice(0, Math.max(1, limit));
+  return allBundledShowcases().slice(0, Math.max(1, limit));
 }
 
 export function formatFromPrice(value: number) {
@@ -118,53 +122,63 @@ export function formatFromPrice(value: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(value);
 }
 
-export function getProductListingPreview(productSlug: string): ProductListingPreview | null {
-  const product = getProductBySlug(productSlug);
-  if (!product) return null;
-  const matches = Object.entries(bundledSnapshots).flatMap(([key, snapshot]) => {
-    const showcase = toShowcase(key, snapshot);
-    return showcase?.productSlug === productSlug ? [showcase] : [];
-  });
-  if (matches.length) {
-    const best = matches.sort((left, right) => left.fromPrice - right.fromPrice)[0];
-    return {
-      productSlug,
+let productPreviewsCache: Map<string, ProductListingPreview> | undefined;
+
+function productPreviewIndex() {
+  if (productPreviewsCache) return productPreviewsCache;
+  const bestByProduct = new Map<string, BundledShowcase>();
+  for (const showcase of allBundledShowcases()) {
+    if (!bestByProduct.has(showcase.productSlug)) bestByProduct.set(showcase.productSlug, showcase);
+  }
+  productPreviewsCache = new Map();
+  for (const product of products) {
+    const best = bestByProduct.get(product.slug);
+    if (best) {
+      productPreviewsCache.set(product.slug, {
+        productSlug: product.slug,
+        productName: product.name,
+        brand: product.brand,
+        category: product.category,
+        image: product.image,
+        href: best.href,
+        variantLabel: best.variantLabel,
+        condition: best.condition,
+        fromPrice: best.fromPrice,
+        pickPrice: best.pickPrice,
+        offerCount: best.offerCount,
+        live: true,
+        lastUpdated: best.lastUpdated,
+        listingImageUrl: best.listingImageUrl,
+      });
+      continue;
+    }
+    const variantId = product.searchAttribute.validVariantIds[0];
+    const variant = getVariantById(variantId);
+    if (!variant) continue;
+    productPreviewsCache.set(product.slug, {
+      productSlug: product.slug,
       productName: product.name,
       brand: product.brand,
       category: product.category,
       image: product.image,
-      href: best.href,
-      variantLabel: best.variantLabel,
-      condition: best.condition,
-      fromPrice: best.fromPrice,
-      pickPrice: best.pickPrice,
-      offerCount: best.offerCount,
-      live: true,
-      lastUpdated: best.lastUpdated,
-      listingImageUrl: best.listingImageUrl,
-    };
+      href: canonicalProductPath({ productSlug: product.slug, variantId, condition: "new", market: "us" }),
+      variantLabel: variant.label,
+      condition: "new",
+      fromPrice: 0,
+      offerCount: 0,
+      live: false,
+    });
   }
-  const variantId = product.searchAttribute.validVariantIds[0];
-  const variant = getVariantById(variantId);
-  if (!variant) return null;
-  return {
-    productSlug,
-    productName: product.name,
-    brand: product.brand,
-    category: product.category,
-    image: product.image,
-    href: canonicalProductPath({ productSlug, variantId, condition: "new", market: "us" }),
-    variantLabel: variant.label,
-    condition: "new",
-    fromPrice: 0,
-    offerCount: 0,
-    live: false,
-  };
+  return productPreviewsCache;
+}
+
+export function getProductListingPreview(productSlug: string): ProductListingPreview | null {
+  return productPreviewIndex().get(productSlug) ?? null;
 }
 
 export function listProductListingPreviews() {
   return products
-    .map((product) => getProductListingPreview(product.slug))
+    .map((product) => productPreviewIndex().get(product.slug))
     .filter((preview): preview is ProductListingPreview => Boolean(preview));
 }
 
@@ -298,6 +312,7 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
 }
 
 export function getComparisonDemo(): ComparisonDemo | null {
+  if (comparisonDemoCache !== undefined) return comparisonDemoCache;
   let bestKey: string | null = null;
   let bestScore = -1;
   for (const [key, snapshot] of Object.entries(bundledSnapshots)) {
@@ -307,5 +322,8 @@ export function getComparisonDemo(): ComparisonDemo | null {
       bestScore = score;
     }
   }
-  return bestKey ? buildComparisonDemo(bestKey) : null;
+  comparisonDemoCache = bestKey ? buildComparisonDemo(bestKey) : null;
+  return comparisonDemoCache;
 }
+
+let comparisonDemoCache: ComparisonDemo | null | undefined;

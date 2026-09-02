@@ -268,13 +268,14 @@ test("outstanding UX surfaces explain confidence, history progress, and catalog 
   assert.match(availability, /View comparison/);
 });
 
-test("discovery cards can show listing images from bundled snapshots", async () => {
+test("discovery cards use an indexed snapshot summary with listing images", async () => {
   const [catalog, image, card] = await Promise.all([
     readFile(new URL("../lib/bundled-snapshot-catalog.ts", import.meta.url), "utf8"),
     readFile(new URL("../components/CatalogProductImage.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/ProductListingCard.tsx", import.meta.url), "utf8"),
   ]);
-  assert.match(catalog, /listingImageFromSnapshot/);
+  assert.match(catalog, /summarizeSnapshot/);
+  assert.match(catalog, /productPreviewsCache/);
   assert.match(catalog, /listingImageUrl/);
   assert.match(image, /optimizedRetailerImageUrl/);
   assert.match(card, /CatalogProductImage/);
