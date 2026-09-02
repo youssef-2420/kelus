@@ -87,6 +87,7 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
           <p className="desk-pick-meta">{demo.variantLabel} · {demo.offerCount} validated offers</p>
         </div>
       </div>
+      <p className="desk-pick-verdict">Not the cheapest. The offer that passed.</p>
       <div className="desk-pick-totals">
         <div className="desk-pick-total is-pick">
           <span>Our pick · known total</span>
@@ -102,6 +103,11 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
         ) : null}
       </div>
       {savingsLabel ? <p className="desk-pick-note">{savingsLabel}</p> : null}
+      <ul className="desk-pick-checks" aria-label="Checks cleared by Our Pick">
+        <li><Icon name="check" size={14} />Exact configuration matched</li>
+        {pick?.shippingKnown ? <li><Icon name="check" size={14} />Shipping included in total</li> : null}
+        <li><Icon name="check" size={14} />Seller evidence checked</li>
+      </ul>
       <div className="desk-pick-foot">{comparisonFootnote(demo)}</div>
       <Link className="button button-primary desk-pick-cta" href={demo.href}>
         Open this comparison <Icon name="arrow" size={17} />

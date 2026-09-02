@@ -66,11 +66,14 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const [activeIndex, setActiveIndex] = useState(-1);
   const [searching, setSearching] = useState(false);
   const [searchIssue, setSearchIssue] = useState<{ kind: "unsupported" | "ambiguous" | "invalid"; query: string; candidates?: Product[] } | null>(null);
+  const [searchHint, setSearchHint] = useState("");
   const [category, setCategory] = useState("All");
   const trimmedQuery = query.trim();
-  const matches = useMemo(() => trimmedQuery ? searchProducts(query).filter((product) => category === "All" || product.category === category) : [], [category, query, trimmedQuery]);
+  const allMatches = useMemo(() => trimmedQuery ? searchProducts(query) : [], [query, trimmedQuery]);
+  const matches = useMemo(() => allMatches.filter((product) => category === "All" || product.category === category), [allMatches, category]);
   const featuredMatches = useMemo(() => deferProductSelection && !trimmedQuery ? getDiscoverableProducts(50).filter((product) => category === "All" || product.category === category).slice(0, 6) : [], [category, deferProductSelection, trimmedQuery]);
-  const suggestionProducts = trimmedQuery ? matches.slice(0, 6) : featuredMatches;
+  const categoryFallback = Boolean(trimmedQuery && category !== "All" && matches.length === 0 && allMatches.length > 0);
+  const suggestionProducts = trimmedQuery ? (matches.length ? matches : allMatches).slice(0, 6) : featuredMatches;
   const showSearchResults = Boolean(trimmedQuery);
   const showCondition = !deferProductSelection || productSelected;
   const variants = useMemo(() => getSearchAttributeVariants(selectedProduct, getVariantsForProduct(selectedProduct.id)), [selectedProduct]);
@@ -125,13 +128,12 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     setActiveIndex(-1);
     if (productSelected && deferProductSelection) {
       setProductSelected(false);
-      setQuery("");
       setVariantId("");
     }
     inputRef.current?.blur();
   }
 
-  function chooseProduct(product: typeof selectedProduct) { const productVariants = getVariantsForProduct(product.id); setSelectedProduct(product); setProductSelected(true); setVariantId(resolveSearchAttributeVariantId(product, productVariants) ?? ""); setQuery(product.name); setSearchIssue(null); setOpen(false); setActiveIndex(-1); trackEvent({ name: "product_selected", productSlug: product.slug }); }
+  function chooseProduct(product: typeof selectedProduct) { const productVariants = getVariantsForProduct(product.id); setSelectedProduct(product); setProductSelected(true); setVariantId(resolveSearchAttributeVariantId(product, productVariants) ?? ""); setQuery(product.name); setSearchIssue(null); setSearchHint(""); setOpen(false); setActiveIndex(-1); trackEvent({ name: "product_selected", productSlug: product.slug }); }
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "ArrowDown") { event.preventDefault(); setOpen(true); setActiveIndex((index) => Math.min(index + 1, suggestionProducts.length - 1)); }
     if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((index) => Math.max(index - 1, 0)); }
@@ -148,6 +150,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     if (searching) return;
     if (deferProductSelection && !trimmedQuery) {
       setSearchIssue(null);
+      setSearchHint("Choose a product below to compare its exact configuration.");
       setOpen(true);
       setActiveIndex(0);
       inputRef.current?.focus();
@@ -156,6 +159,14 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     const resolution = productSelected ? null : resolveProductSearch(query);
     const submittedProduct = productSelected ? selectedProduct : resolution?.status === "resolved" ? resolution.product : undefined;
     if (!submittedProduct) {
+      if (deferProductSelection && suggestionProducts.length > 0) {
+        setSearchIssue(null);
+        setSearchHint("Choose the exact product below so Kelus compares the right configuration.");
+        setOpen(true);
+        setActiveIndex(0);
+        inputRef.current?.focus();
+        return;
+      }
       const normalized = query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
       if (normalized) {
         setSearchIssue({ kind: resolution?.status === "ambiguous" ? "ambiguous" : "unsupported", query: normalized, candidates: resolution?.status === "ambiguous" ? resolution.candidates.slice(0, 3) : suggestSupportedProducts(normalized) });
@@ -166,14 +177,22 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     const submittedVariants = getVariantsForProduct(submittedProduct.id);
     const submittedVariantId = resolveSearchAttributeVariantIdFromQuery(submittedProduct, submittedVariants, query, productSelected ? variantId : undefined);
     if (!isValidSearchConfiguration(submittedProduct, submittedVariants, submittedVariantId)) {
-      const normalized = query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-      setSearchIssue({ kind: "invalid", query: normalized });
-      trackEvent({ name: "search_unsupported", query: normalized });
+      setSelectedProduct(submittedProduct);
+      setProductSelected(true);
+      setVariantId(resolveSearchAttributeVariantId(submittedProduct, submittedVariants) ?? "");
+      setQuery(submittedProduct.name);
+      setSearchIssue(null);
+      setSearchHint("That exact setup is unavailable. Choose one of the supported configurations.");
+      setOpen(false);
+      trackEvent({ name: "search_unsupported", query: query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() });
       return;
     }
     const resolvedCondition = productSelected ? condition : resolveConditionFromQuery(query, condition);
     const criteria = validateSearchCriteria({ productSlug: submittedProduct.slug, variantId: submittedVariantId || undefined, condition: resolvedCondition, market });
-    if (!criteria) return;
+    if (!criteria) {
+      setSearchIssue({ kind: "invalid", query: query.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim(), candidates: [submittedProduct] });
+      return;
+    }
     setOpen(false);
     flushSync(() => setSearching(true));
     document.documentElement.classList.add("is-search-leaving");
@@ -191,21 +210,26 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     {overlayActive && <button type="button" className="search-overlay-scrim" aria-label="Close search overlay" onClick={closeOverlay}/>}
     <form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}>
       {deferProductSelection
-        ? <label className="hero-search-category"><span className="sr-only">Category</span><select aria-label="Category" value={category} onChange={(event) => { setCategory(event.target.value); setProductSelected(false); setQuery(""); setVariantId(""); setSearchIssue(null); setOpen(true); setActiveIndex(-1); inputRef.current?.focus(); }}><option value="All">All</option>{productCategories.map((value) => <option key={value} value={value}>{value}</option>)}</select><Icon name="chevron" size={14}/></label>
+        ? <label className="hero-search-category"><span className="sr-only">Category</span><select aria-label="Category" value={category} onChange={(event) => { setCategory(event.target.value); setProductSelected(false); setVariantId(""); setSearchIssue(null); setSearchHint(""); setOpen(true); setActiveIndex(-1); inputRef.current?.focus(); }}><option value="All">All</option>{productCategories.map((value) => <option key={value} value={value}>{value}</option>)}</select><Icon name="chevron" size={14}/></label>
         : <Icon name="search" size={19}/>}
-      <input ref={inputRef} value={query} placeholder="Search iPhone, MacBook, headphones…" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => setOpen(true)} onBlur={(event) => { if (event.relatedTarget instanceof HTMLElement && event.currentTarget.closest(".rp-search-pill-wrap")?.contains(event.relatedTarget)) return; window.setTimeout(() => setOpen(false), 120); }} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setSearchIssue(null); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} />
+      <input ref={inputRef} value={query} placeholder="Search iPhone, MacBook, headphones…" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} onFocus={() => setOpen(true)} onBlur={(event) => { if (event.relatedTarget instanceof HTMLElement && event.currentTarget.closest(".rp-search-pill-wrap")?.contains(event.relatedTarget)) return; window.setTimeout(() => setOpen(false), 120); }} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setSearchIssue(null); setSearchHint(""); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} />
       {minimalAction && (deferProductSelection
         ? <button type="submit" className="nr-search-action is-icon" disabled={searching} aria-label={productSelected ? "Find offers for selected configuration" : "Search products"}><Icon name="search" size={20}/></button>
         : <button type="submit" className="nr-search-action" disabled={searching}>{searching ? "Finding offers…" : actionLabel}</button>)}
       {!minimalAction && <button type="submit" className="sr-only" disabled={searching}>Search</button>}
     </form>
-    {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions" onPointerDown={(event) => event.preventDefault()}>{suggestionProducts.length ? <><p className="suggestions-heading">{showSearchResults ? "Suggested products" : "Popular products"}</p>{suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}{showSearchResults && <button type="button" className="suggestions-footer" onPointerDown={(event) => { event.preventDefault(); void submit(); }} onClick={(event) => { event.preventDefault(); void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}</> : trimmedQuery ? <p className="suggestion-state">No supported match yet. Try a model name such as “iPhone 17 Pro”.</p> : null}</div>}
+    {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions" onPointerDown={(event) => event.preventDefault()}>{suggestionProducts.length ? <>
+      <p className="suggestions-heading">{categoryFallback ? `No ${category} match — showing all categories` : showSearchResults ? "Choose the exact product" : "Popular products"}</p>
+      {(searchHint || categoryFallback) && <p className="suggestions-guidance" role="status">{searchHint || `Kelus found matches outside ${category}. Pick one below or change the filter.`}</p>}
+      {suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}
+      {showSearchResults && <button type="button" className="suggestions-footer" onPointerDown={(event) => { event.preventDefault(); void submit(); }} onClick={(event) => { event.preventDefault(); void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}
+    </> : trimmedQuery ? <div className="suggestion-empty" role="status"><strong>No supported match for “{query}”.</strong><span>Try a model name, or browse products Kelus can compare now.</span><button type="button" onPointerDown={(event) => event.preventDefault()} onClick={() => { setCategory("All"); setQuery(""); setSearchHint("Choose a supported product below."); setOpen(true); inputRef.current?.focus(); }}>Show supported products</button></div> : null}</div>}
     {productSelected && deferProductSelection && <section className="hero-config-panel" aria-label={`Configure ${selectedProduct.name}`} onPointerDown={(event) => event.stopPropagation()}>
       <div className="hero-config-product"><span><small>Selected product</small><b>{selectedProduct.name}</b><em>{selectedProduct.brand} · {selectedProduct.category}</em></span><button type="button" className="hero-config-close" aria-label="Close configuration" onClick={closeOverlay}><Icon name="close" size={16}/></button></div>
       {attributeLabel && <fieldset><legend>{attributeLabel}</legend><div className="hero-config-options">{variants.map((variant) => <button type="button" key={variant.id} className={variant.id === variantId ? "is-selected" : ""} aria-pressed={variant.id === variantId} onClick={() => setVariantId(variant.id)}>{variant.label}</button>)}</div></fieldset>}
       <fieldset><legend>Condition</legend><div className="hero-config-options">{exactConditions.map((value) => <button type="button" key={value} className={condition === value ? "is-selected" : ""} aria-pressed={condition === value} onClick={() => setCondition(value)}>{conditionLabels[value]}</button>)}</div></fieldset>
       {intelligenceOptions.showsUnlockedStatus && <p className="hero-config-network"><Icon name="lock" size={15}/><span><b>Network</b> Unlocked listings only</span></p>}
-      <p className="hero-config-hint">Choose the exact setup, then open the comparison. This is not loading — Kelus is waiting for your pick.</p>
+      <p className={`hero-config-hint${searchHint ? " is-attention" : ""}`}>{searchHint || "Choose the exact setup, then open the comparison. This is not loading — Kelus is waiting for your pick."}</p>
       <div className="hero-config-confirm"><span>{[selectedVariant?.label, conditionLabels[condition], intelligenceOptions.showsUnlockedStatus ? "Unlocked" : null].filter(Boolean).join(" · ")}</span><button type="button" className="button button-primary" onClick={() => { void submit(); }} disabled={searching}>{searching ? "Opening comparison…" : "Compare offers"}<Icon name="arrow" size={17}/></button></div>
     </section>}
     {issuePanel}

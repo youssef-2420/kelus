@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+import { Icon } from "@/components/Icon";
 import { SafeLink as Link } from "@/components/SafeLink";
 
 const learnItems = [
@@ -19,12 +21,20 @@ export function HomeLearnSection() {
   return (
     <section className="home-learn section" aria-label="Learn about Kelus">
       <div className="home-learn-grid">
-        {learnItems.map((item) => (
-          <article key={item.href} className="home-learn-column">
-            <h2>{item.title}</h2>
-            <p>{item.description}</p>
-            <Link className="home-learn-link" href={item.href}>{item.cta}</Link>
-          </article>
+        {learnItems.map((item, index) => (
+          <Fragment key={item.href}>
+            <article className="home-learn-column">
+              <h2>{item.title}</h2>
+              <p>{item.description}</p>
+              <Link className="home-learn-link" href={item.href}>{item.cta} <Icon name="arrow" size={14} /></Link>
+            </article>
+            {index === 0 ? (
+              <span className="home-learn-flow" aria-hidden="true">
+                <span />
+                <Icon name="arrow" size={18} />
+              </span>
+            ) : null}
+          </Fragment>
         ))}
       </div>
     </section>

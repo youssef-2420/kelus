@@ -253,6 +253,10 @@ test("phase 2 UX polish covers sign-in toast and mobile search overlay", async (
   assert.match(search, /hero-config-close/);
   assert.match(search, /Opening comparison/);
   assert.match(search, /This is not loading/);
+  assert.match(search, /Choose the exact product below/);
+  assert.match(search, /No supported match for/);
+  assert.match(search, /showing all categories/);
+  assert.match(search, /That exact setup is unavailable/);
   assert.match(search, /event\.key === "Escape"/);
   assert.match(search, /body\.style\.overflow = "hidden"/);
   assert.match(signIn, /Signed in successfully/);
@@ -434,8 +438,13 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(home, /id="main-content"/);
   assert.match(comparison, /comparison-row-badge/);
   assert.match(comparison, /DeskPick/);
+  assert.match(comparison, /Not the cheapest\. The offer that passed\./);
+  assert.match(comparison, /Exact configuration matched/);
+  assert.match(home, /HomeLearnSection/);
   assert.match(styles, /\.skip-link/);
   assert.match(styles, /\.desk-rail/);
+  assert.match(styles, /\.home-learn-flow/);
+  assert.match(styles, /@keyframes home-flow-arrow/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);
 });
