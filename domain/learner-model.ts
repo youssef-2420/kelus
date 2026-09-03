@@ -44,7 +44,7 @@ export function nextReviewAt(mastery: number, successfulRetrievals: number, last
 }
 
 export function deriveStatus(mastery: number, retention: number, retrievalAttempts: number): ConceptStatus {
-  if (retrievalAttempts <= 0) return "not_learned";
+  if (retrievalAttempts <= 0 && mastery <= 0) return "not_learned";
   if (mastery < STATUS_WEAK_MASTERY || retention < STATUS_WEAK_RETENTION) return "weak";
   if (mastery >= STATUS_STRONG_MASTERY && retention >= STATUS_STRONG_RETENTION) return "strong";
   if (mastery >= STATUS_FADING_MASTERY && retention <= mastery - STATUS_FADING_GAP) return "fading";
@@ -105,7 +105,10 @@ export function recomputeConceptCache(
     if (event.kind === "seed_rating") {
       mastery = event.masteryAfter;
       lastReviewedAt = event.createdAt;
-      if (event.outcome === "success") lastSuccessAt = event.createdAt;
+      if (event.outcome === "success" || event.outcome === "partial") {
+        lastSuccessAt = event.createdAt;
+        successfulRetrievals = 1;
+      }
       continue;
     }
     mastery = applyRetrievalMastery(mastery, event.outcome, concept.difficulty, successfulRetrievals);

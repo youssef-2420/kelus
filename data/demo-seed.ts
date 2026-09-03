@@ -18,7 +18,7 @@ export function createDemoSnapshot(nowMs = Date.now()): LearnerSnapshot {
   const examId = "exam-midterm";
 
   const concepts = [
-    { id: "c-positioning", name: "Positioning", importance: 0.9, difficulty: 0.35, seed: 0.9, lastSuccessDays: 2, extra: [] as Array<{ daysAgo: number; outcome: "success" | "partial" | "failure" }> },
+    { id: "c-positioning", name: "Positioning", importance: 0.9, difficulty: 0.35, seed: 0.9, lastSuccessDays: 1, extra: [] as Array<{ daysAgo: number; outcome: "success" | "partial" | "failure" }> },
     { id: "c-segmentation", name: "Segmentation", importance: 0.8, difficulty: 0.4, seed: 0.84, lastSuccessDays: 4, extra: [{ daysAgo: 4, outcome: "success" as const }] },
     { id: "c-consumer", name: "Consumer behavior", importance: 0.75, difficulty: 0.5, seed: 0.72, lastSuccessDays: 9, extra: [{ daysAgo: 12, outcome: "partial" as const }] },
     { id: "c-pricing", name: "Pricing", importance: 0.85, difficulty: 0.55, seed: 0.58, lastSuccessDays: 14, extra: [{ daysAgo: 14, outcome: "failure" as const }, { daysAgo: 8, outcome: "partial" as const }] },
@@ -42,7 +42,7 @@ export function createDemoSnapshot(nowMs = Date.now()): LearnerSnapshot {
         responseText: null,
         masteryBefore: 0,
         masteryAfter: item.seed,
-        createdAt: iso(nowMs, 30),
+        createdAt: iso(nowMs, item.lastSuccessDays || 30),
       });
     }
     item.extra.forEach((attempt, attemptIndex) => {

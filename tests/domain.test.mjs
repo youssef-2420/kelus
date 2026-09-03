@@ -36,6 +36,11 @@ test("unseen concepts are not learned", () => {
   assert.equal(deriveStatus(0, 0, 0), "not_learned");
 });
 
+test("seeded mastery without retrievals is still classified", () => {
+  assert.notEqual(deriveStatus(0.9, 0.8, 0), "not_learned");
+  assert.equal(deriveStatus(0.9, 0.8, 0), "strong");
+});
+
 test("recompute treats events as history and caches derived state", () => {
   const concept = { id: "c1", difficulty: 0.5 };
   const events = [
@@ -45,7 +50,7 @@ test("recompute treats events as history and caches derived state", () => {
   const cache = recomputeConceptCache(concept, events, now);
   assert.ok(cache.mastery > 0.5);
   assert.equal(cache.retrievalAttempts, 1);
-  assert.equal(cache.successfulRetrievals, 1);
+  assert.equal(cache.successfulRetrievals, 2);
   assert.ok(cache.predictedRetention <= cache.mastery);
   assert.ok(cache.nextReviewAt);
 });
