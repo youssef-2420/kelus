@@ -508,8 +508,6 @@ function DecisionReport({ decision, lowest, productName, criteria, result, conte
         <span className="pi-total-label">Known total</span>
         <strong className="pi-pick-price">{money(pick)}</strong>
         {savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}
-        <ConfidenceBadge confidence={decision.confidence}/>
-        <Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link>
       </div>
       {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span>{sellerHref ? <a href={sellerHref} target="_blank" rel="noopener noreferrer">{sellerName}</a> : <b>{sellerName}</b>}</span><small>{offerMeta(pick)}</small></div>}
     </div>
@@ -524,6 +522,10 @@ function DecisionReport({ decision, lowest, productName, criteria, result, conte
           : "Opens the live eBay listing · Track keeps this exact configuration watched"}
       </p>
     </div>}
+    <div className="pi-pick-proof">
+      <ConfidenceBadge confidence={decision.confidence}/>
+      <Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link>
+    </div>
     <div className="pi-why">
       <p className="pi-label">Why this offer</p>
       <p className="pi-evidence">{decision.reasons.join(" · ")}</p>
