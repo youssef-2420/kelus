@@ -255,7 +255,15 @@ test("phase 2 UX polish covers sign-in toast and mobile search overlay", async (
   assert.match(toast, /name="shield"/);
   assert.match(search, /search-overlay-scrim/);
   assert.match(search, /is-overlay-open/);
+  assert.match(search, /is-search-focus/);
   assert.match(search, /closeOverlay/);
+  assert.match(styles, /html\.is-search-focus/);
+  assert.match(styles, /html\.is-search-focus \.home-desk \.desk-pick\{[^}]*scale\(/);
+  assert.match(styles, /\.search-overlay-scrim\{[^}]*background:transparent/);
+  assert.doesNotMatch(styles, /html\.is-search-focus \.home-desk \.desk-pick\{[^}]*opacity:\.3/);
+  assert.doesNotMatch(styles, /\.desk:has\(\.rp-search-suggestions\) \.desk-pick\{[^}]*filter:blur/);
+  assert.doesNotMatch(styles, /\.home-desk:has\([^)]*\) \.home-learn\{[^}]*filter:blur/);
+  assert.doesNotMatch(styles, /\.search-overlay-scrim\{[^}]*background:rgba\(15,40,35,\.4\)/);
   assert.match(search, /scrollIntoView/);
   assert.match(search, /hero-config-close/);
   assert.match(search, /Opening comparison/);

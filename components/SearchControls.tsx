@@ -96,6 +96,14 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const overlayActive = minimal && (open || (productSelected && deferProductSelection && configOpen));
 
   useEffect(() => {
+    if (typeof document === "undefined") return undefined;
+    const root = document.documentElement;
+    if (overlayActive) root.classList.add("is-search-focus");
+    else root.classList.remove("is-search-focus");
+    return () => root.classList.remove("is-search-focus");
+  }, [overlayActive]);
+
+  useEffect(() => {
     if (!overlayActive || typeof window === "undefined") return undefined;
     const narrow = window.matchMedia("(max-width: 620px)");
     if (!narrow.matches) return undefined;
