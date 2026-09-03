@@ -72,7 +72,8 @@ test("canonical product runtime contains record-specific SEO and structured-data
   assert.match(page, /"@type": "BreadcrumbList"/);
   assert.match(page, /productImage \? \{ image: productImage \}/);
   assert.match(page, /sku: criteria\.variantId/);
-  assert.match(page, /Last saved validated prices start at/);
+  assert.match(page, /Saved validated prices start at/);
+  assert.match(page, /robots: \{ index: indexable, follow: true \}/);
   assert.match(page, /description: `Kelus comparison of matching/);
   assert.doesNotMatch(page, /ProductSeoIntro/);
   assert.doesNotMatch(page, /six-month low|manufacturer warranty/i);

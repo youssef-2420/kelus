@@ -5,6 +5,7 @@ import sitemap from "../app/sitemap.ts";
 import { readBundledSnapshot } from "../lib/bundled-snapshot-catalog.ts";
 import { shouldRedirectToValidatedAlternative } from "../lib/preferred-product-criteria.ts";
 import { readCanonicalProductSlug } from "../lib/search-state.ts";
+import { hasComparableOffers, productSeoName } from "../lib/product-seo.ts";
 
 test("sitemap contains discovery and canonical product URLs", () => {
   const entries = sitemap();
@@ -26,8 +27,17 @@ test("sitemap contains discovery and canonical product URLs", () => {
     const criteria = slug ? readCanonicalProductSlug(slug) : null;
     assert.ok(criteria, `expected canonical product criteria for ${url}`);
     const hasLiveOffers = readBundledSnapshot(criteria)?.offers.some((offer) => offer.dataSource === "live") ?? false;
+    assert.equal(hasLiveOffers, true, `${url} must have a validated bundled snapshot before sitemap inclusion`);
     assert.equal(shouldRedirectToValidatedAlternative(criteria, hasLiveOffers), null, `${url} must not redirect to another product configuration`);
   }
+});
+
+test("product SEO eligibility requires a real comparable offer", () => {
+  assert.equal(hasComparableOffers({ status: "EMPTY", result: { offers: [] } }), false);
+  assert.equal(hasComparableOffers({ status: "SUCCESS", result: { offers: [{ dataSource: "demo" }] } }), false);
+  assert.equal(hasComparableOffers({ status: "SUCCESS", result: { offers: [{ dataSource: "live" }] } }), true);
+  assert.equal(productSeoName({ brand: "Apple", name: "iPhone 17 Pro" }), "Apple iPhone 17 Pro");
+  assert.equal(productSeoName({ brand: "Bose", name: "Bose QuietComfort" }), "Bose QuietComfort");
 });
 
 test("robots exposes the canonical sitemap and blocks private routes", () => {

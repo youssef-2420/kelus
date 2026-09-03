@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import { cache } from "react";
 import { ProductIntelligenceView } from "@/app/results-v2/page";
 import { getProductBySlug, getVariantById, products } from "@/lib/demo-data";
 import { getCriteriaListingPreview, rankAlternativeCriteria } from "@/lib/catalog-availability";
 import { canonicalProductPath, readCanonicalProductSlug } from "@/lib/search-state";
 import { getAlternativeProductCriteria } from "@/lib/search-state";
 import { shouldRedirectToValidatedAlternative } from "@/lib/preferred-product-criteria";
+import { hasComparableOffers, productSeoName } from "@/lib/product-seo";
 import { absoluteCanonicalUrl } from "@/lib/seo-url";
 import { resolveInitialProductIntelligence } from "@/services/server-product-intelligence";
 import { CONDITIONS } from "@/types/kelus";
@@ -31,22 +33,35 @@ function exactProduct(slug: string) {
   return product && variant ? { criteria, product, variant } : null;
 }
 
+const resolveProductPage = cache(async (slug: string) => {
+  const resolved = exactProduct(slug);
+  if (!resolved) return null;
+  return {
+    ...resolved,
+    initialOutcome: await resolveInitialProductIntelligence(resolved.criteria),
+  };
+});
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const resolved = exactProduct((await params).slug);
+  const resolved = await resolveProductPage((await params).slug);
   if (!resolved) return { title: "Product not found | Kelus", robots: { index: false, follow: false } };
-  const { criteria, product, variant } = resolved;
-  const condition = criteria.condition === "any" ? "all conditions" : criteria.condition;
+  const { criteria, product, variant, initialOutcome } = resolved;
   const conditionLabel = criteria.condition === "any" ? "All conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
   const preview = getCriteriaListingPreview(criteria);
   const savedPrice = preview.live && preview.fromPrice
-    ? ` Last saved validated prices start at ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}.`
+    ? ` Saved validated prices start at ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}.`
     : "";
-  const title = `${product.name} ${variant.label} ${conditionLabel} price | Kelus`;
-  const description = `Compare matching eBay offers for ${product.name} ${variant.label} in ${condition}.${savedPrice} See known totals, seller evidence, and Kelus's current pick.`;
+  const seoName = productSeoName(product);
+  const brandedTitle = `${seoName} ${variant.label} ${conditionLabel} price | Kelus`;
+  const title = brandedTitle.length <= 60 ? brandedTitle : brandedTitle.replace(" | Kelus", "");
+  const baseDescription = `Compare ${seoName} ${variant.label} ${conditionLabel.toLowerCase()} eBay offers by known total and seller evidence. See Kelus's current pick.`;
+  const description = `${baseDescription}${savedPrice}`.length <= 160 ? `${baseDescription}${savedPrice}` : baseDescription;
   const canonicalUrl = absoluteCanonicalUrl(canonicalProductPath(criteria));
+  const indexable = hasComparableOffers(initialOutcome);
   return {
     title,
     description,
+    robots: { index: indexable, follow: true },
     alternates: { canonical: canonicalUrl },
     openGraph: { title, description, type: "website", url: canonicalUrl, images: ["/og.png"] },
     twitter: { card: "summary_large_image", title, description, images: ["/og.png"] },
@@ -54,23 +69,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default async function CanonicalProductPage({ params }: PageProps) {
-  const resolved = exactProduct((await params).slug);
+  const resolved = await resolveProductPage((await params).slug);
   if (!resolved) notFound();
-  const { criteria, product, variant } = resolved;
-  const initialOutcome = await resolveInitialProductIntelligence(criteria);
+  const { criteria, product, variant, initialOutcome } = resolved;
   const alternatives = rankAlternativeCriteria(criteria, getAlternativeProductCriteria(criteria))
     .map((alternativeCriteria) => ({
       criteria: alternativeCriteria,
       preview: getCriteriaListingPreview(alternativeCriteria),
     }));
-  const hasLiveOffers = initialOutcome.status === "SUCCESS"
-    && initialOutcome.result.offers.some((offer) => offer.dataSource === "live");
+  const hasLiveOffers = hasComparableOffers(initialOutcome);
   const redirectCriteria = shouldRedirectToValidatedAlternative(criteria, hasLiveOffers);
   if (redirectCriteria) redirect(canonicalProductPath(redirectCriteria));
   const condition = criteria.condition === "any" ? "Multiple conditions" : `${criteria.condition[0].toUpperCase()}${criteria.condition.slice(1)}`;
   const offers = initialOutcome.status === "SUCCESS" ? initialOutcome.result.offers.filter((offer) => offer.dataSource === "live").slice(0, 5) : [];
   const canonicalUrl = absoluteCanonicalUrl(canonicalProductPath(criteria));
-  const productName = `${product.name} ${variant.label}`;
+  const productName = `${productSeoName(product)} ${variant.label}`;
   const productImage = offers.find((offer) => offer.imageUrl)?.imageUrl;
   const structuredData = {
     "@context": "https://schema.org",

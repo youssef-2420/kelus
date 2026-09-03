@@ -12,6 +12,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const productUrls = products.flatMap((product) => product.searchAttribute.validVariantIds.flatMap((variantId) => (["new", "used"] as const).flatMap((condition) => {
     const criteria = { productSlug: product.slug, variantId, condition, market: "us" as const };
     const snapshotMeta = snapshotSitemapEntry(criteria);
+    // Keep the product sitemap limited to configurations with a validated,
+    // server-renderable snapshot. Empty configurations remain reachable from
+    // the product experience but should not consume crawl/indexing attention.
+    if (!snapshotMeta.live) return [];
     // Product routes without a validated snapshot can redirect to a nearby
     // configuration that does have one. Do not publish those redirect sources
     // to search engines as if they were canonical, indexable URLs.
