@@ -1,0 +1,11 @@
+node_modules
+.next
+out
+dist
+.wrangler
+.impeccable
+.cursor
+tsconfig.tsbuildinfo
+*.log
+.env
+.env.local
