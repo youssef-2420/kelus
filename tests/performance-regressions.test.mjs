@@ -40,3 +40,11 @@ test("product suggestions use one native activation path", async () => {
   assert.match(styles, /\.rp-search-pill-wrap\.is-overlay-open \.rp-search-suggestions\{z-index:4\}/);
   assert.doesNotMatch(styles, /\.search-overlay-scrim[^{}]*\{[^}]*z-index:28/);
 });
+
+test("Alerts reveals stored data before starting its background refresh", async () => {
+  const source = await readFile(new URL("../app/alerts/page.tsx", import.meta.url), "utf8");
+  const reveal = source.indexOf("setAlerts(stored); setExpanded(null);\n      setInitialLoading(false);");
+  const refresh = source.indexOf("await refreshUserAlerts(user.id)");
+  assert.ok(reveal >= 0);
+  assert.ok(refresh > reveal);
+});

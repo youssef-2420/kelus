@@ -30,6 +30,8 @@ test("history stays building until seven distinct days span six days", () => {
   assert.equal(context.average30Day, null);
   assert.equal(context.recentLow, null);
   assert.equal(context.verdict, "Price history is building");
+  assert.equal(context.observationCount, 6);
+  assert.equal(context.observationDayCount, 6);
 });
 
 test("daily best totals drive 30-day context without counting every listing as a separate price", () => {
@@ -42,6 +44,8 @@ test("daily best totals drive 30-day context without counting every listing as a
   assert.equal(context.recentHigh, 100);
   assert.equal(context.trend, "falling");
   assert.equal(context.verdict, "Great price");
+  assert.equal(context.observationCount, 8);
+  assert.equal(context.observationDayCount, 7);
 });
 
 test("daily price intelligence keeps the lowest validated known total rather than the latest offer", () => {

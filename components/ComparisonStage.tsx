@@ -117,10 +117,9 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
       </div>
       {demo.pickReasons.length ? (
         <ul className="desk-pick-reasons">
-          {demo.pickReasons.map((reason) => <li key={reason}>{reason}</li>)}
+          {demo.pickReasons.slice(0, 2).map((reason) => <li key={reason}>{reason}</li>)}
         </ul>
       ) : null}
-      <div className="desk-pick-foot">{comparisonFootnote(demo)}</div>
       <Link className="button button-secondary desk-pick-cta" href={demo.href}>
         View this example <Icon name="arrow" size={17} />
       </Link>

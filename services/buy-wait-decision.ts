@@ -12,12 +12,12 @@ export function getBuyWaitDecision(context: PriceContext): BuyWaitDecision {
   const average = context.average30Day;
   const low = context.recentLow;
   if (context.historyStatus !== "ready" || current === null || average === null || low === null || average <= 0 || low <= 0) {
-    const logged = context.observationCount;
+    const logged = context.observationDayCount;
     const need = 7;
     return {
       label: "HISTORY BUILDING",
       explanation: logged > 0
-        ? `Kelus is collecting real price observations for this exact configuration (${logged} logged so far). Buy/wait guidance needs at least ${need} days of stored data.`
+        ? `Kelus has collected real comparable prices on ${logged} of ${need} required days for this exact configuration.`
         : "Kelus has not stored enough real price history for this exact configuration yet. Track this product to help build buy/wait guidance.",
     };
   }

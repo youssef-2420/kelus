@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element */
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { KelusHeader } from "@/components/KelusHeader";
 import { GuestSyncBanner } from "@/components/GuestSyncBanner";
 import { SignInDialog } from "@/components/SignInDialog";
@@ -85,22 +85,22 @@ export default function AlertsPage() {
   const toggleRefs = useRef(new Map<string, HTMLButtonElement>());
   const detailRefs = useRef(new Map<string, HTMLDivElement>());
 
-  async function fetchGuestAlertUpdates(stored: PriceAlertRecord[]) {
+  const fetchGuestAlertUpdates = useCallback(async (stored: PriceAlertRecord[]) => {
     return Promise.all(stored.map(async (alert) => {
       if (alert.paused) return alert;
       try { return updateAlertFromResult(alert, await retrySearch(alert.criteria)); }
       catch (error) { return updateAlertFromError(alert, error instanceof Error ? error.message : "The latest price check failed."); }
     }));
-  }
+  }, []);
 
-  async function refreshGuestAlerts(stored: PriceAlertRecord[]) {
+  const refreshGuestAlerts = useCallback(async (stored: PriceAlertRecord[]) => {
     setRefreshing(new Set(stored.filter((alert) => !alert.paused).map((alert) => alert.id)));
     const updated = await fetchGuestAlertUpdates(stored);
     setAlerts(updated);
     setRefreshing(new Set());
     writePriceAlerts(updated);
     return updated;
-  }
+  }, [fetchGuestAlertUpdates]);
 
   async function checkGuestPrices() {
     if (!alerts.length || refreshingAll) return;
@@ -126,6 +126,7 @@ export default function AlertsPage() {
       }
       if (cancelled) return;
       setAlerts(stored); setExpanded(null);
+      setInitialLoading(false);
       setRefreshing(new Set(stored.filter((alert) => !alert.paused).map((alert) => alert.id)));
       let updated: PriceAlertRecord[];
       if (user) {
@@ -139,11 +140,10 @@ export default function AlertsPage() {
         setAlerts(updated);
         setRefreshing(new Set());
       }
-      setInitialLoading(false);
     }
     void loadAndRefresh();
     return () => { cancelled = true; };
-  }, [authLoading, user]);
+  }, [authLoading, refreshGuestAlerts, user]);
 
   function persist(next: PriceAlertRecord[]) {
     setAlerts(next); setSyncError("");

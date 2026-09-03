@@ -14,6 +14,7 @@ const buildingContext = {
   isDemo: false,
   historyStatus: "building",
   observationCount: 1,
+  observationDayCount: 1,
 };
 const readyContext = {
   ...buildingContext,
@@ -23,6 +24,7 @@ const readyContext = {
   verdict: "Good price",
   historyStatus: "ready",
   observationCount: 7,
+  observationDayCount: 7,
 };
 
 function offer(id, price, overrides = {}) {

@@ -484,6 +484,8 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(comparison, /listings in this example/);
   assert.match(comparison, /desk-pick-rows/);
   assert.match(comparison, /desk-pick-reasons/);
+  assert.match(comparison, /pickReasons\.slice\(0, 2\)/);
+  assert.doesNotMatch(comparison, /className="desk-pick-foot"/);
   assert.match(homeLearn, /Open a comparison/);
   assert.match(homeLearn, /listHomeComparisonPreviews/);
   assert.match(homeLearn, /ProductListingCard/);

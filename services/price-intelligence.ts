@@ -89,7 +89,7 @@ export function calculatePriceIntelligence(observations: PriceObservation[], inp
   const exact = exactRealPriceObservations(observations, input);
   const observedSnapshots = snapshots(exact);
   if (!observedSnapshots.length) {
-    return { currentTrustedPrice: null, average30Day: null, average90Day: null, recentLow: null, recentHigh: null, trend: "stable", verdict: "Price history is building", isDemo: false, historyStatus: "building", observationCount: 0 };
+    return { currentTrustedPrice: null, average30Day: null, average90Day: null, recentLow: null, recentHigh: null, trend: "stable", verdict: "Price history is building", isDemo: false, historyStatus: "building", observationCount: 0, observationDayCount: 0 };
   }
 
   const latest = observedSnapshots.at(-1)!;
@@ -100,7 +100,7 @@ export function calculatePriceIntelligence(observations: PriceObservation[], inp
   const ready90 = hasCoverage(last90, minimum90DaySamples, minimum90DaySpan);
 
   if (!ready30) {
-    return { currentTrustedPrice: latest.total, average30Day: null, average90Day: null, recentLow: null, recentHigh: null, trend: "stable", verdict: "Price history is building", isDemo: false, historyStatus: "building", observationCount: exact.length };
+    return { currentTrustedPrice: latest.total, average30Day: null, average90Day: null, recentLow: null, recentHigh: null, trend: "stable", verdict: "Price history is building", isDemo: false, historyStatus: "building", observationCount: exact.length, observationDayCount: daily.length };
   }
 
   const totals30 = last30.map((value) => value.total);
@@ -116,5 +116,6 @@ export function calculatePriceIntelligence(observations: PriceObservation[], inp
     isDemo: false,
     historyStatus: "ready",
     observationCount: exact.length,
+    observationDayCount: daily.length,
   };
 }

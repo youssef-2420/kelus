@@ -13,12 +13,13 @@ const ready = {
   isDemo: false,
   historyStatus: "ready",
   observationCount: 7,
+  observationDayCount: 7,
 };
 
 test("HISTORY BUILDING never produces a buy or wait verdict without sufficient history", () => {
-  const decision = getBuyWaitDecision({ ...ready, average30Day: null, recentLow: null, historyStatus: "building", verdict: "Price history is building" });
+  const decision = getBuyWaitDecision({ ...ready, average30Day: null, recentLow: null, historyStatus: "building", verdict: "Price history is building", observationDayCount: 3 });
   assert.equal(decision.label, "HISTORY BUILDING");
-  assert.match(decision.explanation, /collecting real price observations|not stored enough real price history/i);
+  assert.match(decision.explanation, /3 of 7 required days/i);
 });
 
 test("BUY NOW requires a below-average price close to the recent low", () => {

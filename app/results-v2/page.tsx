@@ -552,7 +552,7 @@ function TimingAndTrack({ context, observations, productName, criteria, result }
   const average = context.average90Day ?? context.average30Day;
   const decision = getBuyWaitDecision(context);
   const building = decision.label === "HISTORY BUILDING";
-  const progress = Math.min(100, Math.round((context.observationCount / minimum30DaySamples) * 100));
+  const progress = Math.min(100, Math.round((context.observationDayCount / minimum30DaySamples) * 100));
   const stat = (value: number | null) => value ? `$${value}` : "—";
   const track = <div className="pi-track-card"><div className="pi-track"><div><p className="pi-label">Track price</p><p>{building ? "Kelus will watch this exact configuration and email you when a target is reached." : "Keep this exact configuration connected to future real price observations."}</p></div><WatchButton product={productName} criteria={criteria} result={result}/></div></div>;
 
@@ -566,7 +566,7 @@ function TimingAndTrack({ context, observations, productName, criteria, result }
       <p className="pi-label">When to Buy</p>
       <h2>{building ? "Building price history" : waiting ? "Waiting may help" : decision.label}</h2>
       <p>{decision.explanation}</p>
-      {building && context.observationCount > 0 ? <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, 12)}%` }} /></div><em>{context.observationCount} of {minimum30DaySamples} observations logged toward buy/wait guidance</em></div> : null}
+      {building && context.observationCount > 0 ? <div className="pi-history-progress" role="status" aria-live="polite"><div className="pi-history-progress-track"><span style={{ width: `${Math.max(progress, 12)}%` }} /></div><em>{context.observationDayCount} of {minimum30DaySamples} required days observed</em></div> : null}
       {!building ? <div className="nr-context-stats"><span>Current<strong>{stat(context.currentTrustedPrice)}</strong></span><span>Typical<strong>{stat(average)}</strong></span><span>Recent low<strong>{stat(context.recentLow)}</strong></span></div> : null}
     </div>
     <PriceHistorySparkline points={points} detail={points.length >= 2 ? `Based on ${context.observationCount} real observations for this configuration.` : undefined} />
