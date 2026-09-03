@@ -29,6 +29,7 @@ test("homepage search uses a synchronous quiet transition without an interstitia
 test("product suggestions use one native activation path", async () => {
   const source = await readFile(new URL("../components/SearchControls.tsx", import.meta.url), "utf8");
   const suggestionComponent = source.slice(source.indexOf("function ProductSuggestion"), source.indexOf("export function SearchControls"));
+  assert.match(suggestionComponent, /onMouseDown=\{\(event\) => event\.preventDefault\(\)\}/);
   assert.match(suggestionComponent, /onClick=\{\(\) => chooseProduct\(product\)\}/);
   assert.doesNotMatch(suggestionComponent, /onPointerDown/);
   assert.doesNotMatch(source, /aria-label="Product suggestions" onPointerDown/);
