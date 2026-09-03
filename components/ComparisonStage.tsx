@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { DeskPickActions } from "@/components/DeskPickActions";
 import { Icon } from "@/components/Icon";
 import { ProductMark } from "@/components/ProductMark";
 import { SafeLink as Link } from "@/components/SafeLink";
@@ -106,24 +107,20 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
         </div>
       </div>
       <p className="desk-pick-verdict">Not the cheapest. The offer that passed.</p>
-      {demo.savingsGap !== null && demo.savingsGap > 0 && demo.cheapestTotal !== null ? (
-        <p className="desk-pick-gap">
-          Cheapest known total was <strong>{formatMoney(demo.cheapestTotal)}</strong>
-          {" "}— <strong>{formatMoney(demo.savingsGap)}</strong> less, but it did not clear checks.
-        </p>
-      ) : null}
       <div className="desk-pick-rows comparison-stage-rows" role="list">
         {demo.rows.map((row) => <Row key={row.id} row={row} compact />)}
       </div>
       {demo.pickReasons.length ? (
-        <ul className="desk-pick-reasons">
+        <ul className="desk-pick-reasons" aria-label="Why this pick">
           {demo.pickReasons.map((reason) => <li key={reason}>{reason}</li>)}
         </ul>
       ) : null}
-      <div className="desk-pick-foot">{comparisonFootnote(demo)}</div>
-      <Link className="button button-secondary desk-pick-cta" href={demo.href}>
-        View this example <Icon name="arrow" size={17} />
-      </Link>
+      <DeskPickActions
+        productSlug={demo.productSlug}
+        variantId={demo.variantId}
+        condition={demo.condition}
+        href={demo.href}
+      />
     </aside>
   );
 }

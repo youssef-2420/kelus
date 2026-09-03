@@ -173,7 +173,8 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(page, /listProductListingPreviews/);
   assert.doesNotMatch(page, /LiveShowcase/);
   assert.doesNotMatch(page, /redirect\(/);
-  assert.match(search, /hero-search-category/);
+  assert.match(search, /suggestions-category-filter/);
+  assert.match(search, /kelus:prefill-search|KELUS_PREFILL_SEARCH/);
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(header, /shell === "search"/);
   assert.match(page, /KelusHeader activeHref="\/search"/);
@@ -449,11 +450,12 @@ test("production navigation avoids the incompatible client-side link shim", asyn
 });
 
 test("kit-guided UX adds skip link, homepage desk, and comparison badges", async () => {
-  const [layout, skipLink, home, comparison, styles, homeLearn] = await Promise.all([
+  const [layout, skipLink, home, comparison, deskActions, styles, homeLearn] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SkipLink.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/ComparisonStage.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/DeskPickActions.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../components/HomeLearnSection.tsx", import.meta.url), "utf8"),
   ]);
@@ -468,7 +470,11 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(comparison, /DeskPick/);
   assert.match(comparison, /Not the cheapest\. The offer that passed\./);
   assert.match(comparison, /Saved example/);
-  assert.match(comparison, /View this example/);
+  assert.match(comparison, /DeskPickActions/);
+  assert.match(deskActions, /Search this setup/);
+  assert.match(deskActions, /View full comparison/);
+  assert.match(deskActions, /kelus:prefill-search/);
+  assert.doesNotMatch(comparison, /desk-pick-gap|View this example/);
   assert.match(comparison, /formatConditionLabel/);
   assert.doesNotMatch(comparison, /desk-pick-map|Live Kelus pick|A real Kelus decision/);
   assert.match(home, /HomeLearnSection/);
@@ -476,11 +482,14 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(styles, /\.desk-rail/);
   assert.match(styles, /\.desk-pick-rows/);
   assert.match(styles, /\.desk-pick-reasons/);
+  assert.match(styles, /\.desk-pick-actions/);
+  assert.match(styles, /\.suggestions-category-filter/);
   assert.match(styles, /\.desk-coverage-hint/);
   assert.match(styles, /\.desk-tour-trigger/);
   assert.match(styles, /@keyframes desk-rise/);
   assert.match(styles, /onboarding-tour-copy/);
   assert.match(styles, /animation:desk-rise[^;]*backwards/);
+  assert.match(styles, /\.hero-config-options button\{[^}]*min-height:44px/);
   assert.match(comparison, /listings in this example/);
   assert.match(comparison, /desk-pick-rows/);
   assert.match(comparison, /desk-pick-reasons/);
@@ -488,6 +497,7 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(homeLearn, /listHomeComparisonPreviews/);
   assert.match(homeLearn, /ProductListingCard/);
   assert.doesNotMatch(styles, /\.home-learn-icon|\.desk-pick-map|\.desk-kicker/);
+  assert.doesNotMatch(styles, /\.home-page:has\(\.hero-config-panel\) \.home-learn/);
   assert.match(styles, /\.comparison-row-badge/);
   assert.match(styles, /button\.is-active:not\(\.suggestions-footer\)/);
 });

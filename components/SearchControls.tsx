@@ -9,6 +9,7 @@ import { trackEvent } from "@/services/analytics";
 import type { ConditionFilter, Product, SearchCriteria } from "@/types/kelus";
 import { Icon } from "@/components/Icon";
 import { ProductInterestCapture } from "@/components/ProductInterestCapture";
+import { KELUS_PREFILL_SEARCH, type PrefillSearchDetail } from "@/components/DeskPickActions";
 
 type Props = { compact?: boolean; minimal?: boolean; minimalAction?: boolean; deferProductSelection?: boolean; focusOnMount?: boolean; initialCriteria?: SearchCriteria; resultPath?: string; actionLabel?: string };
 const conditionLabels: Record<ConditionFilter, string> = { any: "Any", new: "New", used: "Used", refurbished: "Refurbished" };
@@ -131,19 +132,52 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     inputRef.current?.blur();
   }
 
-  function chooseProduct(product: typeof selectedProduct) {
+  function applySearchSetup(product: typeof selectedProduct, opts?: { variantId?: string; condition?: ConditionFilter }) {
     const productVariants = getVariantsForProduct(product.id);
     setSelectedProduct(product);
     setProductSelected(true);
     setConfigOpen(true);
-    setVariantId(resolveSearchAttributeVariantId(product, productVariants) ?? "");
+    setCategory("All");
+    setVariantId(resolveSearchAttributeVariantId(product, productVariants, opts?.variantId) ?? "");
+    if (opts?.condition) setCondition(opts.condition);
     setQuery(product.name);
     setSearchIssue(null);
     setSearchHint("");
     setOpen(false);
     setActiveIndex(-1);
     trackEvent({ name: "product_selected", productSlug: product.slug });
+    window.setTimeout(() => inputRef.current?.focus(), 0);
   }
+
+  function chooseProduct(product: typeof selectedProduct) {
+    applySearchSetup(product);
+  }
+
+  useEffect(() => {
+    if (!minimal || !deferProductSelection) return undefined;
+    function onPrefill(event: Event) {
+      const detail = (event as CustomEvent<PrefillSearchDetail>).detail;
+      if (!detail?.productSlug) return;
+      const product = getProductBySlug(detail.productSlug);
+      if (!product) return;
+      const productVariants = getVariantsForProduct(product.id);
+      setSelectedProduct(product);
+      setProductSelected(true);
+      setConfigOpen(true);
+      setCategory("All");
+      setVariantId(resolveSearchAttributeVariantId(product, productVariants, detail.variantId) ?? "");
+      if (detail.condition) setCondition(detail.condition);
+      setQuery(product.name);
+      setSearchIssue(null);
+      setSearchHint("");
+      setOpen(false);
+      setActiveIndex(-1);
+      trackEvent({ name: "product_selected", productSlug: product.slug });
+      window.setTimeout(() => inputRef.current?.focus(), 0);
+    }
+    window.addEventListener(KELUS_PREFILL_SEARCH, onPrefill);
+    return () => window.removeEventListener(KELUS_PREFILL_SEARCH, onPrefill);
+  }, [minimal, deferProductSelection]);
   function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
     if (event.key === "ArrowDown") { event.preventDefault(); setOpen(true); setActiveIndex((index) => Math.min(index + 1, suggestionProducts.length - 1)); }
     if (event.key === "ArrowUp") { event.preventDefault(); setActiveIndex((index) => Math.max(index - 1, 0)); }
@@ -222,15 +256,19 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   if (minimal) return <div className={`rp-search-pill-wrap${productSelected && deferProductSelection ? " has-selected-product" : ""}${overlayActive ? " is-overlay-open" : ""}`}>
     {overlayActive && <button type="button" className="search-overlay-scrim" aria-label="Close search overlay" onClick={closeOverlay}/>}
     <form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}>
-      {deferProductSelection
-        ? <label className="hero-search-category"><span className="sr-only">Category</span><select aria-label="Category" value={category} onChange={(event) => { setCategory(event.target.value); setProductSelected(false); setConfigOpen(false); setVariantId(""); setSearchIssue(null); setSearchHint(""); setOpen(true); setActiveIndex(-1); inputRef.current?.focus(); }}><option value="All">All</option>{productCategories.map((value) => <option key={value} value={value}>{value}</option>)}</select><Icon name="chevron" size={14}/></label>
-        : <Icon name="search" size={19}/>}
+      <Icon name="search" size={19}/>
       <input ref={inputRef} value={query} placeholder="Search iPhone, MacBook, headphones…" role="combobox" aria-autocomplete="list" aria-expanded={open} aria-controls={listboxId} aria-activedescendant={activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined} aria-label="Product search" onFocus={() => { if (productSelected && deferProductSelection) { setConfigOpen(true); setOpen(false); return; } setOpen(true); }} onBlur={(event) => { if (event.relatedTarget instanceof HTMLElement && event.currentTarget.closest(".rp-search-pill-wrap")?.contains(event.relatedTarget)) return; window.setTimeout(() => setOpen(false), 120); }} onKeyDown={onKeyDown} onChange={(event) => { setProductSelected(false); setConfigOpen(false); setSearchIssue(null); setSearchHint(""); setVariantId(""); setQuery(event.target.value); setOpen(true); setActiveIndex(-1); }} />
       {minimalAction && <button type="submit" className="nr-search-action" disabled={searching}>{searching ? "Finding…" : actionLabel}</button>}
       {!minimalAction && <button type="submit" className="sr-only" disabled={searching}>Search</button>}
     </form>
     {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{suggestionProducts.length ? <>
       <p className="suggestions-heading">{categoryFallback ? `No ${category} match — showing all categories` : showSearchResults ? "Choose the exact product" : "Popular products"}</p>
+      {deferProductSelection && <div className="suggestions-category-filter" role="group" aria-label="Filter by category">
+        <button type="button" className={category === "All" ? "is-selected" : ""} aria-pressed={category === "All"} onMouseDown={(event) => event.preventDefault()} onClick={() => { setCategory("All"); setActiveIndex(-1); inputRef.current?.focus(); }}>All</button>
+        {productCategories.map((value) => (
+          <button key={value} type="button" className={category === value ? "is-selected" : ""} aria-pressed={category === value} onMouseDown={(event) => event.preventDefault()} onClick={() => { setCategory(value); setProductSelected(false); setConfigOpen(false); setVariantId(""); setSearchIssue(null); setSearchHint(""); setActiveIndex(-1); inputRef.current?.focus(); }}>{value}</button>
+        ))}
+      </div>}
       {(searchHint || categoryFallback) && <p className="suggestions-guidance" role="status">{searchHint || `Kelus found matches outside ${category}. Pick one below or change the filter.`}</p>}
       {suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}
       {showSearchResults && <button type="button" className="suggestions-footer" onMouseDown={(event) => event.preventDefault()} onClick={() => { void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}
