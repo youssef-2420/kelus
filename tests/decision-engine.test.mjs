@@ -63,6 +63,9 @@ test("decision summary separates cheapest offer from Our Pick when evidence is s
   const decision = buildKelusDecision(criteria, [cheapest, best], readyContext);
   assert.equal(decision.pick?.id, "best-new");
   assert.equal(decision.cheapest?.id, "cheap-open-box");
+  assert.equal(decision.skippedCheapest?.id, "cheap-open-box");
+  assert.equal(decision.cheaperMatchedCount, 1);
+  assert.equal(decision.matchingListingCount, 2);
   assert.equal(decision.totalPrice, 1000);
   assert.equal(decision.confidence, "HIGH");
   assert.match(decision.cheaperTradeoff, /\$42 more than the cheapest/i);
@@ -75,6 +78,8 @@ test("decision never promotes LOW-confidence offers to Our Pick", () => {
   const decision = buildKelusDecision(criteria, [low, medium], readyContext);
   assert.equal(decision.pick?.id, "medium");
   assert.notEqual(decision.pick?.id, "low");
+  assert.equal(decision.skippedCheapest?.id, "low");
+  assert.equal(decision.cheaperMatchedCount, 1);
 });
 
 test("decision keeps tracking as the natural action while history is insufficient", () => {
@@ -91,7 +96,31 @@ test("a tied listing is not presented as a cheaper trade-off", () => {
   const decision = buildKelusDecision(criteria, [tied, best], readyContext);
   assert.equal(decision.pick?.id, "best");
   assert.equal(decision.cheapest?.id, "best");
+  assert.equal(decision.skippedCheapest, null);
   assert.equal(decision.cheaperTradeoff, null);
+  assert.equal(decision.cheaperMatchedCount, 0);
+});
+
+test("unmatched search volume is not a cheaper offer", () => {
+  const pick = offer("pick", 1000);
+  const decision = buildKelusDecision(criteria, [pick], readyContext);
+  assert.equal(decision.skippedCheapest, null);
+  assert.equal(decision.cheaperMatchedCount, 0);
+  assert.equal(decision.matchingListingCount, 1);
+  assert.equal(decision.cheaperTradeoff, null);
+  assert.equal(decision.totalPrice, 1000);
+});
+
+test("a two-dollar cheaper LOW listing is still a skip, not hidden", () => {
+  const low = offer("low-gap", 998, {
+    trust: { confidence: "LOW", reasons: ["Price anomaly."], suspiciousPrice: true, eligibleForRecommendation: false, eligibleForHistory: false },
+  });
+  const pick = offer("pick", 1000);
+  const decision = buildKelusDecision(criteria, [low, pick], readyContext);
+  assert.equal(decision.pick?.id, "pick");
+  assert.equal(decision.skippedCheapest?.id, "low-gap");
+  assert.equal(decision.cheaperMatchedCount, 1);
+  assert.match(decision.cheaperTradeoff ?? "", /unusually low/i);
 });
 
 test("decision uses ready stored history for Buy Now and waiting verdicts", () => {

@@ -136,12 +136,15 @@ export class EbayProvider implements OfferProvider {
     const trustedOffers = applyEbayPriceAnomalyDetection(normalizedCandidates);
     const offers = [...new Map(trustedOffers.map((offer) => [offer.id, offer])).values()];
     const observations = offers.filter((offer) => offer.trust?.eligibleForHistory).map(observationForEbayOffer);
+    const unmatchedListingCount = Math.max(0, rawItems.length - matchedItems.length);
     const value: ProviderResult = {
       providerId: this.id,
       offers,
       observations,
       isDemo: false,
       fetchedAt,
+      matchedListingCount: matchedItems.length,
+      unmatchedListingCount,
     };
     this.cache.set(key, { expiresAt: this.now() + this.config.cacheTtlMs, value });
     this.logger.info("[ebay-provider] request_completed", {
@@ -150,7 +153,7 @@ export class EbayProvider implements OfferProvider {
       normalizedOffers: offers.length,
       trustedForRecommendation: offers.filter((offer) => offer.trust?.eligibleForRecommendation).length,
       suspiciousOffers: offers.filter((offer) => offer.trust?.suspiciousPrice).length,
-      rejectedItems: rawItems.length - matchedItems.length,
+      rejectedItems: unmatchedListingCount,
       enrichedItems: details.size,
     });
     return value;

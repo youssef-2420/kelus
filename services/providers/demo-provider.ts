@@ -8,7 +8,7 @@ abstract class DemoRetailerProvider implements OfferProvider {
   async getOffers(criteria: SearchCriteria): Promise<ProviderResult> {
     const selected = offers.filter((offer) => offer.retailer.id === this.retailerId && offer.variantId === criteria.variantId && (criteria.condition === "any" || offer.condition === criteria.condition));
     const observations: PriceObservation[] = selected.flatMap((offer) => [899, 879, 849, 829, offer.price, offer.price].map((price, index) => ({ id: `${offer.id}-demo-price-${index}`, offerId: offer.id, price, timestamp: `2026-0${4 + index}-01T12:00:00Z`, isDemo: true })));
-    return { providerId: this.id, offers: selected, observations, isDemo: true };
+    return { providerId: this.id, offers: selected, observations, isDemo: true, matchedListingCount: selected.length, unmatchedListingCount: 0 };
   }
 }
 

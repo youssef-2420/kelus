@@ -95,6 +95,8 @@ export async function getLiveOffersForSearch(
     connectedProviders: ["ebay"],
     isDemo: false,
     lastUpdated: successful.map((result) => result.fetchedAt).filter((value): value is string => Boolean(value)).sort().at(-1),
+    matchedListingCount: successful.reduce((total, result) => total + (result.matchedListingCount ?? result.offers.length), 0),
+    unmatchedListingCount: successful.reduce((total, result) => total + (result.unmatchedListingCount ?? 0), 0),
   };
   let observations = currentObservations;
   let observationsStored = false;

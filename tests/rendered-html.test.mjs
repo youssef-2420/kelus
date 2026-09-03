@@ -104,7 +104,15 @@ test("Product Intelligence presentation keeps production data wiring and the exi
   assert.match(view, /decision\.reasons\.join/);
   assert.match(view, /knownTotal/);
   assert.match(view, /Known total/);
-  assert.match(view, /No cheaper comparable offer passed Kelus validation/);
+  assert.match(view, /comparedMatchingCopy/);
+  assert.match(view, /Our Pick is also the lowest known total among them/);
+  assert.match(view, /Passed over/);
+  assert.match(view, /not this exact configuration/);
+  assert.match(view, /skippedCheapest/);
+  assert.doesNotMatch(view, /getCheaperAlternative/);
+  assert.match(view, /Our Pick is also the lowest known total/);
+  assert.doesNotMatch(view, /This is the strongest validated offer/);
+  assert.doesNotMatch(view, /No cheaper comparable offer passed Kelus validation/);
   assert.match(view, /Comparison not ready yet/);
   assert.match(view, /no listing passed the current product, variant, condition, and trust checks/);
   assert.match(view, /Try another supported configuration/);

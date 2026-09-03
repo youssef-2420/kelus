@@ -20,6 +20,8 @@ const liveResult = {
   connectedProviders: ["ebay"],
   isDemo: false,
   lastUpdated: fetchedAt,
+  matchedListingCount: 1,
+  unmatchedListingCount: 4,
 };
 const retailer = { id: "ebay", name: "eBay", logo: "e", website: "https://www.ebay.com" };
 const snapshotOffer = (id, price, seller, sellerOverrides = {}) => ({
@@ -82,6 +84,8 @@ test("live offer snapshots persist primary content without duplicating observati
   assert.equal(restored.servedFromCache, true);
   assert.equal(restored.refreshRecommended, false);
   assert.equal(restored.snapshotState, "fresh");
+  assert.equal(restored.matchedListingCount, 1);
+  assert.equal(restored.unmatchedListingCount, 4);
 });
 
 test("stale and expired valid snapshots remain available and request refresh", async () => {

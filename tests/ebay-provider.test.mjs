@@ -192,9 +192,35 @@ test("provider enriches matched offers with factual return terms", async () => {
   const provider = new EbayProvider(config, fetcher, silentLogger, () => Date.parse("2026-08-24T12:00:00Z"));
   const result = await provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" });
   assert.equal(result.offers.length, 1);
+  assert.equal(result.matchedListingCount, 1);
+  assert.equal(result.unmatchedListingCount, 0);
   assert.equal(result.offers[0].returnPolicy, "30-day seller returns · Seller-paid return shipping");
   assert.equal(result.observations[0].price, 899.99);
   assert.equal(result.observations[0].shippingCost, 12.5);
+});
+
+test("provider counts unmatched search hits without treating them as offers", async () => {
+  clearEbayTokenCache();
+  const fetcher = async (input) => {
+    const url = String(input);
+    if (url.includes("/oauth2/token")) return new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 });
+    if (url.includes("/item_summary/search")) return new Response(JSON.stringify({
+      total: 2,
+      itemSummaries: [
+        { ...validItem, condition: "New", conditionId: "1000" },
+        { ...validItem, itemId: "v1|999|0", title: "Case for Apple iPhone 17 Pro 256GB", shortDescription: "Protective case", itemWebUrl: "https://www.ebay.com/itm/999", price: { value: "12.00", currency: "USD" } },
+      ],
+    }), { status: 200 });
+    if (url.includes("/buy/browse/v1/item/")) return new Response(JSON.stringify({ returnTerms: { returnsAccepted: true, returnPeriod: { value: 30, unit: "DAY" }, returnShippingCostPayer: "SELLER" } }), { status: 200 });
+    throw new Error("Unexpected URL: " + url);
+  };
+  const provider = new EbayProvider(config, fetcher, silentLogger, () => Date.parse("2026-08-24T12:00:00Z"));
+  const result = await provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" });
+  assert.equal(result.offers.length, 1);
+  assert.equal(result.matchedListingCount, 1);
+  assert.equal(result.unmatchedListingCount, 1);
+  assert.equal(result.offers[0].price, 899.99);
+  assert.equal(result.offers.some((offer) => /999/.test(offer.id) || offer.price === 12), false);
 });
 
 test("provider keeps a valid offer when optional item-detail enrichment fails", async () => {
@@ -222,7 +248,10 @@ test("provider returns zero offers cleanly and caches identical searches", async
   };
   const provider = new EbayProvider(config, fetcher, silentLogger, () => 10_000);
   const criteria = { productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" };
-  assert.deepEqual((await provider.getOffers(criteria)).offers, []);
+  const empty = await provider.getOffers(criteria);
+  assert.deepEqual(empty.offers, []);
+  assert.equal(empty.matchedListingCount, 0);
+  assert.equal(empty.unmatchedListingCount, 0);
   assert.deepEqual((await provider.getOffers(criteria)).offers, []);
   assert.equal(searchCalls, 1);
 });

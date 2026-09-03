@@ -60,7 +60,15 @@ export type PriceVerdict = "Great price" | "Good price" | "Typical" | "Expensive
 export type PriceContext = { currentTrustedPrice: number | null; average30Day: number | null; average90Day: number | null; recentLow: number | null; recentHigh: number | null; trend: "rising" | "falling" | "stable"; verdict: PriceVerdict; isDemo: false; historyStatus: "building" | "ready"; observationCount: number; observationDayCount: number };
 export type RecommendationKind = "kelus_pick" | "cheapest" | "safest_option";
 export type Recommendation = { offerId: string; kind: RecommendationKind; reasons: string[]; tradeoffs: string[] };
-export type ProviderResult = { providerId: string; offers: Offer[]; observations: PriceObservation[]; isDemo: boolean; fetchedAt?: string };
+export type ProviderResult = {
+  providerId: string;
+  offers: Offer[];
+  observations: PriceObservation[];
+  isDemo: boolean;
+  fetchedAt?: string;
+  matchedListingCount?: number;
+  unmatchedListingCount?: number;
+};
 export type OfferSearchResult = {
   offers: Offer[];
   observations: PriceObservation[];
@@ -75,5 +83,7 @@ export type OfferSearchResult = {
   isDemo: boolean;
   connectedProviders?: string[];
   lastUpdated?: string;
+  matchedListingCount?: number;
+  unmatchedListingCount?: number;
 };
 export type SearchStatus = "idle" | "resolving_product" | "fetching_offers" | "normalizing_offers" | "ranking" | "complete" | "partial" | "error";

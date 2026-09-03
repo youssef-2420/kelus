@@ -5,6 +5,9 @@ import { getCheaperAlternative, getRecommendation, knownOfferTotal } from "./rec
 export type KelusDecision = {
   pick: Offer | null;
   cheapest: Offer | null;
+  skippedCheapest: Offer | null;
+  matchingListingCount: number;
+  cheaperMatchedCount: number;
   pickRecommendation: Recommendation | null;
   cheapestRecommendation: Recommendation | null;
   confidence: TrustConfidence | "UNAVAILABLE";
@@ -68,19 +71,30 @@ export function buildKelusDecision(criteria: SearchCriteria, offers: Offer[], pr
   const pickRecommendation = getRecommendation(offers, "kelus_pick");
   const pick = offers.find((offer) => offer.id === pickRecommendation?.offerId) ?? null;
   const cheapestRecommendation = getRecommendation(offers.filter(eligibleForRecommendation), "cheapest");
-  const cheapestCandidate = cheapestAcceptedOffer(offers) ?? offers.find((offer) => offer.id === cheapestRecommendation?.offerId) ?? cheapestEligibleOffer(offers);
+  const matchedCheapest = cheapestAcceptedOffer(offers) ?? offers.find((offer) => offer.id === cheapestRecommendation?.offerId) ?? cheapestEligibleOffer(offers);
   const pickTotal = pick ? knownOfferTotal(pick) : null;
-  const cheapestTotal = cheapestCandidate ? knownOfferTotal(cheapestCandidate) : null;
+  const matchedCheapestTotal = matchedCheapest ? knownOfferTotal(matchedCheapest) : null;
+  const skippedCheapest = pick && matchedCheapest && matchedCheapest.id !== pick.id && pickTotal !== null && matchedCheapestTotal !== null && matchedCheapestTotal < pickTotal
+    ? matchedCheapest
+    : null;
+  const cheaperMatchedCount = pickTotal === null
+    ? 0
+    : offers.filter((offer) => {
+      if (pick && offer.id === pick.id) return false;
+      const total = knownOfferTotal(offer);
+      return total !== null && total < pickTotal;
+    }).length;
   // A tied listing is not a cheaper alternative. Keep the recommendation as the
   // comparison baseline so the UI never invents a price trade-off that is not real.
-  const cheapest = pick && pickTotal !== null && cheapestTotal !== null && cheapestTotal >= pickTotal
-    ? pick
-    : cheapestCandidate;
+  const cheapest = skippedCheapest ?? (pick && pickTotal !== null && matchedCheapestTotal !== null && matchedCheapestTotal >= pickTotal ? pick : matchedCheapest);
   const buyWaitDecision = getBuyWaitDecision(priceContext);
   const totalPrice = pickTotal;
   return {
     pick,
     cheapest,
+    skippedCheapest,
+    matchingListingCount: offers.length,
+    cheaperMatchedCount,
     pickRecommendation,
     cheapestRecommendation,
     confidence: pick?.trust?.confidence ?? (pick ? "MEDIUM" : "UNAVAILABLE"),
@@ -88,7 +102,7 @@ export function buildKelusDecision(criteria: SearchCriteria, offers: Offer[], pr
     sellerName: pick?.seller.name || "Seller unavailable",
     retailerName: pick?.retailer.name ?? "Retailer unavailable",
     reasons: pick ? decisionReasons(pick, pickRecommendation) : ["No recommendation-quality offer is available yet."],
-    cheaperTradeoff: pick ? cheaperTradeoff(pick, cheapest, offers) : null,
+    cheaperTradeoff: pick ? cheaperTradeoff(pick, skippedCheapest ?? cheapest, offers) : null,
     buyWaitDecision,
     trackRecommended: buyWaitDecision.label === "HISTORY BUILDING" || buyWaitDecision.label === "CONSIDER WAITING",
   };

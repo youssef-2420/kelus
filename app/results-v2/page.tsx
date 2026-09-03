@@ -27,7 +27,6 @@ import { buildKelusDecision, type KelusDecision } from "@/services/decision-engi
 import { getPriceContext } from "@/services/price-context";
 import { exactRealPriceObservations, minimum30DaySamples } from "@/services/price-intelligence";
 import { settleProductOfferLoad, type ProductOfferLoadOutcome } from "@/services/product-offer-load";
-import { getCheaperAlternative } from "@/services/recommendations";
 import { optimizedRetailerImageUrl } from "@/services/retailer-image";
 import { readCachedSearch, retrySearch, startSearch } from "@/services/search-session";
 import { trackEvent } from "@/services/analytics";
@@ -202,12 +201,7 @@ export function ProductIntelligenceView({ criteria, initialOutcome, alternatives
   const context = getPriceContext(criteria, storedObservations);
   const decision = buildKelusDecision(criteria, offers, context);
   const pick = decision.pick;
-  const cheaperAlternative = pick ? getCheaperAlternative(offers, pick) : null;
-  const pickTotal = pick ? knownTotal(pick) : null;
-  const decisionCheapestTotal = decision.cheapest ? knownTotal(decision.cheapest) : null;
-  const lowest = pickTotal !== null && decisionCheapestTotal !== null && decisionCheapestTotal < pickTotal
-    ? decision.cheapest
-    : cheaperAlternative?.offer;
+  const lowest = decision.skippedCheapest;
   const otherOffers = offers.filter((offer) => offer.id !== pick?.id && offer.id !== lowest?.id);
   const heroOffer = pick ?? offers[0];
   const staleSnapshot = snapshotLooksVisuallyStale(result);
@@ -455,11 +449,23 @@ function EvidenceReveal({ pick, tradeoff }: { pick: Offer; tradeoff: string }) {
   </details>;
 }
 
-function kelusVerdict(decision: KelusDecision, lowest?: Offer | null) {
+function listingCountCopy(count: number, noun: string) {
+  return `${count} ${noun}${count === 1 ? "" : "s"}`;
+}
+
+function comparedMatchingCopy(decision: KelusDecision, result: OfferSearchResult) {
+  const matching = result.matchedListingCount ?? decision.matchingListingCount;
+  const unmatched = result.unmatchedListingCount;
+  const compared = `Kelus compared ${listingCountCopy(matching, "matching listing")}. Our Pick is also the lowest known total among them.`;
+  if (typeof unmatched !== "number" || unmatched < 1) return compared;
+  return `${compared} Passed over ${listingCountCopy(unmatched, "listing")} that ${unmatched === 1 ? "was" : "were"} not this exact configuration.`;
+}
+
+function kelusVerdict(decision: KelusDecision, lowest: Offer | null | undefined, result: OfferSearchResult) {
   const pick = decision.pick;
   if (!pick) return null;
   if (!lowest || lowest.id === pick.id) {
-    return { title: "This is the strongest validated offer.", detail: "No cheaper comparable offer passed the current Kelus checks." };
+    return { title: "Our Pick is also the lowest known total.", detail: comparedMatchingCopy(decision, result) };
   }
   if (lowest.trust?.suspiciousPrice) {
     return { title: "Skip the cheapest offer.", detail: decision.cheaperTradeoff ?? "Its price is unusually low and the available evidence is not strong enough for Our Pick." };
@@ -488,29 +494,34 @@ function DecisionReport({ decision, lowest, productName, criteria, result, conte
   context: ReturnType<typeof getPriceContext>;
 }) {
   const pick = decision.pick;
-  const tradeoff = decision.cheaperTradeoff ?? "Kelus did not find a meaningfully cheaper comparable offer with different trade-offs.";
+  const tradeoff = decision.cheaperTradeoff ?? comparedMatchingCopy(decision, result);
   const pickTotal = pick ? knownTotal(pick) : null;
   const lowestTotal = lowest ? knownTotal(lowest) : null;
   const savings = pickTotal !== null && lowestTotal !== null ? Math.max(0, pickTotal - lowestTotal) : null;
-  const verdict = kelusVerdict(decision, lowest);
+  const hasSkip = Boolean(lowest && pick && lowest.id !== pick.id);
+  const verdict = kelusVerdict(decision, lowest, result);
   const sellerName = decision.sellerName !== "Seller unavailable" ? decision.sellerName : decision.retailerName;
   const sellerHref = pick ? ebaySellerProfileUrl(pick.seller.name || sellerName) : null;
   const timing = getBuyWaitDecision(context);
   const preferTrack = timing.label === "CONSIDER WAITING" || timing.label === "HISTORY BUILDING";
   return <section className="pi-pick pi-pick-reveal" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
-    {verdict && <div className="pi-verdict pi-verdict-lead">
-      <h2><span className="sr-only">Kelus verdict. </span>{verdict.title}</h2>
-      <p>{verdict.detail}</p>
-    </div>}
     <div className="pi-pick-top">
       <div>
         <span className="pi-total-label">Known total</span>
         <strong className="pi-pick-price">{money(pick)}</strong>
-        {savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}
+        {savings !== null && savings > 0 && hasSkip ? <p className="pi-savings-callout">{moneyAmount(savings, lowest!.currency)} more than cheapest — stronger validation evidence</p> : null}
       </div>
       {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span>{sellerHref ? <a href={sellerHref} target="_blank" rel="noopener noreferrer">{sellerName}</a> : <b>{sellerName}</b>}</span><small>{offerMeta(pick)}</small></div>}
     </div>
+    {hasSkip ? <><p className="pi-comparison-label">Our Pick vs Cheapest</p><div className="pi-comparison" aria-label="Our Pick compared with the cheapest offer">
+      <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
+      <span>Cheapest</span><strong>{money(lowest)}</strong><small>{cheapestSkipNote(lowest!, savings)}</small>
+    </div></> : <p className="pi-no-cheaper">{comparedMatchingCopy(decision, result)}</p>}
+    {verdict && <div className="pi-verdict pi-verdict-lead">
+      <h2><span className="sr-only">Kelus verdict. </span>{verdict.title}</h2>
+      <p>{verdict.detail}</p>
+    </div>}
     {pick && <div className={`pi-decision-strip pi-primary-cta pi-primary-cta--early${preferTrack ? " prefers-track" : ""}`}>
       <div className="pi-decision-strip-actions">
         <OutboundRetailerCTA offer={pick} label="View offer" ourPick/>
@@ -532,10 +543,6 @@ function DecisionReport({ decision, lowest, productName, criteria, result, conte
       <p className="pi-tradeoff">{tradeoff}</p>
     </div>
     {pick && <EvidenceReveal pick={pick} tradeoff={tradeoff}/>}
-    {lowest && lowest.id !== pick?.id ? <><p className="pi-comparison-label">Our Pick vs Cheapest</p><div className="pi-comparison" aria-label="Our Pick compared with the cheapest offer">
-      <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
-      <span>Cheapest</span><strong>{money(lowest)}</strong><small>{cheapestSkipNote(lowest, savings)}</small>
-    </div></> : <p className="pi-no-cheaper">No cheaper comparable offer passed Kelus validation.</p>}
     <p className="pi-cta-disclosure pi-pick-foot-note">Kelus may earn a commission from eligible retailer links.</p>
   </section>;
 }
