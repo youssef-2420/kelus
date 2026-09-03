@@ -57,7 +57,7 @@ function Row({ row, compact, quiet = false }: { row: ComparisonDemoRow; compact?
         ) : (
           <strong className="is-unknown">—</strong>
         )}
-        {row.role === "pick" ? <em>Our Pick</em> : row.role === "cheapest" ? <em>Cheapest</em> : <em>Skipped</em>}
+        {!quiet ? row.role === "pick" ? <em>Our Pick</em> : row.role === "cheapest" ? <em>Cheapest</em> : <em>Skipped</em> : null}
       </div>
       {!quiet && row.note ? <p className="comparison-row-note">{row.note}</p> : null}
     </div>

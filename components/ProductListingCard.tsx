@@ -12,9 +12,11 @@ type Props = {
 
 export function ProductListingCard({ preview, compact = false, layout = "row", showStatus = true }: Props) {
   const validated = preview.live && preview.fromPrice > 0;
-  const statusLabel = validated
-    ? `From ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}`
-    : "View comparison";
+  const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  const statusLabel = validated ? `From ${money.format(preview.fromPrice)}` : "View comparison";
+  const pickLabel = validated && preview.pickPrice && preview.pickPrice !== preview.fromPrice
+    ? `Our pick ${money.format(preview.pickPrice)}`
+    : null;
   const statusDetail = validated ? "Validated comparison available" : "Indexed — comparison not saved yet";
   const tile = layout === "tile";
 
@@ -29,10 +31,8 @@ export function ProductListingCard({ preview, compact = false, layout = "row", s
         <b>{preview.productName}</b>
         <small>{preview.variantLabel} · {preview.condition === "new" ? "New" : preview.condition === "used" ? "Used" : preview.condition}</small>
         <span className={`product-listing-price${validated ? "" : " is-muted"}`}>
-          {statusLabel}
-          {validated && preview.pickPrice && preview.pickPrice !== preview.fromPrice
-            ? ` · Kelus pick ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.pickPrice)}`
-            : ""}
+          <strong>{statusLabel}</strong>
+          {pickLabel ? <span>{pickLabel}</span> : null}
         </span>
       </span>
       <Icon name="arrow" size={16} />
