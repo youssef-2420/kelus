@@ -41,10 +41,14 @@ test("comparison demo shows a pick that beat the cheapest known total", () => {
   const demo = getComparisonDemo();
   assert.ok(demo);
   assert.ok(demo.savingsGap && demo.savingsGap > 0);
+  assert.ok(demo.productSlug);
+  assert.ok(demo.variantId);
   const pick = demo.rows.find((row) => row.role === "pick");
   const cheapest = demo.rows.find((row) => row.role === "cheapest");
   assert.ok(pick);
   assert.ok(cheapest);
+  assert.equal(demo.rows[0]?.role, "pick");
+  assert.ok(cheapest.note && /less|anomaly|passed over|checks/i.test(cheapest.note));
   assert.ok(demo.pickReasons.length >= 1);
   assert.ok(demo.rows.length >= 2);
   assert.ok(demo.rows.every((row) => row.role === "pick" || row.role === "cheapest" || row.role === "sample"));

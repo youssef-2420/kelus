@@ -191,6 +191,8 @@ export type ComparisonDemoRow = {
 export type ComparisonDemo = {
   brand: string;
   productName: string;
+  productSlug: string;
+  variantId: string;
   variantLabel: string;
   condition: ConditionFilter;
   lastUpdated?: string;
@@ -204,6 +206,18 @@ export type ComparisonDemo = {
   listingImageUrl?: string;
   rows: ComparisonDemoRow[];
 };
+
+function passedOverNote(offer: Offer, role: "cheapest" | "sample") {
+  if (offer.trust?.suspiciousPrice) return "Flagged price anomaly";
+  if (offer.trust?.confidence === "LOW") return "Low confidence — passed over";
+  if (offer.trust && !offer.trust.eligibleForRecommendation) {
+    const concrete = offer.trust.reasons.find((reason) => reason.trim().length > 0 && reason.length <= 72);
+    if (concrete) return concrete;
+    return "Did not clear seller or match checks";
+  }
+  if (role === "cheapest") return "Lowest known total — passed over";
+  return "Cheaper — passed over";
+}
 
 function knownTotalForOffer(offer: Offer) {
   if (offer.shippingCostKnown === false) return null;
@@ -283,12 +297,14 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
   }
 
   const rows: ComparisonDemoRow[] = [];
+  // Lead with Our Pick so the desk teaches one pick, not gold cheapest.
+  rows.push(toRow(pick, "pick"));
   if (cheapest && cheapest.id !== pick.id) {
-    rows.push(toRow(
-      cheapest,
-      "cheapest",
-      cheapest.trust?.suspiciousPrice ? "Flagged price anomaly" : "Lowest known total — did not clear checks",
-    ));
+    const fail = passedOverNote(cheapest, "cheapest");
+    const gapNote = savingsGap !== null && savingsGap > 0
+      ? `${formatFromPrice(savingsGap)} less — ${fail}`
+      : fail;
+    rows.push(toRow(cheapest, "cheapest", gapNote));
   }
   // Prefer another cheaper-than-pick listing with a different seller (real tradeoff, not a duplicate row).
   const sample = withTotals.find((entry) => {
@@ -298,16 +314,14 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
     return offerSellerLabel(entry.offer) !== offerSellerLabel(cheapest);
   });
   if (sample) {
-    rows.push(toRow(
-      sample.offer,
-      "sample",
-      sample.offer.trust?.suspiciousPrice ? "Flagged price anomaly" : "Cheaper — passed over",
-    ));
+    rows.push(toRow(sample.offer, "sample", passedOverNote(sample.offer, "sample")));
   }
-  rows.push(toRow(pick, "pick"));
+  const parsed = parseSnapshotKey(key);
   return {
     brand: showcase.brand,
     productName: showcase.productName,
+    productSlug: showcase.productSlug,
+    variantId: parsed?.variantId ?? "",
     variantLabel: showcase.variantLabel,
     condition: showcase.condition,
     lastUpdated: showcase.lastUpdated,

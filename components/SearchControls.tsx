@@ -9,6 +9,7 @@ import { trackEvent } from "@/services/analytics";
 import type { ConditionFilter, Product, SearchCriteria } from "@/types/kelus";
 import { Icon } from "@/components/Icon";
 import { ProductInterestCapture } from "@/components/ProductInterestCapture";
+import { KELUS_PREFILL_SEARCH, type PrefillSearchDetail } from "@/components/DeskPickActions";
 
 type Props = { compact?: boolean; minimal?: boolean; minimalAction?: boolean; deferProductSelection?: boolean; focusOnMount?: boolean; initialCriteria?: SearchCriteria; resultPath?: string; actionLabel?: string };
 const conditionLabels: Record<ConditionFilter, string> = { any: "Any", new: "New", used: "Used", refurbished: "Refurbished" };
@@ -122,6 +123,32 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     if (!open || activeIndex < 0) return;
     document.getElementById(`${listboxId}-${activeIndex}`)?.scrollIntoView({ block: "nearest" });
   }, [activeIndex, listboxId, open]);
+
+  useEffect(() => {
+    if (!minimal || !deferProductSelection) return undefined;
+    function onPrefill(event: Event) {
+      const detail = (event as CustomEvent<PrefillSearchDetail>).detail;
+      if (!detail?.productSlug) return;
+      const product = getProductBySlug(detail.productSlug);
+      if (!product) return;
+      const productVariants = getVariantsForProduct(product.id);
+      setSelectedProduct(product);
+      setProductSelected(true);
+      setConfigOpen(true);
+      setCategory("All");
+      setVariantId(resolveSearchAttributeVariantId(product, productVariants, detail.variantId) ?? "");
+      if (detail.condition) setCondition(detail.condition);
+      setQuery(product.name);
+      setSearchIssue(null);
+      setSearchHint("");
+      setOpen(false);
+      setActiveIndex(-1);
+      trackEvent({ name: "product_selected", productSlug: product.slug });
+      window.setTimeout(() => inputRef.current?.focus(), 0);
+    }
+    window.addEventListener(KELUS_PREFILL_SEARCH, onPrefill);
+    return () => window.removeEventListener(KELUS_PREFILL_SEARCH, onPrefill);
+  }, [minimal, deferProductSelection]);
 
   function closeOverlay() {
     setOpen(false);

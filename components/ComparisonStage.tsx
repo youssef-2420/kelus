@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
+import { DeskPickActions } from "@/components/DeskPickActions";
 import { Icon } from "@/components/Icon";
 import { ProductMark } from "@/components/ProductMark";
 import { SafeLink as Link } from "@/components/SafeLink";
@@ -35,9 +36,9 @@ function formatSellerEvidence(row: ComparisonDemoRow) {
   return `${row.feedbackPercentage}% · ${score} feedback`;
 }
 
-function Row({ row, compact, quiet = false }: { row: ComparisonDemoRow; compact?: boolean; quiet?: boolean }) {
+function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
   const badge = row.role === "pick" ? "Our pick" : row.role === "cheapest" ? "Cheapest" : null;
-  const evidence = quiet ? null : formatSellerEvidence(row);
+  const evidence = formatSellerEvidence(row);
   return (
     <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`} role="listitem">
       <div className="comparison-row-main">
@@ -59,7 +60,7 @@ function Row({ row, compact, quiet = false }: { row: ComparisonDemoRow; compact?
         )}
         {row.role === "pick" ? <em>Our Pick</em> : row.role === "cheapest" ? <em>Cheapest</em> : <em>Skipped</em>}
       </div>
-      {!quiet && row.note ? <p className="comparison-row-note">{row.note}</p> : null}
+      {row.note ? <p className="comparison-row-note">{row.note}</p> : null}
     </div>
   );
 }
@@ -84,13 +85,14 @@ function comparisonFootnote(demo: NonNullable<ReturnType<typeof getComparisonDem
 }
 
 function StageImage({ imageUrl, label, large = false }: { imageUrl?: string; label: string; large?: boolean }) {
-  const source = optimizedRetailerImageUrl(imageUrl, large ? 220 : 96);
+  const source = optimizedRetailerImageUrl(imageUrl, large ? 280 : 96);
   if (!source) return <ProductMark label={label} />;
-  return <img src={source} alt="" width={large ? 160 : 56} height={large ? 160 : 56} loading="lazy" decoding="async" />;
+  return <img src={source} alt="" width={large ? 200 : 56} height={large ? 200 : 56} loading="lazy" decoding="async" />;
 }
 
 function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonDemo>> }) {
   const conciseReason = demo.pickReasons.find((reason) => !/total including shipping/i.test(reason)) ?? demo.pickReasons[0];
+  const deskRows = demo.rows.filter((row) => row.role === "pick" || row.role === "cheapest");
   return (
     <aside className="desk-pick" aria-label="Example Kelus pick">
       <p className="desk-pick-status">{formatSnapshotLabel(demo.lastUpdated)}</p>
@@ -107,23 +109,37 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
         </div>
       </div>
       <p className="desk-pick-verdict">Not the cheapest. The offer that passed.</p>
-      {demo.savingsGap !== null && demo.savingsGap > 0 && demo.cheapestTotal !== null ? (
-        <p className="desk-pick-gap">
-          Cheapest known total was <strong>{formatMoney(demo.cheapestTotal)}</strong>
-          {" "}— <strong>{formatMoney(demo.savingsGap)}</strong> less, but it did not clear checks.
-        </p>
-      ) : null}
+      <ul className="desk-checks" aria-label="What Kelus checks">
+        <li>
+          <Icon name="search" size={15} />
+          <span><b>Exact match</b> Same setup and condition</span>
+        </li>
+        <li>
+          <Icon name="tag" size={15} />
+          <span><b>Known total</b> Listing + shipping when known</span>
+        </li>
+        <li>
+          <Icon name="shield" size={15} />
+          <span><b>Seller evidence</b> Feedback, returns, anomalies</span>
+        </li>
+      </ul>
+      <p className="desk-checks-more">
+        <Link href="/methodology">How Our Pick works <Icon name="arrow" size={14} /></Link>
+      </p>
       <div className="desk-pick-rows comparison-stage-rows" role="list">
-        {demo.rows.filter((row) => row.role === "cheapest" || row.role === "pick").map((row) => <Row key={row.id} row={row} compact quiet />)}
+        {deskRows.map((row) => <Row key={row.id} row={row} compact />)}
       </div>
       {conciseReason ? (
-        <ul className="desk-pick-reasons">
+        <ul className="desk-pick-reasons" aria-label="Why this pick">
           <li>{conciseReason}</li>
         </ul>
       ) : null}
-      <Link className="button button-secondary desk-pick-cta" href={demo.href}>
-        View this example <Icon name="arrow" size={17} />
-      </Link>
+      <DeskPickActions
+        productSlug={demo.productSlug}
+        variantId={demo.variantId}
+        condition={demo.condition}
+        href={demo.href}
+      />
     </aside>
   );
 }

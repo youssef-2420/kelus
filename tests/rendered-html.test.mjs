@@ -446,11 +446,13 @@ test("production navigation avoids the incompatible client-side link shim", asyn
 });
 
 test("kit-guided UX adds skip link, homepage desk, and comparison badges", async () => {
-  const [layout, skipLink, home, comparison, styles, homeLearn] = await Promise.all([
+  const [layout, skipLink, home, comparison, deskActions, deskTry, styles, homeLearn] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/SkipLink.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
     readFile(new URL("../components/ComparisonStage.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/DeskPickActions.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../components/DeskTryExample.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     readFile(new URL("../components/HomeLearnSection.tsx", import.meta.url), "utf8"),
   ]);
@@ -458,6 +460,7 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(skipLink, /Skip to main content/);
   assert.match(home, /ComparisonStage layout="desk"/);
   assert.match(home, /What are you buying\?/);
+  assert.match(home, /DeskTryExample/);
   assert.doesNotMatch(home, /desk-coverage-hint|OnboardingTour/);
   assert.match(home, /id="main-content"/);
   assert.doesNotMatch(home, /desk-kicker/);
@@ -465,14 +468,22 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(comparison, /DeskPick/);
   assert.match(comparison, /Not the cheapest\. The offer that passed\./);
   assert.match(comparison, /Saved example/);
-  assert.match(comparison, /View this example/);
+  assert.match(comparison, /desk-checks/);
+  assert.match(comparison, /How Our Pick works/);
+  assert.match(comparison, /DeskPickActions/);
+  assert.match(deskActions, /Search this setup/);
+  assert.match(deskActions, /View full comparison/);
+  assert.match(deskTry, /Try an example/);
   assert.match(comparison, /formatConditionLabel/);
-  assert.doesNotMatch(comparison, /desk-pick-map|Live Kelus pick|A real Kelus decision/);
+  assert.doesNotMatch(comparison, /desk-pick-gap|View this example|desk-pick-map|Live Kelus pick|A real Kelus decision/);
   assert.match(home, /HomeLearnSection/);
   assert.match(styles, /\.skip-link/);
   assert.match(styles, /\.desk-rail/);
   assert.match(styles, /\.desk-pick-rows/);
   assert.match(styles, /\.desk-pick-reasons/);
+  assert.match(styles, /\.desk-checks/);
+  assert.match(styles, /\.desk-try-example/);
+  assert.match(styles, /\.desk-pick-actions/);
   assert.doesNotMatch(styles, /\.desk-coverage-hint/);
   assert.match(styles, /\.desk-tour-trigger/);
   assert.match(styles, /@keyframes desk-rise/);
@@ -482,7 +493,7 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(comparison, /desk-pick-rows/);
   assert.match(comparison, /desk-pick-reasons/);
   assert.match(comparison, /const conciseReason = demo\.pickReasons\.find/);
-  assert.match(comparison, /row\.role === "cheapest" \|\| row\.role === "pick"/);
+  assert.match(comparison, /row\.role === "pick" \|\| row\.role === "cheapest"/);
   assert.doesNotMatch(comparison, /className="desk-pick-foot"/);
   assert.match(homeLearn, /Open a comparison/);
   assert.match(homeLearn, /listHomeComparisonPreviews\(4\)/);

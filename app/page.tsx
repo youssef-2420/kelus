@@ -4,8 +4,10 @@ import { LandingAnalytics } from "@/components/LandingAnalytics";
 import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
 import { ComparisonStage } from "@/components/ComparisonStage";
+import { DeskTryExample } from "@/components/DeskTryExample";
 import { HomeLearnSection } from "@/components/HomeLearnSection";
 import { SiteFooter } from "@/components/SiteFooter";
+import { getComparisonDemo } from "@/lib/bundled-snapshot-catalog";
 
 export const metadata: Metadata = {
   title: "Kelus — Find the offer worth buying",
@@ -21,6 +23,8 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+  const demo = getComparisonDemo();
+
   return (
     <main id="main-content" className="home-page home-desk">
       <LandingAnalytics />
@@ -35,6 +39,15 @@ export default function Home() {
           <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
           </div>
+          {demo ? (
+            <DeskTryExample
+              productName={demo.productName}
+              variantLabel={demo.variantLabel}
+              condition={demo.condition}
+              productSlug={demo.productSlug}
+              variantId={demo.variantId}
+            />
+          ) : null}
         </div>
         <ComparisonStage layout="desk" />
       </section>
