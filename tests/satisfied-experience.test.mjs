@@ -60,6 +60,14 @@ test("homepage comparison previews prefer proof over cheapest accessories", () =
   assert.ok(new Set(previews.map((preview) => preview.category)).size >= 2);
 });
 
+test("catalog previews reapply the current Trust Gate before showing prices", () => {
+  const previews = new Map(listProductListingPreviews().map((preview) => [preview.productSlug, preview]));
+  assert.ok(previews.get("ipad-mini-7")?.fromPrice >= 300, "older iPad mini generations must not set the current model price");
+  assert.ok(previews.get("nintendo-switch-2")?.fromPrice >= 300, "games must not set the console price");
+  assert.ok(previews.get("airpods-pro-2")?.fromPrice >= 70, "single replacement earbuds must not set the pair price");
+  assert.ok(previews.get("sony-wf-1000xm5")?.fromPrice >= 70, "single replacement earbuds must not set the pair price");
+});
+
 test("provider errors map to shopper-safe copy", () => {
   assert.match(userFacingOfferError("provider_unconfigured", 503), /temporarily unavailable/i);
   assert.doesNotMatch(userFacingOfferError("provider_unconfigured", 503), /not configured/i);

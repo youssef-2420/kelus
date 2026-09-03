@@ -4,6 +4,7 @@ import { canonicalProductPath } from "./search-state.ts";
 import type { ConditionFilter, Offer, OfferSearchResult, SearchCriteria } from "../types/kelus.ts";
 import { catalogSnapshotTargetKey } from "./catalog-snapshot-targets.ts";
 import { getRecommendation } from "../services/recommendations.ts";
+import { applySnapshotTrustGate } from "../services/snapshot-trust.ts";
 import type { BundledShowcase, ProductListingPreview } from "./catalog-preview-types.ts";
 
 export type { BundledShowcase, ProductListingPreview } from "./catalog-preview-types.ts";
@@ -21,11 +22,13 @@ function lowestKnownTotal(offers: Offer[]) {
 
 function summarizeSnapshot(snapshot: OfferSearchResult) {
   const liveOffers = snapshot.offers.filter((offer) => offer.dataSource === "live");
+  const validatedOffers = liveOffers.filter((offer) => !offer.trust || (offer.trust.eligibleForRecommendation && offer.trust.confidence !== "LOW"));
   const recommendation = getRecommendation(liveOffers, "kelus_pick");
   const pick = liveOffers.find((offer) => offer.id === recommendation?.offerId) ?? liveOffers[0];
   return {
     liveOffers,
-    fromPrice: lowestKnownTotal(liveOffers),
+    validatedOfferCount: validatedOffers.length,
+    fromPrice: lowestKnownTotal(validatedOffers),
     pickPrice: pick
       ? pick.shippingCostKnown === false ? pick.price : pick.price + pick.shippingCost
       : null,
@@ -45,7 +48,8 @@ export function readBundledSnapshot(criteria: SearchCriteria) {
 
 export function hasBundledSnapshot(criteria: SearchCriteria) {
   const snapshot = readBundledSnapshot(criteria);
-  return Boolean(snapshot?.offers.some((offer) => offer.dataSource === "live"));
+  const trusted = snapshot ? applySnapshotTrustGate(criteria, snapshot) : null;
+  return Boolean(trusted?.offers.some((offer) => offer.dataSource === "live" && offer.trust?.eligibleForRecommendation));
 }
 
 function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase | null {
@@ -54,7 +58,9 @@ function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase |
   const product = getProductBySlug(parsed.productSlug);
   const variant = getVariantById(parsed.variantId);
   if (!product || !variant) return null;
-  const { liveOffers, fromPrice, pickPrice, listingImageUrl } = summarizeSnapshot(snapshot);
+  const trusted = applySnapshotTrustGate(parsed, snapshot);
+  if (!trusted) return null;
+  const { validatedOfferCount, fromPrice, pickPrice, listingImageUrl } = summarizeSnapshot(trusted);
   if (fromPrice === null) return null;
   return {
     productSlug: parsed.productSlug,
@@ -65,7 +71,7 @@ function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase |
     href: canonicalProductPath(parsed),
     fromPrice,
     pickPrice: pickPrice ?? undefined,
-    offerCount: liveOffers.length,
+    offerCount: validatedOfferCount,
     lastUpdated: snapshot.lastUpdated,
     listingImageUrl,
   };
@@ -156,7 +162,8 @@ export function listProductListingPreviews() {
 
 export function snapshotSitemapEntry(criteria: SearchCriteria) {
   const snapshot = readBundledSnapshot(criteria);
-  const live = Boolean(snapshot?.offers.some((offer) => offer.dataSource === "live"));
+  const trusted = snapshot ? applySnapshotTrustGate(criteria, snapshot) : null;
+  const live = Boolean(trusted?.offers.some((offer) => offer.dataSource === "live" && offer.trust?.eligibleForRecommendation));
   const lastUpdated = snapshot?.lastUpdated && !Number.isNaN(Date.parse(snapshot.lastUpdated))
     ? new Date(snapshot.lastUpdated)
     : new Date();

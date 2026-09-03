@@ -6,6 +6,7 @@ import {
   isActiveListing,
   isFixedPrice,
   isPartsOnly,
+  matchesListingType,
   matchesModel,
   matchesProductCategory,
   matchesStorage,
@@ -94,6 +95,9 @@ export function validateEbayCandidate(
       modelEvidence: modelAspects.length ? "structured" : "title",
     });
   }
+  if (!matchesListingType(item, product)) return fail("Listing is not the complete selected product.", {
+    modelEvidence: modelAspects.length ? "structured" : "title",
+  });
   const modelEvidence: Evidence = modelAspects.length ? "structured" : "title";
 
   const requiresStorage = Boolean(variant.storage ?? variant.specifications.storage);

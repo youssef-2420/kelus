@@ -55,6 +55,8 @@ test("generation-specific Apple products reject older-generation listings", () =
     ["macbook-air-m4", "macbook-air-m4-16-512", "Apple MacBook Air M3 16GB RAM 512GB SSD Brand New", "Laptops & Netbooks"],
     ["ipad-pro-11-m4", "ipad-pro-11-m4-256", "Apple iPad Pro 11 inch M2 256GB Brand New", "Tablets"],
     ["ipad-air-11-m3", "ipad-air-11-m3-128", "Apple iPad Air 11 inch M2 128GB Brand New", "Tablets"],
+    ["ipad-mini-7", "ipad-mini-7-128", "Apple iPad Mini 4 128GB WiFi Brand New", "Tablets"],
+    ["ipad-mini-7", "ipad-mini-7-256", "Apple iPad Mini 6 256GB WiFi Used", "Tablets"],
   ];
   for (const [productSlug, variantId, title, category] of cases) {
     const product = getProductBySlug(productSlug);
@@ -62,6 +64,40 @@ test("generation-specific Apple products reject older-generation listings", () =
     assert.ok(product && variant);
     assert.equal(matchesCanonicalEbayItem(listing(title, category), product, variant, "new"), false, title);
   }
+});
+
+test("console listings reject games that merely mention the target console", () => {
+  const product = getProductBySlug("nintendo-switch-2");
+  const variant = getVariantById("nintendo-switch-2");
+  assert.ok(product && variant);
+  const game = listing("Hyrule Warriors: Age of Imprisonment - Nintendo Switch 2 Game", "Video Game Consoles");
+  assert.equal(matchesCanonicalEbayItem(game, product, variant, "new"), false);
+  assert.equal(validateEbayCandidate(game, product, variant, "new").accepted, false);
+  const incomplete = listing("Nintendo Switch 2 Console Tablet Only", "Video Game Consoles");
+  assert.equal(matchesCanonicalEbayItem(incomplete, product, variant, "new"), false);
+});
+
+test("audio listings reject sibling generations and replacement earbuds", () => {
+  const product = getProductBySlug("airpods-pro-2");
+  const variant = getVariantById("airpods-pro-2-usbc");
+  assert.ok(product && variant);
+  assert.equal(matchesCanonicalEbayItem(listing("Apple AirPods Pro 3 USB-C Brand New", "Headphones"), product, variant, "new"), false);
+  assert.equal(matchesCanonicalEbayItem(listing("Apple AirPods Pro 2nd Gen USB-C Right Earbud Only", "Headphones"), product, variant, "new"), false);
+  assert.equal(matchesCanonicalEbayItem(listing("Apple AirPods Pro 2nd Gen USB-C Left Side A3048", "Headphones"), product, variant, "new"), false);
+  const sony = getProductBySlug("sony-wf-1000xm5");
+  const sonyVariant = getVariantById("sony-wf-1000xm5");
+  assert.ok(sony && sonyVariant);
+  assert.equal(matchesCanonicalEbayItem(listing("Sony WF-1000XM5 Right (R) Earbud", "Headphones"), sony, sonyVariant, "new"), false);
+});
+
+test("AirPods 4 standard and ANC variants stay distinct", () => {
+  const product = getProductBySlug("airpods-4");
+  const standard = getVariantById("airpods-4-standard");
+  const anc = getVariantById("airpods-4-anc");
+  assert.ok(product && standard && anc);
+  const ancListing = listing("Apple AirPods 4 with Active Noise Cancellation Brand New", "Headphones");
+  assert.equal(matchesCanonicalEbayItem(ancListing, product, standard, "new"), false);
+  assert.equal(matchesCanonicalEbayItem(ancListing, product, anc, "new"), true);
 });
 
 test("spacing, casing, and one-character spelling aliases resolve to one product", () => {

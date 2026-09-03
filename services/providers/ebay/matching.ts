@@ -8,7 +8,8 @@ const accessoryTerms = [
   "housing", "back glass", "logic board", "motherboard", "sim tray", "flex cable", "phone skin", "wallet case",
   "holster", "bumper", "car mount", "replica", "mockup", "ear pads", "ear cushions", "replacement band",
   "replacement strap", "watch band", "protective shell", "controller only", "stand only", "dock only",
-  "power supply only", "keyboard cover", "sleeve only",
+  "power supply only", "keyboard cover", "sleeve only", "replacement earbud", "replacement", "earbud only",
+  "left side only", "right side only", "left earbud only", "right earbud only", "charging case only",
 ];
 const partsTerms = ["for parts", "parts only", "repair", "broken", "cracked", "not working", "as is"];
 const carrierPatterns = [/\bverizon\b/, /\b(?:at t|att)\b/, /\b(?:t mobile|tmobile)\b/, /\bsprint\b/, /\bcricket\b/, /\bboost mobile\b/, /\bstraight talk\b/, /\bus cellular\b/];
@@ -50,7 +51,20 @@ export function isAccessory(item: EbayItemSummary) {
 export function isPartsOnly(item: EbayItemSummary) { const text = ebayItemText(item); return partsTerms.some((term) => text.includes(term)); }
 
 function modelEvidence(product: Product) {
-  return [...new Set([product.name, `${product.brand} ${product.name}`, ...(product.aliases ?? [])].map(compact).filter(Boolean))].sort((a, b) => b.length - a.length);
+  const identities = product.listingIdentities?.length
+    ? product.listingIdentities
+    : [product.name, `${product.brand} ${product.name}`, ...(product.aliases ?? [])];
+  return [...new Set(identities.map(compact).filter(Boolean))].sort((a, b) => b.length - a.length);
+}
+
+export function matchesListingType(item: EbayItemSummary, product: Product) {
+  const title = itemTitle(item);
+  if (product.category === "Audio" && /\b(left|right)\s+(?:[lr]\s+)?(side|earbud)\b/.test(title)) return false;
+  if (product.category !== "Console") return true;
+  const gameOnly = /\b(game|software|cartridge|download code|digital code)\b/.test(title);
+  const hardwareEvidence = /\b(console|system|hardware|bundle|with console|includes console)\b/.test(title);
+  const incompleteHardware = /\b(tablet|console|system|unit)\s+only\b|\bwithout\s+(controllers?|joy cons?|dock)\b|\bno\s+(controllers?|joy cons?|dock)\b/.test(title);
+  return (!gameOnly || hardwareEvidence) && !incompleteHardware;
 }
 
 export function matchesModel(item: EbayItemSummary, product: Product) {
@@ -88,11 +102,13 @@ export function matchesStorage(item: EbayItemSummary, variant: ProductVariant) {
 function matchesSpecification(text: string, key: string, value: string) {
   if (key === "storage") return true;
   const normalized = compact(value);
-  if (!normalized || normalized === "standard") return true;
+  if (!normalized) return true;
   if (key === "ram") return new RegExp(`\\b${normalized.replace(" ", "\\s*")}\\b`).test(compact(text));
   if (key === "edition" && normalized === "disc") return /\b(disc|disk)\b/.test(compact(text)) && !/\bdigital\b/.test(compact(text));
   if (key === "edition" && normalized === "digital") return /\bdigital\b/.test(compact(text));
-  if (key === "model" && normalized === "anc") return /\b(anc|active noise cancellation)\b/.test(compact(text));
+  if (key === "model" && normalized === "standard") return !/\b(anc|active noise cancellation|active noise cancelling)\b/.test(compact(text));
+  if (normalized === "standard") return true;
+  if (key === "model" && normalized === "anc") return /\b(anc|active noise cancellation|active noise cancelling)\b/.test(compact(text));
   return containsEvidence(text, normalized);
 }
 export function matchesVariantAttributes(item: EbayItemSummary, variant: ProductVariant) {
@@ -121,11 +137,12 @@ export function matchesUnlockedStatus(item: EbayItemSummary, product: Product) {
 export function matchesVariant(item: EbayItemSummary, product: Product, variant: ProductVariant, condition: ConditionFilter) {
   if (!item.itemId || !item.title || !ebayItemText(item) || isAccessory(item) || isPartsOnly(item) || !matchesUnlockedStatus(item, product)) return false;
   if (matchesStructuredIdentifier(item, product, variant) === false) return false;
-  return matchesModel(item, product) && matchesVariantAttributes(item, variant) && matchesProductCategory(item, product) && isFixedPrice(item) && isActiveListing(item) && matchesCondition(item, condition);
+  return matchesModel(item, product) && matchesListingType(item, product) && matchesVariantAttributes(item, variant) && matchesProductCategory(item, product) && isFixedPrice(item) && isActiveListing(item) && matchesCondition(item, condition);
 }
 export function matchesCanonicalEbayItem(item: EbayItemSummary, product: Product, variant: ProductVariant, condition: ConditionFilter) { return matchesVariant(item, product, variant, condition); }
 export function buildEbayQuery(product: Product, variant: ProductVariant) {
   const specs = Object.entries(variant.specifications).filter(([key, value]) => key !== "storage" && value && value !== "Standard").map(([, value]) => value);
-  return [product.brand, product.name, variant.storage, ...specs, product.category === "Smartphone" ? "unlocked" : null].filter(Boolean).join(" ");
+  const listingIdentity = product.listingIdentities?.[0] ?? product.name;
+  return [product.brand, listingIdentity, variant.storage, ...specs, product.category === "Smartphone" ? "unlocked" : null].filter(Boolean).join(" ");
 }
 export function ebayCategoryId(product: Product) { return ({ Smartphone: "9355", Laptop: "175672", Tablet: "171485", Wearable: "178893", Audio: "112529", Console: "139971" } as Record<string, string>)[product.category]; }
