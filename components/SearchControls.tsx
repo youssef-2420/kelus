@@ -9,6 +9,7 @@ import { trackEvent } from "@/services/analytics";
 import type { ConditionFilter, Product, SearchCriteria } from "@/types/kelus";
 import { Icon } from "@/components/Icon";
 import { ProductInterestCapture } from "@/components/ProductInterestCapture";
+import { PREFILL_SEARCH_EVENT, type PrefillSearchDetail } from "@/lib/prefill-search";
 
 type Props = { compact?: boolean; minimal?: boolean; minimalAction?: boolean; deferProductSelection?: boolean; focusOnMount?: boolean; initialCriteria?: SearchCriteria; resultPath?: string; actionLabel?: string };
 const conditionLabels: Record<ConditionFilter, string> = { any: "Any", new: "New", used: "Used", refurbished: "Refurbished" };
@@ -83,6 +84,29 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   useEffect(() => {
     if (focusOnMount) inputRef.current?.focus();
   }, [focusOnMount]);
+
+  useEffect(() => {
+    function onPrefill(event: Event) {
+      const detail = (event as CustomEvent<PrefillSearchDetail>).detail;
+      if (!detail?.productSlug) return;
+      const product = getProductBySlug(detail.productSlug);
+      if (!product) return;
+      const productVariants = getVariantsForProduct(product.id);
+      setSelectedProduct(product);
+      setProductSelected(true);
+      setConfigOpen(true);
+      setVariantId(resolveSearchAttributeVariantId(product, productVariants, detail.variantId) ?? "");
+      setCondition(detail.condition);
+      setQuery(product.name);
+      setSearchIssue(null);
+      setSearchHint("");
+      setOpen(false);
+      setActiveIndex(-1);
+      window.setTimeout(() => inputRef.current?.focus(), 0);
+    }
+    window.addEventListener(PREFILL_SEARCH_EVENT, onPrefill);
+    return () => window.removeEventListener(PREFILL_SEARCH_EVENT, onPrefill);
+  }, []);
 
   const overlayActive = minimal && (open || (productSelected && deferProductSelection && configOpen));
 

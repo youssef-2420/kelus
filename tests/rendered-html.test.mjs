@@ -46,6 +46,8 @@ test("homepage keeps its explanation compact while How It Works preserves the fu
     readFile(new URL("../app/how-it-works/page.tsx", import.meta.url), "utf8"),
   ]);
   assert.match(home, /HomeLearnSection/);
+  assert.match(home, /HomeDeskPass/);
+  assert.match(home, /SearchSetupButton/);
   assert.match(home, /SearchControls/);
   assert.match(home, /ComparisonStage/);
   assert.doesNotMatch(home, /HomepageSocialProof|Prices rechecked|live comparisons/);
@@ -172,6 +174,7 @@ test("search is the single canonical product discovery experience", async () => 
   assert.doesNotMatch(page, /LiveShowcase/);
   assert.doesNotMatch(page, /redirect\(/);
   assert.match(search, /hero-search-category/);
+  assert.match(search, /PREFILL_SEARCH_EVENT/);
   assert.match(header, /href: "\/search", label: "Search"/);
   assert.match(header, /shell === "search"/);
   assert.match(page, /KelusHeader activeHref="\/search"/);
@@ -180,6 +183,8 @@ test("search is the single canonical product discovery experience", async () => 
   assert.match(page, /search-console-panel/);
   assert.match(home, /home-desk/);
   assert.match(home, /layout="desk"/);
+  assert.match(home, /HomeDeskPass/);
+  assert.match(home, /SearchSetupButton/);
   assert.match(styles, /\.desk-pick/);
   assert.match(styles, /\.search-console-panel/);
   assert.match(styles, /\.search-desk \.site-footer\{margin-top:auto\}/);
@@ -458,6 +463,8 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(skipLink, /Skip to main content/);
   assert.match(home, /ComparisonStage layout="desk"/);
   assert.match(home, /What are you buying\?/);
+  assert.match(home, /HomeDeskPass/);
+  assert.match(home, /SearchSetupButton/);
   assert.doesNotMatch(home, /desk-coverage-hint|OnboardingTour/);
   assert.match(home, /id="main-content"/);
   assert.doesNotMatch(home, /desk-kicker/);
@@ -471,6 +478,8 @@ test("kit-guided UX adds skip link, homepage desk, and comparison badges", async
   assert.match(home, /HomeLearnSection/);
   assert.match(styles, /\.skip-link/);
   assert.match(styles, /\.desk-rail/);
+  assert.match(styles, /\.desk-pass/);
+  assert.match(styles, /\.desk-search-setup/);
   assert.match(styles, /\.desk-pick-rows/);
   assert.match(styles, /\.desk-pick-reasons/);
   assert.doesNotMatch(styles, /\.desk-coverage-hint/);
