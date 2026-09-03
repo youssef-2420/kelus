@@ -146,3 +146,38 @@ export function buildEbayQuery(product: Product, variant: ProductVariant) {
   return [product.brand, listingIdentity, variant.storage, ...specs, product.category === "Smartphone" ? "unlocked" : null].filter(Boolean).join(" ");
 }
 export function ebayCategoryId(product: Product) { return ({ Smartphone: "9355", Laptop: "175672", Tablet: "171485", Wearable: "178893", Audio: "112529", Console: "139971" } as Record<string, string>)[product.category]; }
+
+export function ebayBrowseConditionValues(condition: ConditionFilter) {
+  if (condition === "new") return "NEW";
+  if (condition === "refurbished") return "CERTIFIED_REFURBISHED|EXCELLENT_REFURBISHED|VERY_GOOD_REFURBISHED|GOOD_REFURBISHED|SELLER_REFURBISHED|MANUFACTURER_REFURBISHED";
+  if (condition === "used") return "USED_EXCELLENT|USED_VERY_GOOD|USED_GOOD|USED_ACCEPTABLE";
+  return null;
+}
+
+export function ebayBrowseSearchFilter(condition: ConditionFilter) {
+  const parts = ["buyingOptions:{FIXED_PRICE}", "deliveryCountry:US"];
+  const conditions = ebayBrowseConditionValues(condition);
+  if (conditions) parts.push(`conditions:{${conditions}}`);
+  return parts.join(",");
+}
+
+export function estimatedEbayKnownTotal(item: EbayItemSummary) {
+  const price = Number(item.price?.value);
+  const shipping = (item.shippingOptions ?? []).map((option) => Number(option.shippingCost?.value)).filter(Number.isFinite);
+  return Number.isFinite(price) && shipping.length ? price + Math.min(...shipping) : Number.POSITIVE_INFINITY;
+}
+
+export function selectEbayDetailCandidates(items: EbayItemSummary[], limit: number) {
+  const missingShipping = items.filter((item) => !Number.isFinite(estimatedEbayKnownTotal(item)));
+  const withShipping = items
+    .filter((item) => Number.isFinite(estimatedEbayKnownTotal(item)))
+    .sort((a, b) => estimatedEbayKnownTotal(a) - estimatedEbayKnownTotal(b));
+  const selected: EbayItemSummary[] = [];
+  const seen = new Set<string>();
+  for (const item of [...missingShipping, ...withShipping]) {
+    if (!item.itemId || seen.has(item.itemId) || selected.length >= limit) continue;
+    seen.add(item.itemId);
+    selected.push(item);
+  }
+  return selected;
+}

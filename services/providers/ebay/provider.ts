@@ -2,21 +2,17 @@ import { getProductBySlug, getVariantById } from "../../../lib/demo-data.ts";
 import type { ProviderResult, SearchCriteria } from "@/types/kelus";
 import type { OfferProvider, ProviderRequestContext } from "@/services/providers/types";
 import type { EbayProviderConfig } from "@/services/providers/ebay/config";
-import type { EbayItemDetail, EbayItemSummary, EbaySearchResponse } from "@/services/providers/ebay/types";
+import type { EbayItemDetail, EbaySearchResponse } from "@/services/providers/ebay/types";
 import { clearEbayTokenCache, getEbayApplicationToken } from "./auth.ts";
-import { buildEbayQuery, ebayCategoryId } from "./matching.ts";
+import { buildEbayQuery, ebayBrowseSearchFilter, ebayCategoryId, selectEbayDetailCandidates } from "./matching.ts";
 import { normalizeEbayItem, observationForEbayOffer } from "./normalize.ts";
 import { applyEbayPriceAnomalyDetection, validateEbayCandidate } from "./trust-engine.ts";
 
 type Logger = Pick<Console, "info" | "warn" | "error">;
 type CacheEntry = { expiresAt: number; value: ProviderResult };
 const maxDetailRequests = 12;
-
-function estimatedKnownTotal(item: EbayItemSummary) {
-  const price = Number(item.price?.value);
-  const shipping = (item.shippingOptions ?? []).map((option) => Number(option.shippingCost?.value)).filter(Number.isFinite);
-  return Number.isFinite(price) && shipping.length ? price + Math.min(...shipping) : Number.POSITIVE_INFINITY;
-}
+const searchPageSize = 50;
+const minMatchedBeforeExtraPage = 3;
 
 export class EbayProviderError extends Error {
   readonly code: "invalid_search" | "authentication" | "rate_limited" | "timeout" | "network" | "malformed_response" | "provider_error";
@@ -71,42 +67,31 @@ export class EbayProvider implements OfferProvider {
       throw new EbayProviderError("We couldn't authenticate with eBay right now.", "authentication");
     }
 
-    let response = await this.search(token, buildEbayQuery(product, variant), ebayCategoryId(product), context?.signal);
-    if (response.status === 401) {
-      clearEbayTokenCache();
-      try {
-        token = await getEbayApplicationToken(this.config, this.fetcher, this.now());
-      } catch {
-        throw new EbayProviderError("We couldn't authenticate with eBay right now.", "authentication", 401);
-      }
-      response = await this.search(token, buildEbayQuery(product, variant), ebayCategoryId(product), context?.signal);
-    }
-    if (response.status === 429) {
-      this.logger.warn("[ebay-provider] search_failed", { status: response.status, code: "rate_limited" });
-      throw new EbayProviderError("eBay is temporarily rate limiting requests.", "rate_limited", 429);
-    }
-    if (!response.ok) {
-      this.logger.warn("[ebay-provider] search_failed", { status: response.status, code: "provider_error" });
-      throw new EbayProviderError("eBay offers are temporarily unavailable.", "provider_error", response.status);
-    }
-
-    let payload: EbaySearchResponse;
-    try {
-      payload = await response.json() as EbaySearchResponse;
-    } catch {
-      throw new EbayProviderError("eBay returned a malformed response.", "malformed_response", response.status);
-    }
-    if (payload.itemSummaries !== undefined && !Array.isArray(payload.itemSummaries)) {
-      throw new EbayProviderError("eBay returned a malformed response.", "malformed_response", response.status);
-    }
-
-    const rawItems = payload.itemSummaries ?? [];
-    const initiallyValidated = rawItems.flatMap((item) => {
+    const query = buildEbayQuery(product, variant);
+    const categoryId = ebayCategoryId(product);
+    const payload = await this.searchPayload(token, query, categoryId, criteria.condition, 0, context?.signal, true);
+    let rawItems = payload.itemSummaries ?? [];
+    let initiallyValidated = rawItems.flatMap((item) => {
       const validation = validateEbayCandidate(item, product, variant, criteria.condition);
       return validation.accepted ? [{ item, validation }] : [];
     });
+    if (initiallyValidated.length < minMatchedBeforeExtraPage && (payload.total ?? 0) > rawItems.length) {
+      const extra = await this.searchPayload(token, query, categoryId, criteria.condition, searchPageSize, context?.signal, false);
+      const seen = new Set(rawItems.map((item) => item.itemId).filter(Boolean));
+      const merged = [...rawItems];
+      for (const item of extra.itemSummaries ?? []) {
+        if (!item.itemId || seen.has(item.itemId)) continue;
+        seen.add(item.itemId);
+        merged.push(item);
+      }
+      rawItems = merged;
+      initiallyValidated = rawItems.flatMap((item) => {
+        const validation = validateEbayCandidate(item, product, variant, criteria.condition);
+        return validation.accepted ? [{ item, validation }] : [];
+      });
+    }
     const matchedItems = initiallyValidated.map(({ item }) => item);
-    const detailCandidates = [...matchedItems].sort((a, b) => estimatedKnownTotal(a) - estimatedKnownTotal(b)).slice(0, maxDetailRequests);
+    const detailCandidates = selectEbayDetailCandidates(matchedItems, maxDetailRequests);
     const detailResults = await Promise.allSettled(detailCandidates.map((item) => this.getItemDetail(token, item.itemId!, context?.signal)));
     const details = new Map(detailResults.flatMap((result, index) => result.status === "fulfilled" && result.value ? [[detailCandidates[index].itemId, result.value] as const] : []));
     const detailFailures = detailResults.filter((result) => result.status === "rejected").length;
@@ -180,13 +165,60 @@ export class EbayProvider implements OfferProvider {
     }
   }
 
-  private async search(token: string, query: string, categoryId?: string, externalSignal?: AbortSignal) {
+  private async searchPayload(
+    token: string,
+    query: string,
+    categoryId: string | undefined,
+    condition: SearchCriteria["condition"],
+    offset: number,
+    externalSignal: AbortSignal | undefined,
+    retryAuth: boolean,
+  ): Promise<EbaySearchResponse> {
+    let response = await this.search(token, query, categoryId, condition, offset, externalSignal);
+    if (response.status === 401 && retryAuth) {
+      clearEbayTokenCache();
+      try {
+        token = await getEbayApplicationToken(this.config, this.fetcher, this.now());
+      } catch {
+        throw new EbayProviderError("We couldn't authenticate with eBay right now.", "authentication", 401);
+      }
+      response = await this.search(token, query, categoryId, condition, offset, externalSignal);
+    }
+    if (response.status === 429) {
+      this.logger.warn("[ebay-provider] search_failed", { status: response.status, code: "rate_limited" });
+      throw new EbayProviderError("eBay is temporarily rate limiting requests.", "rate_limited", 429);
+    }
+    if (!response.ok) {
+      this.logger.warn("[ebay-provider] search_failed", { status: response.status, code: "provider_error" });
+      throw new EbayProviderError("eBay offers are temporarily unavailable.", "provider_error", response.status);
+    }
+    let payload: EbaySearchResponse;
+    try {
+      payload = await response.json() as EbaySearchResponse;
+    } catch {
+      throw new EbayProviderError("eBay returned a malformed response.", "malformed_response", response.status);
+    }
+    if (payload.itemSummaries !== undefined && !Array.isArray(payload.itemSummaries)) {
+      throw new EbayProviderError("eBay returned a malformed response.", "malformed_response", response.status);
+    }
+    return payload;
+  }
+
+  private async search(
+    token: string,
+    query: string,
+    categoryId: string | undefined,
+    condition: SearchCriteria["condition"],
+    offset: number,
+    externalSignal?: AbortSignal,
+  ) {
     const url = new URL(this.config.apiBaseUrl + "/buy/browse/v1/item_summary/search");
     url.searchParams.set("q", query);
     if (categoryId) url.searchParams.set("category_ids", categoryId);
-    url.searchParams.set("limit", "50");
+    url.searchParams.set("limit", String(searchPageSize));
+    if (offset > 0) url.searchParams.set("offset", String(offset));
     url.searchParams.set("fieldgroups", "EXTENDED");
-    url.searchParams.set("filter", "buyingOptions:{FIXED_PRICE},deliveryCountry:US");
+    url.searchParams.set("filter", ebayBrowseSearchFilter(condition));
     const timeoutSignal = AbortSignal.timeout(this.config.requestTimeoutMs);
     const signal = externalSignal ? AbortSignal.any([externalSignal, timeoutSignal]) : timeoutSignal;
     try {

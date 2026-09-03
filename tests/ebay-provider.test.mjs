@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { getProductBySlug, getVariantById } from "../lib/demo-data.ts";
 import { clearEbayTokenCache, getEbayApplicationToken } from "../services/providers/ebay/auth.ts";
-import { isAccessory, isActiveListing, isPartsOnly, matchesCanonicalEbayItem, matchesCondition, matchesModel, matchesStorage, normalizeEbayCondition } from "../services/providers/ebay/matching.ts";
+import { ebayBrowseSearchFilter, estimatedEbayKnownTotal, isAccessory, isActiveListing, isPartsOnly, matchesCanonicalEbayItem, matchesCondition, matchesModel, matchesStorage, normalizeEbayCondition, selectEbayDetailCandidates } from "../services/providers/ebay/matching.ts";
 import { normalizeEbayItem } from "../services/providers/ebay/normalize.ts";
 import { EbayProvider, EbayProviderError } from "../services/providers/ebay/provider.ts";
 
@@ -268,6 +268,47 @@ test("provider deduplicates repeated eBay item identities", async () => {
   const result = await provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "any", market: "us" });
   assert.equal(result.offers.length, 1);
   assert.equal(result.observations.length, 1);
+});
+
+test("browse search filters request the selected condition without loosening match rules", () => {
+  assert.equal(ebayBrowseSearchFilter("new"), "buyingOptions:{FIXED_PRICE},deliveryCountry:US,conditions:{NEW}");
+  assert.match(ebayBrowseSearchFilter("used"), /conditions:\{USED_EXCELLENT/);
+  assert.equal(ebayBrowseSearchFilter("any"), "buyingOptions:{FIXED_PRICE},deliveryCountry:US");
+});
+
+test("detail enrichment prefers listings that are missing shipping", () => {
+  const missing = { ...validItem, itemId: "v1|missing|0", shippingOptions: [] };
+  const cheap = { ...validItem, itemId: "v1|cheap|0", price: { value: "10.00", currency: "USD" } };
+  const selected = selectEbayDetailCandidates([cheap, missing], 1);
+  assert.equal(selected[0]?.itemId, "v1|missing|0");
+  assert.equal(Number.isFinite(estimatedEbayKnownTotal(missing)), false);
+});
+
+test("provider scopes eBay search to the requested condition and paginates when matches are thin", async () => {
+  clearEbayTokenCache();
+  const searchUrls = [];
+  const match = { ...validItem, condition: "New", conditionId: "1000", title: "Apple iPhone 17 Pro 256GB Unlocked" };
+  const accessory = { ...validItem, itemId: "v1|case|0", title: "Case for Apple iPhone 17 Pro 256GB", shortDescription: "Protective case", itemWebUrl: "https://www.ebay.com/itm/case" };
+  const cheaper = { ...validItem, itemId: "v1|cheap|0", condition: "New", conditionId: "1000", title: "Apple iPhone 17 Pro 256GB Unlocked", price: { value: "820.00", currency: "USD" }, itemWebUrl: "https://www.ebay.com/itm/cheap" };
+  const fetcher = async (input) => {
+    const url = String(input);
+    if (url.includes("/oauth2/token")) return new Response(JSON.stringify({ access_token: "token", expires_in: 7200 }), { status: 200 });
+    if (url.includes("/item_summary/search")) {
+      searchUrls.push(url);
+      const offset = new URL(url).searchParams.get("offset") ?? "0";
+      if (offset === "50") return new Response(JSON.stringify({ total: 80, itemSummaries: [cheaper] }), { status: 200 });
+      return new Response(JSON.stringify({ total: 80, itemSummaries: [match, accessory] }), { status: 200 });
+    }
+    if (url.includes("/buy/browse/v1/item/")) return new Response(JSON.stringify({ returnTerms: { returnsAccepted: true, returnPeriod: { value: 30, unit: "DAY" }, returnShippingCostPayer: "SELLER" } }), { status: 200 });
+    throw new Error("Unexpected URL: " + url);
+  };
+  const provider = new EbayProvider(config, fetcher, silentLogger, () => Date.parse("2026-08-24T12:00:00Z"));
+  const result = await provider.getOffers({ productSlug: "iphone-17-pro", variantId: "iphone-17-pro-256gb", condition: "new", market: "us" });
+  assert.match(decodeURIComponent(searchUrls[0]), /conditions:\{NEW\}/);
+  assert.ok(searchUrls.some((url) => url.includes("offset=50")));
+  assert.equal(result.matchedListingCount, 2);
+  assert.equal(result.offers.length, 2);
+  assert.equal(result.offers.some((offer) => offer.price === 820), true);
 });
 
 test("provider surfaces rate limiting as a typed failure", async () => {
