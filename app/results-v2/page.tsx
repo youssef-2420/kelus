@@ -317,6 +317,11 @@ function ProductUpdatingOverlay() {
 function ProductLoadingSkeleton() {
   return <section className="pi-pick pi-loading" aria-busy="true" aria-live="polite">
     <p className="pi-label">Our Pick</p>
+    <div className="pi-loading-verdict">
+      <span className="pi-loading-block pi-loading-block--sm"/>
+      <span className="pi-loading-block pi-loading-block--md"/>
+      <span className="pi-loading-block pi-loading-block--sm"/>
+    </div>
     <div className="pi-loading-body">
       <div className="pi-loading-price">
         <span className="pi-loading-block pi-loading-block--sm"/>
@@ -327,11 +332,6 @@ function ProductLoadingSkeleton() {
         <span className="pi-loading-block pi-loading-block--md"/>
         <span className="pi-loading-block pi-loading-block--sm"/>
       </div>
-    </div>
-    <div className="pi-loading-verdict">
-      <span className="pi-loading-block pi-loading-block--sm"/>
-      <span className="pi-loading-block pi-loading-block--md"/>
-      <span className="pi-loading-block pi-loading-block--sm"/>
     </div>
     <span className="pi-loading-block pi-loading-block--cta"/>
     <p className="pi-loading-status" role="status">Loading saved comparison…</p>
@@ -470,6 +470,15 @@ function kelusVerdict(decision: KelusDecision, lowest?: Offer | null) {
   return { title: "The lower price comes with a trade-off.", detail: decision.cheaperTradeoff ?? "Kelus found a cheaper comparable offer, but the available evidence favors Our Pick." };
 }
 
+function cheapestSkipNote(lowest: Offer, savings: number | null) {
+  if (lowest.trust?.suspiciousPrice) return "Skipped — unusually low price";
+  const confidence = lowest.trust?.confidence ? `${titleCase(lowest.trust.confidence.toLowerCase())} confidence` : "Confidence unavailable";
+  if (lowest.trust?.confidence === "LOW") {
+    return savings !== null && savings > 0 ? `Skipped — weaker evidence · ${moneyAmount(savings, lowest.currency)} less` : "Skipped — weaker validation evidence";
+  }
+  return savings !== null && savings > 0 ? `${confidence} · ${moneyAmount(savings, lowest.currency)} less` : confidence;
+}
+
 function DecisionReport({ decision, lowest, productName, criteria, result, context }: {
   decision: KelusDecision;
   lowest?: Offer | null;
@@ -490,9 +499,18 @@ function DecisionReport({ decision, lowest, productName, criteria, result, conte
   const preferTrack = timing.label === "CONSIDER WAITING" || timing.label === "HISTORY BUILDING";
   return <section className="pi-pick pi-pick-reveal" aria-labelledby="our-pick-heading">
     <p className="pi-label" id="our-pick-heading">Our Pick</p>
-    {verdict && <div className="pi-verdict pi-verdict-lead"><p className="pi-label">Kelus verdict</p><h2>{verdict.title}</h2><p>{verdict.detail}</p></div>}
+    {verdict && <div className="pi-verdict pi-verdict-lead">
+      <h2><span className="sr-only">Kelus verdict. </span>{verdict.title}</h2>
+      <p>{verdict.detail}</p>
+    </div>}
     <div className="pi-pick-top">
-      <div><span className="pi-total-label">Known total</span><strong className="pi-pick-price">{money(pick)}</strong>{savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}<ConfidenceBadge confidence={decision.confidence}/><Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link></div>
+      <div>
+        <span className="pi-total-label">Known total</span>
+        <strong className="pi-pick-price">{money(pick)}</strong>
+        {savings !== null && savings > 0 && lowest ? <p className="pi-savings-callout">{moneyAmount(savings, lowest.currency)} more than cheapest — stronger validation evidence</p> : null}
+        <ConfidenceBadge confidence={decision.confidence}/>
+        <Link className="pi-method-link" href="/methodology">How Kelus chose this <Icon name="arrow" size={13}/></Link>
+      </div>
       {pick && <div className="pi-pick-seller"><span className="pi-retailer-line"><span className="pi-retailer-logo"><EbayWordmark/></span>{sellerHref ? <a href={sellerHref} target="_blank" rel="noopener noreferrer">{sellerName}</a> : <b>{sellerName}</b>}</span><small>{offerMeta(pick)}</small></div>}
     </div>
     {pick && <div className={`pi-decision-strip pi-primary-cta pi-primary-cta--early${preferTrack ? " prefers-track" : ""}`}>
@@ -514,7 +532,7 @@ function DecisionReport({ decision, lowest, productName, criteria, result, conte
     {pick && <EvidenceReveal pick={pick} tradeoff={tradeoff}/>}
     {lowest && lowest.id !== pick?.id ? <><p className="pi-comparison-label">Our Pick vs Cheapest</p><div className="pi-comparison" aria-label="Our Pick compared with the cheapest offer">
       <span>Our Pick</span><strong>{money(pick)}</strong><small>{titleCase(decision.confidence.toLowerCase())} confidence</small>
-      <span>Cheapest</span><strong>{money(lowest ?? pick)}</strong><small>{lowest?.trust?.confidence ? `${titleCase(lowest.trust.confidence.toLowerCase())} confidence${savings !== null && savings > 0 ? ` · ${moneyAmount(savings, lowest.currency)} less` : ""}` : "Confidence unavailable"}</small>
+      <span>Cheapest</span><strong>{money(lowest)}</strong><small>{cheapestSkipNote(lowest, savings)}</small>
     </div></> : <p className="pi-no-cheaper">No cheaper comparable offer passed Kelus validation.</p>}
     <p className="pi-cta-disclosure pi-pick-foot-note">Kelus may earn a commission from eligible retailer links.</p>
   </section>;
@@ -538,9 +556,9 @@ function OtherOffer({ offer, productName, fallbackLabel, stale }: { offer: Offer
 }
 
 function ProductMobileCTA({ offer }: { offer: Offer }) {
-  return <div className="pi-mobile-cta" aria-label="Quick action">
+  return <div className="pi-mobile-cta" aria-label="Our Pick known total">
     <div className="pi-mobile-cta-copy">
-      <span>Our Pick</span>
+      <span>Known total</span>
       <strong>{money(offer)}</strong>
     </div>
     <OutboundRetailerCTA offer={offer} label="View offer" ourPick/>
