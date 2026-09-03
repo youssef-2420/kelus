@@ -5,7 +5,6 @@ import { VerifiedNotice } from "@/components/VerifiedNotice";
 import { SearchControls } from "@/components/SearchControls";
 import { ComparisonStage } from "@/components/ComparisonStage";
 import { HomeLearnSection } from "@/components/HomeLearnSection";
-import { OnboardingTour } from "@/components/OnboardingTour";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
@@ -36,8 +35,6 @@ export default function Home() {
           <div id="product-search" className="hero-search-wrap desk-search">
             <SearchControls minimal minimalAction deferProductSelection actionLabel="Search" />
           </div>
-          <p className="desk-coverage-hint">Phones, computers, tablets, audio, wearables, and consoles.</p>
-          <OnboardingTour />
         </div>
         <ComparisonStage layout="desk" />
       </section>

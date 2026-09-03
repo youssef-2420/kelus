@@ -63,7 +63,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
   const trimmedQuery = query.trim();
   const allMatches = useMemo(() => trimmedQuery ? searchProducts(query) : [], [query, trimmedQuery]);
   const matches = useMemo(() => allMatches.filter((product) => category === "All" || product.category === category), [allMatches, category]);
-  const featuredMatches = useMemo(() => deferProductSelection && !trimmedQuery ? getDiscoverableProducts(50).filter((product) => category === "All" || product.category === category).slice(0, 6) : [], [category, deferProductSelection, trimmedQuery]);
+  const featuredMatches = useMemo(() => deferProductSelection && !trimmedQuery ? getDiscoverableProducts(50).filter((product) => category === "All" || product.category === category).slice(0, 4) : [], [category, deferProductSelection, trimmedQuery]);
   const categoryFallback = Boolean(trimmedQuery && category !== "All" && matches.length === 0 && allMatches.length > 0);
   const suggestionProducts = trimmedQuery ? (matches.length ? matches : allMatches).slice(0, 6) : featuredMatches;
   const showSearchResults = Boolean(trimmedQuery);

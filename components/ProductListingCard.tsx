@@ -7,9 +7,10 @@ type Props = {
   preview: ProductListingPreview;
   compact?: boolean;
   layout?: "row" | "tile";
+  showStatus?: boolean;
 };
 
-export function ProductListingCard({ preview, compact = false, layout = "row" }: Props) {
+export function ProductListingCard({ preview, compact = false, layout = "row", showStatus = true }: Props) {
   const validated = preview.live && preview.fromPrice > 0;
   const statusLabel = validated
     ? `From ${new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(preview.fromPrice)}`
@@ -23,7 +24,7 @@ export function ProductListingCard({ preview, compact = false, layout = "row" }:
       <span className="product-listing-copy">
         <span className="product-listing-kicker">
           {preview.brand}
-          {validated ? <em className="product-listing-live">Validated</em> : <em className="product-listing-indexed">Indexed</em>}
+          {showStatus ? validated ? <em className="product-listing-live">Validated</em> : <em className="product-listing-indexed">Indexed</em> : null}
         </span>
         <b>{preview.productName}</b>
         <small>{preview.variantLabel} · {preview.condition === "new" ? "New" : preview.condition === "used" ? "Used" : preview.condition}</small>

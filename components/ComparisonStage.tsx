@@ -35,9 +35,9 @@ function formatSellerEvidence(row: ComparisonDemoRow) {
   return `${row.feedbackPercentage}% · ${score} feedback`;
 }
 
-function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
+function Row({ row, compact, quiet = false }: { row: ComparisonDemoRow; compact?: boolean; quiet?: boolean }) {
   const badge = row.role === "pick" ? "Our pick" : row.role === "cheapest" ? "Cheapest" : null;
-  const evidence = formatSellerEvidence(row);
+  const evidence = quiet ? null : formatSellerEvidence(row);
   return (
     <div className={`comparison-row is-${row.role}${compact ? " is-compact" : ""}`} role="listitem">
       <div className="comparison-row-main">
@@ -59,7 +59,7 @@ function Row({ row, compact }: { row: ComparisonDemoRow; compact?: boolean }) {
         )}
         {row.role === "pick" ? <em>Our Pick</em> : row.role === "cheapest" ? <em>Cheapest</em> : <em>Skipped</em>}
       </div>
-      {row.note ? <p className="comparison-row-note">{row.note}</p> : null}
+      {!quiet && row.note ? <p className="comparison-row-note">{row.note}</p> : null}
     </div>
   );
 }
@@ -90,6 +90,7 @@ function StageImage({ imageUrl, label, large = false }: { imageUrl?: string; lab
 }
 
 function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonDemo>> }) {
+  const conciseReason = demo.pickReasons.find((reason) => !/total including shipping/i.test(reason)) ?? demo.pickReasons[0];
   return (
     <aside className="desk-pick" aria-label="Example Kelus pick">
       <p className="desk-pick-status">{formatSnapshotLabel(demo.lastUpdated)}</p>
@@ -113,11 +114,11 @@ function DeskPick({ demo }: { demo: NonNullable<ReturnType<typeof getComparisonD
         </p>
       ) : null}
       <div className="desk-pick-rows comparison-stage-rows" role="list">
-        {demo.rows.map((row) => <Row key={row.id} row={row} compact />)}
+        {demo.rows.filter((row) => row.role === "cheapest" || row.role === "pick").map((row) => <Row key={row.id} row={row} compact quiet />)}
       </div>
-      {demo.pickReasons.length ? (
+      {conciseReason ? (
         <ul className="desk-pick-reasons">
-          {demo.pickReasons.slice(0, 2).map((reason) => <li key={reason}>{reason}</li>)}
+          <li>{conciseReason}</li>
         </ul>
       ) : null}
       <Link className="button button-secondary desk-pick-cta" href={demo.href}>
