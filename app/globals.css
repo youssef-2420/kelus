@@ -1056,7 +1056,7 @@ html { scroll-behavior:smooth; }
 .app-signin-toast svg{flex:none;color:#22705d}
 /* Scrim must stay BELOW suggestions/config inside the overlay wrap (both share that stacking context). */
 /* Desktop: invisible click-catcher (no muddy dark wash). Mobile keeps a light scrim for the sheet. */
-.search-overlay-scrim{position:fixed;inset:0;z-index:28;border:0;padding:0;background:transparent;cursor:pointer}
+.search-overlay-scrim{position:fixed;inset:0;z-index:1;border:0;padding:0;background:transparent;cursor:pointer}
 @media(max-width:620px){
   .search-overlay-scrim{background:rgba(16,34,30,.12);animation:fade-in .12s ease backwards}
 }
@@ -1234,7 +1234,7 @@ html.is-search-focus .home-desk .home-learn,html.is-search-focus .search-desk .s
   .search-console-panel{padding:16px;border-radius:14px}
   .search-browse-grid{grid-template-columns:1fr}
   .desk-search .rp-search-pill-wrap,.search-console-bar .rp-search-pill-wrap{z-index:30}
-  .desk-search .search-overlay-scrim,.search-console-bar .search-overlay-scrim{z-index:28}
+  .desk-search .search-overlay-scrim,.search-console-bar .search-overlay-scrim{z-index:1}
   .desk-search .rp-search-suggestions,.search-console-bar .rp-search-suggestions{position:fixed;left:16px;right:16px;bottom:max(16px,env(safe-area-inset-bottom));top:auto;max-height:min(54dvh,440px);z-index:32;overflow-y:auto;-webkit-overflow-scrolling:touch;transform-origin:bottom center;animation:hero-suggestions-sheet-in .16s ease-out backwards;padding-top:18px}
   .desk-search .rp-search-suggestions::before,.search-console-bar .rp-search-suggestions::before{content:"";display:block;width:36px;height:4px;margin:0 auto 14px;border-radius:999px;background:#d5e0dc}
   .desk-search .hero-config-panel,.search-console-bar .hero-config-panel{position:fixed;left:12px;right:12px;bottom:max(12px,env(safe-area-inset-bottom));top:auto;width:auto;max-height:min(78dvh,720px);z-index:35;overflow-y:auto;-webkit-overflow-scrolling:touch;transform-origin:bottom center;animation:hero-suggestions-sheet-in .16s ease-out backwards;border-radius:18px 18px 14px 14px}
