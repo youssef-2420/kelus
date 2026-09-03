@@ -1127,9 +1127,6 @@ html { scroll-behavior:smooth; }
 .desk-search .rp-search-pill-wrap{max-width:none}
 .desk-search .rp-search-pill{min-height:56px;border:1px solid #c9d8d2;background:#fffefa;box-shadow:0 14px 32px rgba(16,34,30,.08);transition:border-color .18s ease,box-shadow .22s cubic-bezier(.22,.61,.36,1)}
 .desk-search .rp-search-pill>input{caret-color:#17675f}
-.desk-search-setup{display:inline-flex;align-items:center;width:max-content;margin:10px 0 0;padding:8px 0;min-height:44px;border:0;background:transparent;color:#174d43;font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:color .18s ease}
-.desk-search-setup:hover{color:var(--green)}
-.desk-search-setup:focus-visible{outline:3px solid #9fcfc3;outline-offset:3px}
 .desk-pass{margin:28px 0 0;padding:22px 0 0;border-top:1px solid #e3ebe8;max-width:42ch}
 .desk-pass ol{margin:0;padding:0;list-style:none;display:grid;gap:16px;counter-reset:desk-pass}
 .desk-pass li{display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:12px;row-gap:4px;align-items:start;counter-increment:desk-pass}

@@ -66,7 +66,6 @@ function toShowcase(key: string, snapshot: OfferSearchResult): BundledShowcase |
     productSlug: parsed.productSlug,
     productName: product.name,
     brand: product.brand,
-    variantId: parsed.variantId,
     variantLabel: variant.label,
     condition: parsed.condition,
     href: canonicalProductPath(parsed),
@@ -192,8 +191,6 @@ export type ComparisonDemoRow = {
 export type ComparisonDemo = {
   brand: string;
   productName: string;
-  productSlug: string;
-  variantId: string;
   variantLabel: string;
   condition: ConditionFilter;
   lastUpdated?: string;
@@ -311,8 +308,6 @@ function buildComparisonDemo(key: string): ComparisonDemo | null {
   return {
     brand: showcase.brand,
     productName: showcase.productName,
-    productSlug: showcase.productSlug,
-    variantId: showcase.variantId,
     variantLabel: showcase.variantLabel,
     condition: showcase.condition,
     lastUpdated: showcase.lastUpdated,

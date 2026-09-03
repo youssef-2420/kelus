@@ -16,7 +16,6 @@ export type BundledShowcase = {
   productSlug: string;
   productName: string;
   brand: string;
-  variantId: string;
   variantLabel: string;
   condition: ConditionFilter;
   href: string;
