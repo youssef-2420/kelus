@@ -328,7 +328,7 @@ test("phase 3 UX adds comparison and product conversion motion", async () => {
   assert.match(comparison, /role="listitem"/);
   assert.match(results, /pi-pick-reveal/);
   assert.match(styles, /comparison-row-in/);
-  assert.match(styles, /pi-pick-in/);
+  assert.match(styles, /pi-price-in/);
   assert.match(styles, /pi-mobile-cta-in/);
 });
 
