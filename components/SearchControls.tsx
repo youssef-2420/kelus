@@ -28,17 +28,7 @@ function ProductSuggestion({ product, index, listboxId, active, chooseProduct, h
       aria-selected={active}
       id={`${listboxId}-${index}`}
       className={`${active ? "is-active " : ""}${highlightPrimary && index === 0 ? "is-primary" : ""}`.trim()}
-      onPointerDown={(event) => {
-        // Keep input focused. Parent listbox also preventDefaults pointerdown (suppresses mouse events),
-        // so selection must happen here for pointer users.
-        event.preventDefault();
-        chooseProduct(product);
-      }}
-      onClick={(event) => {
-        // Click fallback for environments that synthesize mouse/click without pointer events.
-        event.preventDefault();
-        chooseProduct(product);
-      }}
+      onClick={() => chooseProduct(product)}
     >
       <span className="suggestion-copy">
         {highlightPrimary && index === 0 && <em>Closest match</em>}
@@ -227,7 +217,7 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
     {suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}
     {showSearchResults && <button type="submit" className="suggestions-footer">Compare offers for “{query}” <Icon name="arrow" size={16}/></button>}
   </div>;
-  const issuePanel = searchIssue && <div className="unsupported-search" role="status"><strong>{searchIssue.kind === "ambiguous" ? `Choose a specific product for “${searchIssue.query}”.` : searchIssue.kind === "invalid" ? `That configuration is not available for “${searchIssue.query}”.` : `Kelus does not support “${searchIssue.query}” yet.`}</strong><span>Kelus currently compares selected phones, computers, tablets, audio products, wearables, and consoles.</span>{Boolean(searchIssue.candidates?.length) && <div><small>{searchIssue.kind === "ambiguous" ? "Did you mean:" : "Related supported products:"}</small>{searchIssue.candidates!.map((product) => <button type="button" key={product.slug} onPointerDown={(event) => { event.preventDefault(); chooseProduct(product); }} onClick={(event) => { event.preventDefault(); chooseProduct(product); }}>{product.name}</button>)}</div>}{searchIssue.kind === "unsupported" || searchIssue.kind === "ambiguous" ? <ProductInterestCapture query={searchIssue.query}/> : null}</div>;
+  const issuePanel = searchIssue && <div className="unsupported-search" role="status"><strong>{searchIssue.kind === "ambiguous" ? `Choose a specific product for “${searchIssue.query}”.` : searchIssue.kind === "invalid" ? `That configuration is not available for “${searchIssue.query}”.` : `Kelus does not support “${searchIssue.query}” yet.`}</strong><span>Kelus currently compares selected phones, computers, tablets, audio products, wearables, and consoles.</span>{Boolean(searchIssue.candidates?.length) && <div><small>{searchIssue.kind === "ambiguous" ? "Did you mean:" : "Related supported products:"}</small>{searchIssue.candidates!.map((product) => <button type="button" key={product.slug} onClick={() => chooseProduct(product)}>{product.name}</button>)}</div>}{searchIssue.kind === "unsupported" || searchIssue.kind === "ambiguous" ? <ProductInterestCapture query={searchIssue.query}/> : null}</div>;
   if (minimal) return <div className={`rp-search-pill-wrap${productSelected && deferProductSelection ? " has-selected-product" : ""}${overlayActive ? " is-overlay-open" : ""}`}>
     {overlayActive && <button type="button" className="search-overlay-scrim" aria-label="Close search overlay" onClick={closeOverlay}/>}
     <form className={`rp-search-pill${minimalAction ? " has-action" : ""}${searching ? " is-searching" : ""}`} onSubmit={(event) => { event.preventDefault(); submit(); }} role="search" aria-busy={searching}>
@@ -238,12 +228,12 @@ export function SearchControls({ compact = false, minimal = false, minimalAction
       {minimalAction && <button type="submit" className="nr-search-action" disabled={searching}>{searching ? "Finding…" : actionLabel}</button>}
       {!minimalAction && <button type="submit" className="sr-only" disabled={searching}>Search</button>}
     </form>
-    {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions" onPointerDown={(event) => event.preventDefault()}>{suggestionProducts.length ? <>
+    {open && <div className="suggestions rp-search-suggestions" id={listboxId} role="listbox" aria-label="Product suggestions">{suggestionProducts.length ? <>
       <p className="suggestions-heading">{categoryFallback ? `No ${category} match — showing all categories` : showSearchResults ? "Choose the exact product" : "Popular products"}</p>
       {(searchHint || categoryFallback) && <p className="suggestions-guidance" role="status">{searchHint || `Kelus found matches outside ${category}. Pick one below or change the filter.`}</p>}
       {suggestionProducts.map((product, index) => <ProductSuggestion key={product.slug} product={product} index={index} listboxId={listboxId} active={index === activeIndex} chooseProduct={chooseProduct} highlightPrimary={showSearchResults}/>)}
-      {showSearchResults && <button type="button" className="suggestions-footer" onPointerDown={(event) => { event.preventDefault(); void submit(); }} onClick={(event) => { event.preventDefault(); void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}
-    </> : trimmedQuery ? <div className="suggestion-empty" role="status"><strong>No supported match for “{query}”.</strong><span>Try a model name, or browse products Kelus can compare now.</span><button type="button" onPointerDown={(event) => event.preventDefault()} onClick={() => { setCategory("All"); setQuery(""); setSearchHint("Choose a supported product below."); setOpen(true); inputRef.current?.focus(); }}>Show supported products</button></div> : null}</div>}
+      {showSearchResults && <button type="button" className="suggestions-footer" onClick={() => { void submit(); }}>Choose a product to continue <Icon name="arrow" size={16}/></button>}
+    </> : trimmedQuery ? <div className="suggestion-empty" role="status"><strong>No supported match for “{query}”.</strong><span>Try a model name, or browse products Kelus can compare now.</span><button type="button" onClick={() => { setCategory("All"); setQuery(""); setSearchHint("Choose a supported product below."); setOpen(true); inputRef.current?.focus(); }}>Show supported products</button></div> : null}</div>}
     {productSelected && deferProductSelection && configOpen && <section className="hero-config-panel" aria-label={`Configure ${selectedProduct.name}`} onPointerDown={(event) => event.stopPropagation()}>
       <div className="hero-config-product"><span><small>Selected product</small><b>{selectedProduct.name}</b><em>{selectedProduct.brand} · {selectedProduct.category}</em></span><button type="button" className="hero-config-close" aria-label="Close configuration" onClick={closeOverlay}><Icon name="close" size={16}/></button></div>
       {attributeLabel && <fieldset><legend>{attributeLabel}</legend><div className="hero-config-options">{variants.map((variant) => <button type="button" key={variant.id} className={variant.id === variantId ? "is-selected" : ""} aria-pressed={variant.id === variantId} onClick={() => setVariantId(variant.id)}>{variant.label}</button>)}</div></fieldset>}
