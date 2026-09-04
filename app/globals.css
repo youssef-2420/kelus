@@ -1481,7 +1481,7 @@ button, input, textarea { font: inherit; }
   font-size: clamp(40px, 4.6vw, 64px);
   line-height: 1.04;
   letter-spacing: -0.038em;
-  max-width: 9.2ch;
+  max-width: 14ch;
   overflow-wrap: normal;
   word-break: normal;
   text-wrap: wrap;
@@ -1545,16 +1545,17 @@ button, input, textarea { font: inherit; }
   .kelus-hero.home-hero {
     width: min(1120px, calc(100% - 32px));
     min-height: auto;
-    padding: 16px 0 40px;
-    gap: 20px;
+    padding: 12px 0 24px;
+    gap: 8px;
     grid-template-columns: 1fr;
   }
   .kelus-hero-art {
-    min-height: 360px;
-    aspect-ratio: 11 / 7.6;
+    min-height: 300px;
+    aspect-ratio: 11 / 7.2;
   }
-  .kelus-hero .hero-student-wrap { height: 78%; }
-  .kelus-hero.home-hero .home-copy h1 { font-size: clamp(36px, 10vw, 48px); max-width: 10ch; }
+  .kelus-hero .hero-student-wrap { height: 88%; }
+  .kelus-hero.home-hero .home-copy h1 { font-size: clamp(36px, 10vw, 48px); max-width: 14ch; }
+  .kelus-hero.home-hero .home-lede { margin-bottom: 16px; }
   .home-bar .home-cta.compact { min-height: 44px; padding-inline: 16px; }
   .kelus-hero .hero-why {
     position: relative;

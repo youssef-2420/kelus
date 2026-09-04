@@ -78,13 +78,13 @@ export function KnowledgeNode({
       ) : null}
       {node.kind === "you" ? (
         <g className="hero-here">
-          <text className="hero-kicker-svg" textAnchor={layout === "mobile" ? "middle" : "start"} x={layout === "mobile" ? 0 : 14} y={layout === "mobile" ? 28 : -6}>
+          <text className="hero-kicker-svg" textAnchor="end" x={layout === "mobile" ? -12 : -14} y={layout === "mobile" ? -10 : -8}>
             You are here
           </text>
-          <text className="hero-here-num" textAnchor={layout === "mobile" ? "middle" : "start"} x={layout === "mobile" ? 0 : 14} y={layout === "mobile" ? 52 : 18}>
+          <text className="hero-here-num" textAnchor="end" x={layout === "mobile" ? -12 : -14} y={layout === "mobile" ? 14 : 16}>
             67%
           </text>
-          <text className="hero-kicker-svg" textAnchor={layout === "mobile" ? "middle" : "start"} x={layout === "mobile" ? 0 : 70} y={layout === "mobile" ? 68 : 16}>
+          <text className="hero-kicker-svg" textAnchor="end" x={layout === "mobile" ? -12 : -58} y={layout === "mobile" ? 30 : 16}>
             Ready
           </text>
         </g>
