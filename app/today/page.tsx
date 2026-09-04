@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { RouteVisual } from "@/components/hero/RouteVisual";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { useLearner } from "@/components/LearnerProvider";
@@ -13,9 +14,10 @@ import { allocateStudyRoute } from "@/lib/study-route";
 
 export default function TodayPage() {
   const router = useRouter();
-  const { state, start, reset, skipDay } = useLearner();
+  const { state, start, reset, skipDay, completeSetup } = useLearner();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const { snapshot, nowIso } = state;
+  if (!state.onboardingCompleted) return <FirstRunSetup onComplete={completeSetup} />;
   const course = snapshot.courses[0];
   if (!course) return <AppShell><p>No active course.</p></AppShell>;
   const exam = snapshot.exams.find((item) => item.courseId === course.id && item.isActive);

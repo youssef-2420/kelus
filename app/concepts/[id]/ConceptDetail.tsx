@@ -1,15 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { deriveStatus } from "@/domain/learner-model";
 import { daysAgoLabel, formatDay, percent, statusLabel } from "@/lib/format";
 
-export function ConceptDetail() {
-  const { id } = useParams<{ id: string }>();
+export function ConceptDetail({ conceptId }: { conceptId?: string }) {
+  const params = useParams<{ id?: string }>();
+  const search = useSearchParams();
+  const id = conceptId ?? search.get("id") ?? params.id;
   const { state } = useLearner();
+  if (!state.onboardingCompleted) {
+    return <AppShell><p className="kicker">Set up required</p><h1 className="today-title">Build your first route first.</h1><Link href="/today" className="cta">Set up your exam</Link></AppShell>;
+  }
   const concept = state.snapshot.concepts.find((item) => item.id === id);
   if (!concept) return <AppShell><p>Concept not found.</p></AppShell>;
   const status = deriveStatus(concept.mastery, concept.predictedRetention, concept.retrievalAttempts);
@@ -51,7 +56,7 @@ export function ConceptDetail() {
       <section className="section related">
         <h2>Related concepts</h2>
         {related.length ? related.map((item) => item && (
-          <Link key={item.other.id} href={`/concepts/${item.other.id}`}>{item.other.name} · {item.kind}</Link>
+          <Link key={item.other.id} href={`/concept/?id=${encodeURIComponent(item.other.id)}`}>{item.other.name} · {item.kind}</Link>
         )) : <p className="quiet">No linked concepts yet.</p>}
       </section>
     </AppShell>

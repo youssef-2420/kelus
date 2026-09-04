@@ -29,6 +29,10 @@ function SessionBody() {
     }
   }, []);
 
+  if (!state.onboardingCompleted) {
+    return <AppShell><p>No active session.</p><p><button type="button" className="cta" onClick={() => router.push("/today")}>Set up your exam</button></p></AppShell>;
+  }
+
   if (!session || !concept || !prompt) {
     return (
       <AppShell>
@@ -90,7 +94,7 @@ function SessionBody() {
           </>
         ) : (
           <div className="reveal">
-            <p className="quiet">Answer</p>
+            <p className="quiet">Check your answer</p>
             <p>{prompt.modelAnswer}</p>
             <p className="grade-prompt">How well did you know this?</p>
             <div className="rates">

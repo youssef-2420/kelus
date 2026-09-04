@@ -19,7 +19,7 @@ export function KnowledgeMap({ courseName, mastery, concepts, heading = "Knowled
             const status = deriveStatus(concept.mastery, concept.predictedRetention, concept.retrievalAttempts);
             return (
               <li key={concept.id}>
-                <Link href={`/concepts/${concept.id}`} className="row">
+                <Link href={`/concept/?id=${encodeURIComponent(concept.id)}`} className="row">
                   <span>
                     {concept.name}
                     <span className="bar" aria-hidden="true"><i style={{ width: percent(concept.mastery) }} /></span>

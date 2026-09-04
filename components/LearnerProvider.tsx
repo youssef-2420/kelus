@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, useSyncExternalStore, type ReactNode } from "react";
 import {
   finishSession,
+  completeOnboarding,
   getDemoSnapshot,
   getServerDemoSnapshot,
   recordRetrieval,
@@ -13,6 +14,7 @@ import {
   type DemoState,
 } from "@/lib/demo-store";
 import type { Concept, RetrievalOutcome } from "@/domain/types";
+import type { SetupInput } from "@/lib/setup";
 
 type Store = {
   state: DemoState;
@@ -27,6 +29,7 @@ type Store = {
   }) => void;
   reset: () => void;
   skipDay: () => void;
+  completeSetup: (input: SetupInput) => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -48,6 +51,9 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     skipDay() {
       if (process.env.NODE_ENV !== "development") return;
       shiftDemoDay(state, 1);
+    },
+    completeSetup(input) {
+      completeOnboarding(input);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;

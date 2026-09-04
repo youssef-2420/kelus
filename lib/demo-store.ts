@@ -4,6 +4,7 @@ import { advanceDemoClock, isDemoClockEnabled } from "../domain/demo-clock";
 import { recomputeConceptCache, withCachedState } from "../domain/learner-model";
 import { createRetrievalEvent, sessionSummary } from "../domain/session";
 import type { Concept, LearnerSnapshot, LearningEvent, RetrievalOutcome, StudySession } from "../domain/types";
+import { createLearnerSnapshot, type SetupInput } from "./setup";
 
 const STORAGE_KEY = "kelus-demo-snapshot-v1";
 const SERVER_NOW_MS = Date.parse("2026-09-03T12:00:00.000Z");
@@ -11,6 +12,7 @@ const SERVER_NOW_MS = Date.parse("2026-09-03T12:00:00.000Z");
 export type DemoState = {
   snapshot: LearnerSnapshot;
   nowIso: string;
+  onboardingCompleted: boolean;
 };
 
 function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapshot {
@@ -23,7 +25,7 @@ function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapsh
 export function initialDemoState(nowMs = Date.now()): DemoState {
   const snapshot = createDemoSnapshot(nowMs);
   const nowIso = new Date(nowMs).toISOString();
-  return { snapshot: refreshCaches(snapshot, nowIso), nowIso };
+  return { snapshot: refreshCaches(snapshot, nowIso), nowIso, onboardingCompleted: false };
 }
 
 const SERVER_SNAPSHOT = initialDemoState(SERVER_NOW_MS);
@@ -35,7 +37,11 @@ export function readStoredDemoState(): DemoState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as DemoState;
     if (!parsed?.snapshot?.concepts) return null;
-    return { ...parsed, snapshot: refreshCaches(parsed.snapshot, parsed.nowIso) };
+    return {
+      ...parsed,
+      onboardingCompleted: parsed.onboardingCompleted === true,
+      snapshot: refreshCaches(parsed.snapshot, parsed.nowIso),
+    };
   } catch {
     return null;
   }
@@ -77,6 +83,17 @@ export function getServerDemoSnapshot() {
 
 export function resetDemoState(nowMs = Date.now()) {
   const state = initialDemoState(nowMs);
+  persistDemoState(state);
+  return state;
+}
+
+export function completeOnboarding(input: SetupInput, nowMs = Date.now()) {
+  const nowIso = new Date(nowMs).toISOString();
+  const state: DemoState = {
+    snapshot: refreshCaches(createLearnerSnapshot(input, nowMs), nowIso),
+    nowIso,
+    onboardingCompleted: true,
+  };
   persistDemoState(state);
   return state;
 }
@@ -148,7 +165,7 @@ export function finishSession(state: DemoState, sessionId: string, before: Conce
 export function shiftDemoDay(state: DemoState, days = 1): DemoState {
   if (!isDemoClockEnabled()) return state;
   const nowIso = advanceDemoClock(state.nowIso, days);
-  const next = { snapshot: refreshCaches(state.snapshot, nowIso), nowIso };
+  const next = { ...state, snapshot: refreshCaches(state.snapshot, nowIso), nowIso };
   persistDemoState(next);
   return next;
 }
