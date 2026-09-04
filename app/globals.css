@@ -462,8 +462,8 @@ button, input, textarea { font: inherit; }
 }
 .hero-student img {
   display: block;
-  width: 150%;
-  height: 150%;
+  width: 128%;
+  height: 128%;
   max-width: none;
   object-fit: contain;
   object-position: left bottom;
