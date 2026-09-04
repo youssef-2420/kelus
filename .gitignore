@@ -4,7 +4,9 @@ out
 dist
 .wrangler
 .impeccable
-.cursor
+.cursor/*
+!.cursor/skills/
+!.cursor/skills/**
 tsconfig.tsbuildinfo
 *.log
 .env
