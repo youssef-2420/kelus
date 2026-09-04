@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LearningRouteEngine } from "@/components/hero/LearningRouteEngine";
+import { KnowledgeTerrain } from "@/components/visuals/KnowledgeTerrain";
 
 export default function Home() {
   return (
@@ -21,30 +21,30 @@ export default function Home() {
       <main id="main">
         <section className="home-hero">
           <div className="home-copy">
-            <p className="kicker">A daily exam plan</p>
-            <h1>Know what to study next.</h1>
+            <p className="kicker">Learning navigation</p>
+            <h1>Your learning has a route.</h1>
             <p className="home-lede">
-              Tell Kelus the exam, the topics, and the time you have. Get a short plan that changes as you learn.
+              Kelus maps the shortest path from what you know today to where you want to be—and reroutes as you learn.
             </p>
             <div className="home-actions">
               <Link href="/today" className="cta home-cta">
-                Make today’s plan
+                Build my route
                 <span className="arrow" aria-hidden="true">→</span>
               </Link>
-              <a href="#how" className="home-secondary">
-                See the thinking
+              <a href="#learning-terrain" className="home-secondary">
+                Watch how it works
               </a>
             </div>
             <p className="home-support"><span aria-hidden="true">•</span> No account. Your plan stays in this browser.</p>
           </div>
-          <LearningRouteEngine />
+          <KnowledgeTerrain />
         </section>
 
         <section className="home-argument" aria-labelledby="argument-title">
           <div className="home-argument-inner">
-            <p className="kicker">The problem is rarely effort.</p>
-            <h2 id="argument-title">It’s deciding where the next hour matters.</h2>
-            <p><span aria-hidden="true">↳</span> Kelus ranks the work. You do the learning.</p>
+            <p className="kicker">Many possible paths. One intelligent route.</p>
+            <h2 id="argument-title">Stop deciding what to study.</h2>
+            <p><span aria-hidden="true">↳</span> Kelus recalculates the highest-value learning action from your goal, knowledge, retention, and time.</p>
           </div>
         </section>
 
