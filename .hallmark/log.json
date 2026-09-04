@@ -14,5 +14,20 @@
     },
     "enrichment": "E5 hand-built SVG knowledge terrain",
     "vibe": "editorial, intelligent, calm, precise"
+  },
+  {
+    "date": "2026-09-04",
+    "scope": "project typography",
+    "brief": "Anthropic-inspired editorial typography without copying proprietary brand assets",
+    "macrostructure": "existing Kelus application structure",
+    "theme": "custom",
+    "theme_axes": {
+      "display": "Source Serif 4 variable optical serif",
+      "interface": "Instrument Sans variable grotesk",
+      "hierarchy": "literary headlines and prose with restrained utility labels",
+      "spacing": "slightly looser reading rhythm and tighter display tracking"
+    },
+    "enrichment": "typographic system only",
+    "vibe": "warm, cerebral, editorial, composed"
   }
 ]

@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
-import { Fraunces, DM_Sans } from "next/font/google";
+import { Instrument_Sans, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 
-const display = Fraunces({ subsets: ["latin"], variable: "--font-display" });
-const sans = DM_Sans({ subsets: ["latin"], variable: "--font-sans" });
+const display = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-display",
+  axes: ["opsz"],
+  display: "swap",
+});
+const sans = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kelus.me"),

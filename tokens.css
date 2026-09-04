@@ -14,4 +14,8 @@
   --dur-medium: 450ms;
   --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
+  --type-display-weight: 430;
+  --type-display-tracking: -0.045em;
+  --type-reading-tracking: -0.012em;
+  --type-label-tracking: 0.095em;
 }
