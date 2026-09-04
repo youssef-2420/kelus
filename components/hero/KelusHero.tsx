@@ -17,12 +17,6 @@ import { StudentIllustration } from "./StudentIllustration";
 import { NODE_MAP } from "./landscape-data";
 import { phaseAtLeast, useHeroTimeline } from "./useHeroTimeline";
 
-const copyEase = [0.22, 1, 0.36, 1] as const;
-const copyItem = {
-  hidden: { opacity: 0, y: 14 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.48, ease: copyEase } },
-};
-
 function subscribeMobile(onChange: () => void) {
   const media = window.matchMedia("(max-width: 860px)");
   media.addEventListener("change", onChange);
@@ -78,27 +72,17 @@ export function KelusHero() {
 
   return (
     <section ref={root} className="kelus-hero home-hero">
-      <motion.div
-        className="kelus-hero-copy home-copy"
-        initial={reduceMotion ? false : "hidden"}
-        animate="show"
-        variants={{
-          hidden: {},
-          show: { transition: { staggerChildren: 0.08, delayChildren: 0.04 } },
-        }}
-      >
-        <motion.p className="kicker" variants={copyItem}>
-          Learning navigation
-        </motion.p>
-        <motion.h1 variants={copyItem}>
+      <div className="kelus-hero-copy home-copy">
+        <p className="kicker">Learning navigation</p>
+        <h1>
           Know what
           <br />
           to learn next.
-        </motion.h1>
-        <motion.p className="home-lede" variants={copyItem}>
+        </h1>
+        <p className="home-lede">
           Kelus maps the best path from what you know today to where you want to be — and reroutes as you learn.
-        </motion.p>
-        <motion.div className="home-actions" variants={copyItem}>
+        </p>
+        <div className="home-actions">
           <Link href="/today" className="cta home-cta">
             Build my route
             <span className="arrow" aria-hidden="true">
@@ -108,8 +92,8 @@ export function KelusHero() {
           <a href="#how" className="home-secondary">
             See how it works
           </a>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       <motion.div className="kelus-hero-art" style={{ y: landscapeY }} onPointerMove={onMove} onPointerLeave={onLeave}>
         <div className="hero-grain" aria-hidden="true" />
