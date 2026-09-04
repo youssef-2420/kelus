@@ -2,6 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { allocateStudyRoute } from "../lib/study-route.ts";
 
+test("study route spends the full session budget even with seven stops", () => {
+  const crowded = Array.from({ length: 7 }, (_, index) => ({
+    concept: { id: `c${index}`, name: `C${index}`, importance: 0.5, mastery: 0.3 },
+    status: "weak",
+    priority: 1 + index / 10,
+  }));
+  const crowdedStops = allocateStudyRoute(crowded, 45);
+  assert.equal(crowdedStops.reduce((sum, stop) => sum + stop.minutes, 0), 45);
+});
+
 test("study route spends the full session budget", () => {
   const rows = [
     { concept: { id: "a", name: "A", importance: 0.9, mastery: 0.3 }, status: "weak", priority: 2 },
