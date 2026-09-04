@@ -1,4 +1,6 @@
 import { createDemoSnapshot } from "@/data/demo-seed";
+import { Suspense } from "react";
+import { AppShell } from "@/components/AppShell";
 import { ConceptDetail } from "./ConceptDetail";
 
 export function generateStaticParams() {
@@ -8,5 +10,5 @@ export function generateStaticParams() {
 }
 
 export default function ConceptPage() {
-  return <ConceptDetail />;
+  return <Suspense fallback={<AppShell><p>Opening concept…</p></AppShell>}><ConceptDetail /></Suspense>;
 }

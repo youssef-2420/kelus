@@ -4,6 +4,7 @@ out
 dist
 .wrangler
 .impeccable
+.seo-cache
 .cursor/*
 !.cursor/skills/
 !.cursor/skills/**

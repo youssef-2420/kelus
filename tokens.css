@@ -1,0 +1,21 @@
+:root {
+  --color-terrain: #0d4640;
+  --color-terrain-deep: #082e28;
+  --color-terrain-paper: #fffdf8;
+  --color-terrain-muted: #a9c9c1;
+  --color-terrain-line: #6b948d;
+  --color-terrain-mist: #c9eee1;
+  --color-signal: #ed6f2d;
+  --color-signal-soft: #ffe1cf;
+  --space-terrain: 1.5rem;
+  --radius-terrain: 1.25rem;
+  --rule-terrain: 1px;
+  --dur-quick: 180ms;
+  --dur-medium: 450ms;
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
+  --type-display-weight: 430;
+  --type-display-tracking: -0.045em;
+  --type-reading-tracking: -0.012em;
+  --type-label-tracking: 0.095em;
+}
