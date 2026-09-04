@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
+import { LeverageBoard } from "@/components/home/LeverageBoard";
 import { Reveal } from "@/components/motion";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -57,36 +58,7 @@ export function HomeAfterHero() {
                 <span>01</span>
                 <h3>Find the leverage</h3>
               </header>
-              <div className="signal-board" aria-label="Example topic priorities">
-                <div className="signal-head">
-                  <span>Study next</span>
-                  <span>Already strong</span>
-                </div>
-                <div className="signal-row is-priority">
-                  <b>01</b>
-                  <p>
-                    <strong>Elasticity</strong>
-                    <small>Low mastery · high exam value</small>
-                  </p>
-                  <i style={{ "--signal": "82%" } as React.CSSProperties} />
-                </div>
-                <div className="signal-row">
-                  <b>02</b>
-                  <p>
-                    <strong>Market structures</strong>
-                    <small>Medium mastery · high value</small>
-                  </p>
-                  <i style={{ "--signal": "62%" } as React.CSSProperties} />
-                </div>
-                <div className="signal-row">
-                  <b>03</b>
-                  <p>
-                    <strong>Supply &amp; demand</strong>
-                    <small>Strong · quick retrieval only</small>
-                  </p>
-                  <i style={{ "--signal": "28%" } as React.CSSProperties} />
-                </div>
-              </div>
+              <LeverageBoard />
             </Reveal>
           </li>
           <li>

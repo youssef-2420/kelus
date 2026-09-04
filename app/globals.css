@@ -1172,7 +1172,20 @@ button, input, textarea { font: inherit; }
 .signal-row p { display: grid; margin: 0; }
 .signal-row strong { font-size: 14px; }
 .signal-row small { color: var(--muted); }
-.signal-row i { height: 4px; border-radius: 10px; background: linear-gradient(to right, var(--accent) var(--signal), var(--line) var(--signal)); }
+.signal-row i {
+  height: 4px;
+  border-radius: 10px;
+  background: var(--line);
+  overflow: hidden;
+  display: block;
+}
+.signal-fill {
+  display: block;
+  height: 100%;
+  border-radius: 10px;
+  background: var(--accent);
+  transform-origin: left center;
+}
 .time-board > .engine-label { margin: 0; padding: 18px 20px 0; }
 .time-board > div { display: flex; align-items: baseline; justify-content: space-between; padding: 6px 20px 18px; border-bottom: 1px solid var(--line); }
 .time-board > div > strong { font-family: var(--font-display), serif; font-size: 28px; }
