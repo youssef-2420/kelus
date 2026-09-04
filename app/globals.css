@@ -595,24 +595,6 @@ button, input, textarea { font: inherit; }
   font-weight: 650;
   font-size: 12px;
 }
-.hero-status {
-  position: absolute;
-  top: 8px;
-  left: 0;
-  right: auto;
-  z-index: 3;
-  max-width: 22ch;
-  text-align: left;
-  min-height: 0;
-}
-.hero-status-label {
-  margin: 0;
-  color: var(--hero-green);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
 .hero-learning-flag {
   position: absolute;
   left: 42%;
@@ -673,7 +655,6 @@ button, input, textarea { font: inherit; }
     inset: auto 0 0 0;
     height: 58%;
   }
-  .hero-status { top: 0; left: 0; max-width: 18ch; }
   .hero-why { bottom: 8px; left: 0; right: auto; }
   .hero-learning-flag { left: 8px; top: 44%; }
   .route-engine { min-height: 0; padding: 22px 20px 24px; }

@@ -12,7 +12,6 @@ import {
 } from "motion/react";
 import { useRef, useState, useSyncExternalStore, type PointerEvent } from "react";
 import { KnowledgeLandscape } from "./KnowledgeLandscape";
-import { RerouteSequence } from "./RerouteSequence";
 import { StudentIllustration } from "./StudentIllustration";
 import { NODE_MAP } from "./landscape-data";
 import { phaseAtLeast, useHeroTimeline } from "./useHeroTimeline";
@@ -110,7 +109,15 @@ export function KelusHero() {
             reduceMotion={reduceMotion}
           />
         </motion.div>
-        <RerouteSequence phase={phase} />
+        <p className="sr-only" aria-live="polite">
+          {phase === "learn"
+            ? "Elasticity weaker than expected, 42 to 46 percent."
+            : phase === "rerouting"
+              ? "Rerouting."
+              : phase === "updated"
+                ? "Route now goes through Monetary Policy."
+                : ""}
+        </p>
         {hovered?.why ? (
           <aside className="hero-why" aria-live="polite">
             <p className="hero-why-name">{hovered.name}</p>
