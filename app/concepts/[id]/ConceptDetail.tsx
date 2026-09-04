@@ -26,7 +26,7 @@ export function ConceptDetail() {
   return (
     <AppShell action={<Link href="/today" className="text-btn">Today</Link>}>
       <p className={`mark-status is-${status}`}>{statusLabel(status)}</p>
-      <h1 style={{ fontSize: "clamp(32px, 6vw, 46px)", margin: "8px 0 28px" }}>{concept.name}</h1>
+      <h1 className="page-title">{concept.name}</h1>
       <section className="detail">
         <dl>
           <div><dt>Mastery</dt><dd>{percent(concept.mastery)}</dd></div>

@@ -1,5 +1,4 @@
 import {
-  MINUTES_PER_CONCEPT,
   PREREQ_BOOST,
   PRIORITY_FORGETTING,
   PRIORITY_NEWNESS,
@@ -102,7 +101,7 @@ export function planTodaySession(concepts: Concept[], exam: Exam, relationships:
     if (chosen.some((item) => item.concept.id === row.concept.id)) continue;
     chosen.push(row);
   }
-  const plannedMinutes = Math.min(SESSION_MINUTES, Math.round(chosen.length * MINUTES_PER_CONCEPT));
+  const plannedMinutes = SESSION_MINUTES;
   return {
     concepts: chosen,
     plannedMinutes,

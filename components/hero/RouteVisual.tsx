@@ -2,7 +2,6 @@
 
 import { motion } from "motion/react";
 import type { RouteStop } from "./route-data";
-import { ROUTE_TOTAL_MINUTES } from "./route-data";
 
 const spring = { type: "spring" as const, bounce: 0, duration: 0.55 };
 
@@ -11,13 +10,15 @@ type Props = {
   hoveredId: string | null;
   onHover: (id: string | null) => void;
   compact?: boolean;
+  totalMinutes?: number;
 };
 
-export function RouteVisual({ items, hoveredId, onHover, compact = false }: Props) {
+export function RouteVisual({ items, hoveredId, onHover, compact = false, totalMinutes }: Props) {
+  const total = totalMinutes ?? items.reduce((sum, item) => sum + item.minutes, 0) ?? 45;
   return (
     <ol className="route-visual" aria-label="Today’s recommended route">
       {items.map((item) => {
-        const weight = Math.max(18, Math.round((item.minutes / ROUTE_TOTAL_MINUTES) * 100));
+        const weight = Math.max(16, Math.round((item.minutes / Math.max(total, 1)) * 100));
         const active = hoveredId === item.id;
         return (
           <motion.li

@@ -69,6 +69,7 @@ test("scheduler mixes weak, fading, and new concepts and respects unmet prerequi
   const advanced = ranked.find((row) => row.concept.id === "advanced");
   assert.ok((prereq?.priority ?? 0) > (advanced?.priority ?? 0));
   const plan = planTodaySession(concepts, exam, relationships, now);
+  assert.equal(plan.plannedMinutes, 45);
   assert.ok(plan.concepts.length <= 7);
   assert.ok(plan.weak <= 3);
   assert.ok(plan.nextNew <= 2);

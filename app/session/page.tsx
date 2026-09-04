@@ -18,7 +18,7 @@ function SessionBody() {
   const conceptId = session?.plannedConceptIds[index];
   const concept = state.snapshot.concepts.find((item) => item.id === conceptId);
   const prompt = state.snapshot.prompts.find((item) => item.conceptId === conceptId);
-  const remaining = session ? session.plannedConceptIds.length - index : 0;
+  const total = session?.plannedConceptIds.length ?? 0;
 
   const before = useMemo(() => {
     if (typeof window === "undefined") return [];
@@ -30,7 +30,12 @@ function SessionBody() {
   }, []);
 
   if (!session || !concept || !prompt) {
-    return <AppShell><p>No active session. <button type="button" className="cta" onClick={() => router.push("/today")}>Back to today</button></p></AppShell>;
+    return (
+      <AppShell>
+        <p>No active session.</p>
+        <p><button type="button" className="cta" onClick={() => router.push("/today")}>Back to today</button></p>
+      </AppShell>
+    );
   }
 
   function finishOrNext() {
@@ -58,26 +63,40 @@ function SessionBody() {
     finishOrNext();
   }
 
+  const progress = ((index + (revealed ? 0.5 : 0)) / Math.max(total, 1)) * 100;
+
   return (
-    <AppShell action={<span className="quiet">{index + 1} / {session.plannedConceptIds.length}</span>}>
+    <AppShell action={<span className="quiet">{index + 1} of {total}</span>}>
+      <div
+        className="session-progress"
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round((index / Math.max(total, 1)) * 100)}
+        aria-label={`Question ${index + 1} of ${total}`}
+      >
+        <i style={{ width: `${progress}%` }} />
+      </div>
       <div className="prompt">
-        <p className="kicker quiet">{remaining} left · {concept.name}</p>
+        <p className="kicker quiet">{concept.name}</p>
         <h1>{prompt.promptText}</h1>
         {!revealed ? (
           <>
             <label htmlFor="answer" className="quiet">Your answer</label>
             <textarea id="answer" value={answer} onChange={(event) => setAnswer(event.target.value)} />
-            <p style={{ marginTop: 16 }}><button type="button" className="cta" onClick={() => setRevealed(true)}>Reveal answer</button></p>
+            <p className="session-actions">
+              <button type="button" className="cta" onClick={() => setRevealed(true)}>Reveal answer</button>
+            </p>
           </>
         ) : (
           <div className="reveal">
-            <p className="quiet">Model answer</p>
+            <p className="quiet">Answer</p>
             <p>{prompt.modelAnswer}</p>
-            <p style={{ marginTop: 18 }}>How well did you know this?</p>
+            <p className="grade-prompt">How well did you know this?</p>
             <div className="rates">
               <button type="button" className="cta" onClick={() => grade("success")}>Knew it</button>
-              <button type="button" className="cta ghost" onClick={() => grade("partial")}>Partly</button>
-              <button type="button" className="cta ghost" onClick={() => grade("failure")}>Didn’t know</button>
+              <button type="button" className="ghost" onClick={() => grade("partial")}>Mostly</button>
+              <button type="button" className="ghost" onClick={() => grade("failure")}>Didn’t know</button>
             </div>
           </div>
         )}
