@@ -30,7 +30,7 @@ export function StudentIllustration({ className }: Props) {
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           poster="/hero/student-poster.png"
           width={960}
           height={640}
