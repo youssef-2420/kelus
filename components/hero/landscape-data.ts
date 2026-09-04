@@ -27,8 +27,8 @@ export const NODES: KnowledgeNode[] = [
     id: "you",
     kind: "you",
     name: "You are here",
-    x: { desktop: 220, mobile: 180 },
-    y: { desktop: 628, mobile: 620 },
+    x: { desktop: 96, mobile: 72 },
+    y: { desktop: 600, mobile: 580 },
     mastery: 67,
     signal: null,
   },
@@ -145,8 +145,8 @@ export const QUIET_PATHS: QuietPath[] = [
     from: "you",
     to: "supply",
     d: {
-      desktop: "M 220 628 C 260 590, 320 540, 368 492",
-      mobile: "M 180 620 C 180 580, 180 540, 180 500",
+      desktop: "M 96 600 C 200 560, 300 520, 368 492",
+      mobile: "M 72 580 C 120 540, 160 520, 180 500",
     },
   },
   {
@@ -163,8 +163,8 @@ export const QUIET_PATHS: QuietPath[] = [
     from: "you",
     to: "consumer",
     d: {
-      desktop: "M 220 628 C 140 520, 90 380, 92 268",
-      mobile: "M 180 620 C 110 520, 70 420, 56 360",
+      desktop: "M 96 600 C 80 480, 88 360, 92 268",
+      mobile: "M 72 580 C 70 480, 62 400, 56 360",
     },
   },
   {
@@ -216,16 +216,16 @@ export const QUIET_PATHS: QuietPath[] = [
 
 export const OLD_ROUTE: Record<Layout, string> = {
   desktop:
-    "M 220 628 C 270 590, 320 540, 368 492 C 410 448, 460 398, 508 358 C 560 310, 620 250, 668 208 C 730 160, 800 110, 848 72",
+    "M 96 600 C 220 560, 300 520, 368 492 C 410 448, 460 398, 508 358 C 560 310, 620 250, 668 208 C 730 160, 800 110, 848 72",
   mobile:
-    "M 180 620 C 180 560, 180 490, 180 430 C 180 360, 180 300, 180 250 C 180 190, 180 130, 180 88",
+    "M 72 580 C 120 520, 160 470, 180 430 C 180 360, 180 300, 180 250 C 180 190, 180 130, 180 88",
 };
 
 export const NEW_ROUTE: Record<Layout, string> = {
   desktop:
-    "M 220 628 C 320 540, 430 430, 508 358 C 600 348, 720 400, 792 428 C 820 340, 740 250, 668 208 C 730 160, 800 110, 848 72",
+    "M 96 600 C 280 500, 420 410, 508 358 C 600 348, 720 400, 792 428 C 820 340, 740 250, 668 208 C 730 160, 800 110, 848 72",
   mobile:
-    "M 180 620 C 180 540, 180 470, 180 430 C 220 400, 270 360, 292 340 C 250 300, 200 270, 180 250 C 180 190, 180 130, 180 88",
+    "M 72 580 C 120 500, 160 450, 180 430 C 220 400, 270 360, 292 340 C 250 300, 200 270, 180 250 C 180 190, 180 130, 180 88",
 };
 
 export const OLD_STOPS = ["you", "supply", "elasticity", "markets", "target"] as const;

@@ -75,9 +75,9 @@ export function KelusHero() {
       <div className="kelus-hero-copy home-copy">
         <p className="kicker">Learning navigation</p>
         <h1>
-          Know what
+          Know what to
           <br />
-          to learn next.
+          learn next.
         </h1>
         <p className="home-lede">
           Kelus maps the best path from what you know today to where you want to be — and reroutes as you learn.
