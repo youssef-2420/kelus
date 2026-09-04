@@ -31,7 +31,7 @@ export function StudentIllustration({ className }: Props) {
           loop
           playsInline
           preload="auto"
-          poster="/hero/student-poster.png"
+          poster="/hero/student-poster.jpg"
           width={960}
           height={640}
           onError={() => setVideoFailed(true)}

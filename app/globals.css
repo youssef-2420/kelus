@@ -471,11 +471,9 @@ button, input, textarea { font: inherit; }
   object-position: left bottom;
   background: transparent;
 }
-.hero-student img {
-  mix-blend-mode: multiply;
-}
+.hero-student img,
 .hero-student video {
-  mix-blend-mode: normal;
+  mix-blend-mode: multiply;
 }
 .hero-landscape-wrap {
   position: absolute;
