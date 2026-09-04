@@ -5,7 +5,7 @@ export function AppShell({ children, action }: { children: ReactNode; action?: R
   return (
     <div className="shell">
       <header className="topbar">
-        <Link href="/today" className="mark">Kelus</Link>
+        <Link href="/" className="mark">Kelus</Link>
         <nav className="nav" aria-label="Primary">
           <Link href="/today">Today</Link>
           <Link href="/map">Knowledge map</Link>
