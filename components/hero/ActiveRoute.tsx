@@ -23,7 +23,7 @@ export function ActiveRoute({ d, layout, variant = "old" }: Props) {
         pathLength={1}
         fill="none"
         stroke="var(--hero-green)"
-        strokeWidth={layout === "mobile" ? 2.6 : 2.5}
+        strokeWidth={layout === "mobile" ? 3.1 : 3.4}
         strokeLinecap="round"
         strokeLinejoin="round"
         className={`hero-active-path hero-active-path-${variant}`}
@@ -31,13 +31,13 @@ export function ActiveRoute({ d, layout, variant = "old" }: Props) {
       <circle
         cx={start.x[layout]}
         cy={start.y[layout]}
-        r={4.5}
+        r={6}
         fill="var(--hero-green)"
       />
       <circle
         cx={end.x[layout]}
         cy={end.y[layout]}
-        r={5.5}
+        r={7}
         fill="var(--hero-paper)"
         stroke="var(--hero-green)"
         strokeWidth={2}

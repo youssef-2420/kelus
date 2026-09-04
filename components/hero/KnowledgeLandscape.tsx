@@ -6,7 +6,9 @@ import { KnowledgeNode } from "./KnowledgeNode";
 import { RouteSignal } from "./RouteSignal";
 import {
   NEW_ROUTE,
+  NEW_STOPS,
   OLD_ROUTE,
+  OLD_STOPS,
   VIEW,
   quietPathsFor,
   visibleNodes,
@@ -37,6 +39,8 @@ export function KnowledgeLandscape({
   const showNew = phase === "updated";
   const fadingOld = phase === "rerouting";
   const routeD = showNew ? NEW_ROUTE[layout] : OLD_ROUTE[layout];
+  const routeStops = showNew ? NEW_STOPS : OLD_STOPS;
+  const onRoute = new Set<string>(routeStops);
   const showSignal = !reduceMotion && phaseAtLeast(phase, "route");
   const showRouteLabel = reduceMotion || phaseAtLeast(phase, "route");
 
@@ -49,17 +53,17 @@ export function KnowledgeLandscape({
     >
       <g className="hero-layer-structure" aria-hidden="true">
         <path
-          d="M 80 760 C 220 620, 420 500, 640 280 C 760 160, 860 80, 960 40"
+          d="M 60 680 C 280 520, 520 320, 780 140 C 900 70, 1000 40, 1080 24"
           fill="none"
           stroke="currentColor"
         />
         <path
-          d="M 40 420 C 200 360, 480 340, 820 220"
+          d="M 40 360 C 240 300, 560 280, 980 160"
           fill="none"
           stroke="currentColor"
         />
         <path
-          d="M 180 120 C 340 260, 520 520, 620 780"
+          d="M 200 80 C 340 220, 500 460, 580 700"
           fill="none"
           stroke="currentColor"
         />
@@ -89,7 +93,7 @@ export function KnowledgeLandscape({
       {showSignal ? <RouteSignal key={routeD} d={routeD} /> : null}
 
       {showRouteLabel ? (
-        <text className="hero-route-kicker" x={layout === "mobile" ? 168 : 470} y={layout === "mobile" ? 630 : 598}>
+        <text className="hero-route-kicker" x={layout === "mobile" ? 180 : 430} y={layout === "mobile" ? 560 : 560}>
           Your route
         </text>
       ) : null}
@@ -104,6 +108,7 @@ export function KnowledgeLandscape({
           phase={phase}
           hovered={hoveredId === node.id}
           onHover={onHover}
+          onRoute={onRoute.has(node.id)}
           elasticityMastery={elasticityMastery}
         />
       ))}

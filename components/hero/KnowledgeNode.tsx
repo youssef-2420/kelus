@@ -11,6 +11,7 @@ type Props = {
   phase: HeroPhase;
   hovered: boolean;
   onHover: (id: string | null) => void;
+  onRoute: boolean;
   elasticityMastery: number;
 };
 
@@ -32,11 +33,12 @@ export function KnowledgeNode({
   phase,
   hovered,
   onHover,
+  onRoute,
   elasticityMastery,
 }: Props) {
   const x = node.x[layout];
   const y = node.y[layout];
-  const r = radius(node);
+  const r = radius(node) + (onRoute && node.kind === "concept" ? 1.2 : 0);
   const mastery = node.id === "elasticity" ? elasticityMastery : node.mastery;
   const showLabel = node.kind !== "you" && node.kind !== "target";
   const showSignal = signalVisible(phase, node.signal);
@@ -46,7 +48,7 @@ export function KnowledgeNode({
 
   return (
     <g
-      className={`hero-node hero-node-${node.kind}${hovered ? " is-hovered" : ""}${node.hiddenOnMobile ? " is-quiet" : ""}`}
+      className={`hero-node hero-node-${node.kind}${hovered ? " is-hovered" : ""}${node.hiddenOnMobile ? " is-quiet" : ""}${onRoute ? " is-route" : ""}`}
       transform={`translate(${x} ${y})`}
       tabIndex={node.kind === "concept" ? 0 : undefined}
       onPointerEnter={() => node.kind === "concept" && onHover(node.id)}
@@ -59,15 +61,20 @@ export function KnowledgeNode({
       ) : null}
       <circle
         r={r}
-        fill={node.kind === "you" ? "var(--hero-ink)" : "var(--hero-paper)"}
-        stroke={node.kind === "you" ? "var(--hero-ink)" : hovered ? "var(--hero-green)" : "var(--hero-ink)"}
-        strokeWidth={hovered ? 1.75 : 1.15}
+        fill={node.kind === "you" ? "var(--hero-ink)" : onRoute && node.kind === "concept" ? "var(--hero-paper)" : "var(--hero-paper)"}
+        stroke={node.kind === "you" ? "var(--hero-ink)" : onRoute || hovered ? "var(--hero-green)" : "var(--hero-ink)"}
+        strokeWidth={onRoute || hovered ? 2 : 1.15}
         strokeOpacity={node.hiddenOnMobile ? 0.45 : 0.85}
       />
       {showLabel ? (
-        <text className="hero-node-name" textAnchor={anchor} x={labelX} y={layout === "mobile" ? -16 : -14}>
-          {node.name}
-        </text>
+        <>
+          <text className="hero-node-name" textAnchor={anchor} x={labelX} y={layout === "mobile" ? -18 : -16}>
+            {node.name}
+          </text>
+          <text className="hero-node-mastery" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 22 : 20}>
+            {mastery}%
+          </text>
+        </>
       ) : null}
       {node.kind === "you" ? (
         <g className="hero-here">
@@ -83,12 +90,12 @@ export function KnowledgeNode({
         </g>
       ) : null}
       {showSignal && node.signal ? (
-        <text className="hero-signal" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 20 : 18}>
-          {mastery}% · {SIGNAL_COPY[node.signal]}
+        <text className="hero-signal" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 38 : 36}>
+          {SIGNAL_COPY[node.signal]}
         </text>
       ) : null}
       {showLearn ? (
-        <text className="hero-learn" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 36 : 34}>
+        <text className="hero-learn" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 54 : 52}>
           Weaker than expected  42% → 46%
         </text>
       ) : null}
