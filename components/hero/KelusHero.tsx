@@ -20,8 +20,8 @@ export function KelusHero() {
   const py = useMotionValue(0);
   const sx = useSpring(px, { stiffness: 90, damping: 22, bounce: 0 });
   const sy = useSpring(py, { stiffness: 90, damping: 22, bounce: 0 });
-  const studentX = useTransform(sx, (value) => value * 10);
-  const studentY = useTransform(sy, (value) => value * 8);
+  const studentX = useTransform(sx, (value) => value * 4);
+  const studentY = useTransform(sy, (value) => value * 3);
   const studentShift = useMotionTemplate`translate(${studentX}px, ${studentY}px)`;
 
   const onMove = (event: PointerEvent<HTMLElement>) => {
