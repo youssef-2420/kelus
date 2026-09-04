@@ -466,13 +466,14 @@ button, input, textarea { font: inherit; }
   mix-blend-mode: multiply;
 }
 .hero-landscape-wrap {
-  position: relative;
+  position: absolute;
+  inset: 0;
   z-index: 2;
 }
 .hero-landscape {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   overflow: visible;
   font-family: var(--font-sans), "DM Sans", sans-serif;
   pointer-events: none;
@@ -1492,8 +1493,10 @@ button, input, textarea { font: inherit; }
 }
 .kelus-hero.home-hero .home-cta { min-height: 48px; }
 .kelus-hero-art {
+  position: relative;
   min-height: min(64vh, 680px);
   aspect-ratio: 11 / 7.4;
+  overflow: visible;
 }
 .kelus-hero .hero-student-wrap {
   inset: auto 0 0 0;
@@ -1547,10 +1550,10 @@ button, input, textarea { font: inherit; }
     grid-template-columns: 1fr;
   }
   .kelus-hero-art {
-    min-height: 480px;
-    aspect-ratio: 11 / 8.2;
+    min-height: 360px;
+    aspect-ratio: 11 / 7.6;
   }
-  .kelus-hero .hero-student-wrap { height: 64%; }
+  .kelus-hero .hero-student-wrap { height: 78%; }
   .kelus-hero.home-hero .home-copy h1 { font-size: clamp(36px, 10vw, 48px); max-width: 10ch; }
   .home-bar .home-cta.compact { min-height: 44px; padding-inline: 16px; }
   .kelus-hero .hero-why {
