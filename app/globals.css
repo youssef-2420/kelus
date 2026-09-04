@@ -516,6 +516,20 @@ button, input, textarea { font: inherit; }
   .setup-illustration { width: 100%; justify-self: stretch; }
 }
 
+@media (min-width: 901px) and (max-height: 850px) {
+  .setup-page { padding-top: 14px; padding-bottom: 18px; }
+  .setup-header { min-height: 42px; }
+  .setup-layout { min-height: calc(100dvh - 74px); padding-block: 8px; }
+  .setup-copy h1 { margin-block: 8px 14px; font-size: clamp(50px, 5.1vw, 66px); }
+  .setup-lede { margin-bottom: 18px; font-size: 16px; }
+  .setup-form { padding: 18px 20px; }
+  .setup-fields { gap: 10px 16px; }
+  .setup-fields input { min-height: 46px; padding-block: 10px; }
+  .setup-error { margin-top: 6px; }
+  .setup-actions { min-height: 48px; margin-top: 6px; }
+  .setup-illustration img { max-height: calc(100dvh - 88px); }
+}
+
 @media (max-width: 560px) {
   .setup-page { width: calc(100% - 24px); padding-top: 12px; }
   .setup-layout { gap: 36px; padding: 36px 0 28px; }
