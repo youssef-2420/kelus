@@ -469,11 +469,13 @@ button, input, textarea { font: inherit; }
   max-width: none;
   object-fit: contain;
   object-position: left bottom;
-  mix-blend-mode: multiply;
   background: transparent;
 }
-.hero-student video {
+.hero-student img {
   mix-blend-mode: multiply;
+}
+.hero-student video {
+  mix-blend-mode: normal;
 }
 .hero-landscape-wrap {
   position: absolute;
