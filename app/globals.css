@@ -1527,32 +1527,39 @@ button, input, textarea { font: inherit; }
 
 .kelus-hero.home-hero.is-student {
   min-height: calc(100svh - 96px);
-  align-items: end;
-  padding-bottom: 32px;
-  grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
+  align-items: center;
+  padding: 40px 0 72px;
+  gap: 40px 88px;
+  grid-template-columns: minmax(0, 0.46fr) minmax(280px, 0.54fr);
+}
+.kelus-hero.is-student .home-copy {
+  max-width: 400px;
+  padding: 8px 12px 8px 0;
 }
 .kelus-hero.is-student .kelus-hero-art {
-  min-height: min(78vh, 760px);
+  min-height: min(58vh, 560px);
   aspect-ratio: auto;
+  overflow: hidden;
 }
 .kelus-hero.is-student .hero-student-wrap {
-  inset: 0;
-  height: 100%;
+  inset: 12% 4% 0 8%;
+  height: auto;
 }
 .kelus-hero.is-student .hero-student img {
-  width: 108%;
-  height: 108%;
+  width: 100%;
+  height: 100%;
+  object-position: center bottom;
 }
 
 .home-route-page {
   width: min(1180px, calc(100% - 40px));
   min-height: calc(100svh - 48px);
   display: grid;
-  grid-template-columns: minmax(220px, 0.34fr) minmax(0, 0.66fr);
-  gap: 32px 48px;
+  grid-template-columns: minmax(220px, 0.32fr) minmax(0, 0.68fr);
+  gap: 40px 72px;
   align-items: center;
   margin: 0 auto;
-  padding: 48px 0 72px;
+  padding: 64px 0 88px;
 }
 .home-route-copy h2 {
   margin: 12px 0 16px;
@@ -1614,23 +1621,31 @@ button, input, textarea { font: inherit; }
 @media (max-width: 900px) {
   .kelus-hero.home-hero.is-student {
     min-height: auto;
-    padding: 12px 0 8px;
+    padding: 20px 0 36px;
+    gap: 36px;
+  }
+  .kelus-hero.is-student .home-copy {
+    max-width: none;
+    padding: 0;
   }
   .kelus-hero.is-student .kelus-hero-art {
-    min-height: 420px;
+    min-height: 340px;
     aspect-ratio: auto;
+  }
+  .kelus-hero.is-student .hero-student-wrap {
+    inset: 0;
   }
   .home-route-page {
     width: min(1120px, calc(100% - 32px));
     grid-template-columns: 1fr;
     min-height: auto;
-    padding: 28px 0 56px;
-    gap: 20px;
+    padding: 40px 0 64px;
+    gap: 28px;
   }
-  .home-route-art { min-height: 480px; }
+  .home-route-art { min-height: 440px; }
 }
 @media (max-width: 640px) {
-  .kelus-hero.is-student .kelus-hero-art { min-height: 380px; }
+  .kelus-hero.is-student .kelus-hero-art { min-height: 300px; }
   .home-route-page { width: calc(100% - 28px); }
 }
 
