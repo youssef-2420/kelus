@@ -93,7 +93,7 @@ export function KnowledgeLandscape({
       {showSignal ? <RouteSignal key={routeD} d={routeD} /> : null}
 
       {showRouteLabel ? (
-        <text className="hero-route-kicker" x={layout === "mobile" ? 180 : 430} y={layout === "mobile" ? 560 : 560}>
+        <text className="hero-route-kicker" x={layout === "mobile" ? 180 : 500} y={layout === "mobile" ? 470 : 318}>
           Your route
         </text>
       ) : null}

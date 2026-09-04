@@ -17,6 +17,12 @@ import { StudentIllustration } from "./StudentIllustration";
 import { NODE_MAP } from "./landscape-data";
 import { phaseAtLeast, useHeroTimeline } from "./useHeroTimeline";
 
+const copyEase = [0.22, 1, 0.36, 1] as const;
+const copyItem = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.48, ease: copyEase } },
+};
+
 function subscribeMobile(onChange: () => void) {
   const media = window.matchMedia("(max-width: 860px)");
   media.addEventListener("change", onChange);
@@ -36,7 +42,7 @@ export function KelusHero() {
   const mobile = useMobileLayout();
   const layout = mobile ? "mobile" : "desktop";
   const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const phase = useHeroTimeline(reduceMotion);
+  const phase = useHeroTimeline(reduceMotion, Boolean(hoveredId));
   const elasticityMastery = phaseAtLeast(phase, "learn") ? 46 : 42;
   const hovered = hoveredId ? NODE_MAP[hoveredId] : null;
 
@@ -72,17 +78,27 @@ export function KelusHero() {
 
   return (
     <section ref={root} className="kelus-hero home-hero">
-      <div className="kelus-hero-copy home-copy">
-        <p className="kicker">Learning navigation</p>
-        <h1>
+      <motion.div
+        className="kelus-hero-copy home-copy"
+        initial={reduceMotion ? false : "hidden"}
+        animate="show"
+        variants={{
+          hidden: {},
+          show: { transition: { staggerChildren: 0.08, delayChildren: 0.04 } },
+        }}
+      >
+        <motion.p className="kicker" variants={copyItem}>
+          Learning navigation
+        </motion.p>
+        <motion.h1 variants={copyItem}>
           Know what
           <br />
           to learn next.
-        </h1>
-        <p className="home-lede">
+        </motion.h1>
+        <motion.p className="home-lede" variants={copyItem}>
           Kelus maps the best path from what you know today to where you want to be — and reroutes as you learn.
-        </p>
-        <div className="home-actions">
+        </motion.p>
+        <motion.div className="home-actions" variants={copyItem}>
           <Link href="/today" className="cta home-cta">
             Build my route
             <span className="arrow" aria-hidden="true">
@@ -92,8 +108,8 @@ export function KelusHero() {
           <a href="#how" className="home-secondary">
             See how it works
           </a>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
       <motion.div className="kelus-hero-art" style={{ y: landscapeY }} onPointerMove={onMove} onPointerLeave={onLeave}>
         <div className="hero-grain" aria-hidden="true" />
@@ -111,9 +127,6 @@ export function KelusHero() {
           />
         </motion.div>
         <RerouteSequence phase={phase} />
-        {phase === "learn" ? (
-          <p className="hero-learning-flag">New learning signal · Elasticity</p>
-        ) : null}
         {hovered?.why ? (
           <aside className="hero-why" aria-live="polite">
             <p className="hero-why-name">{hovered.name}</p>

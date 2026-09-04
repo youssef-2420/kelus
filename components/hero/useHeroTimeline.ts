@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type HeroPhase =
   | "enter"
@@ -32,8 +32,13 @@ export function phaseAtLeast(phase: HeroPhase, min: HeroPhase) {
   );
 }
 
-export function useHeroTimeline(reduceMotion: boolean) {
+export function useHeroTimeline(reduceMotion: boolean, paused: boolean) {
   const [phase, setPhase] = useState<HeroPhase>("enter");
+  const pausedRef = useRef(paused);
+
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -43,9 +48,12 @@ export function useHeroTimeline(reduceMotion: boolean) {
     let frame = 0;
 
     const step = (now: number) => {
-      elapsed += now - last;
+      const delta = now - last;
       last = now;
-      if (elapsed >= LOOP_AT) elapsed = 0;
+      if (!pausedRef.current) {
+        elapsed += delta;
+        if (elapsed >= LOOP_AT) elapsed = 0;
+      }
 
       let next: HeroPhase = "enter";
       for (const item of SEQUENCE) {

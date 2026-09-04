@@ -43,14 +43,26 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease } },
 };
 
-export function Stagger({ children, className }: { children: ReactNode; className?: string }) {
+export function Stagger({
+  children,
+  className,
+  once = true,
+}: {
+  children: ReactNode;
+  className?: string;
+  once?: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion() === true;
+  const inView = useInView(ref, { once, margin: "-12% 0px" });
+
   return (
     <motion.div
+      ref={ref}
       className={className}
       variants={reduce ? undefined : list}
       initial={reduce ? false : "hidden"}
-      animate="show"
+      animate={reduce || inView ? "show" : "hidden"}
     >
       {children}
     </motion.div>

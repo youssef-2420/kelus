@@ -8,12 +8,25 @@ type Props = {
 };
 
 export function RerouteSequence({ phase }: Props) {
+  const showLearn = phase === "learn";
   const showReroute = phase === "rerouting";
   const showUpdated = phase === "updated";
 
   return (
     <div className="hero-status" aria-live="polite">
       <AnimatePresence mode="wait">
+        {showLearn ? (
+          <motion.p
+            key="learn"
+            className="hero-status-label"
+            initial={{ opacity: 0, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          >
+            New learning signal · Elasticity
+          </motion.p>
+        ) : null}
         {showReroute ? (
           <motion.p
             key="reroute"

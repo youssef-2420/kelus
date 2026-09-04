@@ -1154,7 +1154,7 @@ button, input, textarea { font: inherit; }
   letter-spacing: var(--type-display-tracking);
 }
 .home-argument-inner > p:last-child { display: flex; gap: 16px; align-items: center; color: #c8d6d1; font-family: var(--font-display), Georgia, serif; font-size: 19px; letter-spacing: var(--type-reading-tracking); }
-.home-argument-inner > p:last-child span { color: #ff7a32; font-size: 28px; }
+.home-argument-inner > p:last-child span { color: #b8d8cd; font-size: 28px; }
 
 .home-workbench {
   width: min(1120px, calc(100% - 40px));
@@ -1175,8 +1175,8 @@ button, input, textarea { font: inherit; }
 .workbench-intro > p:last-of-type { max-width: 32ch; color: var(--muted); font-family: var(--font-display), Georgia, serif; font-size: 18px; letter-spacing: var(--type-reading-tracking); line-height: 1.45; }
 .workbench-intro > a { display: inline-block; margin-top: 24px; font-weight: 700; text-decoration-thickness: 1px; text-underline-offset: 8px; }
 .workbench-stages { display: grid; gap: 96px; margin: 0; padding: 0; list-style: none; }
-.workbench-stages > li > header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
-.workbench-stages > li > header span { color: #d75e25; font-size: 12px; font-weight: 800; letter-spacing: 0.1em; }
+.workbench-stages li header { display: flex; align-items: baseline; gap: 14px; margin-bottom: 18px; }
+.workbench-stages li header span { color: var(--accent-2); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; }
 .workbench-stages h3 { margin: 0; font-family: var(--font-sans), sans-serif; font-size: 16px; font-weight: 750; letter-spacing: -0.01em; }
 .signal-board,
 .time-board,
@@ -1184,7 +1184,7 @@ button, input, textarea { font: inherit; }
 .signal-head { display: flex; justify-content: space-between; padding: 13px 18px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 10px; font-weight: 750; letter-spacing: 0.12em; text-transform: uppercase; }
 .signal-row { display: grid; grid-template-columns: 26px minmax(0, 1fr) 72px; gap: 12px; align-items: center; padding: 17px 18px; border-top: 1px solid var(--line); }
 .signal-row:first-of-type { border-top: 0; }
-.signal-row.is-priority { background: #ffe1cf; }
+.signal-row.is-priority { background: var(--mint-soft); }
 .signal-row > b { color: var(--muted); font-size: 11px; }
 .signal-row p { display: grid; margin: 0; }
 .signal-row strong { font-size: 14px; }
@@ -1197,7 +1197,7 @@ button, input, textarea { font: inherit; }
 .time-board > div > b span { font-family: var(--font-sans), sans-serif; font-size: 12px; }
 .time-board ol { margin: 0; padding: 0; list-style: none; }
 .time-board li { display: grid; grid-template-columns: 26px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px 20px; border-top: 1px solid var(--line); }
-.time-board li:first-child { border-top: 0; background: #ffe1cf; }
+.time-board li:first-child { border-top: 0; background: var(--mint-soft); }
 .time-board li > span { color: var(--muted); font-size: 11px; }
 .time-board li p { display: grid; margin: 0; }
 .time-board li p b { font-size: 14px; }
@@ -1211,7 +1211,7 @@ button, input, textarea { font: inherit; }
 .feedback-board footer { grid-column: 1 / -1; display: flex; align-items: end; justify-content: space-between; margin-top: 12px; padding-top: 18px; border-top: 1px solid var(--line); }
 .feedback-board footer p { display: flex; align-items: baseline; gap: 10px; margin: 0; color: var(--muted); font-size: 11px; }
 .feedback-board footer b { color: var(--ink); font-family: var(--font-display), serif; font-size: 26px; }
-.feedback-board footer i { color: #ed6f2d; font-style: normal; }
+.feedback-board footer i { color: var(--accent-2); font-style: normal; }
 
 .home-principles {
   width: min(1120px, calc(100% - 40px));
@@ -1454,5 +1454,119 @@ button, input, textarea { font: inherit; }
   .terrain-middle,
   .terrain-route,
   .terrain-node circle { transition: none; transform: none; }
+}
+
+/* ── Kelus landscape hero — last-wins overrides (later homepage CSS was crushing this) ── */
+.kelus-hero.home-hero {
+  width: min(1180px, calc(100% - 40px));
+  min-height: auto;
+  margin: 0 auto;
+  padding: 28px 0 56px;
+  gap: 32px 40px;
+  align-items: center;
+  grid-template-columns: minmax(0, 0.42fr) minmax(0, 0.58fr);
+}
+.kelus-hero.home-hero .home-copy {
+  max-width: 460px;
+  padding-top: 8px;
+  z-index: 2;
+}
+.kelus-hero.home-hero .home-copy > * {
+  animation: none;
+  opacity: 1;
+  transform: none;
+}
+.kelus-hero.home-hero .home-copy h1 {
+  font-size: clamp(40px, 4.6vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.038em;
+  max-width: 9.2ch;
+  overflow-wrap: normal;
+  word-break: normal;
+  text-wrap: wrap;
+}
+.kelus-hero.home-hero .home-lede {
+  max-width: 38ch;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.kelus-hero.home-hero .home-cta { min-height: 48px; }
+.kelus-hero-art {
+  min-height: min(64vh, 680px);
+  aspect-ratio: 11 / 7.4;
+}
+.kelus-hero .hero-student-wrap {
+  inset: auto 0 0 0;
+  height: 70%;
+}
+.hero-node-name,
+.hero-node-mastery,
+.hero-route-kicker,
+.hero-dest-name,
+.hero-kicker-svg,
+.hero-here-num,
+.hero-dest-num,
+.hero-signal,
+.hero-learn {
+  paint-order: stroke fill;
+  stroke: #f4efe6;
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+.kelus-hero .hero-why {
+  max-width: 22ch;
+  right: 0;
+  left: auto;
+  bottom: 10px;
+  top: auto;
+  padding: 12px 14px;
+  background: color-mix(in srgb, #f4efe6 88%, transparent);
+  border-radius: 10px;
+}
+.home-continue-route {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  z-index: 2;
+  width: 72px;
+  height: 96px;
+  transform: translateX(-50%);
+  color: #9ec9bb;
+  pointer-events: none;
+}
+.home-argument .kicker { color: #b8d8cd; }
+#how { scroll-margin-top: 88px; }
+.home { overflow-x: clip; overflow-y: visible; }
+
+@media (max-width: 900px) {
+  .kelus-hero.home-hero {
+    width: min(1120px, calc(100% - 32px));
+    min-height: auto;
+    padding: 16px 0 40px;
+    gap: 20px;
+    grid-template-columns: 1fr;
+  }
+  .kelus-hero-art {
+    min-height: 480px;
+    aspect-ratio: 11 / 8.2;
+  }
+  .kelus-hero .hero-student-wrap { height: 64%; }
+  .kelus-hero.home-hero .home-copy h1 { font-size: clamp(36px, 10vw, 48px); max-width: 10ch; }
+  .home-bar .home-cta.compact { min-height: 44px; padding-inline: 16px; }
+  .kelus-hero .hero-why {
+    position: relative;
+    max-width: none;
+    margin: 8px 0 0;
+    right: auto;
+    bottom: auto;
+  }
+}
+@media (max-width: 640px) {
+  .kelus-hero.home-hero {
+    width: calc(100% - 28px);
+    padding: 12px 0 36px;
+  }
+  .kelus-hero.home-hero .home-copy h1 { font-size: clamp(36px, 10vw, 48px); }
+  .home-actions .home-secondary { min-height: 44px; }
 }
 
