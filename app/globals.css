@@ -461,19 +461,15 @@ button, input, textarea { font: inherit; }
   height: 100%;
   background: transparent;
 }
-.hero-student img,
-.hero-student video {
+.hero-student img {
   display: block;
   width: 128%;
   height: 128%;
   max-width: none;
   object-fit: contain;
   object-position: left bottom;
-  background: transparent;
-}
-.hero-student img,
-.hero-student video {
   mix-blend-mode: multiply;
+  background: transparent;
 }
 .hero-landscape-wrap {
   position: absolute;
@@ -1571,10 +1567,9 @@ button, input, textarea { font: inherit; }
   height: 112%;
   max-width: none;
   margin-inline: auto;
-  aspect-ratio: 3 / 2;
+  aspect-ratio: 610 / 538;
 }
-.kelus-hero.is-student .hero-student img,
-.kelus-hero.is-student .hero-student video {
+.kelus-hero.is-student .hero-student img {
   width: 100%;
   height: 100%;
   object-fit: contain;
