@@ -1481,7 +1481,7 @@ button, input, textarea { font: inherit; }
   font-size: clamp(40px, 4.6vw, 64px);
   line-height: 1.04;
   letter-spacing: -0.038em;
-  max-width: 14ch;
+  max-width: none;
   overflow-wrap: normal;
   word-break: normal;
   text-wrap: wrap;
