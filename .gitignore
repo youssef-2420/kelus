@@ -11,3 +11,6 @@ tsconfig.tsbuildinfo
 *.log
 .env
 .env.local
+ios/Domain/.build
+ios/**/DerivedData
+ios/**/xcuserdata
