@@ -19,60 +19,92 @@ export default function Home() {
       </header>
 
       <main id="main">
-      <section className="home-hero">
-        <div className="home-copy">
-          <p className="kicker">Exam prep</p>
-          <h1>Know what to study next.</h1>
-          <p className="home-lede">
-            Tell Kelus the exam. It looks at what you know, what’s fading, and the time you have — then gives you today’s plan.
-          </p>
-          <div className="home-actions">
-            <Link href="/today" className="cta home-cta">
-              Start today’s plan
-              <span className="arrow" aria-hidden="true">→</span>
-            </Link>
-            <a href="#how" className="home-secondary">
-              How it works
-            </a>
+        <section className="home-hero">
+          <div className="home-copy">
+            <p className="kicker">A daily exam plan</p>
+            <h1>Know what to study next.</h1>
+            <p className="home-lede">
+              Tell Kelus the exam, the topics, and the time you have. Get a short plan that changes as you learn.
+            </p>
+            <div className="home-actions">
+              <Link href="/today" className="cta home-cta">
+                Make today’s plan
+                <span className="arrow" aria-hidden="true">→</span>
+              </Link>
+              <a href="#how" className="home-secondary">
+                See the thinking
+              </a>
+            </div>
+            <p className="home-support"><span aria-hidden="true">•</span> No account. Your plan stays in this browser.</p>
           </div>
-        </div>
-        <LearningRouteEngine />
-      </section>
+          <LearningRouteEngine />
+        </section>
 
-      <section id="how" className="home-how">
-        <p className="kicker">How it works</p>
-        <ol>
-          <li>
-            <span className="num">01</span>
-            <div>
-              <h2>Set the exam</h2>
-              <p>Date, target, and how long you can study today.</p>
-            </div>
-          </li>
-          <li>
-            <span className="num">02</span>
-            <div>
-              <h2>Get a plan</h2>
-              <p>Minutes assigned to the few topics that move the exam, not a dump of every weak card.</p>
-            </div>
-          </li>
-          <li>
-            <span className="num">03</span>
-            <div>
-              <h2>Study, then the plan moves</h2>
-              <p>You rate how well you knew each question. Tomorrow’s order changes.</p>
-            </div>
-          </li>
-        </ol>
-      </section>
+        <section className="home-argument" aria-labelledby="argument-title">
+          <div className="home-argument-inner">
+            <p className="kicker">The problem is rarely effort.</p>
+            <h2 id="argument-title">It’s deciding where the next hour matters.</h2>
+            <p><span aria-hidden="true">↳</span> Kelus ranks the work. You do the learning.</p>
+          </div>
+        </section>
 
-      <footer className="home-foot">
-        <Link href="/today" className="cta home-cta">
-          Open today’s plan
-          <span className="arrow" aria-hidden="true">→</span>
-        </Link>
-        <p>No account. Works in the browser.</p>
-      </footer>
+        <section id="how" className="home-workbench" aria-labelledby="workbench-title">
+          <div className="workbench-intro">
+            <p className="kicker">One plan, three signals</p>
+            <h2 id="workbench-title">Small inputs.<br />A plan with an opinion.</h2>
+            <p>No giant task list. Kelus uses what matters for the exam, what feels weak, and what has gone untouched.</p>
+            <Link href="/today">Set up your exam <span aria-hidden="true">→</span></Link>
+          </div>
+
+          <ol className="workbench-stages">
+            <li>
+              <header><span>01</span><h3>Find the leverage</h3></header>
+              <div className="signal-board" aria-label="Example topic priorities">
+                <div className="signal-head"><span>Study next</span><span>Already strong</span></div>
+                <div className="signal-row is-priority"><b>01</b><p><strong>Elasticity</strong><small>Low mastery · high exam value</small></p><i style={{ "--signal": "82%" } as React.CSSProperties} /></div>
+                <div className="signal-row"><b>02</b><p><strong>Market structures</strong><small>Medium mastery · high value</small></p><i style={{ "--signal": "62%" } as React.CSSProperties} /></div>
+                <div className="signal-row"><b>03</b><p><strong>Supply &amp; demand</strong><small>Strong · quick retrieval only</small></p><i style={{ "--signal": "28%" } as React.CSSProperties} /></div>
+              </div>
+            </li>
+            <li>
+              <header><span>02</span><h3>Fit the time you have</h3></header>
+              <div className="time-board">
+                <p className="engine-label">Today · Microeconomics</p>
+                <div><strong>45 focused minutes</strong><b>45<span>m</span></b></div>
+                <ol>
+                  <li><span>01</span><p><b>Elasticity</b><small>High-value gap</small></p><strong>20 min</strong></li>
+                  <li><span>02</span><p><b>Externalities</b><small>High-value gap</small></p><strong>15 min</strong></li>
+                  <li><span>03</span><p><b>Market structures</b><small>Needs a baseline</small></p><strong>10 min</strong></li>
+                </ol>
+              </div>
+            </li>
+            <li>
+              <header><span>03</span><h3>Let the plan move</h3></header>
+              <div className="feedback-board">
+                <div className="feedback-mark" aria-hidden="true">?</div>
+                <div><p className="engine-label">After one question</p><strong>“Almost” is useful data.</strong><span>Kelus keeps the topic close, without starting the whole plan over.</span></div>
+                <footer><p>Today <b>02</b></p><i aria-hidden="true">→</i><p>Tomorrow <b>01</b></p></footer>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section className="home-principles" aria-labelledby="principles-title">
+          <div>
+            <p className="kicker">What Kelus will not do</p>
+            <h2 id="principles-title">No fake certainty.</h2>
+          </div>
+          <dl>
+            <div><dt>Not a grade prediction</dt><dd>Readiness reflects the confidence you report, weighted by exam importance.</dd></div>
+            <div><dt>Not a content generator</dt><dd>Kelus organizes your topics. It does not replace your lecturer, notes, or judgment.</dd></div>
+            <div><dt>Not another streak</dt><dd>Miss a day and the plan simply recalculates. No guilt, confetti, or broken chain.</dd></div>
+          </dl>
+        </section>
+
+        <footer className="home-foot">
+          <h2>Walk into the exam knowing what you worked on—and why.</h2>
+          <div><span className="mark">Kelus</span><Link href="/today">Make today’s plan <span aria-hidden="true">→</span></Link></div>
+        </footer>
       </main>
     </div>
   );
