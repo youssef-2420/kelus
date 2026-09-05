@@ -8,11 +8,11 @@ async function source(path) {
   return readFile(new URL(path, root), "utf8");
 }
 
-test("mobile student hero resets the higher-specificity desktop grid", async () => {
+test("mobile landscape hero resets the higher-specificity desktop grid", async () => {
   const css = await source("app/globals.css");
   assert.match(
     css,
-    /@media \(max-width: 900px\)[\s\S]*?\.kelus-hero\.home-hero\.is-student\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/,
+    /@media \(max-width: 900px\)[\s\S]*?\.kelus-hero\.home-hero\.is-landscape\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0, 1fr\)/,
   );
 });
 
@@ -34,7 +34,9 @@ test("application navigation identifies the current page", async () => {
   assert.match(shell, /aria-current=/);
 });
 
-test("static homepage content does not wait for scroll-triggered reveals", async () => {
+test("static homepage story does not gate markup behind Reveal wrappers", async () => {
   const afterHero = await source("components/home/HomeAfterHero.tsx");
-  assert.doesNotMatch(afterHero, /Reveal|whileInView|useReducedMotion/);
+  assert.doesNotMatch(afterHero, /Reveal/);
+  assert.match(afterHero, /LeverageBoard/);
+  assert.match(afterHero, /TimeClaim/);
 });

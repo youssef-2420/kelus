@@ -16,11 +16,11 @@ type Props = {
 };
 
 function radius(node: NodeData) {
-  if (node.kind === "target") return 6;
-  if (node.kind === "you") return 5;
-  if (node.signal === "high-value") return 5.5;
-  if (node.hiddenOnMobile) return 3.6;
-  return 4.4;
+  if (node.kind === "target") return 8;
+  if (node.kind === "you") return 7;
+  if (node.signal === "high-value") return 7;
+  if (node.hiddenOnMobile) return 4.2;
+  return 5.6;
 }
 
 function signalVisible(phase: HeroPhase, signal: SignalKind) {
