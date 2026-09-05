@@ -12,28 +12,48 @@ export type HeroPhase =
   | "rerouting"
   | "updated";
 
-const SEQUENCE: { phase: HeroPhase; at: number }[] = [
+export type TimelineMode = "hero" | "climax";
+
+const HERO_SEQUENCE: { phase: HeroPhase; at: number }[] = [
   { phase: "enter", at: 0 },
-  { phase: "nodes", at: 500 },
-  { phase: "paths", at: 1200 },
-  { phase: "signals", at: 2200 },
-  { phase: "route", at: 3200 },
-  { phase: "learn", at: 4700 },
-  { phase: "rerouting", at: 6400 },
-  { phase: "updated", at: 7000 },
+  { phase: "nodes", at: 180 },
+  { phase: "paths", at: 520 },
+  { phase: "signals", at: 980 },
+  { phase: "route", at: 1400 },
 ];
 
-const LOOP_AT = 12800;
+const CLIMAX_SEQUENCE: { phase: HeroPhase; at: number }[] = [
+  { phase: "route", at: 0 },
+  { phase: "learn", at: 1200 },
+  { phase: "rerouting", at: 2400 },
+  { phase: "updated", at: 3200 },
+];
+
+const ORDER: HeroPhase[] = [
+  "enter",
+  "nodes",
+  "paths",
+  "signals",
+  "route",
+  "learn",
+  "rerouting",
+  "updated",
+];
 
 export function phaseAtLeast(phase: HeroPhase, min: HeroPhase) {
-  return (
-    SEQUENCE.findIndex((step) => step.phase === phase) >=
-    SEQUENCE.findIndex((step) => step.phase === min)
-  );
+  return ORDER.indexOf(phase) >= ORDER.indexOf(min);
 }
 
-export function useHeroTimeline(reduceMotion: boolean, paused: boolean) {
-  const [phase, setPhase] = useState<HeroPhase>("enter");
+export function useHeroTimeline(
+  reduceMotion: boolean,
+  paused: boolean,
+  mode: TimelineMode = "hero",
+) {
+  const hold = mode === "hero" ? "route" : "updated";
+  const sequence = mode === "hero" ? HERO_SEQUENCE : CLIMAX_SEQUENCE;
+  const loopAt = mode === "hero" ? Number.POSITIVE_INFINITY : 8800;
+  const initial: HeroPhase = mode === "hero" ? "enter" : "route";
+  const [phase, setPhase] = useState<HeroPhase>(initial);
   const pausedRef = useRef(paused);
 
   useEffect(() => {
@@ -41,6 +61,7 @@ export function useHeroTimeline(reduceMotion: boolean, paused: boolean) {
   }, [paused]);
 
   useEffect(() => {
+    setPhase(reduceMotion ? hold : initial);
     if (reduceMotion) return;
 
     let elapsed = 0;
@@ -52,11 +73,11 @@ export function useHeroTimeline(reduceMotion: boolean, paused: boolean) {
       last = now;
       if (!pausedRef.current) {
         elapsed += delta;
-        if (elapsed >= LOOP_AT) elapsed = 0;
+        if (elapsed >= loopAt) elapsed = 0;
       }
 
-      let next: HeroPhase = "enter";
-      for (const item of SEQUENCE) {
+      let next: HeroPhase = sequence[0].phase;
+      for (const item of sequence) {
         if (elapsed >= item.at) next = item.phase;
       }
       setPhase((current) => (current === next ? current : next));
@@ -65,7 +86,8 @@ export function useHeroTimeline(reduceMotion: boolean, paused: boolean) {
 
     frame = window.requestAnimationFrame(step);
     return () => window.cancelAnimationFrame(frame);
-  }, [reduceMotion]);
+  }, [reduceMotion, mode, hold, initial, loopAt, sequence]);
 
-  return reduceMotion ? "updated" : phase;
+  if (reduceMotion) return hold;
+  return phase;
 }

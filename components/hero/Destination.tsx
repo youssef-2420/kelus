@@ -20,10 +20,10 @@ export function Destination({ layout }: Props) {
       <text className="hero-kicker-svg" textAnchor={align} y={0}>
         Target · 11 days
       </text>
-      <text className="hero-dest-name" textAnchor={align} y={22}>
+      <text className="hero-dest-name" textAnchor={align} y={layout === "mobile" ? 16 : 26}>
         Microeconomics Final
       </text>
-      <text className="hero-dest-num" textAnchor={align} y={48}>
+      <text className="hero-dest-num" textAnchor={align} y={layout === "mobile" ? 36 : 62}>
         85%
       </text>
     </g>

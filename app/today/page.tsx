@@ -10,6 +10,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
+import { percent } from "@/lib/format";
 
 export default function TodayPage() {
   const router = useRouter();
@@ -36,21 +37,35 @@ export default function TodayPage() {
 
   return (
     <AppShell action={<button type="button" className="text-btn" onClick={reset}>Start over</button>}>
-      <section className="today-destination">
-        <div><p className="kicker">{exam.target}</p><h1>Today’s route</h1></div>
-        <dl><div><dt>Exam</dt><dd>{days} days</dd></div><div><dt>Target</dt><dd>{exam.targetPercent}%</dd></div></dl>
-      </section>
+      <div className="today-stage">
+        <header className="today-exam">
+          <p>{exam.target}</p>
+          <p className="today-days">
+            <b>{days}</b>
+            <span>days</span>
+          </p>
+        </header>
 
-      <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
+        <p className="today-ready">
+          <b>{percent(readiness)}</b>
+          <span>ready</span>
+        </p>
 
-      <section className="today-allocation" aria-labelledby="allocation-title">
-        <header><div><p className="kicker">Highest learning value first</p><h2 id="allocation-title">Your best {route.availableMinutes} minutes</h2></div><p>Not the weakest topics. The most valuable next actions.</p></header>
-        <TodayRoute route={route} concepts={concepts} />
-      </section>
+        <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
 
-      <div className="today-primary-action">
-        <button type="button" className="cta" onClick={begin}>Start my route <span aria-hidden="true">→</span></button>
-        <p>Kelus will recalculate when your answers change what matters next.</p>
+        <section className="today-minutes" aria-label={`Your best ${route.availableMinutes} minutes`}>
+          <p className="today-minutes-hero">
+            <b>{route.availableMinutes}</b>
+            <span>min</span>
+          </p>
+          <TodayRoute route={route} concepts={concepts} />
+        </section>
+
+        <div className="today-primary-action">
+          <button type="button" className="cta" onClick={begin}>
+            Start route <span aria-hidden="true">→</span>
+          </button>
+        </div>
       </div>
     </AppShell>
   );
