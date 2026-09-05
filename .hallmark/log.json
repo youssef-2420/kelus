@@ -1,6 +1,22 @@
 [
   {
     "date": "2026-09-05",
+    "scope": "V1 homepage product story",
+    "brief": "Demonstrate the focused plan, evidence-driven reroute, and honest materials workflow",
+    "macrostructure": "hero → plan instrument → causal reroute → source shelf → methodology → statement CTA",
+    "theme": "indigo ledger (design.md)",
+    "theme_axes": {
+      "surface": "warm paper with restrained frosted learning instruments",
+      "type": "Inter Tight interface hierarchy with editorial display moments",
+      "geometry": "thin indigo rules, compact four-pixel corners, and open whitespace",
+      "motion": "route causality and progressive plan reveal only",
+      "density": "one idea and one product demonstration per section"
+    },
+    "enrichment": "three real Kelus interface illustrations",
+    "vibe": "precise, calm, product-led, honest"
+  },
+  {
+    "date": "2026-09-05",
     "scope": "course material library",
     "brief": "A focused place for students to save course PDFs, videos, and web sources",
     "macrostructure": "course context → direct ingest → compact source shelf → data-honesty note",

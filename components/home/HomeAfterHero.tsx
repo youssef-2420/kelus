@@ -1,165 +1,99 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useReducedMotion } from "motion/react";
-import { LeverageBoard } from "@/components/home/LeverageBoard";
+import { MaterialShelfIllustration } from "@/components/home/MaterialShelfIllustration";
+import { RerouteIllustration } from "@/components/home/RerouteIllustration";
+import { TodayPlanIllustration } from "@/components/home/TodayPlanIllustration";
 import { Reveal } from "@/components/motion";
 
-const ease = [0.22, 1, 0.36, 1] as const;
-
 export function HomeAfterHero() {
-  const reduce = useReducedMotion() === true;
-
   return (
     <>
-      <section className="home-argument" aria-labelledby="argument-title">
-        <svg className="home-continue-route" viewBox="0 0 72 96" aria-hidden="true">
-          <motion.path
-            d="M 36 0 C 36 28, 18 46, 28 64 C 38 82, 36 88, 36 96"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            pathLength={1}
-            initial={reduce ? false : { pathLength: 0, opacity: 0.15 }}
-            whileInView={{ pathLength: 1, opacity: 0.7 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 1.05, ease }}
-          />
-        </svg>
-        <Reveal className="home-argument-inner">
-          <p className="kicker">Many possible paths. One intelligent route.</p>
-          <h2 id="argument-title">Stop deciding what to study.</h2>
+      <section id="how" className="v1-story-section is-plan" aria-labelledby="v1-plan-title">
+        <Reveal className="v1-story-copy">
+          <p className="kicker">01 · Today’s plan</p>
+          <h2 id="v1-plan-title">Your next 45 minutes.</h2>
           <p>
-            <span aria-hidden="true">↳</span> Kelus recalculates the highest-value learning action from your goal,
-            knowledge, retention, and time.
+            Kelus turns the time you have into a short route. The first topic is there for a reason—not because it was
+            first in the syllabus.
           </p>
-        </Reveal>
-      </section>
-
-      <section id="how" className="home-workbench" aria-labelledby="workbench-title">
-        <Reveal className="workbench-intro">
-          <p className="kicker">One plan, three signals</p>
-          <h2 id="workbench-title">
-            Small inputs.
-            <br />
-            A plan with an opinion.
-          </h2>
-          <p>No giant task list. Kelus uses what matters for the exam, what feels weak, and what has gone untouched.</p>
           <Link href="/today">
-            Set up your exam <span aria-hidden="true">→</span>
+            Build today’s plan <span aria-hidden="true">→</span>
           </Link>
         </Reveal>
-
-        <ol className="workbench-stages">
-          <li>
-            <Reveal>
-              <header>
-                <span>01</span>
-                <h3>Find the leverage</h3>
-              </header>
-              <LeverageBoard />
-            </Reveal>
-          </li>
-          <li>
-            <Reveal delay={0.08}>
-              <header>
-                <span>02</span>
-                <h3>Fit the time you have</h3>
-              </header>
-              <div className="time-board">
-                <p className="engine-label">Today · Microeconomics</p>
-                <div>
-                  <strong>45 focused minutes</strong>
-                  <b>
-                    45<span>m</span>
-                  </b>
-                </div>
-                <ol>
-                  <li>
-                    <span>01</span>
-                    <p>
-                      <b>Elasticity</b>
-                      <small>High-value gap</small>
-                    </p>
-                    <strong>20 min</strong>
-                  </li>
-                  <li>
-                    <span>02</span>
-                    <p>
-                      <b>Externalities</b>
-                      <small>High-value gap</small>
-                    </p>
-                    <strong>15 min</strong>
-                  </li>
-                  <li>
-                    <span>03</span>
-                    <p>
-                      <b>Market structures</b>
-                      <small>Needs a baseline</small>
-                    </p>
-                    <strong>10 min</strong>
-                  </li>
-                </ol>
-              </div>
-            </Reveal>
-          </li>
-          <li>
-            <Reveal delay={0.16}>
-              <header>
-                <span>03</span>
-                <h3>Let the plan move</h3>
-              </header>
-              <div className="feedback-board">
-                <div className="feedback-mark" aria-hidden="true">
-                  ?
-                </div>
-                <div>
-                  <p className="engine-label">After one question</p>
-                  <strong>“Almost” is useful data.</strong>
-                  <span>Kelus keeps the topic close, without starting the whole plan over.</span>
-                </div>
-                <footer>
-                  <p>
-                    Today <b>02</b>
-                  </p>
-                  <i aria-hidden="true">→</i>
-                  <p>
-                    Tomorrow <b>01</b>
-                  </p>
-                </footer>
-              </div>
-            </Reveal>
-          </li>
-        </ol>
+        <Reveal delay={0.08} className="v1-story-visual">
+          <TodayPlanIllustration />
+        </Reveal>
       </section>
 
-      <section className="home-principles" aria-labelledby="principles-title">
-        <Reveal>
-          <p className="kicker">What Kelus will not do</p>
-          <h2 id="principles-title">No fake certainty.</h2>
+      <section id="route" className="v1-story-section is-reroute" aria-labelledby="v1-reroute-title">
+        <Reveal className="v1-story-copy">
+          <p className="kicker">02 · New evidence</p>
+          <h2 id="v1-reroute-title">One answer changes the route.</h2>
+          <p>
+            “Almost” is useful information. Kelus keeps that topic close and quietly reorganizes what should come
+            next—without rebuilding the whole plan.
+          </p>
+          <Link href="/route">
+            See how rerouting works <span aria-hidden="true">→</span>
+          </Link>
         </Reveal>
-        <Reveal delay={0.1}>
+        <Reveal delay={0.08} className="v1-story-visual">
+          <RerouteIllustration />
+        </Reveal>
+      </section>
+
+      <section className="v1-story-section is-materials" aria-labelledby="v1-materials-title">
+        <Reveal className="v1-story-copy">
+          <p className="kicker">03 · Course material</p>
+          <h2 id="v1-materials-title">Everything for the exam, together.</h2>
+          <p>
+            Keep the syllabus, lecture links, and past-paper PDFs beside your course. For V1, Kelus stores these
+            sources for reference; it does not analyze their contents yet.
+          </p>
+          <Link href="/materials">
+            Open materials <span aria-hidden="true">→</span>
+          </Link>
+        </Reveal>
+        <Reveal delay={0.08} className="v1-story-visual">
+          <MaterialShelfIllustration />
+        </Reveal>
+      </section>
+
+      <section className="v1-method" aria-labelledby="v1-method-title">
+        <Reveal className="v1-method-heading">
+          <p className="kicker">Honest methodology</p>
+          <h2 id="v1-method-title">A recommendation you can inspect.</h2>
+          <p>Kelus makes a focused decision from information the student actually supplied.</p>
+        </Reveal>
+        <Reveal delay={0.08}>
           <dl>
             <div>
-              <dt>Not a grade prediction</dt>
-              <dd>Readiness reflects the confidence you report, weighted by exam importance.</dd>
+              <dt>Destination</dt>
+              <dd>Exam date and target</dd>
             </div>
             <div>
-              <dt>Not a content generator</dt>
-              <dd>Kelus organizes your topics. It does not replace your lecturer, notes, or judgment.</dd>
+              <dt>Knowledge</dt>
+              <dd>Reported confidence and retrieval results</dd>
             </div>
             <div>
-              <dt>Not another streak</dt>
-              <dd>Miss a day and the plan simply recalculates. No guilt, confetti, or broken chain.</dd>
+              <dt>Constraints</dt>
+              <dd>Available study time and prerequisites</dd>
+            </div>
+            <div>
+              <dt>Boundary</dt>
+              <dd>Guidance—not a grade prediction</dd>
             </div>
           </dl>
         </Reveal>
       </section>
 
       <Reveal>
-        <footer className="home-foot">
-          <h2>Walk into the exam knowing what you worked on—and why.</h2>
+        <footer className="home-foot v1-foot">
+          <div className="v1-foot-copy">
+            <p className="kicker">Start with what matters</p>
+            <h2>Walk into the exam knowing what you worked on—and why.</h2>
+          </div>
           <div>
             <span className="mark">Kelus</span>
             <Link href="/today">
