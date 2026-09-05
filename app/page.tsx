@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { RouteStory } from "@/components/home/RouteStory";
+import { KelusHero } from "@/components/hero/KelusHero";
+import { HomeAfterHero } from "@/components/home/HomeAfterHero";
+import { KnowledgeRouteStory } from "@/components/home/KnowledgeRouteStory";
 
 export default function Home() {
   return (
@@ -21,7 +23,9 @@ export default function Home() {
       </header>
 
       <main id="main">
-        <RouteStory />
+        <KelusHero />
+        <KnowledgeRouteStory />
+        <HomeAfterHero />
       </main>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import type { KnowledgeNode as NodeData, Layout } from "./landscape-data";
+import type { KnowledgeNode as NodeData, Layout, SignalKind } from "./landscape-data";
 import { SIGNAL_COPY } from "./landscape-data";
 import type { HeroPhase } from "./useHeroTimeline";
 import { phaseAtLeast } from "./useHeroTimeline";
@@ -13,15 +13,18 @@ type Props = {
   onHover: (id: string | null) => void;
   onRoute: boolean;
   elasticityMastery: number;
-  focused?: boolean;
 };
 
 function radius(node: NodeData) {
-  if (node.kind === "target") return 8;
-  if (node.kind === "you") return 7;
-  if (node.signal === "high-value") return 7;
-  if (node.hiddenOnMobile) return 4.2;
-  return 5.6;
+  if (node.kind === "target") return 6;
+  if (node.kind === "you") return 5;
+  if (node.signal === "high-value") return 5.5;
+  if (node.hiddenOnMobile) return 3.6;
+  return 4.4;
+}
+
+function signalVisible(phase: HeroPhase, signal: SignalKind) {
+  return Boolean(signal) && phaseAtLeast(phase, "signals");
 }
 
 export function KnowledgeNode({
@@ -32,21 +35,20 @@ export function KnowledgeNode({
   onHover,
   onRoute,
   elasticityMastery,
-  focused = true,
 }: Props) {
   const x = node.x[layout];
   const y = node.y[layout];
   const r = radius(node) + (onRoute && node.kind === "concept" ? 1.2 : 0);
   const mastery = node.id === "elasticity" ? elasticityMastery : node.mastery;
-  const showLabel = node.kind === "concept" && !(layout === "mobile" && node.id !== "elasticity" && node.id !== "markets");
-  const showSignal = node.id === "elasticity" && phaseAtLeast(phase, "signals");
+  const showLabel = node.kind !== "you" && node.kind !== "target";
+  const showSignal = signalVisible(phase, node.signal);
   const showLearn = node.id === "elasticity" && phase === "learn";
   const labelX = layout === "mobile" ? 0 : node.x.desktop > 700 ? 12 : -12;
   const anchor = layout === "mobile" ? "middle" : node.x.desktop > 700 ? "start" : "end";
 
   return (
     <g
-      className={`hero-node hero-node-${node.kind}${hovered ? " is-hovered" : ""}${node.hiddenOnMobile ? " is-quiet" : ""}${onRoute ? " is-route" : ""}${focused ? "" : " is-dim"}`}
+      className={`hero-node hero-node-${node.kind}${hovered ? " is-hovered" : ""}${node.hiddenOnMobile ? " is-quiet" : ""}${onRoute ? " is-route" : ""}`}
       transform={`translate(${x} ${y})`}
       tabIndex={node.kind === "concept" ? 0 : undefined}
       onPointerEnter={() => node.kind === "concept" && onHover(node.id)}
@@ -66,21 +68,24 @@ export function KnowledgeNode({
       />
       {showLabel ? (
         <>
-          <text className="hero-node-name" textAnchor={anchor} x={labelX} y={layout === "mobile" ? -16 : -16}>
+          <text className="hero-node-name" textAnchor={anchor} x={labelX} y={layout === "mobile" ? -18 : -16}>
             {node.name}
           </text>
-          <text className="hero-node-mastery" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 18 : 20}>
+          <text className="hero-node-mastery" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 22 : 20}>
             {mastery}%
           </text>
         </>
       ) : null}
       {node.kind === "you" ? (
         <g className="hero-here">
-          <text className="hero-kicker-svg" textAnchor={layout === "mobile" ? "start" : "end"} x={layout === "mobile" ? 14 : -18} y={layout === "mobile" ? -12 : -20}>
+          <text className="hero-kicker-svg" textAnchor="end" x={layout === "mobile" ? -12 : -14} y={layout === "mobile" ? -10 : -8}>
             You are here
           </text>
-          <text className="hero-here-num" textAnchor={layout === "mobile" ? "start" : "end"} x={layout === "mobile" ? 14 : -18} y={layout === "mobile" ? 16 : 22}>
+          <text className="hero-here-num" textAnchor="end" x={layout === "mobile" ? -12 : -14} y={layout === "mobile" ? 14 : 16}>
             67%
+          </text>
+          <text className="hero-kicker-svg" textAnchor="end" x={layout === "mobile" ? -12 : -58} y={layout === "mobile" ? 30 : 16}>
+            Ready
           </text>
         </g>
       ) : null}
@@ -91,7 +96,7 @@ export function KnowledgeNode({
       ) : null}
       {showLearn ? (
         <text className="hero-learn" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 54 : 52}>
-          Weaker than expected  42% → 54%
+          Weaker than expected  42% → 46%
         </text>
       ) : null}
       {node.kind === "concept" ? (
