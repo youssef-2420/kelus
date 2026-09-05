@@ -1,103 +1,158 @@
-"use client";
-
 import Link from "next/link";
-import { useInView, useReducedMotion } from "motion/react";
-import { useRef, useState, useSyncExternalStore } from "react";
-import { KnowledgeLandscape } from "@/components/hero/KnowledgeLandscape";
-import { phaseAtLeast, useHeroTimeline } from "@/components/hero/useHeroTimeline";
 import { LeverageBoard } from "@/components/home/LeverageBoard";
-import { TimeClaim } from "@/components/home/TimeClaim";
-
-function subscribeMobile(onChange: () => void) {
-  const media = window.matchMedia("(max-width: 900px)");
-  media.addEventListener("change", onChange);
-  return () => media.removeEventListener("change", onChange);
-}
-
-function useMobileLayout() {
-  return useSyncExternalStore(
-    subscribeMobile,
-    () => window.matchMedia("(max-width: 900px)").matches,
-    () => false,
-  );
-}
 
 export function HomeAfterHero() {
-  const reduceMotion = useReducedMotion() === true;
-  const mobile = useMobileLayout();
-  const layout = mobile ? "mobile" : "desktop";
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const climax = useRef<HTMLElement>(null);
-  const inView = useInView(climax, { amount: 0.4 });
-  const phase = useHeroTimeline(reduceMotion, !inView || Boolean(hoveredId), "climax");
-  const elasticityMastery = phaseAtLeast(phase, "learn") ? 54 : 42;
-  const updated = phase === "updated";
-
   return (
-    <div className="kelus-story">
-      <svg className="story-spine" viewBox="0 0 24 1400" aria-hidden="true">
-        <path d="M 12 0 C 12 180, 4 320, 12 480 C 20 640, 6 820, 12 1000 C 16 1160, 12 1280, 12 1400" fill="none" stroke="currentColor" strokeWidth="1.4" />
-      </svg>
-
-      <section className="story-beat story-leverage" aria-label="Kelus choosing the next concept">
-        <LeverageBoard />
+    <>
+      <section className="home-argument" aria-labelledby="argument-title">
+        <svg className="home-continue-route" viewBox="0 0 72 96" aria-hidden="true">
+          <path
+            d="M 36 0 C 36 28, 18 46, 28 64 C 38 82, 36 88, 36 96"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+          />
+        </svg>
+        <div className="home-argument-inner">
+          <p className="kicker">Many possible paths. One intelligent route.</p>
+          <h2 id="argument-title">Stop deciding what to study.</h2>
+          <p>
+            <span aria-hidden="true">↳</span> Kelus recalculates the highest-value learning action from your goal,
+            knowledge, retention, and time.
+          </p>
+        </div>
       </section>
 
-      <section className="story-beat story-time" aria-label="Today’s minutes">
-        <TimeClaim />
+      <section id="how" className="home-workbench" aria-labelledby="workbench-title">
+        <div className="workbench-intro">
+          <p className="kicker">One plan, three signals</p>
+          <h2 id="workbench-title">
+            Small inputs.
+            <br />
+            A plan with an opinion.
+          </h2>
+          <p>No giant task list. Kelus uses what matters for the exam, what feels weak, and what has gone untouched.</p>
+          <Link href="/today">
+            Set up your exam <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+
+        <ol className="workbench-stages">
+          <li>
+            <div>
+              <header>
+                <span>01</span>
+                <h3>Find the leverage</h3>
+              </header>
+              <LeverageBoard />
+            </div>
+          </li>
+          <li>
+            <div>
+              <header>
+                <span>02</span>
+                <h3>Fit the time you have</h3>
+              </header>
+              <div className="time-board">
+                <p className="engine-label">Today · Microeconomics</p>
+                <div>
+                  <strong>45 focused minutes</strong>
+                  <b>
+                    45<span>m</span>
+                  </b>
+                </div>
+                <ol>
+                  <li>
+                    <span>01</span>
+                    <p>
+                      <b>Elasticity</b>
+                      <small>High-value gap</small>
+                    </p>
+                    <strong>20 min</strong>
+                  </li>
+                  <li>
+                    <span>02</span>
+                    <p>
+                      <b>Externalities</b>
+                      <small>High-value gap</small>
+                    </p>
+                    <strong>15 min</strong>
+                  </li>
+                  <li>
+                    <span>03</span>
+                    <p>
+                      <b>Market structures</b>
+                      <small>Needs a baseline</small>
+                    </p>
+                    <strong>10 min</strong>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div>
+              <header>
+                <span>03</span>
+                <h3>Let the plan move</h3>
+              </header>
+              <div className="feedback-board">
+                <div className="feedback-mark" aria-hidden="true">
+                  ?
+                </div>
+                <div>
+                  <p className="engine-label">After one question</p>
+                  <strong>“Almost” is useful data.</strong>
+                  <span>Kelus keeps the topic close, without starting the whole plan over.</span>
+                </div>
+                <footer>
+                  <p>
+                    Today <b>02</b>
+                  </p>
+                  <i aria-hidden="true">→</i>
+                  <p>
+                    Tomorrow <b>01</b>
+                  </p>
+                </footer>
+              </div>
+            </div>
+          </li>
+        </ol>
       </section>
 
-      <section ref={climax} className="story-beat story-climax" aria-label="The route updates">
-        <KnowledgeLandscape
-          layout={layout}
-          phase={phase}
-          hoveredId={hoveredId}
-          onHover={setHoveredId}
-          elasticityMastery={elasticityMastery}
-          reduceMotion={reduceMotion}
-        />
-        <p className={`story-updated${updated ? " is-on" : ""}`}>
-          {updated ? (
-            <>
-              Route updated
-              <span>Monetary Policy moved forward.</span>
-            </>
-          ) : phaseAtLeast(phase, "learn") ? (
-            <>
-              Elasticity 42 → 54
-            </>
-          ) : (
-            <>
-              New learning evidence
-            </>
-          )}
-        </p>
+      <section className="home-principles" aria-labelledby="principles-title">
+        <div>
+          <p className="kicker">What Kelus will not do</p>
+          <h2 id="principles-title">No fake certainty.</h2>
+        </div>
+        <div>
+          <dl>
+            <div>
+              <dt>Not a grade prediction</dt>
+              <dd>Readiness reflects the confidence you report, weighted by exam importance.</dd>
+            </div>
+            <div>
+              <dt>Not a content generator</dt>
+              <dd>Kelus organizes your topics. It does not replace your lecturer, notes, or judgment.</dd>
+            </div>
+            <div>
+              <dt>Not another streak</dt>
+              <dd>Miss a day and the plan simply recalculates. No guilt, confetti, or broken chain.</dd>
+            </div>
+          </dl>
+        </div>
       </section>
-
-      <dl className="story-limits">
-        <div>
-          <dt>Not a grade prediction</dt>
-          <dd>Readiness is confidence you report, weighted by exam importance.</dd>
-        </div>
-        <div>
-          <dt>Not a content generator</dt>
-          <dd>Kelus organizes your topics. It does not replace your notes.</dd>
-        </div>
-        <div>
-          <dt>Not a streak</dt>
-          <dd>Miss a day and the plan recalculates.</dd>
-        </div>
-      </dl>
 
       <footer className="home-foot">
-        <h2>Where you are, where you need to go, how you get there.</h2>
+        <h2>Walk into the exam knowing what you worked on—and why.</h2>
         <div>
           <span className="mark">Kelus</span>
           <Link href="/today">
-            Build my route <span aria-hidden="true">→</span>
+            Make today’s plan <span aria-hidden="true">→</span>
           </Link>
         </div>
       </footer>
-    </div>
+    </>
   );
 }

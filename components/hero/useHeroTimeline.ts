@@ -12,36 +12,28 @@ export type HeroPhase =
   | "rerouting"
   | "updated";
 
-const HERO_SEQUENCE: { phase: HeroPhase; at: number }[] = [
+const SEQUENCE: { phase: HeroPhase; at: number }[] = [
   { phase: "enter", at: 0 },
-  { phase: "nodes", at: 280 },
-  { phase: "paths", at: 900 },
-  { phase: "signals", at: 1600 },
-  { phase: "route", at: 2400 },
+  { phase: "nodes", at: 500 },
+  { phase: "paths", at: 1200 },
+  { phase: "signals", at: 2200 },
+  { phase: "route", at: 3200 },
+  { phase: "learn", at: 4700 },
+  { phase: "rerouting", at: 6400 },
+  { phase: "updated", at: 7000 },
 ];
 
-const CLIMAX_SEQUENCE: { phase: HeroPhase; at: number }[] = [
-  { phase: "route", at: 0 },
-  { phase: "learn", at: 1600 },
-  { phase: "rerouting", at: 2800 },
-  { phase: "updated", at: 3600 },
-];
+const LOOP_AT = 12800;
 
 export function phaseAtLeast(phase: HeroPhase, min: HeroPhase) {
-  const order: HeroPhase[] = ["enter", "nodes", "paths", "signals", "route", "learn", "rerouting", "updated"];
-  return order.indexOf(phase) >= order.indexOf(min);
+  return (
+    SEQUENCE.findIndex((step) => step.phase === phase) >=
+    SEQUENCE.findIndex((step) => step.phase === min)
+  );
 }
 
-export function useHeroTimeline(
-  reduceMotion: boolean,
-  paused: boolean,
-  mode: "hero" | "climax" = "hero",
-) {
-  const hold = mode === "hero" ? "route" : "updated";
-  const sequence = mode === "hero" ? HERO_SEQUENCE : CLIMAX_SEQUENCE;
-  const loopAt = mode === "hero" ? Number.POSITIVE_INFINITY : 9000;
-  const initial: HeroPhase = mode === "hero" ? "enter" : "route";
-  const [phase, setPhase] = useState<HeroPhase>(initial);
+export function useHeroTimeline(reduceMotion: boolean, paused: boolean) {
+  const [phase, setPhase] = useState<HeroPhase>("enter");
   const pausedRef = useRef(paused);
 
   useEffect(() => {
@@ -60,11 +52,11 @@ export function useHeroTimeline(
       last = now;
       if (!pausedRef.current) {
         elapsed += delta;
-        if (elapsed >= loopAt) elapsed = 0;
+        if (elapsed >= LOOP_AT) elapsed = 0;
       }
 
-      let next: HeroPhase = sequence[0].phase;
-      for (const item of sequence) {
+      let next: HeroPhase = "enter";
+      for (const item of SEQUENCE) {
         if (elapsed >= item.at) next = item.phase;
       }
       setPhase((current) => (current === next ? current : next));
@@ -73,8 +65,7 @@ export function useHeroTimeline(
 
     frame = window.requestAnimationFrame(step);
     return () => window.cancelAnimationFrame(frame);
-  }, [reduceMotion, loopAt, sequence]);
+  }, [reduceMotion]);
 
-  if (reduceMotion) return hold;
-  return phase;
+  return reduceMotion ? "updated" : phase;
 }

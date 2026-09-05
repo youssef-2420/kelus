@@ -24,7 +24,6 @@ type Props = {
   onHover: (id: string | null) => void;
   elasticityMastery: number;
   reduceMotion: boolean;
-  showRouteLabel?: boolean;
 };
 
 export function KnowledgeLandscape({
@@ -34,7 +33,6 @@ export function KnowledgeLandscape({
   onHover,
   elasticityMastery,
   reduceMotion,
-  showRouteLabel = false,
 }: Props) {
   const nodes = visibleNodes(layout);
   const quiet = quietPathsFor(layout);
@@ -44,7 +42,7 @@ export function KnowledgeLandscape({
   const routeStops = showNew ? NEW_STOPS : OLD_STOPS;
   const onRoute = new Set<string>(routeStops);
   const showSignal = !reduceMotion && phaseAtLeast(phase, "route");
-  const labelOn = showRouteLabel && (reduceMotion || phaseAtLeast(phase, "route"));
+  const showRouteLabel = reduceMotion || phaseAtLeast(phase, "route");
 
   return (
     <svg
@@ -94,7 +92,7 @@ export function KnowledgeLandscape({
 
       {showSignal ? <RouteSignal key={routeD} d={routeD} /> : null}
 
-      {labelOn ? (
+      {showRouteLabel ? (
         <text className="hero-route-kicker" x={layout === "mobile" ? 180 : 500} y={layout === "mobile" ? 470 : 318}>
           Your route
         </text>

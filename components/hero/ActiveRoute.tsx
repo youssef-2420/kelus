@@ -23,7 +23,7 @@ export function ActiveRoute({ d, layout, variant = "old" }: Props) {
         pathLength={1}
         fill="none"
         stroke="var(--hero-green)"
-        strokeWidth={layout === "mobile" ? 3.6 : 4.2}
+        strokeWidth={layout === "mobile" ? 3.1 : 3.4}
         strokeLinecap="round"
         strokeLinejoin="round"
         className={`hero-active-path hero-active-path-${variant}`}
