@@ -16,10 +16,10 @@ export type TimelineMode = "hero" | "climax";
 
 const HERO_SEQUENCE: { phase: HeroPhase; at: number }[] = [
   { phase: "enter", at: 0 },
-  { phase: "nodes", at: 180 },
-  { phase: "paths", at: 520 },
-  { phase: "signals", at: 980 },
-  { phase: "route", at: 1400 },
+  { phase: "nodes", at: 80 },
+  { phase: "paths", at: 200 },
+  { phase: "signals", at: 420 },
+  { phase: "route", at: 640 },
 ];
 
 const CLIMAX_SEQUENCE: { phase: HeroPhase; at: number }[] = [

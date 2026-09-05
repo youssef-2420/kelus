@@ -489,20 +489,18 @@ button, input, textarea { font: inherit; }
 }
 .hero-layer-structure {
   color: var(--hero-ink);
-  opacity: 0.08;
+  opacity: 0.045;
 }
 .hero-quiet-path {
   color: var(--hero-ink);
-  opacity: 0.4;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-  animation: hero-draw 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.12s backwards;
+  opacity: 0.32;
+  stroke-dasharray: none;
 }
-.hero-quiet-path.is-related { opacity: 0.7; }
+.hero-quiet-path.is-related { opacity: 0.62; }
 .hero-active-path {
-  stroke-dasharray: 1;
+  stroke-dasharray: none;
   stroke-dashoffset: 0;
-  animation: hero-draw-route 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.08s backwards;
+  opacity: 1;
 }
 .hero-active-path-new {
   animation-delay: 0s;
@@ -1519,9 +1517,13 @@ button, input, textarea { font: inherit; }
 .hero-signal,
 .hero-learn {
   paint-order: stroke fill;
-  stroke: #f4efe6;
-  stroke-width: 5px;
+  stroke: var(--paper);
+  stroke-width: 3px;
   stroke-linejoin: round;
+}
+.hero-dest-num,
+.hero-here-num {
+  stroke-width: 4px;
 }
 .kelus-hero .hero-why {
   max-width: 22ch;
@@ -1565,7 +1567,7 @@ button, input, textarea { font: inherit; }
   position: sticky;
   top: 0;
   z-index: 3;
-  height: 46vh;
+  height: 52vh;
   background: var(--paper);
 }
 .route-story-map .hero-landscape {
@@ -1614,7 +1616,7 @@ button, input, textarea { font: inherit; }
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 72svh;
+  min-height: 88svh;
   padding: 28px 0 48px;
 }
 .story-chapter.is-open h1 {
@@ -1865,19 +1867,32 @@ button, input, textarea { font: inherit; }
 }
 
 @media (max-width: 900px) {
-  .hero-dest-num { font-size: 22px; }
-  .hero-here-num { font-size: 20px; }
-  .hero-dest-name { font-size: 13px; }
+  .hero-dest-num { font-size: 26px; }
+  .hero-here-num { font-size: 24px; }
+  .hero-dest-name { font-size: 14px; }
   .hero-node-name { font-size: 12px; }
   .hero-node-mastery { font-size: 14px; }
+  .hero-kicker-svg { font-size: 9px; }
   .hero-note {
-    position: relative;
-    left: 0;
-    bottom: 0;
-    max-width: none;
-    padding: 0 4px 8px;
+    position: absolute;
+    left: 8px;
+    right: auto;
+    bottom: 8px;
+    max-width: 15ch;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
   }
-  .hero-note-num { font-size: 28px; }
+  .hero-note-num { font-size: 22px; }
+  .story-chapter.is-open {
+    min-height: 0;
+    padding: 16px 0 28px;
+  }
+  .story-chapter.is-leverage,
+  .story-chapter.is-time,
+  .story-chapter.is-climax {
+    min-height: 92svh;
+  }
   .today-exam { flex-direction: column; align-items: start; }
   .home-bar .home-cta.compact { min-height: 44px; padding-inline: 16px; }
 }

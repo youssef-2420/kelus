@@ -42,8 +42,8 @@ export function KnowledgeNode({
   const y = node.y[layout];
   const r = radius(node) + (onRoute && node.kind === "concept" ? 1.2 : 0);
   const mastery = node.id === "elasticity" ? elasticityMastery : node.mastery;
-  const showLabel = node.kind !== "you" && node.kind !== "target";
-  const showSignal = signalVisible(phase, node.signal);
+  const showLabel = node.kind !== "you" && node.kind !== "target" && !(layout === "mobile" && node.hiddenOnMobile);
+  const showSignal = signalVisible(phase, node.signal) && layout !== "mobile";
   const showLearn = node.id === "elasticity" && phase === "learn";
   const labelX = layout === "mobile" ? 0 : node.x.desktop > 700 ? 12 : -12;
   const anchor = layout === "mobile" ? "middle" : node.x.desktop > 700 ? "start" : "end";
@@ -70,20 +70,20 @@ export function KnowledgeNode({
       />
       {showLabel ? (
         <>
-          <text className="hero-node-name" textAnchor={anchor} x={labelX} y={layout === "mobile" ? -18 : -16}>
+          <text className="hero-node-name" textAnchor={anchor} x={labelX} y={layout === "mobile" ? -16 : -16}>
             {node.name}
           </text>
-          <text className="hero-node-mastery" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 22 : 20}>
+          <text className="hero-node-mastery" textAnchor={anchor} x={labelX} y={layout === "mobile" ? 18 : 20}>
             {mastery}%
           </text>
         </>
       ) : null}
       {node.kind === "you" ? (
         <g className="hero-here">
-          <text className="hero-kicker-svg" textAnchor="end" x={layout === "mobile" ? -10 : -16} y={layout === "mobile" ? -14 : -18}>
+          <text className="hero-kicker-svg" textAnchor={layout === "mobile" ? "start" : "end"} x={layout === "mobile" ? 14 : -18} y={layout === "mobile" ? -12 : -20}>
             You are here
           </text>
-          <text className="hero-here-num" textAnchor="end" x={layout === "mobile" ? -10 : -16} y={layout === "mobile" ? 18 : 24}>
+          <text className="hero-here-num" textAnchor={layout === "mobile" ? "start" : "end"} x={layout === "mobile" ? 14 : -18} y={layout === "mobile" ? 16 : 22}>
             67%
           </text>
         </g>

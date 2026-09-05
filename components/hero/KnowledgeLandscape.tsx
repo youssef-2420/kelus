@@ -48,9 +48,9 @@ export function KnowledgeLandscape({
   return (
     <svg
       className="hero-landscape"
-      viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
+      viewBox={layout === "mobile" ? "24 40 340 620" : `0 0 ${VIEW.w} ${VIEW.h}`}
       role="img"
-      aria-label="A knowledge landscape. A recommended route runs from where the student is now through Elasticity toward a Microeconomics final."
+      aria-label="A knowledge landscape. A recommended route runs from where you are now through Elasticity toward a Microeconomics final."
     >
       <g className="hero-layer-structure" aria-hidden="true">
         <path

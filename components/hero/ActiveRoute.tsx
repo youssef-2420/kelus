@@ -20,10 +20,19 @@ export function ActiveRoute({ d, layout, variant = "old" }: Props) {
     <g className="hero-active-route">
       <path
         d={d}
+        fill="none"
+        stroke="#0d4640"
+        strokeOpacity={0.18}
+        strokeWidth={layout === "mobile" ? 10 : 14}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d={d}
         pathLength={1}
         fill="none"
-        stroke="var(--hero-green)"
-        strokeWidth={layout === "mobile" ? 3.6 : 4.6}
+        stroke="#0d4640"
+        strokeWidth={layout === "mobile" ? 4.4 : 5.8}
         strokeLinecap="round"
         strokeLinejoin="round"
         className={`hero-active-path hero-active-path-${variant}`}
