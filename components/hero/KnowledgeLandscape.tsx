@@ -24,7 +24,6 @@ type Props = {
   onHover: (id: string | null) => void;
   elasticityMastery: number;
   reduceMotion: boolean;
-  focusId?: string | null;
 };
 
 export function KnowledgeLandscape({
@@ -34,7 +33,6 @@ export function KnowledgeLandscape({
   onHover,
   elasticityMastery,
   reduceMotion,
-  focusId = null,
 }: Props) {
   const nodes = visibleNodes(layout);
   const quiet = quietPathsFor(layout);
@@ -44,13 +42,14 @@ export function KnowledgeLandscape({
   const routeStops = showNew ? NEW_STOPS : OLD_STOPS;
   const onRoute = new Set<string>(routeStops);
   const showSignal = !reduceMotion && phaseAtLeast(phase, "route");
+  const showRouteLabel = reduceMotion || phaseAtLeast(phase, "route");
 
   return (
     <svg
       className="hero-landscape"
-      viewBox={layout === "mobile" ? "24 40 340 620" : `0 0 ${VIEW.w} ${VIEW.h}`}
+      viewBox={`0 0 ${VIEW.w} ${VIEW.h}`}
       role="img"
-      aria-label="A knowledge landscape. A recommended route runs from where you are now through Elasticity toward a Microeconomics final."
+      aria-label="A student at a desk inside a knowledge landscape. A recommended route runs from where they are now through Elasticity toward a Microeconomics final."
     >
       <g className="hero-layer-structure" aria-hidden="true">
         <path
@@ -80,22 +79,24 @@ export function KnowledgeLandscape({
                 pathLength={1}
                 fill="none"
                 stroke="currentColor"
-                strokeWidth={related ? 1.8 : 1.35}
+                strokeWidth={related ? 1.4 : 1}
               />
             );
           })}
 
       <g className={fadingOld ? "is-fading" : undefined} style={fadingOld ? { opacity: 0.18 } : undefined}>
-        {!showNew ? (
-          <ActiveRoute d={OLD_ROUTE[layout]} layout={layout} variant="old" reduceMotion={reduceMotion} />
-        ) : null}
+        {!showNew ? <ActiveRoute d={OLD_ROUTE[layout]} layout={layout} variant="old" /> : null}
       </g>
 
-      {showNew ? (
-        <ActiveRoute key="new" d={NEW_ROUTE[layout]} layout={layout} variant="new" reduceMotion={reduceMotion} />
-      ) : null}
+      {showNew ? <ActiveRoute key="new" d={NEW_ROUTE[layout]} layout={layout} variant="new" /> : null}
 
       {showSignal ? <RouteSignal key={routeD} d={routeD} /> : null}
+
+      {showRouteLabel ? (
+        <text className="hero-route-kicker" x={layout === "mobile" ? 180 : 500} y={layout === "mobile" ? 470 : 318}>
+          Your route
+        </text>
+      ) : null}
 
       <Destination layout={layout} />
 
@@ -109,7 +110,6 @@ export function KnowledgeLandscape({
           onHover={onHover}
           onRoute={onRoute.has(node.id)}
           elasticityMastery={elasticityMastery}
-          focused={!focusId || focusId === node.id || node.kind === "you" || node.kind === "target"}
         />
       ))}
     </svg>

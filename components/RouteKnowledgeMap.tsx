@@ -27,10 +27,8 @@ export function RouteKnowledgeMap({ concepts, route, readiness, target }: { conc
           </g>
         ))}
         <g className="route-map-target" transform="translate(520 56)"><circle r="24" /><circle r="14" /><text x="0" y="-34">TARGET {target}%</text></g>
-        <g className="route-map-ready" transform="translate(24 312)">
-          <text className="route-map-ready-num">{percent(readiness)}</text>
-        </g>
       </svg>
+      <figcaption><span>Estimated ready</span><strong>{percent(readiness)}</strong><small>Estimate updates from retrieval evidence.</small></figcaption>
     </figure>
   );
 }

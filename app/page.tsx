@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { RouteStory } from "@/components/home/RouteStory";
+import { KelusHero } from "@/components/hero/KelusHero";
+import { HomeAfterHero } from "@/components/home/HomeAfterHero";
+import { KnowledgeRouteStory } from "@/components/home/KnowledgeRouteStory";
 
 export default function Home() {
   return (
@@ -12,10 +14,18 @@ export default function Home() {
           <Link href="/today">Today</Link>
           <Link href="/map">Map</Link>
         </nav>
+        <Link href="/today" className="cta home-cta compact">
+          Start
+          <span className="arrow" aria-hidden="true">
+            →
+          </span>
+        </Link>
       </header>
 
       <main id="main">
-        <RouteStory />
+        <KelusHero />
+        <KnowledgeRouteStory />
+        <HomeAfterHero />
       </main>
     </div>
   );

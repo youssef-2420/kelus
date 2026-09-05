@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import type { Concept, RoutePlan } from "@/domain/types";
-import { REASON_COPY } from "@/lib/learning-copy";
+import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
 import { percent } from "@/lib/format";
 
 export function TodayRoute({ route, concepts }: { route: RoutePlan; concepts: Concept[] }) {
@@ -17,19 +17,14 @@ export function TodayRoute({ route, concepts }: { route: RoutePlan; concepts: Co
         const open = openId === allocation.conceptId;
         return (
           <motion.li layout={!reduceMotion} key={allocation.conceptId}>
-            <button type="button" aria-expanded={open} aria-controls={`plan-disclosure-${allocation.conceptId}`} onClick={() => setOpenId(open ? null : allocation.conceptId)}>
+            <button type="button" aria-expanded={open} onClick={() => setOpenId(open ? null : allocation.conceptId)}>
               <span className="plan-index">{String(index + 1).padStart(2, "0")}</span>
-              <span className="plan-topic">
-                <strong>{name}</strong>
-                <i className="plan-claim" aria-hidden="true">
-                  <em style={{ width: `${Math.max(8, (allocation.minutes / route.availableMinutes) * 100)}%` }} />
-                </i>
-              </span>
+              <span className="plan-topic"><strong>{name}</strong><small>{conciseReason(allocation.reasons)}</small></span>
               <span className="plan-time"><strong>{allocation.minutes}</strong><small>MIN</small></span>
             </button>
             <AnimatePresence initial={false}>
               {open && concept ? (
-                <motion.div id={`plan-disclosure-${allocation.conceptId}`} className="plan-reasoning" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reduceMotion ? 0.1 : 0.22 }}>
+                <motion.div className="plan-reasoning" initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: reduceMotion ? 0.1 : 0.22 }}>
                   <p><span>{percent(concept.mastery)}</span> estimated mastery</p>
                   <div><p className="kicker">Why now?</p><ul>{allocation.reasons.slice(0, 4).map((reason) => <li key={reason}>{REASON_COPY[reason]}</li>)}</ul></div>
                 </motion.div>
