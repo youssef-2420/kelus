@@ -75,7 +75,12 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
               </li>
             ))}
           </ol>
-          <button type="button" className="cta diagnosis-continue" disabled={!allRated} onClick={beginChecks}>Check my recall <span aria-hidden="true">→</span></button>
+          <div className="diagnosis-cta">
+            <button type="button" className="cta diagnosis-continue" disabled={!allRated} onClick={beginChecks}>
+              {allRated ? "Check my recall" : "Rate every topic first"}
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
         </section>
       ) : concept && prompt ? (
         <section className="diagnosis-check">

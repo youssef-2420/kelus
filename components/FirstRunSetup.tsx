@@ -31,9 +31,8 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
         {step === 1 ? (
           <fieldset>
             <legend>What are you working toward?</legend>
-            <label className="sr-only" htmlFor="exam-name">Exam</label>
-            <input id="exam-name" autoFocus readOnly value={draft.examName} aria-describedby="course-support" />
-            <p id="course-support" className="destination-support">Microeconomics is the first supported course.</p>
+            <p className="destination-locked" aria-describedby="course-support">{draft.examName}</p>
+            <p id="course-support" className="destination-support">Microeconomics is the first supported course. More courses come later.</p>
           </fieldset>
         ) : null}
         {step === 2 ? (

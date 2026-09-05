@@ -31,9 +31,11 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <Link href="/today" className="site-header-action">
-          Study now <span aria-hidden="true">→</span>
-        </Link>
+        {pathname.startsWith("/today") ? null : (
+          <Link href="/today" className="site-header-action">
+            Study now <span aria-hidden="true">→</span>
+          </Link>
+        )}
       </div>
     </header>
   );

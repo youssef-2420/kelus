@@ -10,6 +10,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
+import { percent } from "@/lib/format";
 
 export default function TodayPage() {
   const router = useRouter();
@@ -25,6 +26,9 @@ export default function TodayPage() {
   const route = generateRoute({ concepts, relationships: snapshot.relationships, events: snapshot.events, exam, nowIso });
   const readiness = estimatedReadiness(concepts);
   const days = daysUntilExam(exam, nowIso);
+  const first = route.allocations[0];
+  const firstConcept = concepts.find((concept) => concept.id === first?.conceptId);
+  const firstName = firstConcept?.name ?? "mixed retrieval";
   const courseId = course.id;
   const examId = exam.id;
 
@@ -35,23 +39,33 @@ export default function TodayPage() {
   }
 
   return (
-    <AppShell action={<button type="button" className="text-btn" onClick={reset}>Start over</button>}>
-      <section className="today-destination">
-        <div><p className="kicker">{exam.target}</p><h1>Today’s route</h1></div>
-        <dl><div><dt>Exam</dt><dd>{days} days</dd></div><div><dt>Target</dt><dd>{exam.targetPercent}%</dd></div></dl>
+    <AppShell>
+      <section className="today-desk">
+        <p className="kicker">{exam.target}</p>
+        <h1>Start {firstName}</h1>
+        <p className="today-lede">
+          {route.availableMinutes} minutes today · exam in {days} days · aim {exam.targetPercent}%
+        </p>
       </section>
 
       <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
 
       <section className="today-allocation" aria-labelledby="allocation-title">
-        <header><div><p className="kicker">Highest learning value first</p><h2 id="allocation-title">Your best {route.availableMinutes} minutes</h2></div><p>Not the weakest topics. The most valuable next actions.</p></header>
+        <h2 id="allocation-title">This session</h2>
         <TodayRoute route={route} concepts={concepts} />
       </section>
 
-      <div className="today-primary-action">
-        <button type="button" className="cta" onClick={begin}>Start my route <span aria-hidden="true">→</span></button>
+      <div className="today-cta">
+        <button type="button" className="cta" onClick={begin}>
+          Start {firstName} <span aria-hidden="true">→</span>
+        </button>
         <p>Kelus will recalculate when your answers change what matters next.</p>
       </div>
+
+      <p className="today-reset">
+        Estimated ready {percent(readiness)}.
+        <button type="button" className="text-btn" onClick={reset}>Start over</button>
+      </p>
     </AppShell>
   );
 }
