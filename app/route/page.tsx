@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { HomeHeader } from "@/components/home/HomeHeader";
 import { RouteStory } from "@/components/home/RouteStory";
 
 export const metadata: Metadata = {
@@ -11,8 +10,6 @@ export const metadata: Metadata = {
 export default function RoutePage() {
   return (
     <div className="home route-page">
-      <HomeHeader current="route" />
-
       <main id="main">
         <RouteStory />
       </main>

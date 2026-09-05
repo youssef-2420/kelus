@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useRef, useState, type SyntheticEvent } from "react";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
 
@@ -58,13 +57,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
 
   return (
     <main id="main" className="diagnosis-page">
-      <header className="diagnosis-header">
-        <Link href="/" className="mark">Kelus</Link>
-        <div className="route-header-meta">
-          <Link href="/" className="route-home-link">Home</Link>
-          <span>Initial estimate</span>
-        </div>
-      </header>
+      <div className="flow-context diagnosis-context"><span>Build your first route</span><b>Initial estimate</b></div>
       {phase === "rating" ? (
         <section className="diagnosis-panel">
           <p className="kicker">Start with your judgment</p>

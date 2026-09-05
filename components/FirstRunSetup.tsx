@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState, type FormEvent } from "react";
 import type { SetupInput } from "@/lib/setup";
 
@@ -27,14 +26,8 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
 
   return (
     <main id="main" className="destination-page">
-      <header className="destination-header">
-        <Link href="/" className="mark">Kelus</Link>
-        <div className="route-header-meta">
-          <Link href="/" className="route-home-link">Home</Link>
-          <span>{step} / 3</span>
-        </div>
-      </header>
       <form className="destination-form" onSubmit={next}>
+        <div className="flow-context"><span>Set your destination</span><b>{step} / 3</b></div>
         {step === 1 ? (
           <fieldset>
             <legend>What are you working toward?</legend>

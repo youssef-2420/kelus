@@ -34,7 +34,7 @@ function SessionBody() {
   }, []);
 
   if (!session || !concept || !prompt) {
-    return <main className="study-shell"><p>No active route.</p><button className="cta" type="button" onClick={() => router.push("/today")}>Back to today</button></main>;
+    return <main id="main" className="study-shell"><p>No active route.</p><button className="cta" type="button" onClick={() => router.push("/today")}>Back to today</button></main>;
   }
   const activeSessionId = session.id;
   const plannedLength = session.plannedConceptIds.length;
@@ -90,7 +90,7 @@ function SessionBody() {
 
   return (
     <main id="main" className="study-shell">
-      <header className="study-header"><span className="mark">Kelus</span><button type="button" className="text-btn" onClick={() => router.push("/today")}>Exit</button></header>
+      <div className="study-context"><span>Active study route</span><button type="button" className="text-btn" onClick={() => router.push("/today")}>Exit session</button></div>
       <div className="study-progress" role="progressbar" aria-valuenow={index + 1} aria-valuemin={1} aria-valuemax={total}><i style={{ transform: `scaleX(${(index + 1) / Math.max(total, 1)})` }} /></div>
       <AnimatePresence mode="wait">
         {phase === "reroute" ? (
