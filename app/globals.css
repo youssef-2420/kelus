@@ -5056,6 +5056,60 @@ h3,
 .how-stage-copy h2 { max-width: 12ch; margin: 0; font-size: clamp(34px, 4.4vw, 58px); font-weight: 300; letter-spacing: -0.04em; }
 .how-stage-copy p { max-width: 42ch; margin: var(--spacing-24) 0 0; color: var(--color-steel); }
 
+.how-illustration {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  color: var(--color-midnight-ink);
+  background: var(--color-mist);
+  border-top: 1px solid var(--color-midnight-ink);
+  border-bottom: 1px solid var(--color-frost);
+  overflow: hidden;
+}
+.how-illustration svg { display: block; width: 100%; height: auto; }
+.how-illustration text { fill: currentColor; font-family: var(--font-ledger); }
+.how-figure-note { fill: var(--color-smoke) !important; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; }
+.how-flow-line,
+.how-map-link,
+.how-route-option,
+.how-route-active {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+}
+.how-flow-line { stroke: var(--color-lavender-border); stroke-width: 1.25; stroke-dasharray: 4 7; }
+.how-flow-line.is-primary { stroke: var(--color-indigo-ink); stroke-width: 1.75; stroke-dasharray: none; }
+
+.how-paper-stack rect { fill: var(--color-pure-white); stroke: var(--color-lavender-border); stroke-width: 1; }
+.how-paper-stack rect:first-child { fill: var(--color-periwinkle-wash); }
+.how-paper-stack path { fill: none; stroke: var(--color-frost); stroke-width: 4; stroke-linecap: square; }
+.how-paper-stack text:first-of-type { fill: var(--color-indigo-ink); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; }
+.how-paper-stack text:last-of-type { fill: var(--color-smoke); font-size: 8px; letter-spacing: 0.08em; }
+.how-concept-node circle { fill: var(--color-pure-white); stroke: var(--color-smoke); stroke-width: 1.5; }
+.how-concept-node text { fill: var(--color-steel); font-size: 13px; }
+.how-concept-node.is-primary circle { fill: var(--color-indigo-ink); stroke: var(--color-indigo-ink); }
+.how-concept-node.is-primary text { fill: var(--color-indigo-ink); font-size: 16px; font-weight: 600; }
+.how-map-link { stroke: var(--color-indigo-ink); stroke-width: 1.5; }
+
+.how-route-option { stroke: var(--color-lavender-border); stroke-width: 1; stroke-dasharray: 4 9; }
+.how-route-active { stroke: var(--color-indigo-ink); stroke-width: 2; }
+.how-route-you circle { fill: var(--color-midnight-ink); }
+.how-route-you text { fill: var(--color-pure-white); font-size: 8px; font-weight: 600; text-anchor: middle; }
+.how-route-node circle { fill: var(--color-pure-white); stroke: var(--color-indigo-ink); stroke-width: 2; }
+.how-route-node text { fill: var(--color-steel); font-size: 9px; font-weight: 600; letter-spacing: 0.06em; text-anchor: middle; }
+.how-route-target circle:first-of-type { fill: var(--color-periwinkle-wash); stroke: var(--color-indigo-ink); }
+.how-route-target circle:last-of-type { fill: var(--color-indigo-ink); }
+.how-route-target text { fill: var(--color-indigo-ink); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-anchor: middle; }
+
+.how-answer-signal > text { fill: var(--color-smoke); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; }
+.how-answer-signal rect { fill: var(--color-pure-white); stroke: var(--color-lavender-border); }
+.how-answer-signal rect + text { fill: var(--color-indigo-ink); font-size: 12px; font-weight: 600; text-anchor: middle; }
+.how-mastery-shift text:first-child { fill: var(--color-steel); font-size: 10px; font-weight: 600; letter-spacing: 0.06em; }
+.how-mastery-shift text:not(:first-child) { fill: var(--color-steel); font-size: 38px; font-weight: 300; }
+.how-mastery-shift text.is-new { fill: var(--color-indigo-ink); }
+.how-next-route text { fill: var(--color-steel); font-size: 11px; }
+.how-next-route text:first-child { fill: var(--color-smoke); font-size: 9px; font-weight: 600; letter-spacing: 0.08em; }
+.how-next-route text.is-moved { fill: var(--color-indigo-ink); font-weight: 600; }
+
 .how-material-fragment,
 .how-diagnosis-fragment,
 .how-session-fragment,
@@ -5159,6 +5213,7 @@ h3,
   .how-principle > dl { grid-column: 1; }
   .how-stage-copy h2,
   .how-principle > h2 { font-size: 36px; }
+  .how-illustration { margin-top: var(--spacing-16); }
   .how-map-fragment { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-8); padding: var(--spacing-24) 0; }
   .how-map-fragment i { transform: rotate(90deg); text-align: center; }
   .how-material-fragment p { grid-template-columns: 36px minmax(0, 1fr); }

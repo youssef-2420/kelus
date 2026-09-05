@@ -39,5 +39,17 @@ test("route explainer lives on its own page", () => {
   assert.match(story, /Learn inside the route/);
   assert.match(story, /Your answer changes the route/);
   assert.match(story, /BlurText/);
+  assert.match(story, /MaterialToMapIllustration/);
+  assert.match(story, /TodayRouteIllustration/);
+  assert.match(story, /RerouteIllustration/);
   assert.match(story, /Not a grade prediction/);
+});
+
+test("how-it-works illustrations explain causality without raster assets", () => {
+  const illustrations = readFileSync("components/how/HowIllustrations.tsx", "utf8");
+  assert.match(illustrations, /Course pages becoming a confirmed concept map/);
+  assert.match(illustrations, /One selected study route through several possibilities/);
+  assert.match(illustrations, /A learning answer changing the next route/);
+  assert.match(illustrations, /useReducedMotion|reduceMotion/);
+  assert.doesNotMatch(illustrations, /<img/);
 });

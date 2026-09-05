@@ -104,10 +104,10 @@
       "surface": "white ledger sections with mist reserved for the closing action",
       "type": "Inter Tight with one restrained BlurText thesis",
       "geometry": "full-width evidence rows and four-pixel controls",
-      "motion": "word reveal at entry and short viewport reveals for workflow stages",
+      "motion": "word reveal at entry, short stage reveals, and causal SVG path drawing",
       "density": "one product event and one interface fragment per stage"
     },
-    "enrichment": "realistic Kelus interface fragments; no decorative imagery",
+    "enrichment": "three native indigo-ledger diagrams plus realistic Kelus interface fragments",
     "vibe": "clear, causal, instructional, precise"
   }
 ]

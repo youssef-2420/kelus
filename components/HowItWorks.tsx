@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import BlurText from "@/components/BlurText";
+import { MaterialToMapIllustration, RerouteIllustration, TodayRouteIllustration } from "@/components/how/HowIllustrations";
 
 const stages = [
   {
@@ -43,13 +44,8 @@ const stages = [
   },
 ] as const;
 
-function StageVisual({ type }: { type: (typeof stages)[number]["visual"] }) {
-  if (type === "materials") return (
-    <div className="how-material-fragment" aria-label="Example confirmed course sources">
-      <p><span>PDF</span><strong>Microeconomics syllabus</strong><small>12 pages</small></p>
-      <p><span>PDF</span><strong>Lecture 04 · Elasticity</strong><small>Page 7 cited</small></p>
-    </div>
-  );
+function StageVisual({ type, reduceMotion }: { type: (typeof stages)[number]["visual"]; reduceMotion: boolean }) {
+  if (type === "materials") return <MaterialToMapIllustration reduceMotion={reduceMotion} />;
   if (type === "map") return (
     <div className="how-map-fragment" aria-label="Example concept relationship">
       <span>Supply &amp; Demand</span><i aria-hidden="true">→</i><strong>Elasticity</strong><i aria-hidden="true">→</i><span>Market Structures</span>
@@ -62,13 +58,7 @@ function StageVisual({ type }: { type: (typeof stages)[number]["visual"] }) {
       <small>Next: one short recall question</small>
     </div>
   );
-  if (type === "today") return (
-    <ol className="how-today-fragment" aria-label="Example daily route">
-      <li><span>01</span><strong>Elasticity</strong><b>18 min</b></li>
-      <li><span>02</span><strong>Monetary Policy</strong><b>15 min</b></li>
-      <li><span>03</span><strong>Market Structures</strong><b>10 min</b></li>
-    </ol>
-  );
+  if (type === "today") return <TodayRouteIllustration reduceMotion={reduceMotion} />;
   if (type === "session") return (
     <div className="how-session-fragment" aria-label="Example learning session">
       <div><span>01 / 04</span><small>Retrieve</small></div>
@@ -76,12 +66,7 @@ function StageVisual({ type }: { type: (typeof stages)[number]["visual"] }) {
       <span className="how-answer-line">Write your explanation…</span>
     </div>
   );
-  return (
-    <div className="how-reroute-fragment" aria-label="Example route update">
-      <div><span>Elasticity</span><b>42%</b><i aria-hidden="true">→</i><strong>54%</strong></div>
-      <p><span>Moved forward</span><strong>Monetary Policy</strong></p>
-    </div>
-  );
+  return <RerouteIllustration reduceMotion={reduceMotion} />;
 }
 
 export function HowItWorks() {
@@ -106,7 +91,7 @@ export function HowItWorks() {
             <motion.li key={stage.number} {...reveal}>
               <span className="how-stage-number">{stage.number}</span>
               <div className="how-stage-copy"><h2>{stage.label}</h2><p>{stage.body}</p></div>
-              <StageVisual type={stage.visual} />
+              <StageVisual type={stage.visual} reduceMotion={reduceMotion} />
             </motion.li>
           ))}
         </ol>
