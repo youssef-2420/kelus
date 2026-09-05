@@ -12,10 +12,15 @@ import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
 
 export default function TodayPage() {
-  const router = useRouter();
-  const { state, start, reset, completeSetup, completeDiagnosis, useDemo } = useLearner();
+  const { state, completeSetup, completeDiagnosis, useDemo } = useLearner();
   if (!state.onboardingCompleted) return <FirstRunSetup onComplete={completeSetup} onUseDemo={useDemo} />;
   if (!state.diagnosisCompleted) return <InitialDiagnosis snapshot={state.snapshot} onComplete={completeDiagnosis} />;
+  return <TodayStage />;
+}
+
+function TodayStage() {
+  const router = useRouter();
+  const { state, start } = useLearner();
 
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
@@ -25,6 +30,7 @@ export default function TodayPage() {
   const route = generateRoute({ concepts, relationships: snapshot.relationships, events: snapshot.events, exam, nowIso });
   const readiness = estimatedReadiness(concepts);
   const days = daysUntilExam(exam, nowIso);
+  const ready = Math.round(readiness * 100);
   const courseId = course.id;
   const examId = exam.id;
 
@@ -35,22 +41,30 @@ export default function TodayPage() {
   }
 
   return (
-    <AppShell action={<button type="button" className="text-btn" onClick={reset}>Start over</button>}>
-      <section className="today-destination">
-        <div><p className="kicker">{exam.target}</p><h1>Today’s route</h1></div>
-        <dl><div><dt>Exam</dt><dd>{days} days</dd></div><div><dt>Target</dt><dd>{exam.targetPercent}%</dd></div></dl>
-      </section>
+    <AppShell>
+      <div className="today-stage">
+        <header className="today-dest">
+          <h1>{exam.target}</h1>
+          <p className="today-dest-meta">
+            <span>{days} days</span>
+            <span>Target {exam.targetPercent}%</span>
+          </p>
+        </header>
 
-      <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
+        <div className="today-stat">
+          <p className="today-stat-num">{ready}%</p>
+          <p className="today-stat-label">Ready</p>
+        </div>
 
-      <section className="today-allocation" aria-labelledby="allocation-title">
-        <header><div><p className="kicker">Highest learning value first</p><h2 id="allocation-title">Your best {route.availableMinutes} minutes</h2></div><p>Not the weakest topics. The most valuable next actions.</p></header>
+        <RouteKnowledgeMap concepts={concepts} route={route} target={exam.targetPercent} />
+
         <TodayRoute route={route} concepts={concepts} />
-      </section>
 
-      <div className="today-primary-action">
-        <button type="button" className="cta" onClick={begin}>Start my route <span aria-hidden="true">→</span></button>
-        <p>Kelus will recalculate when your answers change what matters next.</p>
+        <div className="today-primary-action">
+          <button type="button" className="cta" onClick={begin}>
+            Start route <span aria-hidden="true">→</span>
+          </button>
+        </div>
       </div>
     </AppShell>
   );

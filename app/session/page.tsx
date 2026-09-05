@@ -34,7 +34,7 @@ function SessionBody() {
   }, []);
 
   if (!session || !concept || !prompt) {
-    return <main className="study-shell"><p>No active route.</p><button className="cta" type="button" onClick={() => router.push("/today")}>Back to today</button></main>;
+    return <main className="product-canvas"><div className="study-shell product"><p>No active route.</p><button className="cta" type="button" onClick={() => router.push("/today")}>Back to today</button></div></main>;
   }
   const activeSessionId = session.id;
   const plannedLength = session.plannedConceptIds.length;
@@ -89,7 +89,8 @@ function SessionBody() {
   const nextNames = session.latestRoute.allocations.map((allocation) => state.snapshot.concepts.find((item) => item.id === allocation.conceptId)?.name).filter(Boolean);
 
   return (
-    <main id="main" className="study-shell">
+    <div className="product-canvas">
+    <main id="main" className="study-shell product">
       <header className="study-header"><span className="mark">Kelus</span><button type="button" className="text-btn" onClick={() => router.push("/today")}>Exit</button></header>
       <div className="study-progress" role="progressbar" aria-valuenow={index + 1} aria-valuemin={1} aria-valuemax={total}><i style={{ transform: `scaleX(${(index + 1) / Math.max(total, 1)})` }} /></div>
       <AnimatePresence mode="wait">
@@ -106,7 +107,7 @@ function SessionBody() {
             <button type="button" className="cta" onClick={continueAfterReroute}>Continue route <span aria-hidden="true">→</span></button>
           </motion.section>
         ) : (
-          <motion.section key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }}>
+          <motion.section key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <p className="study-count">{index + 1} / {total}</p>
             <p className="kicker">{concept.name}</p>
             {phase === "attempt" ? (
@@ -128,7 +129,7 @@ function SessionBody() {
             {phase === "reward" ? (
               <div className="mastery-reward">
                 <p className="kicker">Estimated mastery</p>
-                <div><span>{percent(masteryBefore)}</span><i aria-hidden="true">→</i><motion.strong initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>{percent(concept.mastery)}</motion.strong></div>
+                <div><span>{percent(masteryBefore)}</span><i aria-hidden="true">→</i><motion.strong initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }}>{percent(concept.mastery)}</motion.strong></div>
                 <p>One new piece of evidence. The estimate—not a claim of exact memory—has changed.</p>
                 <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
               </div>
@@ -137,9 +138,10 @@ function SessionBody() {
         )}
       </AnimatePresence>
     </main>
+    </div>
   );
 }
 
 export default function SessionPage() {
-  return <Suspense fallback={<main className="study-shell"><p>Opening route…</p></main>}><SessionBody /></Suspense>;
+  return <Suspense fallback={<main className="product-canvas"><div className="study-shell product"><p>Opening route…</p></div></main>}><SessionBody /></Suspense>;
 }

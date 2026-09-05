@@ -24,5 +24,7 @@ test("route transition is keyed by pathname and respects reduced motion", async 
 test("primary application navigation exposes its active page", async () => {
   const shell = await source("components/AppShell.tsx");
   assert.match(shell, /aria-current=/);
-  assert.match(shell, /className=\{path === "\/" \? "is-active"/);
+  assert.match(shell, /Today/);
+  assert.match(shell, /Map/);
+  assert.doesNotMatch(shell, /className=\{path === "\/" \? "is-active"/);
 });

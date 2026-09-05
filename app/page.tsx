@@ -6,7 +6,7 @@ import { KnowledgeRouteStory } from "@/components/home/KnowledgeRouteStory";
 export default function Home() {
   return (
     <div className="home">
-      <HomeHeader current="home" />
+      <HomeHeader />
 
       <main id="main">
         <KelusHero />
