@@ -93,5 +93,21 @@
     },
     "enrichment": "none; app function carries the page",
     "vibe": "decisive, calm, focused, evidence-led"
+  },
+  {
+    "date": "2026-09-05",
+    "scope": "How Kelus works",
+    "brief": "Replace the abstract sticky route demonstration with a concrete end-to-end learning workflow",
+    "macrostructure": "Narrative Workflow",
+    "theme": "indigo ledger (design.md)",
+    "theme_axes": {
+      "surface": "white ledger sections with mist reserved for the closing action",
+      "type": "Inter Tight with one restrained BlurText thesis",
+      "geometry": "full-width evidence rows and four-pixel controls",
+      "motion": "word reveal at entry and short viewport reveals for workflow stages",
+      "density": "one product event and one interface fragment per stage"
+    },
+    "enrichment": "realistic Kelus interface fragments; no decorative imagery",
+    "vibe": "clear, causal, instructional, precise"
   }
 ]

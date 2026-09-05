@@ -30,9 +30,14 @@ test("the start-here route explains the full first-use loop without generic card
 
 test("route explainer lives on its own page", () => {
   const page = readFileSync("app/route/page.tsx", "utf8");
-  const story = readFileSync("components/home/RouteStory.tsx", "utf8");
-  assert.match(page, /RouteStory/);
-  assert.match(story, /Your learning/);
-  assert.match(story, /TimeClaim/);
-  assert.match(story, /RouteLeverage/);
+  const story = readFileSync("components/HowItWorks.tsx", "utf8");
+  assert.match(page, /HowItWorks/);
+  assert.match(story, /Give Kelus the course/);
+  assert.match(story, /Build the Knowledge Map/);
+  assert.match(story, /Show what you know/);
+  assert.match(story, /Open Today/);
+  assert.match(story, /Learn inside the route/);
+  assert.match(story, /Your answer changes the route/);
+  assert.match(story, /BlurText/);
+  assert.match(story, /Not a grade prediction/);
 });

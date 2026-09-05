@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { RouteStory } from "@/components/home/RouteStory";
+import { HowItWorks } from "@/components/HowItWorks";
 
 export const metadata: Metadata = {
   title: "Kelus — Your learning has a route",
@@ -11,7 +11,7 @@ export default function RoutePage() {
   return (
     <div className="home route-page">
       <main id="main">
-        <RouteStory />
+        <HowItWorks />
       </main>
     </div>
   );
