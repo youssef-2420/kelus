@@ -48,7 +48,7 @@ test("homepage is a single route story with the landscape headline", () => {
 test("today uses spatial scale instead of dashboard headings", () => {
   const today = readFileSync("app/today/page.tsx", "utf8");
   assert.match(today, /today-days/);
-  assert.match(today, /today-ready/);
   assert.match(today, /today-minutes-hero/);
   assert.match(today, /Start route/);
+  assert.match(readFileSync("components/RouteKnowledgeMap.tsx", "utf8"), /route-map-ready/);
 });

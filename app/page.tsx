@@ -12,12 +12,6 @@ export default function Home() {
           <Link href="/today">Today</Link>
           <Link href="/map">Map</Link>
         </nav>
-        <Link href="/today" className="cta home-cta compact">
-          Start
-          <span className="arrow" aria-hidden="true">
-            →
-          </span>
-        </Link>
       </header>
 
       <main id="main">

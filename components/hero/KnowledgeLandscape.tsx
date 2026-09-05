@@ -86,10 +86,14 @@ export function KnowledgeLandscape({
           })}
 
       <g className={fadingOld ? "is-fading" : undefined} style={fadingOld ? { opacity: 0.18 } : undefined}>
-        {!showNew ? <ActiveRoute d={OLD_ROUTE[layout]} layout={layout} variant="old" /> : null}
+        {!showNew ? (
+          <ActiveRoute d={OLD_ROUTE[layout]} layout={layout} variant="old" reduceMotion={reduceMotion} />
+        ) : null}
       </g>
 
-      {showNew ? <ActiveRoute key="new" d={NEW_ROUTE[layout]} layout={layout} variant="new" /> : null}
+      {showNew ? (
+        <ActiveRoute key="new" d={NEW_ROUTE[layout]} layout={layout} variant="new" reduceMotion={reduceMotion} />
+      ) : null}
 
       {showSignal ? <RouteSignal key={routeD} d={routeD} /> : null}
 

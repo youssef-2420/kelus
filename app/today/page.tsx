@@ -10,7 +10,6 @@ import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
-import { percent } from "@/lib/format";
 
 export default function TodayPage() {
   const router = useRouter();
@@ -45,11 +44,6 @@ export default function TodayPage() {
             <span>days</span>
           </p>
         </header>
-
-        <p className="today-ready">
-          <b>{percent(readiness)}</b>
-          <span>ready</span>
-        </p>
 
         <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
 

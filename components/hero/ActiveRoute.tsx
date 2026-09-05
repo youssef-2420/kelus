@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import type { Layout } from "./landscape-data";
 import { NODE_MAP } from "./landscape-data";
 
@@ -12,9 +13,10 @@ type Props = {
   variant?: "old" | "new";
 };
 
-export function ActiveRoute({ d, layout, variant = "old" }: Props) {
+export function ActiveRoute({ d, layout, reduceMotion = false, variant = "old" }: Props) {
   const start = NODE_MAP.you;
   const end = NODE_MAP.target;
+  const ease = [0.22, 1, 0.36, 1] as const;
 
   return (
     <g className="hero-active-route">
@@ -27,7 +29,7 @@ export function ActiveRoute({ d, layout, variant = "old" }: Props) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      <path
+      <motion.path
         d={d}
         pathLength={1}
         fill="none"
@@ -36,6 +38,9 @@ export function ActiveRoute({ d, layout, variant = "old" }: Props) {
         strokeLinecap="round"
         strokeLinejoin="round"
         className={`hero-active-path hero-active-path-${variant}`}
+        initial={reduceMotion ? false : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: variant === "new" ? 0.9 : 1.15, ease, delay: variant === "new" ? 0.05 : 0.12 }}
       />
       <circle
         cx={start.x[layout]}

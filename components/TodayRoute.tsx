@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import type { Concept, RoutePlan } from "@/domain/types";
-import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
+import { REASON_COPY } from "@/lib/learning-copy";
 import { percent } from "@/lib/format";
 
 export function TodayRoute({ route, concepts }: { route: RoutePlan; concepts: Concept[] }) {
@@ -19,7 +19,12 @@ export function TodayRoute({ route, concepts }: { route: RoutePlan; concepts: Co
           <motion.li layout={!reduceMotion} key={allocation.conceptId}>
             <button type="button" aria-expanded={open} aria-controls={`plan-disclosure-${allocation.conceptId}`} onClick={() => setOpenId(open ? null : allocation.conceptId)}>
               <span className="plan-index">{String(index + 1).padStart(2, "0")}</span>
-              <span className="plan-topic"><strong>{name}</strong><small>{conciseReason(allocation.reasons)}</small></span>
+              <span className="plan-topic">
+                <strong>{name}</strong>
+                <i className="plan-claim" aria-hidden="true">
+                  <em style={{ width: `${Math.max(8, (allocation.minutes / route.availableMinutes) * 100)}%` }} />
+                </i>
+              </span>
               <span className="plan-time"><strong>{allocation.minutes}</strong><small>MIN</small></span>
             </button>
             <AnimatePresence initial={false}>

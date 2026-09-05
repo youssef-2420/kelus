@@ -190,8 +190,15 @@ export function RouteStory() {
             className="story-chapter is-climax"
             aria-label="The route updates"
           >
+            {phaseAtLeast(phase, "learn") ? (
+              <p className="story-mastery-shift" aria-hidden="true">
+                <b>42</b>
+                <span>→</span>
+                <b>54</b>
+              </p>
+            ) : null}
             <p className={`story-updated${updated ? " is-on" : ""}`}>
-              {updated ? "Route updated." : phaseAtLeast(phase, "learn") ? "Elasticity 42 → 54" : "The route holds."}
+              {updated ? "Route updated." : ""}
             </p>
           </section>
         </div>
