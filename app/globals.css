@@ -597,6 +597,9 @@ button, input, textarea { font: inherit; }
   fill: var(--hero-ink);
   font-size: 44px;
 }
+.hero-here-num {
+  font-size: 36px;
+}
 .hero-node.is-dim {
   opacity: 0.28;
 }
