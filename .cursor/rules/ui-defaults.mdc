@@ -1,21 +1,28 @@
 ---
-description: Kelus default UI skills — Apple Design + Framer Motion. Apply to all interface work.
+description: Kelus default UI — indigo ledger plus Apple/Motion skills. Apply to all interface work.
 alwaysApply: true
 ---
 
-# Default UI skills
+# Default UI
 
-For any UI, UX, layout, styling, motion, or interaction work on Kelus, **read and follow these skills first**:
+**Visual system:** `design.md` and `tokens.css` (indigo ledger). This is the main design flow.
 
-1. `.cursor/skills/apple-design/SKILL.md` — feedback, directness, interruptible motion, restraint, reduced motion
-2. `.cursor/skills/framer-motion-ui/SKILL.md` — implement motion with `motion/react` (not `framer-motion`)
+- One accent: indigo `#533afd` (hover `#7389ff`). Not Kelus green.
+- Canvas white, midnight ink, Inter Tight 300/400, 4px radii, no shadows, 1px frost dividers.
+- Navigation is `components/SiteHeader.tsx` on every page. Do not add a second marketing header.
+- Homepage order is fixed: `KelusHero` → `StartHereJourney` → `HomeAfterHero`.
 
-They are the primary set. Do not reach for shadcn, Superdesign, Figma generate, or a page rewrite unless the user asks for that by name.
+For interaction and motion, **also** follow:
+
+1. `.cursor/skills/apple-design/SKILL.md` — feedback, directness, restraint, reduced motion
+2. `.cursor/skills/framer-motion-ui/SKILL.md` — `motion/react` (not `framer-motion`)
+
+Do not reach for shadcn, Superdesign, Figma generate, or a page rewrite unless the user asks for that by name.
 
 ## How to use them here
 
-- Small tweaks: keep existing sections, student hero, and workbench. Change CSS, type, spacing, and motion only.
+- Small tweaks: keep the current sections and header. Change CSS, type, spacing, and motion only.
 - Springs with **bounce 0**. Ease `[0.22, 1, 0.36, 1]` when not using a spring.
 - Instant press feedback (`:active` / `whileTap`). Respect `useReducedMotion()`.
 - Animate transform and opacity only. Reuse `@/components/motion` when a wrapper already exists.
-- One accent (Kelus green). Do not invent a new visual system.
+- Do not invent a new visual system.
