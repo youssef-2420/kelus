@@ -651,7 +651,6 @@ button, input, textarea { font: inherit; }
 }
 
 @media (max-width: 860px) {
-  .home { width: min(760px, calc(100% - 32px)); }
   .home-hero {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -1842,7 +1841,7 @@ button, input, textarea { font: inherit; }
   font-weight: 500;
 }
 
-@media (min-width: 761px) {
+@media (min-width: 901px) {
   .route-story-stage {
     display: grid;
     grid-template-columns: minmax(280px, 38%) minmax(0, 1fr);
@@ -1886,7 +1885,7 @@ button, input, textarea { font: inherit; }
   }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   .route-story-rail,
   .story-limits,
   .story-foot {
