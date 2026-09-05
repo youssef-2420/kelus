@@ -1705,14 +1705,30 @@ button, input, textarea { font: inherit; }
   margin: 0 auto;
   border-bottom: 1px solid var(--color-product-border);
 }
-.destination-header > span,
-.diagnosis-header > span:last-child {
+.route-header-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-product-lg);
+}
+.route-header-meta > span {
   color: var(--color-product-secondary);
   font-size: 12px;
   font-weight: 700;
   letter-spacing: var(--type-label-tracking);
   text-transform: uppercase;
 }
+.route-home-link {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-product-green);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.route-home-link::before { content: "\2190"; margin-right: 7px; }
+.route-home-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.route-home-link:focus-visible { outline: 2px solid var(--color-product-green); outline-offset: 4px; }
 .destination-form {
   width: min(760px, calc(100% - 40px));
   margin: 0 auto;

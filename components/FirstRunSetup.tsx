@@ -29,7 +29,10 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
     <main id="main" className="destination-page">
       <header className="destination-header">
         <Link href="/" className="mark">Kelus</Link>
-        <span>{step} / 3</span>
+        <div className="route-header-meta">
+          <Link href="/" className="route-home-link">Home</Link>
+          <span>{step} / 3</span>
+        </div>
       </header>
       <form className="destination-form" onSubmit={next}>
         {step === 1 ? (
