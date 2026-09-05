@@ -4,6 +4,7 @@ import "./globals.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";
+import { AuthProvider } from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 const ledger = Inter_Tight({
@@ -33,11 +34,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={ledger.variable}>
         <a className="skip" href="#main">Skip to content</a>
         <LearnerProvider>
-          <TooltipProvider>
-            <SiteHeader />
-            <RouteTransition>{children}</RouteTransition>
-            <Toaster />
-          </TooltipProvider>
+          <AuthProvider>
+            <TooltipProvider>
+              <SiteHeader />
+              <RouteTransition>{children}</RouteTransition>
+              <Toaster />
+            </TooltipProvider>
+          </AuthProvider>
         </LearnerProvider>
       </body>
     </html>

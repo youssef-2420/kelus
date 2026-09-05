@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/components/AuthProvider";
 
 const links = [
   { href: "/today", label: "Today", matches: ["/today", "/session"] },
@@ -12,6 +13,8 @@ const links = [
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const auth = useAuth();
+  const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
 
   return (
     <header className="site-header">
@@ -31,9 +34,16 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <Link href="/today" className="site-header-action">
-          Study now <span aria-hidden="true">→</span>
-        </Link>
+        {auth.loading ? <span className="site-auth-loading" aria-label="Checking account" /> : auth.user ? (
+          <button type="button" className="site-auth-button is-signed-in" onClick={() => auth.signOut()} aria-label={`Sign out ${auth.user.email ?? "of Kelus"}`}>
+            <span>{displayName}</span><small>Sign out</small>
+          </button>
+        ) : (
+          <button type="button" className="site-auth-button" onClick={auth.openDialog}>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" /></svg>
+            Sign in
+          </button>
+        )}
       </div>
     </header>
   );

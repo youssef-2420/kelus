@@ -30,7 +30,8 @@ test("one persistent header owns navigation for every page", async () => {
   assert.match(header, /href: "\/materials"/);
   assert.match(header, /href: "\/map"/);
   assert.match(header, /href: "\/route"/);
-  assert.match(header, /href="\/today" className="site-header-action"/);
+  assert.match(header, /className="site-auth-button"/);
+  assert.match(header, /auth\.openDialog/);
   assert.doesNotMatch(shell, /<header|<nav/);
 });
 
