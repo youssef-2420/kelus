@@ -5,18 +5,18 @@ import { useEffect, useMemo, useState } from "react";
 import type { Concept, RoutePlan } from "@/domain/types";
 import { percent } from "@/lib/format";
 
-const VIEW = { w: 1000, h: 420 };
-const YOU = { x: 88, y: 248 };
-const EXAM = { x: 912, y: 152 };
+const VIEW = { w: 1000, h: 400 };
+const YOU = { x: 78, y: 228 };
+const EXAM = { x: 922, y: 148 };
 const ROUTE_SLOTS = [
-  { x: 318, y: 228 },
-  { x: 528, y: 196 },
-  { x: 718, y: 168 },
+  { x: 300, y: 214 },
+  { x: 508, y: 188 },
+  { x: 708, y: 164 },
 ] as const;
 const QUIET_SLOTS = [
-  { x: 392, y: 72 },
-  { x: 548, y: 348 },
-  { x: 762, y: 292 },
+  { x: 368, y: 64 },
+  { x: 528, y: 332 },
+  { x: 748, y: 286 },
 ] as const;
 
 export const ease = [0.22, 1, 0.36, 1] as const;
@@ -167,10 +167,10 @@ export function RouteKnowledgeMap({
               transition={{ duration: 0.5, ease, delay: reduce ? 0 : 0.06 * index }}
             >
               <circle r="8" />
-              <text x="14" y="-8">
+              <text y="28">
                 {concept.name}
               </text>
-              <text className="route-map-value" x="14" y="12">
+              <text className="route-map-value" y="44">
                 {percent(concept.mastery)}
               </text>
             </motion.g>
@@ -199,7 +199,7 @@ export function RouteKnowledgeMap({
 
         <motion.g
           className="route-map-ready"
-          transform={`translate(${YOU.x} ${YOU.y + 46})`}
+          transform={`translate(${YOU.x} ${YOU.y + 72})`}
           initial={reduce ? false : { opacity: 0 }}
           animate={beat >= 4 ? { opacity: 1 } : { opacity: reduce ? 1 : 0 }}
           transition={{ duration: 0.4, ease }}
