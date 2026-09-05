@@ -24,10 +24,10 @@ export default function MapPage() {
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
   const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
   return (
-    <AppShell>
+    <AppShell action={!state.diagnosisCompleted ? <Link className="text-btn" href="/today">Continue to diagnosis <span aria-hidden="true">→</span></Link> : undefined}>
       <p className="kicker">Course</p>
-      <h1 className="today-title">What matters versus what you know</h1>
-      <p className="lede-line">Sorted by exam importance, not by weakness.</p>
+      <h1 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course is now a Knowledge Map"}</h1>
+      <p className="lede-line">{state.diagnosisCompleted ? "Sorted by exam importance, not by weakness." : "These are the concepts you confirmed. Diagnosis will add the first evidence about what you know."}</p>
       <div className={`map-workspace${selected ? " is-inspecting" : ""}`}>
         <KnowledgeMap heading={null} courseName={course.name} mastery={courseMastery(concepts)} concepts={concepts} selectedId={selectedId} onSelect={(concept) => setSelectedId(concept.id)} />
         <AnimatePresence initial={false} mode="wait">

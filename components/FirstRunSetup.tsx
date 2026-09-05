@@ -61,7 +61,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
         <p className="setup-error" role="alert">{error}</p>
         <div className="destination-actions">
           {step > 1 ? <button type="button" className="text-btn" onClick={() => setStep((current) => current - 1)}>Back</button> : <button type="button" className="text-btn" onClick={onUseDemo}>Open Amina demo</button>}
-          <button className="cta" type="submit">{step === 3 ? "Continue to diagnosis" : "Continue"}<span aria-hidden="true">→</span></button>
+          <button className="cta" type="submit">{step === 3 ? "Add course material" : "Continue"}<span aria-hidden="true">→</span></button>
         </div>
       </form>
       <div className="destination-route" aria-hidden="true"><i /><i /><i /><b>◎</b></div>

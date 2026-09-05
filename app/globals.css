@@ -4333,6 +4333,131 @@ h3,
   .material-row { grid-template-columns: 84px minmax(0, 1fr); }
 }
 
+/* Confirmed course structure: a review step between source ingestion and routing. */
+.concept-confirmation {
+  padding: var(--spacing-64) 0;
+  border-bottom: 1px solid var(--color-frost);
+}
+
+.concept-confirmation > header {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(240px, 0.8fr);
+  gap: var(--spacing-32);
+  align-items: end;
+  margin-bottom: var(--spacing-32);
+}
+
+.concept-confirmation h2 {
+  max-width: 17ch;
+  margin: var(--spacing-8) 0 0;
+  color: var(--color-midnight-ink);
+  font-size: clamp(32px, 4.2vw, 52px);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+
+.concept-confirmation > header > p {
+  max-width: 47ch;
+  margin: 0;
+  color: var(--color-steel);
+  line-height: 1.55;
+}
+
+.concept-proposal-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-midnight-ink);
+}
+
+.concept-proposal-list li {
+  border-bottom: 1px solid var(--color-frost);
+  transition: background-color var(--dur-quick) var(--ease-enter);
+}
+
+.concept-proposal-list li.is-selected { background: var(--color-periwinkle-wash); }
+
+.concept-proposal-list label {
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 20px 42px minmax(0, 1fr);
+  gap: var(--spacing-16);
+  align-items: center;
+  padding: var(--spacing-8) var(--spacing-16);
+  cursor: pointer;
+}
+
+.concept-proposal-list input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  accent-color: var(--color-indigo-ink);
+}
+
+.proposal-index {
+  color: var(--color-smoke);
+  font-size: var(--text-caption);
+  letter-spacing: 0.08em;
+}
+
+.concept-proposal-list label > span:last-child { min-width: 0; display: grid; gap: 3px; }
+.concept-proposal-list strong { color: var(--color-midnight-ink); font-weight: 600; }
+.concept-proposal-list small { color: var(--color-steel); overflow-wrap: anywhere; }
+
+.concept-confirmation-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-16);
+  margin-top: var(--spacing-32);
+}
+
+.session-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-8) var(--spacing-16);
+  margin: 0 0 var(--spacing-24);
+  padding: var(--spacing-12) 0;
+  border-block: 1px solid var(--color-frost);
+}
+
+.session-sources > span {
+  color: var(--color-smoke);
+  font-size: var(--text-caption);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+}
+
+.session-sources button {
+  min-height: 40px;
+  padding: 0;
+  color: var(--color-indigo-ink);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.session-sources button:hover { text-decoration: underline; text-underline-offset: 3px; }
+.session-sources button:active { transform: scale(0.98); }
+.session-sources button:focus-visible { outline: 2px solid var(--color-indigo-ink); outline-offset: 3px; }
+
+@media (max-width: 720px) {
+  .concept-confirmation > header { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-16); }
+  .concept-confirmation-actions { align-items: stretch; flex-direction: column-reverse; }
+  .concept-confirmation-actions .cta { width: 100%; }
+  .concept-proposal-list label { grid-template-columns: 20px 32px minmax(0, 1fr); padding-inline: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .concept-proposal-list li { transition-duration: 0.01ms; }
+  .session-sources button:active { transform: none; }
+}
+
 /* Knowledge-map inspection stays in context; canonical concept pages remain the
    shareable deep view. */
 .map-workspace {

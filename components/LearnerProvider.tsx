@@ -5,6 +5,7 @@ import {
   finishSession,
   completeDiagnosis as persistDiagnosis,
   completeOnboarding,
+  confirmMaterialConcepts,
   getDemoSnapshot,
   getServerDemoSnapshot,
   recordRetrieval,
@@ -15,7 +16,7 @@ import {
   subscribeDemoState,
   type DemoState,
 } from "@/lib/demo-store";
-import type { Concept, RetrievalOutcome, SelfRating } from "@/domain/types";
+import type { Concept, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
 
 type Store = {
@@ -39,6 +40,7 @@ type Store = {
     retrievals: Array<{ conceptId: string; promptId: string; responseText: string; outcome: RetrievalOutcome; responseTimeMs: number }>;
   }) => void;
   useDemo: () => void;
+  confirmConcepts: (proposals: ProposedConcept[]) => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -69,6 +71,9 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     },
     useDemo() {
       loadAminaDemo();
+    },
+    confirmConcepts(proposals) {
+      confirmMaterialConcepts(state, proposals);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>;

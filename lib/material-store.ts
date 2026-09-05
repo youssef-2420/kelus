@@ -12,6 +12,7 @@ let cache: CourseMaterial[] | null = null;
 const listeners = new Set<() => void>();
 
 const MATERIAL_ROLES: MaterialRole[] = ["syllabus", "lecture_slides", "notes", "past_exam", "course_outline", "other"];
+const PROCESSING_STATUSES: CourseMaterial["processingStatus"][] = ["saved", "processing", "ready", "failed"];
 
 function normalizeMaterial(value: unknown): CourseMaterial | null {
   const item = value as CourseMaterial;
@@ -28,7 +29,7 @@ function normalizeMaterial(value: unknown): CourseMaterial | null {
   return {
     ...item,
     role: MATERIAL_ROLES.includes(item.role) ? item.role : "notes",
-    processingStatus: "saved",
+    processingStatus: PROCESSING_STATUSES.includes(item.processingStatus) ? item.processingStatus : "saved",
   };
 }
 
@@ -136,6 +137,15 @@ export async function addPdfMaterial(input: { courseId: string; file: File; role
   await writePdf(record.id, input.file);
   persist([...readMetadata(), record]);
   return record;
+}
+
+export function updateMaterialProcessingStatus(id: string, processingStatus: CourseMaterial["processingStatus"]) {
+  const items = readMetadata();
+  const item = items.find((material) => material.id === id);
+  if (!item) return null;
+  const updated = { ...item, processingStatus };
+  persist(items.map((material) => material.id === id ? updated : material));
+  return updated;
 }
 
 export async function removeMaterial(id: string) {

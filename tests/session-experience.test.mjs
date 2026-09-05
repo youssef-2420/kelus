@@ -46,6 +46,15 @@ test("materials support learning-purpose labels without claiming analysis", asyn
   assert.equal(materialRoleLabel("past_exam"), "Past exam");
   const library = await source("components/MaterialLibrary.tsx");
   assert.match(library, /This source is/);
-  assert.match(library, /Source analysis is not connected yet/);
-  assert.match(library, /Saved, not analyzed/);
+  assert.match(library, /confirm every proposed concept/);
+  assert.match(library, /Build my Knowledge Map/);
+  assert.match(library, /proposeConceptsFromPages/);
+});
+
+test("sessions expose a confirmed course source and its page", async () => {
+  const page = await source("app/session/page.tsx");
+  assert.match(page, /activity\.sourceReferences\.length/);
+  assert.match(page, /From your course/);
+  assert.match(page, /openSource/);
+  assert.match(page, /#page=/);
 });

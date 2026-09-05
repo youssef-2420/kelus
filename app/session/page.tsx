@@ -2,10 +2,11 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useMemo, useRef, useState, type SyntheticEvent } from "react";
+import { Suspense, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import type { Concept, LearningActivity, RetrievalOutcome } from "@/domain/types";
 import { percent } from "@/lib/format";
+import { getMaterialsSnapshot, getServerMaterialsSnapshot, readLocalPdf, subscribeMaterials } from "@/lib/material-store";
 
 type Phase = "learn" | "retrieve" | "apply" | "evaluate" | "result" | "reroute";
 type HelpMode = "hint" | "explain" | "example" | null;
@@ -43,6 +44,7 @@ function SessionBody() {
   const reduceMotion = useReducedMotion();
   const sessionId = search.get("id");
   const { state, submit } = useLearner();
+  const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const session = state.snapshot.sessions.find((item) => item.id === sessionId);
   const [index, setIndex] = useState(0);
   const [retrieveAnswer, setRetrieveAnswer] = useState("");
@@ -129,6 +131,19 @@ function SessionBody() {
   const nextNames = session.latestRoute.allocations.map((allocation) => state.snapshot.concepts.find((item) => item.id === allocation.conceptId)?.name).filter(Boolean);
   const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : helpMode === "example" ? activity.retrieve.example : null;
 
+  async function openSource(materialId: string, locator: string | null) {
+    const material = materials.find((item) => item.id === materialId);
+    if (!material) return;
+    if (material.storage === "url" && material.sourceUrl) {
+      window.open(material.sourceUrl, "_blank", "noopener,noreferrer");
+      return;
+    }
+    const blob = await readLocalPdf(materialId);
+    if (!blob) return;
+    const page = Number(locator?.match(/\d+/)?.[0] ?? 1);
+    window.open(`${URL.createObjectURL(blob)}#page=${page}`, "_blank", "noopener,noreferrer");
+  }
+
   return (
     <main id="main" className="study-shell">
       <div className="study-context">
@@ -170,7 +185,16 @@ function SessionBody() {
                 <h1>{activity.learn.title}</h1>
                 <p className="session-explanation">{activity.learn.explanation}</p>
                 <ul>{activity.learn.keyPoints.map((point) => <li key={point}>{point}</li>)}</ul>
-                <p className="session-source-note">Demo course model · No uploaded source cited</p>
+                {activity.sourceReferences.length ? (
+                  <div className="session-sources" aria-label="Course sources">
+                    <span>From your course</span>
+                    {activity.sourceReferences.map((reference) => (
+                      <button key={`${reference.materialId}-${reference.locator}`} type="button" onClick={() => void openSource(reference.materialId, reference.locator)}>
+                        {reference.label}{reference.locator ? ` · ${reference.locator}` : ""} <span aria-hidden="true">↗</span>
+                      </button>
+                    ))}
+                  </div>
+                ) : <p className="session-source-note">Demo course model · No uploaded source cited</p>}
                 <button type="button" className="cta" onClick={() => { setPhase("retrieve"); startedAt.current = performance.now(); }}>Retrieve it <span aria-hidden="true">→</span></button>
               </div>
             ) : null}

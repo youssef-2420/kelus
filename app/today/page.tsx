@@ -14,7 +14,7 @@ import { generateRoute } from "@/domain/routing-engine";
 export default function TodayPage() {
   const router = useRouter();
   const { state, start, reset, completeSetup, completeDiagnosis, useDemo } = useLearner();
-  if (!state.onboardingCompleted) return <FirstRunSetup onComplete={completeSetup} onUseDemo={useDemo} />;
+  if (!state.onboardingCompleted) return <FirstRunSetup onComplete={(input) => { completeSetup(input); router.push("/materials"); }} onUseDemo={useDemo} />;
   if (!state.diagnosisCompleted) return <InitialDiagnosis snapshot={state.snapshot} onComplete={completeDiagnosis} />;
 
   const { snapshot, nowIso } = state;

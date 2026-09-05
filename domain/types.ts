@@ -99,6 +99,20 @@ export type LearningSourceReference = {
   locator: string | null;
 };
 
+export type ExtractedMaterialPage = {
+  pageNumber: number;
+  text: string;
+};
+
+export type ProposedConcept = {
+  id: string;
+  materialId: string;
+  name: string;
+  sourceLabel: string;
+  locator: string;
+  sourceExcerpt: string;
+};
+
 export type LearningActivity = {
   id: string;
   conceptId: string;
