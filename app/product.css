@@ -98,7 +98,10 @@
   text-transform: uppercase;
 }
 
-.product-canvas .today-stage { padding-bottom: var(--spacing-48); }
+.product-canvas .today-stage {
+  max-width: 880px;
+  padding-bottom: var(--spacing-48);
+}
 .product-canvas .today-dest h1 {
   margin: 0 0 var(--spacing-16);
   max-width: 18ch;
@@ -140,7 +143,7 @@
 .product-canvas .route-map { position: relative; margin: 0 0 var(--spacing-48); }
 .product-canvas .route-map svg { display: block; width: 100%; height: auto; overflow: visible; }
 .product-canvas .route-map-possibility { fill: none; stroke: var(--color-frost); stroke-width: 1.5; stroke-linecap: square; }
-.product-canvas .route-map-active { fill: none; stroke: var(--color-indigo-ink); stroke-width: 1.5; stroke-linecap: square; stroke-linejoin: miter; }
+.product-canvas .route-map-active { fill: none; stroke: var(--color-indigo-ink); stroke-width: 2; stroke-linecap: square; stroke-linejoin: miter; }
 .product-canvas .route-map-you rect { fill: var(--color-midnight-ink); }
 .product-canvas .route-map-you text,
 .product-canvas .route-map-target text {
@@ -364,7 +367,9 @@
   .product-canvas .plan-topic strong { font-size: var(--text-heading-sm); letter-spacing: var(--tracking-heading-sm); }
   .product-canvas .plan-time { font-size: var(--text-body-lg); }
   .product-canvas .route-map-quiet text { display: none; }
-  .product-canvas .today-primary-action .cta { width: 100%; }
+  .product-canvas .today-plan-list > li > button {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
   .product-canvas .study-ratings { flex-direction: column; }
   .product-canvas .study-ratings button { width: 100%; }
   .product-canvas .reroute-lines { grid-template-columns: 1fr 24px 1fr; gap: var(--spacing-8); }
