@@ -8,6 +8,8 @@ dist
 .cursor/*
 !.cursor/skills/
 !.cursor/skills/**
+!.cursor/rules/
+!.cursor/rules/**
 tsconfig.tsbuildinfo
 *.log
 .env

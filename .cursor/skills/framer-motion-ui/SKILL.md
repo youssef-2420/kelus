@@ -1,9 +1,12 @@
 ---
 name: framer-motion-ui
-description: Production-grade animated React interfaces using Motion (Framer Motion). Use when adding page transitions, scroll reveals, stagger lists, hover/tap springs, parallax, layout animation, counters, or AnimatePresence mount/unmount. Respect reduced motion. This project already depends on `motion` — import from `motion/react`, not `framer-motion`.
+alwaysApply: true
+description: DEFAULT Kelus motion skill (with apple-design). Use for every UI/UX tweak that involves motion, transitions, hover, press, scroll, or presence. Production Motion (`motion/react`, not `framer-motion`). Bounce 0. Respect reduced motion.
 ---
 
 # Framer Motion UI
+
+**Kelus default, paired with `apple-design`.** Bounce 0. Import from `motion/react`.
 
 Source: [AtlasNexusTech/framer-motion-ui](https://github.com/AtlasNexusTech/framer-motion-ui)
 

@@ -1,0 +1,21 @@
+---
+description: Kelus default UI skills — Apple Design + Framer Motion. Apply to all interface work.
+alwaysApply: true
+---
+
+# Default UI skills
+
+For any UI, UX, layout, styling, motion, or interaction work on Kelus, **read and follow these skills first**:
+
+1. `.cursor/skills/apple-design/SKILL.md` — feedback, directness, interruptible motion, restraint, reduced motion
+2. `.cursor/skills/framer-motion-ui/SKILL.md` — implement motion with `motion/react` (not `framer-motion`)
+
+They are the primary set. Do not reach for shadcn, Superdesign, Figma generate, or a page rewrite unless the user asks for that by name.
+
+## How to use them here
+
+- Small tweaks: keep existing sections, student hero, and workbench. Change CSS, type, spacing, and motion only.
+- Springs with **bounce 0**. Ease `[0.22, 1, 0.36, 1]` when not using a spring.
+- Instant press feedback (`:active` / `whileTap`). Respect `useReducedMotion()`.
+- Animate transform and opacity only. Reuse `@/components/motion` when a wrapper already exists.
+- One accent (Kelus green). Do not invent a new visual system.
