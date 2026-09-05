@@ -1,13 +1,18 @@
 "use client";
 
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
+import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
+import { ConceptInspector } from "@/components/ConceptInspector";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { useLearner } from "@/components/LearnerProvider";
 import { courseMastery } from "@/domain/scheduler";
 
 export default function MapPage() {
   const { state } = useLearner();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const reduceMotion = useReducedMotion();
   if (!state.onboardingCompleted) {
     return <AppShell><p className="kicker">Set up required</p><h1 className="today-title">Build your first route first.</h1><Link href="/today" className="cta">Set up your exam</Link></AppShell>;
   }
@@ -17,12 +22,22 @@ export default function MapPage() {
     .filter((concept) => concept.courseId === course.id)
     .slice()
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
+  const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
   return (
     <AppShell>
       <p className="kicker">Course</p>
       <h1 className="today-title">What matters versus what you know</h1>
       <p className="lede-line">Sorted by exam importance, not by weakness.</p>
-      <KnowledgeMap heading={null} courseName={course.name} mastery={courseMastery(concepts)} concepts={concepts} />
+      <div className={`map-workspace${selected ? " is-inspecting" : ""}`}>
+        <KnowledgeMap heading={null} courseName={course.name} mastery={courseMastery(concepts)} concepts={concepts} selectedId={selectedId} onSelect={(concept) => setSelectedId(concept.id)} />
+        <AnimatePresence initial={false} mode="wait">
+          {selected ? (
+            <motion.div key={selected.id} className="concept-inspector-wrap" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }} transition={{ type: "spring", bounce: 0, duration: reduceMotion ? 0.1 : 0.28 }}>
+              <ConceptInspector concept={selected} concepts={concepts} relationships={state.snapshot.relationships} events={state.snapshot.events} nowIso={state.nowIso} onClose={() => setSelectedId(null)} />
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
     </AppShell>
   );
 }

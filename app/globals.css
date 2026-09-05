@@ -4332,3 +4332,106 @@ h3,
 @media (max-width: 720px) {
   .material-row { grid-template-columns: 84px minmax(0, 1fr); }
 }
+
+/* Knowledge-map inspection stays in context; canonical concept pages remain the
+   shareable deep view. */
+.map-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-32);
+  align-items: start;
+}
+
+.map-workspace.is-inspecting { grid-template-columns: minmax(0, 1fr) minmax(300px, 0.62fr); }
+.map-workspace > .section { min-width: 0; margin-top: var(--spacing-40); }
+
+.map-list button.row {
+  width: 100%;
+  color: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.map-list button.row:hover,
+.map-list button.row.is-selected { background: var(--color-periwinkle-wash); }
+.map-list button.row:active { color: var(--color-indigo-ink); }
+.map-list button.row:focus-visible { position: relative; z-index: 1; outline: 2px solid var(--color-indigo-ink); outline-offset: -2px; }
+
+.concept-inspector-wrap {
+  position: sticky;
+  top: 116px;
+  min-width: 0;
+  margin-top: var(--spacing-40);
+}
+
+.concept-inspector {
+  padding: var(--spacing-24);
+  color: var(--color-midnight-ink);
+  background: var(--color-mist);
+  border-top: 1px solid var(--color-midnight-ink);
+  border-bottom: 1px solid var(--color-frost);
+}
+
+.concept-inspector > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+}
+
+.concept-inspector > header button {
+  min-height: 40px;
+  padding: 0;
+  color: var(--color-steel);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.concept-inspector > header button:hover { color: var(--color-indigo-ink); }
+.concept-inspector h2 { margin: var(--spacing-24) 0 var(--spacing-8); font-size: clamp(30px, 4vw, 42px); }
+.concept-inspector > p { margin: 0; color: var(--color-steel); }
+
+.concept-inspector dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: var(--spacing-32) 0;
+  border-top: 1px solid var(--color-frost);
+}
+
+.concept-inspector dl div { padding: var(--spacing-16) 0; border-bottom: 1px solid var(--color-frost); }
+.concept-inspector dt,
+.concept-inspector section > span { color: var(--color-smoke); font-size: var(--text-caption); letter-spacing: var(--type-label-tracking); text-transform: uppercase; }
+.concept-inspector dd { margin: 4px 0 0; font-size: var(--text-body-lg); font-weight: 600; }
+.concept-inspector section { margin-top: var(--spacing-24); }
+.concept-inspector section p { margin: var(--spacing-8) 0 0; color: var(--color-steel); }
+.concept-inspector ul { margin: var(--spacing-8) 0 0; padding: 0; list-style: none; border-top: 1px solid var(--color-frost); }
+.concept-inspector li { display: flex; justify-content: space-between; gap: var(--spacing-16); padding: var(--spacing-8) 0; border-bottom: 1px solid var(--color-frost); }
+.concept-inspector li b { font-weight: 600; }
+.concept-inspector li small { color: var(--color-steel); }
+.concept-inspector > a { display: inline-flex; gap: var(--spacing-8); margin-top: var(--spacing-32); color: var(--color-indigo-ink); text-decoration: none; }
+.concept-inspector > a:hover { text-decoration: underline; text-underline-offset: 4px; }
+
+@media (max-width: 840px) {
+  .map-workspace.is-inspecting { grid-template-columns: minmax(0, 1fr); }
+  .concept-inspector-wrap {
+    position: fixed;
+    z-index: 55;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    max-height: min(78dvh, 680px);
+    margin: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--color-mist);
+    border-top: 1px solid var(--color-midnight-ink);
+  }
+  .concept-inspector { width: min(620px, calc(100% - 32px)); margin: 0 auto; padding: var(--spacing-24) 0 var(--spacing-32); border: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-list button.row { transition: none; }
+}

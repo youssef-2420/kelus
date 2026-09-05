@@ -35,6 +35,24 @@ test("one persistent header owns navigation for every page", async () => {
   assert.doesNotMatch(shell, /<header|<nav/);
 });
 
+test("the knowledge map owns concept inspection while canonical pages remain shareable", async () => {
+  const [map, knowledgeMap, inspector, legacy, detail] = await Promise.all([
+    source("app/map/page.tsx"),
+    source("components/KnowledgeMap.tsx"),
+    source("components/ConceptInspector.tsx"),
+    source("app/concept/page.tsx"),
+    source("app/concepts/[id]/ConceptDetail.tsx"),
+  ]);
+  assert.match(map, /ConceptInspector/);
+  assert.match(map, /AnimatePresence/);
+  assert.match(knowledgeMap, /onSelect/);
+  assert.match(knowledgeMap, /aria-pressed/);
+  assert.match(inspector, /Open full learning history/);
+  assert.match(inspector, /\/concepts\/\$\{encodeURIComponent\(concept\.id\)\}/);
+  assert.match(legacy, /router\.replace\(id \? `\/concepts\//);
+  assert.doesNotMatch(detail, /\/concept\?id=/);
+});
+
 test("ledger design keeps the mobile homepage in one column", async () => {
   const css = await source("app/globals.css");
   const layout = await source("app/layout.tsx");
