@@ -1,22 +1,6 @@
 [
   {
     "date": "2026-09-05",
-    "scope": "learning product UI audit remediation",
-    "brief": "Repair mobile hierarchy and remove friction without changing the established Kelus identity",
-    "macrostructure": "immediate hero → visible argument → direct workbench; consistent home/today/materials navigation",
-    "theme": "custom",
-    "theme_axes": {
-      "surface": "existing warm editorial paper and flat ruled learning views",
-      "type": "existing Source Serif 4 and Instrument Sans hierarchy",
-      "geometry": "single-column mobile hero, flat map rows, explicit Today disclosures",
-      "motion": "route evidence only; static content no longer waits for viewport animation",
-      "density": "fixed course and material limitations disclosed at the decision point"
-    },
-    "enrichment": "existing student illustration rendered as prioritized static imagery",
-    "vibe": "calm, immediate, honest, navigable"
-  },
-  {
-    "date": "2026-09-05",
     "scope": "course material library",
     "brief": "A focused place for students to save course PDFs, videos, and web sources",
     "macrostructure": "course context → direct ingest → compact source shelf → data-honesty note",

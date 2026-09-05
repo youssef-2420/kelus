@@ -117,7 +117,7 @@ export function MaterialLibrary() {
     <AppShell>
       <header className="materials-head">
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
-        <div className="materials-intro"><p>Keep the sources that define this exam together. Add PDFs from your device or save useful video and web links.</p><span>Saved locally · Not used for routing yet</span></div>
+        <p>Keep the sources that define this exam together. Add PDFs from your device or save useful video and web links.</p>
       </header>
 
       <section className="material-ingest" aria-labelledby="add-material-title">
@@ -148,6 +148,10 @@ export function MaterialLibrary() {
         {courseMaterials.length ? <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} />)}</ul> : <p className="material-shelf-empty">Start with the syllabus or the lecture you are studying now.</p>}
       </section>
 
+      <aside className="material-honesty">
+        <p className="kicker">Saved, not analyzed</p>
+        <p>These sources stay on this device. Kelus will not use their contents to change your route until source processing is connected.</p>
+      </aside>
     </AppShell>
   );
 }

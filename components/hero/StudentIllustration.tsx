@@ -1,19 +1,23 @@
-import Image from "next/image";
+"use client";
+
+import { motion, useReducedMotion } from "motion/react";
 
 type Props = {
   className?: string;
 };
 
 export function StudentIllustration({ className }: Props) {
+  const reduce = useReducedMotion() === true;
+
   return (
     <figure className={className} aria-hidden="true">
-      <Image
+      <motion.img
         src="/hero/student.png"
         alt=""
         width={610}
         height={538}
-        priority
-        sizes="(max-width: 900px) 100vw, 54vw"
+        animate={reduce ? undefined : { y: [0, -3, 0], scale: [1, 1.012, 1] }}
+        transition={reduce ? undefined : { duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
       />
     </figure>
   );

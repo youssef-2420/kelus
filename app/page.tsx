@@ -12,7 +12,7 @@ export default function Home() {
         </Link>
         <nav className="home-nav" aria-label="Primary">
           <Link href="/today">Today</Link>
-          <Link href="/materials">Materials</Link>
+          <Link href="/map">Map</Link>
         </nav>
         <Link href="/today" className="cta home-cta compact">
           Start

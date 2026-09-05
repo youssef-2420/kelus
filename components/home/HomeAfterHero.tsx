@@ -1,31 +1,44 @@
+"use client";
+
 import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
 import { LeverageBoard } from "@/components/home/LeverageBoard";
+import { Reveal } from "@/components/motion";
+
+const ease = [0.22, 1, 0.36, 1] as const;
 
 export function HomeAfterHero() {
+  const reduce = useReducedMotion() === true;
+
   return (
     <>
       <section className="home-argument" aria-labelledby="argument-title">
         <svg className="home-continue-route" viewBox="0 0 72 96" aria-hidden="true">
-          <path
+          <motion.path
             d="M 36 0 C 36 28, 18 46, 28 64 C 38 82, 36 88, 36 96"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
             strokeLinecap="round"
+            pathLength={1}
+            initial={reduce ? false : { pathLength: 0, opacity: 0.15 }}
+            whileInView={{ pathLength: 1, opacity: 0.7 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 1.05, ease }}
           />
         </svg>
-        <div className="home-argument-inner">
+        <Reveal className="home-argument-inner">
           <p className="kicker">Many possible paths. One intelligent route.</p>
           <h2 id="argument-title">Stop deciding what to study.</h2>
           <p>
             <span aria-hidden="true">↳</span> Kelus recalculates the highest-value learning action from your goal,
             knowledge, retention, and time.
           </p>
-        </div>
+        </Reveal>
       </section>
 
       <section id="how" className="home-workbench" aria-labelledby="workbench-title">
-        <div className="workbench-intro">
+        <Reveal className="workbench-intro">
           <p className="kicker">One plan, three signals</p>
           <h2 id="workbench-title">
             Small inputs.
@@ -36,20 +49,20 @@ export function HomeAfterHero() {
           <Link href="/today">
             Set up your exam <span aria-hidden="true">→</span>
           </Link>
-        </div>
+        </Reveal>
 
         <ol className="workbench-stages">
           <li>
-            <div>
+            <Reveal>
               <header>
                 <span>01</span>
                 <h3>Find the leverage</h3>
               </header>
               <LeverageBoard />
-            </div>
+            </Reveal>
           </li>
           <li>
-            <div>
+            <Reveal delay={0.08}>
               <header>
                 <span>02</span>
                 <h3>Fit the time you have</h3>
@@ -89,10 +102,10 @@ export function HomeAfterHero() {
                   </li>
                 </ol>
               </div>
-            </div>
+            </Reveal>
           </li>
           <li>
-            <div>
+            <Reveal delay={0.16}>
               <header>
                 <span>03</span>
                 <h3>Let the plan move</h3>
@@ -116,17 +129,17 @@ export function HomeAfterHero() {
                   </p>
                 </footer>
               </div>
-            </div>
+            </Reveal>
           </li>
         </ol>
       </section>
 
       <section className="home-principles" aria-labelledby="principles-title">
-        <div>
+        <Reveal>
           <p className="kicker">What Kelus will not do</p>
           <h2 id="principles-title">No fake certainty.</h2>
-        </div>
-        <div>
+        </Reveal>
+        <Reveal delay={0.1}>
           <dl>
             <div>
               <dt>Not a grade prediction</dt>
@@ -141,18 +154,20 @@ export function HomeAfterHero() {
               <dd>Miss a day and the plan simply recalculates. No guilt, confetti, or broken chain.</dd>
             </div>
           </dl>
-        </div>
+        </Reveal>
       </section>
 
-      <footer className="home-foot">
-        <h2>Walk into the exam knowing what you worked on—and why.</h2>
-        <div>
-          <span className="mark">Kelus</span>
-          <Link href="/today">
-            Make today’s plan <span aria-hidden="true">→</span>
-          </Link>
-        </div>
-      </footer>
+      <Reveal>
+        <footer className="home-foot">
+          <h2>Walk into the exam knowing what you worked on—and why.</h2>
+          <div>
+            <span className="mark">Kelus</span>
+            <Link href="/today">
+              Make today’s plan <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+        </footer>
+      </Reveal>
     </>
   );
 }

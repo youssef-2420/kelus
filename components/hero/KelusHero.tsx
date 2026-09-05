@@ -1,9 +1,48 @@
+"use client";
+
 import Link from "next/link";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+} from "motion/react";
+import { useRef, type PointerEvent } from "react";
 import { StudentIllustration } from "./StudentIllustration";
 
 export function KelusHero() {
+  const reduceMotion = useReducedMotion() === true;
+  const root = useRef<HTMLElement>(null);
+
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const sx = useSpring(px, { stiffness: 90, damping: 22, bounce: 0 });
+  const sy = useSpring(py, { stiffness: 90, damping: 22, bounce: 0 });
+  const studentX = useTransform(sx, (value) => value * 4);
+  const studentY = useTransform(sy, (value) => value * 3);
+  const studentShift = useMotionTemplate`translate(${studentX}px, ${studentY}px)`;
+
+  const onMove = (event: PointerEvent<HTMLElement>) => {
+    if (reduceMotion) return;
+    const box = event.currentTarget.getBoundingClientRect();
+    px.set((event.clientX - box.left) / box.width - 0.5);
+    py.set((event.clientY - box.top) / box.height - 0.5);
+  };
+
+  const onLeave = () => {
+    px.set(0);
+    py.set(0);
+  };
+
   return (
-    <section className="kelus-hero home-hero is-student">
+    <section
+      ref={root}
+      className="kelus-hero home-hero is-student"
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+    >
       <div className="kelus-hero-copy home-copy">
         <p className="kicker">For the student at the desk</p>
         <h1>
@@ -29,9 +68,9 @@ export function KelusHero() {
 
       <div className="kelus-hero-art">
         <div className="hero-grain" aria-hidden="true" />
-        <div className="hero-student-wrap">
+        <motion.div className="hero-student-wrap" style={{ transform: studentShift }}>
           <StudentIllustration className="hero-student" />
-        </div>
+        </motion.div>
       </div>
     </section>
   );
