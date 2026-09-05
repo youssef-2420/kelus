@@ -1825,7 +1825,7 @@ button, input, textarea { font: inherit; }
   font-weight: 500;
 }
 
-@media (min-width: 901px) {
+@media (min-width: 761px) {
   .route-story-stage {
     display: grid;
     grid-template-columns: minmax(0, 0.4fr) minmax(0, 0.6fr);
@@ -1866,7 +1866,7 @@ button, input, textarea { font: inherit; }
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 760px) {
   .hero-dest-num { font-size: 26px; }
   .hero-here-num { font-size: 24px; }
   .hero-dest-name { font-size: 14px; }

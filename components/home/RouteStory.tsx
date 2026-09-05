@@ -12,7 +12,7 @@ import { TimeClaim } from "@/components/home/TimeClaim";
 export type StoryChapter = "open" | "leverage" | "time" | "climax";
 
 function subscribeMobile(onChange: () => void) {
-  const media = window.matchMedia("(max-width: 900px)");
+  const media = window.matchMedia("(max-width: 760px)");
   media.addEventListener("change", onChange);
   return () => media.removeEventListener("change", onChange);
 }
@@ -20,7 +20,7 @@ function subscribeMobile(onChange: () => void) {
 function useMobileLayout() {
   return useSyncExternalStore(
     subscribeMobile,
-    () => window.matchMedia("(max-width: 900px)").matches,
+    () => window.matchMedia("(max-width: 760px)").matches,
     () => false,
   );
 }

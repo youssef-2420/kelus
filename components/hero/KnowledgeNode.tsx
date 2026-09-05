@@ -1,6 +1,6 @@
 "use client";
 
-import type { KnowledgeNode as NodeData, Layout, SignalKind } from "./landscape-data";
+import type { KnowledgeNode as NodeData, Layout } from "./landscape-data";
 import { SIGNAL_COPY } from "./landscape-data";
 import type { HeroPhase } from "./useHeroTimeline";
 import { phaseAtLeast } from "./useHeroTimeline";
@@ -24,10 +24,6 @@ function radius(node: NodeData) {
   return 5.6;
 }
 
-function signalVisible(phase: HeroPhase, signal: SignalKind) {
-  return Boolean(signal) && phaseAtLeast(phase, "signals");
-}
-
 export function KnowledgeNode({
   node,
   layout,
@@ -42,8 +38,8 @@ export function KnowledgeNode({
   const y = node.y[layout];
   const r = radius(node) + (onRoute && node.kind === "concept" ? 1.2 : 0);
   const mastery = node.id === "elasticity" ? elasticityMastery : node.mastery;
-  const showLabel = node.kind !== "you" && node.kind !== "target" && !(layout === "mobile" && node.hiddenOnMobile);
-  const showSignal = signalVisible(phase, node.signal) && layout !== "mobile";
+  const showLabel = node.kind === "concept" && !(layout === "mobile" && node.id !== "elasticity" && node.id !== "markets");
+  const showSignal = node.id === "elasticity" && phaseAtLeast(phase, "signals");
   const showLearn = node.id === "elasticity" && phase === "learn";
   const labelX = layout === "mobile" ? 0 : node.x.desktop > 700 ? 12 : -12;
   const anchor = layout === "mobile" ? "middle" : node.x.desktop > 700 ? "start" : "end";
