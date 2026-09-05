@@ -45,6 +45,6 @@ test("confirmed material concepts become the existing learning model", () => {
   assert.equal(model.concepts.length, 2);
   assert.equal(model.prompts.length, 2);
   assert.equal(model.learningActivities.length, 2);
-  assert.equal(model.relationships.length, 1);
+  assert.equal(model.relationships.length, 0, "PDF order must not fabricate prerequisites");
   assert.deepEqual(model.learningActivities[0].sourceReferences, [{ materialId: "material-1", label: "Lecture 4", locator: "Page 3" }]);
 });

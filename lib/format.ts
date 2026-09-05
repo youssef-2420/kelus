@@ -1,6 +1,12 @@
 import { clamp01 } from "@/domain/learner-model";
 import type { ConceptStatus } from "@/domain/types";
 
+export function confidenceLabel(value: number) {
+  if (value < 0.35) return "Low evidence";
+  if (value < 0.7) return "Developing evidence";
+  return "Strong evidence";
+}
+
 export function percent(value: number) {
   return `${Math.round(clamp01(value) * 100)}%`;
 }

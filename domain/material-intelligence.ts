@@ -1,6 +1,5 @@
 import type {
   Concept,
-  ConceptRelationship,
   ExtractedMaterialPage,
   LearningActivity,
   Prompt,
@@ -139,11 +138,8 @@ export function buildConfirmedMaterialModel(input: {
       sourceReferences: [{ materialId: proposal.materialId, label: proposal.sourceLabel, locator: proposal.locator }],
     };
   });
-  const relationships: ConceptRelationship[] = concepts.slice(1).map((concept, index) => ({
-    id: `r-source-${concepts[index].id}-${concept.id}`,
-    fromId: concepts[index].id,
-    toId: concept.id,
-    kind: "prerequisite",
-  }));
+  // Ordering in a PDF is not evidence of a prerequisite relationship. Keep the
+  // graph unconnected until a relationship is confirmed or explicitly stated.
+  const relationships: [] = [];
   return { concepts, prompts, learningActivities, relationships };
 }

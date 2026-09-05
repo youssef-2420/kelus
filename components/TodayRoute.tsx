@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import type { Concept, RoutePlan } from "@/domain/types";
 import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
-import { percent } from "@/lib/format";
+import { confidenceLabel, percent } from "@/lib/format";
 
 export function TodayRoute({ route, concepts }: { route: RoutePlan; concepts: Concept[] }) {
   const [openId, setOpenId] = useState<string | null>(null);
@@ -19,7 +19,7 @@ export function TodayRoute({ route, concepts }: { route: RoutePlan; concepts: Co
           <motion.li layout={!reduceMotion} key={allocation.conceptId}>
             <button type="button" aria-expanded={open} onClick={() => setOpenId(open ? null : allocation.conceptId)}>
               <span className="plan-index">{String(index + 1).padStart(2, "0")}</span>
-              <span className="plan-topic"><strong>{name}</strong><small>{conciseReason(allocation.reasons)}</small></span>
+              <span className="plan-topic"><strong>{name}</strong><small>{conciseReason(allocation.reasons)}</small><em>{concept ? confidenceLabel(concept.confidence) : "Mixed evidence"}</em></span>
               <span className="plan-time"><strong>{allocation.minutes}</strong><small>MIN</small></span>
             </button>
             <AnimatePresence initial={false}>

@@ -544,6 +544,21 @@ button, input, textarea { font: inherit; }
   .hero-quiet-path { opacity: 0.28; }
 }
 
+.learner-sync-status {
+  position: fixed;
+  z-index: 80;
+  right: var(--spacing-24);
+  bottom: var(--spacing-24);
+  max-width: min(360px, calc(100vw - 32px));
+  margin: 0;
+  padding: var(--spacing-12) var(--spacing-16);
+  color: var(--color-midnight-ink);
+  background: var(--color-pure-white);
+  border: 1px solid var(--color-lavender-border);
+  border-radius: var(--radius-ledger);
+  font-size: var(--text-caption);
+}
+
 /* Session execution: the route now carries the learner through learn, retrieve,
    apply and evaluate without adding dashboard chrome. */
 .study-context > span {
@@ -4404,6 +4419,39 @@ h3,
 .concept-proposal-list label > span:last-child { min-width: 0; display: grid; gap: 3px; }
 .concept-proposal-list strong { color: var(--color-midnight-ink); font-weight: 600; }
 .concept-proposal-list small { color: var(--color-steel); overflow-wrap: anywhere; }
+
+.proposal-name-input {
+  width: 100%;
+  min-height: 36px;
+  padding: 0;
+  color: var(--color-midnight-ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  font: inherit;
+  font-weight: 600;
+}
+
+.proposal-name-input:hover { border-bottom-color: var(--color-lavender-border); }
+.proposal-name-input:focus-visible { outline: 0; border-bottom-color: var(--color-indigo-ink); }
+
+.diagnosis-selection-reason {
+  max-width: 58ch;
+  margin: calc(var(--spacing-16) * -1) 0 var(--spacing-32);
+  color: var(--color-steel);
+  font-size: var(--text-body-sm);
+}
+
+.plan-topic em {
+  display: block;
+  margin-top: 4px;
+  color: var(--color-smoke);
+  font-size: var(--text-caption);
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
 
 .concept-confirmation-actions {
   display: flex;

@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState, type SyntheticEvent } from "react";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
+import { selectDiagnosisConcept } from "@/domain/diagnosis";
 
 const RATINGS: Array<{ value: SelfRating; label: string }> = [
   { value: "dont_know", label: "Don’t know" },
@@ -17,39 +18,51 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
   onComplete: (input: { ratings: Record<string, SelfRating>; retrievals: Retrieval[] }) => void;
 }) {
   const concepts = snapshot.concepts;
-  const checks = useMemo(() => [...concepts].sort((a, b) => b.examImportance - a.examImportance).slice(0, 2), [concepts]);
+  const ratedConcepts = useMemo(() => [...concepts].sort((a, b) => b.examImportance - a.examImportance || a.name.localeCompare(b.name)).slice(0, 6), [concepts]);
   const [phase, setPhase] = useState<"rating" | "retrieval">("rating");
   const [ratings, setRatings] = useState<Record<string, SelfRating>>({});
-  const [checkIndex, setCheckIndex] = useState(0);
+  const [activeConceptId, setActiveConceptId] = useState<string | null>(null);
+  const [selectionReason, setSelectionReason] = useState("");
   const [answer, setAnswer] = useState("");
   const [revealed, setRevealed] = useState(false);
   const [retrievals, setRetrievals] = useState<Retrieval[]>([]);
   const startedAt = useRef(0);
-  const concept = checks[checkIndex];
+  const concept = concepts.find((item) => item.id === activeConceptId);
   const prompt = snapshot.prompts.find((item) => item.conceptId === concept?.id);
-  const allRated = concepts.every((item) => ratings[item.id]);
+  const allRated = ratedConcepts.every((item) => ratings[item.id]);
 
   function beginChecks(event: SyntheticEvent) {
     if (!allRated) return;
+    const selected = selectDiagnosisConcept({ concepts, relationships: snapshot.relationships, ratings, evidence: [] });
+    if (!selected) return onComplete({ ratings, retrievals: [] });
+    setActiveConceptId(selected.concept.id);
+    setSelectionReason(selected.reason);
     startedAt.current = event.timeStamp;
     setPhase("retrieval");
   }
 
   function grade(outcome: RetrievalOutcome, event: SyntheticEvent) {
     if (!concept || !prompt) return;
-    const next = [...retrievals, {
+    const completed = [...retrievals, {
       conceptId: concept.id,
       promptId: prompt.id,
       responseText: answer,
       outcome,
       responseTimeMs: Math.max(0, Math.round(event.timeStamp - startedAt.current)),
     }];
-    if (checkIndex + 1 >= checks.length) {
-      onComplete({ ratings, retrievals: next });
+    const selected = selectDiagnosisConcept({
+      concepts,
+      relationships: snapshot.relationships,
+      ratings,
+      evidence: completed.map((item) => ({ conceptId: item.conceptId, outcome: item.outcome })),
+    });
+    if (!selected) {
+      onComplete({ ratings, retrievals: completed });
       return;
     }
-    setRetrievals(next);
-    setCheckIndex((value) => value + 1);
+    setRetrievals(completed);
+    setActiveConceptId(selected.concept.id);
+    setSelectionReason(selected.reason);
     setAnswer("");
     setRevealed(false);
     startedAt.current = event.timeStamp;
@@ -64,7 +77,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
           <h1>How familiar do these feel?</h1>
           <p className="diagnosis-intro">A rough answer is enough. Kelus will stay uncertain until your retrieval gives it better evidence.</p>
           <ol className="diagnosis-list">
-            {concepts.map((item) => (
+            {ratedConcepts.map((item) => (
               <li key={item.id}>
                 <span>{item.name}</span>
                 <div role="group" aria-label={`Familiarity with ${item.name}`}>
@@ -79,8 +92,9 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
         </section>
       ) : concept && prompt ? (
         <section className="diagnosis-check">
-          <p className="kicker">Quick retrieval · {checkIndex + 1} of {checks.length}</p>
+          <p className="kicker">Adaptive retrieval · check {retrievals.length + 1}</p>
           <h1>{prompt.promptText}</h1>
+          <p className="diagnosis-selection-reason">{selectionReason}</p>
           {!revealed ? (
             <>
               <label htmlFor="diagnosis-answer">Try without notes.</label>

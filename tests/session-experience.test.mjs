@@ -58,3 +58,11 @@ test("sessions expose a confirmed course source and its page", async () => {
   assert.match(page, /openSource/);
   assert.match(page, /#page=/);
 });
+
+test("today exposes confidence while reroutes explain the evidence that changed", async () => {
+  const today = await source("components/TodayRoute.tsx");
+  const store = await source("lib/demo-store.ts");
+  assert.match(today, /confidenceLabel/);
+  assert.match(store, /answer on \$\{concept\.name\} changed its mastery estimate/);
+  assert.match(store, /higher learning value for the remaining time/);
+});

@@ -33,15 +33,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={ledger.variable}>
       <body className={ledger.variable}>
         <a className="skip" href="#main">Skip to content</a>
-        <LearnerProvider>
-          <AuthProvider>
+        <AuthProvider>
+          <LearnerProvider>
             <TooltipProvider>
               <SiteHeader />
               <RouteTransition>{children}</RouteTransition>
               <Toaster />
             </TooltipProvider>
-          </AuthProvider>
-        </LearnerProvider>
+          </LearnerProvider>
+        </AuthProvider>
       </body>
     </html>
   );

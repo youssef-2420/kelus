@@ -84,6 +84,7 @@ export function MaterialLibrary() {
   const [dragging, setDragging] = useState(false);
   const [analysis, setAnalysis] = useState<{ material: CourseMaterial; proposals: ProposedConcept[] } | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [draftNames, setDraftNames] = useState<Record<string, string>>({});
   const fileRef = useRef<HTMLInputElement>(null);
   const course = state.snapshot.courses[0];
 
@@ -106,6 +107,7 @@ export function MaterialLibrary() {
       updateMaterialProcessingStatus(material.id, "ready");
       setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals });
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
+      setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
     } catch (caught) {
       updateMaterialProcessingStatus(material.id, "failed");
       setError(caught instanceof Error ? caught.message : "Kelus could not read this PDF.");
@@ -157,8 +159,14 @@ export function MaterialLibrary() {
 
   function buildMap() {
     if (!analysis) return;
-    const selected = analysis.proposals.filter((proposal) => selectedIds.has(proposal.id));
+    const selected = analysis.proposals
+      .filter((proposal) => selectedIds.has(proposal.id))
+      .map((proposal) => ({ ...proposal, name: draftNames[proposal.id]?.trim() || proposal.name }));
     try {
+      const normalizedNames = selected.map((proposal) => proposal.name.toLocaleLowerCase());
+      if (new Set(normalizedNames).size !== normalizedNames.length) {
+        throw new Error("Each confirmed concept needs a distinct name.");
+      }
       confirmConcepts(selected);
       router.push("/map");
     } catch (caught) {
@@ -223,7 +231,15 @@ export function MaterialLibrary() {
                   <label>
                     <input type="checkbox" checked={selectedIds.has(proposal.id)} onChange={() => toggleProposal(proposal.id)} />
                     <span className="proposal-index">{String(index + 1).padStart(2, "0")}</span>
-                    <span><strong>{proposal.name}</strong><small>{analysis.material.title} · {proposal.locator}</small></span>
+                    <span>
+                      <input
+                        className="proposal-name-input"
+                        value={draftNames[proposal.id] ?? proposal.name}
+                        onChange={(event) => setDraftNames((current) => ({ ...current, [proposal.id]: event.target.value }))}
+                        aria-label={`Concept name from ${proposal.locator}`}
+                      />
+                      <small>{analysis.material.title} · {proposal.locator}</small>
+                    </span>
                   </label>
                 </li>
               ))}
