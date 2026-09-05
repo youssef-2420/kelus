@@ -1,6 +1,19 @@
-import type { MaterialKind } from "./types";
+import type { MaterialKind, MaterialRole } from "./types";
 
 const VIDEO_HOSTS = ["youtube.com", "youtu.be", "vimeo.com", "loom.com"];
+
+export const MATERIAL_ROLES: Array<{ value: MaterialRole; label: string }> = [
+  { value: "syllabus", label: "Syllabus" },
+  { value: "lecture_slides", label: "Lecture slides" },
+  { value: "notes", label: "Notes" },
+  { value: "past_exam", label: "Past exam" },
+  { value: "course_outline", label: "Course outline" },
+  { value: "other", label: "Other source" },
+];
+
+export function materialRoleLabel(role: MaterialRole) {
+  return MATERIAL_ROLES.find((item) => item.value === role)?.label ?? "Other source";
+}
 
 export function parseMaterialUrl(value: string): { url: string; kind: MaterialKind; host: string } {
   const raw = value.trim();

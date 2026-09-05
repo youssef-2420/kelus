@@ -1,5 +1,5 @@
 import { isPdfFile, materialTitle, parseMaterialUrl } from "../domain/materials";
-import type { CourseMaterial } from "../domain/types";
+import type { CourseMaterial, MaterialRole } from "../domain/types";
 
 const METADATA_KEY = "kelus-course-materials-v1";
 const DATABASE_NAME = "kelus-material-files-v1";
@@ -11,9 +11,11 @@ const SERVER_SNAPSHOT: CourseMaterial[] = [];
 let cache: CourseMaterial[] | null = null;
 const listeners = new Set<() => void>();
 
-function isMaterial(value: unknown): value is CourseMaterial {
+const MATERIAL_ROLES: MaterialRole[] = ["syllabus", "lecture_slides", "notes", "past_exam", "course_outline", "other"];
+
+function normalizeMaterial(value: unknown): CourseMaterial | null {
   const item = value as CourseMaterial;
-  return Boolean(
+  const valid = Boolean(
     item?.id
     && item.courseId
     && item.title
@@ -22,6 +24,12 @@ function isMaterial(value: unknown): value is CourseMaterial {
     && item.addedAt
     && (item.storage === "local" || typeof item.sourceUrl === "string"),
   );
+  if (!valid) return null;
+  return {
+    ...item,
+    role: MATERIAL_ROLES.includes(item.role) ? item.role : "notes",
+    processingStatus: "saved",
+  };
 }
 
 function readMetadata() {
@@ -29,7 +37,7 @@ function readMetadata() {
   if (cache) return cache;
   try {
     const parsed: unknown = JSON.parse(window.localStorage.getItem(METADATA_KEY) ?? "[]");
-    cache = Array.isArray(parsed) ? parsed.filter(isMaterial) : [];
+    cache = Array.isArray(parsed) ? parsed.map(normalizeMaterial).filter((item): item is CourseMaterial => Boolean(item)) : [];
   } catch {
     cache = [];
   }
@@ -88,7 +96,7 @@ export function getServerMaterialsSnapshot() {
   return SERVER_SNAPSHOT;
 }
 
-export function addLinkMaterial(input: { courseId: string; title: string; value: string; nowIso?: string }) {
+export function addLinkMaterial(input: { courseId: string; title: string; value: string; role: MaterialRole; nowIso?: string }) {
   const parsed = parseMaterialUrl(input.value);
   const record: CourseMaterial = {
     id: `material-${crypto.randomUUID()}`,
@@ -100,13 +108,15 @@ export function addLinkMaterial(input: { courseId: string; title: string; value:
     fileName: null,
     mimeType: null,
     sizeBytes: null,
+    role: input.role,
+    processingStatus: "saved",
     addedAt: input.nowIso ?? new Date().toISOString(),
   };
   persist([...readMetadata(), record]);
   return record;
 }
 
-export async function addPdfMaterial(input: { courseId: string; file: File; nowIso?: string }) {
+export async function addPdfMaterial(input: { courseId: string; file: File; role: MaterialRole; nowIso?: string }) {
   if (!isPdfFile(input.file)) throw new Error("Choose a PDF file.");
   if (input.file.size > MAX_PDF_BYTES) throw new Error("PDFs must be 20 MB or smaller.");
   const record: CourseMaterial = {
@@ -119,6 +129,8 @@ export async function addPdfMaterial(input: { courseId: string; file: File; nowI
     fileName: input.file.name,
     mimeType: input.file.type || "application/pdf",
     sizeBytes: input.file.size,
+    role: input.role,
+    processingStatus: "saved",
     addedAt: input.nowIso ?? new Date().toISOString(),
   };
   await writePdf(record.id, input.file);

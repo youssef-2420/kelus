@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
-import type { CourseMaterial } from "@/domain/types";
+import type { CourseMaterial, MaterialRole } from "@/domain/types";
+import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 import {
   addLinkMaterial,
   addPdfMaterial,
@@ -51,7 +52,7 @@ function MaterialRow({ item }: { item: CourseMaterial }) {
 
   return (
     <li className="material-row">
-      <span className="material-kind">{item.kind}</span>
+      <span className="material-kind">{materialRoleLabel(item.role)}</span>
       <span className="material-name">
         <strong>{item.title}</strong>
         <small>{item.storage === "local" ? [item.fileName, formatBytes(item.sizeBytes)].filter(Boolean).join(" · ") : sourceHost(item.sourceUrl)}</small>
@@ -69,6 +70,7 @@ export function MaterialLibrary() {
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
+  const [role, setRole] = useState<MaterialRole>("notes");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false);
@@ -86,7 +88,7 @@ export function MaterialLibrary() {
     setError(null);
     setBusy(true);
     try {
-      await addPdfMaterial({ courseId: course.id, file });
+      await addPdfMaterial({ courseId: course.id, file, role });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "The PDF could not be saved.");
     } finally {
@@ -105,7 +107,7 @@ export function MaterialLibrary() {
     event.preventDefault();
     setError(null);
     try {
-      addLinkMaterial({ courseId: course.id, title, value: url });
+      addLinkMaterial({ courseId: course.id, title, value: url, role });
       setTitle("");
       setUrl("");
     } catch (caught) {
@@ -122,6 +124,13 @@ export function MaterialLibrary() {
 
       <section className="material-ingest" aria-labelledby="add-material-title">
         <div className="material-ingest-title"><p className="kicker">Add material</p><h2 id="add-material-title">Bring the course into one place.</h2></div>
+        <div className="material-role-field">
+          <label htmlFor="material-role">This source is</label>
+          <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)}>
+            {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+          </select>
+          <p>Kelus stores the learning purpose now. Source analysis is not connected yet.</p>
+        </div>
         <label
           className={`material-drop${dragging ? " is-dragging" : ""}`}
           onDragEnter={() => setDragging(true)}

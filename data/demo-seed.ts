@@ -1,5 +1,6 @@
 import { recomputeConceptCache, withCachedState } from "../domain/learner-model";
 import type { Concept, LearnerSnapshot, LearningEvent, RetrievalOutcome } from "../domain/types";
+import { createDemoLearningActivities } from "./demo-learning-activities";
 
 const DAY = 86_400_000;
 const iso = (now: number, daysAgo = 0) => new Date(now - daysAgo * DAY).toISOString();
@@ -83,6 +84,7 @@ export function createDemoSnapshot(nowMs = Date.now()): LearnerSnapshot {
       promptText: PROMPTS[concept.id as keyof typeof PROMPTS][0],
       modelAnswer: PROMPTS[concept.id as keyof typeof PROMPTS][1],
     })),
+    learningActivities: createDemoLearningActivities(),
     events,
     sessions: [],
   };

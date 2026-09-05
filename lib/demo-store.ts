@@ -1,4 +1,5 @@
 import { createDemoSnapshot } from "../data/demo-seed";
+import { createDemoLearningActivities } from "../data/demo-learning-activities";
 import { ALGORITHM_KIND, SELF_RATING_MASTERY } from "../domain/constants";
 import { advanceDemoClock, isDemoClockEnabled } from "../domain/demo-clock";
 import { recomputeConceptCache, withCachedState } from "../domain/learner-model";
@@ -22,6 +23,7 @@ export type DemoState = {
 function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapshot {
   return {
     ...snapshot,
+    learningActivities: snapshot.learningActivities?.length ? snapshot.learningActivities : createDemoLearningActivities(),
     concepts: snapshot.concepts.map((concept) => withCachedState(concept, recomputeConceptCache(concept, snapshot.events, nowIso))),
   };
 }
