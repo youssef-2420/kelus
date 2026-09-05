@@ -12,7 +12,6 @@ export function AppShell({ children, action }: { children: ReactNode; action?: R
         <Link href="/" className="mark">Kelus</Link>
         <nav className="nav" aria-label="Primary">
           <Link href="/today" className={path.startsWith("/today") || path.startsWith("/session") ? "is-active" : undefined}>Today</Link>
-          <Link href="/map" className={path.startsWith("/map") || path.startsWith("/concepts") ? "is-active" : undefined}>Map</Link>
         </nav>
         {action}
       </header>

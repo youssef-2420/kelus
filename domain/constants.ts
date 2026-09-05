@@ -36,3 +36,47 @@ export const SESSION_MINUTES = 45;
 export const NEXT_REVIEW_STABILITY_FRACTION = 0.5;
 export const CONFIDENCE_WINDOW = 8;
 export const MINUTES_PER_CONCEPT = 3.5;
+
+/**
+ * Expected-learning-value heuristic. These are product constants, not claims of
+ * scientific precision. Keeping them centralized makes later calibration safe.
+ */
+export const LEARNING_VALUE = {
+  masteryGapFloor: 0.12,
+  retentionNeedFloor: 0.28,
+  examValueFloor: 0.15,
+  examImportanceWeight: 0.85,
+  urgencyWindowDays: 28,
+  urgencyFloor: 0.7,
+  urgencyRange: 0.8,
+  prerequisiteDependentBoost: 0.18,
+  prerequisiteGapBoost: 0.3,
+  recentFailureBoost: 0.22,
+  recentSuccessDiscount: 0.08,
+  uncertaintyBoost: 0.16,
+  targetGapBoost: 0.24,
+  difficultyGainPenalty: 0.28,
+  reviewDueBoost: 0.16,
+  scoreScale: 100,
+} as const;
+
+export const ROUTING = {
+  minimumConceptMinutes: 8,
+  maximumConceptMinutes: 18,
+  mixedRetrievalMinutes: 5,
+  maximumConceptStops: 3,
+  minimumSessionMinutes: 15,
+  maximumSessionMinutes: 90,
+  meaningfulMovePositions: 2,
+  meaningfulTopScoreDelta: 0.16,
+} as const;
+
+export const SELF_RATING_MASTERY = {
+  dont_know: 0.08,
+  weak: 0.32,
+  okay: 0.58,
+  strong: 0.78,
+} as const;
+
+export const SELF_RATING_CONFIDENCE = 0.2;
+export const DIAGNOSIS_RETRIEVAL_LIMIT = 2;

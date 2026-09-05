@@ -39,6 +39,7 @@
     "node_modules",
     "dist",
     "out",
+    ".next/**/* 2.ts",
     "ios"
   ]
 }

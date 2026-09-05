@@ -1,48 +1,24 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createLearnerSnapshot, normalizeTopics } from "../lib/setup.ts";
+import { createLearnerSnapshot } from "../lib/setup.ts";
 
-const now = Date.parse("2026-09-04T12:00:00.000Z");
+const now = Date.parse("2026-09-05T12:00:00.000Z");
 
-test("topic setup trims, deduplicates, and preserves the learner's order", () => {
-  assert.deepEqual(normalizeTopics(["  Framing ", "Loss   aversion", "framing", ""]), ["Framing", "Loss aversion"]);
-});
-
-test("first-run setup creates one coherent course without invented history", () => {
-  const snapshot = createLearnerSnapshot({
-    displayName: " Maya ",
-    courseName: " Behavioral economics ",
-    examName: "Final",
-    examDate: "2026-10-18",
-    topics: ["Framing", "Loss aversion", "Prospect theory"],
-    familiarity: "new",
-  }, now);
-
-  assert.equal(snapshot.profile.displayName, "Maya");
-  assert.equal(snapshot.courses[0].name, "Behavioral economics");
-  assert.equal(snapshot.exams[0].courseId, snapshot.courses[0].id);
-  assert.equal(snapshot.concepts.length, 3);
+test("destination setup creates the supported Microeconomics graph with no invented learner evidence", () => {
+  const snapshot = createLearnerSnapshot({ examName: "Microeconomics Final", examDate: "2026-09-28", targetPercent: 85, availableMinutes: 45 }, now);
+  assert.equal(snapshot.exams[0].target, "Microeconomics Final");
+  assert.equal(snapshot.exams[0].targetPercent, 85);
+  assert.equal(snapshot.exams[0].availableMinutes, 45);
+  assert.equal(snapshot.concepts.length, 7);
   assert.equal(snapshot.events.length, 0);
-  assert.ok(snapshot.concepts.every((concept) => concept.retrievalAttempts === 0 && concept.mastery === 0));
-  assert.ok(snapshot.prompts.every((prompt) => prompt.modelAnswer.includes("course material")));
+  assert.ok(snapshot.concepts.every((concept) => concept.mastery === 0 && concept.confidence === 0));
+  assert.ok(snapshot.relationships.some((relationship) => relationship.kind === "prerequisite"));
 });
 
-test("self-reported familiarity is recorded as seed evidence, not retrieval history", () => {
-  const snapshot = createLearnerSnapshot({
-    displayName: "Maya",
-    courseName: "Economics",
-    examName: "Final",
-    examDate: "2026-10-18",
-    topics: ["Framing", "Loss aversion"],
-    familiarity: "familiar",
-  }, now);
-  assert.equal(snapshot.events.length, 2);
-  assert.ok(snapshot.events.every((event) => event.kind === "seed_rating" && event.sessionId === null));
-  assert.ok(snapshot.concepts.every((concept) => concept.retrievalAttempts === 0));
-});
-
-test("setup rejects incomplete or past-dated plans", () => {
-  const base = { displayName: "Maya", courseName: "Economics", examName: "Final", topics: ["One", "Two"], familiarity: "new" };
+test("every onboarding field affects or validates routing state", () => {
+  const base = { examName: "Final", examDate: "2026-09-28", targetPercent: 85, availableMinutes: 45 };
+  assert.throws(() => createLearnerSnapshot({ ...base, examName: "" }, now), /working toward/);
   assert.throws(() => createLearnerSnapshot({ ...base, examDate: "2026-09-01" }, now), /future/);
-  assert.throws(() => createLearnerSnapshot({ ...base, examDate: "2026-10-18", topics: ["One"] }, now), /two topics/);
+  assert.throws(() => createLearnerSnapshot({ ...base, targetPercent: 120 }, now), /target/);
+  assert.throws(() => createLearnerSnapshot({ ...base, availableMinutes: 20 }, now), /study time/);
 });

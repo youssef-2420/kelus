@@ -5,66 +5,51 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
-import { planTodaySession } from "@/domain/scheduler";
+import { generateRoute } from "@/domain/routing-engine";
 import { percent } from "@/lib/format";
 
 function CompleteBody() {
   const search = useSearchParams();
   const { state } = useLearner();
-  const sessionId = search.get("id");
-  const session = state.snapshot.sessions.find((item) => item.id === sessionId)
+  const session = state.snapshot.sessions.find((item) => item.id === search.get("id"))
     ?? [...state.snapshot.sessions].reverse().find((item) => item.status === "complete");
   const summary = session?.summary;
+  const course = state.snapshot.courses.find((item) => item.id === session?.courseId);
+  const exam = state.snapshot.exams.find((item) => item.id === session?.examId);
   const name = (id: string) => state.snapshot.concepts.find((concept) => concept.id === id)?.name ?? id;
-  const course = state.snapshot.courses[0];
-  const exam = state.snapshot.exams.find((item) => item.isActive);
-  const tomorrow = course && exam
-    ? planTodaySession(
-      state.snapshot.concepts.filter((concept) => concept.courseId === course.id),
-      exam,
-      state.snapshot.relationships,
-      state.nowIso,
-    ).concepts.slice(0, 3)
-    : [];
+  const nextRoute = course && exam ? generateRoute({
+    concepts: state.snapshot.concepts.filter((concept) => concept.courseId === course.id),
+    relationships: state.snapshot.relationships,
+    events: state.snapshot.events,
+    exam,
+    nowIso: state.nowIso,
+  }) : null;
 
   return (
     <AppShell>
-      <p className="kicker">Plan updated</p>
-      <h1 className="today-title">Session complete. Tomorrow’s order changed.</h1>
+      <section className="complete-hero">
+        <p className="kicker">Today’s route complete</p>
+        <h1>{session?.plannedMinutes ?? 0} minutes, allocated with intent.</h1>
+        {summary ? <div className="readiness-change"><span>{percent(summary.readinessBefore)}</span><i aria-hidden="true">→</i><strong>{percent(summary.readinessAfter)}</strong><small>estimated readiness</small></div> : null}
+      </section>
       {summary ? (
-        <section className="detail stack-gap">
-          <dl>
-            <div><dt>Strengthened</dt><dd>{summary.strengthenedIds.length ? summary.strengthenedIds.map(name).join(", ") : "—"}</dd></div>
-            <div><dt>Still weak</dt><dd>{summary.stillWeakIds.length ? summary.stillWeakIds.map(name).join(", ") : "—"}</dd></div>
-            <div><dt>Mastery gained</dt><dd>{percent(Math.max(0, summary.masteryGained / Math.max(1, session?.plannedConceptIds.length ?? 1)))}</dd></div>
-          </dl>
-        </section>
-      ) : <p className="quiet">No session summary yet.</p>}
-      {tomorrow.length ? (
-        <section className="section">
-          <h2>Tomorrow</h2>
-          <ol className="engine-tomorrow">
-            {tomorrow.map((row, index) => (
-              <li key={row.concept.id}>
-                <span className="num">{String(index + 1).padStart(2, "0")}</span>
-                <span>{row.concept.name}</span>
-                <span className="quiet">{percent(row.concept.mastery)}</span>
-              </li>
-            ))}
-          </ol>
+        <div className="complete-columns">
+          <section><p className="kicker">Strengthened</p>{summary.strengthenedIds.length ? summary.strengthenedIds.slice(0, 3).map((id) => <p key={id}>{name(id)}</p>) : <p>No clear movement yet</p>}</section>
+          <section><p className="kicker">Needs attention</p>{summary.stillWeakIds.length ? summary.stillWeakIds.slice(0, 3).map((id) => <p key={id}>{name(id)}</p>) : <p>No urgent gap</p>}</section>
+        </div>
+      ) : null}
+      {nextRoute ? (
+        <section className="next-route">
+          <p className="kicker">Next route</p>
+          <h2>Kelus will recalculate as your memory changes.</h2>
+          <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
         </section>
       ) : null}
-      <p className="session-actions">
-        <Link href="/today" className="cta home-cta">Back to today<span className="arrow" aria-hidden="true">→</span></Link>
-      </p>
+      <Link href="/today" className="cta complete-done">Done <span aria-hidden="true">→</span></Link>
     </AppShell>
   );
 }
 
 export default function SessionCompletePage() {
-  return (
-    <Suspense fallback={<AppShell><p>Loading summary…</p></AppShell>}>
-      <CompleteBody />
-    </Suspense>
-  );
+  return <Suspense fallback={<AppShell><p>Updating your route…</p></AppShell>}><CompleteBody /></Suspense>;
 }

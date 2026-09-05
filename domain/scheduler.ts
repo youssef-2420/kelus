@@ -32,9 +32,9 @@ export function examUrgency(exam: Exam, nowIso: string) {
 
 export function courseMastery(concepts: Concept[]) {
   if (!concepts.length) return 0;
-  const weight = concepts.reduce((total, concept) => total + concept.importance, 0);
+  const weight = concepts.reduce((total, concept) => total + concept.examImportance, 0);
   if (weight <= 0) return 0;
-  return concepts.reduce((total, concept) => total + concept.mastery * concept.importance, 0) / weight;
+  return concepts.reduce((total, concept) => total + concept.mastery * concept.examImportance, 0) / weight;
 }
 
 export function conceptPriority(
@@ -49,7 +49,7 @@ export function conceptPriority(
   const forgetting = 1 - concept.predictedRetention;
   const newness = concept.retrievalAttempts === 0 ? 1 : 0;
   let priority = examUrgency(exam, nowIso)
-    * concept.importance
+    * concept.examImportance
     * (PRIORITY_WEAKNESS * weakness + PRIORITY_FORGETTING * forgetting + PRIORITY_NEWNESS * newness);
 
   const dependents = relationships.filter((rel) => rel.kind === "prerequisite" && rel.fromId === concept.id);

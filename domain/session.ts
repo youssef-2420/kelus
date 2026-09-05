@@ -1,4 +1,6 @@
-import { applyRetrievalMastery, deriveStatus, recomputeConceptCache, withCachedState } from "./learner-model";
+import { deriveStatus, recomputeConceptCache, withCachedState } from "./learner-model";
+import { evidenceEvent } from "./session-engine";
+import { estimatedReadiness } from "./readiness";
 import { planTodaySession } from "./scheduler";
 import type { Concept, LearningEvent, RetrievalOutcome, SessionSummary, StudySession } from "./types";
 
@@ -10,27 +12,11 @@ export function createRetrievalEvent(input: {
   promptId: string;
   responseText: string;
   outcome: RetrievalOutcome;
+  responseTimeMs?: number | null;
+  answerRevealed?: boolean;
   createdAt: string;
 }): LearningEvent {
-  const masteryAfter = applyRetrievalMastery(
-    input.concept.mastery,
-    input.outcome,
-    input.concept.difficulty,
-    input.concept.successfulRetrievals,
-  );
-  return {
-    id: input.id,
-    userId: input.userId,
-    conceptId: input.concept.id,
-    sessionId: input.sessionId,
-    kind: "retrieval",
-    outcome: input.outcome,
-    promptId: input.promptId,
-    responseText: input.responseText,
-    masteryBefore: input.concept.mastery,
-    masteryAfter,
-    createdAt: input.createdAt,
-  };
+  return evidenceEvent({ ...input, responseTimeMs: input.responseTimeMs ?? null, answerRevealed: input.answerRevealed ?? false });
 }
 
 export function applyImmutableEvent(concept: Concept, events: LearningEvent[], nowIso: string): Concept {
@@ -46,7 +32,13 @@ export function sessionSummary(before: Concept[], after: Concept[]): SessionSumm
     .filter((concept) => deriveStatus(concept.mastery, concept.predictedRetention, concept.retrievalAttempts) === "weak")
     .map((concept) => concept.id);
   const masteryGained = after.reduce((total, concept) => total + (concept.mastery - (byId.get(concept.id)?.mastery ?? 0)), 0);
-  return { masteryGained, strengthenedIds, stillWeakIds };
+  return {
+    masteryGained,
+    strengthenedIds,
+    stillWeakIds,
+    readinessBefore: estimatedReadiness(before),
+    readinessAfter: estimatedReadiness(after),
+  };
 }
 
 export function completeSession(session: StudySession, summary: SessionSummary, endedAt: string): StudySession {

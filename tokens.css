@@ -18,4 +18,22 @@
   --type-display-tracking: -0.045em;
   --type-reading-tracking: -0.012em;
   --type-label-tracking: 0.095em;
+  --color-product-paper: #fafaf7;
+  --color-product-surface: #ffffff;
+  --color-product-ink: #171815;
+  --color-product-secondary: #555851;
+  --color-product-border: #e5e7e1;
+  --color-product-green: #245c45;
+  --color-product-green-soft: #e9f0ec;
+  --color-product-warm: #d8a37b;
+  --space-product-xs: 0.5rem;
+  --space-product-sm: 0.75rem;
+  --space-product-md: 1rem;
+  --space-product-lg: 1.5rem;
+  --space-product-xl: 2rem;
+  --space-product-2xl: 3rem;
+  --radius-product: 0.75rem;
+  --dur-product-micro: 160ms;
+  --dur-product-state: 280ms;
+  --dur-product-structural: 620ms;
 }

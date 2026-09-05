@@ -1,115 +1,88 @@
 import { recomputeConceptCache, withCachedState } from "../domain/learner-model";
-import type { LearnerSnapshot, LearningEvent } from "../domain/types";
+import type { Concept, LearnerSnapshot, LearningEvent, RetrievalOutcome } from "../domain/types";
 
 const DAY = 86_400_000;
+const iso = (now: number, daysAgo = 0) => new Date(now - daysAgo * DAY).toISOString();
 
-function iso(now: number, daysAgo = 0) {
-  return new Date(now - daysAgo * DAY).toISOString();
-}
+type SeedConcept = {
+  id: string;
+  name: string;
+  examImportance: number;
+  difficulty: number;
+  estimatedMinutes: number;
+  mastery: number;
+  lastReviewedDays: number;
+  history: RetrievalOutcome[];
+};
 
-function id(prefix: string) {
-  return prefix;
-}
+const MICROECONOMICS_CONCEPTS: SeedConcept[] = [
+  { id: "c-supply-demand", name: "Supply & Demand", examImportance: 0.88, difficulty: 0.38, estimatedMinutes: 22, mastery: 0.82, lastReviewedDays: 2, history: ["success", "success", "partial"] },
+  { id: "c-elasticity", name: "Elasticity", examImportance: 0.95, difficulty: 0.56, estimatedMinutes: 18, mastery: 0.48, lastReviewedDays: 8, history: ["partial", "failure"] },
+  { id: "c-consumer-choice", name: "Consumer Choice", examImportance: 0.68, difficulty: 0.62, estimatedMinutes: 24, mastery: 0.64, lastReviewedDays: 4, history: ["success", "partial"] },
+  { id: "c-market-structures", name: "Market Structures", examImportance: 0.86, difficulty: 0.6, estimatedMinutes: 20, mastery: 0.61, lastReviewedDays: 6, history: ["partial", "success"] },
+  { id: "c-game-theory", name: "Game Theory", examImportance: 0.25, difficulty: 0.7, estimatedMinutes: 26, mastery: 0.31, lastReviewedDays: 3, history: ["partial"] },
+  { id: "c-monetary-policy", name: "Monetary Policy", examImportance: 0.82, difficulty: 0.58, estimatedMinutes: 18, mastery: 0.57, lastReviewedDays: 12, history: ["success", "failure"] },
+  { id: "c-fiscal-policy", name: "Fiscal Policy", examImportance: 0.72, difficulty: 0.5, estimatedMinutes: 17, mastery: 0.69, lastReviewedDays: 5, history: ["success", "partial"] },
+];
+
+const PROMPTS = {
+  "c-supply-demand": ["What happens to equilibrium price when demand rises and supply is unchanged?", "Price rises as buyers compete for unchanged supply, moving the market to a new equilibrium."],
+  "c-elasticity": ["Why does demand become more elastic when close substitutes exist?", "Buyers can switch when price rises, so quantity demanded responds more strongly to the price change."],
+  "c-consumer-choice": ["What does the budget constraint represent?", "The combinations of goods a consumer can afford at given prices and income."],
+  "c-market-structures": ["What feature most clearly separates perfect competition from monopoly?", "The degree of market power: competitive firms are price takers, while a monopolist can influence price."],
+  "c-game-theory": ["What is a dominant strategy?", "A strategy that gives a player the best outcome regardless of what the other player chooses."],
+  "c-monetary-policy": ["How can a higher policy interest rate reduce inflationary pressure?", "It raises borrowing costs, restrains demand and investment, and can reduce upward pressure on prices."],
+  "c-fiscal-policy": ["Name one expansionary fiscal-policy action.", "Increasing government spending or reducing taxes to raise aggregate demand."],
+} as const;
 
 export function createDemoSnapshot(nowMs = Date.now()): LearnerSnapshot {
   const now = iso(nowMs);
   const userId = "user-amina";
-  const courseId = "course-marketing";
-  const examId = "exam-midterm";
-
-  const concepts = [
-    { id: "c-positioning", name: "Positioning", importance: 0.9, difficulty: 0.35, seed: 0.9, lastSuccessDays: 1, extra: [] as Array<{ daysAgo: number; outcome: "success" | "partial" | "failure" }> },
-    { id: "c-segmentation", name: "Segmentation", importance: 0.8, difficulty: 0.4, seed: 0.84, lastSuccessDays: 4, extra: [{ daysAgo: 4, outcome: "success" as const }] },
-    { id: "c-consumer", name: "Consumer behavior", importance: 0.75, difficulty: 0.5, seed: 0.72, lastSuccessDays: 9, extra: [{ daysAgo: 12, outcome: "partial" as const }] },
-    { id: "c-pricing", name: "Pricing", importance: 0.85, difficulty: 0.55, seed: 0.58, lastSuccessDays: 14, extra: [{ daysAgo: 14, outcome: "failure" as const }, { daysAgo: 8, outcome: "partial" as const }] },
-    { id: "c-attribution", name: "Attribution", importance: 0.7, difficulty: 0.7, seed: 0.38, lastSuccessDays: 16, extra: [{ daysAgo: 16, outcome: "failure" as const }] },
-    { id: "c-elasticity", name: "Price elasticity of demand", importance: 0.8, difficulty: 0.6, seed: 0.22, lastSuccessDays: 18, extra: [{ daysAgo: 18, outcome: "failure" as const }] },
-    { id: "c-brand-equity", name: "Brand equity", importance: 0.55, difficulty: 0.45, seed: 0, lastSuccessDays: 0, extra: [] },
-  ];
-
+  const courseId = "course-microeconomics";
+  const examId = "exam-microeconomics-final";
   const events: LearningEvent[] = [];
-  const conceptRows = concepts.map((item, index) => {
-    const createdAt = iso(nowMs, 40 - index);
-    if (item.seed > 0) {
-      events.push({
-        id: id(`evt-seed-${item.id}`),
-        userId,
-        conceptId: item.id,
-        sessionId: null,
-        kind: "seed_rating",
-        outcome: item.seed >= 0.75 ? "success" : item.seed >= 0.4 ? "partial" : "failure",
-        promptId: null,
-        responseText: null,
-        masteryBefore: 0,
-        masteryAfter: item.seed,
-        createdAt: iso(nowMs, item.lastSuccessDays || 30),
-      });
-    }
-    item.extra.forEach((attempt, attemptIndex) => {
-      events.push({
-        id: id(`evt-${item.id}-${attemptIndex}`),
-        userId,
-        conceptId: item.id,
-        sessionId: "session-prior",
-        kind: "retrieval",
-        outcome: attempt.outcome,
-        promptId: `p-${item.id}`,
-        responseText: null,
-        masteryBefore: item.seed,
-        masteryAfter: item.seed,
-        createdAt: iso(nowMs, attempt.daysAgo),
-      });
+
+  const concepts = MICROECONOMICS_CONCEPTS.map((item, conceptIndex) => {
+    events.push({
+      id: `evt-seed-${item.id}`, userId, conceptId: item.id, sessionId: null,
+      kind: "seed_rating", outcome: item.mastery >= 0.7 ? "success" : item.mastery >= 0.4 ? "partial" : "failure",
+      selfRating: null, assistance: "none", responseTimeMs: null, promptId: null, responseText: null,
+      masteryBefore: 0, masteryAfter: item.mastery,
+      createdAt: iso(nowMs, item.lastReviewedDays + item.history.length + 2),
     });
-    const base = {
-      id: item.id,
-      courseId,
-      userId,
-      name: item.name,
-      importance: item.importance,
-      difficulty: item.difficulty,
-      mastery: 0,
-      confidence: 0,
-      predictedRetention: 0,
-      lastReviewedAt: null,
-      nextReviewAt: null,
-      retrievalAttempts: 0,
-      successfulRetrievals: 0,
-      failedRetrievals: 0,
-      createdAt,
-      updatedAt: now,
+    item.history.forEach((outcome, index) => events.push({
+      id: `evt-history-${item.id}-${index}`, userId, conceptId: item.id, sessionId: "session-prior",
+      kind: "retrieval", outcome, selfRating: null, assistance: "none", responseTimeMs: 20_000 + conceptIndex * 1_000,
+      promptId: `p-${item.id}`, responseText: null, masteryBefore: item.mastery, masteryAfter: item.mastery,
+      createdAt: iso(nowMs, item.lastReviewedDays + item.history.length - index - 1),
+    }));
+    const base: Concept = {
+      id: item.id, courseId, userId, name: item.name, examImportance: item.examImportance,
+      difficulty: item.difficulty, estimatedMinutes: item.estimatedMinutes,
+      mastery: 0, confidence: 0, predictedRetention: 0, lastReviewedAt: null, nextReviewAt: null,
+      retrievalAttempts: 0, successfulRetrievals: 0, failedRetrievals: 0,
+      createdAt: iso(nowMs, 40), updatedAt: now,
     };
     return withCachedState(base, recomputeConceptCache(base, events, now));
   });
 
-  const prompts = [
-    { id: "p-c-positioning", conceptId: "c-positioning", promptText: "What is positioning in a marketing strategy?", modelAnswer: "How a product is framed in the customer’s mind relative to alternatives — the distinct value it occupies." },
-    { id: "p-c-segmentation", conceptId: "c-segmentation", promptText: "What is market segmentation?", modelAnswer: "Dividing a market into groups that share needs or behaviors so the offer and message can be specific." },
-    { id: "p-c-consumer", conceptId: "c-consumer", promptText: "Name one factor that shapes consumer behavior.", modelAnswer: "Motivation, perception, social influence, or the buying situation — any of these can change the choice." },
-    { id: "p-c-pricing", conceptId: "c-pricing", promptText: "What should a price communicate besides cost recovery?", modelAnswer: "Perceived value, competitive stance, and who the product is for." },
-    { id: "p-c-attribution", conceptId: "c-attribution", promptText: "What is marketing attribution trying to answer?", modelAnswer: "Which touchpoints deserve credit for a conversion, so spend can follow what actually influenced the decision." },
-    { id: "p-c-elasticity", conceptId: "c-elasticity", promptText: "What is price elasticity of demand?", modelAnswer: "How much quantity demanded changes when price changes. Elastic demand moves a lot; inelastic demand barely moves." },
-    { id: "p-c-brand-equity", conceptId: "c-brand-equity", promptText: "What is brand equity?", modelAnswer: "The extra value a brand name adds beyond the functional product — preference, pricing power, and trust." },
-  ];
-
   return {
-    profile: { id: userId, displayName: "Amina", timezone: "America/New_York", createdAt: iso(nowMs, 40) },
-    courses: [{ id: courseId, userId, name: "Marketing Strategy", createdAt: iso(nowMs, 40) }],
-    exams: [{
-      id: examId,
-      courseId,
-      userId,
-      target: "Midterm",
-      examDate: iso(nowMs, -18),
-      isActive: true,
-    }],
-    concepts: conceptRows,
+    profile: { id: userId, displayName: "Amina", timezone: "Africa/Casablanca", createdAt: iso(nowMs, 40) },
+    courses: [{ id: courseId, userId, name: "Microeconomics", createdAt: iso(nowMs, 40) }],
+    exams: [{ id: examId, courseId, userId, target: "Microeconomics Final", targetPercent: 85, examDate: iso(nowMs, -9), availableMinutes: 43, isActive: true }],
+    concepts,
     relationships: [
-      { id: "r1", fromId: "c-positioning", toId: "c-pricing", kind: "prerequisite" },
-      { id: "r2", fromId: "c-pricing", toId: "c-elasticity", kind: "prerequisite" },
-      { id: "r3", fromId: "c-segmentation", toId: "c-positioning", kind: "related" },
-      { id: "r4", fromId: "c-consumer", toId: "c-attribution", kind: "related" },
+      { id: "r-supply-elasticity", fromId: "c-supply-demand", toId: "c-elasticity", kind: "prerequisite" },
+      { id: "r-elasticity-markets", fromId: "c-elasticity", toId: "c-market-structures", kind: "prerequisite" },
+      { id: "r-choice-markets", fromId: "c-consumer-choice", toId: "c-market-structures", kind: "related" },
+      { id: "r-monetary-fiscal", fromId: "c-monetary-policy", toId: "c-fiscal-policy", kind: "related" },
     ],
-    prompts,
+    prompts: concepts.map((concept) => ({
+      id: `p-${concept.id}`,
+      conceptId: concept.id,
+      promptText: PROMPTS[concept.id as keyof typeof PROMPTS][0],
+      modelAnswer: PROMPTS[concept.id as keyof typeof PROMPTS][1],
+    })),
     events,
     sessions: [],
   };

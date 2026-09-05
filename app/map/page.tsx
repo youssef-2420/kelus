@@ -16,7 +16,7 @@ export default function MapPage() {
   const concepts = state.snapshot.concepts
     .filter((concept) => concept.courseId === course.id)
     .slice()
-    .sort((a, b) => b.importance - a.importance || a.mastery - b.mastery);
+    .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
   return (
     <AppShell>
       <p className="kicker">Course</p>

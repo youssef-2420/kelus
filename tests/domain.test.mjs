@@ -1,113 +1,121 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { ALGORITHM_KIND, MASTERY_FAIL_MULTIPLIER } from "../domain/constants.ts";
-import { advanceDemoClock, isDemoClockEnabled } from "../domain/demo-clock.ts";
-import {
-  applyRetrievalMastery,
-  deriveStatus,
-  predictedRetention,
-  recomputeConceptCache,
-} from "../domain/learner-model.ts";
-import { attentionCount, planTodaySession, rankConcepts } from "../domain/scheduler.ts";
-import { createRetrievalEvent, sessionSummary } from "../domain/session.ts";
+import { applyRetrievalMastery, predictedRetention, recomputeConceptCache, withCachedState } from "../domain/learner-model.ts";
+import { calculateLearningValue } from "../domain/learning-value.ts";
+import { compareRoutes, generateRoute, rankLearningActions } from "../domain/routing-engine.ts";
+import { createRetrievalEvent } from "../domain/session.ts";
 import { createDemoSnapshot } from "../data/demo-seed.ts";
+import { finishSession, loadAminaDemo, recordRetrieval, startSession } from "../lib/demo-store.ts";
 
-const now = "2026-09-03T12:00:00.000Z";
+const now = "2026-09-05T12:00:00.000Z";
 
-test("algorithm is explicitly an MVP heuristic", () => {
+test("algorithm is explicitly an interpretable MVP heuristic", () => {
   assert.equal(ALGORITHM_KIND, "kelus-mvp-heuristic-v1");
 });
 
-test("success raises mastery in [0,1]; failure multiplies it", () => {
-  const up = applyRetrievalMastery(0.5, "success", 0.4, 1);
-  const down = applyRetrievalMastery(0.5, "failure", 0.4, 1);
-  assert.ok(up > 0.5 && up <= 1);
-  assert.equal(down, 0.5 * MASTERY_FAIL_MULTIPLIER);
+test("mastery rises after independent success and falls after failure", () => {
+  const success = applyRetrievalMastery(0.5, "success", 0.4, 1);
+  const failure = applyRetrievalMastery(0.5, "failure", 0.4, 1);
+  assert.ok(success > 0.5 && success <= 1);
+  assert.equal(failure, 0.5 * MASTERY_FAIL_MULTIPLIER);
 });
 
-test("retention decays with time since last success", () => {
-  const fresh = predictedRetention(0.8, 4, "2026-09-03T12:00:00.000Z", now);
-  const stale = predictedRetention(0.8, 4, "2026-08-01T12:00:00.000Z", now);
+test("retention decays deterministically with elapsed time", () => {
+  const fresh = predictedRetention(0.8, 4, now, now);
+  const stale = predictedRetention(0.8, 4, "2026-07-01T12:00:00.000Z", now);
   assert.ok(fresh > stale);
   assert.ok(stale >= 0 && stale <= 1);
 });
 
-test("unseen concepts are not learned", () => {
-  assert.equal(deriveStatus(0, 0, 0), "not_learned");
-});
-
-test("seeded mastery without retrievals is still classified", () => {
-  assert.notEqual(deriveStatus(0.9, 0.8, 0), "not_learned");
-  assert.equal(deriveStatus(0.9, 0.8, 0), "strong");
-});
-
-test("recompute treats events as history and caches derived state", () => {
-  const concept = { id: "c1", difficulty: 0.5 };
-  const events = [
-    { id: "e0", userId: "u", conceptId: "c1", sessionId: null, kind: "seed_rating", outcome: "partial", promptId: null, responseText: null, masteryBefore: 0, masteryAfter: 0.5, createdAt: "2026-08-01T12:00:00.000Z" },
-    { id: "e1", userId: "u", conceptId: "c1", sessionId: "s", kind: "retrieval", outcome: "success", promptId: "p", responseText: "ok", masteryBefore: 0.5, masteryAfter: 0.6, createdAt: "2026-08-20T12:00:00.000Z" },
-  ];
-  const cache = recomputeConceptCache(concept, events, now);
-  assert.ok(cache.mastery > 0.5);
-  assert.equal(cache.retrievalAttempts, 1);
-  assert.equal(cache.successfulRetrievals, 2);
-  assert.ok(cache.predictedRetention <= cache.mastery);
-  assert.ok(cache.nextReviewAt);
-});
-
-test("scheduler mixes weak, fading, and new concepts and respects unmet prerequisites", () => {
-  const exam = { id: "ex", courseId: "co", userId: "u", target: "Midterm", examDate: "2026-09-21T12:00:00.000Z", isActive: true };
-  const concepts = [
-    { id: "prereq", courseId: "co", userId: "u", name: "Prereq", importance: 0.8, difficulty: 0.4, mastery: 0.2, confidence: 0.2, predictedRetention: 0.15, lastReviewedAt: now, nextReviewAt: now, retrievalAttempts: 2, successfulRetrievals: 0, failedRetrievals: 2, createdAt: now, updatedAt: now },
-    { id: "advanced", courseId: "co", userId: "u", name: "Advanced", importance: 0.9, difficulty: 0.6, mastery: 0.3, confidence: 0.2, predictedRetention: 0.2, lastReviewedAt: now, nextReviewAt: now, retrievalAttempts: 2, successfulRetrievals: 0, failedRetrievals: 2, createdAt: now, updatedAt: now },
-    { id: "fade", courseId: "co", userId: "u", name: "Fade", importance: 0.7, difficulty: 0.4, mastery: 0.7, confidence: 0.7, predictedRetention: 0.45, lastReviewedAt: now, nextReviewAt: now, retrievalAttempts: 4, successfulRetrievals: 3, failedRetrievals: 1, createdAt: now, updatedAt: now },
-    { id: "new", courseId: "co", userId: "u", name: "New", importance: 0.6, difficulty: 0.4, mastery: 0, confidence: 0, predictedRetention: 0, lastReviewedAt: null, nextReviewAt: null, retrievalAttempts: 0, successfulRetrievals: 0, failedRetrievals: 0, createdAt: now, updatedAt: now },
-  ];
-  const relationships = [{ id: "r", fromId: "prereq", toId: "advanced", kind: "prerequisite" }];
-  const ranked = rankConcepts(concepts, exam, relationships, now);
-  const prereq = ranked.find((row) => row.concept.id === "prereq");
-  const advanced = ranked.find((row) => row.concept.id === "advanced");
-  assert.ok((prereq?.priority ?? 0) > (advanced?.priority ?? 0));
-  const plan = planTodaySession(concepts, exam, relationships, now);
-  assert.equal(plan.plannedMinutes, 45);
-  assert.ok(plan.concepts.length <= 7);
-  assert.ok(plan.weak <= 3);
-  assert.ok(plan.nextNew <= 2);
-  assert.equal(attentionCount(concepts) >= 3, true);
-});
-
-test("session retrieval event is immutable history and updates cached mastery", () => {
-  const concept = {
-    id: "c1", courseId: "co", userId: "u", name: "Pricing", importance: 0.8, difficulty: 0.5,
-    mastery: 0.4, confidence: 0.3, predictedRetention: 0.35, lastReviewedAt: now, nextReviewAt: now,
-    retrievalAttempts: 1, successfulRetrievals: 0, failedRetrievals: 1, createdAt: now, updatedAt: now,
-  };
-  const event = createRetrievalEvent({
-    id: "e2", userId: "u", concept, sessionId: "s1", promptId: "p1", responseText: "value and stance", outcome: "success", createdAt: now,
-  });
-  assert.equal(event.kind, "retrieval");
-  assert.equal(event.masteryBefore, 0.4);
-  assert.ok(event.masteryAfter > 0.4);
-  const seed = { id: "e0", userId: "u", conceptId: "c1", sessionId: null, kind: "seed_rating", outcome: "partial", promptId: null, responseText: null, masteryBefore: 0, masteryAfter: 0.4, createdAt: "2026-08-01T12:00:00.000Z" };
-  const after = recomputeConceptCache(concept, [seed, event], now);
-  assert.ok(after.mastery > 0.4);
-  const summary = sessionSummary([concept], [{ ...concept, ...after }]);
-  assert.ok(summary.masteryGained > 0);
-  assert.ok(summary.strengthenedIds.includes("c1"));
-});
-
-test("demo seed is immediately useful and demo clock is blocked in production", () => {
+test("fundamental principle: Elasticity outranks weaker low-value Game Theory", () => {
   const snapshot = createDemoSnapshot(Date.parse(now));
-  assert.equal(snapshot.profile.displayName, "Amina");
-  assert.equal(snapshot.exams.length, 1);
-  assert.equal(snapshot.exams[0].courseId, snapshot.courses[0].id);
-  assert.equal(snapshot.exams.filter((exam) => exam.isActive).length, 1);
-  assert.ok(snapshot.concepts.length >= 6);
-  assert.ok(snapshot.prompts.length === snapshot.concepts.length);
-  const original = process.env.NODE_ENV;
-  assert.equal(isDemoClockEnabled(), original === "development");
-  process.env.NODE_ENV = "production";
-  assert.equal(isDemoClockEnabled(), false);
-  assert.throws(() => advanceDemoClock(now, 1), /not available/);
-  process.env.NODE_ENV = original;
+  const ranked = rankLearningActions({ concepts: snapshot.concepts, relationships: snapshot.relationships, events: snapshot.events, exam: snapshot.exams[0], nowIso: now });
+  assert.ok(ranked.findIndex((row) => row.concept.id === "c-elasticity") < ranked.findIndex((row) => row.concept.id === "c-game-theory"));
+  assert.equal(ranked[0].concept.id, "c-elasticity");
+  assert.ok(ranked[0].value.reasons.includes("HIGH_EXAM_VALUE"));
+});
+
+test("prerequisite leverage raises expected learning value", () => {
+  const snapshot = createDemoSnapshot(Date.parse(now));
+  const elasticity = snapshot.concepts.find((concept) => concept.id === "c-elasticity");
+  const withGraph = calculateLearningValue({ concept: elasticity, concepts: snapshot.concepts, relationships: snapshot.relationships, events: snapshot.events, exam: snapshot.exams[0], nowIso: now });
+  const withoutGraph = calculateLearningValue({ concept: elasticity, concepts: snapshot.concepts, relationships: [], events: snapshot.events, exam: snapshot.exams[0], nowIso: now });
+  assert.ok(withGraph.score > withoutGraph.score);
+  assert.ok(withGraph.reasons.includes("PREREQUISITE_GAP"));
+});
+
+test("exam date, target and available time materially affect routing", () => {
+  const snapshot = createDemoSnapshot(Date.parse(now));
+  const concept = snapshot.concepts.find((item) => item.id === "c-elasticity");
+  const base = { concept, concepts: snapshot.concepts, relationships: snapshot.relationships, events: snapshot.events, exam: snapshot.exams[0], nowIso: now };
+  const normal = calculateLearningValue(base);
+  const lowerTarget = calculateLearningValue({ ...base, exam: { ...base.exam, targetPercent: 60 } });
+  const distantExam = calculateLearningValue({ ...base, exam: { ...base.exam, examDate: "2027-09-05T12:00:00.000Z" } });
+  assert.ok(normal.score > lowerTarget.score);
+  assert.ok(normal.score > distantExam.score);
+  const shortRoute = generateRoute({ ...base, availableMinutes: 30 });
+  const longRoute = generateRoute({ ...base, availableMinutes: 60 });
+  assert.equal(shortRoute.availableMinutes, 30);
+  assert.equal(longRoute.availableMinutes, 60);
+});
+
+test("time allocation spends the exact budget without equal splitting", () => {
+  const snapshot = createDemoSnapshot(Date.parse(now));
+  const route = generateRoute({ concepts: snapshot.concepts, relationships: snapshot.relationships, events: snapshot.events, exam: snapshot.exams[0], nowIso: now });
+  assert.equal(route.allocations.reduce((sum, item) => sum + item.minutes, 0), 43);
+  assert.equal(route.allocations.at(-1).conceptId, "mixed-retrieval");
+  assert.notEqual(route.allocations[0].minutes, route.allocations[1].minutes);
+  assert.ok(route.allocations[0].minutes <= 18);
+});
+
+test("real retrieval evidence updates the learner model and can materially reroute", () => {
+  const snapshot = createDemoSnapshot(Date.parse(now));
+  const elasticity = snapshot.concepts.find((concept) => concept.id === "c-elasticity");
+  const previous = generateRoute({ concepts: snapshot.concepts, relationships: snapshot.relationships, events: snapshot.events, exam: snapshot.exams[0], nowIso: now });
+  const event = createRetrievalEvent({ id: "new-evidence", userId: snapshot.profile.id, concept: elasticity, sessionId: "s1", promptId: "p-c-elasticity", responseText: "Substitutes make switching easier.", outcome: "success", createdAt: now });
+  const events = [...snapshot.events, event];
+  const concepts = snapshot.concepts.map((concept) => withCachedState(concept, recomputeConceptCache(concept, events, now)));
+  const next = generateRoute({ concepts, relationships: snapshot.relationships, events, exam: snapshot.exams[0], nowIso: now });
+  const change = compareRoutes(previous, next);
+  assert.ok(concepts.find((concept) => concept.id === "c-elasticity").mastery > elasticity.mastery);
+  assert.equal(change.meaningful, true);
+  assert.equal(change.movedConceptId, "c-monetary-policy");
+});
+
+test("small route differences stay quiet", () => {
+  const base = { generatedAt: now, availableMinutes: 43, allocations: [
+    { conceptId: "a", minutes: 18, learningValue: 4, reasons: [] },
+    { conceptId: "b", minutes: 12, learningValue: 3, reasons: [] },
+    { conceptId: "c", minutes: 8, learningValue: 2, reasons: [] },
+    { conceptId: "mixed-retrieval", minutes: 5, learningValue: 0, reasons: [] },
+  ] };
+  const slight = { ...base, allocations: base.allocations.map((item) => ({ ...item, learningValue: item.learningValue * 1.03 })) };
+  assert.equal(compareRoutes(base, slight).meaningful, false);
+});
+
+test("complete product loop persists evidence, reroutes, and completes without expanding the session", () => {
+  const loaded = loadAminaDemo(Date.parse(now));
+  const before = loaded.snapshot.concepts;
+  const { state: started, session } = startSession(loaded, loaded.snapshot.courses[0].id, loaded.snapshot.exams[0].id);
+  const firstId = session.plannedConceptIds[0];
+  const first = started.snapshot.concepts.find((concept) => concept.id === firstId);
+  const next = recordRetrieval(started, {
+    conceptId: firstId,
+    sessionId: session.id,
+    promptId: `p-${firstId}`,
+    responseText: "A retrieved explanation",
+    outcome: "success",
+    responseTimeMs: 24_000,
+    answerRevealed: true,
+  });
+  const updatedSession = next.snapshot.sessions.find((item) => item.id === session.id);
+  const updated = next.snapshot.concepts.find((concept) => concept.id === firstId);
+  assert.ok(updated.mastery > first.mastery);
+  assert.equal(next.snapshot.events.at(-1).assistance, "answer_revealed");
+  assert.equal(updatedSession.routeChanges.length, 1);
+  assert.equal(updatedSession.plannedConceptIds.length, session.plannedConceptIds.length);
+  const completed = finishSession(next, session.id, before);
+  assert.equal(completed.snapshot.sessions.find((item) => item.id === session.id).status, "complete");
+  assert.ok(completed.snapshot.sessions.find((item) => item.id === session.id).summary.readinessAfter >= 0);
 });

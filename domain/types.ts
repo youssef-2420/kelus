@@ -1,8 +1,19 @@
 export type ConceptStatus = "not_learned" | "weak" | "fading" | "stable" | "strong";
 export type RetrievalOutcome = "success" | "partial" | "failure";
+export type SelfRating = "dont_know" | "weak" | "okay" | "strong";
 export type RelationshipKind = "prerequisite" | "related";
 export type SessionStatus = "in_progress" | "complete";
-export type EventKind = "seed_rating" | "retrieval";
+export type EventKind = "seed_rating" | "self_rating" | "retrieval" | "hint_used" | "answer_revealed";
+export type AssistanceLevel = "none" | "hint" | "answer_revealed";
+export type LearningReasonCode =
+  | "HIGH_EXAM_VALUE"
+  | "LOW_MASTERY"
+  | "RETENTION_FADING"
+  | "PREREQUISITE_GAP"
+  | "EXAM_APPROACHING"
+  | "HIGH_EXPECTED_GAIN"
+  | "REVIEW_DUE"
+  | "LOW_CONFIDENCE_ESTIMATE";
 
 export type Profile = {
   id: string;
@@ -23,7 +34,9 @@ export type Exam = {
   courseId: string;
   userId: string;
   target: string;
+  targetPercent: number;
   examDate: string;
+  availableMinutes: number;
   isActive: boolean;
 };
 
@@ -32,8 +45,9 @@ export type Concept = {
   courseId: string;
   userId: string;
   name: string;
-  importance: number;
+  examImportance: number;
   difficulty: number;
+  estimatedMinutes: number;
   mastery: number;
   confidence: number;
   predictedRetention: number;
@@ -66,12 +80,45 @@ export type LearningEvent = {
   conceptId: string;
   sessionId: string | null;
   kind: EventKind;
-  outcome: RetrievalOutcome;
+  outcome: RetrievalOutcome | null;
+  selfRating: SelfRating | null;
+  assistance: AssistanceLevel;
+  responseTimeMs: number | null;
   promptId: string | null;
   responseText: string | null;
   masteryBefore: number;
   masteryAfter: number;
   createdAt: string;
+};
+
+export type LearningValue = {
+  conceptId: string;
+  score: number;
+  expectedGain: number;
+  timeCost: number;
+  reasons: LearningReasonCode[];
+  confidence: number;
+};
+
+export type RouteAllocation = {
+  conceptId: string | "mixed-retrieval";
+  minutes: number;
+  learningValue: number;
+  reasons: LearningReasonCode[];
+};
+
+export type RoutePlan = {
+  generatedAt: string;
+  availableMinutes: number;
+  allocations: RouteAllocation[];
+};
+
+export type RouteChange = {
+  meaningful: boolean;
+  movedConceptId: string | null;
+  previousIndex: number | null;
+  nextIndex: number | null;
+  explanation: string | null;
 };
 
 export type StudySession = {
@@ -82,7 +129,11 @@ export type StudySession = {
   startedAt: string;
   endedAt: string | null;
   plannedMinutes: number;
+  readinessBefore: number;
   plannedConceptIds: string[];
+  initialRoute: RoutePlan;
+  latestRoute: RoutePlan;
+  routeChanges: RouteChange[];
   status: SessionStatus;
   summary: SessionSummary | null;
 };
@@ -91,6 +142,8 @@ export type SessionSummary = {
   masteryGained: number;
   strengthenedIds: string[];
   stillWeakIds: string[];
+  readinessBefore: number;
+  readinessAfter: number;
 };
 
 export type LearnerSnapshot = {

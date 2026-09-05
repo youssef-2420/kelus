@@ -100,10 +100,12 @@ export function recomputeConceptCache(
   let lastReviewedAt: string | null = null;
   let lastSuccessAt: string | null = null;
   const retrievalOutcomes: RetrievalOutcome[] = [];
+  let selfRatingSeen = false;
 
   for (const event of history) {
-    if (event.kind === "seed_rating") {
+    if (event.kind === "seed_rating" || event.kind === "self_rating") {
       mastery = event.masteryAfter;
+      selfRatingSeen = event.kind === "self_rating" || selfRatingSeen;
       lastReviewedAt = event.createdAt;
       if (event.outcome === "success" || event.outcome === "partial") {
         lastSuccessAt = event.createdAt;
@@ -111,6 +113,7 @@ export function recomputeConceptCache(
       }
       continue;
     }
+    if (event.kind === "hint_used" || event.kind === "answer_revealed" || !event.outcome) continue;
     mastery = applyRetrievalMastery(mastery, event.outcome, concept.difficulty, successfulRetrievals);
     retrievalAttempts += 1;
     lastReviewedAt = event.createdAt;
@@ -129,7 +132,7 @@ export function recomputeConceptCache(
   const retention = predictedRetention(mastery, successfulRetrievals, lastSuccessAt, nowIso);
   return {
     mastery,
-    confidence: confidenceFromOutcomes(retrievalOutcomes),
+    confidence: retrievalOutcomes.length ? confidenceFromOutcomes(retrievalOutcomes) : selfRatingSeen ? 0.2 : 0,
     predictedRetention: retention,
     lastReviewedAt,
     nextReviewAt: nextReviewAt(mastery, successfulRetrievals, lastSuccessAt, nowIso),
