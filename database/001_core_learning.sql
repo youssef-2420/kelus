@@ -60,6 +60,21 @@ create table if not exists prompts (
   model_answer text not null
 );
 
+create table if not exists course_materials (
+  id uuid primary key,
+  user_id uuid not null references profiles(id) on delete cascade,
+  course_id uuid not null references courses(id) on delete cascade,
+  kind text not null check (kind in ('pdf', 'video', 'link')),
+  storage text not null check (storage in ('local', 'url')),
+  title text not null,
+  source_url text,
+  storage_key text,
+  file_name text,
+  mime_type text,
+  size_bytes bigint,
+  added_at timestamptz not null default now()
+);
+
 create table if not exists study_sessions (
   id uuid primary key,
   user_id uuid not null references profiles(id) on delete cascade,
@@ -96,3 +111,4 @@ create table if not exists learning_events (
 create index if not exists learning_events_concept_time on learning_events(concept_id, created_at);
 create index if not exists learning_events_user_time on learning_events(user_id, created_at);
 create index if not exists concepts_course on concepts(course_id);
+create index if not exists course_materials_course on course_materials(course_id, added_at desc);

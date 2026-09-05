@@ -1,6 +1,22 @@
 [
   {
     "date": "2026-09-05",
+    "scope": "course material library",
+    "brief": "A focused place for students to save course PDFs, videos, and web sources",
+    "macrostructure": "course context → direct ingest → compact source shelf → data-honesty note",
+    "theme": "custom",
+    "theme_axes": {
+      "surface": "existing warm Kelus paper with one direct drop field",
+      "type": "Source Serif 4 hierarchy with Instrument Sans controls",
+      "geometry": "full-width rules and source rows instead of cards",
+      "motion": "state feedback only; no decorative animation",
+      "density": "one ingest action followed by a quiet library"
+    },
+    "enrichment": "custom line upload mark",
+    "vibe": "calm, useful, honest, course-specific"
+  },
+  {
+    "date": "2026-09-05",
     "scope": "core learning product",
     "brief": "Destination-to-reroute learning allocation loop for university exams",
     "macrostructure": "destination → diagnosis → route canvas → focused retrieval → evidence-driven reroute",

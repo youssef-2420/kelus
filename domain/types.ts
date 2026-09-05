@@ -2,6 +2,8 @@ export type ConceptStatus = "not_learned" | "weak" | "fading" | "stable" | "stro
 export type RetrievalOutcome = "success" | "partial" | "failure";
 export type SelfRating = "dont_know" | "weak" | "okay" | "strong";
 export type RelationshipKind = "prerequisite" | "related";
+export type MaterialKind = "pdf" | "video" | "link";
+export type MaterialStorage = "local" | "url";
 export type SessionStatus = "in_progress" | "complete";
 export type EventKind = "seed_rating" | "self_rating" | "retrieval" | "hint_used" | "answer_revealed";
 export type AssistanceLevel = "none" | "hint" | "answer_revealed";
@@ -27,6 +29,19 @@ export type Course = {
   userId: string;
   name: string;
   createdAt: string;
+};
+
+export type CourseMaterial = {
+  id: string;
+  courseId: string;
+  kind: MaterialKind;
+  storage: MaterialStorage;
+  title: string;
+  sourceUrl: string | null;
+  fileName: string | null;
+  mimeType: string | null;
+  sizeBytes: number | null;
+  addedAt: string;
 };
 
 export type Exam = {
