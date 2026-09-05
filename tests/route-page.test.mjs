@@ -4,6 +4,7 @@ import test from "node:test";
 
 test("homepage keeps the student hero and workbench", () => {
   const page = readFileSync("app/page.tsx", "utf8");
+  assert.match(page, /HomeHeader/);
   assert.match(page, /KelusHero/);
   assert.match(page, /KnowledgeRouteStory/);
   assert.match(page, /HomeAfterHero/);
