@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Instrument_Sans, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
+import { RouteTransition } from "@/components/RouteTransition";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -39,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip" href="#main">Skip to content</a>
         <LearnerProvider>
           <TooltipProvider>
-            {children}
+            <RouteTransition>{children}</RouteTransition>
             <Toaster />
           </TooltipProvider>
         </LearnerProvider>

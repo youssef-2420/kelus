@@ -92,9 +92,12 @@ button, input, textarea { font: inherit; }
 .topbar { display: flex; align-items: center; gap: 16px; margin-bottom: 36px; flex-wrap: wrap; }
 .mark { font-family: var(--font-display), Georgia, serif; font-size: 22px; font-weight: 600; letter-spacing: -0.035em; margin-right: auto; }
 .nav { display: flex; gap: 16px; }
-.nav a { color: var(--muted); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.nav a { position: relative; color: var(--muted); text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; white-space: nowrap; transition: color var(--dur-product-micro) var(--ease-enter); }
+.nav a::after { content: ""; position: absolute; right: 0; bottom: 6px; left: 0; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform var(--dur-quick) var(--ease-enter); }
 .nav a:hover, .nav a.is-active { color: var(--ink); }
 .nav a.is-active { font-weight: 650; }
+.nav a:hover::after, .nav a.is-active::after { transform: scaleX(1); transform-origin: left; }
+.nav a:active { color: var(--accent); }
 .kicker { color: var(--muted); font-size: 12px; letter-spacing: var(--type-label-tracking); text-transform: uppercase; font-weight: 650; }
 .quiet { color: var(--muted); }
 .hero h1 { font-size: clamp(32px, 6vw, 48px); margin: 0 0 28px; }
@@ -1084,6 +1087,8 @@ button, input, textarea { font: inherit; }
   transition: transform 180ms ease;
 }
 .home-nav a:hover::after { transform: scaleX(1); transform-origin: left; }
+.home-nav a:active { color: var(--accent); }
+.route-transition { min-height: 100dvh; }
 .home-hero {
   width: min(1120px, calc(100% - 40px));
   min-height: 790px;
@@ -1911,6 +1916,9 @@ button, input, textarea { font: inherit; }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .nav a,
+  .nav a::after,
+  .home-nav a::after { transition-duration: 0.01ms; }
   .route-map-active { animation: none; }
   .study-progress i { transition-duration: 100ms; }
 }
