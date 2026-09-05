@@ -1,21 +1,29 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
-import { RouteKnowledgeMap } from "@/components/RouteKnowledgeMap";
+import { ease, RouteKnowledgeMap, ROUTE_BEATS } from "@/components/RouteKnowledgeMap";
 import { TodayRoute } from "@/components/TodayRoute";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
+import { greeting } from "@/lib/format";
 
 export default function TodayPage() {
-  const router = useRouter();
-  const { state, start, reset, completeSetup, completeDiagnosis, useDemo } = useLearner();
+  const { state, completeSetup, completeDiagnosis, useDemo } = useLearner();
   if (!state.onboardingCompleted) return <FirstRunSetup onComplete={completeSetup} onUseDemo={useDemo} />;
   if (!state.diagnosisCompleted) return <InitialDiagnosis snapshot={state.snapshot} onComplete={completeDiagnosis} />;
+  return <TodayStage />;
+}
+
+function TodayStage() {
+  const router = useRouter();
+  const { state, start } = useLearner();
+  const reduce = useReducedMotion();
 
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
@@ -35,22 +43,43 @@ export default function TodayPage() {
   }
 
   return (
-    <AppShell action={<button type="button" className="text-btn" onClick={reset}>Start over</button>}>
-      <section className="today-destination">
-        <div><p className="kicker">{exam.target}</p><h1>Today’s route</h1></div>
-        <dl><div><dt>Exam</dt><dd>{days} days</dd></div><div><dt>Target</dt><dd>{exam.targetPercent}%</dd></div></dl>
-      </section>
+    <AppShell>
+      <div className="today-stage">
+        <motion.header
+          className="today-dest"
+          initial={reduce ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, ease }}
+        >
+          <h1>{exam.target}</h1>
+          <p className="today-dest-meta">
+            <span>
+              <b>{days}</b> days to go
+            </span>
+            <span>Target {exam.targetPercent}%</span>
+          </p>
+          <p className="today-greeting">{greeting(nowIso)}.</p>
+          <p className="today-lede">
+            You have {route.availableMinutes} minutes.
+            <br />
+            Here’s where they matter most.
+          </p>
+        </motion.header>
 
-      <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
+        <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
 
-      <section className="today-allocation" aria-labelledby="allocation-title">
-        <header><div><p className="kicker">Highest learning value first</p><h2 id="allocation-title">Your best {route.availableMinutes} minutes</h2></div><p>Not the weakest topics. The most valuable next actions.</p></header>
         <TodayRoute route={route} concepts={concepts} />
-      </section>
 
-      <div className="today-primary-action">
-        <button type="button" className="cta" onClick={begin}>Start my route <span aria-hidden="true">→</span></button>
-        <p>Kelus will recalculate when your answers change what matters next.</p>
+        <motion.div
+          className="today-primary-action"
+          initial={reduce ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease, delay: reduce ? 0 : ROUTE_BEATS.plan + 0.28 }}
+        >
+          <button type="button" className="cta" onClick={begin}>
+            Start route <span aria-hidden="true">→</span>
+          </button>
+        </motion.div>
       </div>
     </AppShell>
   );

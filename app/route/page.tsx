@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function RoutePage() {
   return (
     <div className="home route-page">
-      <HomeHeader current="route" />
+      <HomeHeader />
 
       <main id="main">
         <RouteStory />
