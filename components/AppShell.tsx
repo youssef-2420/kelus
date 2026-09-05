@@ -14,7 +14,8 @@ export function AppShell({ children, action }: { children: ReactNode; action?: R
   const initial = state.snapshot.profile.displayName.trim().charAt(0).toUpperCase() || "K";
 
   return (
-    <div className="shell">
+    <div className="product-canvas">
+    <div className="shell product">
       <header className="app-bar">
         <Link href="/" className="mark">
           Kelus
@@ -56,6 +57,7 @@ export function AppShell({ children, action }: { children: ReactNode; action?: R
         </div>
       </header>
       <main id="main">{children}</main>
+    </div>
     </div>
   );
 }

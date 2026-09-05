@@ -8,7 +8,7 @@ test("today does not use dashboard section labels", () => {
     assert.equal(today.includes(phrase), false, phrase);
   }
   assert.match(today, /Start route/);
-  assert.match(today, /today-stage/);
+  assert.match(today, /today-stat/);
 });
 
 test("marketing header is sign-in and start learning", () => {
