@@ -25,4 +25,17 @@ test("primary application navigation exposes its active page", async () => {
   const shell = await source("components/AppShell.tsx");
   assert.match(shell, /aria-current=/);
   assert.match(shell, /className=\{path === "\/" \? "is-active"/);
+  assert.match(shell, /href="\/materials"/);
+  assert.match(shell, /href="\/map"/);
+  assert.match(shell, /href="\/route"/);
+});
+
+test("ledger design keeps the mobile homepage in one column", async () => {
+  const css = await source("app/globals.css");
+  const layout = await source("app/layout.tsx");
+  const header = await source("components/home/HomeHeader.tsx");
+  assert.match(layout, /Inter_Tight/);
+  assert.match(css, /\.kelus-hero\.home-hero\.is-student\s*\{[\s\S]*?grid-template-columns: minmax\(0, 1fr\)/);
+  assert.match(css, /--color-indigo-ink/);
+  assert.match(header, /href="\/materials"/);
 });

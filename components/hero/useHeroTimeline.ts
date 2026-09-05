@@ -73,7 +73,6 @@ export function useHeroTimeline(
   }, [paused]);
 
   useEffect(() => {
-    setPhase(reduceMotion ? hold : initial);
     if (reduceMotion) return;
 
     let elapsed = 0;
@@ -98,7 +97,7 @@ export function useHeroTimeline(
 
     frame = window.requestAnimationFrame(step);
     return () => window.cancelAnimationFrame(frame);
-  }, [reduceMotion, mode, hold, initial, loopAt, sequence]);
+  }, [reduceMotion, mode, loopAt, sequence]);
 
   if (reduceMotion) return hold;
   return phase;

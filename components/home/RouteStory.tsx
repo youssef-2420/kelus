@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { KnowledgeLandscape } from "@/components/hero/KnowledgeLandscape";
 import { NODE_MAP } from "@/components/hero/landscape-data";
 import { phaseAtLeast, useHeroTimeline, type TimelineMode } from "@/components/hero/useHeroTimeline";
@@ -28,6 +28,9 @@ function useMobileLayout() {
 function useStoryChapter() {
   const [chapter, setChapter] = useState<StoryChapter>("open");
   const refs = useRef<Partial<Record<StoryChapter, HTMLElement | null>>>({});
+  const registerChapter = useCallback((id: StoryChapter, node: HTMLElement | null) => {
+    refs.current[id] = node;
+  }, []);
 
   useEffect(() => {
     const nodes = (["open", "leverage", "time", "climax"] as const)
@@ -50,7 +53,7 @@ function useStoryChapter() {
     return () => observer.disconnect();
   }, []);
 
-  return { chapter, refs };
+  return { chapter, registerChapter };
 }
 
 export function RouteStory() {
@@ -60,7 +63,7 @@ export function RouteStory() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const stage = useRef<HTMLDivElement>(null);
   const inView = useInView(stage, { amount: 0.12 });
-  const { chapter, refs } = useStoryChapter();
+  const { chapter, registerChapter } = useStoryChapter();
   const mode: TimelineMode = chapter === "climax" ? "climax" : "hero";
   const phase = useHeroTimeline(reduceMotion, !inView || Boolean(hoveredId), mode);
   const elasticityMastery = phaseAtLeast(phase, "learn") ? 54 : 42;
@@ -136,7 +139,7 @@ export function RouteStory() {
         <div className="route-story-rail">
           <section
             ref={(node) => {
-              refs.current.open = node;
+              registerChapter("open", node);
             }}
             data-chapter="open"
             className="story-chapter is-open"
@@ -162,7 +165,7 @@ export function RouteStory() {
 
           <section
             ref={(node) => {
-              refs.current.leverage = node;
+              registerChapter("leverage", node);
             }}
             data-chapter="leverage"
             className="story-chapter is-leverage"
@@ -173,7 +176,7 @@ export function RouteStory() {
 
           <section
             ref={(node) => {
-              refs.current.time = node;
+              registerChapter("time", node);
             }}
             data-chapter="time"
             className="story-chapter is-time"
@@ -184,7 +187,7 @@ export function RouteStory() {
 
           <section
             ref={(node) => {
-              refs.current.climax = node;
+              registerChapter("climax", node);
             }}
             data-chapter="climax"
             className="story-chapter is-climax"

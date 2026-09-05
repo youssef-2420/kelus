@@ -12,6 +12,7 @@ export function HomeHeader({ current }: Props) {
       </Link>
       <nav className="home-nav" aria-label="Primary">
         <Link href="/today">Today</Link>
+        <Link href="/materials">Materials</Link>
         <Link href="/map">Map</Link>
         <Link href="/route" aria-current={current === "route" ? "page" : undefined}>
           Route

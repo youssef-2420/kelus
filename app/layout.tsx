@@ -1,21 +1,14 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Source_Serif_4 } from "next/font/google";
+import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-
-const display = Source_Serif_4({
+const ledger = Inter_Tight({
   subsets: ["latin"],
-  variable: "--font-display",
-  axes: ["opsz"],
-  display: "swap",
-});
-const sans = Instrument_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter-tight",
+  weight: ["300", "400", "600"],
   display: "swap",
 });
 
@@ -35,8 +28,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn("font-sans", sans.variable, display.variable)}>
-      <body className={`${display.variable} ${sans.variable}`}>
+    <html lang="en" className={ledger.variable}>
+      <body className={ledger.variable}>
         <a className="skip" href="#main">Skip to content</a>
         <LearnerProvider>
           <TooltipProvider>
