@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef, useState, type SyntheticEvent } from "react";
+import { AppShell } from "@/components/AppShell";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
 import { selectDiagnosisConcept } from "@/domain/diagnosis";
 
@@ -69,7 +70,8 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
   }
 
   return (
-    <main id="main" className="diagnosis-page">
+    <AppShell>
+    <div className="diagnosis-page">
       <div className="flow-context diagnosis-context"><span>Build your first route</span><b>Initial estimate</b></div>
       {phase === "rating" ? (
         <section className="diagnosis-panel">
@@ -115,6 +117,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
           )}
         </section>
       ) : null}
-    </main>
+    </div>
+    </AppShell>
   );
 }

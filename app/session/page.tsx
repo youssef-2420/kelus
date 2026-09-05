@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import type { Concept, LearningActivity, RetrievalOutcome } from "@/domain/types";
 import { percent } from "@/lib/format";
@@ -10,6 +10,12 @@ import { getMaterialsSnapshot, getServerMaterialsSnapshot, readLocalPdf, subscri
 
 type Phase = "learn" | "retrieve" | "apply" | "evaluate" | "result" | "reroute";
 type HelpMode = "hint" | "explain" | "example" | null;
+type SourcePanelState = {
+  title: string;
+  locator: string | null;
+  kind: "pdf" | "link" | "unavailable";
+  href: string | null;
+};
 
 const STEP_INDEX = { learn: 1, retrieve: 2, apply: 3, evaluate: 4 } as const;
 
@@ -53,13 +59,19 @@ function SessionBody() {
   const [helpMode, setHelpMode] = useState<HelpMode>(null);
   const [masteryBefore, setMasteryBefore] = useState(0);
   const [seenRouteChanges, setSeenRouteChanges] = useState(0);
+  const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
   const startedAt = useRef(0);
+  const sourceObjectUrl = useRef<string | null>(null);
   const conceptId = session?.plannedConceptIds[index];
   const concept = state.snapshot.concepts.find((item) => item.id === conceptId);
   const prompt = state.snapshot.prompts.find((item) => item.conceptId === conceptId);
   const activity = state.snapshot.learningActivities?.find((item) => item.conceptId === conceptId)
     ?? (concept && prompt ? activityFallback(concept, prompt.promptText, prompt.modelAnswer) : null);
   const total = session?.plannedConceptIds.length ?? 0;
+
+  useEffect(() => () => {
+    if (sourceObjectUrl.current) URL.revokeObjectURL(sourceObjectUrl.current);
+  }, []);
 
   const before = useMemo<Concept[]>(() => {
     if (typeof window === "undefined") return [];
@@ -133,19 +145,39 @@ function SessionBody() {
 
   async function openSource(materialId: string, locator: string | null) {
     const material = materials.find((item) => item.id === materialId);
-    if (!material) return;
+    if (sourceObjectUrl.current) {
+      URL.revokeObjectURL(sourceObjectUrl.current);
+      sourceObjectUrl.current = null;
+    }
+    if (!material) {
+      setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null });
+      return;
+    }
     if (material.storage === "url" && material.sourceUrl) {
-      window.open(material.sourceUrl, "_blank", "noopener,noreferrer");
+      setSourcePanel({ title: material.title, locator, kind: "link", href: material.sourceUrl });
       return;
     }
     const blob = await readLocalPdf(materialId);
-    if (!blob) return;
+    if (!blob) {
+      setSourcePanel({ title: material.title, locator, kind: "unavailable", href: null });
+      return;
+    }
     const page = Number(locator?.match(/\d+/)?.[0] ?? 1);
-    window.open(`${URL.createObjectURL(blob)}#page=${page}`, "_blank", "noopener,noreferrer");
+    const objectUrl = URL.createObjectURL(blob);
+    sourceObjectUrl.current = objectUrl;
+    setSourcePanel({ title: material.title, locator, kind: "pdf", href: `${objectUrl}#page=${page}` });
+  }
+
+  function closeSource() {
+    if (sourceObjectUrl.current) {
+      URL.revokeObjectURL(sourceObjectUrl.current);
+      sourceObjectUrl.current = null;
+    }
+    setSourcePanel(null);
   }
 
   return (
-    <main id="main" className="study-shell">
+    <main id="main" className={`study-shell${sourcePanel ? " is-source-open" : ""}`}>
       <div className="study-context">
         <span><b>{concept.name}</b><small>{routeMinutes} min</small></span>
         <button type="button" className="text-btn" onClick={() => router.push("/today")}>Exit session</button>
@@ -245,6 +277,37 @@ function SessionBody() {
             ) : null}
           </motion.section>
         )}
+      </AnimatePresence>
+      <AnimatePresence initial={false}>
+        {sourcePanel ? (
+          <motion.aside
+            key={`${sourcePanel.title}-${sourcePanel.locator}`}
+            className="session-source-panel"
+            aria-label={`Course source: ${sourcePanel.title}`}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16 }}
+            transition={{ type: "spring", bounce: 0, duration: reduceMotion ? 0.1 : 0.28 }}
+          >
+            <header>
+              <div><span>From your course</span><strong>{sourcePanel.title}</strong>{sourcePanel.locator ? <small>{sourcePanel.locator}</small> : null}</div>
+              <button type="button" onClick={closeSource} aria-label="Close course source">Close</button>
+            </header>
+            {sourcePanel.kind === "pdf" && sourcePanel.href ? <iframe title={`${sourcePanel.title} ${sourcePanel.locator ?? ""}`} src={sourcePanel.href} /> : null}
+            {sourcePanel.kind === "link" && sourcePanel.href ? (
+              <div className="session-source-link">
+                <p>This source is saved as a web link. Open it when you need the original context; your session stays here.</p>
+                <a href={sourcePanel.href} target="_blank" rel="noreferrer">Open original source <span aria-hidden="true">↗</span></a>
+              </div>
+            ) : null}
+            {sourcePanel.kind === "unavailable" ? (
+              <div className="session-source-link">
+                <p>The reference is part of your learning activity, but the original file is not available on this device.</p>
+                <button type="button" onClick={() => router.push("/materials")}>Add the PDF again <span aria-hidden="true">→</span></button>
+              </div>
+            ) : null}
+          </motion.aside>
+        ) : null}
       </AnimatePresence>
     </main>
   );

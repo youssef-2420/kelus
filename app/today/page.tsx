@@ -45,7 +45,7 @@ export default function TodayPage() {
 
       <section className="today-allocation" aria-labelledby="allocation-title">
         <header><div><p className="kicker">Highest learning value first</p><h2 id="allocation-title">Your best {route.availableMinutes} minutes</h2></div><p>Not the weakest topics. The most valuable next actions.</p></header>
-        <TodayRoute route={route} concepts={concepts} />
+        <TodayRoute route={route} concepts={concepts} activities={snapshot.learningActivities} />
       </section>
 
       <div className="today-primary-action">
