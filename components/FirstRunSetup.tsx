@@ -31,6 +31,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
         {step === 1 ? (
           <fieldset>
             <legend>What are you working toward?</legend>
+            <p className="destination-locked-label">Course</p>
             <p className="destination-locked" aria-describedby="course-support">{draft.examName}</p>
             <p id="course-support" className="destination-support">Microeconomics is the first supported course. More courses come later.</p>
           </fieldset>

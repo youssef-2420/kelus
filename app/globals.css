@@ -1787,8 +1787,7 @@ button, input, textarea { font: inherit; }
   line-height: 1.08;
 }
 .destination-form > fieldset > input,
-.destination-pair input,
-.destination-locked {
+.destination-pair input {
   width: 100%;
   min-height: 56px;
   padding: 0 4px;
@@ -1802,9 +1801,25 @@ button, input, textarea { font: inherit; }
   font-weight: 300;
   outline: none;
 }
+.destination-locked-label {
+  margin: 0 0 8px;
+  color: var(--color-product-secondary);
+  font-size: 13px;
+}
 .destination-locked {
   display: flex;
   align-items: center;
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 12px 16px;
+  color: var(--color-product-ink);
+  background: var(--color-mist);
+  border: 1px solid var(--color-frost);
+  border-radius: var(--radius-ledger);
+  font-family: var(--font-ledger);
+  font-size: var(--text-body-lg);
+  font-weight: 400;
 }
 .destination-form input:focus {
   border-color: var(--color-product-green);
@@ -1861,19 +1876,19 @@ button, input, textarea { font: inherit; }
 .diagnosis-list button:hover,
 .diagnosis-grades button:hover,
 .study-ratings button:hover { color: var(--color-product-ink); background: var(--color-product-green-soft); }
-.diagnosis-list button.is-selected { color: var(--color-product-surface); background: var(--color-product-green); }
+.diagnosis-list button.is-selected {
+  color: var(--color-pure-white);
+  background: var(--color-indigo-ink);
+  border-color: var(--color-indigo-ink);
+}
 .diagnosis-list button:focus-visible,
 .diagnosis-grades button:focus-visible,
 .study-ratings button:focus-visible { outline: 2px solid var(--color-product-green); outline-offset: 2px; }
 .diagnosis-cta {
-  position: sticky;
-  bottom: 0;
   display: flex;
   justify-content: flex-end;
   margin-top: var(--space-product-xl);
   padding: var(--space-product-md) 0;
-  background: var(--color-pure-white);
-  z-index: 2;
 }
 .diagnosis-continue { float: none; margin-top: 0; }
 .diagnosis-check { width: min(760px, calc(100% - 40px)); }
@@ -1974,8 +1989,9 @@ button, input, textarea { font: inherit; }
   .diagnosis-list li { grid-template-columns: minmax(0, 1fr); padding: 15px 0; }.diagnosis-list li > div { display: grid; grid-template-columns: 1fr 1fr; }.diagnosis-list button { border-color: var(--color-product-border); }
   .diagnosis-continue { float: none; width: 100%; }
   .destination-route { display: none; }
-  .route-map svg { max-height: 180px; }
-  .route-map-node text { font-size: 10px; }
+  .route-map svg { max-height: 200px; }
+  .route-map-node .route-map-value { display: none; }
+  .route-map-node text { font-size: 11px; }
   .today-plan-list > li > button { grid-template-columns: 28px minmax(0, 1fr) 56px; }
   .plan-topic strong { font-size: 16px; }
   .plan-topic small { font-size: 12px; }
