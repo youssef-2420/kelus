@@ -13,6 +13,7 @@ type Props = {
   onHover: (id: string | null) => void;
   onRoute: boolean;
   elasticityMastery: number;
+  focused?: boolean;
 };
 
 function radius(node: NodeData) {
@@ -35,6 +36,7 @@ export function KnowledgeNode({
   onHover,
   onRoute,
   elasticityMastery,
+  focused = true,
 }: Props) {
   const x = node.x[layout];
   const y = node.y[layout];
@@ -48,7 +50,7 @@ export function KnowledgeNode({
 
   return (
     <g
-      className={`hero-node hero-node-${node.kind}${hovered ? " is-hovered" : ""}${node.hiddenOnMobile ? " is-quiet" : ""}${onRoute ? " is-route" : ""}`}
+      className={`hero-node hero-node-${node.kind}${hovered ? " is-hovered" : ""}${node.hiddenOnMobile ? " is-quiet" : ""}${onRoute ? " is-route" : ""}${focused ? "" : " is-dim"}`}
       transform={`translate(${x} ${y})`}
       tabIndex={node.kind === "concept" ? 0 : undefined}
       onPointerEnter={() => node.kind === "concept" && onHover(node.id)}

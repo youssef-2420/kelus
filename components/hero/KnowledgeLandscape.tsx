@@ -24,6 +24,7 @@ type Props = {
   onHover: (id: string | null) => void;
   elasticityMastery: number;
   reduceMotion: boolean;
+  focusId?: string | null;
 };
 
 export function KnowledgeLandscape({
@@ -33,6 +34,7 @@ export function KnowledgeLandscape({
   onHover,
   elasticityMastery,
   reduceMotion,
+  focusId = null,
 }: Props) {
   const nodes = visibleNodes(layout);
   const quiet = quietPathsFor(layout);
@@ -110,6 +112,7 @@ export function KnowledgeLandscape({
           onHover={onHover}
           onRoute={onRoute.has(node.id)}
           elasticityMastery={elasticityMastery}
+          focused={!focusId || focusId === node.id || node.kind === "you" || node.kind === "target"}
         />
       ))}
     </svg>

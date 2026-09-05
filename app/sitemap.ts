@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/`, changeFrequency: "weekly", priority: 1 },
     { url: `${BASE_URL}/today/`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/map/`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/route/`, changeFrequency: "weekly", priority: 0.7 },
   ];
 
   const concepts: MetadataRoute.Sitemap = createDemoSnapshot(
