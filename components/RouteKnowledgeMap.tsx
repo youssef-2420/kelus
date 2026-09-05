@@ -15,20 +15,20 @@ export function RouteKnowledgeMap({ concepts, route, readiness, target }: { conc
   return (
     <figure className="route-map">
       <svg viewBox="0 0 560 340" role="img" aria-labelledby="route-map-title route-map-desc">
-        <title id="route-map-title">Your recommended route to the exam</title>
-        <desc id="route-map-desc">A path from your current estimated readiness through the highest-value concepts toward your target.</desc>
+        <title id="route-map-title">Recommended route to the exam</title>
+        <desc id="route-map-desc">A path from your current estimated readiness through the next concepts toward your target.</desc>
         <path className="route-map-possibility" d="M 88 282 C 180 278 160 120 260 176 S 390 270 520 56" />
         <path className="route-map-possibility" d="M 88 282 C 150 190 275 300 360 202 S 445 120 520 56" />
         <path className="route-map-active" d={`${path} L 520 56`} />
-        <g className="route-map-you" transform="translate(88 282)"><circle r="18" /><text y="4">YOU</text></g>
+        <g className="route-map-you" transform="translate(88 282)"><circle r="18" /><text y="5">You</text></g>
         {routeConcepts.map((concept, index) => (
           <g key={concept.id} className="route-map-node" transform={`translate(${nodePositions[index]?.x ?? 455} ${nodePositions[index]?.y ?? 102})`}>
-            <circle r="7" /><text x="14" y="-5">{concept.name}</text><text className="route-map-value" x="14" y="11">{percent(concept.mastery)} estimated</text>
+            <circle r="7" /><text x="14" y="-5">{concept.name}</text><text className="route-map-value" x="14" y="11">{percent(concept.mastery)}</text>
           </g>
         ))}
-        <g className="route-map-target" transform="translate(520 56)"><circle r="24" /><circle r="14" /><text x="0" y="-34">TARGET {target}%</text></g>
+        <g className="route-map-target" transform="translate(520 56)"><circle r="24" /><circle r="14" /><text x="0" y="-34">Target {target}%</text></g>
       </svg>
-      <figcaption><span>Estimated ready</span><strong>{percent(readiness)}</strong><small>Estimate updates from retrieval evidence.</small></figcaption>
+      <figcaption>Estimated ready {percent(readiness)} · updates from retrieval</figcaption>
     </figure>
   );
 }
