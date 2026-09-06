@@ -12,12 +12,9 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
   return (
     <footer className={compact ? "site-footer is-compact" : "site-footer"}>
       <div className="site-footer-inner">
-        <div className="site-footer-brand">
-          <Link href="/" className="mark">
-            Kelus
-          </Link>
-          <p>Local-first exam prep. Your files stay on this device unless you choose to sign in.</p>
-        </div>
+        <Link href="/" className="mark site-footer-mark">
+          Kelus
+        </Link>
         <nav className="site-footer-nav" aria-label="Footer">
           {links.map((link) => (
             <Link key={link.href} href={link.href}>
@@ -26,7 +23,7 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
           ))}
         </nav>
       </div>
-      <p className="site-footer-note">© {new Date().getFullYear()} Kelus · kelus.me</p>
+      <p className="site-footer-note">Local-first exam prep · © {new Date().getFullYear()} Kelus</p>
     </footer>
   );
 }

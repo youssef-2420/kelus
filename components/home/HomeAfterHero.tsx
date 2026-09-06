@@ -49,8 +49,8 @@ export function HomeAfterHero() {
           <p className="kicker">03 · Course material</p>
           <h2 id="v1-materials-title">Everything for the exam, together.</h2>
           <p>
-            Add a syllabus or lecture PDF, review the proposed concepts, and keep each learning activity connected
-            to the page it came from.
+            Add a syllabus or lecture PDF, review the proposed concepts, and keep each learning activity connected to
+            the page it came from.
           </p>
           <Link href="/today">
             Start with my course <span aria-hidden="true">→</span>
@@ -89,23 +89,23 @@ export function HomeAfterHero() {
         </Reveal>
       </section>
 
-      <Reveal>
-        <footer className="home-foot v1-foot">
-          <div className="v1-foot-copy">
-            <p className="kicker">Start with what matters</p>
-            <h2>Walk into the exam knowing what you worked on—and why.</h2>
+      <section className="home-close" aria-labelledby="home-close-title">
+        <Reveal className="home-close-inner">
+          <div className="home-close-copy">
+            <h2 id="home-close-title">Walk into the exam knowing what you worked on—and why.</h2>
+            <p>Start free on this device. Join founding when you want sync.</p>
           </div>
-          <div className="v1-foot-actions">
-            <span className="mark">Kelus</span>
-            <div className="v1-foot-links">
-              <Link href="/today">
-                Make today’s plan <span aria-hidden="true">→</span>
-              </Link>
-              <Link href="/pricing" className="text-btn">Founding student</Link>
-            </div>
+          <div className="home-close-actions">
+            <Link href="/today" className="cta">
+              Make today’s plan <span aria-hidden="true">→</span>
+            </Link>
+            <Link href="/pricing" className="text-btn">
+              Founding student
+            </Link>
           </div>
-        </footer>
-      </Reveal>
+        </Reveal>
+      </section>
+
       <SiteFooter />
     </>
   );

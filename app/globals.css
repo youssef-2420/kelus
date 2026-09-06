@@ -5408,13 +5408,13 @@ h3,
 }
 .kelus-hero.is-product-demo .home-copy { max-width: 600px; padding: 0; }
 .kelus-hero.is-product-demo .home-copy h1 {
-  max-width: 14ch;
+  max-width: 13ch;
   margin: 0 0 var(--spacing-24);
   color: var(--color-midnight-ink);
-  font-size: clamp(28px, 3.4vw, 40px);
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  font-size: clamp(44px, 6.4vw, 72px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
 }
 .kelus-hero.is-product-demo .home-lede { max-width: 42ch; margin-bottom: var(--spacing-32); }
 .hero-honesty { margin: var(--spacing-24) 0 0; color: var(--color-smoke); font-size: var(--text-caption); }
@@ -5610,23 +5610,15 @@ h3,
   white-space: nowrap;
 }
 
-/* Home brand must outrank the problem headline on first paint. */
-.hero-brand {
-  margin: 0 0 var(--spacing-16);
-  color: var(--color-midnight-ink);
-  font-size: clamp(56px, 8vw, 92px);
-  font-weight: 600;
-  letter-spacing: -0.055em;
-  line-height: 0.92;
-}
+/* Brand lives in the header wordmark + the product name inside the hero headline. */
 .kelus-hero.is-product-demo .home-copy h1 {
-  max-width: 14ch;
+  max-width: 13ch;
   margin: 0 0 var(--spacing-24);
   color: var(--color-midnight-ink);
-  font-size: clamp(28px, 3.4vw, 40px);
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  font-size: clamp(44px, 6.4vw, 72px);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
 }
 .kelus-hero.is-product-demo .home-copy .home-lede {
   max-width: 40ch;
@@ -5686,9 +5678,6 @@ h3,
     padding-left: 0;
     border-left: 0;
     padding-top: var(--spacing-16);
-  }
-  .hero-brand {
-    font-size: clamp(48px, 16vw, 72px);
   }
   .destination-brand {
     font-size: clamp(36px, 12vw, 48px);
@@ -5759,9 +5748,92 @@ h3,
   color: var(--color-steel);
 }
 
+.home-close {
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 72px 0 24px;
+  border-top: 1px solid var(--color-smoke);
+}
+
+.home-close-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.home-close-copy {
+  display: grid;
+  gap: 12px;
+  max-width: 34ch;
+}
+
+.home-close-copy h2 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+
+.home-close-copy p {
+  margin: 0;
+  color: var(--color-steel);
+}
+
+.home-close-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.home-close {
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 72px 0 24px;
+  border-top: 1px solid var(--color-smoke);
+}
+
+.home-close-inner {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.home-close-copy {
+  display: grid;
+  gap: 12px;
+  max-width: 36ch;
+}
+
+.home-close-copy h2 {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+
+.home-close-copy p {
+  margin: 0;
+  color: var(--color-steel);
+}
+
+.home-close-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 .site-footer {
-  margin-top: 64px;
-  padding: 28px 0 8px;
+  width: min(1120px, calc(100% - 48px));
+  margin: 32px auto 0;
+  padding: 24px 0 40px;
   border-top: 1px solid var(--color-smoke);
 }
 
@@ -5772,43 +5844,54 @@ h3,
 .site-footer-inner {
   display: flex;
   justify-content: space-between;
-  gap: 24px;
-  align-items: flex-start;
+  gap: 20px 32px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
-.site-footer-brand {
-  display: grid;
-  gap: 8px;
-  max-width: 36ch;
-}
-
-.site-footer-brand p,
-.site-footer-note {
-  margin: 0;
-  color: var(--color-steel);
-  font-size: 13px;
-  line-height: 1.45;
+.site-footer-mark {
+  font-size: 20px;
+  text-decoration: none;
+  color: var(--color-midnight-ink);
 }
 
 .site-footer-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px 18px;
+  gap: 8px 20px;
 }
 
 .site-footer-nav a {
-  color: var(--color-midnight-ink);
+  color: var(--color-steel);
   text-decoration: none;
   font-size: 14px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .site-footer-nav a:hover {
-  color: var(--color-indigo-ink);
+  color: var(--color-midnight-ink);
 }
 
 .site-footer-note {
-  margin-top: 20px;
+  margin: 16px 0 0;
+  color: var(--color-steel);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .home-close,
+  .site-footer {
+    width: calc(100% - 32px);
+  }
+
+  .home-close-inner,
+  .site-footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .waitlist-form {
