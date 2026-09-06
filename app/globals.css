@@ -5283,14 +5283,19 @@ h3,
 }
 .hero-demo-head {
   min-height: 76px;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--spacing-24);
+  gap: var(--spacing-16);
   padding: var(--spacing-16) var(--spacing-24);
   border-bottom: 1px solid var(--color-frost);
 }
-.hero-demo-head > div:first-child { display: grid; gap: 2px; }
+.hero-window-controls { display: flex; gap: 7px; align-self: start; padding-top: 5px; }
+.hero-window-controls i { width: 10px; height: 10px; display: block; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .08); }
+.hero-window-controls i:nth-child(1) { background: #ff5f57; }
+.hero-window-controls i:nth-child(2) { background: #febc2e; }
+.hero-window-controls i:nth-child(3) { background: #28c840; }
+.hero-demo-identity { display: grid; gap: 2px; }
 .hero-demo-head span,
 .hero-demo-context span,
 .hero-demo-route-title span {
@@ -5365,7 +5370,8 @@ h3,
 @media (max-width: 640px) {
   .kelus-hero.home-hero.is-product-demo { width: calc(100% - 32px); padding: var(--spacing-48) 0 var(--spacing-64); }
   .kelus-hero.is-product-demo .home-copy h1 { font-size: clamp(48px, 14vw, 64px); }
-  .hero-demo-head { align-items: stretch; flex-direction: column; gap: var(--spacing-8); padding-inline: var(--spacing-16); }
+  .hero-demo-head { grid-template-columns: auto minmax(0, 1fr); align-items: start; gap: var(--spacing-8) var(--spacing-16); padding-inline: var(--spacing-16); }
+  .hero-demo-tabs { grid-column: 1 / -1; }
   .hero-demo-tabs { gap: var(--spacing-16); }
   .hero-demo-body { padding-inline: var(--spacing-16); }
   .hero-demo-context { grid-template-columns: minmax(0, 1fr); gap: var(--spacing-16); padding-top: var(--spacing-24); }

@@ -26,7 +26,8 @@ export function KelusHero() {
 
       <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
         <header className="hero-demo-head">
-          <div><span>Example route</span><strong>{example.course}</strong></div>
+          <span className="hero-window-controls" aria-hidden="true"><i /><i /><i /></span>
+          <div className="hero-demo-identity"><span>Example route</span><strong>{example.course}</strong></div>
           <div className="hero-demo-tabs" role="tablist" aria-label="Choose an example course">
             {LEARNING_EXAMPLES.map((item, index) => (
               <button key={item.id} type="button" role="tab" aria-selected={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>

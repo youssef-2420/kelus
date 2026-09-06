@@ -13,6 +13,7 @@ test("homepage presents the V1 product loop after the student hero", () => {
   assert.match(hero, /LEARNING_EXAMPLES/);
   assert.match(hero, /Today’s route/);
   assert.match(hero, /No invented progress/);
+  assert.match(hero, /hero-window-controls/);
   assert.doesNotMatch(page, /KnowledgeRouteStory/);
   assert.doesNotMatch(page, /<RouteStory/);
   assert.match(story, /TodayPlanIllustration/);
