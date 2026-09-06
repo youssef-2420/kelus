@@ -14,14 +14,14 @@ type RevealProps = {
 export function Reveal({ children, className, delay = 0, ...rest }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion() === true;
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const inView = useInView(ref, { once: true, margin: "0px 0px -12% 0px" });
 
   return (
     <motion.div
       ref={ref}
       className={className}
-      initial={reduce ? false : { opacity: 0, y: 24 }}
-      animate={reduce || inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      initial={reduce ? false : { opacity: 0, y: 16 }}
+      animate={reduce || inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
       transition={{ duration: 0.5, delay, ease }}
       {...rest}
     >
