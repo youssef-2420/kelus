@@ -1,5 +1,4 @@
 import { createDemoSnapshot } from "../data/demo-seed";
-import { createDemoLearningActivities } from "../data/demo-learning-activities";
 import { ALGORITHM_KIND, SELF_RATING_MASTERY } from "../domain/constants";
 import { advanceDemoClock, isDemoClockEnabled } from "../domain/demo-clock";
 import { recomputeConceptCache, withCachedState } from "../domain/learner-model";
@@ -24,7 +23,7 @@ export type DemoState = {
 function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapshot {
   return {
     ...snapshot,
-    learningActivities: snapshot.learningActivities?.length ? snapshot.learningActivities : createDemoLearningActivities(),
+    learningActivities: snapshot.learningActivities ?? [],
     concepts: snapshot.concepts.map((concept) => withCachedState(concept, recomputeConceptCache(concept, snapshot.events, nowIso))),
   };
 }
@@ -40,7 +39,9 @@ const SERVER_SNAPSHOT = initialDemoState(SERVER_NOW_MS);
 export function validStoredState(value: unknown): value is DemoState {
   const state = value as DemoState;
   return Boolean(
-    state?.snapshot?.concepts?.length
+    Array.isArray(state?.snapshot?.concepts)
+    && Array.isArray(state.snapshot.courses)
+    && Array.isArray(state.snapshot.exams)
     && state.snapshot.exams?.[0]?.targetPercent
     && state.snapshot.concepts.every((concept) => typeof concept.examImportance === "number"),
   );

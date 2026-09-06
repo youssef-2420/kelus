@@ -42,6 +42,10 @@ test("route explainer lives on its own page", () => {
   assert.match(story, /MaterialToMapIllustration/);
   assert.match(story, /TodayRouteIllustration/);
   assert.match(story, /RerouteIllustration/);
+  assert.match(story, /Biology/);
+  assert.match(story, /Computer science/);
+  assert.match(story, /History/);
+  assert.match(story, /Choose an example course/);
   assert.match(story, /Not a grade prediction/);
 });
 

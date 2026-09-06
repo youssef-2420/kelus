@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
@@ -14,6 +15,7 @@ export default function TodayPage() {
   const router = useRouter();
   const { state, start, reset, completeSetup, completeDiagnosis, useDemo } = useLearner();
   if (!state.onboardingCompleted) return <FirstRunSetup onComplete={(input) => { completeSetup(input); router.push("/materials"); }} onUseDemo={useDemo} />;
+  if (!state.snapshot.concepts.length) return <AppShell><section className="materials-empty"><p className="kicker">Next step</p><h1>Bring in one real source.</h1><p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p><Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link></section></AppShell>;
   if (!state.diagnosisCompleted) return <InitialDiagnosis snapshot={state.snapshot} onComplete={completeDiagnosis} />;
 
   const { snapshot, nowIso } = state;

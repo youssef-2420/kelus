@@ -204,7 +204,7 @@ export function MaterialLibrary() {
         </label>
 
         <form className="material-link-form" onSubmit={addLink}>
-          <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Lecture 4 — Elasticity" /></div>
+          <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture notes" /></div>
           <div className="material-url-field"><label htmlFor="material-url">Video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" /></div>
           <button className="cta" type="submit" disabled={!url.trim()}>Add link</button>
         </form>
