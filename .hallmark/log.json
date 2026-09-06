@@ -77,5 +77,37 @@
     },
     "enrichment": "typographic system only",
     "vibe": "warm, cerebral, editorial, composed"
+  },
+  {
+    "date": "2026-09-05",
+    "scope": "Today learning route",
+    "brief": "Replace the route-diagram-first dashboard with an immediate executable study decision",
+    "macrostructure": "Workbench",
+    "theme": "indigo ledger (design.md)",
+    "theme_axes": {
+      "surface": "white execution surface separated by midnight and frost rules",
+      "type": "Inter Tight with one lightweight decision headline",
+      "geometry": "open ledger rows and four-pixel action controls",
+      "motion": "single lead-action entrance and evidence-row disclosure",
+      "density": "one lead action followed by a subordinate route queue"
+    },
+    "enrichment": "none; app function carries the page",
+    "vibe": "decisive, calm, focused, evidence-led"
+  },
+  {
+    "date": "2026-09-05",
+    "scope": "How Kelus works",
+    "brief": "Replace the abstract sticky route demonstration with a concrete end-to-end learning workflow",
+    "macrostructure": "Narrative Workflow",
+    "theme": "indigo ledger (design.md)",
+    "theme_axes": {
+      "surface": "white ledger sections with mist reserved for the closing action",
+      "type": "Inter Tight with one restrained BlurText thesis",
+      "geometry": "full-width evidence rows and four-pixel controls",
+      "motion": "word reveal at entry, short stage reveals, and causal SVG path drawing",
+      "density": "one product event and one interface fragment per stage"
+    },
+    "enrichment": "three native indigo-ledger diagrams plus realistic Kelus interface fragments",
+    "vibe": "clear, causal, instructional, precise"
   }
 ]

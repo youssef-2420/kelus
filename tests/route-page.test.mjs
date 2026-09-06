@@ -4,17 +4,23 @@ import test from "node:test";
 
 test("homepage presents the V1 product loop after the student hero", () => {
   const page = readFileSync("app/page.tsx", "utf8");
+  const hero = readFileSync("components/hero/KelusHero.tsx", "utf8");
   const story = readFileSync("components/home/HomeAfterHero.tsx", "utf8");
   assert.match(page, /KelusHero/);
-  assert.match(page, /StartHereJourney/);
+  assert.doesNotMatch(page, /StartHereJourney/);
   assert.match(page, /HomeAfterHero/);
+  assert.match(hero, /Your course is too big/);
+  assert.match(hero, /LEARNING_EXAMPLES/);
+  assert.match(hero, /Today’s route/);
+  assert.match(hero, /No invented progress/);
+  assert.match(hero, /hero-window-controls/);
   assert.doesNotMatch(page, /KnowledgeRouteStory/);
   assert.doesNotMatch(page, /<RouteStory/);
   assert.match(story, /TodayPlanIllustration/);
   assert.match(story, /RerouteIllustration/);
   assert.match(story, /MaterialShelfIllustration/);
   assert.match(story, /Honest methodology/);
-  assert.match(story, /does not analyze their contents yet/);
+  assert.match(story, /review the proposed concepts/);
 });
 
 test("the start-here route explains the full first-use loop without generic cards", () => {
@@ -30,9 +36,31 @@ test("the start-here route explains the full first-use loop without generic card
 
 test("route explainer lives on its own page", () => {
   const page = readFileSync("app/route/page.tsx", "utf8");
-  const story = readFileSync("components/home/RouteStory.tsx", "utf8");
-  assert.match(page, /RouteStory/);
-  assert.match(story, /Your learning/);
-  assert.match(story, /TimeClaim/);
-  assert.match(story, /RouteLeverage/);
+  const story = readFileSync("components/HowItWorks.tsx", "utf8");
+  const examples = readFileSync("data/learning-examples.ts", "utf8");
+  assert.match(page, /HowItWorks/);
+  assert.match(story, /Give Kelus the course/);
+  assert.match(story, /Build the Knowledge Map/);
+  assert.match(story, /Show what you know/);
+  assert.match(story, /Open Today/);
+  assert.match(story, /Learn inside the route/);
+  assert.match(story, /Your answer changes the route/);
+  assert.match(story, /BlurText/);
+  assert.match(story, /MaterialToMapIllustration/);
+  assert.match(story, /TodayRouteIllustration/);
+  assert.match(story, /RerouteIllustration/);
+  assert.match(examples, /Biology/);
+  assert.match(examples, /Computer science/);
+  assert.match(examples, /History/);
+  assert.match(story, /Choose an example course/);
+  assert.match(story, /Not a grade prediction/);
+});
+
+test("how-it-works illustrations explain causality without raster assets", () => {
+  const illustrations = readFileSync("components/how/HowIllustrations.tsx", "utf8");
+  assert.match(illustrations, /Course pages becoming a confirmed concept map/);
+  assert.match(illustrations, /One selected study route through several possibilities/);
+  assert.match(illustrations, /A learning answer changing the next route/);
+  assert.match(illustrations, /useReducedMotion|reduceMotion/);
+  assert.doesNotMatch(illustrations, /<img/);
 });

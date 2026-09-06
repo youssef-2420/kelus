@@ -1,76 +1,67 @@
 "use client";
 
 import Link from "next/link";
-import {
-  motion,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-} from "motion/react";
-import { useRef, type PointerEvent } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useState } from "react";
+import { LEARNING_EXAMPLES } from "@/data/learning-examples";
 import { StudentIllustration } from "./StudentIllustration";
 
 export function KelusHero() {
   const reduceMotion = useReducedMotion() === true;
-  const root = useRef<HTMLElement>(null);
-
-  const px = useMotionValue(0);
-  const py = useMotionValue(0);
-  const sx = useSpring(px, { stiffness: 90, damping: 22, bounce: 0 });
-  const sy = useSpring(py, { stiffness: 90, damping: 22, bounce: 0 });
-  const studentX = useTransform(sx, (value) => value * 4);
-  const studentY = useTransform(sy, (value) => value * 3);
-  const studentShift = useMotionTemplate`translate(${studentX}px, ${studentY}px)`;
-
-  const onMove = (event: PointerEvent<HTMLElement>) => {
-    if (reduceMotion) return;
-    const box = event.currentTarget.getBoundingClientRect();
-    px.set((event.clientX - box.left) / box.width - 0.5);
-    py.set((event.clientY - box.top) / box.height - 0.5);
-  };
-
-  const onLeave = () => {
-    px.set(0);
-    py.set(0);
-  };
+  const [exampleIndex, setExampleIndex] = useState(0);
+  const example = LEARNING_EXAMPLES[exampleIndex];
 
   return (
-    <section
-      ref={root}
-      className="kelus-hero home-hero is-student"
-      onPointerMove={onMove}
-      onPointerLeave={onLeave}
-    >
+    <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
       <div className="kelus-hero-copy home-copy">
-        <p className="kicker">For the student at the desk</p>
-        <h1>
-          Know what to
-          <br />
-          learn next.
-        </h1>
-        <p className="home-lede">
-          Sit down with your exam. Kelus decides the route from here — so you don’t spend the evening choosing.
-        </p>
+        <p className="kicker">Adaptive study routes</p>
+        <h1 id="home-hero-title">Your course is too big. Today doesn’t have to be.</h1>
+        <p className="home-lede">Add the material and the exam date. Kelus turns what you know—and what you do not—into the next useful study session.</p>
         <div className="home-actions">
-          <Link href="/today" className="cta home-cta">
-            Start today’s plan
-            <span className="arrow" aria-hidden="true">
-              →
-            </span>
-          </Link>
-          <a href="#route" className="home-secondary">
-            See the route
-          </a>
+          <Link href="/today" className="cta home-cta">Build my route <span className="arrow" aria-hidden="true">→</span></Link>
+          <a href="#route" className="home-secondary">See a route change</a>
         </div>
+        <p className="hero-honesty">Your material. Your answers. No invented progress.</p>
       </div>
 
-      <div className="kelus-hero-art">
-        <div className="hero-grain" aria-hidden="true" />
-        <motion.div className="hero-student-wrap" style={{ transform: studentShift }}>
-          <StudentIllustration className="hero-student" />
-        </motion.div>
+      <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
+        <header className="hero-demo-head">
+          <span className="hero-window-controls" aria-hidden="true"><i /><i /><i /></span>
+          <div className="hero-demo-identity"><span>Example route</span><strong>{example.course}</strong></div>
+          <div className="hero-demo-tabs" role="tablist" aria-label="Choose an example course">
+            {LEARNING_EXAMPLES.map((item, index) => (
+              <button key={item.id} type="button" role="tab" aria-selected={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>
+            ))}
+          </div>
+        </header>
+
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={example.id}
+            className="hero-demo-body"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -5 }}
+            transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="hero-demo-context">
+              <div><span>Destination</span><strong>{example.destination}</strong></div>
+              <dl><div><dt>Exam</dt><dd>{example.days} days</dd></div><div><dt>Today</dt><dd>45 min</dd></div></dl>
+            </div>
+            <div className="hero-demo-route">
+              <div className="hero-demo-route-title"><span>Today’s route</span><strong>Highest value first</strong></div>
+              <ol>
+                {example.route.map((item, index) => (
+                  <motion.li key={item.name} initial={reduceMotion ? false : { opacity: 0, x: 8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: reduceMotion ? 0 : index * 0.045, duration: 0.2 }}>
+                    <span>{String(index + 1).padStart(2, "0")}</span><div><strong>{item.name}</strong><small>{item.reason}</small></div><b>{item.minutes} min</b>
+                  </motion.li>
+                ))}
+              </ol>
+            </div>
+            <p className="hero-demo-signal"><span aria-hidden="true">↳</span>{example.signal}</p>
+          </motion.div>
+        </AnimatePresence>
+        <StudentIllustration className="hero-demo-student" />
       </div>
     </section>
   );

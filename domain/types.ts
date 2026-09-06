@@ -4,6 +4,8 @@ export type SelfRating = "dont_know" | "weak" | "okay" | "strong";
 export type RelationshipKind = "prerequisite" | "related";
 export type MaterialKind = "pdf" | "video" | "link";
 export type MaterialStorage = "local" | "url";
+export type MaterialRole = "syllabus" | "lecture_slides" | "notes" | "past_exam" | "course_outline" | "other";
+export type MaterialProcessingStatus = "saved" | "processing" | "ready" | "failed";
 export type SessionStatus = "in_progress" | "complete";
 export type EventKind = "seed_rating" | "self_rating" | "retrieval" | "hint_used" | "answer_revealed";
 export type AssistanceLevel = "none" | "hint" | "answer_revealed";
@@ -41,6 +43,8 @@ export type CourseMaterial = {
   fileName: string | null;
   mimeType: string | null;
   sizeBytes: number | null;
+  role: MaterialRole;
+  processingStatus: MaterialProcessingStatus;
   addedAt: string;
 };
 
@@ -87,6 +91,49 @@ export type Prompt = {
   conceptId: string;
   promptText: string;
   modelAnswer: string;
+};
+
+export type LearningSourceReference = {
+  materialId: string;
+  label: string;
+  locator: string | null;
+};
+
+export type ExtractedMaterialPage = {
+  pageNumber: number;
+  text: string;
+};
+
+export type ProposedConcept = {
+  id: string;
+  materialId: string;
+  name: string;
+  sourceLabel: string;
+  locator: string;
+  sourceExcerpt: string;
+};
+
+export type LearningActivity = {
+  id: string;
+  conceptId: string;
+  learn: {
+    title: string;
+    explanation: string;
+    keyPoints: string[];
+  };
+  retrieve: {
+    prompt: string;
+    hint: string;
+    explanation: string;
+    example: string;
+    modelAnswer: string;
+  };
+  apply: {
+    prompt: string;
+    hint: string;
+    modelAnswer: string;
+  };
+  sourceReferences: LearningSourceReference[];
 };
 
 export type LearningEvent = {
@@ -168,6 +215,7 @@ export type LearnerSnapshot = {
   concepts: Concept[];
   relationships: ConceptRelationship[];
   prompts: Prompt[];
+  learningActivities: LearningActivity[];
   events: LearningEvent[];
   sessions: StudySession[];
 };

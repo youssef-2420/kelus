@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
-import { RouteKnowledgeMap } from "@/components/RouteKnowledgeMap";
 import { TodayRoute } from "@/components/TodayRoute";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
@@ -14,19 +15,50 @@ import { generateRoute } from "@/domain/routing-engine";
 export default function TodayPage() {
   const router = useRouter();
   const { state, start, reset, completeSetup, completeDiagnosis, useDemo } = useLearner();
-  if (!state.onboardingCompleted) return <FirstRunSetup onComplete={completeSetup} onUseDemo={useDemo} />;
-  if (!state.diagnosisCompleted) return <InitialDiagnosis snapshot={state.snapshot} onComplete={completeDiagnosis} />;
+  const [confirmReset, setConfirmReset] = useState(false);
+
+  if (!state.onboardingCompleted) {
+    return (
+      <FirstRunSetup
+        onComplete={(input) => {
+          completeSetup(input);
+          router.push("/materials");
+        }}
+        onUseDemo={useDemo}
+      />
+    );
+  }
+
+  if (!state.snapshot.concepts.length) {
+    return (
+      <AppShell>
+        <section className="materials-empty">
+          <p className="kicker">Next step</p>
+          <h1>Bring in one real source.</h1>
+          <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
+          <Link className="cta" href="/materials">
+            Add course material <span aria-hidden="true">→</span>
+          </Link>
+        </section>
+      </AppShell>
+    );
+  }
+
+  if (!state.diagnosisCompleted) {
+    return <InitialDiagnosis snapshot={state.snapshot} onComplete={completeDiagnosis} />;
+  }
 
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
   const exam = snapshot.exams.find((item) => item.courseId === course?.id && item.isActive);
   if (!course || !exam) return <AppShell><p>No active destination.</p></AppShell>;
+
   const concepts = snapshot.concepts.filter((concept) => concept.courseId === course.id);
   const route = generateRoute({ concepts, relationships: snapshot.relationships, events: snapshot.events, exam, nowIso });
   const readiness = estimatedReadiness(concepts);
   const days = daysUntilExam(exam, nowIso);
-  const first = route.allocations[0];
-  const firstConcept = concepts.find((concept) => concept.id === first?.conceptId);
+  const firstAllocation = route.allocations[0];
+  const firstConcept = concepts.find((concept) => concept.id === firstAllocation?.conceptId);
   const firstName = firstConcept?.name ?? "mixed retrieval";
   const courseId = course.id;
   const examId = exam.id;
@@ -37,33 +69,65 @@ export default function TodayPage() {
     router.push(`/session?id=${sessionId}`);
   }
 
+  function requestReset() {
+    setConfirmReset(true);
+  }
+
+  function confirmStartOver() {
+    setConfirmReset(false);
+    reset();
+  }
+
   return (
-    <AppShell>
-      <section className="today-desk">
-        <p className="kicker">{exam.target}</p>
-        <h1>Start {firstName}</h1>
-        <p className="today-lede">
-          {route.availableMinutes} minutes today · exam in {days} days · aim {exam.targetPercent}%
-        </p>
+    <AppShell
+      action={
+        confirmReset ? (
+          <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
+            <span>Erase this route?</span>
+            <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>Cancel</button>
+            <button type="button" className="text-btn is-danger" onClick={confirmStartOver}>Start over</button>
+          </span>
+        ) : (
+          <button type="button" className="text-btn" onClick={requestReset}>Start over</button>
+        )
+      }
+    >
+      <section className="today-brief" aria-labelledby="today-title">
+        <div className="today-brief-copy">
+          <p className="kicker">Today · {course.name}</p>
+          <h1 id="today-title">Start {firstName}</h1>
+          <p>
+            {route.availableMinutes} minutes today · exam in {days} days · aim {exam.targetPercent}%
+          </p>
+        </div>
+        <dl className="today-context" aria-label="Current study context">
+          <div className="today-readiness">
+            <dt>Estimated ready</dt>
+            <dd>{Math.round(readiness * 100)}%</dd>
+          </div>
+          <div>
+            <dt>Exam</dt>
+            <dd>{days} days</dd>
+          </div>
+          <div>
+            <dt>Target</dt>
+            <dd>{exam.targetPercent}%</dd>
+          </div>
+        </dl>
       </section>
 
-      <RouteKnowledgeMap concepts={concepts} route={route} readiness={readiness} target={exam.targetPercent} />
-
-      <section className="today-allocation" aria-labelledby="allocation-title">
-        <h2 id="allocation-title">This session</h2>
-        <TodayRoute route={route} concepts={concepts} />
+      <section className="today-workbench" aria-labelledby="route-title">
+        <div className="today-workbench-heading">
+          <p className="kicker">This session</p>
+          <h2 id="route-title">Do this now.</h2>
+        </div>
+        <TodayRoute
+          route={route}
+          concepts={concepts}
+          activities={snapshot.learningActivities}
+          onStart={begin}
+        />
       </section>
-
-      <div className="today-cta">
-        <button type="button" className="cta" onClick={begin}>
-          Start {firstName} <span aria-hidden="true">→</span>
-        </button>
-        <p>Kelus will recalculate when your answers change what matters next.</p>
-      </div>
-
-      <p className="today-reset">
-        <button type="button" className="text-btn" onClick={reset}>Start over</button>
-      </p>
     </AppShell>
   );
 }

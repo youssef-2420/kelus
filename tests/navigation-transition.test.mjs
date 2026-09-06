@@ -30,8 +30,42 @@ test("one persistent header owns navigation for every page", async () => {
   assert.match(header, /href: "\/materials"/);
   assert.match(header, /href: "\/map"/);
   assert.match(header, /href: "\/route"/);
-  assert.match(header, /href="\/today" className="site-header-action"/);
+  assert.match(header, /className="site-auth-button"/);
+  assert.match(header, /auth\.openDialog/);
   assert.doesNotMatch(shell, /<header|<nav/);
+});
+
+test("the course workspace keeps destination and setup progress across product pages", async () => {
+  const [shell, rail, diagnosis] = await Promise.all([
+    source("components/AppShell.tsx"),
+    source("components/CourseWorkspaceRail.tsx"),
+    source("components/InitialDiagnosis.tsx"),
+  ]);
+  assert.match(shell, /CourseWorkspaceRail/);
+  assert.match(rail, /Current course/);
+  assert.match(rail, /Course path/);
+  assert.match(rail, /Knowledge Map/);
+  assert.match(rail, /Today’s route/);
+  assert.match(rail, /aria-current=\{current \? "step"/);
+  assert.match(diagnosis, /<AppShell>/);
+});
+
+test("the knowledge map owns concept inspection while canonical pages remain shareable", async () => {
+  const [map, knowledgeMap, inspector, legacy, detail] = await Promise.all([
+    source("app/map/page.tsx"),
+    source("components/KnowledgeMap.tsx"),
+    source("components/ConceptInspector.tsx"),
+    source("app/concept/page.tsx"),
+    source("app/concepts/[id]/ConceptDetail.tsx"),
+  ]);
+  assert.match(map, /ConceptInspector/);
+  assert.match(map, /AnimatePresence/);
+  assert.match(knowledgeMap, /onSelect/);
+  assert.match(knowledgeMap, /aria-pressed/);
+  assert.match(inspector, /Open full learning history/);
+  assert.match(inspector, /\/concepts\/\$\{encodeURIComponent\(concept\.id\)\}/);
+  assert.match(legacy, /router\.replace\(id \? `\/concepts\//);
+  assert.doesNotMatch(detail, /\/concept\?id=/);
 });
 
 test("ledger design keeps the mobile homepage in one column", async () => {

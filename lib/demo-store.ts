@@ -5,8 +5,9 @@ import { recomputeConceptCache, withCachedState } from "../domain/learner-model"
 import { generateRoute } from "../domain/routing-engine";
 import { estimatedReadiness } from "../domain/readiness";
 import { recalculateSessionRoute } from "../domain/session-engine";
+import { buildConfirmedMaterialModel } from "../domain/material-intelligence";
 import { createRetrievalEvent, sessionSummary } from "../domain/session";
-import type { Concept, LearnerSnapshot, LearningEvent, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
+import type { Concept, LearnerSnapshot, LearningEvent, ProposedConcept, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
 import { createLearnerSnapshot, type SetupInput } from "./setup";
 
 const STORAGE_KEY = "kelus-learning-state-v2";
@@ -22,6 +23,7 @@ export type DemoState = {
 function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapshot {
   return {
     ...snapshot,
+    learningActivities: snapshot.learningActivities ?? [],
     concepts: snapshot.concepts.map((concept) => withCachedState(concept, recomputeConceptCache(concept, snapshot.events, nowIso))),
   };
 }
@@ -34,13 +36,37 @@ export function initialDemoState(nowMs = Date.now()): DemoState {
 
 const SERVER_SNAPSHOT = initialDemoState(SERVER_NOW_MS);
 
-function validStoredState(value: unknown): value is DemoState {
+export function validStoredState(value: unknown): value is DemoState {
   const state = value as DemoState;
   return Boolean(
-    state?.snapshot?.concepts?.length
+    Array.isArray(state?.snapshot?.concepts)
+    && Array.isArray(state.snapshot.courses)
+    && Array.isArray(state.snapshot.exams)
     && state.snapshot.exams?.[0]?.targetPercent
     && state.snapshot.concepts.every((concept) => typeof concept.examImportance === "number"),
   );
+}
+
+export function stateForAuthenticatedUser(state: DemoState, userId: string): DemoState {
+  return {
+    ...state,
+    snapshot: {
+      ...state.snapshot,
+      profile: { ...state.snapshot.profile, id: userId },
+      courses: state.snapshot.courses.map((course) => ({ ...course, userId })),
+      exams: state.snapshot.exams.map((exam) => ({ ...exam, userId })),
+      concepts: state.snapshot.concepts.map((concept) => ({ ...concept, userId })),
+      events: state.snapshot.events.map((event) => ({ ...event, userId })),
+      sessions: state.snapshot.sessions.map((session) => ({ ...session, userId })),
+    },
+  };
+}
+
+export function replaceDemoState(value: unknown) {
+  if (!validStoredState(value)) throw new Error("The saved learner state is not compatible with this version of Kelus.");
+  const state = { ...value, snapshot: refreshCaches(value.snapshot, value.nowIso) };
+  persistDemoState(state);
+  return state;
 }
 
 export function readStoredDemoState(): DemoState | null {
@@ -112,10 +138,11 @@ export function completeDiagnosis(state: DemoState, input: {
   retrievals: Array<{ conceptId: string; promptId: string; responseText: string; outcome: RetrievalOutcome; responseTimeMs: number }>;
 }) {
   const userId = state.snapshot.profile.id;
-  const ratingEvents: LearningEvent[] = state.snapshot.concepts.map((concept) => {
-    const rating = input.ratings[concept.id] ?? "dont_know";
+  const ratingEvents: LearningEvent[] = Object.entries(input.ratings).flatMap(([conceptId, rating]) => {
+    const concept = state.snapshot.concepts.find((item) => item.id === conceptId);
+    if (!concept) return [];
     const mastery = SELF_RATING_MASTERY[rating];
-    return {
+    return [{
       id: `diagnosis-rating-${concept.id}`,
       userId,
       conceptId: concept.id,
@@ -130,7 +157,7 @@ export function completeDiagnosis(state: DemoState, input: {
       masteryBefore: 0,
       masteryAfter: mastery,
       createdAt: state.nowIso,
-    };
+    }];
   });
   let snapshot = refreshCaches({ ...state.snapshot, events: ratingEvents }, state.nowIso);
   const retrievalEvents: LearningEvent[] = [];
@@ -152,6 +179,31 @@ export function completeDiagnosis(state: DemoState, input: {
     snapshot = refreshCaches({ ...snapshot, events: [...snapshot.events, event] }, state.nowIso);
   }
   const next = { ...state, snapshot, diagnosisCompleted: true };
+  persistDemoState(next);
+  return next;
+}
+
+export function confirmMaterialConcepts(state: DemoState, proposals: ProposedConcept[]) {
+  if (!proposals.length) throw new Error("Keep at least one concept before building the map.");
+  const course = state.snapshot.courses[0];
+  if (!course) throw new Error("Set a destination before confirming concepts.");
+  const model = buildConfirmedMaterialModel({
+    proposals,
+    courseId: course.id,
+    userId: state.snapshot.profile.id,
+    nowIso: state.nowIso,
+  });
+  const previousIds = new Set(state.snapshot.concepts.filter((concept) => concept.courseId === course.id).map((concept) => concept.id));
+  const snapshot: LearnerSnapshot = {
+    ...state.snapshot,
+    concepts: [...state.snapshot.concepts.filter((concept) => concept.courseId !== course.id), ...model.concepts],
+    relationships: [...state.snapshot.relationships.filter((relationship) => !previousIds.has(relationship.fromId) && !previousIds.has(relationship.toId)), ...model.relationships],
+    prompts: [...state.snapshot.prompts.filter((prompt) => !previousIds.has(prompt.conceptId)), ...model.prompts],
+    learningActivities: [...state.snapshot.learningActivities.filter((activity) => !previousIds.has(activity.conceptId)), ...model.learningActivities],
+    events: state.snapshot.events.filter((event) => !previousIds.has(event.conceptId)),
+    sessions: state.snapshot.sessions.filter((session) => session.courseId !== course.id),
+  };
+  const next = { ...state, snapshot, diagnosisCompleted: false };
   persistDemoState(next);
   return next;
 }
@@ -182,6 +234,13 @@ export function recordRetrieval(state: DemoState, input: {
   });
   let snapshot = refreshCaches({ ...state.snapshot, events: [...state.snapshot.events, event] }, state.nowIso);
   const recalculated = recalculateSessionRoute({ snapshot, session, previousRoute: session.latestRoute, nowIso: state.nowIso });
+  const movedConcept = recalculated.change?.movedConceptId
+    ? snapshot.concepts.find((item) => item.id === recalculated.change?.movedConceptId)
+    : null;
+  const explainedChange = recalculated.change?.meaningful ? {
+    ...recalculated.change,
+    explanation: `Your ${input.outcome === "success" ? "independent" : input.outcome === "partial" ? "partial" : "not-yet"} answer on ${concept.name} changed its mastery estimate.${movedConcept ? ` ${movedConcept.name} now has higher learning value for the remaining time.` : " Kelus recalculated the remaining route."}`,
+  } : recalculated.change;
   const completedIds = [...new Set(snapshot.events.filter((item) => item.sessionId === session.id && item.kind === "retrieval").map((item) => item.conceptId))];
   const originalIds = session.initialRoute.allocations
     .map((item) => item.conceptId)
@@ -194,7 +253,7 @@ export function recordRetrieval(state: DemoState, input: {
     ...item,
     plannedConceptIds: [...completedIds, ...futureIds, ...unchangedRemaining],
     latestRoute: recalculated.route,
-    routeChanges: recalculated.change?.meaningful ? [...item.routeChanges, recalculated.change] : item.routeChanges,
+    routeChanges: explainedChange?.meaningful ? [...item.routeChanges, explainedChange] : item.routeChanges,
   } : item);
   snapshot = { ...snapshot, sessions };
   const next = { ...state, snapshot };

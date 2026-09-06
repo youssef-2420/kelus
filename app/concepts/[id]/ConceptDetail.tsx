@@ -56,7 +56,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
       <section className="section related">
         <h2>Related concepts</h2>
         {related.length ? related.map((item) => item && (
-          <Link key={item.other.id} href={`/concept/?id=${encodeURIComponent(item.other.id)}`}>{item.other.name} · {item.kind}</Link>
+          <Link key={item.other.id} href={`/concepts/${encodeURIComponent(item.other.id)}`}>{item.other.name} · {item.kind}</Link>
         )) : <p className="quiet">No linked concepts yet.</p>}
       </section>
     </AppShell>

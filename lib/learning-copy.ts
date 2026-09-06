@@ -12,5 +12,9 @@ export const REASON_COPY: Record<LearningReasonCode, string> = {
 };
 
 export function conciseReason(reasons: LearningReasonCode[]) {
-  return reasons.slice(0, 2).map((reason) => REASON_COPY[reason]).join(" · ");
+  if (!reasons.length) return "Queued for this session";
+  // Prefer the most distinctive signal first so rows do not all read the same.
+  const preferred = reasons.find((reason) => reason !== "HIGH_EXAM_VALUE") ?? reasons[0];
+  const second = reasons.find((reason) => reason !== preferred);
+  return second ? `${REASON_COPY[preferred]} · ${REASON_COPY[second]}` : REASON_COPY[preferred];
 }
