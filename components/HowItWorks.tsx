@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import BlurText from "@/components/BlurText";
 import { MaterialToMapIllustration, RerouteIllustration, TodayRouteIllustration } from "@/components/how/HowIllustrations";
+import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
 
 const stages = [
   {
@@ -45,35 +46,6 @@ const stages = [
   },
 ] as const;
 
-const examples = [
-  {
-    id: "biology",
-    label: "Biology",
-    course: "Cell Biology",
-    concepts: ["Cell membranes", "Osmosis", "Homeostasis"] as const,
-    question: "Why does water move across a selectively permeable membrane?",
-    moved: "Active transport",
-  },
-  {
-    id: "computing",
-    label: "Computer science",
-    course: "Data Structures",
-    concepts: ["Arrays", "Hash tables", "Graph traversal"] as const,
-    question: "Why can a hash table retrieve a value without scanning every item?",
-    moved: "Collision handling",
-  },
-  {
-    id: "history",
-    label: "History",
-    course: "Modern History",
-    concepts: ["Industrialization", "Labor movements", "Social reform"] as const,
-    question: "How did industrialization change the bargaining power of workers?",
-    moved: "Urbanization",
-  },
-] as const;
-
-type LearningExample = (typeof examples)[number];
-
 function StageVisual({ type, reduceMotion, example }: { type: (typeof stages)[number]["visual"]; reduceMotion: boolean; example: LearningExample }) {
   if (type === "materials") return <MaterialToMapIllustration reduceMotion={reduceMotion} concepts={example.concepts} />;
   if (type === "map") return (
@@ -102,7 +74,7 @@ function StageVisual({ type, reduceMotion, example }: { type: (typeof stages)[nu
 export function HowItWorks() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
-  const example = examples[exampleIndex];
+  const example = LEARNING_EXAMPLES[exampleIndex];
   const reveal = reduceMotion ? {} : { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.22 }, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const } };
 
   return (
@@ -117,7 +89,7 @@ export function HowItWorks() {
         <div className="how-example-switcher" aria-label="Choose an example course">
           <span>See the loop with</span>
           <div role="tablist">
-            {examples.map((item, index) => <button key={item.id} type="button" role="tab" aria-selected={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>)}
+            {LEARNING_EXAMPLES.map((item, index) => <button key={item.id} type="button" role="tab" aria-selected={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>)}
           </div>
         </div>
       </section>

@@ -48,8 +48,8 @@ export function HomeAfterHero() {
           <p className="kicker">03 · Course material</p>
           <h2 id="v1-materials-title">Everything for the exam, together.</h2>
           <p>
-            Keep the syllabus, lecture links, and past-paper PDFs beside your course. For V1, Kelus stores these
-            sources for reference; it does not analyze their contents yet.
+            Add a syllabus or lecture PDF, review the proposed concepts, and keep each learning activity connected
+            to the page it came from.
           </p>
           <Link href="/materials">
             Open materials <span aria-hidden="true">→</span>

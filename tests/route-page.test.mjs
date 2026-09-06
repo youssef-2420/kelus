@@ -4,17 +4,22 @@ import test from "node:test";
 
 test("homepage presents the V1 product loop after the student hero", () => {
   const page = readFileSync("app/page.tsx", "utf8");
+  const hero = readFileSync("components/hero/KelusHero.tsx", "utf8");
   const story = readFileSync("components/home/HomeAfterHero.tsx", "utf8");
   assert.match(page, /KelusHero/);
-  assert.match(page, /StartHereJourney/);
+  assert.doesNotMatch(page, /StartHereJourney/);
   assert.match(page, /HomeAfterHero/);
+  assert.match(hero, /Your course is too big/);
+  assert.match(hero, /LEARNING_EXAMPLES/);
+  assert.match(hero, /Today’s route/);
+  assert.match(hero, /No invented progress/);
   assert.doesNotMatch(page, /KnowledgeRouteStory/);
   assert.doesNotMatch(page, /<RouteStory/);
   assert.match(story, /TodayPlanIllustration/);
   assert.match(story, /RerouteIllustration/);
   assert.match(story, /MaterialShelfIllustration/);
   assert.match(story, /Honest methodology/);
-  assert.match(story, /does not analyze their contents yet/);
+  assert.match(story, /review the proposed concepts/);
 });
 
 test("the start-here route explains the full first-use loop without generic cards", () => {
@@ -31,6 +36,7 @@ test("the start-here route explains the full first-use loop without generic card
 test("route explainer lives on its own page", () => {
   const page = readFileSync("app/route/page.tsx", "utf8");
   const story = readFileSync("components/HowItWorks.tsx", "utf8");
+  const examples = readFileSync("data/learning-examples.ts", "utf8");
   assert.match(page, /HowItWorks/);
   assert.match(story, /Give Kelus the course/);
   assert.match(story, /Build the Knowledge Map/);
@@ -42,9 +48,9 @@ test("route explainer lives on its own page", () => {
   assert.match(story, /MaterialToMapIllustration/);
   assert.match(story, /TodayRouteIllustration/);
   assert.match(story, /RerouteIllustration/);
-  assert.match(story, /Biology/);
-  assert.match(story, /Computer science/);
-  assert.match(story, /History/);
+  assert.match(examples, /Biology/);
+  assert.match(examples, /Computer science/);
+  assert.match(examples, /History/);
   assert.match(story, /Choose an example course/);
   assert.match(story, /Not a grade prediction/);
 });
