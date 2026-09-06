@@ -57,6 +57,9 @@ export function TodayRoute({
             <h3>{firstName}</h3>
             <p>{conciseReason(first.reasons)}</p>
             <small>{firstConcept ? confidenceLabel(firstConcept.confidence) : "Mixed evidence across weak spots"}</small>
+            <button type="button" className="cta today-start" onClick={onStart}>
+              Start {firstName} <span aria-hidden="true">→</span>
+            </button>
           </div>
           <div className="today-lead-time">
             <strong>{first.minutes}</strong>
@@ -76,9 +79,6 @@ export function TodayRoute({
               : "Uses the current course model; no uploaded source is cited yet."}
           </small>
         </div>
-        <button type="button" className="cta today-start" onClick={onStart}>
-          Start {firstName} <span aria-hidden="true">→</span>
-        </button>
       </motion.article>
 
       {remaining.length ? (

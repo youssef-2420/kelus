@@ -14,6 +14,7 @@ export function KelusHero() {
   return (
     <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
       <div className="kelus-hero-copy home-copy">
+        <p className="hero-brand">Kelus</p>
         <p className="kicker">Adaptive study routes</p>
         <h1 id="home-hero-title">Your course is too big. Today doesn’t have to be.</h1>
         <p className="home-lede">Add the material and the exam date. Kelus turns what you know—and what you do not—into the next useful study session.</p>
@@ -45,8 +46,8 @@ export function KelusHero() {
             transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="hero-demo-context">
-              <div><span>Destination</span><strong>{example.destination}</strong></div>
-              <dl><div><dt>Exam</dt><dd>{example.days} days</dd></div><div><dt>Today</dt><dd>45 min</dd></div></dl>
+              <div><span>Exam</span><strong>{example.destination}</strong></div>
+              <dl><div><dt>Days left</dt><dd>{example.days}</dd></div><div><dt>Today</dt><dd>45 min</dd></div></dl>
             </div>
             <div className="hero-demo-route">
               <div className="hero-demo-route-title"><span>Today’s route</span><strong>Highest value first</strong></div>

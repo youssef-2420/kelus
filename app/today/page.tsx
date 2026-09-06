@@ -111,11 +111,7 @@ export default function TodayPage() {
             {firstName} first · {route.availableMinutes} minutes · exam in {days} days · aim {exam.targetPercent}%
           </p>
         </div>
-        <dl className="today-context" aria-label="Current study context">
-          <div className="today-readiness">
-            <dt>Estimated ready</dt>
-            <dd>{Math.round(readiness * 100)}%</dd>
-          </div>
+        <dl className="today-context is-equal" aria-label="Current study context">
           <div>
             <dt>Exam</dt>
             <dd>{days} days</dd>
@@ -123,6 +119,10 @@ export default function TodayPage() {
           <div>
             <dt>Target</dt>
             <dd>{exam.targetPercent}%</dd>
+          </div>
+          <div className="today-readiness">
+            <dt>Ready</dt>
+            <dd>{Math.round(readiness * 100)}%</dd>
           </div>
         </dl>
       </section>

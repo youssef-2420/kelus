@@ -69,8 +69,8 @@ export function HomeAfterHero() {
         <Reveal delay={0.08}>
           <dl>
             <div>
-              <dt>Destination</dt>
-              <dd>Exam date and target</dd>
+              <dt>Exam</dt>
+              <dd>Date and target score</dd>
             </div>
             <div>
               <dt>Knowledge</dt>
