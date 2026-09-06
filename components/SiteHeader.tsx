@@ -43,7 +43,7 @@ export function SiteHeader() {
             <span>{displayName}</span><small>Sign out</small>
           </button>
         ) : (
-          <button type="button" className="site-auth-button" onClick={auth.openDialog}>
+          <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" /></svg>
             Sign in
           </button>

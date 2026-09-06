@@ -56,7 +56,7 @@ export default function TodayPage() {
       <AppShell>
         <section className="materials-empty">
           <p className="kicker">Today</p>
-          <h1>Set an exam destination first.</h1>
+          <h1>Set your exam first.</h1>
           <p>Kelus needs a course and exam before it can build today’s route.</p>
           <button type="button" className="cta" onClick={() => reset()}>Start over</button>
         </section>

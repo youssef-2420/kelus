@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import type { Concept, ConceptRelationship, LearningEvent } from "@/domain/types";
 import { deriveStatus } from "@/domain/learner-model";
 import { daysAgoLabel, percent, statusLabel } from "@/lib/format";
@@ -23,12 +24,31 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
     })
     .filter((item): item is { concept: Concept; kind: ConceptRelationship["kind"] } => Boolean(item));
   const retrievals = events.filter((event) => event.conceptId === concept.id && event.kind === "retrieval").length;
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const timer = window.setTimeout(() => closeRef.current?.focus(), 0);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("keydown", onKeyDown);
+      previousFocus.current?.focus();
+    };
+  }, [concept.id, onClose]);
 
   return (
-    <aside className="concept-inspector" aria-labelledby="concept-inspector-title">
+    <aside className="concept-inspector" role="dialog" aria-modal="true" aria-labelledby="concept-inspector-title">
       <header>
         <span className={`mark-status is-${status}`}>{statusLabel(status)}</span>
-        <button type="button" onClick={onClose} aria-label="Close concept details">Close</button>
+        <button ref={closeRef} type="button" onClick={onClose} aria-label="Close concept details">Close</button>
       </header>
       <h2 id="concept-inspector-title">{concept.name}</h2>
       <p>One concept inside the current course route—not a separate destination.</p>

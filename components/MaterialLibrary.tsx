@@ -36,6 +36,7 @@ function sourceHost(value: string | null) {
 
 function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (item: CourseMaterial) => void }) {
   const [busy, setBusy] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(false);
 
   async function downloadPdf() {
     setBusy(true);
@@ -69,7 +70,14 @@ function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (it
         ) : (
           <button type="button" onClick={downloadPdf} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>
         )}
-        <button type="button" onClick={remove} disabled={busy}>Remove</button>
+        {confirmRemove ? (
+          <span className="material-remove-confirm" role="group" aria-label={`Confirm remove ${item.title}`}>
+            <button type="button" className="text-btn" onClick={() => setConfirmRemove(false)} disabled={busy}>Cancel</button>
+            <button type="button" className="text-btn is-danger" onClick={() => void remove()} disabled={busy}>Remove</button>
+          </span>
+        ) : (
+          <button type="button" onClick={() => setConfirmRemove(true)} disabled={busy}>Remove</button>
+        )}
       </span>
     </li>
   );
@@ -93,7 +101,7 @@ export function MaterialLibrary() {
   const course = state.snapshot.courses[0];
 
   if (!state.onboardingCompleted || !course) {
-    return <AppShell><section className="materials-empty"><p className="kicker">Course material</p><h1>Set a destination first.</h1><p>Kelus needs a course before it can keep sources with it.</p><Link className="cta" href="/today">Set destination <span aria-hidden="true">→</span></Link></section></AppShell>;
+    return <AppShell><section className="materials-empty"><p className="kicker">Course material</p><h1>Set your exam first.</h1><p>Kelus needs a course and exam before it can keep sources with it.</p><Link className="cta" href="/today">Set exam <span aria-hidden="true">→</span></Link></section></AppShell>;
   }
 
   const courseMaterials = materials.filter((item) => item.courseId === course.id);
@@ -232,11 +240,18 @@ export function MaterialLibrary() {
             <ol className="concept-proposal-list">
               {analysis.proposals.map((proposal, index) => (
                 <li key={proposal.id} className={selectedIds.has(proposal.id) ? "is-selected" : undefined}>
-                  <label>
-                    <input type="checkbox" checked={selectedIds.has(proposal.id)} onChange={() => toggleProposal(proposal.id)} />
-                    <span className="proposal-index">{String(index + 1).padStart(2, "0")}</span>
-                    <span>
+                  <div className="proposal-row">
+                    <input
+                      id={`proposal-${proposal.id}`}
+                      type="checkbox"
+                      checked={selectedIds.has(proposal.id)}
+                      onChange={() => toggleProposal(proposal.id)}
+                      aria-labelledby={`proposal-name-${proposal.id}`}
+                    />
+                    <span className="proposal-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="proposal-fields">
                       <input
+                        id={`proposal-name-${proposal.id}`}
                         className="proposal-name-input"
                         value={draftNames[proposal.id] ?? proposal.name}
                         onChange={(event) => setDraftNames((current) => ({ ...current, [proposal.id]: event.target.value }))}
@@ -244,7 +259,7 @@ export function MaterialLibrary() {
                       />
                       <small>{analysis.material.title} · {proposal.locator}</small>
                     </span>
-                  </label>
+                  </div>
                 </li>
               ))}
             </ol>

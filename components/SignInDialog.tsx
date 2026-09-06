@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react";
+import { useEffect, useId, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { useAuth } from "@/components/AuthProvider";
 
 type Mode = "signin" | "signup";
@@ -20,7 +20,10 @@ function GoogleMark() {
 export function SignInDialog() {
   const auth = useAuth();
   const reduceMotion = useReducedMotion() === true;
+  const titleId = useId();
+  const dialogRef = useRef<HTMLElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
   const [mode, setMode] = useState<Mode>("signin");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,13 +34,46 @@ export function SignInDialog() {
 
   useEffect(() => {
     if (!auth.dialogOpen) return;
-    emailRef.current?.focus();
+
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const focusTimer = window.setTimeout(() => emailRef.current?.focus(), 0);
+
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") auth.closeDialog();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        auth.closeDialog();
+        return;
+      }
+      if (event.key !== "Tab" || !dialogRef.current) return;
+      const focusable = Array.from(
+        dialogRef.current.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((node) => !node.hasAttribute("disabled") && node.getAttribute("aria-hidden") !== "true");
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
+
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [auth]);
+    return () => {
+      window.clearTimeout(focusTimer);
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      previousFocus.current?.focus();
+    };
+  }, [auth.dialogOpen, auth]);
 
   function switchMode(nextMode: Mode) {
     setMode(nextMode);
@@ -82,10 +118,11 @@ export function SignInDialog() {
           transition={{ duration: reduceMotion ? 0.1 : 0.2 }}
         >
           <motion.section
+            ref={dialogRef}
             className="auth-dialog"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="auth-title"
+            aria-labelledby={titleId}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.99 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8, scale: 0.99 }}
@@ -95,7 +132,7 @@ export function SignInDialog() {
               <span aria-hidden="true">×</span>
             </button>
             <p className="auth-kicker">Your Kelus account</p>
-            <h2 id="auth-title">{mode === "signin" ? "Welcome back." : "Create your account."}</h2>
+            <h2 id={titleId}>{mode === "signin" ? "Welcome back." : "Create your account."}</h2>
             <p className="auth-intro">
               {mode === "signin" ? "Return to your study route on this device." : "Keep your identity ready for future cross-device sync."}
             </p>

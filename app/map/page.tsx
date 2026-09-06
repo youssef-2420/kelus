@@ -14,7 +14,16 @@ export default function MapPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   if (!state.onboardingCompleted) {
-    return <AppShell><p className="kicker">Set up required</p><h1 className="today-title">Build your first route first.</h1><Link href="/today" className="cta">Set up your exam</Link></AppShell>;
+    return (
+      <AppShell>
+        <section className="materials-empty">
+          <p className="kicker">Knowledge Map</p>
+          <h1>Build your first route first.</h1>
+          <p>Set your exam, then confirm concepts from a source so the map has something to show.</p>
+          <Link href="/today" className="cta">Set up your exam <span aria-hidden="true">→</span></Link>
+        </section>
+      </AppShell>
+    );
   }
   const course = state.snapshot.courses[0];
   if (!course) return <AppShell><p>No active course.</p></AppShell>;

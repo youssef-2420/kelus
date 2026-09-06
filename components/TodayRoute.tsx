@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import Link from "next/link";
 import { useState } from "react";
 import type { Concept, LearningActivity, RoutePlan } from "@/domain/types";
 import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
@@ -23,9 +24,14 @@ export function TodayRoute({
 
   if (!first) {
     return (
-      <div className="today-route-empty">
-        <p>No study action is ready yet.</p>
-        <small>Review the Knowledge Map or add course material to create a route.</small>
+      <div className="today-route-empty materials-empty">
+        <p className="kicker">Today’s route</p>
+        <h2>No study action is ready yet.</h2>
+        <p>Review the Knowledge Map or add course material so Kelus can build a route.</p>
+        <div className="today-route-empty-actions">
+          <Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
+          <Link className="text-btn" href="/map">Open Knowledge Map</Link>
+        </div>
       </div>
     );
   }

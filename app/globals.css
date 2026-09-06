@@ -5495,3 +5495,42 @@ h3,
   .hero-demo-signal { padding-right: 72px; }
   .hero-demo-student { width: 88px; height: 80px; opacity: .16; }
 }
+
+
+/* Confirm destructive material removal without competing with primary CTAs. */
+.material-remove-confirm {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-8);
+}
+.material-remove-confirm .text-btn.is-danger {
+  color: var(--color-midnight-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Concept confirmation: checkbox and name field are separate controls. */
+.proposal-row {
+  display: grid;
+  grid-template-columns: 20px 36px minmax(0, 1fr);
+  gap: var(--spacing-12);
+  align-items: start;
+}
+.proposal-fields {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.today-route-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-12) var(--spacing-16);
+  margin-top: var(--spacing-24);
+}
+.today-route-empty.materials-empty h2 {
+  margin: var(--spacing-8) 0 var(--spacing-12);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+}

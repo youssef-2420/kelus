@@ -43,7 +43,7 @@ export function CourseWorkspaceRail() {
   const currentStep = state.diagnosisCompleted ? 5 : !sourceCount ? 2 : !concepts.length ? 3 : 4;
 
   const stages = [
-    { label: "Destination", detail: `${days} days · target ${exam.targetPercent}%`, href: "/today" },
+    { label: "Exam", detail: `${days} days · target ${exam.targetPercent}%`, href: "/today" },
     { label: "Materials", detail: sourceCount ? `${sourceCount} source${sourceCount === 1 ? "" : "s"}` : "Add your first source", href: "/materials" },
     { label: "Knowledge Map", detail: concepts.length ? `${concepts.length} concepts` : "Waiting for concepts", href: "/map" },
     { label: "Diagnosis", detail: state.diagnosisCompleted ? "Initial evidence captured" : "Next step", href: "/today" },

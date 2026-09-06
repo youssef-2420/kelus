@@ -60,6 +60,9 @@ function SessionBody() {
   const [masteryBefore, setMasteryBefore] = useState(0);
   const [seenRouteChanges, setSeenRouteChanges] = useState(0);
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
+  const [confirmExit, setConfirmExit] = useState(false);
+  const sourceCloseRef = useRef<HTMLButtonElement>(null);
+  const sourceOpenerRef = useRef<HTMLElement | null>(null);
   const startedAt = useRef(0);
   const sourceObjectUrl = useRef<string | null>(null);
   const conceptId = session?.plannedConceptIds[index];
@@ -80,7 +83,16 @@ function SessionBody() {
   }, []);
 
   if (!session || !concept || !prompt || !activity) {
-    return <main id="main" className="study-shell"><p>No active route.</p><button className="cta" type="button" onClick={() => router.push("/today")}>Back to today</button></main>;
+    return (
+      <main id="main" className="study-shell">
+        <section className="materials-empty">
+          <p className="kicker">Session</p>
+          <h1>No active route.</h1>
+          <p>Start from Today when Kelus has a plan ready for this exam.</p>
+          <button className="cta" type="button" onClick={() => router.push("/today")}>Back to today <span aria-hidden="true">→</span></button>
+        </section>
+      </main>
+    );
   }
 
   const activeSessionId = session.id;
@@ -150,21 +162,25 @@ function SessionBody() {
       sourceObjectUrl.current = null;
     }
     if (!material) {
-      setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null });
+      sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null });
       return;
     }
     if (material.storage === "url" && material.sourceUrl) {
-      setSourcePanel({ title: material.title, locator, kind: "link", href: material.sourceUrl });
+      sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSourcePanel({ title: material.title, locator, kind: "link", href: material.sourceUrl });
       return;
     }
     const blob = await readLocalPdf(materialId);
     if (!blob) {
-      setSourcePanel({ title: material.title, locator, kind: "unavailable", href: null });
+      sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    setSourcePanel({ title: material.title, locator, kind: "unavailable", href: null });
       return;
     }
     const page = Number(locator?.match(/\d+/)?.[0] ?? 1);
     const objectUrl = URL.createObjectURL(blob);
     sourceObjectUrl.current = objectUrl;
+    sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setSourcePanel({ title: material.title, locator, kind: "pdf", href: `${objectUrl}#page=${page}` });
   }
 
@@ -176,13 +192,43 @@ function SessionBody() {
     setSourcePanel(null);
   }
 
+  useEffect(() => {
+    if (!sourcePanel) return;
+    const previous = sourceOpenerRef.current;
+    const timer = window.setTimeout(() => sourceCloseRef.current?.focus(), 0);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (sourceObjectUrl.current) {
+          URL.revokeObjectURL(sourceObjectUrl.current);
+          sourceObjectUrl.current = null;
+        }
+        setSourcePanel(null);
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("keydown", onKeyDown);
+      previous?.focus();
+    };
+  }, [sourcePanel]);
+
   return (
     <main id="main" className={`study-shell${sourcePanel ? " is-source-open" : ""}`}>
       <div className="study-context">
         <span><b>{concept.name}</b><small>{routeMinutes} min</small></span>
-        <button type="button" className="text-btn" onClick={() => router.push("/today")}>Exit session</button>
+        {confirmExit ? (
+          <span className="today-reset-confirm" role="group" aria-label="Confirm exit session">
+            <span>Leave this session?</span>
+            <button type="button" className="text-btn" onClick={() => setConfirmExit(false)}>Stay</button>
+            <button type="button" className="text-btn is-danger" onClick={() => router.push("/today")}>Exit</button>
+          </span>
+        ) : (
+          <button type="button" className="text-btn" onClick={() => setConfirmExit(true)}>Exit session</button>
+        )}
       </div>
-      <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
+      <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
@@ -199,7 +245,7 @@ function SessionBody() {
           </motion.section>
         ) : phase === "result" ? (
           <motion.section key={`${concept.id}-result`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <p className="study-count">04 / 04 · Evaluated</p>
+            <p className="study-count" aria-live="polite">04 / 04 · Evaluated</p>
             <p className="kicker">Learner model updated</p>
             <div className="mastery-reward">
               <div><span>{percent(masteryBefore)}</span><i aria-hidden="true">→</i><motion.strong initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>{percent(concept.mastery)}</motion.strong></div>
@@ -209,7 +255,7 @@ function SessionBody() {
           </motion.section>
         ) : (
           <motion.section key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
-            <p className="study-count">{String(visibleStep).padStart(2, "0")} / 04 · {phase}</p>
+            <p className="study-count" aria-live="polite">{String(visibleStep).padStart(2, "0")} / 04 · {phase}</p>
 
             {phase === "learn" ? (
               <div className="session-learn">
@@ -287,6 +333,8 @@ function SessionBody() {
           <motion.aside
             key={`${sourcePanel.title}-${sourcePanel.locator}`}
             className="session-source-panel"
+            role="dialog"
+            aria-modal="true"
             aria-label={`Course source: ${sourcePanel.title}`}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
@@ -295,7 +343,7 @@ function SessionBody() {
           >
             <header>
               <div><span>From your course</span><strong>{sourcePanel.title}</strong>{sourcePanel.locator ? <small>{sourcePanel.locator}</small> : null}</div>
-              <button type="button" onClick={closeSource} aria-label="Close course source">Close</button>
+              <button ref={sourceCloseRef} type="button" onClick={closeSource} aria-label="Close course source">Close</button>
             </header>
             {sourcePanel.kind === "pdf" && sourcePanel.href ? <iframe title={`${sourcePanel.title} ${sourcePanel.locator ?? ""}`} src={sourcePanel.href} /> : null}
             {sourcePanel.kind === "link" && sourcePanel.href ? (
