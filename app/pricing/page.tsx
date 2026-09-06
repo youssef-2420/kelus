@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
-import { WaitlistForm } from "@/components/WaitlistForm";
+import { FoundingCta } from "@/components/FoundingCta";
 import { PricingViewTracker } from "@/components/PricingViewTracker";
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function PricingPage() {
         <h1>Start free. Join founding when you want sync.</h1>
         <p className="legal-lede">
           Kelus already plans today’s route on this device. Founding student is for people who want the next layer —
-          sync, multi-course, and priority access — without paying until billing is live.
+          sync, multi-course, and priority access — and can pay the founding rate when checkout is configured.
         </p>
 
         <div className="pricing-grid" role="list">
@@ -50,7 +50,7 @@ export default function PricingPage() {
               <li>Multi-course workspace</li>
               <li>Priority access to new study features</li>
             </ul>
-            <WaitlistForm source="pricing" compact />
+            <FoundingCta source="pricing" />
           </article>
         </div>
 

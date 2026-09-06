@@ -7,7 +7,8 @@ export type KelusAnalyticsEvent =
   | { name: "diagnosis_completed"; retrieval_count: number }
   | { name: "session_started" }
   | { name: "pricing_viewed"; source: string }
-  | { name: "soft_paywall_shown"; moment: "first_session" | "third_material" };
+  | { name: "soft_paywall_shown"; moment: "first_session" | "third_material" }
+  | { name: "founding_checkout_clicked"; source: string };
 
 export function analyticsEnabled() {
   return Boolean(GA_MEASUREMENT_ID) && typeof window !== "undefined";

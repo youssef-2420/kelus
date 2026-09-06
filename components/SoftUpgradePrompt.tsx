@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { foundingPaymentConfigured, foundingPaymentLink } from "@/lib/founding";
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 
@@ -58,9 +59,15 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
         <p>{copy.body}</p>
       </div>
       <div className="soft-upgrade-actions">
-        <Link href="/pricing/" className="cta">
-          See pricing
-        </Link>
+        {foundingPaymentConfigured() ? (
+          <a className="cta" href={foundingPaymentLink()} target="_blank" rel="noopener noreferrer">
+            Join founding · $9
+          </a>
+        ) : (
+          <Link href="/pricing/" className="cta">
+            See pricing
+          </Link>
+        )}
         <button type="button" className="ghost" onClick={dismiss}>
           Not now
         </button>

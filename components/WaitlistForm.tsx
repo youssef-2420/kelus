@@ -31,11 +31,19 @@ export function WaitlistForm({ source = "waitlist", compact = false }: { source?
     trackEvent({ name: "waitlist_joined", source });
     if (result.delivery === "local") {
       setStatus("local");
-      setMessage(
-        result.duplicate
-          ? "Saved on this device already. Remote waitlist delivery isn’t configured in this build."
-          : "Saved on this device. Remote waitlist delivery isn’t configured yet — email hello@kelus.me if you want a human reply.",
-      );
+      if (remoteReady) {
+        setMessage(
+          result.duplicate
+            ? "Saved on this device already. Remote delivery failed just now — your email is still kept locally."
+            : "Saved on this device. Remote delivery failed just now — your email is kept locally so it isn’t lost.",
+        );
+      } else {
+        setMessage(
+          result.duplicate
+            ? "Saved on this device already. Remote waitlist delivery isn’t configured in this build."
+            : "Saved on this device. Remote waitlist delivery isn’t configured yet — email hello@kelus.me if you want a human reply.",
+        );
+      }
     } else {
       setStatus(result.duplicate ? "duplicate" : "saved");
       setMessage(

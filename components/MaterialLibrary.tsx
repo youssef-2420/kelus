@@ -20,7 +20,7 @@ import {
   subscribeMaterials,
   updateMaterialProcessingStatus,
 } from "@/lib/material-store";
-import { assessPdfTextQuality, extractPdfPages } from "@/lib/pdf-extraction";
+import { assessPdfTextQuality, extractPdfPages, ocrPdfPages } from "@/lib/pdf-extraction";
 
 function formatBytes(bytes: number | null) {
   if (bytes === null) return null;
@@ -99,6 +99,7 @@ export function MaterialLibrary() {
   const [draftNames, setDraftNames] = useState<Record<string, string>>({});
   const [readySummary, setReadySummary] = useState<{ conceptCount: number; firstName: string | null } | null>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const course = state.snapshot.courses[0];
 
@@ -115,8 +116,24 @@ export function MaterialLibrary() {
     try {
       const stored = file ?? await readLocalPdf(material.id);
       if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
-      const pages = await extractPdfPages(stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" }));
-      const quality = assessPdfTextQuality(pages);
+      const pdfFile = stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" });
+      setStatusMessage("Reading PDF text…");
+      let pages = await extractPdfPages(pdfFile);
+      let quality = assessPdfTextQuality(pages);
+      let usedOcr = false;
+      if (quality.density === "sparse" || quality.density === "empty") {
+        setStatusMessage("Scanned PDF detected — reading pages with on-device OCR…");
+        const ocr = await ocrPdfPages(pdfFile, pages, {
+          maxPages: 8,
+          onProgress: (progress) => setStatusMessage(progress.message),
+        });
+        if (ocr.ocrPages > 0) {
+          pages = ocr.pages;
+          quality = assessPdfTextQuality(pages);
+          usedOcr = true;
+        }
+      }
+      setStatusMessage(usedOcr ? "Building concepts from scanned text…" : "Building concepts…");
       let proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
       if (proposals.length < 3 && (quality.density === "sparse" || quality.density === "empty")) {
         const relaxed = proposeConceptsFromPages({
@@ -143,7 +160,7 @@ export function MaterialLibrary() {
       if (!proposals.length) {
         throw new Error(
           quality.density === "empty"
-            ? "This PDF has almost no selectable text (often a scan). Export a text PDF or OCR it first — Kelus reads text in the browser, not images."
+            ? "Kelus still could not recover usable text from this scan. Try a clearer export, or use the sample course to see the loop."
             : "Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text.",
         );
       }
@@ -166,6 +183,7 @@ export function MaterialLibrary() {
       setError(caught instanceof Error ? caught.message : "Kelus could not read this PDF.");
     } finally {
       setBusy(false);
+      setStatusMessage(null);
     }
   }
 
@@ -267,8 +285,8 @@ export function MaterialLibrary() {
         >
           <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
-          <strong>{busy ? "Saving PDF…" : "Drop a PDF here"}</strong>
-          <span>or choose a file · up to 20 MB</span>
+          <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
+          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · scans use on-device OCR"}</span>
         </label>
 
         <form className="material-link-form" onSubmit={addLink}>
@@ -279,7 +297,7 @@ export function MaterialLibrary() {
         <p className="material-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error ?? "\u00a0"}</p>
         {error ? (
           <div className="material-error-rescue" role="group" aria-label="Ways to continue">
-            <p>Use a syllabus or lecture PDF with selectable text. Scanned image-only PDFs usually fail.</p>
+            <p>Kelus now tries on-device OCR for scans. If that still fails, use a text PDF or try the sample course.</p>
             <div className="material-error-actions">
               <button type="button" className="text-btn" onClick={() => useDemo()}>Try the sample course</button>
               <a className="text-btn" href="#source-shelf-title">Retry with another file</a>

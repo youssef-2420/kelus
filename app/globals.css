@@ -6177,3 +6177,75 @@ h3,
   padding-top: clamp(var(--spacing-48), 5vw, 72px);
   padding-bottom: var(--spacing-16);
 }
+
+
+.setup-sample {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-product-md, 1rem);
+  margin-top: var(--space-product-xl, 1.5rem);
+  padding: 1rem 1.1rem;
+  border: 1px solid color-mix(in srgb, var(--color-product-border, #d7dde8) 88%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-product-surface, #fff) 92%, #eef2ff);
+}
+
+.setup-sample p {
+  margin: 0.2rem 0 0;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.95rem;
+  max-width: 36ch;
+}
+
+.setup-sample-cta {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+.destination-actions-spacer {
+  display: inline-block;
+  min-width: 1px;
+  min-height: 1px;
+}
+
+.founding-cta {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.founding-cta-note {
+  margin: 0;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.waitlist-export {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-product-border, #d7dde8) 80%, transparent);
+  display: grid;
+  gap: 0.65rem;
+}
+
+.waitlist-export p {
+  margin: 0;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.92rem;
+}
+
+.waitlist-export-message {
+  min-height: 1.25em;
+}
+
+@media (max-width: 720px) {
+  .setup-sample {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .setup-sample-cta {
+    width: 100%;
+  }
+}

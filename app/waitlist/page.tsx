@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { WaitlistExport } from "@/components/WaitlistExport";
 
 export const metadata: Metadata = {
   title: "Waitlist — Kelus",
@@ -20,6 +21,7 @@ export default function WaitlistPage() {
           courses, or study features land — not a marketing drip.
         </p>
         <WaitlistForm source="waitlist_page" />
+        <WaitlistExport />
         <p className="legal-inline-links">
           Prefer to try now? <Link href="/today">Build today’s route</Link>
           {" · "}

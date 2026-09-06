@@ -37,7 +37,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
               <label htmlFor="course-name">Course<input id="course-name" autoFocus value={draft.courseName} onChange={(event) => setDraft({ ...draft, courseName: event.target.value })} placeholder="Molecular Biology" aria-describedby="course-support" /></label>
               <label htmlFor="exam-name">Exam<input id="exam-name" value={draft.examName} onChange={(event) => setDraft({ ...draft, examName: event.target.value })} placeholder="Final exam" aria-describedby="course-support" /></label>
             </div>
-            <p id="course-support" className="destination-support">Use the names you use at school. Your PDF will supply the actual topics.</p>
+            <p id="course-support" className="destination-support">Use the names you use at school. Your PDF will supply the actual topics — or skip ahead with the sample course if you just want to feel the loop.</p>
           </fieldset>
         ) : null}
         {step === 2 ? (
@@ -87,8 +87,19 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
           </fieldset>
         ) : null}
         <p className="setup-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error || "\u00a0"}</p>
+        {step === 1 ? (
+          <aside className="setup-sample" aria-label="Try without your own PDF">
+            <div>
+              <p className="kicker">No syllabus yet?</p>
+              <p>Load a finished sample course and walk today’s route in under a minute.</p>
+            </div>
+            <button type="button" className="cta setup-sample-cta" onClick={onUseDemo}>
+              Try a sample course <span aria-hidden="true">→</span>
+            </button>
+          </aside>
+        ) : null}
         <div className="destination-actions">
-          {step > 1 ? <button type="button" className="text-btn" onClick={() => setStep((current) => current - 1)}>Back</button> : <button type="button" className="text-btn" onClick={onUseDemo}>Try a sample course</button>}
+          {step > 1 ? <button type="button" className="text-btn" onClick={() => setStep((current) => current - 1)}>Back</button> : <span className="destination-actions-spacer" />}
           <button className="cta" type="submit">{step === 3 ? "Add course material" : "Continue"}<span aria-hidden="true">→</span></button>
         </div>
       </form>

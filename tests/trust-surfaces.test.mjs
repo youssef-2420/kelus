@@ -90,7 +90,7 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   ]);
   assert.match(pricing, /Founding student/);
   assert.match(pricing, /\$9/);
-  assert.match(pricing, /WaitlistForm/);
+  assert.match(pricing, /FoundingCta|WaitlistForm/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
   assert.match(home, /\/pricing/);

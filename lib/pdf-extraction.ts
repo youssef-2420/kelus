@@ -72,3 +72,105 @@ export async function extractPdfPages(file: File): Promise<ExtractedMaterialPage
   }
   return pages;
 }
+
+export type OcrProgress = {
+  phase: "rendering" | "recognizing" | "done";
+  pageNumber: number;
+  totalPages: number;
+  message: string;
+};
+
+const OCR_MIN_PAGE_CHARS = 40;
+
+export async function ocrPdfPages(
+  file: File,
+  pages: ExtractedMaterialPage[],
+  options?: {
+    maxPages?: number;
+    onProgress?: (progress: OcrProgress) => void;
+  },
+): Promise<{ pages: ExtractedMaterialPage[]; ocrPages: number }> {
+  if (typeof document === "undefined") {
+    return { pages, ocrPages: 0 };
+  }
+
+  const maxPages = options?.maxPages ?? 8;
+  const targets = pages
+    .filter((page) => page.pageNumber > 0 && page.text.trim().length < OCR_MIN_PAGE_CHARS)
+    .slice(0, maxPages);
+
+  if (!targets.length) {
+    return { pages, ocrPages: 0 };
+  }
+
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+    "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
+    import.meta.url,
+  ).toString();
+
+  const documentProxy = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const { createWorker } = await import("tesseract.js");
+  const worker = await createWorker("eng");
+  const byNumber = new Map(pages.map((page) => [page.pageNumber, page]));
+  let ocrPages = 0;
+
+  try {
+    for (let index = 0; index < targets.length; index += 1) {
+      const target = targets[index];
+      options?.onProgress?.({
+        phase: "rendering",
+        pageNumber: target.pageNumber,
+        totalPages: targets.length,
+        message: `Preparing scanned page ${index + 1} of ${targets.length}…`,
+      });
+
+      const page = await documentProxy.getPage(target.pageNumber);
+      const viewport = page.getViewport({ scale: 2 });
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.ceil(viewport.width);
+      canvas.height = Math.ceil(viewport.height);
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) {
+        page.cleanup();
+        continue;
+      }
+
+      await page.render({ canvasContext: context, canvas, viewport }).promise;
+      page.cleanup();
+
+      options?.onProgress?.({
+        phase: "recognizing",
+        pageNumber: target.pageNumber,
+        totalPages: targets.length,
+        message: `Reading scanned page ${index + 1} of ${targets.length}…`,
+      });
+
+      const result = await worker.recognize(canvas);
+      const text = result.data.text.replace(/[ \t]+\n/g, "\n").trim();
+      if (text.length > target.text.trim().length) {
+        byNumber.set(target.pageNumber, { pageNumber: target.pageNumber, text });
+        ocrPages += 1;
+      }
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+  } finally {
+    await worker.terminate();
+    await documentProxy.destroy();
+  }
+
+  options?.onProgress?.({
+    phase: "done",
+    pageNumber: targets.at(-1)?.pageNumber ?? 0,
+    totalPages: targets.length,
+    message: ocrPages
+      ? `Recovered text from ${ocrPages} scanned page${ocrPages === 1 ? "" : "s"}.`
+      : "Scan reading finished without usable text.",
+  });
+
+  return {
+    pages: pages.map((page) => byNumber.get(page.pageNumber) ?? page),
+    ocrPages,
+  };
+}

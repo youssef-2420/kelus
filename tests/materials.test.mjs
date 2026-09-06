@@ -135,3 +135,14 @@ test("empty PDF text is classified so the UI can explain scans", async () => {
   const sparse = assessPdfTextQuality([{ pageNumber: 1, text: "a".repeat(80) }, { pageNumber: 2, text: "" }, { pageNumber: 3, text: "" }, { pageNumber: 4, text: "" }]);
   assert.equal(sparse.density, "sparse");
 });
+
+test("scanned PDF OCR helper is available for empty-density pages", async () => {
+  const { assessPdfTextQuality, ocrPdfPages } = await import("../lib/pdf-extraction.ts");
+  const empty = assessPdfTextQuality([{ pageNumber: 1, text: "" }, { pageNumber: 2, text: "   " }]);
+  assert.equal(empty.density, "empty");
+  const result = await ocrPdfPages(new File([""], "scan.pdf", { type: "application/pdf" }), [
+    { pageNumber: 1, text: "" },
+  ]);
+  assert.equal(result.ocrPages, 0);
+  assert.equal(result.pages[0].text, "");
+});

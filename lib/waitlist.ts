@@ -89,10 +89,11 @@ export async function submitWaitlistSignup(input: {
       keepalive: true,
     });
     if (!response.ok) {
-      return { ok: false, error: "Couldn’t reach the waitlist service. Try again in a moment." };
+      // Local copy already saved — stay honest that remote delivery failed.
+      return { ok: true, duplicate, delivery: "local" };
     }
   } catch {
-    return { ok: false, error: "Couldn’t reach the waitlist service. Try again in a moment." };
+    return { ok: true, duplicate, delivery: "local" };
   }
 
   return { ok: true, duplicate, delivery: "remote" };
@@ -100,4 +101,28 @@ export async function submitWaitlistSignup(input: {
 
 export function readWaitlistEntries() {
   return readEntries();
+}
+
+export function exportWaitlistCsv(entries = readEntries()) {
+  const header = "email,source,note,createdAt";
+  const rows = entries.map((entry) =>
+    [entry.email, entry.source, entry.note ?? "", entry.createdAt]
+      .map((value) => `"${String(value).replaceAll('"', '""')}"`)
+      .join(","),
+  );
+  return [header, ...rows].join("\n");
+}
+
+export function downloadWaitlistCsv(filename = `kelus-waitlist-${new Date().toISOString().slice(0, 10)}.csv`) {
+  if (typeof document === "undefined") return 0;
+  const entries = readEntries();
+  if (!entries.length) return 0;
+  const blob = new Blob([exportWaitlistCsv(entries)], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+  return entries.length;
 }
