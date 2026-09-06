@@ -5,10 +5,11 @@ import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
+import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { trackEvent } from "@/lib/analytics";
 import type { CourseMaterial, ExtractedMaterialPage, MaterialRole, ProposedConcept } from "@/domain/types";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
-import { buildConfirmedMaterialModel, proposeConceptsFromPages } from "@/domain/material-intelligence";
+import { buildConfirmedMaterialModel, proposeConceptsFromMetadata, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
   addPdfMaterial,
@@ -19,7 +20,7 @@ import {
   subscribeMaterials,
   updateMaterialProcessingStatus,
 } from "@/lib/material-store";
-import { extractPdfPages } from "@/lib/pdf-extraction";
+import { assessPdfTextQuality, extractPdfPages } from "@/lib/pdf-extraction";
 
 function formatBytes(bytes: number | null) {
   if (bytes === null) return null;
@@ -97,6 +98,7 @@ export function MaterialLibrary() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [draftNames, setDraftNames] = useState<Record<string, string>>({});
   const [readySummary, setReadySummary] = useState<{ conceptCount: number; firstName: string | null } | null>(null);
+  const [showUpgrade, setShowUpgrade] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const course = state.snapshot.courses[0];
 
@@ -114,13 +116,51 @@ export function MaterialLibrary() {
       const stored = file ?? await readLocalPdf(material.id);
       if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
       const pages = await extractPdfPages(stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" }));
-      const proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
-      if (!proposals.length) throw new Error("Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text.");
+      const quality = assessPdfTextQuality(pages);
+      let proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
+      if (proposals.length < 3 && (quality.density === "sparse" || quality.density === "empty")) {
+        const relaxed = proposeConceptsFromPages({
+          materialId: material.id,
+          sourceLabel: material.title,
+          pages,
+          mode: "relaxed",
+        });
+        const seen = new Set(proposals.map((item) => item.name.toLocaleLowerCase()));
+        for (const item of relaxed) {
+          const key = item.name.toLocaleLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          proposals.push(item);
+        }
+      }
+      if (!proposals.length) {
+        proposals = proposeConceptsFromMetadata({
+          materialId: material.id,
+          sourceLabel: material.title,
+          fileName: material.fileName,
+        });
+      }
+      if (!proposals.length) {
+        throw new Error(
+          quality.density === "empty"
+            ? "This PDF has almost no selectable text (often a scan). Export a text PDF or OCR it first — Kelus reads text in the browser, not images."
+            : "Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text.",
+        );
+      }
       updateMaterialProcessingStatus(material.id, "ready");
       setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals, pages });
       setReadySummary(null);
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
+      if (courseMaterials.filter((item) => item.storage === "local").length >= 3) {
+        try {
+          if (window.localStorage.getItem(PAYWALL_DISMISS_KEY) !== "1") {
+            setShowUpgrade(true);
+          }
+        } catch {
+          setShowUpgrade(true);
+        }
+      }
     } catch (caught) {
       updateMaterialProcessingStatus(material.id, "failed");
       setError(caught instanceof Error ? caught.message : "Kelus could not read this PDF.");
@@ -206,6 +246,8 @@ export function MaterialLibrary() {
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
         <p>Keep the sources that define this exam together. Add PDFs from your device or save useful video and web links.</p>
       </header>
+
+      {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
       <section className="material-ingest" aria-labelledby="add-material-title">
         <div className="material-ingest-title"><p className="kicker">Add material</p><h2 id="add-material-title">Bring the course into one place.</h2></div>

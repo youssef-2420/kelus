@@ -69,8 +69,30 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
   assert.match(ui, /maximumChecks: 2/);
   assert.match(materials, /Continue:\ short\ check,\ then\ study/);
   assert.match(materials, /Try\ the\ sample\ course/);
-  assert.match(complete, /WaitlistForm/);
+  assert.match(materials, /SoftUpgradePrompt/);
+  assert.match(materials, /proposeConceptsFromMetadata|mode:\s*"relaxed"/);
+  assert.match(complete, /WaitlistForm|SoftUpgradePrompt/);
   assert.match(header, /auth\.configured/);
   assert.match(setup, /Try\ a\ sample\ course/);
   assert.match(how, /SiteFooter/);
+});
+
+test("pricing conversion loop is linked from product surfaces", async () => {
+  const [pricing, footer, sitemap, home, soft, analytics] = await Promise.all([
+    source("app/pricing/page.tsx"),
+    source("components/SiteFooter.tsx"),
+    source("app/sitemap.ts"),
+    source("components/home/HomeAfterHero.tsx"),
+    source("components/SoftUpgradePrompt.tsx"),
+    source("lib/analytics.ts"),
+  ]);
+  assert.match(pricing, /Founding student/);
+  assert.match(pricing, /\$9/);
+  assert.match(pricing, /WaitlistForm/);
+  assert.match(footer, /\/pricing/);
+  assert.match(sitemap, /\/pricing\//);
+  assert.match(home, /\/pricing/);
+  assert.match(soft, /soft_paywall_shown/);
+  assert.match(analytics, /pricing_viewed/);
+  assert.match(analytics, /soft_paywall_shown/);
 });

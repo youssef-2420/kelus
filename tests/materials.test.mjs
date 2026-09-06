@@ -100,3 +100,38 @@ test("explicit prerequisite language creates one directed relationship", () => {
   assert.ok((elasticity?.examImportance ?? 0) > (gameTheory?.examImportance ?? 0));
   assert.match(model.learningActivities[1].learn.explanation, /builds on Supply and Demand|responsiveness|essential for the midterm/i);
 });
+
+
+test("sparse and outline text still yields reviewable concepts in relaxed mode", () => {
+  const proposals = proposeConceptsFromPages({
+    materialId: "material-sparse",
+    sourceLabel: "Sparse syllabus",
+    mode: "relaxed",
+    pages: [
+      { pageNumber: 0, text: "Supply and Demand\nElasticity\nMarket Structures" },
+      { pageNumber: 1, text: "Week topics. Supply and Demand. Elasticity." },
+    ],
+  });
+  assert.ok(proposals.length >= 2);
+  assert.ok(proposals.some((item) => item.locator === "Document outline" || /Page/.test(item.locator)));
+});
+
+test("filename metadata can seed concepts when PDF text is empty", async () => {
+  const { proposeConceptsFromMetadata } = await import("../domain/material-intelligence.ts");
+  const proposals = proposeConceptsFromMetadata({
+    materialId: "material-scan",
+    sourceLabel: "Organic Chemistry Midterm Notes",
+    fileName: "organic-chemistry-midterm-notes.pdf",
+  });
+  assert.ok(proposals.length >= 1);
+  assert.equal(proposals[0].locator, "From filename");
+  assert.match(proposals.map((item) => item.name).join(" "), /Organic|Chemistry|Midterm/i);
+});
+
+test("empty PDF text is classified so the UI can explain scans", async () => {
+  const { assessPdfTextQuality } = await import("../lib/pdf-extraction.ts");
+  const empty = assessPdfTextQuality([{ pageNumber: 1, text: "" }, { pageNumber: 2, text: "   " }]);
+  assert.equal(empty.density, "empty");
+  const sparse = assessPdfTextQuality([{ pageNumber: 1, text: "a".repeat(80) }, { pageNumber: 2, text: "" }, { pageNumber: 3, text: "" }, { pageNumber: 4, text: "" }]);
+  assert.equal(sparse.density, "sparse");
+});

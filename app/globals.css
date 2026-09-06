@@ -5955,3 +5955,118 @@ h3,
   padding-top: 8px;
   border-top: 0;
 }
+
+
+/* —— Pricing + soft upgrade —— */
+.pricing-page .legal-panel {
+  max-width: 920px;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 32px 0 8px;
+}
+
+.pricing-plan {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  padding: 24px;
+  border: 1px solid var(--color-frost);
+  border-radius: var(--radius-ledger, 4px);
+  background: var(--color-pure-white, #fff);
+}
+
+.pricing-plan.is-founding {
+  border-color: var(--color-indigo-ink);
+}
+
+.pricing-plan h2 {
+  margin: 0;
+  font-family: var(--font-ledger);
+  font-weight: 300;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+  text-transform: none;
+}
+
+.pricing-price {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--color-midnight-ink);
+  line-height: 1;
+}
+
+.pricing-price span {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--color-steel);
+}
+
+.pricing-plan ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 8px;
+}
+
+.pricing-plan .cta,
+.pricing-plan .waitlist-form {
+  margin-top: 8px;
+}
+
+.soft-upgrade {
+  display: grid;
+  gap: 16px;
+  margin: 8px 0 28px;
+  padding: 24px;
+  border: 1px solid var(--color-frost);
+  background: var(--color-mist);
+}
+
+.soft-upgrade-kicker {
+  margin: 0;
+  color: var(--color-indigo-ink);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.soft-upgrade-copy {
+  display: grid;
+  gap: 8px;
+  max-width: 52ch;
+}
+
+.soft-upgrade-copy h2 {
+  margin: 0;
+  font-family: var(--font-ledger);
+  font-weight: 300;
+  font-size: clamp(24px, 4vw, 34px);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+
+.soft-upgrade-copy p {
+  margin: 0;
+  color: var(--color-steel);
+  line-height: 1.5;
+}
+
+.soft-upgrade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+@media (max-width: 720px) {
+  .pricing-grid {
+    grid-template-columns: 1fr;
+  }
+}

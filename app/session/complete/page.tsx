@@ -8,6 +8,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
 import { percent } from "@/lib/format";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 
 function CompleteBody() {
   const search = useSearchParams();
@@ -18,6 +19,7 @@ function CompleteBody() {
   const course = state.snapshot.courses.find((item) => item.id === session?.courseId);
   const exam = state.snapshot.exams.find((item) => item.id === session?.examId);
   const name = (id: string) => state.snapshot.concepts.find((concept) => concept.id === id)?.name ?? id;
+  const completedSessions = state.snapshot.sessions.filter((item) => item.status === "complete").length;
   const nextRoute = course && exam ? generateRoute({
     concepts: state.snapshot.concepts.filter((concept) => concept.courseId === course.id),
     relationships: state.snapshot.relationships,
@@ -46,11 +48,15 @@ function CompleteBody() {
           <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
         </section>
       ) : null}
-      <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
-        <p className="kicker">Stay in the loop</p>
-        <h2 id="complete-waitlist-title">Want a note when Kelus gets better for your course?</h2>
-        <WaitlistForm source="session_complete" compact />
-      </section>
+      {completedSessions === 1 ? (
+        <SoftUpgradePrompt moment="first_session" />
+      ) : (
+        <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
+          <p className="kicker">Stay in the loop</p>
+          <h2 id="complete-waitlist-title">Want a note when Kelus gets better for your course?</h2>
+          <WaitlistForm source="session_complete" compact />
+        </section>
+      )}
       <Link href="/today" className="cta complete-done">Back to today <span aria-hidden="true">→</span></Link>
     </AppShell>
   );

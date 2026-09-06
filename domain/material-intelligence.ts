@@ -208,32 +208,110 @@ function inferRelationships(concepts: Concept[], corpus: string): ConceptRelatio
   return relationships.slice(0, 12);
 }
 
+function looksLikeConceptRelaxed(value: string) {
+  if (value.length < 3 || value.length > 80 || ADMINISTRATIVE.test(value)) return false;
+  if (/https?:|@|\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(value)) return false;
+  if (/\b(?:due|points?|percent|room)\b/i.test(value)) return false;
+  const words = value.split(/\s+/);
+  if (words.length > 12) return false;
+  const titleWords = words.filter((word) => /^[A-Z][A-Za-z/&-]*$/.test(word)).length;
+  return (
+    HEADING_PREFIX.test(value) ||
+    NUMBER_PREFIX.test(value) ||
+    titleWords >= Math.max(1, Math.ceil(words.length * 0.35)) ||
+    words.length <= 4
+  );
+}
+
+function splitSparseLines(text: string) {
+  return text
+    .split(/\n+|•|;|—|–|\u2022/g)
+    .flatMap((chunk) => chunk.split(/(?<=[.!?])\s+(?=[A-Z])/))
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 export function proposeConceptsFromPages(input: {
   materialId: string;
   sourceLabel: string;
   pages: ExtractedMaterialPage[];
   limit?: number;
+  mode?: "strict" | "relaxed";
 }): ProposedConcept[] {
   const proposals: ProposedConcept[] = [];
   const seen = new Set<string>();
   const limit = input.limit ?? 12;
+  const matcher = input.mode === "relaxed" ? looksLikeConceptRelaxed : looksLikeConcept;
 
   for (const page of input.pages) {
-    const lines = page.text.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+    const lines = (input.mode === "relaxed" ? splitSparseLines(page.text) : page.text.split(/\n+/).map((line) => line.trim()).filter(Boolean));
     lines.forEach((line, index) => {
-      if (proposals.length >= limit || !looksLikeConcept(line)) return;
+      if (proposals.length >= limit || !matcher(line)) return;
       const name = cleanCandidate(line);
       const key = name.toLocaleLowerCase();
-      if (!looksLikeConcept(name) || seen.has(key)) return;
+      if (!matcher(name) || seen.has(key)) return;
       seen.add(key);
       proposals.push({
         id: `proposal-${stablePart(`${input.materialId}:${key}`)}`,
         materialId: input.materialId,
         name,
         sourceLabel: input.sourceLabel,
-        locator: `Page ${page.pageNumber}`,
+        locator: page.pageNumber === 0 ? "Document outline" : `Page ${page.pageNumber}`,
         sourceExcerpt: excerptFor(lines, index, line),
       });
+    });
+  }
+  return proposals;
+}
+
+const METADATA_STOPWORDS = new Set([
+  "a", "an", "and", "the", "of", "to", "in", "on", "for", "with", "from",
+  "week", "lecture", "notes", "note", "pdf", "syllabus", "chapter", "unit",
+  "final", "midterm", "exam", "course", "intro", "introduction", "part",
+  "section", "doc", "handout", "slides", "slide", "reading", "assignment",
+]);
+
+export function proposeConceptsFromMetadata(input: {
+  materialId: string;
+  sourceLabel: string;
+  fileName?: string | null;
+  limit?: number;
+}): ProposedConcept[] {
+  const limit = input.limit ?? 4;
+  const raw = `${input.sourceLabel} ${input.fileName ?? ""}`
+    .replace(/\.pdf$/i, " ")
+    .replace(/[-_+/]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!raw) return [];
+
+  const phrases: string[] = [];
+  const cleanedTitle = cleanCandidate(raw);
+  if (cleanedTitle.length >= 3 && cleanedTitle.length <= 72) phrases.push(cleanedTitle);
+
+  for (const token of raw.split(/\s+/)) {
+    const word = token.replace(/[^A-Za-z&/-]/g, "");
+    if (word.length < 4) continue;
+    if (METADATA_STOPWORDS.has(word.toLocaleLowerCase())) continue;
+    if (/^\d+$/.test(word)) continue;
+    phrases.push(word[0].toUpperCase() + word.slice(1));
+  }
+
+  const proposals: ProposedConcept[] = [];
+  const seen = new Set<string>();
+  for (const phrase of phrases) {
+    if (proposals.length >= limit) break;
+    const name = cleanCandidate(phrase);
+    const key = name.toLocaleLowerCase();
+    if (!name || seen.has(key) || ADMINISTRATIVE.test(name)) continue;
+    seen.add(key);
+    proposals.push({
+      id: `proposal-${stablePart(`${input.materialId}:meta:${key}`)}`,
+      materialId: input.materialId,
+      name,
+      sourceLabel: input.sourceLabel,
+      locator: "From filename",
+      sourceExcerpt: `Suggested from the file title “${input.sourceLabel}”. Edit or remove anything that is not an exam concept.`,
     });
   }
   return proposals;

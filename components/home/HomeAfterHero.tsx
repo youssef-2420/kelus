@@ -101,7 +101,7 @@ export function HomeAfterHero() {
               <Link href="/today">
                 Make today’s plan <span aria-hidden="true">→</span>
               </Link>
-              <Link href="/waitlist" className="text-btn">Join the waitlist</Link>
+              <Link href="/pricing" className="text-btn">Founding student</Link>
             </div>
           </div>
         </footer>
