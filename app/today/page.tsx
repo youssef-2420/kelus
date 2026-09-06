@@ -37,9 +37,14 @@ export default function TodayPage() {
           <p className="kicker">Next step</p>
           <h1>Bring in one real source.</h1>
           <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
-          <Link className="cta" href="/materials">
-            Add course material <span aria-hidden="true">→</span>
-          </Link>
+          <div className="materials-empty-actions">
+            <Link className="cta" href="/materials">
+              Add course material <span aria-hidden="true">→</span>
+            </Link>
+            <button type="button" className="text-btn" onClick={() => useDemo()}>
+              Try a sample course <span aria-hidden="true">→</span>
+            </button>
+          </div>
         </section>
       </AppShell>
     );
@@ -123,8 +128,19 @@ export default function TodayPage() {
             <dd>{exam.targetPercent}%</dd>
           </div>
           <div className="today-readiness">
-            <dt>Ready</dt>
-            <dd>{Math.round(readiness * 100)}%</dd>
+            <dt>
+              <span id="today-readiness-label">Est. readiness</span>
+            </dt>
+            <dd
+              aria-labelledby="today-readiness-label"
+              aria-describedby="today-readiness-hint"
+              title="Estimate from your familiarity ratings and recall checks — not a grade prediction."
+            >
+              {Math.round(readiness * 100)}%
+            </dd>
+            <p className="today-readiness-hint" id="today-readiness-hint">
+              Estimate from your ratings and recall checks — not a grade prediction.
+            </p>
           </div>
         </dl>
       </section>

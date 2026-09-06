@@ -154,7 +154,7 @@ export function RouteStory() {
             <div className="home-actions">
               <motion.div whileTap={reduceMotion ? undefined : { scale: 0.97 }} transition={press}>
                 <Link href="/today" className="cta home-cta">
-                  Build my route
+                  Build today’s route
                   <span className="arrow" aria-hidden="true">
                     →
                   </span>
@@ -227,7 +227,7 @@ export function RouteStory() {
         <div>
           <span className="mark">Kelus</span>
           <Link href="/today">
-            Build my route <span aria-hidden="true">→</span>
+            Build today’s route <span aria-hidden="true">→</span>
           </Link>
         </div>
       </footer>

@@ -49,15 +49,13 @@ function CompleteBody() {
         </section>
       ) : null}
       {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" /> : null}
-      <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
-        <p className="kicker">Stay in the loop</p>
-        <h2 id="complete-waitlist-title">
-          {completedSessions === 1
-            ? "Want founding updates when sync opens?"
-            : "Want a note when Kelus gets better for your course?"}
-        </h2>
-        <WaitlistForm source="session_complete" compact />
-      </section>
+      {completedSessions >= 2 ? (
+        <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
+          <p className="kicker">Stay in the loop</p>
+          <h2 id="complete-waitlist-title">Want a note when Kelus gets better for your course?</h2>
+          <WaitlistForm source="session_complete" compact />
+        </section>
+      ) : null}
       <Link href="/today" className="cta complete-done">Back to today <span aria-hidden="true">→</span></Link>
     </AppShell>
   );

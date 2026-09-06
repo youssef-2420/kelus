@@ -85,7 +85,7 @@ export function HowItWorks() {
         <BlurText as="h1" id="how-title" text="One route from course material to exam readiness." delay={58} className="how-title" />
         <div className="how-hero-foot">
           <p>Kelus decides what deserves your time, then gives you the place to learn it. Every answer becomes evidence for what comes next.</p>
-          <Link className="cta" href="/today">Build my route <span aria-hidden="true">→</span></Link>
+          <Link className="cta" href="/today">Build today’s route <span aria-hidden="true">→</span></Link>
         </div>
         <div className="how-example-switcher" aria-label="Choose an example course">
           <span>See the loop with</span>
@@ -124,7 +124,7 @@ export function HowItWorks() {
 
       <footer className="how-final">
         <p>Give Kelus one course. Get the next right move.</p>
-        <Link className="cta" href="/today">Start with my course <span aria-hidden="true">→</span></Link>
+        <Link className="cta" href="/today">Build today’s route <span aria-hidden="true">→</span></Link>
       </footer>
       <SiteFooter />
     </div>

@@ -19,7 +19,7 @@ export function HomeAfterHero() {
             first in the syllabus.
           </p>
           <Link href="/today">
-            Build today’s plan <span aria-hidden="true">→</span>
+            Build today’s route <span aria-hidden="true">→</span>
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
@@ -53,7 +53,7 @@ export function HomeAfterHero() {
             the page it came from.
           </p>
           <Link href="/today">
-            Start with my course <span aria-hidden="true">→</span>
+            Build today’s route <span aria-hidden="true">→</span>
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
@@ -97,7 +97,7 @@ export function HomeAfterHero() {
           </div>
           <div className="home-close-actions">
             <Link href="/today" className="cta">
-              Make today’s plan <span aria-hidden="true">→</span>
+              Build today’s route <span aria-hidden="true">→</span>
             </Link>
             <Link href="/pricing" className="text-btn">
               Founding student

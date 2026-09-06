@@ -21,7 +21,7 @@ export function KelusHero() {
         </p>
         <div className="home-actions">
           <Link href="/today" className="cta home-cta">
-            Build my route <span className="arrow" aria-hidden="true">
+            Build today’s route <span className="arrow" aria-hidden="true">
               →
             </span>
           </Link>

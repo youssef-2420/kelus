@@ -74,7 +74,26 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
   assert.match(complete, /WaitlistForm|SoftUpgradePrompt/);
   assert.match(header, /auth\.configured/);
   assert.match(setup, /Try\ a\ sample\ course/);
+  assert.match(setup, /text-btn setup-sample-cta/);
   assert.match(how, /SiteFooter/);
+});
+
+test("primary CTA language and readiness stay consistent", async () => {
+  const [hero, header, home, today, how] = await Promise.all([
+    source("components/hero/KelusHero.tsx"),
+    source("components/SiteHeader.tsx"),
+    source("components/home/HomeAfterHero.tsx"),
+    source("app/today/page.tsx"),
+    source("components/HowItWorks.tsx"),
+  ]);
+  assert.match(hero, /Build today’s route/);
+  assert.match(header, /Build today’s route/);
+  assert.match(home, /Build today’s route/);
+  assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
+  assert.match(how, /Build today’s route/);
+  assert.match(today, /Est\. readiness/);
+  assert.match(today, /not a grade prediction/);
+  assert.match(today, /Try a sample course/);
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {
@@ -102,4 +121,6 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(analytics, /soft_paywall_shown/);
   assert.match(complete, /SoftUpgradePrompt/);
   assert.match(complete, /WaitlistForm/);
+  assert.match(complete, /completedSessions === 1/);
+  assert.match(complete, /completedSessions >= 2/);
 });

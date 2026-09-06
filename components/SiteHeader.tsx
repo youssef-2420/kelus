@@ -46,7 +46,7 @@ export function SiteHeader() {
         ) : (
           <div className="site-header-cluster">
             <Link href="/today" className="site-header-action">
-              Build my route <span aria-hidden="true">→</span>
+              Build today’s route <span aria-hidden="true">→</span>
             </Link>
             {auth.configured ? (
               <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>

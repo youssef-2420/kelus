@@ -91,9 +91,9 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
           <aside className="setup-sample" aria-label="Try without your own PDF">
             <div>
               <p className="kicker">No syllabus yet?</p>
-              <p>Load a finished sample course and walk today’s route in under a minute.</p>
+              <p>Load a finished sample course and walk today’s route in under a minute — no PDF needed.</p>
             </div>
-            <button type="button" className="cta setup-sample-cta" onClick={onUseDemo}>
+            <button type="button" className="text-btn setup-sample-cta" onClick={onUseDemo}>
               Try a sample course <span aria-hidden="true">→</span>
             </button>
           </aside>

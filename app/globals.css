@@ -2406,11 +2406,20 @@ button, input, textarea { font: inherit; }
 .material-actions button:disabled { opacity: 0.55; cursor: not-allowed; text-decoration: none; }
 .material-actions a:focus-visible,
 .material-actions button:focus-visible { outline: 2px solid var(--color-product-green); outline-offset: 3px; }
-.material-shelf-empty { margin: 0; padding: var(--space-product-xl) 0; color: var(--color-product-secondary); border-block: 1px solid var(--color-product-border); }
+.material-shelf-empty { margin: 0; padding: var(--space-product-xl) 0; color: var(--color-product-secondary); border-block: 1px solid var(--color-product-border); display: grid; gap: var(--spacing-12, 0.75rem); justify-items: start; }
+.material-shelf-empty p { margin: 0; }
 .material-honesty { max-width: 62ch; padding: var(--space-product-xl) 0 var(--space-product-2xl); }
 .material-honesty > p:last-child { margin: var(--space-product-xs) 0 0; color: var(--color-product-secondary); }
 .materials-empty { max-width: 620px; padding: clamp(72px, 14vh, 140px) 0; }
 .materials-empty .cta { margin-top: var(--space-product-xl); white-space: nowrap; }
+.materials-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-12, 0.75rem) var(--spacing-16, 1rem);
+  margin-top: var(--space-product-xl);
+}
+.materials-empty-actions .cta { margin-top: 0; }
 
 .route-page.home {
   width: 100%;
@@ -5076,6 +5085,13 @@ h3,
 }
 .today-context dd { margin: 4px 0 0; color: var(--color-midnight-ink); font-size: var(--text-body-lg); font-variant-numeric: tabular-nums; }
 .today-context .today-readiness dd { color: var(--color-midnight-ink); font-size: var(--text-heading); font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; }
+.today-readiness-hint {
+  margin: var(--spacing-8, 0.5rem) 0 0;
+  max-width: 28ch;
+  color: var(--color-product-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
 
 .today-workbench { padding: var(--spacing-48) 0 var(--spacing-80); }
 .today-workbench-heading { display: grid; grid-template-columns: 150px minmax(0, 1fr); align-items: baseline; margin-bottom: var(--spacing-24); }
@@ -6201,6 +6217,10 @@ h3,
 .setup-sample-cta {
   flex: 0 0 auto;
   white-space: nowrap;
+  align-self: center;
+}
+.setup-sample .text-btn.setup-sample-cta {
+  padding-inline: 0;
 }
 
 .destination-actions-spacer {

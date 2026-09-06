@@ -379,7 +379,16 @@ export function MaterialLibrary() {
 
       <section className="material-shelf" aria-labelledby="source-shelf-title">
         <header><div><p className="kicker">Source shelf</p><h2 id="source-shelf-title">{courseMaterials.length ? `${courseMaterials.length} saved` : "Nothing saved yet"}</h2></div><span>This device</span></header>
-        {courseMaterials.length ? <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} onAnalyze={(material) => void analyzePdf(material)} />)}</ul> : <p className="material-shelf-empty">Start with the syllabus or the lecture you are studying now.</p>}
+        {courseMaterials.length ? (
+          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
+        ) : (
+          <div className="material-shelf-empty">
+            <p>Start with the syllabus or the lecture you are studying now.</p>
+            <button type="button" className="text-btn" onClick={() => useDemo()}>
+              Try the sample course <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        )}
       </section>
 
       <aside className="material-honesty">
