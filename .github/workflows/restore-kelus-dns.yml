@@ -23,6 +23,8 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_GA_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_GA_MEASUREMENT_ID }}
+          NEXT_PUBLIC_WAITLIST_ENDPOINT: ${{ secrets.NEXT_PUBLIC_WAITLIST_ENDPOINT }}
       - name: Publish static site on kelus.me
         run: npx wrangler@4.92.0 deploy
         env:

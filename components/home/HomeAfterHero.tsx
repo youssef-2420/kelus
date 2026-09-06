@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SiteFooter } from "@/components/SiteFooter";
 import { MaterialShelfIllustration } from "@/components/home/MaterialShelfIllustration";
 import { RerouteIllustration } from "@/components/home/RerouteIllustration";
 import { TodayPlanIllustration } from "@/components/home/TodayPlanIllustration";
@@ -94,14 +95,18 @@ export function HomeAfterHero() {
             <p className="kicker">Start with what matters</p>
             <h2>Walk into the exam knowing what you worked on—and why.</h2>
           </div>
-          <div>
+          <div className="v1-foot-actions">
             <span className="mark">Kelus</span>
-            <Link href="/today">
-              Make today’s plan <span aria-hidden="true">→</span>
-            </Link>
+            <div className="v1-foot-links">
+              <Link href="/today">
+                Make today’s plan <span aria-hidden="true">→</span>
+              </Link>
+              <Link href="/waitlist" className="text-btn">Join the waitlist</Link>
+            </div>
           </div>
         </footer>
       </Reveal>
+      <SiteFooter />
     </>
   );
 }

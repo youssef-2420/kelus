@@ -11,6 +11,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/today/`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/map/`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${BASE_URL}/route/`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${BASE_URL}/privacy/`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE_URL}/terms/`, changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE_URL}/waitlist/`, changeFrequency: "monthly", priority: 0.5 },
   ];
 
   const concepts: MetadataRoute.Sitemap = createDemoSnapshot(

@@ -5694,3 +5694,208 @@ h3,
     font-size: clamp(36px, 12vw, 48px);
   }
 }
+
+
+
+/* —— Trust surfaces: privacy, terms, waitlist —— */
+.legal-page {
+  width: min(760px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 48px 0 80px;
+  color: var(--color-midnight-ink);
+}
+
+.legal-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.legal-panel h1 {
+  margin: 0;
+  font-family: var(--font-ledger);
+  font-weight: 300;
+  font-size: clamp(36px, 6vw, 56px);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.legal-panel h2 {
+  margin: 28px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.legal-updated,
+.legal-lede,
+.legal-panel p,
+.legal-panel li {
+  color: var(--color-steel);
+  line-height: 1.55;
+}
+
+.legal-lede {
+  font-size: 18px;
+  max-width: 56ch;
+}
+
+.legal-panel ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 10px;
+}
+
+.legal-panel a,
+.legal-inline-links a {
+  color: var(--color-indigo-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.legal-inline-links {
+  margin-top: 8px;
+  color: var(--color-steel);
+}
+
+.site-footer {
+  margin-top: 64px;
+  padding: 28px 0 8px;
+  border-top: 1px solid var(--color-smoke);
+}
+
+.site-footer.is-compact {
+  margin-top: 48px;
+}
+
+.site-footer-inner {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.site-footer-brand {
+  display: grid;
+  gap: 8px;
+  max-width: 36ch;
+}
+
+.site-footer-brand p,
+.site-footer-note {
+  margin: 0;
+  color: var(--color-steel);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.site-footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+}
+
+.site-footer-nav a {
+  color: var(--color-midnight-ink);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.site-footer-nav a:hover {
+  color: var(--color-indigo-ink);
+}
+
+.site-footer-note {
+  margin-top: 20px;
+}
+
+.waitlist-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 8px;
+  padding: 24px 0;
+  border-top: 1px solid var(--color-smoke);
+  border-bottom: 1px solid var(--color-smoke);
+}
+
+.waitlist-fields {
+  display: grid;
+  gap: 14px;
+}
+
+.waitlist-fields label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.waitlist-fields label span {
+  font-weight: 400;
+  color: var(--color-steel);
+}
+
+.waitlist-fields input {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-smoke);
+  border-radius: 4px;
+  background: var(--color-pure-white);
+  color: var(--color-midnight-ink);
+  font: inherit;
+}
+
+.waitlist-fields input:focus-visible {
+  outline: 2px solid var(--color-indigo-ink);
+  outline-offset: 2px;
+}
+
+.waitlist-form .cta {
+  justify-self: start;
+}
+
+.waitlist-message {
+
+  margin: 0;
+  color: var(--color-steel);
+  font-size: 14px;
+}
+
+.waitlist-message.is-error {
+  color: var(--color-midnight-ink);
+}
+
+.v1-foot-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.v1-foot-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.v1-foot-links .text-btn {
+  color: var(--color-steel);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.v1-foot-links .text-btn:hover {
+  color: var(--color-indigo-ink);
+}
+
+@media (max-width: 720px) {
+  .legal-page { width: min(100% - 32px, 760px); padding-top: 32px; }
+  .site-footer-inner { flex-direction: column; }
+  .v1-foot-links { align-items: flex-start; }
+}

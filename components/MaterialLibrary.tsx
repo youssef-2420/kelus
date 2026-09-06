@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
+import { trackEvent } from "@/lib/analytics";
 import type { CourseMaterial, ExtractedMaterialPage, MaterialRole, ProposedConcept } from "@/domain/types";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 import { buildConfirmedMaterialModel, proposeConceptsFromPages } from "@/domain/material-intelligence";
@@ -188,6 +189,7 @@ export function MaterialLibrary() {
       });
       const first = [...preview.concepts].sort((left, right) => right.examImportance - left.examImportance)[0];
       confirmConcepts(selected, analysis.pages);
+      trackEvent({ name: "material_confirmed", concept_count: selected.length });
       setReadySummary({
         conceptCount: selected.length,
         firstName: first?.name ?? selected[0]?.name ?? null,
@@ -251,11 +253,11 @@ export function MaterialLibrary() {
             </h2>
             <p>
               Kelus ranked them from the source itself
-              {readySummary.firstName ? <> — start with <strong>{readySummary.firstName}</strong> after a short check</> : null}.
-              No invented syllabus.
+              {readySummary.firstName ? <> — start with <strong>{readySummary.firstName}</strong> after a ~1 minute check</> : null}.
+              No invented syllabus. Next is a short familiarity check, then stop 1.
             </p>
             <div className="material-ready-actions">
-              <Link className="cta" href="/today">Start stop 1 <span aria-hidden="true">→</span></Link>
+              <Link className="cta" href="/today">Continue to stop 1 <span aria-hidden="true">→</span></Link>
               <Link className="text-btn" href="/map">Review the map</Link>
             </div>
           </motion.section>

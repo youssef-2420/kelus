@@ -20,7 +20,7 @@ export function selectDiagnosisConcept(input: {
   evidence: DiagnosisEvidence[];
   maximumChecks?: number;
 }) {
-  const maximumChecks = input.maximumChecks ?? 3;
+  const maximumChecks = input.maximumChecks ?? 2;
   if (input.evidence.length >= maximumChecks) return null;
   const checked = new Set(input.evidence.map((item) => item.conceptId));
   const latest = input.evidence.at(-1);

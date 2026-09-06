@@ -4,6 +4,7 @@ import { useMemo, useRef, useState, type SyntheticEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
 import { selectDiagnosisConcept } from "@/domain/diagnosis";
+import { trackEvent } from "@/lib/analytics";
 
 const RATINGS: Array<{ value: SelfRating; label: string }> = [
   { value: "dont_know", label: "Don’t know" },
@@ -20,7 +21,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
 }) {
   const concepts = snapshot.concepts;
   const ratedConcepts = useMemo(
-    () => [...concepts].sort((a, b) => b.examImportance - a.examImportance || a.name.localeCompare(b.name)).slice(0, 4),
+    () => [...concepts].sort((a, b) => b.examImportance - a.examImportance || a.name.localeCompare(b.name)).slice(0, 3),
     [concepts],
   );
   const [phase, setPhase] = useState<"rating" | "retrieval">("rating");
@@ -37,8 +38,11 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
 
   function beginChecks(event: SyntheticEvent) {
     if (!allRated) return;
-    const selected = selectDiagnosisConcept({ concepts, relationships: snapshot.relationships, ratings, evidence: [] });
-    if (!selected) return onComplete({ ratings, retrievals: [] });
+    const selected = selectDiagnosisConcept({ concepts, relationships: snapshot.relationships, ratings, evidence: [], maximumChecks: 2 });
+    if (!selected) {
+      trackEvent({ name: "diagnosis_completed", retrieval_count: 0 });
+      return onComplete({ ratings, retrievals: [] });
+    }
     setActiveConceptId(selected.concept.id);
     setSelectionReason(selected.reason);
     startedAt.current = event.timeStamp;
@@ -59,8 +63,10 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
       relationships: snapshot.relationships,
       ratings,
       evidence: completed.map((item) => ({ conceptId: item.conceptId, outcome: item.outcome })),
+      maximumChecks: 2,
     });
     if (!selected) {
+      trackEvent({ name: "diagnosis_completed", retrieval_count: completed.length });
       onComplete({ ratings, retrievals: completed });
       return;
     }
@@ -75,13 +81,13 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
   return (
     <AppShell>
     <div className="diagnosis-page">
-      <div className="flow-context diagnosis-context"><span>Build your first route</span><b>Initial estimate</b></div>
+      <div className="flow-context diagnosis-context"><span>About a minute · then stop 1</span><b>Initial estimate</b></div>
       {phase === "rating" ? (
         <section className="diagnosis-panel">
           <p className="kicker">Start with your judgment</p>
           <h1>How familiar do these feel?</h1>
           <p className="diagnosis-intro">
-            Rate the {ratedConcepts.length} most exam-critical topics. A rough answer is enough — Kelus stays uncertain until retrieval gives better evidence.
+            Rate the {ratedConcepts.length} most exam-critical topics, then one quick recall check. Rough answers are enough — then Kelus opens stop 1.
           </p>
           <ol className="diagnosis-list">
             {ratedConcepts.map((item) => (
@@ -108,7 +114,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
           </ol>
           <div className="diagnosis-cta">
             <button type="button" className="cta diagnosis-continue" disabled={!allRated} onClick={beginChecks}>
-              {allRated ? "Check my recall" : "Rate every topic first"}
+              {allRated ? "One recall check, then stop 1" : "Rate every topic first"}
               <span aria-hidden="true">→</span>
             </button>
           </div>
