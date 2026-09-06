@@ -13,11 +13,11 @@ export default function WaitlistPage() {
   return (
     <main id="main" className="legal-page waitlist-page">
       <section className="legal-panel">
-        <p className="kicker">Early access</p>
-        <h1>Get Kelus when it’s ready for your course.</h1>
+        <p className="kicker">Stay close</p>
+        <h1>Use Kelus now. Get a note when it gets better for your course.</h1>
         <p className="legal-lede">
-          Kelus turns your syllabus into a daily exam route. Join the list if you want a quiet note when new courses,
-          sync, or study features land — not a marketing drip.
+          The planner works today on this device. Join the list only if you want a quiet update when sync, more
+          courses, or study features land — not a marketing drip.
         </p>
         <WaitlistForm source="waitlist_page" />
         <p className="legal-inline-links">
