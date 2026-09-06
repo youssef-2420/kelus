@@ -43,8 +43,32 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
           <fieldset>
             <legend>Define the destination.</legend>
             <div className="destination-pair">
-              <label>When is it?<input autoFocus type="date" min={minimumDate} value={draft.examDate} onChange={(event) => setDraft({ ...draft, examDate: event.target.value })} /></label>
-              <label>What are you aiming for?<span className="target-input"><input type="number" min="50" max="100" value={draft.targetPercent} onChange={(event) => setDraft({ ...draft, targetPercent: Number(event.target.value) })} /><b>%</b></span></label>
+              <label htmlFor="exam-date">
+                When is it?
+                <input
+                  id="exam-date"
+                  className="destination-date"
+                  autoFocus
+                  type="date"
+                  min={minimumDate}
+                  value={draft.examDate}
+                  onChange={(event) => setDraft({ ...draft, examDate: event.target.value })}
+                />
+              </label>
+              <label htmlFor="exam-target">
+                What are you aiming for?
+                <span className="target-input">
+                  <input
+                    id="exam-target"
+                    type="number"
+                    min="50"
+                    max="100"
+                    value={draft.targetPercent}
+                    onChange={(event) => setDraft({ ...draft, targetPercent: Number(event.target.value) })}
+                  />
+                  <b>%</b>
+                </span>
+              </label>
             </div>
           </fieldset>
         ) : null}
@@ -61,7 +85,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
             </div>
           </fieldset>
         ) : null}
-        <p className="setup-error" role="alert">{error}</p>
+        <p className="setup-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error || "\u00a0"}</p>
         <div className="destination-actions">
           {step > 1 ? <button type="button" className="text-btn" onClick={() => setStep((current) => current - 1)}>Back</button> : <button type="button" className="text-btn" onClick={onUseDemo}>Open Amina demo</button>}
           <button className="cta" type="submit">{step === 3 ? "Add course material" : "Continue"}<span aria-hidden="true">→</span></button>

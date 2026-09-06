@@ -3,18 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { useLearner } from "@/components/LearnerProvider";
 
 const links = [
-  { href: "/today", label: "Today", matches: ["/today", "/session"] },
-  { href: "/materials", label: "Materials", matches: ["/materials"] },
-  { href: "/map", label: "Map", matches: ["/map", "/concept", "/concepts"] },
-  { href: "/route", label: "How it works", matches: ["/route"] },
+  { href: "/today", label: "Today", matches: ["/today", "/session"], always: true },
+  { href: "/materials", label: "Materials", matches: ["/materials"], always: false },
+  { href: "/map", label: "Map", matches: ["/map", "/concept", "/concepts"], always: false },
+  { href: "/route", label: "How it works", matches: ["/route"], always: true },
 ] as const;
 
 export function SiteHeader() {
   const pathname = usePathname();
   const auth = useAuth();
+  const { state } = useLearner();
+  const destinationReady = state.onboardingCompleted;
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
+  const visibleLinks = links.filter((link) => link.always || destinationReady);
 
   return (
     <header className="site-header">
@@ -24,7 +28,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="site-nav" aria-label="Primary navigation">
-          {links.map((link) => {
+          {visibleLinks.map((link) => {
             const active = link.matches.some((prefix) => pathname.startsWith(prefix));
             return (
               <Link key={link.href} href={link.href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>
