@@ -46,7 +46,8 @@ test("the course workspace keeps destination and setup progress across product p
   assert.match(rail, /Course path/);
   assert.match(rail, /Knowledge Map/);
   assert.match(rail, /Today’s route/);
-  assert.match(rail, /aria-current=\{current \? "step"/);
+  assert.match(rail, /aria-current="step"/);
+  assert.match(rail, /course-stage/);
   assert.match(diagnosis, /<AppShell>/);
 });
 
