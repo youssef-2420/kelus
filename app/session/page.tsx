@@ -272,7 +272,11 @@ function SessionBody() {
                   <section><span>A sound application</span><p>{activity.apply.modelAnswer}</p></section>
                 </div>
                 <h2>How independently could you explain and apply it?</h2>
-                <div className="study-ratings"><button type="button" onClick={(event) => grade("failure", event)}>Not yet</button><button type="button" onClick={(event) => grade("partial", event)}>Almost</button><button type="button" onClick={(event) => grade("success", event)}>I can use it</button></div>
+                <div className="study-ratings" role="group" aria-label="How independently could you explain and apply it?">
+                  <button type="button" className="is-ghost" onClick={(event) => grade("failure", event)}>Not yet</button>
+                  <button type="button" className="is-outline" onClick={(event) => grade("partial", event)}>Almost</button>
+                  <button type="button" className="is-primary" onClick={(event) => grade("success", event)}>I can use it</button>
+                </div>
               </div>
             ) : null}
           </motion.section>

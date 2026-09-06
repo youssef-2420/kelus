@@ -23,6 +23,18 @@ export default function MapPage() {
     .slice()
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
   const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
+  if (!concepts.length) {
+    return (
+      <AppShell>
+        <section className="materials-empty">
+          <p className="kicker">Knowledge Map</p>
+          <h1>Confirm concepts from a source first.</h1>
+          <p>Add a syllabus or lecture PDF, then keep the concepts this exam actually covers.</p>
+          <Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
+        </section>
+      </AppShell>
+    );
+  }
   return (
     <AppShell action={!state.diagnosisCompleted ? <Link className="text-btn" href="/today">Continue to diagnosis <span aria-hidden="true">→</span></Link> : undefined}>
       <p className="kicker">Course</p>

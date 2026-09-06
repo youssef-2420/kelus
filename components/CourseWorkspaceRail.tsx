@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type ReactNode } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
@@ -14,6 +14,18 @@ const workspaceLinks = [
   { href: "/map", label: "Knowledge Map", matches: ["/map", "/concept"] },
   { href: "/materials", label: "Materials", matches: ["/materials"] },
 ] as const;
+
+function StageContent({ complete, index, label, detail }: { complete: boolean; index: number; label: string; detail: string }) {
+  return (
+    <>
+      <i aria-hidden="true">{complete ? "✓" : String(index + 1).padStart(2, "0")}</i>
+      <span>
+        <strong>{label}</strong>
+        <small>{detail}</small>
+      </span>
+    </>
+  );
+}
 
 export function CourseWorkspaceRail() {
   const pathname = usePathname();
@@ -59,12 +71,20 @@ export function CourseWorkspaceRail() {
           {stages.map((stage, index) => {
             const complete = index + 1 < currentStep;
             const current = index + 1 === currentStep;
+            const body = <StageContent complete={complete} index={index} label={stage.label} detail={stage.detail} />;
+            let marker: ReactNode;
+            if (current) {
+              marker = (
+                <Link href={stage.href} aria-current="step">
+                  {body}
+                </Link>
+              );
+            } else {
+              marker = <span className="course-stage">{body}</span>;
+            }
             return (
               <li key={stage.label} className={complete ? "is-complete" : current ? "is-current" : undefined}>
-                <Link href={stage.href} aria-current={current ? "step" : undefined}>
-                  <i aria-hidden="true">{complete ? "✓" : String(index + 1).padStart(2, "0")}</i>
-                  <span><strong>{stage.label}</strong><small>{stage.detail}</small></span>
-                </Link>
+                {marker}
               </li>
             );
           })}

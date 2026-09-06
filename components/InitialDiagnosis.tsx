@@ -88,9 +88,20 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
               <li key={item.id}>
                 <span>{item.name}</span>
                 <div role="group" aria-label={`Familiarity with ${item.name}`}>
-                  {RATINGS.map((rating) => (
-                    <button key={rating.value} type="button" className={ratings[item.id] === rating.value ? "is-selected" : undefined} onClick={() => setRatings({ ...ratings, [item.id]: rating.value })}>{rating.label}</button>
-                  ))}
+                  {RATINGS.map((rating) => {
+                    const selected = ratings[item.id] === rating.value;
+                    return (
+                      <button
+                        key={rating.value}
+                        type="button"
+                        className={selected ? "is-selected" : undefined}
+                        aria-pressed={selected}
+                        onClick={() => setRatings({ ...ratings, [item.id]: rating.value })}
+                      >
+                        {rating.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </li>
             ))}
@@ -118,10 +129,10 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
               <p className="kicker">A useful answer includes</p>
               <p>{prompt.modelAnswer}</p>
               <h2>How well did you know this?</h2>
-              <div className="diagnosis-grades">
-                <button type="button" onClick={(event) => grade("failure", event)}>Didn’t know</button>
-                <button type="button" onClick={(event) => grade("partial", event)}>Almost</button>
-                <button type="button" onClick={(event) => grade("success", event)}>Knew it</button>
+              <div className="diagnosis-grades" role="group" aria-label="How well did you know this?">
+                <button type="button" className="is-ghost" onClick={(event) => grade("failure", event)}>Didn’t know</button>
+                <button type="button" className="is-outline" onClick={(event) => grade("partial", event)}>Almost</button>
+                <button type="button" className="is-primary" onClick={(event) => grade("success", event)}>Knew it</button>
               </div>
             </div>
           )}

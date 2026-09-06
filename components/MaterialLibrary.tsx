@@ -64,7 +64,11 @@ function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (it
       </span>
       <span className="material-actions">
         {item.storage === "local" ? <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>{item.processingStatus === "processing" ? "Reading…" : item.processingStatus === "ready" ? "Review concepts" : "Build concepts"}</button> : null}
-        {item.storage === "url" ? <a href={item.sourceUrl ?? "#"} target="_blank" rel="noreferrer">Open</a> : <button type="button" onClick={downloadPdf} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>}
+        {item.storage === "url" ? (
+          item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">Open</a> : null
+        ) : (
+          <button type="button" onClick={downloadPdf} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>
+        )}
         <button type="button" onClick={remove} disabled={busy}>Remove</button>
       </span>
     </li>
@@ -208,7 +212,7 @@ export function MaterialLibrary() {
           <div className="material-url-field"><label htmlFor="material-url">Video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" /></div>
           <button className="cta" type="submit" disabled={!url.trim()}>Add link</button>
         </form>
-        <p className="material-error" role="alert">{error ?? ""}</p>
+        <p className="material-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error ?? "\u00a0"}</p>
       </section>
 
       <AnimatePresence initial={false}>

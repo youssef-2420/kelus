@@ -21,27 +21,27 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
     try {
       onComplete(draft);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Kelus could not create your destination yet.");
+      setError(caught instanceof Error ? caught.message : "Kelus could not set up your exam yet.");
     }
   }
 
   return (
     <main id="main" className="destination-page">
       <form className="destination-form" onSubmit={next}>
-        <div className="flow-context"><span>Set your destination</span><b>{step} / 3</b></div>
+        <div className="flow-context"><span>Set your exam</span><b>{step} / 3</b></div>
         {step === 1 ? (
           <fieldset>
             <legend>What are you studying?</legend>
             <div className="destination-course-fields">
-              <label htmlFor="course-name">Course<input id="course-name" autoFocus value={draft.courseName} onChange={(event) => setDraft({ ...draft, courseName: event.target.value })} placeholder="Molecular Biology" /></label>
-              <label htmlFor="exam-name">Destination<input id="exam-name" value={draft.examName} onChange={(event) => setDraft({ ...draft, examName: event.target.value })} placeholder="Final exam" /></label>
+              <label htmlFor="course-name">Course<input id="course-name" autoFocus value={draft.courseName} onChange={(event) => setDraft({ ...draft, courseName: event.target.value })} placeholder="Molecular Biology" aria-describedby="course-support" /></label>
+              <label htmlFor="exam-name">Exam<input id="exam-name" value={draft.examName} onChange={(event) => setDraft({ ...draft, examName: event.target.value })} placeholder="Final exam" aria-describedby="course-support" /></label>
             </div>
             <p id="course-support" className="destination-support">Use the names you use at school. Your PDF will supply the actual topics.</p>
           </fieldset>
         ) : null}
         {step === 2 ? (
           <fieldset>
-            <legend>Define the destination.</legend>
+            <legend>Set the exam.</legend>
             <div className="destination-pair">
               <label htmlFor="exam-date">
                 When is it?

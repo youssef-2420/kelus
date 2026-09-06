@@ -51,7 +51,18 @@ export default function TodayPage() {
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
   const exam = snapshot.exams.find((item) => item.courseId === course?.id && item.isActive);
-  if (!course || !exam) return <AppShell><p>No active destination.</p></AppShell>;
+  if (!course || !exam) {
+    return (
+      <AppShell>
+        <section className="materials-empty">
+          <p className="kicker">Today</p>
+          <h1>Set an exam destination first.</h1>
+          <p>Kelus needs a course and exam before it can build today’s route.</p>
+          <button type="button" className="cta" onClick={() => reset()}>Start over</button>
+        </section>
+      </AppShell>
+    );
+  }
 
   const concepts = snapshot.concepts.filter((concept) => concept.courseId === course.id);
   const route = generateRoute({ concepts, relationships: snapshot.relationships, events: snapshot.events, exam, nowIso });
@@ -95,9 +106,9 @@ export default function TodayPage() {
       <section className="today-brief" aria-labelledby="today-title">
         <div className="today-brief-copy">
           <p className="kicker">Today · {course.name}</p>
-          <h1 id="today-title">Start {firstName}</h1>
+          <h1 id="today-title">Today’s route</h1>
           <p>
-            {route.availableMinutes} minutes today · exam in {days} days · aim {exam.targetPercent}%
+            {firstName} first · {route.availableMinutes} minutes · exam in {days} days · aim {exam.targetPercent}%
           </p>
         </div>
         <dl className="today-context" aria-label="Current study context">
