@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { SiteFooter } from "@/components/SiteFooter";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import BlurText from "@/components/BlurText";
@@ -125,6 +126,7 @@ export function HowItWorks() {
         <p>Give Kelus one course. Get the next right move.</p>
         <Link className="cta" href="/today">Start with my course <span aria-hidden="true">→</span></Link>
       </footer>
+      <SiteFooter />
     </div>
   );
 }

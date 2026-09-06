@@ -52,8 +52,8 @@ export function HomeAfterHero() {
             Add a syllabus or lecture PDF, review the proposed concepts, and keep each learning activity connected
             to the page it came from.
           </p>
-          <Link href="/materials">
-            Open materials <span aria-hidden="true">→</span>
+          <Link href="/today">
+            Start with my course <span aria-hidden="true">→</span>
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">

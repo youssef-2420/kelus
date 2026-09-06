@@ -28,33 +28,49 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
 });
 
 test("analytics only loads when a measurement id is configured", async () => {
-  const [analytics, ga, workflow] = await Promise.all([
+  const [analytics, ga, workflow, today] = await Promise.all([
     source("lib/analytics.ts"),
     source("components/GoogleAnalytics.tsx"),
     source(".github/workflows/restore-kelus-dns.yml"),
+    source("app/today/page.tsx"),
   ]);
   assert.match(analytics, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
   assert.match(ga, /if \(!GA_MEASUREMENT_ID\) return null/);
   assert.match(ga, /anonymize_ip: true/);
   assert.match(ga, /allow_google_signals: false/);
   assert.match(workflow, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
+  assert.match(today, /session_started/);
 });
 
-test("waitlist capture persists locally and can POST to an optional endpoint", async () => {
-  const waitlist = await source("lib/waitlist.ts");
+test("waitlist capture stays honest without a remote endpoint", async () => {
+  const [waitlist, form] = await Promise.all([
+    source("lib/waitlist.ts"),
+    source("components/WaitlistForm.tsx"),
+  ]);
   assert.match(waitlist, /localStorage/);
   assert.match(waitlist, /NEXT_PUBLIC_WAITLIST_ENDPOINT/);
   assert.match(waitlist, /submitWaitlistSignup/);
+  assert.match(waitlist, /delivery: "local"/);
+  assert.match(form, /Remote waitlist delivery isn’t configured|on-device until remote delivery/i);
 });
 
-test("ready-to-today path keeps diagnosis short", async () => {
-  const [diagnosis, ui, materials] = await Promise.all([
+test("ready-to-today path stays short and does not overpromise stop 1", async () => {
+  const [diagnosis, ui, materials, complete, header, setup, how] = await Promise.all([
     source("domain/diagnosis.ts"),
     source("components/InitialDiagnosis.tsx"),
     source("components/MaterialLibrary.tsx"),
+    source("app/session/complete/page.tsx"),
+    source("components/SiteHeader.tsx"),
+    source("components/FirstRunSetup.tsx"),
+    source("components/HowItWorks.tsx"),
   ]);
   assert.match(diagnosis, /maximumChecks \?\? 2/);
   assert.match(ui, /slice\(0, 3\)/);
   assert.match(ui, /maximumChecks: 2/);
-  assert.match(materials, /Continue to stop 1/);
+  assert.match(materials, /Continue:\ short\ check,\ then\ study/);
+  assert.match(materials, /Try\ the\ sample\ course/);
+  assert.match(complete, /WaitlistForm/);
+  assert.match(header, /auth\.configured/);
+  assert.match(setup, /Try\ a\ sample\ course/);
+  assert.match(how, /SiteFooter/);
 });

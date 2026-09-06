@@ -85,7 +85,7 @@ function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (it
 
 export function MaterialLibrary() {
   const reduceMotion = useReducedMotion();
-  const { state, confirmConcepts } = useLearner();
+  const { state, confirmConcepts, useDemo } = useLearner();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -235,6 +235,15 @@ export function MaterialLibrary() {
           <button className="cta" type="submit" disabled={!url.trim()}>Add link</button>
         </form>
         <p className="material-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error ?? "\u00a0"}</p>
+        {error ? (
+          <div className="material-error-rescue" role="group" aria-label="Ways to continue">
+            <p>Use a syllabus or lecture PDF with selectable text. Scanned image-only PDFs usually fail.</p>
+            <div className="material-error-actions">
+              <button type="button" className="text-btn" onClick={() => useDemo()}>Try the sample course</button>
+              <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
+            </div>
+          </div>
+        ) : null}
       </section>
 
       <AnimatePresence initial={false}>
@@ -254,10 +263,9 @@ export function MaterialLibrary() {
             <p>
               Kelus ranked them from the source itself
               {readySummary.firstName ? <> — start with <strong>{readySummary.firstName}</strong> after a ~1 minute check</> : null}.
-              No invented syllabus. Next is a short familiarity check, then stop 1.
-            </p>
+              No invented syllabus. Next: a ~1 minute familiarity check, then your first study stop.</p>
             <div className="material-ready-actions">
-              <Link className="cta" href="/today">Continue to stop 1 <span aria-hidden="true">→</span></Link>
+              <Link className="cta" href="/today">Continue: short check, then study <span aria-hidden="true">→</span></Link>
               <Link className="text-btn" href="/map">Review the map</Link>
             </div>
           </motion.section>

@@ -8,6 +8,7 @@ import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
 import { TodayRoute } from "@/components/TodayRoute";
 import { useLearner } from "@/components/LearnerProvider";
+import { trackEvent } from "@/lib/analytics";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
@@ -76,6 +77,7 @@ export default function TodayPage() {
 
   function begin() {
     const sessionId = start(courseId, examId);
+    trackEvent({ name: "session_started" });
     sessionStorage.setItem("kelus-session-before", JSON.stringify(concepts));
     router.push(`/session?id=${sessionId}`);
   }

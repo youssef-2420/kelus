@@ -47,10 +47,12 @@ export function SiteHeader() {
             <Link href="/today" className="site-header-action">
               Build my route <span aria-hidden="true">→</span>
             </Link>
-            <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" /></svg>
-              Sign in
-            </button>
+            {auth.configured ? (
+              <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" /></svg>
+                Sign in
+              </button>
+            ) : null}
           </div>
         )}
       </div>

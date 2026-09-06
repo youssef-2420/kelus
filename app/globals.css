@@ -5899,3 +5899,59 @@ h3,
   .site-footer-inner { flex-direction: column; }
   .v1-foot-links { align-items: flex-start; }
 }
+
+.material-error-rescue {
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid var(--color-frost);
+  background: var(--color-mist);
+  display: grid;
+  gap: 12px;
+}
+
+.material-error-rescue p {
+  margin: 0;
+  color: var(--color-steel);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.material-error-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+}
+
+.material-error-actions .text-btn {
+  color: var(--color-indigo-ink);
+  text-decoration: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  min-height: 44px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.complete-waitlist {
+  margin: 48px 0 24px;
+  padding: 28px 0;
+  border-top: 1px solid var(--color-frost);
+  display: grid;
+  gap: 12px;
+  max-width: 520px;
+}
+
+.complete-waitlist h2 {
+  margin: 0;
+  font-family: var(--font-ledger);
+  font-weight: 300;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.waitlist-form.is-compact {
+  padding-top: 8px;
+  border-top: 0;
+}

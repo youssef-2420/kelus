@@ -81,13 +81,13 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
   return (
     <AppShell>
     <div className="diagnosis-page">
-      <div className="flow-context diagnosis-context"><span>About a minute · then stop 1</span><b>Initial estimate</b></div>
+      <div className="flow-context diagnosis-context"><span>About a minute · then today’s first stop</span><b>Initial estimate</b></div>
       {phase === "rating" ? (
         <section className="diagnosis-panel">
           <p className="kicker">Start with your judgment</p>
           <h1>How familiar do these feel?</h1>
           <p className="diagnosis-intro">
-            Rate the {ratedConcepts.length} most exam-critical topics, then one quick recall check. Rough answers are enough — then Kelus opens stop 1.
+            Rate the {ratedConcepts.length} most exam-critical topics, then up to two quick recall checks. Rough answers are enough — then Kelus opens today’s first study stop.
           </p>
           <ol className="diagnosis-list">
             {ratedConcepts.map((item) => (
@@ -114,14 +114,14 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
           </ol>
           <div className="diagnosis-cta">
             <button type="button" className="cta diagnosis-continue" disabled={!allRated} onClick={beginChecks}>
-              {allRated ? "One recall check, then stop 1" : "Rate every topic first"}
+              {allRated ? "Recall check, then today’s route" : "Rate every topic first"}
               <span aria-hidden="true">→</span>
             </button>
           </div>
         </section>
       ) : concept && prompt ? (
         <section className="diagnosis-check">
-          <p className="kicker">Adaptive retrieval · check {retrievals.length + 1}</p>
+          <p className="kicker">Recall check {retrievals.length + 1} of 2</p>
           <h1>{prompt.promptText}</h1>
           <p className="diagnosis-selection-reason">{selectionReason}</p>
           {!revealed ? (

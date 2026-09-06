@@ -2,13 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import { trackEvent } from "@/lib/analytics";
-import { isValidWaitlistEmail, submitWaitlistSignup } from "@/lib/waitlist";
+import { isValidWaitlistEmail, submitWaitlistSignup, waitlistEndpointConfigured } from "@/lib/waitlist";
 
-export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
+export function WaitlistForm({ source = "waitlist", compact = false }: { source?: string; compact?: boolean }) {
   const [email, setEmail] = useState("");
   const [note, setNote] = useState("");
-  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "duplicate" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "duplicate" | "local" | "error">("idle");
   const [message, setMessage] = useState("");
+  const remoteReady = waitlistEndpointConfigured();
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -28,12 +29,21 @@ export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
     }
 
     trackEvent({ name: "waitlist_joined", source });
-    setStatus(result.duplicate ? "duplicate" : "saved");
-    setMessage(
-      result.duplicate
-        ? "You’re already on the list with this email."
-        : "You’re on the list. We’ll only email when there’s something worth reading.",
-    );
+    if (result.delivery === "local") {
+      setStatus("local");
+      setMessage(
+        result.duplicate
+          ? "Saved on this device already. Remote waitlist delivery isn’t configured in this build."
+          : "Saved on this device. Remote waitlist delivery isn’t configured yet — email hello@kelus.me if you want a human reply.",
+      );
+    } else {
+      setStatus(result.duplicate ? "duplicate" : "saved");
+      setMessage(
+        result.duplicate
+          ? "You’re already on the list with this email."
+          : "You’re on the list. We’ll only email when there’s something worth reading.",
+      );
+    }
     if (!result.duplicate) {
       setEmail("");
       setNote("");
@@ -41,12 +51,12 @@ export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
   }
 
   return (
-    <form className="waitlist-form" onSubmit={onSubmit} noValidate>
+    <form className={compact ? "waitlist-form is-compact" : "waitlist-form"} onSubmit={onSubmit} noValidate>
       <div className="waitlist-fields">
         <div>
-          <label htmlFor="waitlist-email">Email</label>
+          <label htmlFor={`waitlist-email-${source}`}>Email</label>
           <input
-            id="waitlist-email"
+            id={`waitlist-email-${source}`}
             name="email"
             type="email"
             autoComplete="email"
@@ -64,30 +74,34 @@ export function WaitlistForm({ source = "waitlist" }: { source?: string }) {
             disabled={status === "saving"}
           />
         </div>
-        <div>
-          <label htmlFor="waitlist-note">
-            What are you studying? <span>optional</span>
-          </label>
-          <input
-            id="waitlist-note"
-            name="note"
-            value={note}
-            onChange={(event) => setNote(event.target.value)}
-            placeholder="Organic chemistry · midterm in three weeks"
-            disabled={status === "saving"}
-          />
-        </div>
+        {compact ? null : (
+          <div>
+            <label htmlFor={`waitlist-note-${source}`}>
+              What are you studying? <span>optional</span>
+            </label>
+            <input
+              id={`waitlist-note-${source}`}
+              name="note"
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+              placeholder="Organic chemistry · midterm in three weeks"
+              disabled={status === "saving"}
+            />
+          </div>
+        )}
       </div>
       <button className="cta" type="submit" disabled={status === "saving" || !email.trim()}>
         {status === "saving" ? "Joining…" : "Join the waitlist"}
         <span aria-hidden="true">→</span>
       </button>
       <p
-        className={status === "error" ? "waitlist-message is-error" : "waitlist-message"}
-        role={status === "error" ? "alert" : status === "saved" || status === "duplicate" ? "status" : undefined}
+        className={status === "error" || status === "local" ? "waitlist-message is-error" : "waitlist-message"}
+        role={status === "error" ? "alert" : status === "saved" || status === "duplicate" || status === "local" ? "status" : undefined}
         aria-live="polite"
       >
-        {message || "No spam. One quiet list for early access and product notes."}
+        {message || (remoteReady
+          ? "No spam. One quiet list for early access and product notes."
+          : "Leave an email to be counted. This build saves it on-device until remote delivery is configured.")}
       </p>
     </form>
   );

@@ -7,6 +7,10 @@ export type WaitlistEntry = {
   createdAt: string;
 };
 
+export function waitlistEndpointConfigured() {
+  return Boolean(process.env.NEXT_PUBLIC_WAITLIST_ENDPOINT?.trim());
+}
+
 function readEntries(): WaitlistEntry[] {
   if (typeof window === "undefined") return [];
   try {
@@ -38,7 +42,10 @@ export async function submitWaitlistSignup(input: {
   email: string;
   source?: string;
   note?: string;
-}): Promise<{ ok: true; duplicate?: boolean } | { ok: false; error: string }> {
+}): Promise<
+  | { ok: true; duplicate?: boolean; delivery: "remote" | "local" }
+  | { ok: false; error: string }
+> {
   const email = normalizeWaitlistEmail(input.email);
   if (!isValidWaitlistEmail(email)) {
     return { ok: false, error: "Enter a valid email address." };
@@ -56,31 +63,39 @@ export async function submitWaitlistSignup(input: {
   if (!duplicate) writeEntries([...existing, entry]);
 
   const endpoint = process.env.NEXT_PUBLIC_WAITLIST_ENDPOINT?.trim();
-  if (endpoint) {
-    try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({
-          email: entry.email,
-          source: entry.source,
-          note: entry.note,
-          createdAt: entry.createdAt,
-        }),
-        keepalive: true,
-      });
-      if (!response.ok) {
-        return { ok: false, error: "Couldn’t reach the waitlist service. Try again in a moment." };
-      }
-    } catch {
-      return { ok: false, error: "Couldn’t reach the waitlist service. Try again in a moment." };
-    }
+  if (!endpoint) {
+    // Persist locally so the founder can recover intent from a shared device/demo,
+    // but never claim the email was delivered to Kelus.
+    return {
+      ok: true,
+      duplicate,
+      delivery: "local",
+    };
   }
 
-  return { ok: true, duplicate };
+  try {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        email: entry.email,
+        source: entry.source,
+        note: entry.note,
+        createdAt: entry.createdAt,
+      }),
+      keepalive: true,
+    });
+    if (!response.ok) {
+      return { ok: false, error: "Couldn’t reach the waitlist service. Try again in a moment." };
+    }
+  } catch {
+    return { ok: false, error: "Couldn’t reach the waitlist service. Try again in a moment." };
+  }
+
+  return { ok: true, duplicate, delivery: "remote" };
 }
 
 export function readWaitlistEntries() {
