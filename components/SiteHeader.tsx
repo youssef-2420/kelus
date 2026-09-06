@@ -3,12 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
-import { useLearner } from "@/components/LearnerProvider";
 
 const links = [
   { href: "/today", label: "Today", matches: ["/today", "/session"], always: true },
-  { href: "/materials", label: "Materials", matches: ["/materials"], always: false },
-  { href: "/map", label: "Map", matches: ["/map", "/concept", "/concepts"], always: false },
+  { href: "/materials", label: "Materials", matches: ["/materials"], always: true },
+  { href: "/map", label: "Map", matches: ["/map", "/concept", "/concepts"], always: true },
   { href: "/route", label: "How it works", matches: ["/route"], always: true },
   { href: "/pricing", label: "Pricing", matches: ["/pricing", "/waitlist"], always: true },
 ] as const;
@@ -16,10 +15,8 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname();
   const auth = useAuth();
-  const { state } = useLearner();
-  const destinationReady = state.onboardingCompleted;
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
-  const visibleLinks = links.filter((link) => link.always || destinationReady);
+  const visibleLinks = links;
 
   return (
     <header className="site-header">
