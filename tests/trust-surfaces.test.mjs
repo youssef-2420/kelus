@@ -78,13 +78,15 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {
-  const [pricing, footer, sitemap, home, soft, analytics] = await Promise.all([
+  const [pricing, footer, sitemap, home, soft, analytics, header, complete] = await Promise.all([
     source("app/pricing/page.tsx"),
     source("components/SiteFooter.tsx"),
     source("app/sitemap.ts"),
     source("components/home/HomeAfterHero.tsx"),
     source("components/SoftUpgradePrompt.tsx"),
     source("lib/analytics.ts"),
+    source("components/SiteHeader.tsx"),
+    source("app/session/complete/page.tsx"),
   ]);
   assert.match(pricing, /Founding student/);
   assert.match(pricing, /\$9/);
@@ -92,7 +94,12 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
   assert.match(home, /\/pricing/);
+  assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
+  assert.match(soft, /sync/i);
+  assert.doesNotMatch(soft, /unlocks more materials/i);
   assert.match(analytics, /pricing_viewed/);
   assert.match(analytics, /soft_paywall_shown/);
+  assert.match(complete, /SoftUpgradePrompt/);
+  assert.match(complete, /WaitlistForm/);
 });

@@ -48,15 +48,16 @@ function CompleteBody() {
           <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
         </section>
       ) : null}
-      {completedSessions === 1 ? (
-        <SoftUpgradePrompt moment="first_session" />
-      ) : (
-        <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
-          <p className="kicker">Stay in the loop</p>
-          <h2 id="complete-waitlist-title">Want a note when Kelus gets better for your course?</h2>
-          <WaitlistForm source="session_complete" compact />
-        </section>
-      )}
+      {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" /> : null}
+      <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
+        <p className="kicker">Stay in the loop</p>
+        <h2 id="complete-waitlist-title">
+          {completedSessions === 1
+            ? "Want founding updates when sync opens?"
+            : "Want a note when Kelus gets better for your course?"}
+        </h2>
+        <WaitlistForm source="session_complete" compact />
+      </section>
       <Link href="/today" className="cta complete-done">Back to today <span aria-hidden="true">→</span></Link>
     </AppShell>
   );

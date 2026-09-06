@@ -10,6 +10,7 @@ const links = [
   { href: "/materials", label: "Materials", matches: ["/materials"], always: false },
   { href: "/map", label: "Map", matches: ["/map", "/concept", "/concepts"], always: false },
   { href: "/route", label: "How it works", matches: ["/route"], always: true },
+  { href: "/pricing", label: "Pricing", matches: ["/pricing", "/waitlist"], always: true },
 ] as const;
 
 export function SiteHeader() {

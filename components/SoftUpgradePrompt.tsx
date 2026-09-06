@@ -16,11 +16,11 @@ const COPY: Record<
 > = {
   first_session: {
     title: "Keep this rhythm for the term",
-    body: "Founding student is $9/term while we grow. Free stays usable — paid is for the people who want the product to stay alive.",
+    body: "Founding student is $9/term while we grow. Free stays usable on this device — founding is for sync, multi-course, and priority access when billing opens.",
   },
   third_material: {
     title: "You’re stacking materials",
-    body: "Free covers one solid course path. Founding student unlocks more materials and keeps Kelus funded at $9/term.",
+    body: "Free already plans today’s route on this device. Founding student is for sync across devices, multi-course workspace, and priority access when billing opens — $9/term.",
   },
 };
 
