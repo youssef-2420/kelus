@@ -1301,7 +1301,7 @@ button, input, textarea { font: inherit; }
 }
 .home-nav a:hover::after { transform: scaleX(1); transform-origin: left; }
 .home-nav a:active { color: var(--accent); }
-.route-transition { min-height: 100dvh; }
+.route-transition { min-height: 0; }
 .home-hero {
   width: min(1120px, calc(100% - 40px));
   min-height: auto; /* was 790px — caused homepage dead space */
@@ -3761,7 +3761,8 @@ h3,
 .site-header-action:active { transform: scale(0.97); }
 
 .route-transition {
-  min-height: calc(100dvh - 77px);
+  /* Do not force viewport height — that left a blank band below the footer. */
+  min-height: 0;
   will-change: transform, opacity;
 }
 
@@ -3840,7 +3841,7 @@ h3,
 
   .site-nav::-webkit-scrollbar { display: none; }
   .site-nav a { min-height: 48px; }
-  .route-transition { min-height: calc(100dvh - 99px); }
+  .route-transition { min-height: 0; }
   .shell { padding-top: var(--spacing-32); }
   .destination-form { padding-top: var(--spacing-48); }
   .diagnosis-context { width: calc(100% - 28px); }
@@ -5753,11 +5754,23 @@ h3,
   gap: 10px;
 }
 
-.legal-panel a,
-.legal-inline-links a {
+.legal-panel a:not(.cta),
+.legal-inline-links a:not(.cta) {
   color: var(--color-indigo-ink);
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+
+.legal-panel a.cta,
+.pricing-plan a.cta,
+.pricing-plan .cta {
+  color: var(--color-pure-white);
+  background: var(--color-indigo-ink);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  text-align: center;
+  white-space: normal;
+  max-width: 100%;
 }
 
 .legal-inline-links {
@@ -6115,8 +6128,20 @@ h3,
 }
 
 .pricing-plan .cta,
-.pricing-plan .waitlist-form {
+.pricing-plan .waitlist-form,
+.pricing-plan .founding-cta {
   margin-top: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pricing-plan .cta {
+  justify-self: start;
+  width: fit-content;
+  max-width: 100%;
+  color: var(--color-pure-white) !important;
+  background: var(--color-indigo-ink);
+  text-decoration: none !important;
 }
 
 .soft-upgrade {

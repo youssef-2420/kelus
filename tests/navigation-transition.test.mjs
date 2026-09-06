@@ -78,3 +78,20 @@ test("ledger design keeps the mobile homepage in one column", async () => {
   assert.match(css, /--color-indigo-ink/);
   assert.match(header, /href: "\/materials"/);
 });
+
+test("core product nav is visible without sign-in or onboarding", async () => {
+  const header = await source("components/SiteHeader.tsx");
+  assert.match(header, /href: "\/today".*always: true/s);
+  assert.match(header, /href: "\/materials".*always: true/s);
+  assert.match(header, /href: "\/map".*always: true/s);
+  assert.doesNotMatch(header, /href: "\/materials".*always: false/s);
+  assert.doesNotMatch(header, /href: "\/map".*always: false/s);
+});
+
+test("pricing free CTA keeps readable contrast against legal link styles", async () => {
+  const css = await source("app/globals.css");
+  assert.match(css, /legal-panel a:not\(\.cta\)/);
+  assert.match(css, /pricing-plan \.cta[\s\S]*color: var\(--color-pure-white\)/);
+  assert.match(css, /route-transition[\s\S]*min-height: 0/);
+  assert.doesNotMatch(css, /\.route-transition \{ min-height: 100dvh; \}/);
+});
