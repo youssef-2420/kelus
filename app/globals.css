@@ -3143,7 +3143,7 @@ h3,
 .v1-method {
   width: min(var(--page-max-width), calc(100% - 48px));
   margin: 0 auto;
-  padding: clamp(var(--spacing-56), 6vw, 88px) 0;
+  padding: clamp(var(--spacing-48), 6vw, 88px) 0;
   border-top: 1px solid var(--color-frost);
 }
 
@@ -6159,7 +6159,7 @@ h3,
 /* Homepage density: content-sized hero, not a forced full-viewport void. */
 .kelus-hero.home-hero.is-product-demo {
   min-height: 0 !important;
-  padding: var(--spacing-40) 0 var(--spacing-56);
+  padding: var(--spacing-40) 0 var(--spacing-48);
   gap: clamp(var(--spacing-32), 4vw, 64px);
   align-items: center;
 }
