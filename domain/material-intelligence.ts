@@ -1,14 +1,23 @@
 import type {
   Concept,
+  ConceptRelationship,
   ExtractedMaterialPage,
   LearningActivity,
   Prompt,
   ProposedConcept,
 } from "./types";
 
-const ADMINISTRATIVE = /\b(?:assessment|attendance|calendar|contact|course syllabus|email|grading|instructor|office hours|policy|reading list|schedule|syllabus|textbook)\b/i;
+const ADMINISTRATIVE =
+  /\b(?:assessment|attendance|calendar|contact|course syllabus|email|grading|instructor|office hours|policy|reading list|schedule|syllabus|textbook)\b/i;
 const HEADING_PREFIX = /^(?:week|module|topic|chapter|unit|lecture|section)\s*\d*[.:\-–—]?\s*/i;
 const NUMBER_PREFIX = /^\s*(?:\d+(?:\.\d+)*|[ivx]+)[.)\-:]\s*/i;
+const EXAM_SIGNAL =
+  /\b(?:exam|midterm|final|tests?|tested|assessment|learning objectives?|will be asked|must know|high-?yield|core concept|key concept|important|critical|essential|fundamental)\b/i;
+const DEFINITION_SIGNAL =
+  /\b(?:is defined as|refers to|means that|measures|describes|occurs when|happens when|is the|are the)\b/i;
+const PREREQ_SIGNAL =
+  /\b(?:prerequisites?|requires?|required|depends on|dependent on|builds on|built on|based on|before studying|after mastering|extension of|application of|assumes knowledge of|you should already know)\b/i;
+const RELATED_SIGNAL = /\b(?:related to|closely related|see also|compared with|in contrast to|versus|vs\.?)\b/i;
 
 function cleanCandidate(value: string) {
   return value
@@ -39,8 +48,164 @@ function stablePart(value: string) {
 }
 
 function excerptFor(lines: string[], index: number, fallback: string) {
-  const nearby = lines.slice(index + 1, index + 4).map((line) => line.trim()).filter((line) => line.length > 20);
-  return (nearby[0] ?? fallback).slice(0, 360);
+  const nearby = lines
+    .slice(index + 1, index + 5)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 20 && !looksLikeConcept(line));
+  return (nearby[0] ?? nearby[1] ?? fallback).slice(0, 420);
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function pageNumberFromLocator(locator: string) {
+  const match = locator.match(/(\d+)/);
+  return match ? Number(match[1]) : 1;
+}
+
+function mentionCount(name: string, corpus: string) {
+  return corpus.match(new RegExp(`\\b${escapeRegExp(name)}\\b`, "gi"))?.length ?? 0;
+}
+
+function sentencesFrom(excerpt: string) {
+  return excerpt
+    .split(/(?<=[.!?])\s+/)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 18);
+}
+
+function centralClaim(name: string, excerpt: string) {
+  const sentences = sentencesFrom(excerpt);
+  if (!sentences.length) return excerpt.slice(0, 220);
+  const named = sentences.find((sentence) => sentence.toLocaleLowerCase().includes(name.toLocaleLowerCase()));
+  const defined = sentences.find((sentence) => DEFINITION_SIGNAL.test(sentence));
+  return (named ?? defined ?? sentences[0]).slice(0, 260);
+}
+
+function headingStrengthFor(name: string) {
+  let strength = 0.35;
+  if (NUMBER_PREFIX.test(name) || /^\d+/.test(name)) strength += 0.25;
+  if (HEADING_PREFIX.test(name)) strength += 0.25;
+  if (name === name.toUpperCase() && name.length > 4) strength += 0.1;
+  return clamp(strength, 0, 1);
+}
+
+function scoreExamImportance(input: {
+  name: string;
+  excerpt: string;
+  locator: string;
+  corpus: string;
+  index: number;
+  total: number;
+}) {
+  let score = 0.52;
+  score += clamp((mentionCount(input.name, input.corpus) - 1) * 0.035, 0, 0.14);
+  score += headingStrengthFor(input.name) * 0.08;
+  if (EXAM_SIGNAL.test(input.excerpt) || EXAM_SIGNAL.test(input.name)) score += 0.12;
+  if (DEFINITION_SIGNAL.test(input.excerpt)) score += 0.05;
+  if (pageNumberFromLocator(input.locator) <= 2) score += 0.04;
+  score += clamp(((input.total - input.index) / Math.max(input.total, 1)) * 0.04, 0, 0.04);
+  return clamp(Number(score.toFixed(3)), 0.35, 0.95);
+}
+
+function scoreDifficulty(excerpt: string) {
+  let score = 0.45;
+  if (excerpt.length > 180) score += 0.08;
+  if (/\b(?:however|whereas|trade-?off|equilibrium|derivative|integral|theorem|proof|paradox)\b/i.test(excerpt)) {
+    score += 0.12;
+  }
+  if (/\d/.test(excerpt)) score += 0.05;
+  return clamp(Number(score.toFixed(3)), 0.3, 0.8);
+}
+
+function buildActivity(concept: Concept, proposal: ProposedConcept): LearningActivity {
+  const claim = centralClaim(concept.name, proposal.sourceExcerpt);
+  return {
+    id: `activity-${concept.id}`,
+    conceptId: concept.id,
+    learn: {
+      title: `Make ${concept.name} usable from the source.`,
+      explanation: claim,
+      keyPoints: [
+        `Find the claim the source makes about ${concept.name}.`,
+        "Cover the excerpt, then restate that claim without looking.",
+        `Keep one concrete detail from ${proposal.locator} so the idea stays grounded.`,
+      ],
+    },
+    retrieve: {
+      prompt: `Without looking, what central claim does the course make about ${concept.name}?`,
+      hint: `Return to ${proposal.locator}. Start from the relationship or definition, not a list of facts.`,
+      explanation: claim,
+      example: `Restate the source claim about ${concept.name} in one sentence, then add one detail from ${proposal.locator}.`,
+      modelAnswer: claim,
+    },
+    apply: {
+      prompt: `Apply the source's claim about ${concept.name} to a new example that is not copied from the page.`,
+      hint: "Keep the same underlying relationship. Change only the situation.",
+      modelAnswer: `A strong answer reuses this claim in a new context: ${claim}`,
+    },
+    sourceReferences: [{ materialId: proposal.materialId, label: proposal.sourceLabel, locator: proposal.locator }],
+  };
+}
+
+function inferRelationships(concepts: Concept[], corpus: string): ConceptRelationship[] {
+  const relationships: ConceptRelationship[] = [];
+  const seen = new Set<string>();
+
+  for (const left of concepts) {
+    for (const right of concepts) {
+      if (left.id === right.id) continue;
+      const leftPattern = escapeRegExp(left.name);
+      const rightPattern = escapeRegExp(right.name);
+
+      // "Elasticity builds on Supply and Demand" => Supply and Demand → Elasticity
+      const dependsOn = new RegExp(
+        `\\b${leftPattern}\\b[\\s\\S]{0,40}\\b(?:requires|required|depends on|dependent on|builds on|built on|based on|assumes knowledge of)\\b[\\s\\S]{0,40}\\b${rightPattern}\\b`,
+        "i",
+      );
+      // "Supply and Demand is a prerequisite for Elasticity"
+      const precedes = new RegExp(
+        `\\b${leftPattern}\\b[\\s\\S]{0,40}\\b(?:prerequisite for|before studying|before learning)\\b[\\s\\S]{0,40}\\b${rightPattern}\\b`,
+        "i",
+      );
+      // Both names must be the related pair — not "related to Something Else".
+      const related = new RegExp(
+        `\\b${leftPattern}\\b[\\s\\S]{0,40}\\b(?:related to|closely related|see also|compared with|in contrast to|versus|vs\\.?)\\b[\\s\\S]{0,40}\\b${rightPattern}\\b`,
+        "i",
+      );
+
+      let kind: ConceptRelationship["kind"] | null = null;
+      let fromId = left.id;
+      let toId = right.id;
+
+      if (dependsOn.test(corpus)) {
+        kind = "prerequisite";
+        fromId = right.id;
+        toId = left.id;
+      } else if (precedes.test(corpus)) {
+        kind = "prerequisite";
+        fromId = left.id;
+        toId = right.id;
+      } else if (related.test(corpus)) {
+        kind = "related";
+      }
+      if (!kind) continue;
+
+      const key = `${kind}:${fromId}:${toId}`;
+      const reverse = `${kind}:${toId}:${fromId}`;
+      if (seen.has(key) || (kind === "related" && seen.has(reverse))) continue;
+      if (kind === "prerequisite" && seen.has(`prerequisite:${toId}:${fromId}`)) continue;
+      seen.add(key);
+      relationships.push({ id: `rel-${stablePart(key)}`, fromId, toId, kind });
+    }
+  }
+
+  return relationships.slice(0, 12);
 }
 
 export function proposeConceptsFromPages(input: {
@@ -61,13 +226,12 @@ export function proposeConceptsFromPages(input: {
       const key = name.toLocaleLowerCase();
       if (!looksLikeConcept(name) || seen.has(key)) return;
       seen.add(key);
-      const locator = `Page ${page.pageNumber}`;
       proposals.push({
         id: `proposal-${stablePart(`${input.materialId}:${key}`)}`,
         materialId: input.materialId,
         name,
         sourceLabel: input.sourceLabel,
-        locator,
+        locator: `Page ${page.pageNumber}`,
         sourceExcerpt: excerptFor(lines, index, line),
       });
     });
@@ -80,14 +244,27 @@ export function buildConfirmedMaterialModel(input: {
   courseId: string;
   userId: string;
   nowIso: string;
+  pages?: ExtractedMaterialPage[];
 }) {
-  const concepts: Concept[] = input.proposals.map((proposal) => ({
+  const corpus = [
+    ...(input.pages ?? []).map((page) => page.text),
+    ...input.proposals.map((proposal) => `${proposal.name}\n${proposal.sourceExcerpt}`),
+  ].join("\n");
+
+  const concepts: Concept[] = input.proposals.map((proposal, index) => ({
     id: `c-source-${stablePart(`${input.courseId}:${proposal.name.toLocaleLowerCase()}`)}`,
     courseId: input.courseId,
     userId: input.userId,
     name: proposal.name,
-    examImportance: 0.7,
-    difficulty: 0.5,
+    examImportance: scoreExamImportance({
+      name: proposal.name,
+      excerpt: proposal.sourceExcerpt,
+      locator: proposal.locator,
+      corpus,
+      index,
+      total: input.proposals.length,
+    }),
+    difficulty: scoreDifficulty(proposal.sourceExcerpt),
     estimatedMinutes: 18,
     mastery: 0,
     confidence: 0,
@@ -100,46 +277,31 @@ export function buildConfirmedMaterialModel(input: {
     createdAt: input.nowIso,
     updatedAt: input.nowIso,
   }));
+
+  const uniqueScores = new Set(concepts.map((concept) => concept.examImportance.toFixed(2)));
+  if (concepts.length > 1 && uniqueScores.size === 1) {
+    concepts.forEach((concept, index) => {
+      concept.examImportance = clamp(
+        Number((concept.examImportance + (concepts.length - index - 1) * 0.02 - index * 0.01).toFixed(3)),
+        0.35,
+        0.95,
+      );
+    });
+  }
+
   const proposalByName = new Map(input.proposals.map((proposal) => [proposal.name, proposal]));
   const prompts: Prompt[] = concepts.map((concept) => {
     const proposal = proposalByName.get(concept.name)!;
     return {
       id: `p-${concept.id}`,
       conceptId: concept.id,
-      promptText: `Explain ${concept.name} in your own words using the course source.`,
-      modelAnswer: proposal.sourceExcerpt,
+      promptText: `Explain the central claim about ${concept.name} from the course source.`,
+      modelAnswer: centralClaim(concept.name, proposal.sourceExcerpt),
     };
   });
-  const learningActivities: LearningActivity[] = concepts.map((concept) => {
-    const proposal = proposalByName.get(concept.name)!;
-    return {
-      id: `activity-${concept.id}`,
-      conceptId: concept.id,
-      learn: {
-        title: `Build a usable explanation of ${concept.name}.`,
-        explanation: proposal.sourceExcerpt,
-        keyPoints: [
-          `Locate the central claim about ${concept.name}.`,
-          "Close the source, then reconstruct that claim from memory.",
-        ],
-      },
-      retrieve: {
-        prompt: `What is the central idea behind ${concept.name}?`,
-        hint: `Return to ${proposal.locator} and identify the relationship or definition attached to this topic.`,
-        explanation: proposal.sourceExcerpt,
-        example: `Connect ${concept.name} to one example from your lecture or notes.`,
-        modelAnswer: proposal.sourceExcerpt,
-      },
-      apply: {
-        prompt: `Use ${concept.name} to explain a new example or situation.`,
-        hint: "Keep the source's central relationship, but change the context.",
-        modelAnswer: `A sound application should preserve the source's central claim: ${proposal.sourceExcerpt}`,
-      },
-      sourceReferences: [{ materialId: proposal.materialId, label: proposal.sourceLabel, locator: proposal.locator }],
-    };
-  });
-  // Ordering in a PDF is not evidence of a prerequisite relationship. Keep the
-  // graph unconnected until a relationship is confirmed or explicitly stated.
-  const relationships: [] = [];
+  const learningActivities: LearningActivity[] = concepts.map((concept) =>
+    buildActivity(concept, proposalByName.get(concept.name)!),
+  );
+  const relationships = inferRelationships(concepts, corpus);
   return { concepts, prompts, learningActivities, relationships };
 }

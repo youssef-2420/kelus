@@ -19,7 +19,7 @@ import {
   subscribeDemoState,
   type DemoState,
 } from "@/lib/demo-store";
-import type { Concept, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
+import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
 import { readLearnerState, writeLearnerState } from "@/lib/learner-sync";
 
@@ -44,7 +44,7 @@ type Store = {
     retrievals: Array<{ conceptId: string; promptId: string; responseText: string; outcome: RetrievalOutcome; responseTimeMs: number }>;
   }) => void;
   useDemo: () => void;
-  confirmConcepts: (proposals: ProposedConcept[]) => void;
+  confirmConcepts: (proposals: ProposedConcept[], pages?: ExtractedMaterialPage[]) => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -130,8 +130,8 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     useDemo() {
       loadAminaDemo();
     },
-    confirmConcepts(proposals) {
-      confirmMaterialConcepts(state, proposals);
+    confirmConcepts(proposals, pages) {
+      confirmMaterialConcepts(state, proposals, pages);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{children}</StoreContext.Provider>;

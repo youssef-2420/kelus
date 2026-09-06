@@ -7,7 +7,7 @@ import { estimatedReadiness } from "../domain/readiness";
 import { recalculateSessionRoute } from "../domain/session-engine";
 import { buildConfirmedMaterialModel } from "../domain/material-intelligence";
 import { createRetrievalEvent, sessionSummary } from "../domain/session";
-import type { Concept, LearnerSnapshot, LearningEvent, ProposedConcept, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
+import type { Concept, ExtractedMaterialPage, LearnerSnapshot, LearningEvent, ProposedConcept, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
 import { createLearnerSnapshot, type SetupInput } from "./setup";
 
 const STORAGE_KEY = "kelus-learning-state-v2";
@@ -183,7 +183,11 @@ export function completeDiagnosis(state: DemoState, input: {
   return next;
 }
 
-export function confirmMaterialConcepts(state: DemoState, proposals: ProposedConcept[]) {
+export function confirmMaterialConcepts(
+  state: DemoState,
+  proposals: ProposedConcept[],
+  pages?: ExtractedMaterialPage[],
+) {
   if (!proposals.length) throw new Error("Keep at least one concept before building the map.");
   const course = state.snapshot.courses[0];
   if (!course) throw new Error("Set a destination before confirming concepts.");
@@ -192,6 +196,7 @@ export function confirmMaterialConcepts(state: DemoState, proposals: ProposedCon
     courseId: course.id,
     userId: state.snapshot.profile.id,
     nowIso: state.nowIso,
+    pages,
   });
   const previousIds = new Set(state.snapshot.concepts.filter((concept) => concept.courseId === course.id).map((concept) => concept.id));
   const snapshot: LearnerSnapshot = {

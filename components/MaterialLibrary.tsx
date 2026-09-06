@@ -2,13 +2,12 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
-import type { CourseMaterial, MaterialRole, ProposedConcept } from "@/domain/types";
+import type { CourseMaterial, ExtractedMaterialPage, MaterialRole, ProposedConcept } from "@/domain/types";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
-import { proposeConceptsFromPages } from "@/domain/material-intelligence";
+import { buildConfirmedMaterialModel, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
   addPdfMaterial,
@@ -84,7 +83,6 @@ function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (it
 }
 
 export function MaterialLibrary() {
-  const router = useRouter();
   const reduceMotion = useReducedMotion();
   const { state, confirmConcepts } = useLearner();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
@@ -94,9 +92,10 @@ export function MaterialLibrary() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [dragging, setDragging] = useState(false);
-  const [analysis, setAnalysis] = useState<{ material: CourseMaterial; proposals: ProposedConcept[] } | null>(null);
+  const [analysis, setAnalysis] = useState<{ material: CourseMaterial; proposals: ProposedConcept[]; pages: ExtractedMaterialPage[] } | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [draftNames, setDraftNames] = useState<Record<string, string>>({});
+  const [readySummary, setReadySummary] = useState<{ conceptCount: number; firstName: string | null } | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const course = state.snapshot.courses[0];
 
@@ -117,7 +116,8 @@ export function MaterialLibrary() {
       const proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
       if (!proposals.length) throw new Error("Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text.");
       updateMaterialProcessingStatus(material.id, "ready");
-      setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals });
+      setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals, pages });
+      setReadySummary(null);
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
     } catch (caught) {
@@ -179,8 +179,20 @@ export function MaterialLibrary() {
       if (new Set(normalizedNames).size !== normalizedNames.length) {
         throw new Error("Each confirmed concept needs a distinct name.");
       }
-      confirmConcepts(selected);
-      router.push("/map");
+      const preview = buildConfirmedMaterialModel({
+        proposals: selected,
+        courseId: course.id,
+        userId: state.snapshot.profile.id,
+        nowIso: state.nowIso,
+        pages: analysis.pages,
+      });
+      const first = [...preview.concepts].sort((left, right) => right.examImportance - left.examImportance)[0];
+      confirmConcepts(selected, analysis.pages);
+      setReadySummary({
+        conceptCount: selected.length,
+        firstName: first?.name ?? selected[0]?.name ?? null,
+      });
+      setAnalysis(null);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Kelus could not build the map.");
     }
@@ -224,6 +236,30 @@ export function MaterialLibrary() {
       </section>
 
       <AnimatePresence initial={false}>
+        {readySummary ? (
+          <motion.section
+            className="material-ready"
+            aria-labelledby="material-ready-title"
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <p className="kicker">You’re ready</p>
+            <h2 id="material-ready-title">
+              {readySummary.conceptCount} confirmed concept{readySummary.conceptCount === 1 ? "" : "s"} from your file.
+            </h2>
+            <p>
+              Kelus ranked them from the source itself
+              {readySummary.firstName ? <> — start with <strong>{readySummary.firstName}</strong> after a short check</> : null}.
+              No invented syllabus.
+            </p>
+            <div className="material-ready-actions">
+              <Link className="cta" href="/today">Start stop 1 <span aria-hidden="true">→</span></Link>
+              <Link className="text-btn" href="/map">Review the map</Link>
+            </div>
+          </motion.section>
+        ) : null}
         {analysis ? (
           <motion.section
             className="concept-confirmation"
