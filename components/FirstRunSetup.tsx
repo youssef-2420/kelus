@@ -28,6 +28,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
   return (
     <main id="main" className="destination-page">
       <form className="destination-form" onSubmit={next}>
+        <p className="destination-brand">Kelus</p>
         <div className="flow-context"><span>Set your exam</span><b>{step} / 3</b></div>
         {step === 1 ? (
           <fieldset>

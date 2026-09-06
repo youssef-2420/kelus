@@ -15,7 +15,6 @@ export function KelusHero() {
     <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
       <div className="kelus-hero-copy home-copy">
         <p className="hero-brand">Kelus</p>
-        <p className="kicker">Adaptive study routes</p>
         <h1 id="home-hero-title">Your course is too big. Today doesn’t have to be.</h1>
         <p className="home-lede">Add the material and the exam date. Kelus turns what you know—and what you do not—into the next useful study session.</p>
         <div className="home-actions">
