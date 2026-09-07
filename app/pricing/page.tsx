@@ -6,7 +6,7 @@ import { PricingViewTracker } from "@/components/PricingViewTracker";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Kelus is free for local exam planning. Founding student unlocks sync and multi-course when billing opens.",
+  description: "Try Kelus free, then reserve a $19 Exam Pass for one focused adaptive route through exam day.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -16,21 +16,21 @@ export default function PricingPage() {
       <PricingViewTracker />
       <section className="legal-panel">
         <p className="kicker">Pricing</p>
-        <h1>Start free. Join founding when you want sync.</h1>
+        <h1>Prepare for one exam. Pay for one exam.</h1>
         <p className="legal-lede">
-          Kelus already plans today’s route on this device. Founding student is for people who want the next layer —
-          sync, multi-course, and priority access — and can pay the founding rate when checkout is configured.
+          Build your first route free. The Exam Pass is a focused, one-time upgrade for students who want their
+          course, learning evidence, and changing route kept together through exam day.
         </p>
 
         <div className="pricing-grid" role="list">
           <article className="pricing-plan" role="listitem">
             <p className="kicker">Free</p>
-            <h2>Local planner</h2>
+            <h2>Try a real route</h2>
             <p className="pricing-price">$0</p>
             <ul>
-              <li>Upload course PDFs on this device</li>
-              <li>Confirm concepts and build today’s route</li>
-              <li>Diagnosis + study sessions</li>
+              <li>Add your course and exam date</li>
+              <li>Build today’s evidence-based route</li>
+              <li>Complete a diagnosis and study session</li>
               <li>No account required</li>
             </ul>
             <Link className="cta" href="/today">
@@ -39,16 +39,16 @@ export default function PricingPage() {
           </article>
 
           <article className="pricing-plan is-founding" role="listitem">
-            <p className="kicker">Founding student</p>
-            <h2>Sync when it’s ready</h2>
+            <p className="kicker">Exam Pass</p>
+            <h2>Stay routed to exam day</h2>
             <p className="pricing-price">
-              $9<span>/term</span>
+              $19<span>/exam</span>
             </p>
             <ul>
               <li>Everything in Free</li>
-              <li>Cross-device sync (when billing opens)</li>
-              <li>Multi-course workspace</li>
-              <li>Priority access to new study features</li>
+              <li>One course routed through one exam date</li>
+              <li>Cross-device course and learning-state sync</li>
+              <li>Priority access while the Exam Pass launches</li>
             </ul>
             <FoundingCta source="pricing" />
           </article>

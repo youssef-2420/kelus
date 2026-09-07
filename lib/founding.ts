@@ -1,5 +1,5 @@
 export function foundingPaymentLink() {
-  return process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK?.trim() || "";
+  return process.env.NEXT_PUBLIC_EXAM_PASS_PAYMENT_LINK?.trim() || "";
 }
 
 export function foundingPaymentConfigured() {

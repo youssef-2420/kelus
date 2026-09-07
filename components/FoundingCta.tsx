@@ -16,12 +16,12 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
           href={paymentLink}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => trackEvent({ name: "founding_checkout_clicked", source })}
+          onClick={() => trackEvent({ name: "exam_pass_checkout_clicked", source })}
         >
-          Join founding · $9/term <span aria-hidden="true">→</span>
+          Get Exam Pass · $19 <span aria-hidden="true">→</span>
         </a>
         <p className="founding-cta-note">
-          Opens Stripe checkout. Founding covers sync and multi-course when those ship — Free stays local forever.
+          One exam, one payment. Access follows the exam date you set in Kelus.
         </p>
       </div>
     );
@@ -31,7 +31,7 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
     <div className="founding-cta">
       <WaitlistForm source={source} compact />
       <p className="founding-cta-note">
-        Payment isn’t live in this build yet. Join the list to claim the founding rate when checkout opens.
+        Checkout is not live yet. Join the list to reserve the $19 Exam Pass launch price.
       </p>
     </div>
   );

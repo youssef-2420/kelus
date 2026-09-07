@@ -16,12 +16,12 @@ const COPY: Record<
   { title: string; body: string }
 > = {
   first_session: {
-    title: "Keep this rhythm for the term",
-    body: "Founding student is $9/term while we grow. Free stays usable on this device — founding is for sync, multi-course, and priority access when billing opens.",
+    title: "Take this route to exam day",
+    body: "Your first route is free. The planned $19 Exam Pass keeps one course, its learning evidence, and its changing route together through the exam date you set.",
   },
   third_material: {
-    title: "You’re stacking materials",
-    body: "Free already plans today’s route on this device. Founding student is for sync across devices, multi-course workspace, and priority access when billing opens — $9/term.",
+    title: "Keep this course together",
+    body: "The planned $19 Exam Pass is for one exam: your course materials, learning evidence, and adaptive route kept together across devices until exam day.",
   },
 };
 
@@ -29,13 +29,19 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    let active = true;
     try {
       if (window.localStorage.getItem(PAYWALL_DISMISS_KEY) === "1") return;
     } catch {
       /* ignore */
     }
-    setVisible(true);
+    queueMicrotask(() => {
+      if (active) setVisible(true);
+    });
     trackEvent({ name: "soft_paywall_shown", moment });
+    return () => {
+      active = false;
+    };
   }, [moment]);
 
   if (!visible) return null;
@@ -52,16 +58,16 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
   }
 
   return (
-    <aside className="soft-upgrade" aria-label="Founding student offer">
+    <aside className="soft-upgrade" aria-label="Exam Pass offer">
       <div className="soft-upgrade-copy">
-        <p className="soft-upgrade-kicker">Founding student</p>
+        <p className="soft-upgrade-kicker">Exam Pass</p>
         <h2>{copy.title}</h2>
         <p>{copy.body}</p>
       </div>
       <div className="soft-upgrade-actions">
         {foundingPaymentConfigured() ? (
           <a className="cta" href={foundingPaymentLink()} target="_blank" rel="noopener noreferrer">
-            Join founding · $9
+            Get Exam Pass · $19
           </a>
         ) : (
           <Link href="/pricing/" className="cta">

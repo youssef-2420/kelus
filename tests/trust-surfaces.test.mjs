@@ -107,15 +107,16 @@ test("pricing conversion loop is linked from product surfaces", async () => {
     source("components/SiteHeader.tsx"),
     source("app/session/complete/page.tsx"),
   ]);
-  assert.match(pricing, /Founding student/);
-  assert.match(pricing, /\$9/);
+  assert.match(pricing, /Exam Pass/);
+  assert.match(pricing, /\$19/);
+  assert.match(pricing, /Pay for one exam/);
   assert.match(pricing, /FoundingCta|WaitlistForm/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
   assert.match(home, /\/pricing/);
   assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
-  assert.match(soft, /sync/i);
+  assert.match(soft, /exam date/i);
   assert.doesNotMatch(soft, /unlocks more materials/i);
   assert.match(analytics, /pricing_viewed/);
   assert.match(analytics, /soft_paywall_shown/);
