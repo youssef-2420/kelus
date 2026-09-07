@@ -58,6 +58,8 @@ export default function PricingPage() {
         <p className="legal-inline-links">
           Questions? <a href="mailto:hello@kelus.me">hello@kelus.me</a>
           {" · "}
+          <Link href="/questions">Ask a question</Link>
+          {" · "}
           <Link href="/privacy">Privacy</Link>
         </p>
       </section>

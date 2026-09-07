@@ -56,6 +56,12 @@ export default function PrivacyPage() {
           You can keep using Kelus without signing in. Skip the waitlist if you only want the local planner.
         </p>
 
+        <h2>Questions inbox</h2>
+        <p>
+          If you send a question through the Questions page, we store your name, email, and message so we can reply.
+          You can also email <a href="mailto:hello@kelus.me">hello@kelus.me</a> directly.
+        </p>
+
         <h2>Waitlist</h2>
         <p>
           If you join the waitlist, we store the email (and optional note) you submit so we can contact you about Exam

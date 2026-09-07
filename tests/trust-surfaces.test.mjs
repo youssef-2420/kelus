@@ -59,6 +59,36 @@ test("waitlist capture stays honest without a remote endpoint", async () => {
   assert.match(form, /Remote waitlist delivery isn’t configured|on-device until remote delivery/i);
 });
 
+test("client questions page captures name email and question for inbox delivery", async () => {
+  const [page, form, lib, footer, sitemap, privacy, envExample, pagesWorkflow, restoreWorkflow, analytics] = await Promise.all([
+    source("app/questions/page.tsx"),
+    source("components/QuestionsForm.tsx"),
+    source("lib/questions.ts"),
+    source("components/SiteFooter.tsx"),
+    source("app/sitemap.ts"),
+    source("app/privacy/page.tsx"),
+    source(".env.example"),
+    source(".github/workflows/pages.yml"),
+    source(".github/workflows/restore-kelus-dns.yml"),
+    source("lib/analytics.ts"),
+  ]);
+  assert.match(page, /QuestionsForm/);
+  assert.match(page, /Ask us anything about Kelus/);
+  assert.match(form, /Send question/);
+  assert.match(form, /hello@kelus\.me/);
+  assert.match(lib, /NEXT_PUBLIC_QUESTIONS_ENDPOINT/);
+  assert.match(lib, /submitClientQuestion/);
+  assert.match(lib, /type: "client_question"/);
+  assert.match(lib, /delivery: "local"/);
+  assert.match(footer, /\/questions/);
+  assert.match(sitemap, /\/questions\//);
+  assert.match(privacy, /Questions inbox/i);
+  assert.match(envExample, /NEXT_PUBLIC_QUESTIONS_ENDPOINT/);
+  assert.match(pagesWorkflow, /NEXT_PUBLIC_QUESTIONS_ENDPOINT/);
+  assert.match(restoreWorkflow, /NEXT_PUBLIC_QUESTIONS_ENDPOINT/);
+  assert.match(analytics, /question_submitted/);
+});
+
 test("ready-to-today path stays short and does not overpromise stop 1", async () => {
   const [diagnosis, ui, materials, complete, header, setup, how] = await Promise.all([
     source("domain/diagnosis.ts"),

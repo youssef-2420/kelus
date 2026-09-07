@@ -3,6 +3,7 @@ export const GA_MEASUREMENT_ID =
 
 export type KelusAnalyticsEvent =
   | { name: "waitlist_joined"; source: string }
+  | { name: "question_submitted"; source: string }
   | { name: "material_confirmed"; concept_count: number }
   | { name: "diagnosis_completed"; retrieval_count: number }
   | { name: "first_route_ready"; elapsed_ms: number; concept_count: number }
