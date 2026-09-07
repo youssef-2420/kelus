@@ -14,7 +14,7 @@ export default function TermsPage() {
       <article className="legal-panel">
         <p className="kicker">Legal</p>
         <h1>Terms of use</h1>
-        <p className="legal-updated">Last updated: September 6, 2026</p>
+        <p className="legal-updated">Last updated: September 7, 2026</p>
         <p className="legal-lede">By using kelus.me, you agree to these terms.</p>
 
         <h2>What Kelus provides</h2>
@@ -33,13 +33,14 @@ export default function TermsPage() {
         <h2>Accounts and waitlist</h2>
         <p>
           If you create an account or join the waitlist, keep your credentials safe and provide an email you control.
-          We may remove abusive accounts or waitlist entries.
+          Signed-in accounts may sync learning state and course PDFs to private cloud storage so you can continue on
+          another device. We may remove abusive accounts or waitlist entries.
         </p>
 
         <h2>Availability</h2>
         <p>
           Kelus is provided as-is. Features may change as the product evolves. Local browser storage can be cleared by
-          you or by the browser; keep your own backups of critical notes.
+          you or by the browser; keep your own backups of critical notes even if you use sync.
         </p>
 
         <h2>Limitation</h2>

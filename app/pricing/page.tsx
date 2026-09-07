@@ -6,7 +6,7 @@ import { PricingViewTracker } from "@/components/PricingViewTracker";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Try Kelus free, then reserve a $9 Exam Pass for one focused adaptive route through exam day.",
+  description: "Try Kelus free, then reserve a $9 Exam Pass for launch support through one exam.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -18,8 +18,8 @@ export default function PricingPage() {
         <p className="kicker">Pricing</p>
         <h1>Prepare for one exam. Pay for one exam.</h1>
         <p className="legal-lede">
-          Build your first route free. The Exam Pass is a focused, one-time upgrade for students who want their
-          course, learning evidence, and changing route kept together through exam day.
+          Build your first route free on this device. Sign in anytime to sync that progress across browsers. The Exam
+          Pass is a one-time $9 launch pass for students who want priority support through exam day.
         </p>
 
         <div className="pricing-grid" role="list">
@@ -32,6 +32,7 @@ export default function PricingPage() {
               <li>Build today’s evidence-based route</li>
               <li>Complete a diagnosis and study session</li>
               <li>No account required</li>
+              <li>Optional free sign-in to sync across devices</li>
             </ul>
             <Link className="cta" href="/today">
               Build today’s route <span aria-hidden="true">→</span>
@@ -40,15 +41,15 @@ export default function PricingPage() {
 
           <article className="pricing-plan is-founding" role="listitem">
             <p className="kicker">Exam Pass</p>
-            <h2>Stay routed to exam day</h2>
+            <h2>Support through exam day</h2>
             <p className="pricing-price">
               $9<span>/exam</span>
             </p>
             <ul>
-              <li>Everything in Free</li>
-              <li>One course routed through one exam date</li>
-              <li>Cross-device course and learning-state sync</li>
-              <li>Priority access while the Exam Pass launches</li>
+              <li>Everything in Free, including optional sign-in sync</li>
+              <li>Priority access to new study features while Exam Pass launches</li>
+              <li>Direct email support through the exam date you set</li>
+              <li>Funds focused work on the adaptive route</li>
             </ul>
             <FoundingCta source="pricing" />
           </article>

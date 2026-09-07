@@ -17,11 +17,11 @@ const COPY: Record<
 > = {
   first_session: {
     title: "Take this route to exam day",
-    body: "Your first route is free. The planned $9 Exam Pass keeps one course, its learning evidence, and its changing route together through the exam date you set.",
+    body: "Your first route is free. Sign in anytime to sync this course across devices. The $9 Exam Pass adds priority support through the exam date you set.",
   },
   third_material: {
     title: "Keep this course together",
-    body: "The planned $9 Exam Pass is for one exam: your course materials, learning evidence, and adaptive route kept together across devices until exam day.",
+    body: "Sign in free to sync materials and learning evidence across devices. The $9 Exam Pass is for priority support through one exam while Kelus launches.",
   },
 };
 

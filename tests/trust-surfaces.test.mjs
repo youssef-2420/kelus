@@ -18,8 +18,13 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
   assert.match(privacy, /local-first/i);
   assert.match(privacy, /analytics/i);
   assert.match(privacy, /hello@kelus\.me/);
+  assert.match(privacy, /Optional account and sync/i);
+  assert.match(privacy, /private storage/i);
+  assert.doesNotMatch(privacy, /future sync feature/i);
   assert.match(terms, /not grades|not a guarantee|exam outcomes|Guidance/i);
+  assert.match(terms, /sync learning state and course PDFs/i);
   assert.match(waitlist, /WaitlistForm/);
+  assert.match(waitlist, /Sign in free anytime to sync/i);
   assert.match(footer, /\/privacy/);
   assert.match(footer, /\/waitlist/);
   assert.match(sitemap, /\/privacy\//);
@@ -97,7 +102,7 @@ test("primary CTA language and readiness stay consistent", async () => {
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {
-  const [pricing, footer, sitemap, home, soft, analytics, header, complete] = await Promise.all([
+  const [pricing, footer, sitemap, home, soft, analytics, header, complete, auth, envExample, founding] = await Promise.all([
     source("app/pricing/page.tsx"),
     source("components/SiteFooter.tsx"),
     source("app/sitemap.ts"),
@@ -106,17 +111,25 @@ test("pricing conversion loop is linked from product surfaces", async () => {
     source("lib/analytics.ts"),
     source("components/SiteHeader.tsx"),
     source("app/session/complete/page.tsx"),
+    source("components/SignInDialog.tsx"),
+    source(".env.example"),
+    source("components/FoundingCta.tsx"),
   ]);
   assert.match(pricing, /Exam Pass/);
   assert.match(pricing, /\$9/);
   assert.match(pricing, /Pay for one exam/);
   assert.match(pricing, /FoundingCta|WaitlistForm/);
+  assert.match(pricing, /Optional free sign-in to sync across devices/);
+  assert.match(pricing, /Priority access to new study features/);
+  assert.doesNotMatch(pricing, /Cross-device course and learning-state sync/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
   assert.match(home, /\/pricing/);
   assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
   assert.match(soft, /exam date/i);
+  assert.match(soft, /Sign in/);
+  assert.doesNotMatch(soft, /planned \$9/);
   assert.doesNotMatch(soft, /unlocks more materials/i);
   assert.match(analytics, /pricing_viewed/);
   assert.match(analytics, /soft_paywall_shown/);
@@ -124,4 +137,24 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(complete, /WaitlistForm/);
   assert.match(complete, /completedSessions === 1/);
   assert.match(complete, /completedSessions >= 2/);
+  assert.match(auth, /Sync this course, its PDFs, and your learning evidence across devices/);
+  assert.doesNotMatch(auth, /future cross-device sync/);
+  assert.match(envExample, /NEXT_PUBLIC_EXAM_PASS_PAYMENT_LINK/);
+  assert.doesNotMatch(envExample, /NEXT_PUBLIC_STRIPE_PAYMENT_LINK/);
+  assert.match(founding, /Sync across devices is included with\s+free sign-in|Sync across devices is already available/s);
+});
+
+test("materials stay honest about PDF OCR limits and bookmark-only links", async () => {
+  const [materials, map] = await Promise.all([
+    source("components/MaterialLibrary.tsx"),
+    source("app/map/page.tsx"),
+  ]);
+  assert.match(materials, /Prefer a text PDF/);
+  assert.match(materials, /first 12 pages/);
+  assert.match(materials, /Bookmarks stay on your shelf/);
+  assert.match(materials, /Save bookmark/);
+  assert.match(materials, /Bookmark ·/);
+  assert.match(materials, /replaces your current map and asks you to redo/);
+  assert.match(map, /Set your exam first/);
+  assert.match(map, /Set your exam/);
 });

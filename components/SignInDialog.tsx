@@ -134,7 +134,9 @@ export function SignInDialog() {
             <p className="auth-kicker">Your Kelus account</p>
             <h2 id={titleId}>{mode === "signin" ? "Welcome back." : "Create your account."}</h2>
             <p className="auth-intro">
-              {mode === "signin" ? "Return to your study route on this device." : "Keep your identity ready for future cross-device sync."}
+              {mode === "signin"
+                ? "Pick up your course, materials, and learning evidence on this device."
+                : "Sync this course, its PDFs, and your learning evidence across devices."}
             </p>
 
             {!auth.configured ? <p className="auth-message is-error" role="alert">Authentication is not configured in this build.</p> : null}

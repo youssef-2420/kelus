@@ -93,7 +93,7 @@ export function HomeAfterHero() {
         <Reveal className="home-close-inner">
           <div className="home-close-copy">
             <h2 id="home-close-title">Walk into the exam knowing what you worked on—and why.</h2>
-            <p>Build your first route free. Use one Exam Pass to stay routed through exam day.</p>
+            <p>Build your first route free. Sign in to sync across devices, or get Exam Pass for priority support through exam day.</p>
           </div>
           <div className="home-close-actions">
             <Link href="/today" className="cta">

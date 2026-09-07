@@ -18,9 +18,9 @@ export default function MapPage() {
       <AppShell>
         <section className="materials-empty">
           <p className="kicker">Knowledge Map</p>
-          <h1>Build your first route first.</h1>
-          <p>Set your exam, then confirm concepts from a source so the map has something to show.</p>
-          <Link href="/today" className="cta">Set up your exam <span aria-hidden="true">→</span></Link>
+          <h1>Set your exam first.</h1>
+          <p>Kelus needs a course and exam before it can show a map.</p>
+          <Link href="/today" className="cta">Set your exam <span aria-hidden="true">→</span></Link>
         </section>
       </AppShell>
     );

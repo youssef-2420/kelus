@@ -21,7 +21,8 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
           Get Exam Pass · $9 <span aria-hidden="true">→</span>
         </a>
         <p className="founding-cta-note">
-          One exam, one payment. Access follows the exam date you set in Kelus.
+          One exam, one payment. Priority support follows the exam date you set. Sync across devices is included with
+          free sign-in.
         </p>
       </div>
     );
@@ -31,7 +32,8 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
     <div className="founding-cta">
       <WaitlistForm source={source} compact />
       <p className="founding-cta-note">
-        Checkout is not live yet. Join the list to reserve the $9 Exam Pass launch price.
+        Checkout is not live yet. Join the list to reserve the $9 Exam Pass. Sync across devices is already available
+        with free sign-in.
       </p>
     </div>
   );

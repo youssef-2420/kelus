@@ -17,8 +17,8 @@ export default function WaitlistPage() {
         <p className="kicker">Stay close</p>
         <h1>Use Kelus now. Get a note when it gets better for your course.</h1>
         <p className="legal-lede">
-          The planner works today on this device. Join the list only if you want a quiet update when sync, more
-          courses, or study features land — not a marketing drip.
+          The planner works today on this device. Sign in free anytime to sync across browsers. Join the list only if
+          you want a quiet update when Exam Pass checkout or more courses land — not a marketing drip.
         </p>
         <WaitlistForm source="waitlist_page" />
         <WaitlistExport />

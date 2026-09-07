@@ -14,35 +14,52 @@ export default function PrivacyPage() {
       <article className="legal-panel">
         <p className="kicker">Legal</p>
         <h1>Privacy</h1>
-        <p className="legal-updated">Last updated: September 6, 2026</p>
+        <p className="legal-updated">Last updated: September 7, 2026</p>
         <p className="legal-lede">
-          Kelus is a local-first exam planner. Your course PDFs and study progress stay on this device by default.
-          This page explains what optional services may collect if you use them.
+          Kelus is a local-first exam planner. Without an account, your course PDFs and study progress stay on this
+          device. If you sign in, Kelus can sync that work to your private account so you can continue on another
+          browser.
         </p>
 
-        <h2>What stays on your device</h2>
+        <h2>What stays on your device by default</h2>
         <ul>
           <li>
-            <strong>Course materials</strong> — PDFs you upload are read in the browser to propose concepts. Kelus does
-            not upload those files to Kelus servers as part of the static planner.
+            <strong>Course materials</strong> — PDFs you upload are read in the browser to propose concepts. Concept
+            extraction runs on this device. Without sign-in, PDF files stay in this browser’s storage.
           </li>
           <li>
             <strong>Study state</strong> — exam setup, confirmed concepts, diagnosis answers, and session history are
             stored in browser storage on this device.
           </li>
+          <li>
+            <strong>Saved links</strong> — video and web URLs you add are bookmarks on the source shelf. Kelus does not
+            fetch or analyze those pages for concepts.
+          </li>
         </ul>
 
-        <h2>Optional account</h2>
+        <h2>Optional account and sync</h2>
         <p>
           If you sign in, authentication is handled by Supabase. That may store your email, auth identifiers, and any
-          profile fields you provide so you can restore a session on another browser. Course PDFs are still processed
-          locally unless a future sync feature says otherwise in product copy.
+          profile fields you provide. When signed in, Kelus can also sync:
+        </p>
+        <ul>
+          <li>
+            <strong>Learning state</strong> — your course, exam date, confirmed concepts, diagnosis, and session history
+            to your private account.
+          </li>
+          <li>
+            <strong>Course PDFs</strong> — copies of uploaded PDFs to private storage in your account so they are
+            available across devices. Processing still happens in the browser first.
+          </li>
+        </ul>
+        <p>
+          You can keep using Kelus without signing in. Skip the waitlist if you only want the local planner.
         </p>
 
         <h2>Waitlist</h2>
         <p>
-          If you join the waitlist, we store the email (and optional note) you submit so we can contact you about
-          early access. You can ask to be removed anytime at{" "}
+          If you join the waitlist, we store the email (and optional note) you submit so we can contact you about Exam
+          Pass launch and product updates. You can ask to be removed anytime at{" "}
           <a href="mailto:hello@kelus.me">hello@kelus.me</a>.
         </p>
 
@@ -61,10 +78,11 @@ export default function PrivacyPage() {
 
         <h2>Your choices</h2>
         <ul>
-          <li>Clear site data in your browser to remove local study state.</li>
-          <li>Skip sign-in and waitlist if you want to keep using Kelus fully offline in the browser.</li>
+          <li>Clear site data in your browser to remove local study state and on-device PDFs.</li>
+          <li>Skip sign-in and waitlist if you want to keep using Kelus only on this device.</li>
           <li>
-            Contact <a href="mailto:hello@kelus.me">hello@kelus.me</a> to delete an account or waitlist email we hold.
+            Contact <a href="mailto:hello@kelus.me">hello@kelus.me</a> to delete an account, synced materials, or
+            waitlist email we hold.
           </li>
         </ul>
 

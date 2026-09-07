@@ -2423,6 +2423,13 @@ button, input, textarea { font: inherit; }
 .material-link-form input:focus-visible { outline-color: var(--color-product-green); border-color: var(--color-product-border); }
 .material-link-form .cta { min-height: 48px; white-space: nowrap; }
 .material-error { min-height: 1.5em; margin: var(--space-product-xs) 0 0; color: var(--weak); font-size: 13px; }
+.material-link-hint {
+  margin: var(--space-product-xs) 0 0;
+  color: var(--color-product-secondary);
+  font-size: 13px;
+  line-height: 1.45;
+  max-width: 62ch;
+}
 .material-shelf { padding: var(--space-product-2xl) 0; border-bottom: 1px solid var(--color-product-border); }
 .material-shelf > header { display: flex; align-items: end; justify-content: space-between; gap: var(--space-product-lg); margin-bottom: var(--space-product-lg); }
 .material-shelf h2 { margin: var(--space-product-xs) 0 0; font-size: 30px; }

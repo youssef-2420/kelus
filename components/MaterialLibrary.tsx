@@ -64,13 +64,17 @@ function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMater
       <span className="material-kind">{materialRoleLabel(item.role)}</span>
       <span className="material-name">
         <strong>{item.title}</strong>
-        <small>{item.storage === "local" ? [item.fileName, formatBytes(item.sizeBytes)].filter(Boolean).join(" · ") : sourceHost(item.sourceUrl)}</small>
+        <small>
+          {item.storage === "local"
+            ? [item.fileName, formatBytes(item.sizeBytes)].filter(Boolean).join(" · ")
+            : `Bookmark · ${sourceHost(item.sourceUrl)}`}
+        </small>
         {userId ? <small className={`material-sync-label is-${syncState ?? "synced"}`}>{syncState === "syncing" ? "Saving across devices…" : syncState === "retrying" ? "Saved here · cloud retry queued" : "Saved across devices"}</small> : <small className="material-sync-label">Saved on this device</small>}
       </span>
       <span className="material-actions">
         {item.storage === "local" ? <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>{item.processingStatus === "processing" ? "Reading…" : item.processingStatus === "ready" ? "Review concepts" : "Build concepts"}</button> : null}
         {item.storage === "url" ? (
-          item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">Open</a> : null
+          item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">Open bookmark</a> : null
         ) : (
           <button type="button" onClick={downloadPdf} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>
         )}
@@ -109,7 +113,18 @@ export function MaterialLibrary() {
   const course = state.snapshot.courses[0];
 
   if (!state.onboardingCompleted || !course) {
-    return <AppShell><section className="materials-empty"><p className="kicker">Course material</p><h1>Set your exam first.</h1><p>Kelus needs a course and exam before it can keep sources with it.</p><Link className="cta" href="/today">Set exam <span aria-hidden="true">→</span></Link></section></AppShell>;
+    return (
+      <AppShell>
+        <section className="materials-empty">
+          <p className="kicker">Course material</p>
+          <h1>Set your exam first.</h1>
+          <p>Kelus needs a course and exam before it can keep sources with it.</p>
+          <Link className="cta" href="/today">
+            Set your exam <span aria-hidden="true">→</span>
+          </Link>
+        </section>
+      </AppShell>
+    );
   }
 
   const courseMaterials = materials.filter((item) => item.courseId === course.id);
@@ -277,7 +292,7 @@ export function MaterialLibrary() {
     <AppShell>
       <header className="materials-head">
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
-        <p>Keep the sources that define this exam together. Add PDFs from your device or save useful video and web links.</p>
+        <p>Keep the sources that define this exam together. PDFs build concepts; links are bookmarks only.</p>
       </header>
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
@@ -289,7 +304,11 @@ export function MaterialLibrary() {
           <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)}>
             {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
-          <p>PDFs are read on this device. You confirm every proposed concept before it changes your route.</p>
+          <p>
+            Prefer a text PDF (syllabus or lecture notes with selectable text). Scanned image PDFs use on-device OCR for
+            roughly the first 12 pages and about a minute — English works best. You confirm every proposed concept
+            before it changes your route.
+          </p>
         </div>
         <label
           className={`material-drop${dragging ? " is-dragging" : ""}`}
@@ -301,18 +320,24 @@ export function MaterialLibrary() {
           <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
           <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
-          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · scans use on-device OCR"}</span>
+          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · text PDFs work best · scans use on-device OCR"}</span>
         </label>
 
         <form className="material-link-form" onSubmit={addLink}>
-          <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture notes" /></div>
-          <div className="material-url-field"><label htmlFor="material-url">Video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" /></div>
-          <button className="cta" type="submit" disabled={!url.trim()}>Add link</button>
+          <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" /></div>
+          <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" /></div>
+          <button className="cta" type="submit" disabled={!url.trim()}>Save bookmark</button>
         </form>
+        <p className="material-link-hint">
+          Bookmarks stay on your shelf for quick open. They do not become concepts — upload a PDF for that.
+        </p>
         <p className="material-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error ?? "\u00a0"}</p>
         {error ? (
           <div className="material-error-rescue" role="group" aria-label="Ways to continue">
-            <p>Kelus now tries on-device OCR for scans. If that still fails, use a text PDF or try the sample course.</p>
+            <p>
+              If OCR cannot read this scan, export a text PDF from your notes app, try a clearer scan, or continue with
+              the sample course.
+            </p>
             <div className="material-error-actions">
               <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
               <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
@@ -356,7 +381,12 @@ export function MaterialLibrary() {
           >
             <header>
               <div><p className="kicker">Confirm the course structure</p><h2 id="concept-confirmation-title">Kelus found {analysis.proposals.length} proposed concepts.</h2></div>
-              <p>Keep only the concepts this exam actually covers. Each one retains the page where Kelus found it.</p>
+              <p>
+                Keep only the concepts this exam actually covers. Each one retains the page where Kelus found it.
+                {state.diagnosisCompleted
+                  ? " Confirming a new set replaces your current map and asks you to redo the short familiarity check."
+                  : null}
+              </p>
             </header>
             <ol className="concept-proposal-list">
               {analysis.proposals.map((proposal, index) => (
