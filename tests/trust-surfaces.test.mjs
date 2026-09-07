@@ -76,9 +76,10 @@ test("client questions page captures name email and question for inbox delivery"
   assert.match(page, /Ask us anything about Kelus/);
   assert.match(form, /Send question/);
   assert.match(form, /hello@kelus\.me/);
-  assert.match(lib, /NEXT_PUBLIC_QUESTIONS_ENDPOINT/);
+  assert.match(lib, /formsubmit\.co\/ajax\/\$\{DEFAULT_QUESTIONS_INBOX\}|formsubmit\.co\/ajax\/hello@kelus\.me/);
+  assert.match(lib, /DEFAULT_QUESTIONS_INBOX = "hello@kelus\.me"/);
   assert.match(lib, /submitClientQuestion/);
-  assert.match(lib, /type: "client_question"/);
+  assert.match(lib, /_subject/);
   assert.match(lib, /delivery: "local"/);
   assert.match(footer, /\/questions/);
   assert.match(sitemap, /\/questions\//);

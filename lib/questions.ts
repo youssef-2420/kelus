@@ -1,4 +1,7 @@
 const STORAGE_KEY = "kelus:questions:v1";
+const DEFAULT_QUESTIONS_INBOX = "hello@kelus.me";
+/** FormSubmit delivers browser POSTs to the inbox without a GitHub secret. */
+const DEFAULT_QUESTIONS_ENDPOINT = `https://formsubmit.co/ajax/${DEFAULT_QUESTIONS_INBOX}`;
 
 export type QuestionEntry = {
   name: string;
@@ -8,8 +11,17 @@ export type QuestionEntry = {
   createdAt: string;
 };
 
+export function questionsInboxEmail() {
+  return DEFAULT_QUESTIONS_INBOX;
+}
+
+export function questionsEndpoint() {
+  return process.env.NEXT_PUBLIC_QUESTIONS_ENDPOINT?.trim() || DEFAULT_QUESTIONS_ENDPOINT;
+}
+
 export function questionsEndpointConfigured() {
-  return Boolean(process.env.NEXT_PUBLIC_QUESTIONS_ENDPOINT?.trim());
+  // Always deliverable: custom endpoint or default FormSubmit → hello@kelus.me.
+  return Boolean(questionsEndpoint());
 }
 
 function readEntries(): QuestionEntry[] {
@@ -37,6 +49,10 @@ export function normalizeQuestionEmail(email: string) {
 
 export function isValidQuestionEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeQuestionEmail(email));
+}
+
+function isFormSubmitEndpoint(endpoint: string) {
+  return /formsubmit\.co/i.test(endpoint);
 }
 
 export async function submitClientQuestion(input: {
@@ -72,10 +88,27 @@ export async function submitClientQuestion(input: {
 
   writeEntries([...readEntries(), entry]);
 
-  const endpoint = process.env.NEXT_PUBLIC_QUESTIONS_ENDPOINT?.trim();
-  if (!endpoint) {
-    return { ok: true, delivery: "local" };
-  }
+  const endpoint = questionsEndpoint();
+  const payload = isFormSubmitEndpoint(endpoint)
+    ? {
+        name: entry.name,
+        email: entry.email,
+        message: entry.question,
+        question: entry.question,
+        source: entry.source,
+        createdAt: entry.createdAt,
+        _subject: `Kelus question from ${entry.name}`,
+        _replyto: entry.email,
+        _template: "table",
+      }
+    : {
+        type: "client_question",
+        name: entry.name,
+        email: entry.email,
+        question: entry.question,
+        source: entry.source,
+        createdAt: entry.createdAt,
+      };
 
   try {
     const response = await fetch(endpoint, {
@@ -84,14 +117,7 @@ export async function submitClientQuestion(input: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify({
-        type: "client_question",
-        name: entry.name,
-        email: entry.email,
-        question: entry.question,
-        source: entry.source,
-        createdAt: entry.createdAt,
-      }),
+      body: JSON.stringify(payload),
       keepalive: true,
     });
     if (!response.ok) {

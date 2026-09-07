@@ -1,32 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { downloadQuestionsCsv, questionsEndpointConfigured, readQuestionEntries } from "@/lib/questions";
+import { downloadQuestionsCsv, readQuestionEntries } from "@/lib/questions";
 
 export function QuestionsExport() {
   const [count, setCount] = useState(() => (typeof window === "undefined" ? 0 : readQuestionEntries().length));
   const [message, setMessage] = useState("");
-  const remoteReady = questionsEndpointConfigured();
 
   function exportEntries() {
     const exported = downloadQuestionsCsv();
     setCount(readQuestionEntries().length);
     setMessage(
       exported
-        ? `Downloaded ${exported} local question${exported === 1 ? "" : "s"}.`
+        ? `Downloaded ${exported} local question${exported === 1 ? "" : "s"} (backup copy).`
         : "No local questions on this device yet.",
     );
   }
 
-  if (remoteReady && count === 0) return null;
+  if (count === 0) return null;
 
   return (
-    <aside className="waitlist-export" aria-label="Local questions recovery">
-      <p>
-        {remoteReady
-          ? "This browser may also hold earlier on-device questions from before remote delivery was configured."
-          : "Remote question delivery isn’t configured in this build. Questions stay on this device until it is."}
-      </p>
+    <aside className="waitlist-export" aria-label="Local questions backup">
+      <p>This browser also keeps a backup of questions sent from here, in case inbox delivery hiccups.</p>
       <button type="button" className="text-btn" onClick={exportEntries}>
         Download local questions ({count})
       </button>

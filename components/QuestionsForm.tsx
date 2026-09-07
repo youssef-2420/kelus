@@ -2,11 +2,7 @@
 
 import { useId, useState, type FormEvent } from "react";
 import { trackEvent } from "@/lib/analytics";
-import {
-  isValidQuestionEmail,
-  questionsEndpointConfigured,
-  submitClientQuestion,
-} from "@/lib/questions";
+import { isValidQuestionEmail, submitClientQuestion } from "@/lib/questions";
 
 export function QuestionsForm({ source = "questions" }: { source?: string }) {
   const formId = useId();
@@ -15,7 +11,6 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
   const [question, setQuestion] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "local" | "error">("idle");
   const [message, setMessage] = useState("");
-  const remoteReady = questionsEndpointConfigured();
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -48,9 +43,7 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
     if (result.delivery === "local") {
       setStatus("local");
       setMessage(
-        remoteReady
-          ? "Saved on this device. Remote delivery failed just now — email hello@kelus.me if you need a reply today."
-          : "Saved on this device. Delivery to Kelus isn’t configured in this build yet — email hello@kelus.me for a human reply.",
+        "Couldn’t reach the Kelus inbox just now. Your question is saved on this device — also email hello@kelus.me if you need a reply today.",
       );
     } else {
       setStatus("saved");
@@ -138,9 +131,7 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
         aria-live="polite"
       >
         {message ||
-          (remoteReady
-            ? "Questions go to the Kelus inbox. We reply by email — no public comment thread."
-            : "Leave a question here. This build keeps a local copy until inbox delivery is configured; you can also email hello@kelus.me.")}
+          "Questions go to hello@kelus.me. We reply by email — no public comment thread."}
       </p>
     </form>
   );

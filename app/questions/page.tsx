@@ -17,8 +17,8 @@ export default function QuestionsPage() {
         <p className="kicker">Questions</p>
         <h1>Ask us anything about Kelus.</h1>
         <p className="legal-lede">
-          Stuck on Materials, Map, Today, or Exam Pass? Send a question here. It goes to the Kelus inbox and we reply by
-          email — not a public forum.
+          Stuck on Materials, Map, Today, or Exam Pass? Send a question here. It goes to{" "}
+          <a href="mailto:hello@kelus.me">hello@kelus.me</a> and we reply by email — not a public forum.
         </p>
         <QuestionsForm source="questions_page" />
         <QuestionsExport />
