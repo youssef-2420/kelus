@@ -123,6 +123,20 @@ export async function submitClientQuestion(input: {
     if (!response.ok) {
       return { ok: true, delivery: "local" };
     }
+    const contentType = response.headers.get("content-type") ?? "";
+    if (contentType.includes("application/json")) {
+      const body = (await response.json().catch(() => null)) as
+        | { success?: boolean | string; message?: string; error?: string }
+        | null;
+      if (body) {
+        const failed =
+          body.success === false
+          || body.success === "false"
+          || Boolean(body.error)
+          || /activate|confirm your email|disabled/i.test(body.message ?? "");
+        if (failed) return { ok: true, delivery: "local" };
+      }
+    }
   } catch {
     return { ok: true, delivery: "local" };
   }

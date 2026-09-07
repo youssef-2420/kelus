@@ -171,6 +171,43 @@ export function updateMaterialProcessingStatus(id: string, processingStatus: Cou
   return updated;
 }
 
+export function clearMaterials() {
+  if (typeof window === "undefined") return;
+  cache = [];
+  try {
+    window.localStorage.setItem(METADATA_KEY, "[]");
+  } catch {
+    /* Materials clear must never break the page. */
+  }
+  listeners.forEach((listener) => listener());
+}
+
+/** Seeds a visible sample shelf item so demo courses don't look empty. */
+export function seedDemoMaterial(courseId: string, nowIso?: string) {
+  const timestamp = nowIso ?? new Date().toISOString();
+  const items = readMetadata();
+  if (items.some((item) => item.courseId === courseId && item.id.startsWith("material-demo-"))) {
+    return items;
+  }
+  const record: CourseMaterial = {
+    id: "material-demo-microeconomics",
+    courseId,
+    kind: "link",
+    storage: "url",
+    title: "Sample: Microeconomics lecture pack",
+    sourceUrl: "https://kelus.me/route",
+    fileName: null,
+    mimeType: null,
+    sizeBytes: null,
+    role: "lecture_slides",
+    processingStatus: "ready",
+    addedAt: timestamp,
+    updatedAt: timestamp,
+  };
+  persist([record, ...items.filter((item) => item.courseId !== courseId)]);
+  return readMetadata();
+}
+
 export async function removeMaterial(id: string) {
   const item = readMetadata().find((material) => material.id === id);
   if (item?.storage === "local") await deletePdf(id);

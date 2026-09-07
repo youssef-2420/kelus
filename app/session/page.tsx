@@ -52,7 +52,7 @@ function SessionBody() {
   const search = useSearchParams();
   const reduceMotion = useReducedMotion();
   const sessionId = search.get("id");
-  const { state, submit } = useLearner();
+  const { state, submit, abandon } = useLearner();
   const auth = useAuth();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const session = state.snapshot.sessions.find((item) => item.id === sessionId);
@@ -253,7 +253,10 @@ function SessionBody() {
           <span className="today-reset-confirm" role="group" aria-label="Confirm exit session">
             <span>Leave this session?</span>
             <button type="button" className="text-btn" onClick={() => setConfirmExit(false)}>Stay</button>
-            <button type="button" className="text-btn is-danger" onClick={() => router.push("/today")}>Exit</button>
+            <button type="button" className="text-btn is-danger" onClick={() => {
+              abandon(session.id);
+              router.push("/today");
+            }}>Exit</button>
           </span>
         ) : (
           <button type="button" className="text-btn" onClick={() => setConfirmExit(true)}>Exit session</button>

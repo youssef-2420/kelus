@@ -73,7 +73,7 @@ test("today exposes confidence while reroutes explain the evidence that changed"
   assert.match(today, /Course evidence/);
   assert.match(today, /Learner evidence/);
   assert.match(today, /Start here/);
-  assert.match(today, /Start \{firstName\}/);
+  assert.match(today, /startLabel \?\? `Start \$\{firstName\}`|Start \{firstName\}/);
   assert.match(today, /Learn/);
   assert.match(today, /Retrieve/);
   assert.match(today, /Apply/);

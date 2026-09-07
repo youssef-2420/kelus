@@ -3,6 +3,7 @@
 import { useId, useState, type FormEvent } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { isValidQuestionEmail, submitClientQuestion } from "@/lib/questions";
+import { QUESTIONS_UPDATED_EVENT } from "@/components/QuestionsExport";
 
 export function QuestionsForm({ source = "questions" }: { source?: string }) {
   const formId = useId();
@@ -40,10 +41,11 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
     }
 
     trackEvent({ name: "question_submitted", source });
+    window.dispatchEvent(new Event(QUESTIONS_UPDATED_EVENT));
     if (result.delivery === "local") {
       setStatus("local");
       setMessage(
-        "Couldn’t reach the Kelus inbox just now. Your question is saved on this device — also email hello@kelus.me if you need a reply today.",
+        "Couldn’t reach the Kelus inbox just now. Your question is saved on this device — download the backup below or email hello@kelus.me if you need a reply today.",
       );
     } else {
       setStatus("saved");

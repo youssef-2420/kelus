@@ -93,12 +93,23 @@ export default function TodayPage() {
   const firstName = firstConcept?.name ?? "mixed retrieval";
   const courseId = course.id;
   const examId = exam.id;
+  const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
 
   function begin() {
     const sessionId = start(courseId, examId);
     trackEvent({ name: "session_started" });
-    sessionStorage.setItem("kelus-session-before", JSON.stringify(concepts));
+    try {
+      sessionStorage.setItem("kelus-session-before", JSON.stringify(concepts));
+    } catch {
+      /* Private mode may block sessionStorage; session still starts. */
+    }
     router.push(`/session?id=${sessionId}`);
+  }
+
+  function resume() {
+    if (!openSession) return;
+    trackEvent({ name: "session_resumed" });
+    router.push(`/session?id=${openSession.id}`);
   }
 
   function requestReset() {
@@ -169,7 +180,8 @@ export default function TodayPage() {
           concepts={concepts}
           activities={snapshot.learningActivities}
           events={snapshot.events}
-          onStart={begin}
+          onStart={openSession ? resume : begin}
+          startLabel={openSession ? "Resume session" : undefined}
         />
       </section>
     </AppShell>

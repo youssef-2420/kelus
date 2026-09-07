@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FoundingCta } from "@/components/FoundingCta";
 import { PricingViewTracker } from "@/components/PricingViewTracker";
+import { authConfigured } from "@/lib/auth-config";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
 };
 
 export default function PricingPage() {
+  const syncReady = authConfigured();
+
   return (
     <main id="main" className="legal-page pricing-page">
       <PricingViewTracker />
@@ -18,8 +21,11 @@ export default function PricingPage() {
         <p className="kicker">Pricing</p>
         <h1>Prepare for one exam. Pay for one exam.</h1>
         <p className="legal-lede">
-          Build your first route free on this device. Sign in anytime to sync that progress across browsers. The Exam
-          Pass is a one-time $9 launch pass for students who want priority support through exam day.
+          Build your first route free on this device.
+          {syncReady
+            ? " Sign in anytime to sync that progress across browsers."
+            : " Account sync ships when enabled for your build."}{" "}
+          The Exam Pass is a one-time $9 launch pass for students who want priority support through exam day.
         </p>
 
         <div className="pricing-grid" role="list">
@@ -32,7 +38,7 @@ export default function PricingPage() {
               <li>Build today’s evidence-based route</li>
               <li>Complete a diagnosis and study session</li>
               <li>No account required</li>
-              <li>Optional free sign-in to sync across devices</li>
+              {syncReady ? <li>Optional free sign-in to sync across devices</li> : <li>Saved on this device</li>}
             </ul>
             <Link className="cta" href="/today">
               Build today’s route <span aria-hidden="true">→</span>
@@ -46,7 +52,7 @@ export default function PricingPage() {
               $9<span>/exam</span>
             </p>
             <ul>
-              <li>Everything in Free, including optional sign-in sync</li>
+              <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
               <li>Priority access to new study features while Exam Pass launches</li>
               <li>Direct email support through the exam date you set</li>
               <li>Funds focused work on the adaptive route</li>
