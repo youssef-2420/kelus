@@ -48,11 +48,18 @@ function stablePart(value: string) {
 }
 
 function excerptFor(lines: string[], index: number, fallback: string) {
-  const nearby = lines
-    .slice(index + 1, index + 5)
-    .map((line) => line.trim())
-    .filter((line) => line.length > 20 && !looksLikeConcept(line));
-  return (nearby[0] ?? nearby[1] ?? fallback).slice(0, 420);
+  const nearby: string[] = [];
+  for (const raw of lines.slice(index + 1, index + 8)) {
+    const line = raw.trim();
+    if (!line) {
+      if (nearby.length) break;
+      continue;
+    }
+    if (looksLikeConcept(line) && nearby.length) break;
+    if (line.length > 18 && !looksLikeConcept(line)) nearby.push(line);
+    if (nearby.join(" ").length >= 520) break;
+  }
+  return (nearby.length ? nearby.join(" ") : fallback).slice(0, 700);
 }
 
 function escapeRegExp(value: string) {
@@ -105,7 +112,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
       return {
         learnTitle: `Trace the mechanism behind ${name}.`,
         retrievePrompt: `Without looking, describe the mechanism or relationship the source gives for ${name}.`,
-        applyPrompt: `Predict what changes in a new biological case when one part of ${name} is altered. Explain the mechanism.`,
+        applyPrompt: `Suppose one required part of ${name} is reduced or blocked. Predict the consequence and trace the mechanism.`,
         applyHint: "Name the changed component, then trace its effect through the system.",
         applyAnswer: `A sound answer identifies the changed component and uses this source-backed mechanism to predict the result: ${claim}`,
       };
@@ -113,7 +120,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
       return {
         learnTitle: `Trace how ${name} behaves.`,
         retrievePrompt: `Without looking, explain the rule or process the source gives for ${name}.`,
-        applyPrompt: `Trace ${name} on a new input or system state, showing the important steps and resulting behavior.`,
+        applyPrompt: `Suppose the input grows or one required condition fails. Trace how ${name} behaves and name the resulting state or output.`,
         applyHint: "State the input, follow the process in order, and name the resulting state or output.",
         applyAnswer: `A sound trace follows the source-backed process step by step and reaches a consistent output: ${claim}`,
       };
@@ -121,7 +128,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
       return {
         learnTitle: `Explain the forces shaping ${name}.`,
         retrievePrompt: `Without looking, state the source's central causal claim about ${name}.`,
-        applyPrompt: `Use the same causal relationship to explain how a changed condition could alter a related historical outcome.`,
+        applyPrompt: `Suppose the source's main causal condition were weaker. Explain how that could alter the historical outcome.`,
         applyHint: "Name the changed condition, connect it to the source's cause, then explain the likely consequence.",
         applyAnswer: `A sound answer preserves the source's causal relationship while changing the historical condition: ${claim}`,
       };
@@ -129,7 +136,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
       return {
         learnTitle: `Make the rule in ${name} usable.`,
         retrievePrompt: `Without looking, state the rule or legal test the source gives for ${name}.`,
-        applyPrompt: `Apply the rule for ${name} to a new fact pattern. Identify the decisive fact and likely conclusion.`,
+        applyPrompt: `Suppose one required element of the rule for ${name} is missing. Apply the rule and give a qualified conclusion.`,
         applyHint: "State the rule, connect each relevant fact to it, then give a qualified conclusion.",
         applyAnswer: `A sound application states the source-backed rule, tests the relevant facts, and reaches a supported conclusion: ${claim}`,
       };
@@ -137,7 +144,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
       return {
         learnTitle: `Reconstruct the method behind ${name}.`,
         retrievePrompt: `Without looking, state the rule, theorem, or method the source gives for ${name}.`,
-        applyPrompt: `Use the method for ${name} on a new case and show the steps that justify the result.`,
+        applyPrompt: `Suppose one condition of the rule or method for ${name} is not satisfied. Show what can still be concluded and why.`,
         applyHint: "Name the rule first, substitute or transform carefully, and check the result against the conditions.",
         applyAnswer: `A sound solution names the source-backed method, applies it step by step, and checks its conditions: ${claim}`,
       };
@@ -150,6 +157,33 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
         applyAnswer: `A strong answer reuses this source-backed claim in a new context: ${claim}`,
       };
   }
+}
+
+const RUBRIC_STOPWORDS = new Set(["answer", "application", "claim", "course", "idea", "identifies", "new", "result", "sound", "source", "source-backed", "uses"]);
+
+function rubricTerms(value: string) {
+  return [...new Set(value.toLocaleLowerCase().replace(/[^\p{L}\p{N}-]+/gu, " ").split(/\s+/)
+    .filter((word) => word.length > 3 && !RUBRIC_STOPWORDS.has(word)))].slice(0, 10);
+}
+
+function assessmentFor(mode: SubjectMode, name: string, claim: string): NonNullable<LearningActivity["assessment"]> {
+  const sourceTerms = rubricTerms(`${name} ${claim}`);
+  const modeCriterion = {
+    biology: { label: "Traces a mechanism and consequence", terms: ["because", "causes", "leads", "therefore", "result"] },
+    computer_science: { label: "Traces input, process, and output", terms: ["input", "step", "process", "output", "result"] },
+    history: { label: "Connects cause to historical consequence", terms: ["because", "caused", "led", "therefore", "consequence"] },
+    law: { label: "Applies the rule to facts and reaches a conclusion", terms: ["rule", "fact", "element", "because", "conclusion"] },
+    mathematics: { label: "Uses the rule and checks its conditions", terms: ["condition", "therefore", "because", "step", "result"] },
+    general: { label: "Explains the relationship, not only the label", terms: ["because", "means", "leads", "therefore", "example"] },
+  }[mode];
+  return {
+    mode,
+    criteria: [
+      { id: "source-idea", label: "Uses the central source idea", terms: sourceTerms, minimumMatches: Math.min(3, Math.max(1, Math.ceil(sourceTerms.length * 0.3))), appliesTo: "both" },
+      { id: "reasoning", ...modeCriterion, minimumMatches: 1, appliesTo: "apply" },
+      { id: "transfer", label: "Transfers the idea beyond memorized wording", terms: ["if", "when", "because", "therefore", "would", "could"], minimumMatches: 1, appliesTo: "apply" },
+    ],
+  };
 }
 
 function headingStrengthFor(name: string) {
@@ -215,6 +249,7 @@ function buildActivity(concept: Concept, proposal: ProposedConcept): LearningAct
       hint: language.applyHint,
       modelAnswer: language.applyAnswer,
     },
+    assessment: assessmentFor(subjectModeFor(concept.name, proposal.sourceExcerpt), concept.name, claim),
     sourceReferences: [{ materialId: proposal.materialId, label: proposal.sourceLabel, locator: proposal.locator }],
   };
 }
@@ -311,11 +346,15 @@ export function proposeConceptsFromPages(input: {
 
   for (const page of input.pages) {
     const lines = (input.mode === "relaxed" ? splitSparseLines(page.text) : page.text.split(/\n+/).map((line) => line.trim()).filter(Boolean));
+    const bodySizes = page.blocks?.map((block) => block.fontSize).filter((size) => size > 0).sort((a, b) => a - b) ?? [];
+    const bodySize = bodySizes.length ? bodySizes[Math.floor(bodySizes.length / 2)] : 0;
+    const layoutHeadings = new Set(page.blocks?.filter((block) => bodySize > 0 && block.fontSize >= bodySize * 1.16 && block.text.length <= 96).map((block) => cleanCandidate(block.text).toLocaleLowerCase()) ?? []);
     lines.forEach((line, index) => {
-      if (proposals.length >= limit || !matcher(line)) return;
+      const layoutHeading = layoutHeadings.has(cleanCandidate(line).toLocaleLowerCase());
+      if (proposals.length >= limit || (!matcher(line) && !layoutHeading)) return;
       const name = cleanCandidate(line);
       const key = name.toLocaleLowerCase();
-      if (!matcher(name) || seen.has(key)) return;
+      if ((!matcher(name) && !layoutHeading) || seen.has(key) || ADMINISTRATIVE.test(name)) return;
       seen.add(key);
       proposals.push({
         id: `proposal-${stablePart(`${input.materialId}:${key}`)}`,

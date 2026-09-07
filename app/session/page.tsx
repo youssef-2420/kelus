@@ -143,6 +143,7 @@ function SessionBody() {
       applicationAnswer,
       retrieveModelAnswer: activeActivity.retrieve.modelAnswer,
       applicationModelAnswer: activeActivity.apply.modelAnswer,
+      assessment: activeActivity.assessment,
     });
     setEvaluation(nextEvaluation);
     setHelpMode(null);
@@ -356,7 +357,16 @@ function SessionBody() {
                     <p className="kicker">Kelus evidence check</p>
                     <h2>{evaluation.label}</h2>
                     <p>{evaluation.explanation}</p>
-                    <small>Deterministic source comparison · not an instructor grade</small>
+                    {evaluation.criteria.length ? (
+                      <ul className="answer-criteria" aria-label="Assessment criteria">
+                        {evaluation.criteria.map((criterion) => (
+                          <li key={criterion.id} className={criterion.met ? "is-met" : "is-missing"}>
+                            <span aria-hidden="true">{criterion.met ? "✓" : "○"}</span>{criterion.label}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                    <small>Structured source comparison · not an instructor grade</small>
                     <div className="study-ratings" role="group" aria-label="Record answer evidence">
                       <button type="button" className="is-primary" onClick={() => grade(evaluation.outcome)}>Use this result</button>
                       {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={() => grade("partial")}>I needed more help</button> : null}

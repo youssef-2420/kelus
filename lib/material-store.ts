@@ -30,6 +30,7 @@ function normalizeMaterial(value: unknown): CourseMaterial | null {
     ...item,
     role: MATERIAL_ROLES.includes(item.role) ? item.role : "notes",
     processingStatus: PROCESSING_STATUSES.includes(item.processingStatus) ? item.processingStatus : "saved",
+    updatedAt: item.updatedAt ?? item.addedAt,
   };
 }
 
@@ -98,8 +99,15 @@ export function getServerMaterialsSnapshot() {
 }
 
 export function mergeMaterialMetadata(remote: CourseMaterial[]) {
-  const merged = new Map(remote.map((item) => [item.id, normalizeMaterial(item)]));
-  for (const item of readMetadata()) merged.set(item.id, item);
+  const merged = new Map<string, CourseMaterial | null>();
+  for (const item of [...readMetadata(), ...remote]) {
+    const normalized = normalizeMaterial(item);
+    if (!normalized) continue;
+    const existing = merged.get(normalized.id);
+    const existingTime = existing ? Date.parse(existing.updatedAt ?? existing.addedAt) : 0;
+    const nextTime = Date.parse(normalized.updatedAt ?? normalized.addedAt);
+    if (!existing || nextTime >= existingTime) merged.set(normalized.id, normalized);
+  }
   const normalized = [...merged.values()].filter((item): item is CourseMaterial => Boolean(item));
   persist(normalized);
   return normalized;
@@ -124,6 +132,7 @@ export function addLinkMaterial(input: { courseId: string; title: string; value:
     role: input.role,
     processingStatus: "saved",
     addedAt: input.nowIso ?? new Date().toISOString(),
+    updatedAt: input.nowIso ?? new Date().toISOString(),
   };
   persist([...readMetadata(), record]);
   return record;
@@ -132,6 +141,7 @@ export function addLinkMaterial(input: { courseId: string; title: string; value:
 export async function addPdfMaterial(input: { courseId: string; file: File; role: MaterialRole; nowIso?: string }) {
   if (!isPdfFile(input.file)) throw new Error("Choose a PDF file.");
   if (input.file.size > MAX_PDF_BYTES) throw new Error("PDFs must be 20 MB or smaller.");
+  const timestamp = input.nowIso ?? new Date().toISOString();
   const record: CourseMaterial = {
     id: `material-${crypto.randomUUID()}`,
     courseId: input.courseId,
@@ -144,7 +154,8 @@ export async function addPdfMaterial(input: { courseId: string; file: File; role
     sizeBytes: input.file.size,
     role: input.role,
     processingStatus: "saved",
-    addedAt: input.nowIso ?? new Date().toISOString(),
+    addedAt: timestamp,
+    updatedAt: timestamp,
   };
   await writePdf(record.id, input.file);
   persist([...readMetadata(), record]);
@@ -155,7 +166,7 @@ export function updateMaterialProcessingStatus(id: string, processingStatus: Cou
   const items = readMetadata();
   const item = items.find((material) => material.id === id);
   if (!item) return null;
-  const updated = { ...item, processingStatus };
+  const updated = { ...item, processingStatus, updatedAt: new Date().toISOString() };
   persist(items.map((material) => material.id === id ? updated : material));
   return updated;
 }

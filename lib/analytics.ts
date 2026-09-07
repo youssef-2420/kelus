@@ -5,6 +5,7 @@ export type KelusAnalyticsEvent =
   | { name: "waitlist_joined"; source: string }
   | { name: "material_confirmed"; concept_count: number }
   | { name: "diagnosis_completed"; retrieval_count: number }
+  | { name: "first_route_ready"; elapsed_ms: number; concept_count: number }
   | { name: "session_started" }
   | { name: "pricing_viewed"; source: string }
   | { name: "soft_paywall_shown"; moment: "first_session" | "third_material" }

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore, type ReactNode } from "react";
 import { useLearner } from "@/components/LearnerProvider";
-import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { percent } from "@/lib/format";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
@@ -39,15 +38,19 @@ export function CourseWorkspaceRail() {
   const concepts = state.snapshot.concepts.filter((item) => item.courseId === course.id);
   const sourceCount = materials.filter((item) => item.courseId === course.id).length;
   const readiness = estimatedReadiness(concepts);
-  const days = daysUntilExam(exam, state.nowIso);
-  const currentStep = state.diagnosisCompleted ? 5 : !sourceCount ? 2 : !concepts.length ? 3 : 4;
+  const sessions = state.snapshot.sessions.filter((session) => session.courseId === course.id);
+  const completedSession = sessions.some((session) => session.status === "complete");
+  const activeSession = sessions.some((session) => session.status === "in_progress");
+  const currentStep = !sourceCount ? 1 : !concepts.length ? 2 : !state.diagnosisCompleted ? 3 : activeSession ? 5 : completedSession ? 7 : 4;
 
   const stages = [
-    { label: "Exam", detail: `${days} days · target ${exam.targetPercent}%`, href: "/today" },
     { label: "Materials", detail: sourceCount ? `${sourceCount} source${sourceCount === 1 ? "" : "s"}` : "Add your first source", href: "/materials" },
-    { label: "Knowledge Map", detail: concepts.length ? `${concepts.length} concepts` : "Waiting for concepts", href: "/map" },
+    { label: "Concepts", detail: concepts.length ? `${concepts.length} confirmed` : "Confirm what Kelus found", href: "/materials" },
     { label: "Diagnosis", detail: state.diagnosisCompleted ? "Initial evidence captured" : "Next step", href: "/today" },
-    { label: "Today’s route", detail: state.diagnosisCompleted ? `${percent(readiness)} ready` : "Builds after diagnosis", href: "/today" },
+    { label: "Route", detail: state.diagnosisCompleted ? `${percent(readiness)} estimated readiness` : "Builds after diagnosis", href: "/today" },
+    { label: "Study", detail: activeSession ? "Session in progress" : completedSession ? "First session complete" : "Learn, retrieve, apply", href: "/today" },
+    { label: "Evaluation", detail: completedSession ? "Answer evidence recorded" : "Checks reasoning", href: "/today" },
+    { label: "Rerouting", detail: completedSession ? "Next route recalculated" : "Adapts after evidence", href: "/today" },
   ];
 
   return (
@@ -66,7 +69,7 @@ export function CourseWorkspaceRail() {
       </nav>
 
       <div className="course-workspace-progress">
-        <div><span>Course path</span><b>{currentStep} / 5</b></div>
+        <div><span>Learning loop</span><b>{currentStep} / 7</b></div>
         <ol>
           {stages.map((stage, index) => {
             const complete = index + 1 < currentStep;

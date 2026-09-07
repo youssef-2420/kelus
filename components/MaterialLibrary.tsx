@@ -36,7 +36,7 @@ function sourceHost(value: string | null) {
   }
 }
 
-function MaterialRow({ item, onAnalyze, userId }: { item: CourseMaterial; onAnalyze: (item: CourseMaterial) => void; userId?: string }) {
+function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMaterial; onAnalyze: (item: CourseMaterial) => void; userId?: string; syncState?: "syncing" | "synced" | "retrying" }) {
   const [busy, setBusy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
 
@@ -65,6 +65,7 @@ function MaterialRow({ item, onAnalyze, userId }: { item: CourseMaterial; onAnal
       <span className="material-name">
         <strong>{item.title}</strong>
         <small>{item.storage === "local" ? [item.fileName, formatBytes(item.sizeBytes)].filter(Boolean).join(" · ") : sourceHost(item.sourceUrl)}</small>
+        {userId ? <small className={`material-sync-label is-${syncState ?? "synced"}`}>{syncState === "syncing" ? "Saving across devices…" : syncState === "retrying" ? "Saved here · cloud retry queued" : "Saved across devices"}</small> : <small className="material-sync-label">Saved on this device</small>}
       </span>
       <span className="material-actions">
         {item.storage === "local" ? <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>{item.processingStatus === "processing" ? "Reading…" : item.processingStatus === "ready" ? "Review concepts" : "Build concepts"}</button> : null}
@@ -103,6 +104,7 @@ export function MaterialLibrary() {
   const [readySummary, setReadySummary] = useState<{ conceptCount: number; firstName: string | null } | null>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [syncStates, setSyncStates] = useState<Record<string, "syncing" | "synced" | "retrying">>({});
   const fileRef = useRef<HTMLInputElement>(null);
   const course = state.snapshot.courses[0];
 
@@ -127,7 +129,8 @@ export function MaterialLibrary() {
       if (quality.density === "sparse" || quality.density === "empty") {
         setStatusMessage("Scanned PDF detected — reading pages with on-device OCR…");
         const ocr = await ocrPdfPages(pdfFile, pages, {
-          maxPages: 8,
+          maxPages: 12,
+          timeBudgetMs: 60_000,
           onProgress: (progress) => setStatusMessage(progress.message),
         });
         if (ocr.ocrPages > 0) {
@@ -197,8 +200,12 @@ export function MaterialLibrary() {
     try {
       const material = await addPdfMaterial({ courseId: course.id, file, role });
       if (auth.user?.id) {
-        void uploadMaterialPdf(auth.user.id, material, file).catch(() => {
-          setError("The PDF is ready on this device, but its cross-device copy could not be saved yet.");
+        setSyncStates((current) => ({ ...current, [material.id]: "syncing" }));
+        void uploadMaterialPdf(auth.user.id, material, file).then(() => {
+          setSyncStates((current) => ({ ...current, [material.id]: "synced" }));
+        }).catch(() => {
+          setSyncStates((current) => ({ ...current, [material.id]: "retrying" }));
+          setError("The PDF is ready here. Its encrypted account copy will retry when the connection returns.");
         });
       }
       await analyzePdf(material, file);
@@ -388,7 +395,7 @@ export function MaterialLibrary() {
       <section className="material-shelf" aria-labelledby="source-shelf-title">
         <header><div><p className="kicker">Source shelf</p><h2 id="source-shelf-title">{courseMaterials.length ? `${courseMaterials.length} saved` : "Nothing saved yet"}</h2></div><span>This device</span></header>
         {courseMaterials.length ? (
-          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
+          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
         ) : (
           <div className="material-shelf-empty">
             <p>Start with the syllabus or the lecture you are studying now.</p>
@@ -400,8 +407,8 @@ export function MaterialLibrary() {
       </section>
 
       <aside className="material-honesty">
-        <p className="kicker">Local and reviewable</p>
-        <p>PDF text and files stay on this device. Kelus uses only the concepts you confirm, and every learning activity keeps its source page visible.</p>
+        <p className="kicker">Private and reviewable</p>
+        <p>{auth.user ? "Signed-in materials are stored in your private Kelus account and cached on this device. " : "Materials stay on this device until you sign in. "}Kelus uses only the concepts you confirm, and every learning activity keeps its source page visible.</p>
       </aside>
     </AppShell>
   );

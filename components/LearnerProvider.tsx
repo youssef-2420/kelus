@@ -23,7 +23,7 @@ import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome,
 import type { SetupInput } from "@/lib/setup";
 import { readLearnerState, writeLearnerState } from "@/lib/learner-sync";
 import { subscribeMaterials } from "@/lib/material-store";
-import { initializeMaterialSync, writeRemoteMaterialState } from "@/lib/material-sync";
+import { flushMaterialSyncQueue, initializeMaterialSync, writeRemoteMaterialState } from "@/lib/material-sync";
 
 type Store = {
   state: DemoState;
@@ -122,6 +122,13 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       if (active) setSyncMessage("Your route is saved. Material sync needs the Supabase materials migration.");
     });
 
+    const retryPending = () => {
+      void flushMaterialSyncQueue(userId).then((completed) => {
+        if (active && completed > 0) setSyncMessage(null);
+      });
+    };
+    window.addEventListener("online", retryPending);
+
     const unsubscribe = subscribeMaterials(() => {
       if (!initialized) return;
       if (timeout) window.clearTimeout(timeout);
@@ -136,6 +143,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       active = false;
       if (timeout) window.clearTimeout(timeout);
       unsubscribe();
+      window.removeEventListener("online", retryPending);
     };
   }, [auth.user?.id]);
   const store = useMemo<Store>(() => ({

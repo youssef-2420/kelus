@@ -46,6 +46,7 @@ export type CourseMaterial = {
   role: MaterialRole;
   processingStatus: MaterialProcessingStatus;
   addedAt: string;
+  updatedAt?: string;
 };
 
 export type Exam = {
@@ -99,9 +100,19 @@ export type LearningSourceReference = {
   locator: string | null;
 };
 
+export type ExtractedTextBlock = {
+  text: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fontSize: number;
+};
+
 export type ExtractedMaterialPage = {
   pageNumber: number;
   text: string;
+  blocks?: ExtractedTextBlock[];
 };
 
 export type ProposedConcept = {
@@ -132,6 +143,16 @@ export type LearningActivity = {
     prompt: string;
     hint: string;
     modelAnswer: string;
+  };
+  assessment?: {
+    mode: "biology" | "computer_science" | "history" | "law" | "mathematics" | "general";
+    criteria: Array<{
+      id: string;
+      label: string;
+      terms: string[];
+      minimumMatches: number;
+      appliesTo: "retrieve" | "apply" | "both";
+    }>;
   };
   sourceReferences: LearningSourceReference[];
 };

@@ -19,7 +19,7 @@ test("route transition is keyed by pathname and respects reduced motion", async 
   const transition = await source("components/RouteTransition.tsx");
   assert.match(transition, /key=\{pathname\}/);
   assert.match(transition, /useReducedMotion/);
-  assert.match(transition, /initial=\{false\}/);
+  assert.doesNotMatch(transition, /AnimatePresence/);
   assert.doesNotMatch(transition, /height:|width:|top:|left:/);
 });
 
@@ -43,9 +43,10 @@ test("the course workspace keeps destination and setup progress across product p
   ]);
   assert.match(shell, /CourseWorkspaceRail/);
   assert.match(rail, /Current course/);
-  assert.match(rail, /Course path/);
-  assert.match(rail, /Knowledge Map/);
-  assert.match(rail, /Today’s route/);
+  assert.match(rail, /Learning loop/);
+  assert.match(rail, /Materials/);
+  assert.match(rail, /Evaluation/);
+  assert.match(rail, /Rerouting/);
   assert.match(rail, /aria-current="step"/);
   assert.match(rail, /course-stage/);
   assert.match(diagnosis, /<AppShell>/);

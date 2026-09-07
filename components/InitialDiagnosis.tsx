@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, type SyntheticEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { evaluateDiagnosisResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
+import { DIAGNOSIS_RETRIEVAL_LIMIT } from "@/domain/constants";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
 import { selectDiagnosisConcept } from "@/domain/diagnosis";
 import { trackEvent } from "@/lib/analytics";
@@ -36,11 +37,12 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
   const startedAt = useRef(0);
   const concept = concepts.find((item) => item.id === activeConceptId);
   const prompt = snapshot.prompts.find((item) => item.conceptId === concept?.id);
+  const activity = snapshot.learningActivities.find((item) => item.conceptId === concept?.id);
   const allRated = ratedConcepts.every((item) => ratings[item.id]);
 
   function beginChecks(event: SyntheticEvent) {
     if (!allRated) return;
-    const selected = selectDiagnosisConcept({ concepts, relationships: snapshot.relationships, ratings, evidence: [], maximumChecks: 2 });
+    const selected = selectDiagnosisConcept({ concepts, relationships: snapshot.relationships, ratings, evidence: [], maximumChecks: DIAGNOSIS_RETRIEVAL_LIMIT });
     if (!selected) {
       trackEvent({ name: "diagnosis_completed", retrieval_count: 0 });
       return onComplete({ ratings, retrievals: [] });
@@ -65,7 +67,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
       relationships: snapshot.relationships,
       ratings,
       evidence: completed.map((item) => ({ conceptId: item.conceptId, outcome: item.outcome })),
-      maximumChecks: 2,
+      maximumChecks: DIAGNOSIS_RETRIEVAL_LIMIT,
     });
     if (!selected) {
       trackEvent({ name: "diagnosis_completed", retrieval_count: completed.length });
@@ -83,20 +85,20 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
 
   function compareAnswer() {
     if (!prompt) return;
-    setEvaluation(evaluateDiagnosisResponse({ answer, modelAnswer: prompt.modelAnswer }));
+    setEvaluation(evaluateDiagnosisResponse({ answer, modelAnswer: prompt.modelAnswer, assessment: activity?.assessment }));
     setRevealed(true);
   }
 
   return (
     <AppShell>
     <div className="diagnosis-page">
-      <div className="flow-context diagnosis-context"><span>About a minute · then today’s first stop</span><b>Initial estimate</b></div>
+      <div className="flow-context diagnosis-context"><span>One quick evidence check · then today’s first stop</span><b>Initial estimate</b></div>
       {phase === "rating" ? (
         <section className="diagnosis-panel">
           <p className="kicker">Start with your judgment</p>
           <h1>How familiar do these feel?</h1>
           <p className="diagnosis-intro">
-            Rate the {ratedConcepts.length} most exam-critical topics, then up to two quick recall checks. Rough answers are enough — then Kelus opens today’s first study stop.
+            Rate the {ratedConcepts.length} most exam-critical topics, then complete one source-backed recall check. Rough answers are enough — then Kelus opens today’s first study stop.
           </p>
           <ol className="diagnosis-list">
             {ratedConcepts.map((item) => (
@@ -130,7 +132,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
         </section>
       ) : concept && prompt ? (
         <section className="diagnosis-check">
-          <p className="kicker">Recall check {retrievals.length + 1} of 2</p>
+          <p className="kicker">Recall check {retrievals.length + 1} of {DIAGNOSIS_RETRIEVAL_LIMIT}</p>
           <h1>{prompt.promptText}</h1>
           <p className="diagnosis-selection-reason">{selectionReason}</p>
           {!revealed ? (
@@ -148,7 +150,16 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
                   <p className="kicker">Kelus evidence check</p>
                   <h2>{evaluation.label}</h2>
                   <p>{evaluation.explanation}</p>
-                  <small>Deterministic source comparison · not an instructor grade</small>
+                  {evaluation.criteria.length ? (
+                    <ul className="answer-criteria" aria-label="Assessment criteria">
+                      {evaluation.criteria.map((criterion) => (
+                        <li key={criterion.id} className={criterion.met ? "is-met" : "is-missing"}>
+                          <span aria-hidden="true">{criterion.met ? "✓" : "○"}</span>{criterion.label}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  <small>Structured source comparison · not an instructor grade</small>
                   <div className="diagnosis-grades" role="group" aria-label="Record diagnosis evidence">
                     <button type="button" className="is-primary" onClick={(event) => grade(evaluation.outcome, event)}>Use this result</button>
                     {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={(event) => grade("partial", event)}>I needed more help</button> : null}

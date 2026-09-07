@@ -6350,3 +6350,30 @@ h3,
     width: 100%;
   }
 }
+.answer-criteria {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.answer-criteria li {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  color: var(--color-steel);
+  font-size: var(--text-body-sm);
+}
+
+.answer-criteria li span { width: 16px; color: var(--color-smoke); }
+.answer-criteria li.is-met { color: var(--color-midnight-ink); }
+.answer-criteria li.is-met span { color: var(--color-indigo-ink); }
+
+.material-sync-label {
+  color: var(--color-smoke);
+  font-size: 11px;
+}
+
+.material-sync-label.is-syncing { color: var(--color-indigo-ink); }
+.material-sync-label.is-retrying { color: #8a5a20; }

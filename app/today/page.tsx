@@ -18,10 +18,24 @@ export default function TodayPage() {
   const { state, start, reset, completeSetup, completeDiagnosis, useDemo: loadDemo } = useLearner();
   const [confirmReset, setConfirmReset] = useState(false);
 
+  function finishDiagnosis(input: Parameters<typeof completeDiagnosis>[0]) {
+    completeDiagnosis(input);
+    let elapsedMs = 0;
+    try {
+      const startedAt = Number(window.localStorage.getItem("kelus-first-route-started-at"));
+      elapsedMs = startedAt > 0 ? Math.max(0, Date.now() - startedAt) : 0;
+      window.localStorage.removeItem("kelus-first-route-started-at");
+    } catch {
+      elapsedMs = 0;
+    }
+    trackEvent({ name: "first_route_ready", elapsed_ms: elapsedMs, concept_count: state.snapshot.concepts.length });
+  }
+
   if (!state.onboardingCompleted) {
     return (
       <FirstRunSetup
         onComplete={(input) => {
+          try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
           completeSetup(input);
           router.push("/materials");
         }}
@@ -51,7 +65,7 @@ export default function TodayPage() {
   }
 
   if (!state.diagnosisCompleted) {
-    return <InitialDiagnosis snapshot={state.snapshot} onComplete={completeDiagnosis} />;
+    return <InitialDiagnosis snapshot={state.snapshot} onComplete={finishDiagnosis} />;
   }
 
   const { snapshot, nowIso } = state;

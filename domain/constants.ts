@@ -79,4 +79,4 @@ export const SELF_RATING_MASTERY = {
 } as const;
 
 export const SELF_RATING_CONFIDENCE = 0.2;
-export const DIAGNOSIS_RETRIEVAL_LIMIT = 2;
+export const DIAGNOSIS_RETRIEVAL_LIMIT = 1;

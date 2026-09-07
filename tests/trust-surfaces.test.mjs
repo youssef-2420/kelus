@@ -66,7 +66,7 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
   ]);
   assert.match(diagnosis, /maximumChecks \?\? 2/);
   assert.match(ui, /slice\(0, 3\)/);
-  assert.match(ui, /maximumChecks: 2/);
+  assert.match(ui, /DIAGNOSIS_RETRIEVAL_LIMIT/);
   assert.match(materials, /Continue:\ short\ check,\ then\ study/);
   assert.match(materials, /Try\ the\ sample\ course/);
   assert.match(materials, /SoftUpgradePrompt/);

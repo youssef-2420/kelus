@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 
@@ -11,17 +11,14 @@ export function RouteTransition({ children }: { children: ReactNode }) {
   const reduceMotion = useReducedMotion() === true;
 
   return (
-    <AnimatePresence initial={false} mode="popLayout">
-      <motion.div
-        key={pathname}
-        className="route-transition"
-        initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -4 }}
-        transition={reduceMotion ? { duration: 0.1 } : transition}
-      >
-        {children}
-      </motion.div>
-    </AnimatePresence>
+    <motion.div
+      key={pathname}
+      className="route-transition"
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={reduceMotion ? { duration: 0.1 } : transition}
+    >
+      {children}
+    </motion.div>
   );
 }

@@ -1,6 +1,6 @@
-import type { ExtractedMaterialPage } from "../domain/types";
+import type { ExtractedMaterialPage, ExtractedTextBlock } from "../domain/types";
 
-type PdfTextItem = { str?: string; hasEOL?: boolean };
+type PdfTextItem = { str?: string; hasEOL?: boolean; transform?: number[]; width?: number; height?: number };
 type PdfOutlineNode = { title?: string; items?: PdfOutlineNode[] };
 
 export type PdfTextDensity = "empty" | "sparse" | "ok";
@@ -36,6 +36,50 @@ function flattenOutline(nodes: PdfOutlineNode[] | null | undefined, depth = 0): 
   return titles;
 }
 
+function median(values: number[]) {
+  const sorted = values.filter(Number.isFinite).sort((left, right) => left - right);
+  if (!sorted.length) return 12;
+  const middle = Math.floor(sorted.length / 2);
+  return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+}
+
+export function buildLayoutPage(pageNumber: number, rawItems: PdfTextItem[]): ExtractedMaterialPage {
+  const items = rawItems.flatMap((item) => {
+    const text = item.str?.replace(/\s+/g, " ").trim();
+    if (!text) return [];
+    const transform = item.transform ?? [];
+    const measuredSize = item.height ?? Math.hypot(transform[0] ?? 0, transform[1] ?? 0);
+    const fontSize = Math.max(1, measuredSize || 12);
+    return [{ text, x: transform[4] ?? 0, y: transform[5] ?? 0, width: item.width ?? 0, height: item.height ?? fontSize, fontSize, hasEOL: Boolean(item.hasEOL) }];
+  });
+  const lines: Array<ExtractedTextBlock & { hasEOL: boolean }> = [];
+  for (const item of items) {
+    const previous = lines.at(-1);
+    const sameLine = previous && Math.abs(previous.y - item.y) <= Math.max(2, Math.min(previous.fontSize, item.fontSize) * 0.28);
+    if (sameLine && !previous.hasEOL) {
+      previous.text = `${previous.text} ${item.text}`.replace(/\s+/g, " ");
+      previous.width = Math.max(previous.width, item.x + item.width - previous.x);
+      previous.height = Math.max(previous.height, item.height);
+      previous.fontSize = Math.max(previous.fontSize, item.fontSize);
+      previous.hasEOL = item.hasEOL;
+    } else {
+      lines.push({ ...item });
+    }
+  }
+  const bodySize = median(lines.map((line) => line.fontSize));
+  let text = "";
+  lines.forEach((line, index) => {
+    const previous = lines[index - 1];
+    if (previous) {
+      const gap = Math.abs(previous.y - line.y);
+      const paragraphBreak = gap > bodySize * 1.65 || line.fontSize >= bodySize * 1.18 || previous.fontSize >= bodySize * 1.18;
+      text += paragraphBreak ? "\n\n" : "\n";
+    }
+    text += line.text;
+  });
+  return { pageNumber, text: text.trim(), blocks: lines.map(({ hasEOL: _hasEOL, ...line }) => line) };
+}
+
 export async function extractPdfPages(file: File): Promise<ExtractedMaterialPage[]> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -58,13 +102,7 @@ export async function extractPdfPages(file: File): Promise<ExtractedMaterialPage
     for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
       const page = await document.getPage(pageNumber);
       const content = await page.getTextContent();
-      let text = "";
-      for (const raw of content.items) {
-        const item = raw as PdfTextItem;
-        if (!item.str) continue;
-        text += `${item.str}${item.hasEOL ? "\n" : " "}`;
-      }
-      pages.push({ pageNumber, text: text.replace(/[ \t]+\n/g, "\n").trim() });
+      pages.push(buildLayoutPage(pageNumber, content.items as PdfTextItem[]));
       page.cleanup();
     }
   } finally {
@@ -87,6 +125,7 @@ export async function ocrPdfPages(
   pages: ExtractedMaterialPage[],
   options?: {
     maxPages?: number;
+    timeBudgetMs?: number;
     onProgress?: (progress: OcrProgress) => void;
   },
 ): Promise<{ pages: ExtractedMaterialPage[]; ocrPages: number }> {
@@ -95,6 +134,8 @@ export async function ocrPdfPages(
   }
 
   const maxPages = options?.maxPages ?? 8;
+  const timeBudgetMs = options?.timeBudgetMs ?? 60_000;
+  const startedAt = Date.now();
   const targets = pages
     .filter((page) => page.pageNumber > 0 && page.text.trim().length < OCR_MIN_PAGE_CHARS)
     .slice(0, maxPages);
@@ -117,6 +158,7 @@ export async function ocrPdfPages(
 
   try {
     for (let index = 0; index < targets.length; index += 1) {
+      if (Date.now() - startedAt >= timeBudgetMs) break;
       const target = targets[index];
       options?.onProgress?.({
         phase: "rendering",
