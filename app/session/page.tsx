@@ -417,5 +417,5 @@ function SessionBody() {
 }
 
 export default function SessionPage() {
-  return <Suspense fallback={<main className="study-shell"><p>Opening route…</p></main>}><SessionBody /></Suspense>;
+  return <Suspense fallback={<main id="main" className="study-shell"><p>Opening route…</p></main>}><SessionBody /></Suspense>;
 }

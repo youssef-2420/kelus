@@ -29,7 +29,13 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
     <main id="main" className="destination-page">
       <form className="destination-form" onSubmit={next}>
         <p className="destination-brand">Kelus</p>
-        <div className="flow-context"><span>Set your exam</span><b>{step} / 3</b></div>
+        <h1 className="destination-page-title">Set your exam</h1>
+        <div className="flow-context" aria-live="polite">
+          <span>Step</span>
+          <b>
+            {step} / 3
+          </b>
+        </div>
         {step === 1 ? (
           <fieldset>
             <legend>What are you studying?</legend>
