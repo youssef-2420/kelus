@@ -100,7 +100,7 @@ export function HomeAfterHero() {
               Build today’s route <span aria-hidden="true">→</span>
             </Link>
             <Link href="/pricing" className="text-btn">
-              Exam Pass · $19
+              Exam Pass · $9
             </Link>
           </div>
         </Reveal>

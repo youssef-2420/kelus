@@ -6,7 +6,7 @@ import { PricingViewTracker } from "@/components/PricingViewTracker";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Try Kelus free, then reserve a $19 Exam Pass for one focused adaptive route through exam day.",
+  description: "Try Kelus free, then reserve a $9 Exam Pass for one focused adaptive route through exam day.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -42,7 +42,7 @@ export default function PricingPage() {
             <p className="kicker">Exam Pass</p>
             <h2>Stay routed to exam day</h2>
             <p className="pricing-price">
-              $19<span>/exam</span>
+              $9<span>/exam</span>
             </p>
             <ul>
               <li>Everything in Free</li>

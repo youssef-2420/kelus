@@ -108,7 +108,7 @@ test("pricing conversion loop is linked from product surfaces", async () => {
     source("app/session/complete/page.tsx"),
   ]);
   assert.match(pricing, /Exam Pass/);
-  assert.match(pricing, /\$19/);
+  assert.match(pricing, /\$9/);
   assert.match(pricing, /Pay for one exam/);
   assert.match(pricing, /FoundingCta|WaitlistForm/);
   assert.match(footer, /\/pricing/);
