@@ -128,6 +128,7 @@ export function MaterialLibrary() {
   }
 
   const courseMaterials = materials.filter((item) => item.courseId === course.id);
+  const concepts = state.snapshot.concepts.filter((item) => item.courseId === course.id);
 
   async function analyzePdf(material: CourseMaterial, file?: File) {
     setError(null);
@@ -423,9 +424,16 @@ export function MaterialLibrary() {
       </AnimatePresence>
 
       <section className="material-shelf" aria-labelledby="source-shelf-title">
-        <header><div><p className="kicker">Source shelf</p><h2 id="source-shelf-title">{courseMaterials.length ? `${courseMaterials.length} saved` : "Nothing saved yet"}</h2></div><span>This device</span></header>
+        <header><div><p className="kicker">Source shelf</p><h2 id="source-shelf-title">{courseMaterials.length ? `${courseMaterials.length} saved` : concepts.length ? "Sample model ready" : "Nothing saved yet"}</h2></div><span>This device</span></header>
         {courseMaterials.length ? (
           <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
+        ) : concepts.length ? (
+          <div className="material-shelf-empty">
+            <p>Sample course model is loaded — concepts are ready without a PDF on this shelf. Add your own syllabus when you want Kelus grounded in your files.</p>
+            <Link className="cta" href="/today">
+              Continue to Today <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         ) : (
           <div className="material-shelf-empty">
             <p>Start with the syllabus or the lecture you are studying now.</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { authConfigured } from "@/lib/auth-config";
 import { foundingPaymentConfigured, foundingPaymentLink } from "@/lib/founding";
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
@@ -17,16 +18,18 @@ const COPY: Record<
 > = {
   first_session: {
     title: "Take this route to exam day",
-    body: "Your first route is free. Sign in anytime to sync this course across devices. The $9 Exam Pass adds priority support through the exam date you set.",
+    body: "Your first route is free. The $9 Exam Pass adds priority support through the exam date you set.",
   },
   third_material: {
     title: "Keep this course together",
-    body: "Sign in free to sync materials and learning evidence across devices. The $9 Exam Pass is for priority support through one exam while Kelus launches.",
+    body: "The $9 Exam Pass is for priority support through one exam while Kelus launches.",
   },
 };
 
 export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
   const [visible, setVisible] = useState(false);
+  const paymentReady = foundingPaymentConfigured();
+  const syncReady = authConfigured();
 
   useEffect(() => {
     let active = true;
@@ -47,6 +50,9 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
   if (!visible) return null;
 
   const copy = COPY[moment];
+  const body = syncReady
+    ? `${copy.body} Sign in free anytime to sync this course across devices.`
+    : `${copy.body} Your learning stays on this device.`;
 
   function dismiss() {
     try {
@@ -62,16 +68,16 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
       <div className="soft-upgrade-copy">
         <p className="soft-upgrade-kicker">Exam Pass</p>
         <h2>{copy.title}</h2>
-        <p>{copy.body}</p>
+        <p>{body}</p>
       </div>
       <div className="soft-upgrade-actions">
-        {foundingPaymentConfigured() ? (
+        {paymentReady ? (
           <a className="cta" href={foundingPaymentLink()} target="_blank" rel="noopener noreferrer">
             Get Exam Pass · $9
           </a>
         ) : (
           <Link href="/pricing/" className="cta">
-            See pricing
+            See Exam Pass options
           </Link>
         )}
         <button type="button" className="ghost" onClick={dismiss}>

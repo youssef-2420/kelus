@@ -1,11 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { downloadQuestionsCsv, readQuestionEntries } from "@/lib/questions";
 
+export const QUESTIONS_UPDATED_EVENT = "kelus:questions-updated";
+
 export function QuestionsExport() {
-  const [count, setCount] = useState(() => (typeof window === "undefined" ? 0 : readQuestionEntries().length));
+  const [count, setCount] = useState(0);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    const refresh = () => setCount(readQuestionEntries().length);
+    refresh();
+    window.addEventListener(QUESTIONS_UPDATED_EVENT, refresh);
+    window.addEventListener("storage", refresh);
+    return () => {
+      window.removeEventListener(QUESTIONS_UPDATED_EVENT, refresh);
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
 
   function exportEntries() {
     const exported = downloadQuestionsCsv();

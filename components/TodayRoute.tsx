@@ -13,12 +13,14 @@ export function TodayRoute({
   activities,
   events,
   onStart,
+  startLabel,
 }: {
   route: RoutePlan;
   concepts: Concept[];
   activities: LearningActivity[];
   events: LearningEvent[];
   onStart: () => void;
+  startLabel?: string;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
@@ -73,7 +75,7 @@ export function TodayRoute({
             <p>{conciseReason(first.reasons)}</p>
             <small>{firstConcept ? confidenceLabel(firstConcept.confidence) : "Mixed evidence across weak spots"}</small>
             <button type="button" className="cta today-start" onClick={onStart}>
-              Start {firstName} <span aria-hidden="true">→</span>
+              {startLabel ?? `Start ${firstName}`} <span aria-hidden="true">→</span>
             </button>
           </div>
           <div className="today-lead-time">

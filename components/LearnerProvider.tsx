@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyn
 import { useAuth } from "@/components/AuthProvider";
 import {
   finishSession,
+  abandonSession,
   completeDiagnosis as persistDiagnosis,
   completeOnboarding,
   confirmMaterialConcepts,
@@ -28,6 +29,7 @@ import { flushMaterialSyncQueue, initializeMaterialSync, writeRemoteMaterialStat
 type Store = {
   state: DemoState;
   start: (courseId: string, examId: string) => string;
+  abandon: (sessionId: string) => void;
   submit: (input: {
     conceptId: string;
     sessionId: string;
@@ -150,6 +152,9 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     state,
     start(courseId, examId) {
       return startSession(state, courseId, examId).session.id;
+    },
+    abandon(sessionId) {
+      abandonSession(state, sessionId);
     },
     submit(input) {
       const next = recordRetrieval(state, input);

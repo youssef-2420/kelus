@@ -106,6 +106,9 @@ export const getServerDemoSnapshot = () => SERVER_SNAPSHOT;
 export function resetDemoState(nowMs = Date.now()) {
   const state = initialDemoState(nowMs);
   persistDemoState(state);
+  if (typeof window !== "undefined") {
+    void import("./material-store").then(({ clearMaterials }) => clearMaterials());
+  }
   return state;
 }
 
@@ -118,6 +121,12 @@ export function loadAminaDemo(nowMs = Date.now()) {
     diagnosisCompleted: true,
   };
   persistDemoState(state);
+  if (typeof window !== "undefined") {
+    void import("./material-store").then(({ clearMaterials, seedDemoMaterial }) => {
+      clearMaterials();
+      seedDemoMaterial(state.snapshot.courses[0]?.id ?? "course-microeconomics", nowIso);
+    });
+  }
   return state;
 }
 
@@ -130,6 +139,9 @@ export function completeOnboarding(input: SetupInput, nowMs = Date.now()) {
     diagnosisCompleted: false,
   };
   persistDemoState(state);
+  if (typeof window !== "undefined") {
+    void import("./material-store").then(({ clearMaterials }) => clearMaterials());
+  }
   return state;
 }
 
@@ -277,6 +289,11 @@ export function startSession(state: DemoState, courseId: string, examId: string)
     nowIso: state.nowIso,
   });
   const plannedConceptIds = route.allocations.map((item) => item.conceptId).filter((id): id is string => id !== "mixed-retrieval");
+  const abandoned = state.snapshot.sessions.map((item) =>
+    item.courseId === courseId && item.status === "in_progress"
+      ? { ...item, status: "abandoned" as const, endedAt: state.nowIso }
+      : item,
+  );
   const session: StudySession = {
     id: `session-${crypto.randomUUID()}`,
     userId: state.snapshot.profile.id,
@@ -293,9 +310,22 @@ export function startSession(state: DemoState, courseId: string, examId: string)
     status: "in_progress",
     summary: null,
   };
-  const next = { ...state, snapshot: { ...state.snapshot, sessions: [...state.snapshot.sessions, session] } };
+  const next = { ...state, snapshot: { ...state.snapshot, sessions: [...abandoned, session] } };
   persistDemoState(next);
   return { state: next, session };
+}
+
+export function abandonSession(state: DemoState, sessionId: string) {
+  const session = state.snapshot.sessions.find((item) => item.id === sessionId);
+  if (!session || session.status !== "in_progress") return state;
+  const sessions = state.snapshot.sessions.map((item) =>
+    item.id === sessionId
+      ? { ...item, status: "abandoned" as const, endedAt: state.nowIso }
+      : item,
+  );
+  const next = { ...state, snapshot: { ...state.snapshot, sessions } };
+  persistDemoState(next);
+  return next;
 }
 
 export function finishSession(state: DemoState, sessionId: string, before: Concept[]) {

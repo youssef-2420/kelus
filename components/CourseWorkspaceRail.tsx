@@ -37,14 +37,23 @@ export function CourseWorkspaceRail() {
 
   const concepts = state.snapshot.concepts.filter((item) => item.courseId === course.id);
   const sourceCount = materials.filter((item) => item.courseId === course.id).length;
+  const materialsReady = sourceCount > 0 || concepts.length > 0;
   const readiness = estimatedReadiness(concepts);
   const sessions = state.snapshot.sessions.filter((session) => session.courseId === course.id);
   const completedSession = sessions.some((session) => session.status === "complete");
   const activeSession = sessions.some((session) => session.status === "in_progress");
-  const currentStep = !sourceCount ? 1 : !concepts.length ? 2 : !state.diagnosisCompleted ? 3 : activeSession ? 5 : completedSession ? 7 : 4;
+  const currentStep = !materialsReady ? 1 : !concepts.length ? 2 : !state.diagnosisCompleted ? 3 : activeSession ? 5 : completedSession ? 7 : 4;
 
   const stages = [
-    { label: "Materials", detail: sourceCount ? `${sourceCount} source${sourceCount === 1 ? "" : "s"}` : "Add your first source", href: "/materials" },
+    {
+      label: "Materials",
+      detail: sourceCount
+        ? `${sourceCount} source${sourceCount === 1 ? "" : "s"}`
+        : concepts.length
+          ? "Sample course model ready"
+          : "Add your first source",
+      href: "/materials",
+    },
     { label: "Concepts", detail: concepts.length ? `${concepts.length} confirmed` : "Confirm what Kelus found", href: "/materials" },
     { label: "Diagnosis", detail: state.diagnosisCompleted ? "Initial evidence captured" : "Next step", href: "/today" },
     { label: "Route", detail: state.diagnosisCompleted ? `${percent(readiness)} estimated readiness` : "Builds after diagnosis", href: "/today" },
