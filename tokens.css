@@ -5,7 +5,8 @@
   --color-midnight-ink: #061b31;
   --color-slate: #64748d;
   --color-steel: #50617a;
-  --color-smoke: #839bc8;
+  /* AA body/caption on white: ≥4.5:1 (was #839bc8 @ ~2.8:1) */
+  --color-smoke: #5b6f92;
   --color-pure-white: #ffffff;
   --color-mist: #f8fafd;
   --color-frost: #e5edf5;

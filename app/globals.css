@@ -3745,6 +3745,9 @@ h3,
 
 .site-wordmark {
   flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   margin-right: auto;
   color: var(--color-midnight-ink);
   font-size: 32px;
@@ -3770,6 +3773,8 @@ h3,
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  min-width: 44px;
+  justify-content: center;
   color: var(--color-steel);
   font-size: var(--text-body-sm);
   font-weight: 400;
@@ -3809,7 +3814,7 @@ h3,
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 16px;
   color: var(--color-pure-white);
   background: var(--color-indigo-ink);
@@ -3889,7 +3894,7 @@ h3,
   }
 
   .site-header-action {
-    min-height: 38px;
+    min-height: 44px;
     padding-inline: 13px;
   }
 
@@ -4292,7 +4297,7 @@ h3,
   justify-content: center;
   gap: var(--spacing-8);
   min-width: 96px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 var(--spacing-16);
   color: var(--color-midnight-ink);
   background: var(--color-pure-white);
@@ -4516,7 +4521,7 @@ h3,
 .auth-switch button:active { color: var(--color-midnight-ink); }
 
 @media (max-width: 720px) {
-  .site-auth-button { min-width: 84px; min-height: 38px; padding-inline: 12px; }
+  .site-auth-button { min-width: 84px; min-height: 44px; padding-inline: 12px; }
   .auth-backdrop { align-items: end; padding: var(--spacing-16); }
   .auth-dialog { max-height: calc(100dvh - 32px); padding: var(--spacing-48) var(--spacing-24) var(--spacing-32); }
   .auth-switch { flex-wrap: wrap; }
@@ -5272,7 +5277,7 @@ h3,
 .how-example-switcher { display: flex; align-items: center; gap: var(--spacing-24); margin-top: var(--spacing-48); padding-top: var(--spacing-16); border-top: 1px solid var(--color-frost); }
 .how-example-switcher > span { color: var(--color-smoke); font-size: var(--text-caption); text-transform: uppercase; letter-spacing: var(--type-label-tracking); }
 .how-example-switcher [role="tablist"] { display: flex; gap: var(--spacing-24); }
-.how-example-switcher button { padding: 6px 0; color: var(--color-steel); background: transparent; border: 0; border-bottom: 1px solid transparent; font: inherit; cursor: pointer; }
+.how-example-switcher button { min-height: 44px; padding: 8px 0; color: var(--color-steel); background: transparent; border: 0; border-bottom: 1px solid transparent; font: inherit; cursor: pointer; }
 .how-example-switcher button[aria-selected="true"] { color: var(--color-indigo-ink); border-bottom-color: currentColor; }
 .how-stage-visual { min-width: 0; }
 
@@ -5538,8 +5543,8 @@ h3,
 .hero-demo-tabs { display: flex; gap: var(--spacing-16); overflow-x: auto; }
 .hero-demo-tabs button {
   flex: 0 0 auto;
-  min-height: 36px;
-  padding: 4px 0;
+  min-height: 44px;
+  padding: 8px 0;
   color: var(--color-steel);
   background: transparent;
   border: 0;
@@ -5715,12 +5720,20 @@ h3,
 
 /* Setup entry: brand first, then the exam form. */
 .destination-brand {
-  margin: 0 0 var(--spacing-24);
+  margin: 0 0 var(--spacing-16);
   color: var(--color-midnight-ink);
   font-size: clamp(40px, 6vw, 56px);
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 0.95;
+}
+.destination-page-title {
+  margin: 0 0 var(--spacing-16);
+  color: var(--color-midnight-ink);
+  font-size: clamp(28px, 4.5vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 .destination-form .flow-context {
   margin-bottom: var(--spacing-24);
@@ -5943,6 +5956,9 @@ h3,
 }
 
 .site-footer-mark {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: 20px;
   text-decoration: none;
   color: var(--color-midnight-ink);
