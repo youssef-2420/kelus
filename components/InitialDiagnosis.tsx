@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState, type SyntheticEvent } from "react";
 import { AppShell } from "@/components/AppShell";
+import { evaluateDiagnosisResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
 import { selectDiagnosisConcept } from "@/domain/diagnosis";
 import { trackEvent } from "@/lib/analytics";
@@ -30,6 +31,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
   const [selectionReason, setSelectionReason] = useState("");
   const [answer, setAnswer] = useState("");
   const [revealed, setRevealed] = useState(false);
+  const [evaluation, setEvaluation] = useState<AnswerEvaluation | null>(null);
   const [retrievals, setRetrievals] = useState<Retrieval[]>([]);
   const startedAt = useRef(0);
   const concept = concepts.find((item) => item.id === activeConceptId);
@@ -75,7 +77,14 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
     setSelectionReason(selected.reason);
     setAnswer("");
     setRevealed(false);
+    setEvaluation(null);
     startedAt.current = event.timeStamp;
+  }
+
+  function compareAnswer() {
+    if (!prompt) return;
+    setEvaluation(evaluateDiagnosisResponse({ answer, modelAnswer: prompt.modelAnswer }));
+    setRevealed(true);
   }
 
   return (
@@ -128,18 +137,25 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
             <>
               <label htmlFor="diagnosis-answer">Try without notes.</label>
               <textarea id="diagnosis-answer" autoFocus value={answer} onChange={(event) => setAnswer(event.target.value)} />
-              <button type="button" className="cta" disabled={!answer.trim()} onClick={() => setRevealed(true)}>Compare answer</button>
+              <button type="button" className="cta" disabled={!answer.trim()} onClick={compareAnswer}>Compare answer</button>
             </>
           ) : (
             <div className="diagnosis-feedback">
               <p className="kicker">A useful answer includes</p>
               <p>{prompt.modelAnswer}</p>
-              <h2>How well did you know this?</h2>
-              <div className="diagnosis-grades" role="group" aria-label="How well did you know this?">
-                <button type="button" className="is-ghost" onClick={(event) => grade("failure", event)}>Didn’t know</button>
-                <button type="button" className="is-outline" onClick={(event) => grade("partial", event)}>Almost</button>
-                <button type="button" className="is-primary" onClick={(event) => grade("success", event)}>Knew it</button>
-              </div>
+              {evaluation ? (
+                <div className={`diagnosis-evaluation is-${evaluation.outcome}`} role="status">
+                  <p className="kicker">Kelus evidence check</p>
+                  <h2>{evaluation.label}</h2>
+                  <p>{evaluation.explanation}</p>
+                  <small>Deterministic source comparison · not an instructor grade</small>
+                  <div className="diagnosis-grades" role="group" aria-label="Record diagnosis evidence">
+                    <button type="button" className="is-primary" onClick={(event) => grade(evaluation.outcome, event)}>Use this result</button>
+                    {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={(event) => grade("partial", event)}>I needed more help</button> : null}
+                    {evaluation.outcome !== "failure" ? <button type="button" className="is-ghost" onClick={(event) => grade("failure", event)}>I did not understand it</button> : null}
+                  </div>
+                </div>
+              ) : null}
             </div>
           )}
         </section>

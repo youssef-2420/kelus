@@ -87,6 +87,71 @@ function centralClaim(name: string, excerpt: string) {
   return (named ?? defined ?? sentences[0]).slice(0, 260);
 }
 
+type SubjectMode = "biology" | "computer_science" | "history" | "law" | "mathematics" | "general";
+
+function subjectModeFor(name: string, excerpt: string): SubjectMode {
+  const evidence = `${name} ${excerpt}`;
+  if (/\b(?:cell|cellular|dna|gene|protein|enzyme|organism|membrane|metabolism|metabolic|photosynthesis|respiration|evolution|homeostasis)\b/i.test(evidence)) return "biology";
+  if (/\b(?:algebra|calculate|calculus|derivative|equation|geometry|integral|limit|matrix|polynomial|probability|proof|theorem|vector)\b/i.test(evidence)) return "mathematics";
+  if (/\b(?:algorithm|array|binary|compiler|complexity|data structure|database|memory|network|program|recursion|runtime|software)\b/i.test(evidence)) return "computer_science";
+  if (/\b(?:century|colonial|empire|historical|revolution|treaty|war|dynasty|industrialization|migration)\b/i.test(evidence)) return "history";
+  if (/\b(?:case law|claimant|contract|court|defendant|doctrine|liability|precedent|statute|tort|jurisdiction)\b/i.test(evidence)) return "law";
+  return "general";
+}
+
+function activityLanguage(mode: SubjectMode, name: string, claim: string) {
+  switch (mode) {
+    case "biology":
+      return {
+        learnTitle: `Trace the mechanism behind ${name}.`,
+        retrievePrompt: `Without looking, describe the mechanism or relationship the source gives for ${name}.`,
+        applyPrompt: `Predict what changes in a new biological case when one part of ${name} is altered. Explain the mechanism.`,
+        applyHint: "Name the changed component, then trace its effect through the system.",
+        applyAnswer: `A sound answer identifies the changed component and uses this source-backed mechanism to predict the result: ${claim}`,
+      };
+    case "computer_science":
+      return {
+        learnTitle: `Trace how ${name} behaves.`,
+        retrievePrompt: `Without looking, explain the rule or process the source gives for ${name}.`,
+        applyPrompt: `Trace ${name} on a new input or system state, showing the important steps and resulting behavior.`,
+        applyHint: "State the input, follow the process in order, and name the resulting state or output.",
+        applyAnswer: `A sound trace follows the source-backed process step by step and reaches a consistent output: ${claim}`,
+      };
+    case "history":
+      return {
+        learnTitle: `Explain the forces shaping ${name}.`,
+        retrievePrompt: `Without looking, state the source's central causal claim about ${name}.`,
+        applyPrompt: `Use the same causal relationship to explain how a changed condition could alter a related historical outcome.`,
+        applyHint: "Name the changed condition, connect it to the source's cause, then explain the likely consequence.",
+        applyAnswer: `A sound answer preserves the source's causal relationship while changing the historical condition: ${claim}`,
+      };
+    case "law":
+      return {
+        learnTitle: `Make the rule in ${name} usable.`,
+        retrievePrompt: `Without looking, state the rule or legal test the source gives for ${name}.`,
+        applyPrompt: `Apply the rule for ${name} to a new fact pattern. Identify the decisive fact and likely conclusion.`,
+        applyHint: "State the rule, connect each relevant fact to it, then give a qualified conclusion.",
+        applyAnswer: `A sound application states the source-backed rule, tests the relevant facts, and reaches a supported conclusion: ${claim}`,
+      };
+    case "mathematics":
+      return {
+        learnTitle: `Reconstruct the method behind ${name}.`,
+        retrievePrompt: `Without looking, state the rule, theorem, or method the source gives for ${name}.`,
+        applyPrompt: `Use the method for ${name} on a new case and show the steps that justify the result.`,
+        applyHint: "Name the rule first, substitute or transform carefully, and check the result against the conditions.",
+        applyAnswer: `A sound solution names the source-backed method, applies it step by step, and checks its conditions: ${claim}`,
+      };
+    default:
+      return {
+        learnTitle: `Make ${name} usable from the source.`,
+        retrievePrompt: `Without looking, what central claim does the course make about ${name}?`,
+        applyPrompt: `Apply the source's claim about ${name} to a new example that is not copied from the page.`,
+        applyHint: "Keep the same underlying relationship. Change only the situation.",
+        applyAnswer: `A strong answer reuses this source-backed claim in a new context: ${claim}`,
+      };
+  }
+}
+
 function headingStrengthFor(name: string) {
   let strength = 0.35;
   if (NUMBER_PREFIX.test(name) || /^\d+/.test(name)) strength += 0.25;
@@ -125,11 +190,12 @@ function scoreDifficulty(excerpt: string) {
 
 function buildActivity(concept: Concept, proposal: ProposedConcept): LearningActivity {
   const claim = centralClaim(concept.name, proposal.sourceExcerpt);
+  const language = activityLanguage(subjectModeFor(concept.name, proposal.sourceExcerpt), concept.name, claim);
   return {
     id: `activity-${concept.id}`,
     conceptId: concept.id,
     learn: {
-      title: `Make ${concept.name} usable from the source.`,
+      title: language.learnTitle,
       explanation: claim,
       keyPoints: [
         `Find the claim the source makes about ${concept.name}.`,
@@ -138,16 +204,16 @@ function buildActivity(concept: Concept, proposal: ProposedConcept): LearningAct
       ],
     },
     retrieve: {
-      prompt: `Without looking, what central claim does the course make about ${concept.name}?`,
+      prompt: language.retrievePrompt,
       hint: `Return to ${proposal.locator}. Start from the relationship or definition, not a list of facts.`,
       explanation: claim,
       example: `Restate the source claim about ${concept.name} in one sentence, then add one detail from ${proposal.locator}.`,
       modelAnswer: claim,
     },
     apply: {
-      prompt: `Apply the source's claim about ${concept.name} to a new example that is not copied from the page.`,
-      hint: "Keep the same underlying relationship. Change only the situation.",
-      modelAnswer: `A strong answer reuses this claim in a new context: ${claim}`,
+      prompt: language.applyPrompt,
+      hint: language.applyHint,
+      modelAnswer: language.applyAnswer,
     },
     sourceReferences: [{ materialId: proposal.materialId, label: proposal.sourceLabel, locator: proposal.locator }],
   };

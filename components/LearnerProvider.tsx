@@ -22,6 +22,8 @@ import {
 import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
 import { readLearnerState, writeLearnerState } from "@/lib/learner-sync";
+import { subscribeMaterials } from "@/lib/material-store";
+import { initializeMaterialSync, writeRemoteMaterialState } from "@/lib/material-sync";
 
 type Store = {
   state: DemoState;
@@ -105,6 +107,37 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     }, 500);
     return () => window.clearTimeout(timeout);
   }, [auth.user?.id, state]);
+
+  useEffect(() => {
+    const userId = auth.user?.id;
+    if (!userId) return;
+    let active = true;
+    let initialized = false;
+    let timeout: number | null = null;
+
+    initializeMaterialSync(userId).then(() => {
+      if (!active) return;
+      initialized = true;
+    }).catch(() => {
+      if (active) setSyncMessage("Your route is saved. Material sync needs the Supabase materials migration.");
+    });
+
+    const unsubscribe = subscribeMaterials(() => {
+      if (!initialized) return;
+      if (timeout) window.clearTimeout(timeout);
+      timeout = window.setTimeout(() => {
+        writeRemoteMaterialState(userId).catch(() => {
+          if (active) setSyncMessage("Saved on this device. Material sync will retry after the next change.");
+        });
+      }, 500);
+    });
+
+    return () => {
+      active = false;
+      if (timeout) window.clearTimeout(timeout);
+      unsubscribe();
+    };
+  }, [auth.user?.id]);
   const store = useMemo<Store>(() => ({
     state,
     start(courseId, examId) {

@@ -15,7 +15,7 @@ import { generateRoute } from "@/domain/routing-engine";
 
 export default function TodayPage() {
   const router = useRouter();
-  const { state, start, reset, completeSetup, completeDiagnosis, useDemo } = useLearner();
+  const { state, start, reset, completeSetup, completeDiagnosis, useDemo: loadDemo } = useLearner();
   const [confirmReset, setConfirmReset] = useState(false);
 
   if (!state.onboardingCompleted) {
@@ -25,7 +25,7 @@ export default function TodayPage() {
           completeSetup(input);
           router.push("/materials");
         }}
-        onUseDemo={useDemo}
+        onUseDemo={loadDemo}
       />
     );
   }
@@ -41,7 +41,7 @@ export default function TodayPage() {
             <Link className="cta" href="/materials">
               Add course material <span aria-hidden="true">→</span>
             </Link>
-            <button type="button" className="text-btn" onClick={() => useDemo()}>
+            <button type="button" className="text-btn" onClick={() => loadDemo()}>
               Try a sample course <span aria-hidden="true">→</span>
             </button>
           </div>
@@ -154,6 +154,7 @@ export default function TodayPage() {
           route={route}
           concepts={concepts}
           activities={snapshot.learningActivities}
+          events={snapshot.events}
           onStart={begin}
         />
       </section>

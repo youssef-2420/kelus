@@ -738,6 +738,62 @@ button, input, textarea { font: inherit; }
   .material-role-field select { width: 100%; }
 }
 
+/* Evidence is shown at the decision point without turning Today into a dashboard. */
+.today-lead-evidence {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-24);
+  margin: var(--spacing-24) 0 0;
+  padding: var(--spacing-20) 0 0;
+  border-top: 1px solid var(--color-frost);
+}
+.today-lead-evidence div { min-width: 0; }
+.today-lead-evidence dt {
+  color: var(--color-smoke);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+}
+.today-lead-evidence dd {
+  margin: var(--spacing-8) 0 0;
+  color: var(--color-midnight-ink);
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+}
+
+.answer-evaluation,
+.diagnosis-evaluation {
+  margin-top: var(--spacing-24);
+  padding-top: var(--spacing-24);
+  border-top: 1px solid var(--color-frost);
+}
+.answer-evaluation h2,
+.diagnosis-evaluation h2 {
+  margin: var(--spacing-8) 0;
+  font-size: var(--text-heading-sm);
+  font-weight: 500;
+}
+.answer-evaluation > p:not(.kicker),
+.diagnosis-evaluation > p:not(.kicker) {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--color-steel);
+}
+.answer-evaluation > small,
+.diagnosis-evaluation > small {
+  display: block;
+  margin: var(--spacing-8) 0 var(--spacing-20);
+  color: var(--color-smoke);
+}
+.answer-evaluation.is-failure h2,
+.diagnosis-evaluation.is-failure h2 { color: var(--color-product-danger, #9a3412); }
+
+@media (max-width: 720px) {
+  .today-lead-evidence { grid-column: 1; grid-template-columns: minmax(0, 1fr); gap: var(--spacing-16); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .session-help button,
   .session-apply-hint button { transition-duration: 0.01ms; transform: none !important; }

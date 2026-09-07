@@ -4,6 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
+import { useAuth } from "@/components/AuthProvider";
 import { useLearner } from "@/components/LearnerProvider";
 import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { trackEvent } from "@/lib/analytics";
@@ -15,11 +16,11 @@ import {
   addPdfMaterial,
   getMaterialsSnapshot,
   getServerMaterialsSnapshot,
-  readLocalPdf,
   removeMaterial,
   subscribeMaterials,
   updateMaterialProcessingStatus,
 } from "@/lib/material-store";
+import { readMaterialPdf, removeRemoteMaterial, uploadMaterialPdf } from "@/lib/material-sync";
 import { assessPdfTextQuality, extractPdfPages, ocrPdfPages } from "@/lib/pdf-extraction";
 
 function formatBytes(bytes: number | null) {
@@ -35,13 +36,13 @@ function sourceHost(value: string | null) {
   }
 }
 
-function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (item: CourseMaterial) => void }) {
+function MaterialRow({ item, onAnalyze, userId }: { item: CourseMaterial; onAnalyze: (item: CourseMaterial) => void; userId?: string }) {
   const [busy, setBusy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
 
   async function downloadPdf() {
     setBusy(true);
-    const blob = await readLocalPdf(item.id);
+    const blob = await readMaterialPdf(item.id, userId);
     setBusy(false);
     if (!blob) return;
     const url = URL.createObjectURL(blob);
@@ -55,6 +56,7 @@ function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (it
   async function remove() {
     setBusy(true);
     await removeMaterial(item.id);
+    if (userId) await removeRemoteMaterial(userId, item.id).catch(() => undefined);
   }
 
   return (
@@ -86,7 +88,8 @@ function MaterialRow({ item, onAnalyze }: { item: CourseMaterial; onAnalyze: (it
 
 export function MaterialLibrary() {
   const reduceMotion = useReducedMotion();
-  const { state, confirmConcepts, useDemo } = useLearner();
+  const auth = useAuth();
+  const { state, confirmConcepts, useDemo: loadDemo } = useLearner();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -114,7 +117,7 @@ export function MaterialLibrary() {
     setBusy(true);
     updateMaterialProcessingStatus(material.id, "processing");
     try {
-      const stored = file ?? await readLocalPdf(material.id);
+      const stored = file ?? await readMaterialPdf(material.id, auth.user?.id);
       if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
       const pdfFile = stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" });
       setStatusMessage("Reading PDF text…");
@@ -193,6 +196,11 @@ export function MaterialLibrary() {
     setBusy(true);
     try {
       const material = await addPdfMaterial({ courseId: course.id, file, role });
+      if (auth.user?.id) {
+        void uploadMaterialPdf(auth.user.id, material, file).catch(() => {
+          setError("The PDF is ready on this device, but its cross-device copy could not be saved yet.");
+        });
+      }
       await analyzePdf(material, file);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "The PDF could not be saved.");
@@ -299,7 +307,7 @@ export function MaterialLibrary() {
           <div className="material-error-rescue" role="group" aria-label="Ways to continue">
             <p>Kelus now tries on-device OCR for scans. If that still fails, use a text PDF or try the sample course.</p>
             <div className="material-error-actions">
-              <button type="button" className="text-btn" onClick={() => useDemo()}>Try the sample course</button>
+              <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
               <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
             </div>
           </div>
@@ -380,11 +388,11 @@ export function MaterialLibrary() {
       <section className="material-shelf" aria-labelledby="source-shelf-title">
         <header><div><p className="kicker">Source shelf</p><h2 id="source-shelf-title">{courseMaterials.length ? `${courseMaterials.length} saved` : "Nothing saved yet"}</h2></div><span>This device</span></header>
         {courseMaterials.length ? (
-          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
+          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
         ) : (
           <div className="material-shelf-empty">
             <p>Start with the syllabus or the lecture you are studying now.</p>
-            <button type="button" className="text-btn" onClick={() => useDemo()}>
+            <button type="button" className="text-btn" onClick={() => loadDemo()}>
               Try the sample course <span aria-hidden="true">→</span>
             </button>
           </div>

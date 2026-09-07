@@ -38,6 +38,8 @@ test("the session executes learn, retrieve, apply and evaluate before updating t
   assert.match(page, /Explain this/);
   assert.match(page, /Show an example/);
   assert.match(page, /submit\(\{/);
+  assert.match(page, /evaluateLearningResponse/);
+  assert.doesNotMatch(page, />I can use it</);
   assert.match(page, /setPhase\("reroute"\)/);
 });
 
@@ -68,6 +70,8 @@ test("today exposes confidence while reroutes explain the evidence that changed"
   const page = await source("app/today/page.tsx");
   const store = await source("lib/demo-store.ts");
   assert.match(today, /confidenceLabel/);
+  assert.match(today, /Course evidence/);
+  assert.match(today, /Learner evidence/);
   assert.match(today, /Start here/);
   assert.match(today, /Start \{firstName\}/);
   assert.match(today, /Learn/);

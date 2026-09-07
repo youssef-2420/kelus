@@ -66,7 +66,7 @@ function openDatabase() {
   });
 }
 
-function writePdf(id: string, file: File) {
+function writePdf(id: string, file: Blob) {
   return openDatabase().then((database) => new Promise<void>((resolve, reject) => {
     const transaction = database.transaction(FILE_STORE, "readwrite");
     transaction.objectStore(FILE_STORE).put(file, id);
@@ -95,6 +95,18 @@ export function getMaterialsSnapshot() {
 
 export function getServerMaterialsSnapshot() {
   return SERVER_SNAPSHOT;
+}
+
+export function mergeMaterialMetadata(remote: CourseMaterial[]) {
+  const merged = new Map(remote.map((item) => [item.id, normalizeMaterial(item)]));
+  for (const item of readMetadata()) merged.set(item.id, item);
+  const normalized = [...merged.values()].filter((item): item is CourseMaterial => Boolean(item));
+  persist(normalized);
+  return normalized;
+}
+
+export function cacheLocalPdf(id: string, file: Blob) {
+  return writePdf(id, file);
 }
 
 export function addLinkMaterial(input: { courseId: string; title: string; value: string; role: MaterialRole; nowIso?: string }) {

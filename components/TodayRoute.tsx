@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
-import type { Concept, LearningActivity, RoutePlan } from "@/domain/types";
+import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
 import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
 import { confidenceLabel, percent } from "@/lib/format";
 
@@ -11,11 +11,13 @@ export function TodayRoute({
   route,
   concepts,
   activities,
+  events,
   onStart,
 }: {
   route: RoutePlan;
   concepts: Concept[];
   activities: LearningActivity[];
+  events: LearningEvent[];
   onStart: () => void;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
@@ -38,7 +40,20 @@ export function TodayRoute({
 
   const firstConcept = concepts.find((item) => item.id === first.conceptId);
   const firstActivity = activities.find((item) => item.conceptId === first.conceptId);
+  const firstSource = firstActivity?.sourceReferences[0];
+  const latestEvidence = [...events]
+    .filter((item) => item.conceptId === first.conceptId && (item.kind === "retrieval" || item.kind === "self_rating"))
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
   const firstName = firstConcept?.name ?? "Mixed Retrieval";
+  const learnerEvidence = latestEvidence?.kind === "retrieval"
+    ? latestEvidence.outcome === "success"
+      ? "Latest recall was strong"
+      : latestEvidence.outcome === "partial"
+        ? "Latest recall was partial"
+        : "Latest recall was not yet secure"
+    : latestEvidence?.selfRating
+      ? `Initial familiarity: ${latestEvidence.selfRating.replace("_", " ")}`
+      : "No answer evidence yet";
 
   return (
     <div className="today-route-execution">
@@ -79,6 +94,20 @@ export function TodayRoute({
               : "Uses the current course model; no uploaded source is cited yet."}
           </small>
         </div>
+        <dl className="today-lead-evidence" aria-label={`Why Kelus recommends ${firstName}`}>
+          <div>
+            <dt>Course evidence</dt>
+            <dd>{firstSource ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}` : "No uploaded source cited"}</dd>
+          </div>
+          <div>
+            <dt>Learner evidence</dt>
+            <dd>{learnerEvidence}</dd>
+          </div>
+          <div>
+            <dt>Why first</dt>
+            <dd>{conciseReason(first.reasons)}</dd>
+          </div>
+        </dl>
       </motion.article>
 
       {remaining.length ? (
