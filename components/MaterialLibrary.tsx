@@ -167,17 +167,47 @@ export function MaterialLibrary() {
       if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
       const pdfFile = stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" });
       setStatusMessage("Reading PDF text…");
-      let pages = await extractPdfPages(pdfFile);
+      let pages = await extractPdfPages(pdfFile, { maxContentPages: 16 });
       let quality = assessPdfTextQuality(pages);
       let usedOcr = false;
+      let proposals: ProposedConcept[] = [];
+
+      function mergeProposals(extra: ProposedConcept[]) {
+        const seen = new Set(proposals.map((item) => item.name.toLocaleLowerCase()));
+        for (const item of extra) {
+          const key = item.name.toLocaleLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          proposals.push(item);
+        }
+      }
+
+      proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
+      if (proposals.length < 3) {
+        mergeProposals(proposeConceptsFromPages({
+          materialId: material.id,
+          sourceLabel: material.title,
+          pages,
+          mode: "relaxed",
+        }));
+      }
+      if (proposals.length < 3) {
+        mergeProposals(proposeConceptsFromMetadata({
+          materialId: material.id,
+          sourceLabel: material.title,
+          fileName: material.fileName,
+        }));
+      }
 
       async function runOcr(reason: string) {
         attemptedOcr = true;
         setOcrRunning(true);
         setStatusMessage(reason);
         const ocr = await ocrPdfPages(pdfFile, pages, {
-          maxPages: 12,
-          timeBudgetMs: 75_000,
+          maxPages: 8,
+          timeBudgetMs: 45_000,
+          scale: 1.5,
+          stopAfterRecoveredPages: 4,
           signal: controller.signal,
           onProgress: (progress) => setStatusMessage(progress.message),
         });
@@ -190,7 +220,8 @@ export function MaterialLibrary() {
         return ocr.ocrPages;
       }
 
-      if (quality.density === "sparse" || quality.density === "empty" || pages.some(pageNeedsOcr)) {
+      const needsScanHelp = quality.density === "sparse" || quality.density === "empty" || pages.some(pageNeedsOcr);
+      if (proposals.length < 3 && needsScanHelp) {
         const recovered = await runOcr("Scanned or weak PDF text — reading pages with on-device OCR…");
         if (recovered === 0 && quality.density === "empty") {
           const ocrError = new Error(
@@ -199,39 +230,27 @@ export function MaterialLibrary() {
           (ocrError as Error & { kind?: string }).kind = "ocr";
           throw ocrError;
         }
-      }
-
-      setStatusMessage(usedOcr ? "Building concepts from scanned text…" : "Building concepts…");
-      let proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
-
-      if (proposals.length < 3 && !attemptedOcr && pages.some(pageNeedsOcr)) {
-        await runOcr("Few concepts found — retrying weak pages with on-device OCR…");
-        setStatusMessage("Building concepts from recovered text…");
+        setStatusMessage(usedOcr ? "Building concepts from scanned text…" : "Building concepts…");
         proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
+        if (proposals.length < 3) {
+          mergeProposals(proposeConceptsFromPages({
+            materialId: material.id,
+            sourceLabel: material.title,
+            pages,
+            mode: "relaxed",
+          }));
+        }
+        if (proposals.length < 3) {
+          mergeProposals(proposeConceptsFromMetadata({
+            materialId: material.id,
+            sourceLabel: material.title,
+            fileName: material.fileName,
+          }));
+        }
+      } else {
+        setStatusMessage("Building concepts…");
       }
 
-      if (proposals.length < 3) {
-        const relaxed = proposeConceptsFromPages({
-          materialId: material.id,
-          sourceLabel: material.title,
-          pages,
-          mode: "relaxed",
-        });
-        const seen = new Set(proposals.map((item) => item.name.toLocaleLowerCase()));
-        for (const item of relaxed) {
-          const key = item.name.toLocaleLowerCase();
-          if (seen.has(key)) continue;
-          seen.add(key);
-          proposals.push(item);
-        }
-      }
-      if (!proposals.length) {
-        proposals = proposeConceptsFromMetadata({
-          materialId: material.id,
-          sourceLabel: material.title,
-          fileName: material.fileName,
-        });
-      }
       if (!proposals.length) {
         const emptyScan = attemptedOcr && quality.density === "empty";
         const fail = new Error(
@@ -375,7 +394,7 @@ export function MaterialLibrary() {
           </select>
           <p>
             Prefer a text PDF (syllabus or lecture notes with selectable text). Scanned image PDFs use on-device OCR for
-            roughly the first 12 pages and about a minute — English works best. You confirm every proposed concept
+            roughly the first 8 weak pages and under a minute — English works best. You confirm every proposed concept
             before it changes your route.
           </p>
         </div>

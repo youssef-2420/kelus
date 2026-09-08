@@ -1,9 +1,23 @@
 "use client";
 
-import { useId, useState, type FormEvent } from "react";
+import { useId, useMemo, useState, type FormEvent } from "react";
 import { trackEvent } from "@/lib/analytics";
-import { isValidQuestionEmail, submitClientQuestion } from "@/lib/questions";
+import { isValidQuestionEmail, questionsInboxEmail, submitClientQuestion } from "@/lib/questions";
 import { QUESTIONS_UPDATED_EVENT } from "@/components/QuestionsExport";
+
+function buildMailto(name: string, email: string, question: string) {
+  const subject = encodeURIComponent(name.trim() ? `Kelus question from ${name.trim()}` : "Kelus question");
+  const body = encodeURIComponent(
+    [
+      question.trim() || "(Write your question here)",
+      "",
+      `Name: ${name.trim() || "(your name)"}`,
+      `Reply-to: ${email.trim() || "(your email)"}`,
+      "Source: kelus.me/questions",
+    ].join("\n"),
+  );
+  return `mailto:${questionsInboxEmail()}?subject=${subject}&body=${body}`;
+}
 
 export function QuestionsForm({ source = "questions" }: { source?: string }) {
   const formId = useId();
@@ -12,6 +26,7 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
   const [question, setQuestion] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "local" | "needs_activation" | "error">("idle");
   const [message, setMessage] = useState("");
+  const mailtoHref = useMemo(() => buildMailto(name, email, question), [name, email, question]);
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -42,15 +57,12 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
 
     trackEvent({ name: "question_submitted", source, delivery: result.delivery });
     window.dispatchEvent(new Event(QUESTIONS_UPDATED_EVENT));
-    if (result.delivery === "needs_activation") {
-      setStatus("needs_activation");
+    if (result.delivery === "needs_activation" || result.delivery === "local") {
+      setStatus(result.delivery === "needs_activation" ? "needs_activation" : "local");
       setMessage(
-        "Your question is saved on this device, but the Kelus inbox still needs a one-time activation on our side. Email hello@kelus.me directly if you need a reply today.",
-      );
-    } else if (result.delivery === "local") {
-      setStatus("local");
-      setMessage(
-        "Couldn’t reach the Kelus inbox just now. Your question is saved on this device — download the backup below or email hello@kelus.me if you need a reply today.",
+        result.delivery === "needs_activation"
+          ? "Saved on this device, but the browser inbox path still needs activation on our side. Use Email hello@kelus.me below for a guaranteed reply."
+          : "Couldn’t reach the browser inbox just now. Your question is saved here — use Email hello@kelus.me below for a guaranteed reply.",
       );
     } else {
       setStatus("saved");
@@ -67,6 +79,8 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
       setMessage("");
     }
   }
+
+  const promoteMailto = status === "local" || status === "needs_activation";
 
   return (
     <form className="questions-form waitlist-form" onSubmit={onSubmit} noValidate>
@@ -124,14 +138,23 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
           maxLength={2000}
         />
       </div>
-      <button
-        className="cta"
-        type="submit"
-        disabled={status === "saving" || !name.trim() || !email.trim() || !question.trim()}
-      >
-        {status === "saving" ? "Sending…" : "Send question"}
-        <span aria-hidden="true">→</span>
-      </button>
+      <div className="questions-actions">
+        <a
+          className={promoteMailto ? "cta" : "text-btn questions-mailto-cta"}
+          href={mailtoHref}
+          onClick={() => trackEvent({ name: "question_submitted", source: `${source}_mailto`, delivery: "local" })}
+        >
+          Email hello@kelus.me <span aria-hidden="true">→</span>
+        </a>
+        <button
+          className={promoteMailto ? "text-btn" : "cta"}
+          type="submit"
+          disabled={status === "saving" || !name.trim() || !email.trim() || !question.trim()}
+        >
+          {status === "saving" ? "Sending…" : "Send in browser"}
+          <span aria-hidden="true">→</span>
+        </button>
+      </div>
       <p
         className={
           status === "error" || status === "local" || status === "needs_activation"
@@ -142,11 +165,7 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
         aria-live="polite"
       >
         {message ||
-          "Questions go to hello@kelus.me. We reply by email — no public comment thread."}
-      </p>
-      <p className="questions-mailto-fallback">
-        Prefer a guaranteed inbox hit?{" "}
-        <a href="mailto:hello@kelus.me?subject=Kelus%20question">Email hello@kelus.me</a>
+          "Email hello@kelus.me is the guaranteed path. Send in browser also keeps a local backup."}
       </p>
     </form>
   );

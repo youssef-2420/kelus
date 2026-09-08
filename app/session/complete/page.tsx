@@ -2,17 +2,19 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
 import { percent } from "@/lib/format";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
+import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
 
 function CompleteBody() {
   const search = useSearchParams();
   const { state } = useLearner();
+  const [calendarNote, setCalendarNote] = useState("");
   const session = state.snapshot.sessions.find((item) => item.id === search.get("id"))
     ?? [...state.snapshot.sessions].reverse().find((item) => item.status === "complete");
   const summary = session?.summary;
@@ -38,6 +40,21 @@ function CompleteBody() {
     if (!concept.nextReviewAt) return false;
     return Date.parse(concept.nextReviewAt) <= Date.parse(state.nowIso);
   }).length;
+  const minutes = session?.plannedMinutes || exam?.availableMinutes || 45;
+
+  function addCalendar() {
+    const ok = downloadTomorrowStudyIcs({
+      courseName: course?.name ?? "Study",
+      minutes,
+      nextStopName,
+      todayUrl: "https://kelus.me/today/",
+    });
+    setCalendarNote(
+      ok
+        ? "Calendar file downloaded. Open it to add tomorrow’s study block — works even if this tab is closed."
+        : "Could not build a calendar file in this browser.",
+    );
+  }
 
   return (
     <AppShell>
@@ -63,8 +80,14 @@ function CompleteBody() {
           {dueCount > 0
             ? `${dueCount} concept${dueCount === 1 ? "" : "s"} already due for review as memory fades.`
             : "Tomorrow’s route will shift as retention fades — no need to rebuild from scratch."}
-          {" "}Bookmark Today or leave this tab open.
         </p>
+        <div className="complete-return-actions">
+          <button type="button" className="cta" onClick={addCalendar}>
+            Add tomorrow to calendar <span aria-hidden="true">→</span>
+          </button>
+          <Link href="/today" className="text-btn">Open Today</Link>
+        </div>
+        <p className="complete-return-note" role="status" aria-live="polite">{calendarNote || "\u00a0"}</p>
       </section>
       {nextRoute ? (
         <section className="next-route">

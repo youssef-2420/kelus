@@ -98,7 +98,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
           <p className="kicker">Start with your judgment</p>
           <h1>How familiar do these feel?</h1>
           <p className="diagnosis-intro">
-            Rate the {ratedConcepts.length} most exam-critical topics, then complete one source-backed recall check. Rough answers are enough — then Kelus opens today’s first study stop.
+            Rate the {ratedConcepts.length} most exam-critical topics. One short recall check is optional — rough answers are enough.
           </p>
           <ol className="diagnosis-list">
             {ratedConcepts.map((item) => (
@@ -127,6 +127,17 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
             <button type="button" className="cta diagnosis-continue" disabled={!allRated} onClick={beginChecks}>
               {allRated ? "Recall check, then today’s route" : "Rate every topic first"}
               <span aria-hidden="true">→</span>
+            </button>
+            <button
+              type="button"
+              className="text-btn diagnosis-skip"
+              disabled={!allRated}
+              onClick={() => {
+                trackEvent({ name: "diagnosis_completed", retrieval_count: 0 });
+                onComplete({ ratings, retrievals: [] });
+              }}
+            >
+              Skip recall — open Today with a rough estimate
             </button>
           </div>
         </section>

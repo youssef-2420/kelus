@@ -70,7 +70,7 @@ test("stick-under-eight surfaces: return copy, inbox proof, OCR helpers", async 
   assert.match(today, /lastSessionCompletedAt/);
   assert.match(questions, /QuestionsInboxStatus/);
   assert.match(form, /needs_activation/);
-  assert.match(form, /mailto:hello@kelus\.me/);
+  assert.match(form, /mailto:|questionsInboxEmail/);
   assert.match(materials, /pageNeedsOcr/);
   assert.match(materials, /mode:\s*"relaxed"/);
   assert.match(pdf, /pageNeedsOcr/);

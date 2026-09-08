@@ -80,7 +80,7 @@ export function buildLayoutPage(pageNumber: number, rawItems: PdfTextItem[]): Ex
   return { pageNumber, text: text.trim(), blocks: lines.map(({ hasEOL: _hasEOL, ...line }) => line) };
 }
 
-export async function extractPdfPages(file: File): Promise<ExtractedMaterialPage[]> {
+export async function extractPdfPages(file: File, options?: { maxContentPages?: number }): Promise<ExtractedMaterialPage[]> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
@@ -88,6 +88,7 @@ export async function extractPdfPages(file: File): Promise<ExtractedMaterialPage
   ).toString();
   const document = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
   const pages: ExtractedMaterialPage[] = [];
+  const maxContentPages = options?.maxContentPages ?? 16;
   try {
     try {
       const outline = (await document.getOutline()) as PdfOutlineNode[] | null;
@@ -99,7 +100,8 @@ export async function extractPdfPages(file: File): Promise<ExtractedMaterialPage
       // Outline is optional; text extraction continues.
     }
 
-    for (let pageNumber = 1; pageNumber <= document.numPages; pageNumber += 1) {
+    const lastPage = Math.min(document.numPages, maxContentPages);
+    for (let pageNumber = 1; pageNumber <= lastPage; pageNumber += 1) {
       const page = await document.getPage(pageNumber);
       const content = await page.getTextContent();
       pages.push(buildLayoutPage(pageNumber, content.items as PdfTextItem[]));
@@ -159,6 +161,8 @@ export async function ocrPdfPages(
   options?: {
     maxPages?: number;
     timeBudgetMs?: number;
+    scale?: number;
+    stopAfterRecoveredPages?: number;
     signal?: AbortSignal;
     onProgress?: (progress: OcrProgress) => void;
   },
@@ -171,6 +175,8 @@ export async function ocrPdfPages(
 
   const maxPages = options?.maxPages ?? 8;
   const timeBudgetMs = options?.timeBudgetMs ?? 60_000;
+  const scale = options?.scale ?? 1.5;
+  const stopAfter = options?.stopAfterRecoveredPages ?? maxPages;
   const startedAt = Date.now();
   const targets = pages
     .filter((page) => pageNeedsOcr(page))
@@ -198,6 +204,7 @@ export async function ocrPdfPages(
     for (let index = 0; index < targets.length; index += 1) {
       throwIfAborted(options?.signal);
       if (Date.now() - startedAt >= timeBudgetMs) break;
+      if (ocrPages >= stopAfter) break;
       const target = targets[index];
       options?.onProgress?.({
         phase: "rendering",
@@ -207,7 +214,7 @@ export async function ocrPdfPages(
       });
 
       const page = await documentProxy.getPage(target.pageNumber);
-      const viewport = page.getViewport({ scale: 2 });
+      const viewport = page.getViewport({ scale });
       const canvas = document.createElement("canvas");
       canvas.width = Math.ceil(viewport.width);
       canvas.height = Math.ceil(viewport.height);

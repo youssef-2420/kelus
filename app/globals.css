@@ -6542,3 +6542,38 @@ h3,
   color: var(--color-product-secondary, #5b6578);
   font-size: 0.95rem;
 }
+
+.diagnosis-skip {
+  display: block;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.complete-return-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.complete-return-note {
+  min-height: 1.35em;
+  margin: 0.65rem 0 0;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.9rem;
+}
+
+.questions-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin-top: 0.35rem;
+}
+
+.questions-mailto-cta {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}

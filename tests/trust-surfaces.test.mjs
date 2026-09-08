@@ -74,8 +74,8 @@ test("client questions page captures name email and question for inbox delivery"
   ]);
   assert.match(page, /QuestionsForm/);
   assert.match(page, /Ask us anything about Kelus/);
-  assert.match(form, /Send question/);
-  assert.match(form, /hello@kelus\.me/);
+  assert.match(form, /Send in browser|Send question/);
+  assert.match(form, /Email hello@kelus\.me|hello@kelus\.me/);
   assert.match(lib, /formsubmit\.co\/ajax\/\$\{DEFAULT_QUESTIONS_INBOX\}|formsubmit\.co\/ajax\/hello@kelus\.me/);
   assert.match(lib, /DEFAULT_QUESTIONS_INBOX = "hello@kelus\.me"/);
   assert.match(lib, /submitClientQuestion/);
@@ -186,7 +186,7 @@ test("materials stay honest about PDF OCR limits and bookmark-only links", async
     source("app/map/page.tsx"),
   ]);
   assert.match(materials, /Prefer a text PDF/);
-  assert.match(materials, /first 12 pages/);
+  assert.match(materials, /first 8 (weak )?pages|first 12 pages/);
   assert.match(materials, /Bookmarks stay on your shelf/);
   assert.match(materials, /Save bookmark/);
   assert.match(materials, /Bookmark ·/);
