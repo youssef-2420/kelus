@@ -7377,3 +7377,72 @@ h3 {
     box-shadow: var(--shadow-soft);
   }
 }
+
+/* Product setup / Today entry craft */
+.destination-page {
+  position: relative;
+  background:
+    radial-gradient(70% 55% at 50% -10%, color-mix(in srgb, var(--color-periwinkle-wash) 55%, transparent), transparent 70%),
+    transparent;
+}
+
+.destination-form {
+  position: relative;
+}
+
+.setup-sample {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-24);
+  margin: var(--spacing-32) 0 var(--spacing-40);
+  padding: var(--spacing-24) var(--spacing-32);
+  background:
+    linear-gradient(165deg, var(--material-panel) 0%, var(--color-pure-white) 55%);
+  border: 1px solid color-mix(in srgb, var(--color-lavender-border) 70%, var(--color-frost));
+  border-top: 2px solid var(--color-indigo-ink);
+  border-radius: calc(var(--radius-ledger) + 2px);
+  box-shadow: var(--shadow-panel);
+}
+
+.setup-sample .kicker {
+  color: var(--color-indigo-ink);
+  margin: 0 0 8px;
+}
+
+.setup-sample > div > p:not(.kicker) {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--color-steel);
+}
+
+.setup-sample-cta {
+  box-shadow: var(--shadow-lift);
+}
+
+.destination-brand {
+  background: linear-gradient(180deg, var(--color-midnight-ink) 0%, color-mix(in srgb, var(--color-midnight-ink) 75%, var(--color-indigo-ink)) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .destination-brand { color: var(--color-midnight-ink); background: none; }
+}
+
+.time-choices label {
+  transition: background-color var(--dur-quick) var(--ease-enter), border-color var(--dur-quick) var(--ease-enter), transform 100ms ease-out;
+}
+
+.time-choices label:active {
+  transform: scale(0.98);
+}
+
+.diagnosis-panel,
+.today-brief,
+.study-question {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 94%, var(--color-periwinkle-wash)) 0%, var(--color-pure-white) 40%);
+}
