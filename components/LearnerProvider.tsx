@@ -10,6 +10,8 @@ import {
   confirmMaterialConcepts,
   getDemoSnapshot,
   getServerDemoSnapshot,
+  clearStoredDemoState,
+  getDemoStateOwner,
   recordRetrieval,
   loadAminaDemo,
   resetDemoState,
@@ -17,13 +19,14 @@ import {
   shiftDemoDay,
   startSession,
   stateForAuthenticatedUser,
+  setDemoStateOwner,
   subscribeDemoState,
   type DemoState,
 } from "@/lib/demo-store";
 import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
 import { readLearnerState, writeLearnerState } from "@/lib/learner-sync";
-import { subscribeMaterials } from "@/lib/material-store";
+import { claimGuestMaterials, getMaterialOwner, setMaterialOwner, subscribeMaterials } from "@/lib/material-store";
 import { flushMaterialSyncQueue, initializeMaterialSync, writeRemoteMaterialState } from "@/lib/material-sync";
 
 type Store = {
@@ -56,13 +59,18 @@ const StoreContext = createContext<Store | null>(null);
 export function LearnerProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
   const state = useSyncExternalStore(subscribeDemoState, getDemoSnapshot, getServerDemoSnapshot);
+  const activeUserId = auth.user?.id ?? null;
+  const materialOwner = useSyncExternalStore(subscribeMaterials, getMaterialOwner, () => null);
+  const scopeAligned = getDemoStateOwner() === activeUserId && materialOwner === activeUserId;
   const syncedUser = useRef<string | null>(null);
   const lastWritten = useRef("");
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    const userId = auth.user?.id;
+    const userId = activeUserId;
+    const previousOwner = getDemoStateOwner();
+    setDemoStateOwner(userId);
     if (!userId) {
       syncedUser.current = null;
       lastWritten.current = "";
@@ -77,9 +85,13 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
         replaceDemoState(claimed);
         lastWritten.current = JSON.stringify(claimed);
       } else {
-        const claimed = stateForAuthenticatedUser(state, userId);
+        // Only an anonymous scope may be claimed. A previous account's local
+        // state is never re-keyed into a different account.
+        const localState = getDemoSnapshot();
+        const claimed = stateForAuthenticatedUser(previousOwner === null ? localState : getDemoSnapshot(), userId);
         replaceDemoState(claimed);
         lastWritten.current = JSON.stringify(claimed);
+        if (previousOwner === null) clearStoredDemoState(null);
         void writeLearnerState(userId, claimed).catch(() => setSyncMessage("Saved on this device. Cloud sync will retry."));
       }
       syncedUser.current = userId;
@@ -92,11 +104,10 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     return () => { active = false; };
     // Load once when the authenticated account changes; live state writes are
     // handled by the separate debounced effect below.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth.user?.id]);
+  }, [activeUserId]);
 
   useEffect(() => {
-    const userId = auth.user?.id;
+    const userId = activeUserId;
     if (!userId || syncedUser.current !== userId) return;
     const claimed = stateForAuthenticatedUser(state, userId);
     const serialized = JSON.stringify(claimed);
@@ -108,21 +119,32 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       }).catch(() => setSyncMessage("Saved on this device. Cloud sync will retry."));
     }, 500);
     return () => window.clearTimeout(timeout);
-  }, [auth.user?.id, state]);
+  }, [activeUserId, state]);
 
   useEffect(() => {
-    const userId = auth.user?.id;
-    if (!userId) return;
+    const userId = activeUserId;
     let active = true;
     let initialized = false;
     let timeout: number | null = null;
 
-    initializeMaterialSync(userId).then(() => {
-      if (!active) return;
-      initialized = true;
-    }).catch(() => {
-      if (active) setSyncMessage("Your route is saved. Material sync needs the Supabase materials migration.");
-    });
+    if (!userId) {
+      setMaterialOwner(null);
+      return () => { active = false; };
+    }
+
+    void (async () => {
+      try {
+        // Always check the isolated guest scope. It may contain materials added
+        // before sign-in, while the learner scope effect may already have
+        // switched its owner by the time this effect runs.
+        await claimGuestMaterials(userId);
+        if (!active) return;
+        await initializeMaterialSync(userId);
+        if (active) initialized = true;
+      } catch {
+        if (active) setSyncMessage("Your route is saved. Material sync needs the Supabase materials migration.");
+      }
+    })();
 
     const retryPending = () => {
       void flushMaterialSyncQueue(userId).then((completed) => {
@@ -147,7 +169,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       unsubscribe();
       window.removeEventListener("online", retryPending);
     };
-  }, [auth.user?.id]);
+  }, [activeUserId]);
   const store = useMemo<Store>(() => ({
     state,
     start(courseId, examId) {
@@ -180,7 +202,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       confirmMaterialConcepts(state, proposals, pages);
     },
   }), [state]);
-  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{children}</StoreContext.Provider>;
+  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;
 }
 
 export function useLearner() {

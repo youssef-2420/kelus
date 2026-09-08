@@ -12,6 +12,7 @@ import { createLearnerSnapshot, type SetupInput } from "./setup";
 
 const STORAGE_KEY = "kelus-learning-state-v2";
 const LAST_SESSION_KEY = "kelus:last-session-completed-at";
+const GUEST_OWNER = "guest";
 /** Advance frozen learner clocks once wall time has moved (return visits). */
 const CLOCK_STALE_MS = 60_000;
 const SERVER_NOW_MS = Date.parse("2026-09-05T12:00:00.000Z");
@@ -43,7 +44,7 @@ export function advanceNowIfNeeded(state: DemoState, nowMs = Date.now()): { stat
 export function markSessionCompleted(atIso = new Date().toISOString()) {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(LAST_SESSION_KEY, atIso);
+    window.localStorage.setItem(lastSessionKey(), atIso);
   } catch {
     /* Optional retention signal. */
   }
@@ -52,7 +53,7 @@ export function markSessionCompleted(atIso = new Date().toISOString()) {
 export function lastSessionCompletedAt() {
   if (typeof window === "undefined") return null;
   try {
-    return window.localStorage.getItem(LAST_SESSION_KEY);
+    return window.localStorage.getItem(lastSessionKey());
   } catch {
     return null;
   }
@@ -65,6 +66,10 @@ export function initialDemoState(nowMs = Date.now()): DemoState {
 }
 
 const SERVER_SNAPSHOT = initialDemoState(SERVER_NOW_MS);
+
+function lastSessionKey(ownerId = activeOwnerId) {
+  return `${LAST_SESSION_KEY}:${ownerId ?? GUEST_OWNER}`;
+}
 
 export function validStoredState(value: unknown): value is DemoState {
   const state = value as DemoState;
@@ -99,13 +104,19 @@ export function replaceDemoState(value: unknown) {
   return state;
 }
 
-export function readStoredDemoState(): DemoState | null {
+let activeOwnerId: string | null = null;
+
+export function demoStateStorageKey(ownerId: string | null = activeOwnerId) {
+  return `${STORAGE_KEY}:${ownerId ?? GUEST_OWNER}`;
+}
+
+export function readStoredDemoState(ownerId = activeOwnerId): DemoState | null {
   if (typeof window === "undefined") return null;
   try {
-    const parsed: unknown = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null");
+    const parsed: unknown = JSON.parse(window.localStorage.getItem(demoStateStorageKey(ownerId)) ?? "null");
     if (!validStoredState(parsed)) return null;
     const { state, changed } = advanceNowIfNeeded(parsed);
-    if (changed) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if (changed) window.localStorage.setItem(demoStateStorageKey(ownerId), JSON.stringify(state));
     return state;
   } catch {
     return null;
@@ -118,8 +129,24 @@ const emit = () => listeners.forEach((listener) => listener());
 
 function persistDemoState(state: DemoState) {
   clientCache = state;
-  if (typeof window !== "undefined") window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  if (typeof window !== "undefined") window.localStorage.setItem(demoStateStorageKey(), JSON.stringify(state));
   emit();
+}
+
+export function getDemoStateOwner() {
+  return activeOwnerId;
+}
+
+export function setDemoStateOwner(userId: string | null) {
+  if (activeOwnerId === userId && clientCache) return;
+  activeOwnerId = userId;
+  clientCache = readStoredDemoState(userId) ?? SERVER_SNAPSHOT;
+  emit();
+}
+
+export function clearStoredDemoState(ownerId: string | null) {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(demoStateStorageKey(ownerId));
 }
 
 export function subscribeDemoState(listener: () => void) {
@@ -129,7 +156,7 @@ export function subscribeDemoState(listener: () => void) {
 
 export function getDemoSnapshot() {
   if (typeof window === "undefined") return SERVER_SNAPSHOT;
-  if (!clientCache) clientCache = readStoredDemoState() ?? SERVER_SNAPSHOT;
+  if (!clientCache) clientCache = readStoredDemoState(activeOwnerId) ?? SERVER_SNAPSHOT;
   return clientCache;
 }
 

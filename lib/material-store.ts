@@ -7,8 +7,10 @@ const DATABASE_VERSION = 1;
 const FILE_STORE = "files";
 const MAX_PDF_BYTES = 20 * 1024 * 1024;
 const SERVER_SNAPSHOT: CourseMaterial[] = [];
+const GUEST_OWNER = "guest";
 
 let cache: CourseMaterial[] | null = null;
+let activeOwnerId: string | null = null;
 const listeners = new Set<() => void>();
 
 const MATERIAL_ROLES: MaterialRole[] = ["syllabus", "lecture_slides", "notes", "past_exam", "course_outline", "other"];
@@ -34,22 +36,41 @@ function normalizeMaterial(value: unknown): CourseMaterial | null {
   };
 }
 
+export function materialMetadataStorageKey(ownerId: string | null = activeOwnerId) {
+  return `${METADATA_KEY}:${ownerId ?? GUEST_OWNER}`;
+}
+
+export function materialFileStorageKey(id: string, ownerId: string | null = activeOwnerId) {
+  return `${ownerId ?? GUEST_OWNER}:${id}`;
+}
+
+function readMetadataFor(ownerId: string | null) {
+  if (typeof window === "undefined") return SERVER_SNAPSHOT;
+  try {
+    const parsed: unknown = JSON.parse(window.localStorage.getItem(materialMetadataStorageKey(ownerId)) ?? "[]");
+    return Array.isArray(parsed) ? parsed.map(normalizeMaterial).filter((item): item is CourseMaterial => Boolean(item)) : [];
+  } catch {
+    return [];
+  }
+}
+
 function readMetadata() {
   if (typeof window === "undefined") return SERVER_SNAPSHOT;
   if (cache) return cache;
-  try {
-    const parsed: unknown = JSON.parse(window.localStorage.getItem(METADATA_KEY) ?? "[]");
-    cache = Array.isArray(parsed) ? parsed.map(normalizeMaterial).filter((item): item is CourseMaterial => Boolean(item)) : [];
-  } catch {
-    cache = [];
-  }
+  cache = readMetadataFor(activeOwnerId);
   return cache;
 }
 
 function persist(items: CourseMaterial[]) {
   cache = [...items].sort((a, b) => b.addedAt.localeCompare(a.addedAt));
-  window.localStorage.setItem(METADATA_KEY, JSON.stringify(cache));
+  window.localStorage.setItem(materialMetadataStorageKey(), JSON.stringify(cache));
   listeners.forEach((listener) => listener());
+}
+
+function persistFor(ownerId: string | null, items: CourseMaterial[]) {
+  const sorted = [...items].sort((a, b) => b.addedAt.localeCompare(a.addedAt));
+  if (ownerId === activeOwnerId) cache = sorted;
+  window.localStorage.setItem(materialMetadataStorageKey(ownerId), JSON.stringify(sorted));
 }
 
 function openDatabase() {
@@ -67,19 +88,23 @@ function openDatabase() {
   });
 }
 
-function writePdf(id: string, file: Blob) {
+function writePdfForOwner(id: string, file: Blob, ownerId: string | null) {
   return openDatabase().then((database) => new Promise<void>((resolve, reject) => {
     const transaction = database.transaction(FILE_STORE, "readwrite");
-    transaction.objectStore(FILE_STORE).put(file, id);
+    transaction.objectStore(FILE_STORE).put(file, materialFileStorageKey(id, ownerId));
     transaction.oncomplete = () => { database.close(); resolve(); };
     transaction.onerror = () => { database.close(); reject(new Error("The PDF could not be saved on this device.")); };
   }));
 }
 
+function writePdf(id: string, file: Blob) {
+  return writePdfForOwner(id, file, activeOwnerId);
+}
+
 function deletePdf(id: string) {
   return openDatabase().then((database) => new Promise<void>((resolve) => {
     const transaction = database.transaction(FILE_STORE, "readwrite");
-    transaction.objectStore(FILE_STORE).delete(id);
+    transaction.objectStore(FILE_STORE).delete(materialFileStorageKey(id));
     transaction.oncomplete = () => { database.close(); resolve(); };
     transaction.onerror = () => { database.close(); resolve(); };
   }));
@@ -96,6 +121,37 @@ export function getMaterialsSnapshot() {
 
 export function getServerMaterialsSnapshot() {
   return SERVER_SNAPSHOT;
+}
+
+export function getMaterialOwner() {
+  return activeOwnerId;
+}
+
+export function setMaterialOwner(userId: string | null) {
+  if (activeOwnerId === userId && cache) return;
+  activeOwnerId = userId;
+  cache = readMetadataFor(userId);
+  listeners.forEach((listener) => listener());
+}
+
+/** Move only anonymous local materials into the first account that claims them. */
+export async function claimGuestMaterials(userId: string) {
+  const guestMaterials = readMetadataFor(null);
+  if (!guestMaterials.length) {
+    setMaterialOwner(userId);
+    return;
+  }
+  const accountMaterials = readMetadataFor(userId);
+  activeOwnerId = userId;
+  cache = accountMaterials;
+  await Promise.all(guestMaterials.filter((item) => item.storage === "local").map(async (item) => {
+    const blob = await readPdfForOwner(item.id, null);
+    if (blob) await writePdfForOwner(item.id, blob, userId);
+  }));
+  persistFor(userId, [...accountMaterials, ...guestMaterials]);
+  persistFor(null, []);
+  cache = readMetadataFor(userId);
+  listeners.forEach((listener) => listener());
 }
 
 export function mergeMaterialMetadata(remote: CourseMaterial[]) {
@@ -175,7 +231,7 @@ export function clearMaterials() {
   if (typeof window === "undefined") return;
   cache = [];
   try {
-    window.localStorage.setItem(METADATA_KEY, "[]");
+    window.localStorage.setItem(materialMetadataStorageKey(), "[]");
   } catch {
     /* Materials clear must never break the page. */
   }
@@ -214,10 +270,14 @@ export async function removeMaterial(id: string) {
   persist(readMetadata().filter((material) => material.id !== id));
 }
 
-export function readLocalPdf(id: string) {
+function readPdfForOwner(id: string, ownerId: string | null) {
   return openDatabase().then((database) => new Promise<Blob | null>((resolve) => {
-    const request = database.transaction(FILE_STORE, "readonly").objectStore(FILE_STORE).get(id);
+    const request = database.transaction(FILE_STORE, "readonly").objectStore(FILE_STORE).get(materialFileStorageKey(id, ownerId));
     request.onsuccess = () => { database.close(); resolve(request.result instanceof Blob ? request.result : null); };
     request.onerror = () => { database.close(); resolve(null); };
   }));
+}
+
+export function readLocalPdf(id: string) {
+  return readPdfForOwner(id, activeOwnerId);
 }
