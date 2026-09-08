@@ -10,12 +10,15 @@ export function KelusHero() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
   const [showBefore, setShowBefore] = useState(false);
+  const [answerOpen, setAnswerOpen] = useState(false);
+  const [practiceResult, setPracticeResult] = useState<"again" | "remembered" | null>(null);
   const example = LEARNING_EXAMPLES[exampleIndex];
   const route = showBefore ? [...example.route.slice(1), example.route[0]] : example.route;
 
   return (
     <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
       <div className="kelus-hero-copy home-copy">
+        <p className="kicker">A little revision. Every day.</p>
         <h1 id="home-hero-title">Revise your lessons. Prepare for your exams.</h1>
         <p className="home-lede">
           Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
@@ -37,7 +40,7 @@ export function KelusHero() {
       <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
         <header className="hero-demo-head">
           <div className="hero-demo-identity">
-            <span>Example route</span>
+            <span>Interactive example · not saved</span>
             <strong>{example.course}</strong>
           </div>
           <div className="hero-demo-tabs" role="group" aria-label="Choose an example course">
@@ -46,7 +49,7 @@ export function KelusHero() {
                 key={item.id}
                 type="button"
                 aria-pressed={index === exampleIndex}
-                onClick={() => { setExampleIndex(index); setShowBefore(false); }}
+                onClick={() => { setExampleIndex(index); setShowBefore(false); setAnswerOpen(false); setPracticeResult(null); }}
               >
                 {item.label}
               </button>
@@ -63,26 +66,32 @@ export function KelusHero() {
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -5 }}
             transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="hero-demo-context">
-              <div>
-                <span>Exam</span>
-                <strong>{example.destination}</strong>
-              </div>
-              <dl>
-                <div>
-                  <dt>Days left</dt>
-                  <dd>{example.days}</dd>
-                </div>
-                <div>
-                  <dt>Today</dt>
-                  <dd>45 min</dd>
-                </div>
-              </dl>
-            </div>
+            <section className="hero-recall" aria-label="Try a revision question">
+              <ol className="hero-recall-steps" aria-label="Example revision steps">
+                <li aria-current={!answerOpen ? "step" : undefined}>01 Recall</li>
+                <li aria-current={answerOpen && !practiceResult ? "step" : undefined}>02 Check</li>
+                <li aria-current={practiceResult ? "step" : undefined}>03 Revisit</li>
+              </ol>
+              <h2>{example.question}</h2>
+              <p className="hero-recall-instruction">Try answering in your head. Then check the reasoning.</p>
+              <button type="button" className="hero-reveal-button" aria-expanded={answerOpen} aria-controls="hero-example-answer" onClick={() => { setAnswerOpen(!answerOpen); setPracticeResult(null); }}>
+                {answerOpen ? "Hide answer" : "Reveal answer"}<span aria-hidden="true">{answerOpen ? "−" : "+"}</span>
+              </button>
+              <AnimatePresence initial={false}>
+                {answerOpen && <motion.div id="hero-example-answer" className="hero-recall-answer" key="answer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.18 }}>
+                  <p>{example.answer}</p>
+                  <div className="hero-recall-actions" role="group" aria-label="Try an example outcome">
+                    <button type="button" aria-pressed={practiceResult === "again"} onClick={() => { setPracticeResult("again"); setShowBefore(false); }}>Practise again</button>
+                    <button type="button" aria-pressed={practiceResult === "remembered"} onClick={() => { setPracticeResult("remembered"); setShowBefore(true); }}>I remembered it</button>
+                  </div>
+                  <p className="hero-recall-result" role="status">{practiceResult === "again" ? "Example: keep this topic near the front for another attempt." : practiceResult === "remembered" ? "Example: move on to another topic, then return to this one later." : "Try either outcome to see the example order change. Actual sessions check your written answers."}</p>
+                </motion.div>}
+              </AnimatePresence>
+            </section>
             <div className="hero-demo-route">
               <div className="hero-demo-route-title">
-                <span>{showBefore ? "Before the example answer" : "Today’s route"}</span>
-                <strong>{showBefore ? "Previous order" : "Highest value first"}</strong>
+                <span>Today’s route</span>
+                <strong>Example · 45 minutes</strong>
               </div>
               <ol>
                 {route.map((item, index) => (
@@ -106,18 +115,17 @@ export function KelusHero() {
             </div>
             <p className="hero-demo-signal" aria-live="polite">
               <span aria-hidden="true">↳</span>
-              {showBefore ? "An uncertain answer gives Kelus a reason to reconsider the order." : example.signal}
+              {practiceResult === "remembered" ? "A stronger answer can make room to practise another topic." : example.signal}
             </p>
             <motion.button
               type="button"
               className="hero-demo-replay"
-              aria-pressed={showBefore}
-              onClick={() => setShowBefore((value) => !value)}
+              onClick={() => { setShowBefore(false); setAnswerOpen(false); setPracticeResult(null); }}
               whileTap={reduceMotion ? undefined : { scale: 0.98 }}
               transition={{ type: "spring", bounce: 0, duration: 0.2 }}
             >
-              {showBefore ? "Apply the example answer" : "Replay this decision"}
-              <span aria-hidden="true">{showBefore ? "→" : "↶"}</span>
+              Reset example
+              <span aria-hidden="true">↶</span>
             </motion.button>
           </motion.div>
         </AnimatePresence>

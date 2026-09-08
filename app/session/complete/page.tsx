@@ -17,8 +17,10 @@ function CompleteBody() {
   const { state } = useLearner();
   const [calendarNote, setCalendarNote] = useState("");
   const completionTracked = useRef<string | null>(null);
-  const session = state.snapshot.sessions.find((item) => item.id === search.get("id"))
-    ?? [...state.snapshot.sessions].reverse().find((item) => item.status === "complete");
+  const requestedId = search.get("id");
+  const session = requestedId
+    ? state.snapshot.sessions.find((item) => item.id === requestedId && item.status === "complete")
+    : [...state.snapshot.sessions].reverse().find((item) => item.status === "complete");
   const summary = session?.summary;
   const course = state.snapshot.courses.find((item) => item.id === session?.courseId);
   const exam = state.snapshot.exams.find((item) => item.id === session?.examId);
@@ -43,16 +45,17 @@ function CompleteBody() {
     return Date.parse(concept.nextReviewAt) <= Date.parse(state.nowIso);
   }).length;
   const minutes = session?.plannedMinutes || exam?.availableMinutes || 45;
+  const practisedCount = new Set(state.snapshot.events.filter((event) => event.sessionId === session?.id && event.kind === "retrieval").map((event) => event.conceptId)).size;
 
   useEffect(() => {
-    if (!session || completionTracked.current === session.id) return;
+    if (!session || !summary || completionTracked.current === session.id) return;
     completionTracked.current = session.id;
     trackEvent({
       name: "session_completed",
       concept_count: session.plannedConceptIds.length,
       planned_minutes: session.plannedMinutes,
     });
-  }, [session]);
+  }, [session, summary]);
 
   function addCalendar() {
     const ok = downloadTomorrowStudyIcs({
@@ -68,11 +71,16 @@ function CompleteBody() {
     );
   }
 
+  if (!session || !summary) return (
+    <AppShell><section className="complete-hero"><p className="kicker">Revision session</p><h1>No completed session here yet.</h1><p>Finish a session to see what you practised and what needs another review.</p><Link href="/today" className="cta">Back to Today <span aria-hidden="true">→</span></Link></section></AppShell>
+  );
+
   return (
     <AppShell>
       <section className="complete-hero">
         <p className="kicker">Today’s route complete</p>
-        <h1>{session?.plannedMinutes ?? 0} minutes, allocated with intent.</h1>
+        <h1>You’ve done your revision for now.</h1>
+        <p>{practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}{course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.</p>
         {summary ? <div className="readiness-change"><span>{percent(summary.readinessBefore)}</span><i aria-hidden="true">→</i><strong>{percent(summary.readinessAfter)}</strong><small>estimated readiness</small></div> : null}
       </section>
       {summary ? (
@@ -85,7 +93,7 @@ function CompleteBody() {
         <p className="kicker">Come back tomorrow</p>
         <h2 id="complete-return-title">
           {nextStopName
-            ? <>Kelus will put <strong>{nextStopName}</strong> first when you return.</>
+            ? <>Next suggested review: <strong>{nextStopName}</strong>.</>
             : "Your route stays on this device — open Today when you come back."}
         </h2>
         <p>
@@ -94,29 +102,30 @@ function CompleteBody() {
             : "Tomorrow’s route will shift as retention fades — no need to rebuild from scratch."}
         </p>
         <div className="complete-return-actions">
-          <button type="button" className="cta" onClick={addCalendar}>
+          <Link href="/today" className="cta">Back to Today <span aria-hidden="true">→</span></Link>
+          <button type="button" className="text-btn" onClick={addCalendar}>
             Add tomorrow to calendar <span aria-hidden="true">→</span>
           </button>
-          <Link href="/today" className="text-btn">Open Today</Link>
         </div>
         <p className="complete-return-note" role="status" aria-live="polite">{calendarNote || "\u00a0"}</p>
       </section>
       {nextRoute ? (
-        <section className="next-route">
+        <details className="next-route">
+          <summary>Preview your next revision topics</summary>
           <p className="kicker">Next route</p>
           <h2>Kelus will recalculate as your memory changes.</h2>
           <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
-        </section>
+        </details>
       ) : null}
-      {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" /> : null}
+      {completedSessions === 1 ? <details><summary>Optional support through exam day</summary><SoftUpgradePrompt moment="first_session" /></details> : null}
       {completedSessions >= 2 ? (
-        <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
+        <details className="complete-waitlist">
+          <summary>Get product updates</summary>
           <p className="kicker">Stay in the loop</p>
           <h2 id="complete-waitlist-title">Want a note when Kelus gets better for your course?</h2>
           <WaitlistForm source="session_complete" compact />
-        </section>
+        </details>
       ) : null}
-      <Link href="/today" className="cta complete-done">Open tomorrow’s Today <span aria-hidden="true">→</span></Link>
     </AppShell>
   );
 }

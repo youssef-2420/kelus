@@ -6652,6 +6652,29 @@ h3,
   text-align: left;
 }
 .hero-demo-replay:hover { color: var(--color-deep-violet); }
+
+/* Revision demo: recall first, feedback on demand. */
+.kelus-hero.is-product-demo .home-copy h1 { max-width: 15ch; font-weight: 400; text-wrap: balance; }
+.kelus-hero.is-product-demo .home-copy > .kicker { margin-bottom: 24px; }
+.hero-demo-head { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.hero-demo-tabs { flex-wrap: wrap; gap: 8px 20px; overflow: visible; }
+.hero-recall { padding: 24px 0; }
+.hero-recall-steps { display: flex; flex-wrap: wrap; gap: 20px; list-style: none; padding: 0; margin: 0 0 24px; color: var(--color-steel); font-size: 11px; }
+.hero-recall-steps [aria-current="step"] { color: var(--color-indigo-ink); font-weight: 600; }
+.hero-recall h2 { max-width: 30ch; margin: 0 0 12px; font-size: clamp(22px, 2.2vw, 30px); line-height: 1.2; font-weight: 400; letter-spacing: -.025em; text-wrap: balance; }
+.hero-recall-instruction { color: var(--color-steel); font-size: 13px; margin: 0 0 16px; }
+.hero-reveal-button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-lavender-border); border-radius: var(--radius-ledger); color: var(--color-indigo-ink); background: var(--color-pure-white); font: inherit; font-size: 14px; cursor: pointer; }
+.hero-reveal-button:active, .hero-recall-actions button:active { transform: scale(.99); }
+.hero-recall-answer { padding-top: 16px; }
+.hero-recall-answer > p { margin: 0 0 16px; font-size: 14px; color: var(--color-steel); line-height: 1.6; }
+.hero-recall-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.hero-recall-actions button { flex: 1; min-height: 44px; padding: 8px 12px; border: 1px solid var(--color-lavender-border); background: var(--color-pure-white); border-radius: var(--radius-ledger); color: var(--color-midnight-ink); font: inherit; font-size: 13px; cursor: pointer; }
+.hero-recall-actions button[aria-pressed="true"] { background: var(--color-indigo-ink); color: white; border-color: var(--color-indigo-ink); }
+.hero-recall-answer .hero-recall-result { font-size: 12px; margin: 12px 0 0; }
+.hero-reveal-button:focus-visible, .hero-recall-actions button:focus-visible { outline: 2px solid var(--color-indigo-ink); outline-offset: 3px; }
+.complete-hero h1 { max-width: 18ch; }
+.complete-return { border-radius: var(--radius-ledger); background: var(--color-pure-white); padding: 24px 0; border-width: 1px 0; }
+@media (prefers-reduced-motion: reduce) { .hero-reveal-button:active, .hero-recall-actions button:active { transform: none; } }
 .hero-demo-replay:focus-visible { outline: 2px solid var(--color-indigo-ink); outline-offset: 4px; }
 @media (prefers-reduced-motion: no-preference) {
   .cta { transition: transform 160ms ease-out, background-color 160ms ease-out; }

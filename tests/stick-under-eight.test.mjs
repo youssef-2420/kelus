@@ -65,7 +65,7 @@ test("stick-under-eight surfaces: return copy, inbox proof, OCR helpers", async 
     source(".env.example"),
   ]);
   assert.match(complete, /Come back tomorrow/);
-  assert.match(complete, /Open tomorrow’s Today/);
+  assert.match(complete, /Back to Today/);
   assert.match(today, /Welcome back/);
   assert.match(today, /lastSessionCompletedAt/);
   assert.match(questions, /QuestionsInboxStatus/);
