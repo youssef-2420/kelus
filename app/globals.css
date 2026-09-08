@@ -6653,6 +6653,37 @@ h3,
 }
 .hero-demo-replay:hover { color: var(--color-deep-violet); }
 
+/* Keep the next action visible and secondary detail within reach. */
+.material-ingest[hidden] { display: none; }
+.material-bookmarks { margin-top: var(--spacing-24); border-top: 1px solid var(--color-frost); }
+.material-bookmarks > summary,
+.next-route > summary,
+.complete-waitlist > summary { min-height: 44px; padding: 12px 0; color: var(--color-indigo-ink); cursor: pointer; }
+.material-ready [tabindex="-1"],
+.concept-confirmation [tabindex="-1"] { scroll-margin-top: 120px; }
+.material-ready-actions { flex-wrap: wrap; }
+.concept-confirmation-actions { position: sticky; bottom: 0; z-index: 2; background: var(--color-pure-white); padding-block: var(--spacing-16); border-top: 1px solid var(--color-frost); }
+.destination-actions .cta { min-height: 48px; }
+.study-question textarea { min-height: 160px; line-height: 1.65; resize: vertical; }
+.study-question { scroll-margin-top: 100px; }
+.today-lead-main, .today-lead-evidence > div { min-width: 0; }
+.today-lead-evidence dd { overflow-wrap: anywhere; }
+@media (min-width: 900px) {
+  .kelus-hero.home-hero.is-product-demo { align-items: start; }
+  .kelus-hero.is-product-demo .home-copy { padding-top: var(--spacing-32); }
+}
+@media (max-width: 720px) {
+  .course-workspace-progress li:not(.is-current) { display: none; }
+  .course-workspace-progress li.is-current { flex: 1; }
+  .course-workspace-progress ol { overflow: visible; }
+  .course-workspace-progress li small { white-space: normal; }
+  .today-start { min-width: 0; padding-inline: 16px; }
+  .material-ready-actions > .cta { width: 100%; justify-content: center; }
+  .concept-confirmation-actions { gap: 12px; flex-wrap: wrap; }
+  .concept-confirmation-actions .cta { flex: 1; white-space: normal; }
+  .destination-actions .cta { width: 100%; justify-content: center; }
+}
+
 /* Revision demo: recall first, feedback on demand. */
 .kelus-hero.is-product-demo .home-copy h1 { max-width: 15ch; font-weight: 400; text-wrap: balance; }
 .kelus-hero.is-product-demo .home-copy > .kicker { margin-bottom: 24px; }

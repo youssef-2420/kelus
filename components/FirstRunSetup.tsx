@@ -25,8 +25,8 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
     if (!draft.examName.trim()) return setError("Tell Kelus what you are working toward.");
     if (!draft.examDate) return setError("Choose the date of your exam.");
     try {
-      trackEvent({ name: "setup_completed", available_minutes: draft.availableMinutes });
       onComplete(draft);
+      trackEvent({ name: "setup_completed", available_minutes: draft.availableMinutes });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Kelus could not set up your exam yet.");
     }
@@ -94,7 +94,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
         <p className="setup-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error || "\u00a0"}</p>
         <div className="destination-actions">
           <span className="destination-actions-spacer" />
-          <button className="ghost" type="submit">Continue with my course <span aria-hidden="true">→</span></button>
+          <button className="cta" type="submit">Continue with my course <span aria-hidden="true">→</span></button>
         </div>
       </form>
       <div className="destination-route" aria-hidden="true"><i /><i /><i /><b>◎</b></div>

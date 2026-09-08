@@ -98,7 +98,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
           <p className="kicker">Start with your judgment</p>
           <h1>How familiar do these feel?</h1>
           <p className="diagnosis-intro">
-            Rate the {ratedConcepts.length} most exam-critical topics. One short recall check is optional — rough answers are enough.
+            Rate these {ratedConcepts.length} suggested topics. A short recall check helps Kelus choose your starting point — rough answers are enough.
           </p>
           <ol className="diagnosis-list">
             {ratedConcepts.map((item) => (

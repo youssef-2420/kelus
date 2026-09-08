@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/components/AuthProvider";
 import { useLearner } from "@/components/LearnerProvider";
@@ -130,6 +130,13 @@ export function MaterialLibrary() {
   const fileRef = useRef<HTMLInputElement>(null);
   const ocrAbortRef = useRef<AbortController | null>(null);
   const course = state.snapshot.courses[0];
+
+  useEffect(() => {
+    const id = analysis ? "concept-confirmation-title" : readySummary ? "material-ready-title" : null;
+    if (!id) return;
+    const frame = requestAnimationFrame(() => document.getElementById(id)?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [analysis, readySummary]);
 
   if (!state.onboardingCompleted || !course) {
     return (
@@ -389,7 +396,7 @@ export function MaterialLibrary() {
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
-      <section className="material-ingest" aria-labelledby="add-material-title">
+      <section className="material-ingest" aria-labelledby="add-material-title" hidden={Boolean(analysis || readySummary)}>
         <div className="material-ingest-title"><p className="kicker">Add material</p><h2 id="add-material-title">Bring the course into one place.</h2></div>
         <div className="material-role-field">
           <label htmlFor="material-role">This source is</label>
@@ -421,6 +428,7 @@ export function MaterialLibrary() {
           </div>
         ) : null}
 
+        <details className="material-bookmarks"><summary>Save a video or web link instead</summary>
         <form className="material-link-form" onSubmit={addLink}>
           <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" /></div>
           <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" /></div>
@@ -429,7 +437,7 @@ export function MaterialLibrary() {
         <p className="material-link-hint">
           Bookmarks stay on your shelf for quick open. They do not become concepts — upload a PDF for that.
         </p>
-        <p className="material-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error ?? "\u00a0"}</p>
+        </details>
         {error && errorKind === "ocr" ? (
           <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
             <p>
@@ -450,6 +458,7 @@ export function MaterialLibrary() {
         ) : null}
       </section>
 
+      {error ? <p className="material-error" role="alert">{error}</p> : null}
       <AnimatePresence initial={false}>
         {readySummary ? (
           <motion.section
@@ -461,16 +470,15 @@ export function MaterialLibrary() {
             transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.22, 1, 0.36, 1] }}
           >
             <p className="kicker">You’re ready</p>
-            <h2 id="material-ready-title">
+            <h2 id="material-ready-title" tabIndex={-1}>
               {readySummary.conceptCount} confirmed concept{readySummary.conceptCount === 1 ? "" : "s"} from your file.
             </h2>
             <p>
-              Kelus ranked them from the source itself
-              {readySummary.firstName ? <> — start with <strong>{readySummary.firstName}</strong> after a ~1 minute check</> : null}.
-              No invented syllabus. Next: a ~1 minute familiarity check, then your first study stop.</p>
+              Your topics are saved. Next, check what you remember so Kelus can suggest where to begin. You can inspect the map whenever you need it.</p>
             <div className="material-ready-actions">
               <Link className="cta" href="/today">Continue: short check, then study <span aria-hidden="true">→</span></Link>
               <Link className="text-btn" href="/map">Review the map</Link>
+              <button type="button" className="text-btn" onClick={() => setReadySummary(null)}>Add another source</button>
             </div>
           </motion.section>
         ) : null}
@@ -484,7 +492,7 @@ export function MaterialLibrary() {
             transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.22, 1, 0.36, 1] }}
           >
             <header>
-              <div><p className="kicker">Confirm the course structure</p><h2 id="concept-confirmation-title">Kelus found {analysis.proposals.length} proposed concepts.</h2></div>
+              <div><p className="kicker">Review your topics</p><h2 id="concept-confirmation-title" tabIndex={-1}>Kelus found {analysis.proposals.length} proposed concepts.</h2></div>
               <p>
                 Keep only the concepts this exam actually covers. Each one retains the page where Kelus found it.
                 {state.diagnosisCompleted
