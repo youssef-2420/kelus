@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 import "./globals.css";
-import { LearnerProvider } from "@/components/LearnerProvider";
+import { LearnerProvider, LearnerScopeGate } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";
 import { AuthProvider } from "@/components/AuthProvider";
@@ -38,7 +38,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LearnerProvider>
             <TooltipProvider>
               <SiteHeader />
-              <RouteTransition>{children}</RouteTransition>
+              <LearnerScopeGate>
+                <RouteTransition>{children}</RouteTransition>
+              </LearnerScopeGate>
               <Toaster />
             </TooltipProvider>
           </LearnerProvider>

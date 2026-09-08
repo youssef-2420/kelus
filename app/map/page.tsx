@@ -26,7 +26,18 @@ export default function MapPage() {
     );
   }
   const course = state.snapshot.courses[0];
-  if (!course) return <AppShell><p>No active course.</p></AppShell>;
+  if (!course) {
+    return (
+      <AppShell>
+        <section className="materials-empty">
+          <p className="kicker">Knowledge Map</p>
+          <h1>No active course.</h1>
+          <p>Set your exam so Kelus can show a map of what this course covers.</p>
+          <Link href="/today" className="cta">Set your exam <span aria-hidden="true">→</span></Link>
+        </section>
+      </AppShell>
+    );
+  }
   const concepts = state.snapshot.concepts
     .filter((concept) => concept.courseId === course.id)
     .slice()

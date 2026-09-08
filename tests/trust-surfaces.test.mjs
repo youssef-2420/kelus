@@ -20,6 +20,7 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
   assert.match(privacy, /hello@kelus\.me/);
   assert.match(privacy, /Optional account and sync/i);
   assert.match(privacy, /private storage/i);
+  assert.match(privacy, /Shared devices/);
   assert.doesNotMatch(privacy, /future sync feature/i);
   assert.match(terms, /not grades|not a guarantee|exam outcomes|Guidance/i);
   assert.match(terms, /sync learning state and course PDFs/i);

@@ -116,7 +116,7 @@ function CompleteBody() {
           <WaitlistForm source="session_complete" compact />
         </section>
       ) : null}
-      <Link href="/today" className="cta complete-done">Open tomorrow’s Today <span aria-hidden="true">→</span></Link>
+      <Link href="/today" className="cta complete-done">Back to Today <span aria-hidden="true">→</span></Link>
     </AppShell>
   );
 }

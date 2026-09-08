@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isPdfFile, materialTitle, parseMaterialUrl } from "../domain/materials.ts";
+import { isPdfFile, looksLikePdf, materialTitle, parseMaterialUrl } from "../domain/materials.ts";
 import { buildConfirmedMaterialModel, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
 
 test("material links are classified without inventing source data", () => {
@@ -14,9 +14,11 @@ test("material URLs reject incomplete and unsafe protocols", () => {
   assert.throws(() => parseMaterialUrl("file:///private/notes.pdf"), /Only http/);
 });
 
-test("PDF validation and titles are deterministic", () => {
+test("PDF validation and titles are deterministic", async () => {
   assert.equal(isPdfFile({ name: "lecture.PDF", type: "" }), true);
   assert.equal(isPdfFile({ name: "notes.txt", type: "text/plain" }), false);
+  assert.equal(await looksLikePdf(new Blob(["%PDF-1.7"])), true);
+  assert.equal(await looksLikePdf(new Blob(["PK\u0003\u0004"])), false);
   assert.equal(materialTitle("", "week_03-elasticity.pdf"), "week 03 elasticity");
   assert.equal(materialTitle(" My lecture ", "fallback.pdf"), "My lecture");
 });
