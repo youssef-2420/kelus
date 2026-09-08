@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { ConceptInspector } from "@/components/ConceptInspector";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
@@ -12,6 +12,8 @@ import { courseMastery } from "@/domain/scheduler";
 export default function MapPage() {
   const { state, useDemo: loadDemo } = useLearner();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const closeInspector = useCallback(() => setSelectedId(null), []);
   const reduceMotion = useReducedMotion();
   if (!state.onboardingCompleted) {
     return (
@@ -54,12 +56,19 @@ export default function MapPage() {
       <p className="kicker">Course</p>
       <h1 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course is now a Knowledge Map"}</h1>
       <p className="lede-line">{state.diagnosisCompleted ? "Sorted by exam importance, not by weakness." : "These are the concepts you confirmed. Diagnosis will add the first evidence about what you know."}</p>
+      <div className="map-tools">
+        <label htmlFor="topic-filter">Find a topic<input id="topic-filter" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search your course topics" /></label>
+        <span role="status">{concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())).length} of {concepts.length} topics</span>
+      </div>
       <div className={`map-workspace${selected ? " is-inspecting" : ""}`}>
-        <KnowledgeMap heading={null} courseName={course.name} mastery={courseMastery(concepts)} concepts={concepts} selectedId={selectedId} onSelect={(concept) => setSelectedId(concept.id)} />
+        <div>
+        <KnowledgeMap heading={null} courseName={course.name} mastery={courseMastery(concepts)} concepts={concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase()))} selectedId={selectedId} onSelect={(concept) => setSelectedId(concept.id)} />
+        {query.trim() && !concepts.some((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())) ? <div className="map-no-match"><p>No topics match “{query}”. Your course is unchanged.</p><button type="button" className="text-btn" onClick={() => setQuery("")}>Clear search</button></div> : null}
+        </div>
         <AnimatePresence initial={false} mode="wait">
           {selected ? (
             <motion.div key={selected.id} className="concept-inspector-wrap" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }} transition={{ type: "spring", bounce: 0, duration: reduceMotion ? 0.1 : 0.28 }}>
-              <ConceptInspector concept={selected} concepts={concepts} relationships={state.snapshot.relationships} events={state.snapshot.events} nowIso={state.nowIso} onClose={() => setSelectedId(null)} />
+              <ConceptInspector concept={selected} concepts={concepts} relationships={state.snapshot.relationships} events={state.snapshot.events} nowIso={state.nowIso} onClose={closeInspector} />
             </motion.div>
           ) : null}
         </AnimatePresence>

@@ -116,9 +116,6 @@ function TodayBody() {
   const route = generateRoute({ concepts, relationships: snapshot.relationships, events: snapshot.events, exam, nowIso });
   const readiness = estimatedReadiness(concepts);
   const days = daysUntilExam(exam, nowIso);
-  const firstAllocation = route.allocations[0];
-  const firstConcept = concepts.find((concept) => concept.id === firstAllocation?.conceptId);
-  const firstName = firstConcept?.name ?? "mixed retrieval";
   const courseId = course.id;
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
@@ -177,9 +174,11 @@ function TodayBody() {
             </p>
           ) : null}
           <p>
-            {firstName} first · {route.availableMinutes} minutes · exam in {days} days · aim {exam.targetPercent}%
+            {route.availableMinutes} minutes for revision today. Start with one topic.
           </p>
         </div>
+        <details className="today-exam-details">
+        <summary>Exam in {days} days <span>View target and readiness</span></summary>
         <dl className="today-context is-equal" aria-label="Current study context">
           <div>
             <dt>Exam</dt>
@@ -205,12 +204,12 @@ function TodayBody() {
             </p>
           </div>
         </dl>
+        </details>
       </section>
 
       <section className="today-workbench" aria-labelledby="route-title">
         <div className="today-workbench-heading">
-          <p className="kicker">This session</p>
-          <h2 id="route-title">Do this now.</h2>
+          <h2 id="route-title" className="kicker">Your next study block</h2>
         </div>
         <TodayRoute
           route={route}

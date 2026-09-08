@@ -45,13 +45,13 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
   }, [concept.id, onClose]);
 
   return (
-    <aside className="concept-inspector" role="dialog" aria-modal="true" aria-labelledby="concept-inspector-title">
+    <aside className="concept-inspector" role="dialog" aria-modal="false" aria-labelledby="concept-inspector-title">
       <header>
         <span className={`mark-status is-${status}`}>{statusLabel(status)}</span>
         <button ref={closeRef} type="button" onClick={onClose} aria-label="Close concept details">Close</button>
       </header>
       <h2 id="concept-inspector-title">{concept.name}</h2>
-      <p>One concept inside the current course route—not a separate destination.</p>
+      <p>Learning estimates from your recorded answers. These are not exam grades.</p>
 
       <dl>
         <div><dt>Mastery</dt><dd>{percent(concept.mastery)}</dd></div>

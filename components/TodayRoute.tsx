@@ -96,6 +96,8 @@ export function TodayRoute({
               : "Uses the current course model; no uploaded source is cited yet."}
           </small>
         </div>
+        <details className="today-evidence-disclosure">
+        <summary>Why this topic? <span>Sources and learning evidence</span></summary>
         <dl className="today-lead-evidence" aria-label={`Why Kelus recommends ${firstName}`}>
           <div>
             <dt>Course evidence</dt>
@@ -110,6 +112,7 @@ export function TodayRoute({
             <dd>{conciseReason(first.reasons)}</dd>
           </div>
         </dl>
+        </details>
       </motion.article>
 
       {remaining.length ? (

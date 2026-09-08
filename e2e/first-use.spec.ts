@@ -71,15 +71,55 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
 
   await expect(page.getByRole("heading", { name: "Today’s route" })).toBeVisible();
   await expect(page.getByText(/Molecular Biology/).first()).toBeVisible();
+  for (const width of [320, 375, 768, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Map", exact: true }).click();
+  await page.getByLabel("Find a topic").fill("no such topic");
+  await expect(page.getByText(/No topics match/)).toBeVisible();
+  await page.getByRole("button", { name: "Clear search" }).click();
+  await page.getByLabel("Find a topic").fill("Osmosis");
+  await expect(page.locator(".map-list > li")).toHaveCount(1);
+  const topic = page.locator(".map-list button").first();
+  await topic.click();
+  await expect(page.getByRole("button", { name: "Close concept details" })).toBeFocused();
+  await page.setViewportSize({ width: 375, height: 812 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(page.locator(".concept-inspector-wrap")).toHaveCSS("opacity", "1");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: "/tmp/kelus-map-mobile.png", fullPage: true });
+  await page.keyboard.press("Escape");
+  await expect(topic).toBeFocused();
+  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Today", exact: true }).click();
+  await page.locator(".today-evidence-disclosure > summary").click();
+  await expect(page.getByText("Course evidence", { exact: true })).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: "/tmp/kelus-today-mobile.png", fullPage: true });
   const start = page.locator("button.today-start");
   await expect(start).toBeVisible();
   await start.click();
 
   await expect(page).toHaveURL(/\/session/);
+  await expect(page.getByRole("list", { name: "Revision steps" })).toBeVisible();
+  await page.locator(".session-sources button").first().click();
+  await expect(page.getByRole("button", { name: "Close course source" })).toBeFocused();
+  await expect(page.locator(".session-source-panel iframe")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.keyboard.press("Escape");
   await page.getByRole("button", { name: /Retrieve it/ }).click();
   await page.getByLabel(/Write from memory/).fill("I cannot yet explain the mechanism from memory.");
   await page.getByRole("button", { name: /Continue/ }).click();
+  await page.getByRole("button", { name: "Edit recall answer" }).click();
+  await expect(page.getByLabel(/Write from memory/)).toHaveValue("I cannot yet explain the mechanism from memory.");
+  await page.getByRole("button", { name: "Back to explanation" }).click();
+  await page.getByRole("button", { name: /Retrieve it/ }).click();
+  await expect(page.getByLabel(/Write from memory/)).toHaveValue("I cannot yet explain the mechanism from memory.");
+  await page.getByRole("button", { name: /Continue/ }).click();
   await page.getByLabel(/Use the idea in a different situation/).fill("I cannot apply this relationship to the new situation yet.");
+  await expect(page.locator(".study-question")).toHaveCSS("opacity", "1");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
   await page.getByRole("button", { name: /Check my thinking/ }).click();
   await page.getByRole("button", { name: "Use this result" }).click();
   await expect(page.getByText("Learner model updated")).toBeVisible();

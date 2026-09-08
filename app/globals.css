@@ -6653,6 +6653,48 @@ h3,
 }
 .hero-demo-replay:hover { color: var(--color-deep-violet); }
 
+/* One primary action, with detail available when the student needs it. */
+.today-evidence-disclosure { border-top: 1px solid var(--color-frost); }
+.today-evidence-disclosure > summary { cursor: pointer; padding: 16px 0; min-height: 48px; color: var(--color-indigo-ink); }
+.today-evidence-disclosure > summary span { color: var(--color-steel); margin-left: 16px; font-size: 14px; }
+.today-evidence-disclosure .today-lead-evidence { border-top: 0; }
+.today-exam-details > summary { cursor: pointer; min-height: 44px; padding: 12px 0; color: var(--color-indigo-ink); font-size: 14px; }
+.today-exam-details > summary span { color: var(--color-steel); margin-left: 12px; }
+.today-brief:has(.today-exam-details) { display: block; }
+.today-workbench-heading h2.kicker { font-size: 13px; letter-spacing: .06em; font-weight: 400; margin: 0; }
+.map-tools { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin: 24px 0; }
+.map-tools label { display: grid; gap: 8px; width: min(100%, 400px); font-size: 14px; color: var(--color-steel); }
+.map-tools input { width: 100%; min-height: 48px; border: 1px solid var(--color-frost); border-radius: 4px; padding: 12px; color: var(--color-midnight-ink); background: var(--color-pure-white); font: inherit; }
+.map-tools > span { white-space: nowrap; padding-bottom: 12px; font-size: 14px; color: var(--color-steel); }
+.map-no-match { padding: 24px 0; }
+.concept-inspector, .study-question, .reroute-view { scroll-margin-top: 150px; }
+.study-wayfinding { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding-top: 16px; font-size: 13px; color: var(--color-steel); }
+.study-wayfinding ol { display: flex; flex-wrap: wrap; gap: 16px; padding: 0; margin: 0; list-style: none; }
+.study-wayfinding [aria-current="step"] { color: var(--color-indigo-ink); font-weight: 600; }
+.study-back { display: block; margin-top: 16px; min-height: 44px; }
+.study-shell.is-source-open > .study-wayfinding { grid-column: 1 / -1; }
+.study-shell.is-source-open > .session-source-panel { grid-row: 4; }
+@media (max-width: 720px) {
+  .course-workspace-rail { padding-block: 12px; }
+  .course-workspace-identity { padding-bottom: 8px; }
+  .course-workspace-identity > span { display: none; }
+  .course-workspace-progress { padding-top: 8px; }
+  .course-workspace-progress > div { font-size: 11px; }
+  .course-workspace-progress ol { margin-top: 4px; }
+  .course-workspace-progress li.is-current a { min-height: 44px; }
+  .course-workspace-progress li.is-current small { display: none; }
+  .today-brief:has(.today-exam-details) { padding-bottom: 16px; }
+  .today-evidence-disclosure > summary span { display: block; margin: 4px 0 0 20px; }
+  .map-tools { align-items: stretch; flex-direction: column; gap: 8px; }
+  .map-tools label { width: 100%; }
+  .map-tools > span { padding: 0; }
+  .study-context { gap: 12px; align-items: start; }
+  .study-context > span b { overflow-wrap: anywhere; }
+  .study-question .cta { max-width: 100%; white-space: normal; }
+  .study-shell .study-question { padding-top: 32px; }
+  .study-shell .study-question h1 { font-size: clamp(26px, 7.5vw, 32px); line-height: 1.2; letter-spacing: -.025em; }
+}
+
 /* Keep the next action visible and secondary detail within reach. */
 .material-ingest[hidden] { display: none; }
 .material-bookmarks { margin-top: var(--spacing-24); border-top: 1px solid var(--color-frost); }

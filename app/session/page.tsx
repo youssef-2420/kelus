@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import { evaluateLearningResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
 import type { Concept, LearningActivity, RetrievalOutcome } from "@/domain/types";
@@ -68,6 +68,8 @@ function SessionBody() {
   const [routeBeforeIds, setRouteBeforeIds] = useState<string[]>([]);
   const [seenRouteChanges, setSeenRouteChanges] = useState(0);
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
+  const [openingSource, setOpeningSource] = useState(false);
+  const sourceRequest = useRef(0);
   const [confirmExit, setConfirmExit] = useState(false);
   const sourceCloseRef = useRef<HTMLButtonElement>(null);
   const sourceOpenerRef = useRef<HTMLElement | null>(null);
@@ -80,8 +82,12 @@ function SessionBody() {
   const activity = state.snapshot.learningActivities?.find((item) => item.conceptId === conceptId)
     ?? (concept && prompt ? activityFallback(concept, prompt.promptText, prompt.modelAnswer) : null);
   const total = session?.plannedConceptIds.length ?? 0;
+  const focusStep = useCallback((node: HTMLElement | null) => {
+    if (node && phase !== "retrieve" && phase !== "apply") node.focus();
+  }, [phase]);
 
   useEffect(() => () => {
+    sourceRequest.current += 1;
     if (sourceObjectUrl.current) URL.revokeObjectURL(sourceObjectUrl.current);
   }, []);
 
@@ -217,31 +223,38 @@ function SessionBody() {
   const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : helpMode === "example" ? activity.retrieve.example : null;
 
   async function openSource(materialId: string, locator: string | null) {
+    sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const material = materials.find((item) => item.id === materialId);
     if (sourceObjectUrl.current) {
       URL.revokeObjectURL(sourceObjectUrl.current);
       sourceObjectUrl.current = null;
     }
     if (!material) {
-      sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null });
+      setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null });
       return;
     }
     if (material.storage === "url" && material.sourceUrl) {
-      sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setSourcePanel({ title: material.title, locator, kind: "link", href: material.sourceUrl });
+      setSourcePanel({ title: material.title, locator, kind: "link", href: material.sourceUrl });
       return;
     }
-    const blob = await readMaterialPdf(materialId, auth.user?.id);
+    const request = ++sourceRequest.current;
+    setOpeningSource(true);
+    let blob: Blob | null = null;
+    try {
+      blob = await readMaterialPdf(materialId, auth.user?.id);
+    } catch {
+      // Keep the lesson usable when local or remote source storage fails.
+    } finally {
+      if (request === sourceRequest.current) setOpeningSource(false);
+    }
+    if (request !== sourceRequest.current) return;
     if (!blob) {
-      sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    setSourcePanel({ title: material.title, locator, kind: "unavailable", href: null });
+      setSourcePanel({ title: material.title, locator, kind: "unavailable", href: null });
       return;
     }
     const page = Number(locator?.match(/\d+/)?.[0] ?? 1);
     const objectUrl = URL.createObjectURL(blob);
     sourceObjectUrl.current = objectUrl;
-    sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setSourcePanel({ title: material.title, locator, kind: "pdf", href: `${objectUrl}#page=${page}` });
   }
 
@@ -272,10 +285,14 @@ function SessionBody() {
         )}
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
+      <div className="study-wayfinding">
+        <span>Topic {index + 1} of {total}</span>
+        <ol aria-label="Revision steps">{(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>{step === "retrieve" ? "Recall" : step === "evaluate" ? "Check" : step[0].toUpperCase() + step.slice(1)}</li>)}</ol>
+      </div>
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
-          <motion.section key="reroute" className="reroute-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.section ref={focusStep} tabIndex={-1} key="reroute" className="reroute-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <p className="kicker">New learning evidence</p>
             <h1>{routeOrderChanged ? "Route updated." : "Route checked."}</h1>
             <p>
@@ -291,7 +308,7 @@ function SessionBody() {
             <button type="button" className="cta" onClick={continueAfterReroute}>Continue route <span aria-hidden="true">→</span></button>
           </motion.section>
         ) : phase === "result" ? (
-          <motion.section key={`${concept.id}-result`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-result`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
             <p className="study-count" aria-live="polite">04 / 04 · Evaluated</p>
             <p className="kicker">Learner model updated</p>
             <div className="mastery-reward">
@@ -301,7 +318,7 @@ function SessionBody() {
             </div>
           </motion.section>
         ) : (
-          <motion.section key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
+          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
             <p className="study-count" aria-live="polite">{String(visibleStep).padStart(2, "0")} / 04 · {phase}</p>
 
             {phase === "learn" ? (
@@ -314,12 +331,13 @@ function SessionBody() {
                   <div className="session-sources" aria-label="Course sources">
                     <span>From your course</span>
                     {activity.sourceReferences.map((reference) => (
-                      <button key={`${reference.materialId}-${reference.locator}`} type="button" onClick={() => void openSource(reference.materialId, reference.locator)}>
+                      <button key={`${reference.materialId}-${reference.locator}`} type="button" disabled={openingSource} onClick={() => void openSource(reference.materialId, reference.locator)}>
                         {reference.label}{reference.locator ? ` · ${reference.locator}` : ""} <span aria-hidden="true">↗</span>
                       </button>
                     ))}
                   </div>
                 ) : <p className="session-source-note">Demo course model · No uploaded source cited</p>}
+                {openingSource ? <p role="status" className="session-source-note">Opening your source…</p> : null}
                 <button type="button" className="cta" onClick={() => { setPhase("retrieve"); startedAt.current = performance.now(); }}>Retrieve it <span aria-hidden="true">→</span></button>
               </div>
             ) : null}
@@ -340,6 +358,7 @@ function SessionBody() {
                   <AnimatePresence mode="wait">{helpCopy ? <motion.p key={helpMode} initial={{ opacity: 0, y: reduceMotion ? 0 : -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{helpCopy}</motion.p> : null}</AnimatePresence>
                 </div>
                 <button type="button" className="cta" disabled={!retrieveAnswer.trim()} onClick={() => { setHelpMode(null); setPhase("apply"); }}>Continue <span aria-hidden="true">→</span></button>
+                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("learn"); }}>Back to explanation</button>
               </>
             ) : null}
 
@@ -351,6 +370,7 @@ function SessionBody() {
                 <textarea id="application-answer" autoFocus value={applicationAnswer} onChange={(event) => setApplicationAnswer(event.target.value)} placeholder="Work through the new case…" />
                 <div className="session-apply-hint"><button type="button" onClick={() => setHelpMode(helpMode === "hint" ? null : "hint")} aria-expanded={helpMode === "hint"}>Need a hint?</button>{helpMode === "hint" ? <p>{activity.apply.hint}</p> : null}</div>
                 <button type="button" className="cta" disabled={!applicationAnswer.trim()} onClick={checkAnswers}>Check my thinking <span aria-hidden="true">→</span></button>
+                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("retrieve"); }}>Edit recall answer</button>
               </>
             ) : null}
 
@@ -397,7 +417,7 @@ function SessionBody() {
             key={`${sourcePanel.title}-${sourcePanel.locator}`}
             className="session-source-panel"
             role="dialog"
-            aria-modal="true"
+            aria-modal="false"
             aria-label={`Course source: ${sourcePanel.title}`}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
