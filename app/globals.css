@@ -7917,61 +7917,83 @@ h3 {
   position: relative;
   isolation: isolate;
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(420px, 1.15fr);
-  gap: clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 0.88fr) minmax(440px, 1.12fr);
+  gap: clamp(2rem, 5vw, 5rem);
   align-items: center;
   width: 100%;
   max-width: none;
   min-height: calc(100svh - 76px) !important;
   margin: 0;
   padding:
-    clamp(2.5rem, 6vh, 4.5rem)
+    clamp(2.75rem, 7vh, 5rem)
     max(24px, calc((100vw - var(--page-max-width)) / 2))
-    clamp(3rem, 8vh, 5rem) !important;
+    clamp(3rem, 8vh, 5.5rem) !important;
   overflow: clip;
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-mist) 80%, transparent) 0%, transparent 38%),
+    radial-gradient(90% 70% at 8% -10%, color-mix(in srgb, var(--color-mist) 90%, white), transparent 62%),
+    linear-gradient(180deg, var(--color-mist) 0%, transparent 42%),
     var(--color-pure-white);
 }
 
 .kelus-hero.is-editorial .hero-atmosphere-grain {
   position: absolute;
   inset: 0;
-  opacity: 0.35;
+  opacity: 0.28;
   background-image:
-    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--color-deep-violet) 12%, transparent) 1px, transparent 0);
-  background-size: 22px 22px;
-  mask-image: linear-gradient(180deg, rgba(0,0,0,0.55), transparent 78%);
+    radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--color-midnight-ink) 8%, transparent) 1px, transparent 0);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 72%);
   pointer-events: none;
 }
 
 .kelus-hero.is-editorial .hero-atmosphere-mist {
-  inset: -18% -10% auto;
-  height: 85%;
+  inset: -20% -8% auto;
+  height: 88%;
   opacity: 1;
   background:
-    radial-gradient(42% 55% at 12% 18%, color-mix(in srgb, var(--color-periwinkle-wash) 92%, white), transparent 70%),
-    radial-gradient(38% 48% at 78% 8%, color-mix(in srgb, var(--color-mist) 70%, var(--color-lavender-border)), transparent 72%),
+    radial-gradient(48% 58% at 10% 14%, color-mix(in srgb, var(--color-periwinkle-wash) 85%, white), transparent 68%),
+    radial-gradient(36% 44% at 82% 6%, color-mix(in srgb, var(--color-mist) 75%, var(--color-frost)), transparent 70%),
     linear-gradient(180deg, var(--color-mist) 0%, transparent 100%);
 }
 
 .kelus-hero.is-editorial .hero-atmosphere-wash {
-  right: -12%;
-  bottom: -8%;
-  width: min(62vw, 820px);
-  height: min(62vw, 820px);
-  opacity: 1;
+  right: -14%;
+  bottom: -10%;
+  width: min(58vw, 760px);
+  height: min(58vw, 760px);
+  opacity: 0.55;
+  filter: blur(12px);
   background:
-    radial-gradient(circle at 40% 40%, color-mix(in srgb, var(--color-indigo-ink) 16%, transparent), transparent 64%),
-    radial-gradient(circle at 70% 70%, color-mix(in srgb, var(--color-deep-violet) 10%, transparent), transparent 60%);
+    radial-gradient(circle at 42% 38%, color-mix(in srgb, var(--color-midnight-ink) 8%, transparent), transparent 66%),
+    radial-gradient(circle at 68% 72%, color-mix(in srgb, var(--color-periwinkle-wash) 35%, transparent), transparent 62%);
 }
 
 .kelus-hero.is-editorial .hero-atmosphere-beam {
-  left: 6%;
-  top: 8%;
-  width: min(46vw, 560px);
-  height: min(46vw, 560px);
-  opacity: 0.8;
+  left: 4%;
+  top: 6%;
+  width: min(40vw, 480px);
+  height: min(40vw, 480px);
+  opacity: 0.5;
+  filter: blur(20px);
+  background: radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--color-periwinkle-wash) 48%, transparent), transparent 72%);
+}
+
+.hero-atmosphere-horizon {
+  position: absolute;
+  left: max(24px, calc((100vw - var(--page-max-width)) / 2));
+  right: max(24px, calc((100vw - var(--page-max-width)) / 2));
+  bottom: clamp(3rem, 12vh, 6rem);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-frost) 80%, var(--color-lavender-border)) 18%,
+    color-mix(in srgb, var(--color-lavender-border) 60%, var(--color-frost)) 50%,
+    color-mix(in srgb, var(--color-frost) 80%, var(--color-lavender-border)) 82%,
+    transparent
+  );
+  opacity: 0.7;
+  pointer-events: none;
 }
 
 .kelus-hero.is-editorial .kelus-hero-copy,
@@ -7986,12 +8008,12 @@ h3 {
 }
 
 .kelus-hero.is-editorial .hero-brand {
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.65rem;
   color: var(--color-midnight-ink);
-  font-size: clamp(3.25rem, 8.5vw, 6.25rem);
+  font-size: clamp(4rem, 11vw, 7.5rem);
   font-weight: 600;
-  letter-spacing: -0.06em;
-  line-height: 0.88;
+  letter-spacing: -0.065em;
+  line-height: 0.84;
 }
 
 .kelus-hero.is-editorial .home-copy .kicker {
@@ -8005,10 +8027,10 @@ h3 {
   max-width: 11ch;
   margin: 0 0 1rem;
   color: var(--color-midnight-ink);
-  font-size: clamp(2.15rem, 4.2vw, 3.5rem);
+  font-size: clamp(2.25rem, 4.4vw, 3.75rem);
   font-weight: 300;
-  letter-spacing: -0.045em;
-  line-height: 0.98;
+  letter-spacing: -0.048em;
+  line-height: 0.96;
   text-wrap: balance;
 }
 
@@ -8065,24 +8087,84 @@ h3 {
 .hero-stage {
   position: relative;
   min-width: 0;
-  padding-top: 2.5rem;
+  padding-top: 0;
+}
+
+.hero-stage-ensemble {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: clamp(420px, 52vh, 560px);
+  padding: clamp(1.5rem, 3vw, 2.5rem) 0 clamp(0.5rem, 1.5vw, 1rem);
+}
+
+.hero-stage-horizon {
+  position: absolute;
+  left: -6%;
+  right: -2%;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-frost) 14%,
+    var(--color-lavender-border) 50%,
+    var(--color-frost) 86%,
+    transparent
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-stage-floor {
+  position: absolute;
+  left: -10%;
+  right: -4%;
+  bottom: 0;
+  height: clamp(80px, 18%, 140px);
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--color-mist) 55%, transparent) 38%,
+    color-mix(in srgb, var(--color-periwinkle-wash) 22%, transparent) 100%
+  );
+  z-index: 0;
+  pointer-events: none;
 }
 
 .hero-stage-art {
   position: absolute;
-  right: -4%;
-  top: -1.5rem;
-  z-index: 2;
-  width: min(46%, 280px);
+  left: -14%;
+  bottom: -2%;
+  z-index: 3;
+  width: min(54%, 340px);
   pointer-events: none;
-  filter: drop-shadow(0 28px 40px color-mix(in srgb, var(--color-deep-violet) 22%, transparent));
 }
 
 .hero-stage-student {
+  position: relative;
   margin: 0;
 }
 
+.hero-student-ground {
+  position: absolute;
+  left: 12%;
+  right: 8%;
+  bottom: 2%;
+  height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--color-midnight-ink) 14%, transparent) 0%,
+    transparent 72%
+  );
+  filter: blur(4px);
+  transform: scaleX(1.15);
+}
+
 .hero-stage-student img {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: auto;
@@ -8091,15 +8173,18 @@ h3 {
 
 .kelus-hero.is-editorial .hero-product-demo {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  margin-left: clamp(0px, 10%, 56px);
   overflow: hidden;
   background:
-    linear-gradient(165deg, color-mix(in srgb, var(--color-pure-white) 86%, var(--color-periwinkle-wash)) 0%, var(--color-pure-white) 42%),
+    linear-gradient(168deg, color-mix(in srgb, var(--color-pure-white) 92%, var(--color-mist)) 0%, var(--color-pure-white) 52%),
     var(--color-pure-white);
-  border: 1px solid color-mix(in srgb, var(--color-lavender-border) 75%, var(--color-frost));
+  border: 1px solid color-mix(in srgb, var(--color-frost) 85%, var(--color-lavender-border));
   border-top: 2px solid var(--color-indigo-ink);
-  border-radius: calc(var(--radius-ledger) + 2px);
-  box-shadow: var(--elevation-2);
+  border-radius: var(--radius-ledger);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--color-pure-white) 85%, transparent) inset,
+    0 24px 48px -32px color-mix(in srgb, var(--color-midnight-ink) 18%, transparent);
 }
 
 .kelus-hero.is-editorial .hero-demo-student {
@@ -8111,6 +8196,10 @@ h3 {
   backdrop-filter: blur(14px) saturate(140%);
 }
 
+.kelus-hero.is-editorial .hero-demo-signal {
+  padding-right: 0;
+}
+
 @media (max-width: 980px) {
   .kelus-hero.home-hero.is-product-demo.is-editorial {
     grid-template-columns: 1fr;
@@ -8120,18 +8209,25 @@ h3 {
     padding-block: 2.5rem 3.5rem !important;
   }
   .kelus-hero.is-editorial .hero-brand {
-    font-size: clamp(3.25rem, 16vw, 5rem);
+    font-size: clamp(3.75rem, 18vw, 5.5rem);
   }
   .kelus-hero.is-editorial .home-copy h1 {
     max-width: 14ch;
     font-size: clamp(2.15rem, 8vw, 3rem);
   }
-  .hero-stage { padding-top: 1.5rem; }
-  .hero-stage-art {
-    width: min(42%, 180px);
-    top: -0.5rem;
-    right: 0;
+  .hero-stage-ensemble {
+    min-height: 0;
+    padding-top: 1rem;
   }
+  .hero-stage-art {
+    left: -4%;
+    width: min(44%, 200px);
+    bottom: 0;
+  }
+  .kelus-hero.is-editorial .hero-product-demo {
+    margin-left: 0;
+  }
+  .hero-atmosphere-horizon { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -8151,11 +8247,59 @@ h3 {
 .home-product-story {
   position: relative;
   background: var(--color-pure-white);
+  overflow: clip;
+}
+
+.home-story-thread {
+  position: absolute;
+  inset: clamp(4rem, 9vh, 7rem) auto clamp(4rem, 9vh, 7rem) max(24px, calc((100vw - var(--page-max-width)) / 2));
+  width: 1px;
+  pointer-events: none;
+  z-index: 0;
+  display: none;
+}
+
+.home-story-thread-line {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-indigo-ink) 0%,
+    color-mix(in srgb, var(--color-frost) 80%, var(--color-lavender-border)) 22%,
+    color-mix(in srgb, var(--color-frost) 80%, var(--color-lavender-border)) 78%,
+    var(--color-indigo-ink) 100%
+  );
+  opacity: 0.22;
+}
+
+.home-story-thread-node {
+  position: absolute;
+  left: 50%;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  border: 1px solid var(--color-indigo-ink);
+  background: var(--color-pure-white);
+}
+
+.home-story-thread-node.is-plan { top: 8%; }
+.home-story-thread-node.is-reroute { top: 42%; }
+.home-story-thread-node.is-materials { top: 76%; }
+
+@media (min-width: 1100px) {
+  .home-story-thread { display: block; }
+  .v1-story-section.is-band.is-chapter,
+  .v1-method.is-band {
+    padding-left: calc(max(24px, calc((100vw - var(--page-max-width)) / 2)) + 2.5rem);
+  }
 }
 
 .v1-story-section.is-band,
 .v1-method.is-band,
 .home-close.is-band {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: none;
   margin: 0;
@@ -8165,26 +8309,42 @@ h3 {
   border-top: 0;
 }
 
+.v1-story-section.is-band.is-chapter::before {
+  content: attr(data-chapter);
+  position: absolute;
+  top: clamp(3rem, 7vh, 5.5rem);
+  right: max(24px, calc((100vw - var(--page-max-width)) / 2));
+  font-size: clamp(5.5rem, 13vw, 10rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 0.9;
+  color: color-mix(in srgb, var(--color-indigo-ink) 5%, transparent);
+  pointer-events: none;
+  user-select: none;
+}
+
 .v1-story-section.is-band {
   display: grid;
-  grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1.28fr);
   gap: clamp(2.5rem, 7vw, 6.5rem);
   align-items: center;
 }
 
 .v1-story-section.is-band.is-plan {
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-mist) 70%, transparent) 0%, transparent 55%);
+    radial-gradient(80% 60% at 0% 0%, color-mix(in srgb, var(--color-mist) 85%, white), transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-mist) 65%, transparent) 0%, transparent 62%);
 }
 
 .v1-story-section.is-band.is-reroute {
   background:
-    linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-periwinkle-wash) 32%, transparent) 48%, transparent 100%);
+    radial-gradient(70% 80% at 100% 50%, color-mix(in srgb, var(--color-periwinkle-wash) 40%, transparent), transparent 62%),
+    linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-periwinkle-wash) 24%, transparent) 50%, transparent 100%);
 }
 
 .v1-story-section.is-band.is-materials {
   background:
-    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-mist) 55%, transparent) 100%);
+    linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--color-mist) 50%, transparent) 100%);
 }
 
 .v1-story-section.is-band.is-reroute .v1-story-copy {
@@ -8206,10 +8366,10 @@ h3 {
 .v1-story-section.is-band .v1-story-copy h2 {
   max-width: 10ch;
   margin: 1rem 0 1.25rem;
-  font-size: clamp(2.75rem, 5.5vw, 4.75rem);
+  font-size: clamp(2.85rem, 5.8vw, 5rem);
   font-weight: 300;
-  letter-spacing: -0.05em;
-  line-height: 0.96;
+  letter-spacing: -0.052em;
+  line-height: 0.94;
 }
 
 .v1-story-section.is-band .v1-story-copy > p:not(.kicker) {
@@ -8239,14 +8399,15 @@ h3 {
   transform: translateX(4px);
 }
 
+.v1-story-section.is-band .v1-story-scene,
 .v1-story-section.is-band .v1-story-frame {
   overflow: hidden;
   background:
-    linear-gradient(165deg, color-mix(in srgb, var(--color-pure-white) 88%, var(--color-periwinkle-wash)) 0%, var(--color-pure-white) 48%);
-  border: 1px solid color-mix(in srgb, var(--color-lavender-border) 70%, var(--color-frost));
-  border-top: 2px solid var(--color-indigo-ink);
-  border-radius: calc(var(--radius-ledger) + 2px);
-  box-shadow: var(--elevation-2);
+    linear-gradient(168deg, color-mix(in srgb, var(--color-pure-white) 94%, var(--color-mist)) 0%, var(--color-pure-white) 55%);
+  border: 1px solid color-mix(in srgb, var(--color-frost) 90%, var(--color-lavender-border));
+  border-left: 2px solid var(--color-indigo-ink);
+  border-radius: var(--radius-ledger);
+  box-shadow: 0 20px 44px -36px color-mix(in srgb, var(--color-midnight-ink) 16%, transparent);
 }
 
 .v1-story-section.is-band .v1-plan,
@@ -8260,11 +8421,12 @@ h3 {
 
 .v1-method.is-band {
   display: grid;
-  grid-template-columns: minmax(240px, 0.78fr) minmax(0, 1.22fr);
+  grid-template-columns: minmax(240px, 0.72fr) minmax(0, 1.28fr);
   gap: clamp(2.5rem, 7vw, 6.5rem);
   align-items: start;
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--color-mist) 45%, transparent), var(--color-pure-white));
+    radial-gradient(60% 80% at 0% 100%, color-mix(in srgb, var(--color-mist) 70%, transparent), transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-mist) 40%, transparent), var(--color-pure-white));
   border-top: 1px solid var(--color-frost);
 }
 
@@ -8318,9 +8480,18 @@ h3 {
   isolation: isolate;
   overflow: clip;
   background:
-    radial-gradient(70% 100% at 50% 120%, color-mix(in srgb, var(--color-periwinkle-wash) 75%, transparent), transparent 68%),
-    linear-gradient(180deg, var(--color-mist), color-mix(in srgb, var(--color-mist) 40%, white));
-  border-top: 1px solid color-mix(in srgb, var(--color-frost) 70%, var(--color-lavender-border));
+    radial-gradient(65% 90% at 50% 110%, color-mix(in srgb, var(--color-periwinkle-wash) 55%, transparent), transparent 65%),
+    linear-gradient(180deg, var(--color-mist), color-mix(in srgb, var(--color-mist) 35%, white));
+  border-top: 1px solid color-mix(in srgb, var(--color-frost) 75%, var(--color-lavender-border));
+}
+
+.home-close.is-band::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-indigo-ink), transparent);
+  opacity: 0.12;
 }
 
 .home-close.is-band .home-close-inner {
@@ -8380,6 +8551,12 @@ h3 {
   .v1-method.is-band {
     grid-template-columns: 1fr;
     gap: 2.5rem;
+  }
+  .v1-story-section.is-band.is-chapter::before {
+    font-size: clamp(4rem, 22vw, 6rem);
+    top: 1.5rem;
+    right: max(24px, calc((100vw - var(--page-max-width)) / 2));
+    opacity: 0.85;
   }
   .v1-story-section.is-band.is-reroute .v1-story-copy,
   .v1-story-section.is-band.is-reroute .v1-story-visual {

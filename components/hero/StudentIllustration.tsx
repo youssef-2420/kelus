@@ -11,6 +11,7 @@ export function StudentIllustration({ className }: Props) {
 
   return (
     <figure className={className} aria-hidden="true">
+      <span className="hero-student-ground" aria-hidden="true" />
       <picture>
         <source srcSet="/hero/student.webp" type="image/webp" />
         <motion.img
@@ -20,9 +21,9 @@ export function StudentIllustration({ className }: Props) {
           height={538}
           decoding="async"
           fetchPriority="high"
-          initial={false}
-          animate={reduce ? { opacity: 1 } : { opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] }}
+          initial={reduce ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0 : 0.72, delay: reduce ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
         />
       </picture>
     </figure>

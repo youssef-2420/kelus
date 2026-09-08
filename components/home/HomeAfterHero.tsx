@@ -10,7 +10,14 @@ import { Pressable, Reveal } from "@/components/motion";
 export function HomeAfterHero() {
   return (
     <div className="home-product-story">
-      <section id="how" className="v1-story-section is-plan is-band" aria-labelledby="v1-plan-title">
+      <div className="home-story-thread" aria-hidden="true">
+        <span className="home-story-thread-line" />
+        <span className="home-story-thread-node is-plan" />
+        <span className="home-story-thread-node is-reroute" />
+        <span className="home-story-thread-node is-materials" />
+      </div>
+
+      <section id="how" className="v1-story-section is-plan is-band is-chapter" data-chapter="01" aria-labelledby="v1-plan-title">
         <Reveal className="v1-story-copy">
           <p className="kicker">01 · Today’s plan</p>
           <h2 id="v1-plan-title">Your next 45 minutes.</h2>
@@ -25,13 +32,13 @@ export function HomeAfterHero() {
           </Pressable>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
-          <div className="v1-story-frame">
+          <div className="v1-story-scene">
             <TodayPlanIllustration />
           </div>
         </Reveal>
       </section>
 
-      <section id="route" className="v1-story-section is-reroute is-band" aria-labelledby="v1-reroute-title">
+      <section id="route" className="v1-story-section is-reroute is-band is-chapter" data-chapter="02" aria-labelledby="v1-reroute-title">
         <Reveal className="v1-story-copy">
           <p className="kicker">02 · New evidence</p>
           <h2 id="v1-reroute-title">One answer changes the route.</h2>
@@ -46,13 +53,13 @@ export function HomeAfterHero() {
           </Pressable>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
-          <div className="v1-story-frame">
+          <div className="v1-story-scene">
             <RerouteIllustration />
           </div>
         </Reveal>
       </section>
 
-      <section className="v1-story-section is-materials is-band" aria-labelledby="v1-materials-title">
+      <section className="v1-story-section is-materials is-band is-chapter" data-chapter="03" aria-labelledby="v1-materials-title">
         <Reveal className="v1-story-copy">
           <p className="kicker">03 · Course material</p>
           <h2 id="v1-materials-title">Revise from your own course material.</h2>
@@ -67,7 +74,7 @@ export function HomeAfterHero() {
           </Pressable>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
-          <div className="v1-story-frame">
+          <div className="v1-story-scene">
             <MaterialShelfIllustration />
           </div>
         </Reveal>
