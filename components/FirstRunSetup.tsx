@@ -28,6 +28,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
       <form className="destination-form" onSubmit={submit}>
         <p className="destination-brand">Kelus</p>
         <h1 className="destination-page-title">Set your exam</h1>
+        <p className="destination-support">Choose the course you want to revise. Next, add your lessons and start practising what you remember.</p>
         <aside className="setup-sample is-primary" aria-label="Fastest way to try Kelus">
           <div>
             <p className="kicker">Fastest path</p>

@@ -21,7 +21,7 @@ export default function PricingPage() {
         <p className="kicker">Pricing</p>
         <h1>Prepare for one exam. Pay for one exam.</h1>
         <p className="legal-lede">
-          Build your first route free on this device.
+          Try a revision session free on this device.
           {syncReady
             ? " Sign in anytime to sync that progress across browsers."
             : " Account sync ships when enabled for your build."}{" "}
@@ -31,17 +31,17 @@ export default function PricingPage() {
         <div className="pricing-grid" role="list">
           <article className="pricing-plan" role="listitem">
             <p className="kicker">Free</p>
-            <h2>Try a real route</h2>
+            <h2>Try a revision session</h2>
             <p className="pricing-price">$0</p>
             <ul>
               <li>Add your course and exam date</li>
-              <li>Build today’s evidence-based route</li>
-              <li>Complete a diagnosis and study session</li>
+              <li>Get topics to revise from your answer evidence</li>
+              <li>Practise recall and application, then check your answers</li>
               <li>No account required</li>
               {syncReady ? <li>Optional free sign-in to sync across devices</li> : <li>Saved on this device</li>}
             </ul>
             <Link className="cta" href="/today">
-              Build today’s route <span aria-hidden="true">→</span>
+              Start revising <span aria-hidden="true">→</span>
             </Link>
           </article>
 
@@ -55,7 +55,7 @@ export default function PricingPage() {
               <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
               <li>Priority access to new study features while Exam Pass launches</li>
               <li>Direct email support through the exam date you set</li>
-              <li>Funds focused work on the adaptive route</li>
+              <li>Funds improvements to revision and exam practice</li>
             </ul>
             <FoundingCta source="pricing" />
           </article>

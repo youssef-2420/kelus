@@ -16,7 +16,7 @@ export default function PrivacyPage() {
         <h1>Privacy</h1>
         <p className="legal-updated">Last updated: September 7, 2026</p>
         <p className="legal-lede">
-          Kelus is a local-first exam planner. Without an account, your course PDFs and study progress stay on this
+          Kelus is a local-first revision and exam practice tool. Without an account, your course PDFs and study progress stay on this
           device. If you sign in, Kelus can sync that work to your private account so you can continue on another
           browser.
         </p>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
           </li>
         </ul>
         <p>
-          You can keep using Kelus without signing in. Skip the waitlist if you only want the local planner.
+          You can keep using Kelus without signing in. Skip the waitlist if you only want revision on this device.
         </p>
 
         <h2>Questions inbox</h2>

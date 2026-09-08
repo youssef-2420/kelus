@@ -4,7 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "Terms — Kelus",
-  description: "Terms for using Kelus, the local-first exam planner on kelus.me.",
+  description: "Terms for using Kelus, the local-first revision and exam practice tool on kelus.me.",
   alternates: { canonical: "/terms" },
 };
 
@@ -19,7 +19,7 @@ export default function TermsPage() {
 
         <h2>What Kelus provides</h2>
         <p>
-          Kelus helps you turn course materials into a focused daily study route. Recommendations are guidance for
+          Kelus helps you revise course materials through recall and application practice. Recommendations are guidance for
           exam prep — not grades, academic credit, medical advice, or a guarantee of exam outcomes.
         </p>
 

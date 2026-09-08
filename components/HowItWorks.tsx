@@ -11,14 +11,14 @@ import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-example
 const stages = [
   {
     number: "01",
-    label: "Give Kelus the course",
+    label: "Add the lessons you want to revise",
     body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus keeps the source attached to the concepts you confirm.",
     visual: "materials",
   },
   {
     number: "02",
-    label: "Build the Knowledge Map",
-    body: "Course topics become connected concepts. You confirm the structure instead of manually drawing a complicated graph.",
+    label: "Confirm your revision topics",
+    body: "Review the topics proposed from your PDF. The Knowledge Map keeps them together with their source references.",
     visual: "map",
   },
   {
@@ -29,20 +29,20 @@ const stages = [
   },
   {
     number: "04",
-    label: "Open Today",
-    body: "Kelus ranks the next actions by exam value, current understanding, prerequisites, retention, and the time available.",
+    label: "Start today’s revision",
+    body: "Kelus suggests topics to practise using your recall checks, topic priorities, exam date, and available time.",
     visual: "today",
   },
   {
     number: "05",
-    label: "Learn inside the route",
-    body: "Each session moves through learning, retrieval, application, and evaluation—with the relevant source page when one is confirmed.",
+    label: "Review, recall, and apply",
+    body: "Review an explanation, answer from memory, and try an application question. Check your reasoning against the source before continuing.",
     visual: "session",
   },
   {
     number: "06",
     label: "Your answer changes the route",
-    body: "New evidence updates the learner model. If another concept becomes more valuable, tomorrow’s order changes quietly.",
+    body: "Your answer results change what Kelus suggests next. Revisit weaker topics and keep practising through the days before your exam.",
     visual: "reroute",
   },
 ] as const;
@@ -82,10 +82,10 @@ export function HowItWorks() {
     <div className="how-page">
       <section className="how-hero" aria-labelledby="how-title">
         <p className="kicker">How Kelus works</p>
-        <BlurText as="h1" id="how-title" text="One route from course material to exam readiness." delay={58} className="how-title" />
+        <BlurText as="h1" id="how-title" text="Your lessons. A regular revision habit." delay={58} className="how-title" />
         <div className="how-hero-foot">
-          <p>Kelus decides what deserves your time, then gives you the place to learn it. Every answer becomes evidence for what comes next.</p>
-          <Link className="cta" href="/today">Build today’s route <span aria-hidden="true">→</span></Link>
+          <p>Bring what you’ve studied. Recall it, practise using it, and review the parts that need another attempt before your exam.</p>
+          <Link className="cta" href="/today">Start revising <span aria-hidden="true">→</span></Link>
         </div>
         <div className="how-example-switcher" aria-label="Choose an example course">
           <span>See the loop with</span>
@@ -96,7 +96,7 @@ export function HowItWorks() {
       </section>
 
       <section className="how-loop" aria-label="The Kelus learning loop">
-        <header><span>The loop</span><p>Setup happens once. Learning and rerouting repeat until the exam.</p></header>
+        <header><span>The loop</span><p>Add your lessons once. Return for revision and practice until the exam.</p></header>
         <ol>
           {stages.map((stage) => (
             <motion.li key={stage.number} {...reveal}>
@@ -114,17 +114,17 @@ export function HowItWorks() {
 
       <section className="how-principle">
         <p className="kicker">The principle</p>
-        <h2>Kelus does the routing. You do the learning.</h2>
+        <h2>One purpose: help you revise for your exam.</h2>
         <dl>
-          <div><dt>Not a generic AI tutor</dt><dd>The learner model—not a chat window—decides the route.</dd></div>
+          <div><dt>Practice from your lessons</dt><dd>Review course ideas, answer from memory, and apply them.</dd></div>
           <div><dt>Not a grade prediction</dt><dd>Readiness is an estimate built from the evidence you provide.</dd></div>
-          <div><dt>Not a fixed schedule</dt><dd>Miss a day or struggle with a concept and the route recalculates.</dd></div>
+          <div><dt>Revision that adapts</dt><dd>Your answers and the time available shape the next practice session.</dd></div>
         </dl>
       </section>
 
       <footer className="how-final">
-        <p>Give Kelus one course. Get the next right move.</p>
-        <Link className="cta" href="/today">Build today’s route <span aria-hidden="true">→</span></Link>
+        <p>Bring one lesson. Start practising for your exam.</p>
+        <Link className="cta" href="/today">Start revising <span aria-hidden="true">→</span></Link>
       </footer>
       <SiteFooter />
     </div>

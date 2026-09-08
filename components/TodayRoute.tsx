@@ -215,7 +215,7 @@ export function TodayRoute({
           );
         })}
       </ol>
-      <p className="today-reroute-note">After the session, Kelus uses your answers to reorder what comes next.</p>
+      <p className="today-reroute-note">Review your lessons, answer from memory, and practise applying them. Your results guide what to revise next.</p>
     </div>
   );
 }

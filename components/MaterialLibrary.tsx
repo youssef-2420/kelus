@@ -383,7 +383,7 @@ export function MaterialLibrary() {
     <AppShell>
       <header className="materials-head">
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
-        <p>Keep the sources that define this exam together. PDFs build concepts; links are bookmarks only.</p>
+        <p>Add the lessons you want to revise for this exam. PDFs supply proposed revision topics; links are bookmarks only.</p>
       </header>
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}

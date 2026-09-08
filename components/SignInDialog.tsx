@@ -135,8 +135,8 @@ export function SignInDialog() {
             <h2 id={titleId}>{mode === "signin" ? "Welcome back." : "Create your account."}</h2>
             <p className="auth-intro">
               {mode === "signin"
-                ? "Pick up your course, materials, and learning evidence on this device."
-                : "Sync this course, its PDFs, and your learning evidence across devices."}
+                ? "Return to your lessons and revision progress."
+                : "Sync your course PDFs and revision progress across devices."}
             </p>
 
             {!auth.configured ? <p className="auth-message is-error" role="alert">Authentication is not configured in this build.</p> : null}

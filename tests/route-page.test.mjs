@@ -9,10 +9,10 @@ test("homepage presents the V1 product loop after the student hero", () => {
   assert.match(page, /KelusHero/);
   assert.doesNotMatch(page, /StartHereJourney/);
   assert.match(page, /HomeAfterHero/);
-  assert.match(hero, /Your course is too big/);
+  assert.match(hero, /Revise your lessons/);
   assert.match(hero, /LEARNING_EXAMPLES/);
   assert.match(hero, /Today’s route/);
-  assert.match(hero, /No invented progress/);
+  assert.match(hero, /Revision that adapts to your answers/);
   assert.match(hero, /Try sample \(~1 min\)/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
@@ -41,11 +41,11 @@ test("route explainer lives on its own page", () => {
   const story = readFileSync("components/HowItWorks.tsx", "utf8");
   const examples = readFileSync("data/learning-examples.ts", "utf8");
   assert.match(page, /HowItWorks/);
-  assert.match(story, /Give Kelus the course/);
-  assert.match(story, /Build the Knowledge Map/);
+  assert.match(story, /Add the lessons you want to revise/);
+  assert.match(story, /Confirm your revision topics/);
   assert.match(story, /Show what you know/);
-  assert.match(story, /Open Today/);
-  assert.match(story, /Learn inside the route/);
+  assert.match(story, /Start today’s revision/);
+  assert.match(story, /Review, recall, and apply/);
   assert.match(story, /Your answer changes the route/);
   assert.match(story, /BlurText/);
   assert.match(story, /MaterialToMapIllustration/);

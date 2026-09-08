@@ -15,11 +15,11 @@ export function HomeAfterHero() {
           <p className="kicker">01 · Today’s plan</p>
           <h2 id="v1-plan-title">Your next 45 minutes.</h2>
           <p>
-            Kelus turns the time you have into a short route. The first topic is there for a reason—not because it was
-            first in the syllabus.
+            Spend a short session revising your lessons: review an idea, recall it from memory, then apply it.
+            Your recent answers help Kelus choose what to practise first.
           </p>
           <Link href="/today">
-            Build today’s route <span aria-hidden="true">→</span>
+            Start revising <span aria-hidden="true">→</span>
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
@@ -32,8 +32,8 @@ export function HomeAfterHero() {
           <p className="kicker">02 · New evidence</p>
           <h2 id="v1-reroute-title">One answer changes the route.</h2>
           <p>
-            “Almost” is useful information. Kelus keeps that topic close and quietly reorganizes what should come
-            next—without rebuilding the whole plan.
+            A weak answer shows what needs another attempt. Kelus adjusts the revision order so you can
+            practise that topic again and keep reviewing what you have already studied.
           </p>
           <Link href="/route">
             See how rerouting works <span aria-hidden="true">→</span>
@@ -47,13 +47,13 @@ export function HomeAfterHero() {
       <section className="v1-story-section is-materials" aria-labelledby="v1-materials-title">
         <Reveal className="v1-story-copy">
           <p className="kicker">03 · Course material</p>
-          <h2 id="v1-materials-title">Everything for the exam, together.</h2>
+          <h2 id="v1-materials-title">Revise from your own course material.</h2>
           <p>
             Add a syllabus or lecture PDF, review the proposed concepts, and keep each learning activity connected to
             the page it came from.
           </p>
           <Link href="/today">
-            Build today’s route <span aria-hidden="true">→</span>
+            Start revising <span aria-hidden="true">→</span>
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
@@ -65,7 +65,7 @@ export function HomeAfterHero() {
         <Reveal className="v1-method-heading">
           <p className="kicker">Honest methodology</p>
           <h2 id="v1-method-title">A recommendation you can inspect.</h2>
-          <p>Kelus makes a focused decision from information the student actually supplied.</p>
+          <p>Your material, recall checks, and exam date guide what Kelus suggests you revise next.</p>
         </Reveal>
         <Reveal delay={0.08}>
           <dl>
@@ -93,11 +93,11 @@ export function HomeAfterHero() {
         <Reveal className="home-close-inner">
           <div className="home-close-copy">
             <h2 id="home-close-title">Walk into the exam knowing what you worked on—and why.</h2>
-            <p>Build your first route free on this device. See Exam Pass if you want priority support through exam day.</p>
+            <p>Try a revision session free on this device. See Exam Pass if you want priority support through exam day.</p>
           </div>
           <div className="home-close-actions">
             <Link href="/today" className="cta">
-              Build today’s route <span aria-hidden="true">→</span>
+              Start revising <span aria-hidden="true">→</span>
             </Link>
             <Link href="/pricing" className="text-btn">
               See pricing

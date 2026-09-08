@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { HowItWorks } from "@/components/HowItWorks";
 
 export const metadata: Metadata = {
-  title: "Kelus — Your learning has a route",
-  description: "Watch Kelus choose a route from where you are, the time you have, and what the exam actually rewards.",
+  title: "How to revise with Kelus — Course notes to exam practice",
+  description: "Add your course material, check what you recall, practise your lessons, and revisit weaker topics. See how Kelus adapts your exam revision to your answers.",
   alternates: { canonical: "/route" },
 };
 

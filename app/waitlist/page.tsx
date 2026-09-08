@@ -6,7 +6,7 @@ import { WaitlistExport } from "@/components/WaitlistExport";
 
 export const metadata: Metadata = {
   title: "Waitlist — Kelus",
-  description: "Join the Kelus waitlist for early access updates on the local-first exam planner.",
+  description: "Join the Kelus waitlist for early access updates on the local-first revision and exam practice tool.",
   alternates: { canonical: "/waitlist" },
 };
 
@@ -17,13 +17,13 @@ export default function WaitlistPage() {
         <p className="kicker">Stay close</p>
         <h1>Use Kelus now. Get a note when it gets better for your course.</h1>
         <p className="legal-lede">
-          The planner works today on this device. Sign in free anytime to sync across browsers. Join the list only if
+          Revision sessions work today on this device. Sign in free anytime to sync across browsers. Join the list only if
           you want a quiet update when Exam Pass checkout or more courses land — not a marketing drip.
         </p>
         <WaitlistForm source="waitlist_page" />
         <WaitlistExport />
         <p className="legal-inline-links">
-          Prefer to try now? <Link href="/today">Build today’s route</Link>
+          Prefer to try now? <Link href="/today">Start revising</Link>
           {" · "}
           <Link href="/privacy">Privacy</Link>
         </p>

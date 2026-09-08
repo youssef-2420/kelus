@@ -17,14 +17,14 @@ const ledger = Inter_Tight({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kelus.me"),
-  title: "Kelus — Know what to study next",
-  description: "Kelus looks at what you know, what’s fading, and the time you have — then gives you today’s exam plan.",
+  title: "Kelus — Revise your lessons. Prepare for exams.",
+  description: "Revise your course material with recall questions, application practice, and answer feedback. Kelus uses your answers to suggest what to review before your exam.",
   openGraph: {
     type: "website",
     url: "https://kelus.me/",
     siteName: "Kelus",
-    title: "Kelus — Know what to study next",
-    description: "A focused daily exam plan that changes as you learn.",
+    title: "Kelus — Revise your lessons. Prepare for exams.",
+    description: "Practise recalling your lessons, check your answers, and revisit weaker topics before your exam.",
   },
 };
 

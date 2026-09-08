@@ -27,7 +27,7 @@ export default function QuestionsPage() {
         <p className="legal-inline-links">
           Prefer email? <a href="mailto:hello@kelus.me">hello@kelus.me</a>
           {" · "}
-          <Link href="/today">Build today’s route</Link>
+          <Link href="/today">Start revising</Link>
           {" · "}
           <Link href="/privacy">Privacy</Link>
         </p>

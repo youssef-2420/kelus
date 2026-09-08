@@ -16,10 +16,10 @@ export function KelusHero() {
   return (
     <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
       <div className="kelus-hero-copy home-copy">
-        <h1 id="home-hero-title">Your course is too big. Make today finishable.</h1>
+        <h1 id="home-hero-title">Revise your lessons. Prepare for your exams.</h1>
         <p className="home-lede">
-          Add the material and the exam date. Kelus turns what you know—and what you do not—into the next useful study
-          session.
+          Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
+          and revisit the topics that need more work before your exam.
         </p>
         <div className="home-actions">
           <Link href="/today?sample=1" className="cta home-cta">
@@ -28,10 +28,10 @@ export function KelusHero() {
             </span>
           </Link>
           <Link href="/today" className="home-secondary">
-            Build with my PDF
+            Revise my course
           </Link>
         </div>
-        <p className="hero-honesty">Your material. Your answers. No invented progress.</p>
+        <p className="hero-honesty">Your lessons. Regular practice. Revision that adapts to your answers.</p>
       </div>
 
       <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">

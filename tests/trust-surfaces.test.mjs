@@ -159,13 +159,13 @@ test("primary CTA language and readiness stay consistent", async () => {
   ]);
   assert.match(hero, /Try sample \(~1 min\)/);
   assert.match(hero, /today\?sample=1/);
-  assert.match(hero, /Build with my PDF/);
+  assert.match(hero, /Revise my course/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
-  assert.match(header, /Build today’s route/);
-  assert.match(home, /Build today’s route/);
+  assert.match(header, /Start revising/);
+  assert.match(home, /Start revising/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
-  assert.match(how, /Build today’s route/);
+  assert.match(how, /Start revising/);
   assert.match(today, /Est\. readiness/);
   assert.match(today, /not a grade prediction/);
   assert.match(today, /get\("sample"\) === "1"/);
@@ -208,7 +208,7 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(complete, /WaitlistForm/);
   assert.match(complete, /completedSessions === 1/);
   assert.match(complete, /completedSessions >= 2/);
-  assert.match(auth, /Sync this course, its PDFs, and your learning evidence across devices/);
+  assert.match(auth, /Sync your course PDFs and revision progress across devices/);
   assert.doesNotMatch(auth, /future cross-device sync/);
   assert.match(envExample, /NEXT_PUBLIC_EXAM_PASS_PAYMENT_LINK/);
   assert.doesNotMatch(envExample, /NEXT_PUBLIC_STRIPE_PAYMENT_LINK/);
