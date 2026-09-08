@@ -23,7 +23,9 @@ export function HomeAfterHero() {
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
-          <TodayPlanIllustration />
+          <div className="v1-story-frame surface-raised">
+            <TodayPlanIllustration />
+          </div>
         </Reveal>
       </section>
 
@@ -40,7 +42,9 @@ export function HomeAfterHero() {
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
-          <RerouteIllustration />
+          <div className="v1-story-frame surface-raised">
+            <RerouteIllustration />
+          </div>
         </Reveal>
       </section>
 
@@ -57,7 +61,9 @@ export function HomeAfterHero() {
           </Link>
         </Reveal>
         <Reveal delay={0.08} className="v1-story-visual">
-          <MaterialShelfIllustration />
+          <div className="v1-story-frame surface-raised">
+            <MaterialShelfIllustration />
+          </div>
         </Reveal>
       </section>
 
@@ -68,7 +74,7 @@ export function HomeAfterHero() {
           <p>Your material, recall checks, and exam date guide what Kelus suggests you revise next.</p>
         </Reveal>
         <Reveal delay={0.08}>
-          <dl>
+          <dl className="v1-method-grid">
             <div>
               <dt>Exam</dt>
               <dd>Date and target score</dd>

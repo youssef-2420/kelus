@@ -29,7 +29,7 @@ export default function PricingPage() {
         </p>
 
         <div className="pricing-grid" role="list">
-          <article className="pricing-plan" role="listitem">
+          <article className="pricing-plan surface-flat" role="listitem">
             <p className="kicker">Free</p>
             <h2>Try a revision session</h2>
             <p className="pricing-price">$0</p>
@@ -45,7 +45,7 @@ export default function PricingPage() {
             </Link>
           </article>
 
-          <article className="pricing-plan is-founding" role="listitem">
+          <article className="pricing-plan is-founding surface-raised" role="listitem">
             <p className="kicker">Exam Pass</p>
             <h2>Support through exam day</h2>
             <p className="pricing-price">

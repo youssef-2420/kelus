@@ -141,13 +141,35 @@ export function MaterialLibrary() {
   if (!state.onboardingCompleted || !course) {
     return (
       <AppShell>
-        <section className="materials-empty">
-          <p className="kicker">Course material</p>
-          <h1>Set your exam first.</h1>
-          <p>Kelus needs a course and exam before it can keep sources with it.</p>
-          <Link className="cta" href="/today">
-            Set your exam <span aria-hidden="true">→</span>
-          </Link>
+        <section className="materials-empty is-staged">
+          <div className="materials-empty-copy">
+            <p className="kicker">Course material</p>
+            <h1>Set your exam first.</h1>
+            <p>Kelus needs a course and exam before it can keep sources with it.</p>
+            <Link className="cta" href="/today">
+              Set your exam <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          <div className="materials-empty-stage surface-raised" aria-hidden="true">
+            <p className="kicker">What comes next</p>
+            <ol>
+              <li>
+                <span>01</span>
+                <strong>Set the exam</strong>
+                <small>Course, date, study block</small>
+              </li>
+              <li>
+                <span>02</span>
+                <strong>Add a PDF</strong>
+                <small>Syllabus or lecture notes</small>
+              </li>
+              <li>
+                <span>03</span>
+                <strong>Confirm topics</strong>
+                <small>Then revise from Today</small>
+              </li>
+            </ol>
+          </div>
         </section>
       </AppShell>
     );
