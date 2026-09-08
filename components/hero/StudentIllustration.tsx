@@ -11,7 +11,6 @@ export function StudentIllustration({ className }: Props) {
 
   return (
     <figure className={className} aria-hidden="true">
-      <span className="hero-student-ground" aria-hidden="true" />
       <picture>
         <source srcSet="/hero/student.webp" type="image/webp" />
         <motion.img
