@@ -9,7 +9,9 @@ import { StudentIllustration } from "./StudentIllustration";
 export function KelusHero() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
+  const [showBefore, setShowBefore] = useState(false);
   const example = LEARNING_EXAMPLES[exampleIndex];
+  const route = showBefore ? [...example.route.slice(1), example.route[0]] : example.route;
 
   return (
     <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
@@ -38,14 +40,13 @@ export function KelusHero() {
             <span>Example route</span>
             <strong>{example.course}</strong>
           </div>
-          <div className="hero-demo-tabs" role="tablist" aria-label="Choose an example course">
+          <div className="hero-demo-tabs" role="group" aria-label="Choose an example course">
             {LEARNING_EXAMPLES.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
-                role="tab"
-                aria-selected={index === exampleIndex}
-                onClick={() => setExampleIndex(index)}
+                aria-pressed={index === exampleIndex}
+                onClick={() => { setExampleIndex(index); setShowBefore(false); }}
               >
                 {item.label}
               </button>
@@ -80,16 +81,18 @@ export function KelusHero() {
             </div>
             <div className="hero-demo-route">
               <div className="hero-demo-route-title">
-                <span>Today’s route</span>
-                <strong>Highest value first</strong>
+                <span>{showBefore ? "Before the example answer" : "Today’s route"}</span>
+                <strong>{showBefore ? "Previous order" : "Highest value first"}</strong>
               </div>
               <ol>
-                {example.route.map((item, index) => (
+                {route.map((item, index) => (
                   <motion.li
                     key={item.name}
+                    layout={reduceMotion ? false : "position"}
+                    className={!showBefore && index === 0 ? "is-recommended" : undefined}
                     initial={reduceMotion ? false : { opacity: 0, x: 8 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: reduceMotion ? 0 : index * 0.045, duration: 0.2 }}
+                    transition={{ duration: reduceMotion ? 0 : 0.28, layout: { type: "spring", bounce: 0, duration: 0.38 } }}
                   >
                     <span>{String(index + 1).padStart(2, "0")}</span>
                     <div>
@@ -101,10 +104,21 @@ export function KelusHero() {
                 ))}
               </ol>
             </div>
-            <p className="hero-demo-signal">
+            <p className="hero-demo-signal" aria-live="polite">
               <span aria-hidden="true">↳</span>
-              {example.signal}
+              {showBefore ? "An uncertain answer gives Kelus a reason to reconsider the order." : example.signal}
             </p>
+            <motion.button
+              type="button"
+              className="hero-demo-replay"
+              aria-pressed={showBefore}
+              onClick={() => setShowBefore((value) => !value)}
+              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              transition={{ type: "spring", bounce: 0, duration: 0.2 }}
+            >
+              {showBefore ? "Apply the example answer" : "Replay this decision"}
+              <span aria-hidden="true">{showBefore ? "→" : "↶"}</span>
+            </motion.button>
           </motion.div>
         </AnimatePresence>
         <StudentIllustration className="hero-demo-student" />

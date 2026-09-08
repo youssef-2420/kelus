@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import Image from "next/image";
 
 const sources = [
   { kind: "PDF", title: "Course syllabus", detail: "Saved on this device" },
@@ -25,6 +26,7 @@ export function MaterialShelfIllustration() {
 
   return (
     <div className="v1-materials" aria-label="Example saved course materials">
+      <Image unoptimized className="material-route-art" src="/hero/material-route.webp" alt="Course notes becoming a connected study route, drawn in indigo ink." width={1000} height={667} loading="lazy" />
       <header>
         <div>
           <span>Example source shelf</span>

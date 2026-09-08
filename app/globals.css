@@ -6568,3 +6568,48 @@ h3,
   display: inline-flex;
   align-items: center;
 }
+
+/* Editorial imagery and responsive decision feedback, within the ledger palette. */
+.material-route-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  object-fit: contain;
+  margin: 0 0 var(--spacing-24);
+}
+.hero-demo-tabs button[aria-pressed="true"] {
+  color: var(--color-indigo-ink);
+  border-color: var(--color-indigo-ink);
+  background: var(--color-periwinkle-wash);
+}
+.hero-demo-route li.is-recommended {
+  border-inline-start: 2px solid var(--color-indigo-ink);
+  background: var(--color-mist);
+}
+.hero-demo-replay {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+  min-height: 44px;
+  padding: 10px 132px 10px 0;
+  color: var(--color-indigo-ink);
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--color-frost);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--text-body-sm);
+  text-align: left;
+}
+.hero-demo-replay:hover { color: var(--color-deep-violet); }
+.hero-demo-replay:focus-visible { outline: 2px solid var(--color-indigo-ink); outline-offset: 4px; }
+@media (prefers-reduced-motion: no-preference) {
+  .cta { transition: transform 160ms ease-out, background-color 160ms ease-out; }
+  .cta:active { transform: scale(0.985); }
+}
+@media (max-width: 640px) {
+  .hero-demo-replay { padding-right: 72px; }
+}
