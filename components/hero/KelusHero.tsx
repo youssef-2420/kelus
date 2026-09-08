@@ -31,20 +31,17 @@ export function KelusHero() {
       </div>
 
       <div className="kelus-hero-copy home-copy">
-        <p className="hero-brand hero-rise" style={{ "--hero-rise-delay": "0ms" } as CSSProperties} aria-hidden="true">
-          Kelus
-        </p>
-        <p className="kicker hero-rise" style={{ "--hero-rise-delay": "60ms" } as CSSProperties}>
+        <p className="kicker hero-rise" style={{ "--hero-rise-delay": "40ms" } as CSSProperties}>
           A little revision. Every day.
         </p>
-        <h1 id="home-hero-title" className="hero-rise" style={{ "--hero-rise-delay": "100ms" } as CSSProperties}>
+        <h1 id="home-hero-title" className="hero-rise" style={{ "--hero-rise-delay": "80ms" } as CSSProperties}>
           Revise your lessons. Prepare for your exams.
         </h1>
-        <p className="home-lede hero-rise" style={{ "--hero-rise-delay": "140ms" } as CSSProperties}>
+        <p className="home-lede hero-rise" style={{ "--hero-rise-delay": "120ms" } as CSSProperties}>
           Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
           and revisit the topics that need more work before your exam.
         </p>
-        <div className="home-actions hero-rise" style={{ "--hero-rise-delay": "180ms" } as CSSProperties}>
+        <div className="home-actions hero-rise" style={{ "--hero-rise-delay": "160ms" } as CSSProperties}>
           <motion.div whileTap={reduceMotion ? undefined : { scale: 0.97 }} transition={press}>
             <Link href="/today?sample=1" className="cta home-cta">
               Try sample (~1 min) <span className="arrow" aria-hidden="true">
@@ -58,7 +55,7 @@ export function KelusHero() {
             </Link>
           </motion.div>
         </div>
-        <p className="hero-honesty hero-rise" style={{ "--hero-rise-delay": "220ms" } as CSSProperties}>
+        <p className="hero-honesty hero-rise" style={{ "--hero-rise-delay": "200ms" } as CSSProperties}>
           Your lessons. Regular practice. Revision that adapts to your answers.
         </p>
       </div>
