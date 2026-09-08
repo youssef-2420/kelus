@@ -14,31 +14,27 @@ export function KelusHero() {
   return (
     <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
       <div className="kelus-hero-copy home-copy">
-        <h1 id="home-hero-title">Your course is too big. Kelus makes today finishable.</h1>
+        <p className="home-brand">Kelus</p>
+        <h1 id="home-hero-title">Your course is too big. Make today finishable.</h1>
         <p className="home-lede">
           Add the material and the exam date. Kelus turns what you know—and what you do not—into the next useful study
           session.
         </p>
         <div className="home-actions">
-          <Link href="/today" className="cta home-cta">
-            Build today’s route <span className="arrow" aria-hidden="true">
+          <Link href="/today?sample=1" className="cta home-cta">
+            Try sample (~1 min) <span className="arrow" aria-hidden="true">
               →
             </span>
           </Link>
-          <a href="#route" className="home-secondary">
-            See a route change
-          </a>
+          <Link href="/today" className="home-secondary">
+            Build with my PDF
+          </Link>
         </div>
         <p className="hero-honesty">Your material. Your answers. No invented progress.</p>
       </div>
 
       <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
         <header className="hero-demo-head">
-          <span className="hero-window-controls" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
           <div className="hero-demo-identity">
             <span>Example route</span>
             <strong>{example.course}</strong>

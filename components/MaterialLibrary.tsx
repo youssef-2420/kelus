@@ -39,12 +39,17 @@ function sourceHost(value: string | null) {
 function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMaterial; onAnalyze: (item: CourseMaterial) => void; userId?: string; syncState?: "syncing" | "synced" | "retrying" }) {
   const [busy, setBusy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   async function downloadPdf() {
     setBusy(true);
+    setDownloadError(null);
     const blob = await readMaterialPdf(item.id, userId);
     setBusy(false);
-    if (!blob) return;
+    if (!blob) {
+      setDownloadError("PDF isn’t available on this device anymore. Add the file again to download it.");
+      return;
+    }
     const url = URL.createObjectURL(blob);
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -59,8 +64,17 @@ function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMater
     if (userId) await removeRemoteMaterial(userId, item.id).catch(() => undefined);
   }
 
+  const statusLabel =
+    item.processingStatus === "failed"
+      ? "Failed"
+      : item.processingStatus === "processing"
+        ? "Reading…"
+        : item.processingStatus === "ready"
+          ? "Ready"
+          : null;
+
   return (
-    <li className="material-row">
+    <li className={`material-row${item.processingStatus === "failed" ? " is-failed" : ""}`}>
       <span className="material-kind">{materialRoleLabel(item.role)}</span>
       <span className="material-name">
         <strong>{item.title}</strong>
@@ -69,14 +83,16 @@ function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMater
             ? [item.fileName, formatBytes(item.sizeBytes)].filter(Boolean).join(" · ")
             : `Bookmark · ${sourceHost(item.sourceUrl)}`}
         </small>
+        {statusLabel ? <small className={`material-status-badge is-${item.processingStatus}`}>{statusLabel}</small> : null}
         {userId ? <small className={`material-sync-label is-${syncState ?? "synced"}`}>{syncState === "syncing" ? "Saving across devices…" : syncState === "retrying" ? "Saved here · cloud retry queued" : "Saved across devices"}</small> : <small className="material-sync-label">Saved on this device</small>}
+        {downloadError ? <small className="material-download-error" role="alert">{downloadError}</small> : null}
       </span>
       <span className="material-actions">
-        {item.storage === "local" ? <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>{item.processingStatus === "processing" ? "Reading…" : item.processingStatus === "ready" ? "Review concepts" : "Build concepts"}</button> : null}
+        {item.storage === "local" ? <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>{item.processingStatus === "processing" ? "Reading…" : item.processingStatus === "failed" ? "Retry concepts" : item.processingStatus === "ready" ? "Review concepts" : "Build concepts"}</button> : null}
         {item.storage === "url" ? (
           item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">Open bookmark</a> : null
         ) : (
-          <button type="button" onClick={downloadPdf} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>
+          <button type="button" onClick={() => void downloadPdf()} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>
         )}
         {confirmRemove ? (
           <span className="material-remove-confirm" role="group" aria-label={`Confirm remove ${item.title}`}>
@@ -100,7 +116,9 @@ export function MaterialLibrary() {
   const [url, setUrl] = useState("");
   const [role, setRole] = useState<MaterialRole>("notes");
   const [error, setError] = useState<string | null>(null);
+  const [errorKind, setErrorKind] = useState<"ocr" | "generic" | null>(null);
   const [busy, setBusy] = useState(false);
+  const [ocrRunning, setOcrRunning] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [analysis, setAnalysis] = useState<{ material: CourseMaterial; proposals: ProposedConcept[]; pages: ExtractedMaterialPage[] } | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -110,6 +128,7 @@ export function MaterialLibrary() {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [syncStates, setSyncStates] = useState<Record<string, "syncing" | "synced" | "retrying">>({});
   const fileRef = useRef<HTMLInputElement>(null);
+  const ocrAbortRef = useRef<AbortController | null>(null);
   const course = state.snapshot.courses[0];
 
   if (!state.onboardingCompleted || !course) {
@@ -130,10 +149,19 @@ export function MaterialLibrary() {
   const courseMaterials = materials.filter((item) => item.courseId === course.id);
   const concepts = state.snapshot.concepts.filter((item) => item.courseId === course.id);
 
+  function cancelOcr() {
+    ocrAbortRef.current?.abort();
+  }
+
   async function analyzePdf(material: CourseMaterial, file?: File) {
     setError(null);
+    setErrorKind(null);
     setBusy(true);
     updateMaterialProcessingStatus(material.id, "processing");
+    ocrAbortRef.current?.abort();
+    const controller = new AbortController();
+    ocrAbortRef.current = controller;
+    let attemptedOcr = false;
     try {
       const stored = file ?? await readMaterialPdf(material.id, auth.user?.id);
       if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
@@ -143,16 +171,26 @@ export function MaterialLibrary() {
       let quality = assessPdfTextQuality(pages);
       let usedOcr = false;
       if (quality.density === "sparse" || quality.density === "empty") {
+        attemptedOcr = true;
+        setOcrRunning(true);
         setStatusMessage("Scanned PDF detected — reading pages with on-device OCR…");
         const ocr = await ocrPdfPages(pdfFile, pages, {
           maxPages: 12,
           timeBudgetMs: 60_000,
+          signal: controller.signal,
           onProgress: (progress) => setStatusMessage(progress.message),
         });
+        setOcrRunning(false);
         if (ocr.ocrPages > 0) {
           pages = ocr.pages;
           quality = assessPdfTextQuality(pages);
           usedOcr = true;
+        } else if (quality.density === "empty") {
+          const ocrError = new Error(
+            "On-device OCR finished without usable English text. Export a text PDF, try a clearer English scan, or continue with the sample course.",
+          );
+          (ocrError as Error & { kind?: string }).kind = "ocr";
+          throw ocrError;
         }
       }
       setStatusMessage(usedOcr ? "Building concepts from scanned text…" : "Building concepts…");
@@ -180,11 +218,14 @@ export function MaterialLibrary() {
         });
       }
       if (!proposals.length) {
-        throw new Error(
-          quality.density === "empty"
-            ? "Kelus still could not recover usable text from this scan. Try a clearer export, or use the sample course to see the loop."
+        const emptyScan = attemptedOcr && quality.density === "empty";
+        const fail = new Error(
+          emptyScan
+            ? "Kelus still could not recover usable English text from this scan. Try a clearer export, or use the sample course to see the loop."
             : "Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text.",
         );
+        if (emptyScan) (fail as Error & { kind?: string }).kind = "ocr";
+        throw fail;
       }
       updateMaterialProcessingStatus(material.id, "ready");
       setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals, pages });
@@ -202,16 +243,26 @@ export function MaterialLibrary() {
       }
     } catch (caught) {
       updateMaterialProcessingStatus(material.id, "failed");
-      setError(caught instanceof Error ? caught.message : "Kelus could not read this PDF.");
+      if (caught instanceof Error && caught.name === "AbortError") {
+        setError("OCR cancelled. You can retry this file, export a text PDF, or try the sample course.");
+        setErrorKind("ocr");
+      } else {
+        const kind = caught instanceof Error && (caught as Error & { kind?: string }).kind === "ocr" ? "ocr" : "generic";
+        setErrorKind(kind);
+        setError(caught instanceof Error ? caught.message : "Kelus could not read this PDF.");
+      }
     } finally {
+      setOcrRunning(false);
       setBusy(false);
       setStatusMessage(null);
+      if (ocrAbortRef.current === controller) ocrAbortRef.current = null;
     }
   }
 
   async function savePdf(file: File | undefined) {
     if (!file) return;
     setError(null);
+    setErrorKind(null);
     setBusy(true);
     try {
       const material = await addPdfMaterial({ courseId: course.id, file, role });
@@ -221,11 +272,13 @@ export function MaterialLibrary() {
           setSyncStates((current) => ({ ...current, [material.id]: "synced" }));
         }).catch(() => {
           setSyncStates((current) => ({ ...current, [material.id]: "retrying" }));
+          setErrorKind("generic");
           setError("The PDF is ready here. Its encrypted account copy will retry when the connection returns.");
         });
       }
       await analyzePdf(material, file);
     } catch (caught) {
+      setErrorKind("generic");
       setError(caught instanceof Error ? caught.message : "The PDF could not be saved.");
     } finally {
       setBusy(false);
@@ -321,8 +374,14 @@ export function MaterialLibrary() {
           <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
           <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
-          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · text PDFs work best · scans use on-device OCR"}</span>
+          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · text PDFs work best · English scans use on-device OCR"}</span>
         </label>
+        {ocrRunning ? (
+          <div className="material-ocr-progress" role="status" aria-live="polite">
+            <p>{statusMessage ?? "Reading scanned pages…"}</p>
+            <button type="button" className="text-btn" onClick={cancelOcr}>Cancel OCR</button>
+          </div>
+        ) : null}
 
         <form className="material-link-form" onSubmit={addLink}>
           <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" /></div>
@@ -333,16 +392,22 @@ export function MaterialLibrary() {
           Bookmarks stay on your shelf for quick open. They do not become concepts — upload a PDF for that.
         </p>
         <p className="material-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error ?? "\u00a0"}</p>
-        {error ? (
-          <div className="material-error-rescue" role="group" aria-label="Ways to continue">
+        {error && errorKind === "ocr" ? (
+          <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
             <p>
-              If OCR cannot read this scan, export a text PDF from your notes app, try a clearer scan, or continue with
-              the sample course.
+              OCR works best on clear English scans. Export a text PDF from your notes app, try a sharper scan, or
+              continue with the sample course.
             </p>
             <div className="material-error-actions">
               <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
               <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
             </div>
+          </div>
+        ) : null}
+        {error && errorKind === "generic" ? (
+          <div className="material-error-actions">
+            <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
+            <a className="text-btn" href="#source-shelf-title">Choose another file</a>
           </div>
         ) : null}
       </section>
@@ -436,9 +501,9 @@ export function MaterialLibrary() {
           </div>
         ) : (
           <div className="material-shelf-empty">
-            <p>Start with the syllabus or the lecture you are studying now.</p>
-            <button type="button" className="text-btn" onClick={() => loadDemo()}>
-              Try the sample course <span aria-hidden="true">→</span>
+            <p>Start with the syllabus or the lecture you are studying now — or try the sample in about a minute.</p>
+            <button type="button" className="cta" onClick={() => loadDemo()}>
+              Try sample (~1 min) <span aria-hidden="true">→</span>
             </button>
           </div>
         )}

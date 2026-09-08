@@ -104,13 +104,13 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
   assert.match(ui, /slice\(0, 3\)/);
   assert.match(ui, /DIAGNOSIS_RETRIEVAL_LIMIT/);
   assert.match(materials, /Continue:\ short\ check,\ then\ study/);
-  assert.match(materials, /Try\ the\ sample\ course/);
+  assert.match(materials, /Try sample \(~1 min\)|Try the sample course/);
   assert.match(materials, /SoftUpgradePrompt/);
   assert.match(materials, /proposeConceptsFromMetadata|mode:\s*"relaxed"/);
   assert.match(complete, /WaitlistForm|SoftUpgradePrompt/);
   assert.match(header, /auth\.configured/);
-  assert.match(setup, /Try\ a\ sample\ course/);
-  assert.match(setup, /text-btn setup-sample-cta/);
+  assert.match(setup, /Try sample \(~1 min\)/);
+  assert.match(setup, /cta setup-sample-cta/);
   assert.match(how, /SiteFooter/);
 });
 
@@ -122,14 +122,19 @@ test("primary CTA language and readiness stay consistent", async () => {
     source("app/today/page.tsx"),
     source("components/HowItWorks.tsx"),
   ]);
-  assert.match(hero, /Build today’s route/);
+  assert.match(hero, /home-brand/);
+  assert.match(hero, /Try sample \(~1 min\)/);
+  assert.match(hero, /today\?sample=1/);
+  assert.match(hero, /Build with my PDF/);
+  assert.doesNotMatch(hero, /hero-window-controls/);
   assert.match(header, /Build today’s route/);
   assert.match(home, /Build today’s route/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
   assert.match(how, /Build today’s route/);
   assert.match(today, /Est\. readiness/);
   assert.match(today, /not a grade prediction/);
-  assert.match(today, /Try a sample course/);
+  assert.match(today, /get\("sample"\) === "1"/);
+  assert.match(today, /Try sample \(~1 min\)/);
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {

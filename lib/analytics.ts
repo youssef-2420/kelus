@@ -9,6 +9,7 @@ export type KelusAnalyticsEvent =
   | { name: "first_route_ready"; elapsed_ms: number; concept_count: number }
   | { name: "session_started" }
   | { name: "session_resumed" }
+  | { name: "sample_loaded"; source: string }
   | { name: "pricing_viewed"; source: string }
   | { name: "soft_paywall_shown"; moment: "first_session" | "third_material" }
   | { name: "exam_pass_checkout_clicked"; source: string };

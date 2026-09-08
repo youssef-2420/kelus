@@ -146,3 +146,16 @@ test("scanned PDF OCR helper is available for empty-density pages", async () => 
   assert.equal(result.ocrPages, 0);
   assert.equal(result.pages[0].text, "");
 });
+
+test("OCR helper honors AbortSignal before work starts", async () => {
+  const { ocrPdfPages } = await import("../lib/pdf-extraction.ts");
+  const controller = new AbortController();
+  controller.abort();
+  await assert.rejects(
+    () =>
+      ocrPdfPages(new File([""], "scan.pdf", { type: "application/pdf" }), [{ pageNumber: 1, text: "" }], {
+        signal: controller.signal,
+      }),
+    (error) => error instanceof Error && error.name === "AbortError",
+  );
+});

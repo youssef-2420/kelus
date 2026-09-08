@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
@@ -13,10 +13,30 @@ import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
 
-export default function TodayPage() {
+function TodayBody() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { state, start, reset, completeSetup, completeDiagnosis, useDemo: loadDemo } = useLearner();
   const [confirmReset, setConfirmReset] = useState(false);
+  const sampleHandled = useRef(false);
+  const wantsSample = searchParams.get("sample") === "1";
+  const [sampleBooting, setSampleBooting] = useState(wantsSample);
+
+  useEffect(() => {
+    if (!wantsSample) {
+      setSampleBooting(false);
+      return;
+    }
+    if (sampleHandled.current) return;
+    sampleHandled.current = true;
+    const alreadyReady = state.onboardingCompleted && state.snapshot.concepts.length > 0;
+    if (!alreadyReady) {
+      loadDemo();
+      trackEvent({ name: "sample_loaded", source: "today_query" });
+    }
+    setSampleBooting(false);
+    router.replace("/today");
+  }, [wantsSample, state.onboardingCompleted, state.snapshot.concepts.length, loadDemo, router]);
 
   function finishDiagnosis(input: Parameters<typeof completeDiagnosis>[0]) {
     completeDiagnosis(input);
@@ -29,6 +49,16 @@ export default function TodayPage() {
       elapsedMs = 0;
     }
     trackEvent({ name: "first_route_ready", elapsed_ms: elapsedMs, concept_count: state.snapshot.concepts.length });
+  }
+
+  if (sampleBooting) {
+    return (
+      <main id="main" className="destination-page">
+        <p className="destination-brand">Kelus</p>
+        <h1 className="destination-page-title">Loading sample…</h1>
+        <p>Opening a finished course model so you can see Today in about a minute.</p>
+      </main>
+    );
   }
 
   if (!state.onboardingCompleted) {
@@ -52,12 +82,12 @@ export default function TodayPage() {
           <h1>Bring in one real source.</h1>
           <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
           <div className="materials-empty-actions">
-            <Link className="cta" href="/materials">
+            <button type="button" className="cta" onClick={() => loadDemo()}>
+              Try sample (~1 min) <span aria-hidden="true">→</span>
+            </button>
+            <Link className="text-btn" href="/materials">
               Add course material <span aria-hidden="true">→</span>
             </Link>
-            <button type="button" className="text-btn" onClick={() => loadDemo()}>
-              Try a sample course <span aria-hidden="true">→</span>
-            </button>
           </div>
         </section>
       </AppShell>
@@ -185,5 +215,20 @@ export default function TodayPage() {
         />
       </section>
     </AppShell>
+  );
+}
+
+export default function TodayPage() {
+  return (
+    <Suspense
+      fallback={
+        <main id="main" className="destination-page">
+          <p className="destination-brand">Kelus</p>
+          <h1 className="destination-page-title">Opening Today…</h1>
+        </main>
+      }
+    >
+      <TodayBody />
+    </Suspense>
   );
 }

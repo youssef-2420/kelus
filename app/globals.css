@@ -6324,6 +6324,68 @@ h3,
   padding-bottom: var(--spacing-16);
 }
 
+.home-brand {
+  margin: 0 0 var(--spacing-12, 12px);
+  color: var(--color-ink, #1a2233);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+.material-status-badge {
+  display: inline-block;
+  margin-top: 0.25rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.material-status-badge.is-failed {
+  color: #7a2430;
+  background: color-mix(in srgb, #f3d4d8 70%, white);
+}
+
+.material-status-badge.is-processing {
+  color: #3d4f73;
+  background: color-mix(in srgb, #d9e3f7 75%, white);
+}
+
+.material-status-badge.is-ready {
+  color: #2f4a3a;
+  background: color-mix(in srgb, #d7ebe0 75%, white);
+}
+
+.material-row.is-failed {
+  border-color: color-mix(in srgb, #c45b6a 28%, transparent);
+}
+
+.material-download-error {
+  display: block;
+  margin-top: 0.35rem;
+  color: #7a2430;
+}
+
+.material-ocr-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--color-product-border, #d7dde8) 88%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-product-surface, #fff) 90%, #eef2ff);
+}
+
+.material-ocr-progress p {
+  margin: 0;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.92rem;
+}
 
 .setup-sample {
   display: flex;
@@ -6335,6 +6397,12 @@ h3,
   border: 1px solid color-mix(in srgb, var(--color-product-border, #d7dde8) 88%, transparent);
   border-radius: 14px;
   background: color-mix(in srgb, var(--color-product-surface, #fff) 92%, #eef2ff);
+}
+
+.setup-sample.is-primary {
+  border-color: color-mix(in srgb, var(--color-ink, #1a2233) 18%, transparent);
+  background: color-mix(in srgb, var(--color-product-surface, #fff) 78%, #e8eefc);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--color-ink, #1a2233) 6%, transparent);
 }
 
 .setup-sample p {

@@ -120,15 +120,26 @@ export type OcrProgress = {
 
 const OCR_MIN_PAGE_CHARS = 40;
 
+function throwIfAborted(signal?: AbortSignal) {
+  if (signal?.aborted) {
+    const error = new Error("OCR cancelled.");
+    error.name = "AbortError";
+    throw error;
+  }
+}
+
 export async function ocrPdfPages(
   file: File,
   pages: ExtractedMaterialPage[],
   options?: {
     maxPages?: number;
     timeBudgetMs?: number;
+    signal?: AbortSignal;
     onProgress?: (progress: OcrProgress) => void;
   },
 ): Promise<{ pages: ExtractedMaterialPage[]; ocrPages: number }> {
+  throwIfAborted(options?.signal);
+
   if (typeof document === "undefined") {
     return { pages, ocrPages: 0 };
   }
@@ -150,7 +161,9 @@ export async function ocrPdfPages(
     import.meta.url,
   ).toString();
 
+  throwIfAborted(options?.signal);
   const documentProxy = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  throwIfAborted(options?.signal);
   const { createWorker } = await import("tesseract.js");
   const worker = await createWorker("eng");
   const byNumber = new Map(pages.map((page) => [page.pageNumber, page]));
@@ -158,6 +171,7 @@ export async function ocrPdfPages(
 
   try {
     for (let index = 0; index < targets.length; index += 1) {
+      throwIfAborted(options?.signal);
       if (Date.now() - startedAt >= timeBudgetMs) break;
       const target = targets[index];
       options?.onProgress?.({
@@ -180,6 +194,7 @@ export async function ocrPdfPages(
 
       await page.render({ canvasContext: context, canvas, viewport }).promise;
       page.cleanup();
+      throwIfAborted(options?.signal);
 
       options?.onProgress?.({
         phase: "recognizing",
@@ -189,6 +204,7 @@ export async function ocrPdfPages(
       });
 
       const result = await worker.recognize(canvas);
+      throwIfAborted(options?.signal);
       const text = result.data.text.replace(/[ \t]+\n/g, "\n").trim();
       if (text.length > target.text.trim().length) {
         byNumber.set(target.pageNumber, { pageNumber: target.pageNumber, text });

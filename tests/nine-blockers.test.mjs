@@ -30,7 +30,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
   assert.match(pricing, /authConfigured/);
   assert.match(sessionPage, /abandon\(session\.id\)/);
   assert.match(today, /Resume session|openSession/);
-  assert.match(map, /Try a sample course/);
+  assert.match(map, /Try sample \(~1 min\)|Try a sample course/);
 });
 
 test("abandoning a session clears in_progress without counting as complete", () => {

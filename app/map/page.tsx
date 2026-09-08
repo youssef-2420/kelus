@@ -40,10 +40,10 @@ export default function MapPage() {
           <h1>Confirm concepts from a source first.</h1>
           <p>Add a syllabus or lecture PDF, then keep the concepts this exam actually covers.</p>
           <div className="materials-empty-actions">
-            <Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
-            <button type="button" className="text-btn" onClick={() => useDemo()}>
-              Try a sample course <span aria-hidden="true">→</span>
+            <button type="button" className="cta" onClick={() => useDemo()}>
+              Try sample (~1 min) <span aria-hidden="true">→</span>
             </button>
+            <Link className="text-btn" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
           </div>
         </section>
       </AppShell>
