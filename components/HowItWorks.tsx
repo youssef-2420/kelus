@@ -76,7 +76,14 @@ export function HowItWorks() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
   const example = LEARNING_EXAMPLES[exampleIndex];
-  const reveal = reduceMotion ? {} : { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.22 }, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const } };
+  const reveal = reduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 14 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, amount: 0.22 },
+        transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const },
+      };
 
   return (
     <div className="how-page">

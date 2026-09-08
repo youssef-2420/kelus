@@ -12,12 +12,15 @@ type RevealProps = {
 } & Omit<HTMLMotionProps<"div">, "children">;
 
 export function Reveal({ children, className, delay = 0, ...rest }: RevealProps) {
+  const reduce = useReducedMotion() === true;
+
   return (
     <motion.div
       className={className}
-      initial={false}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay, ease }}
+      initial={reduce ? false : { opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2, margin: "0px 0px -48px 0px" }}
+      transition={reduce ? { duration: 0 } : { duration: 0.55, delay, ease }}
       {...rest}
     >
       {children}
@@ -48,14 +51,14 @@ export function Stagger({
   once?: boolean;
 }) {
   const reduce = useReducedMotion() === true;
-  void once;
 
   return (
     <motion.div
       className={className}
       variants={reduce ? undefined : list}
-      initial={false}
-      animate="show"
+      initial={reduce ? false : "hidden"}
+      whileInView={reduce ? undefined : "show"}
+      viewport={{ once, amount: 0.18 }}
     >
       {children}
     </motion.div>
@@ -71,7 +74,7 @@ export function StaggerItem({ children, className }: { children: ReactNode; clas
   );
 }
 
-const pressSpring = { type: "spring" as const, stiffness: 400, damping: 28, bounce: 0 };
+const pressSpring = { type: "spring" as const, stiffness: 420, damping: 28, bounce: 0 };
 
 export function Pressable({ children, className }: { children: ReactNode; className?: string }) {
   const reduce = useReducedMotion() === true;

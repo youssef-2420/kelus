@@ -42,11 +42,23 @@
 
   --page-max-width: 82.5rem;
   --radius-ledger: 0.25rem;
-  --dur-quick: 180ms;
+  --dur-quick: 160ms;
   --dur-medium: 280ms;
   --dur-slow: 620ms;
-  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Materials & depth — restrained ledger craft */
+  --shadow-soft: 0 18px 48px -28px color-mix(in srgb, var(--color-deep-violet) 28%, transparent);
+  --shadow-panel: 0 1px 0 color-mix(in srgb, var(--color-pure-white) 70%, transparent) inset,
+    0 22px 50px -34px color-mix(in srgb, var(--color-deep-violet) 24%, transparent),
+    0 10px 24px -16px color-mix(in srgb, var(--color-indigo-ink) 14%, transparent);
+  --shadow-lift: 0 12px 28px -18px color-mix(in srgb, var(--color-indigo-ink) 22%, transparent);
+  --material-header: color-mix(in srgb, var(--color-pure-white) 78%, transparent);
+  --material-panel: color-mix(in srgb, var(--color-pure-white) 92%, var(--color-periwinkle-wash));
+  --material-mist: color-mix(in srgb, var(--color-mist) 70%, var(--color-periwinkle-wash));
+  --atmosphere-top: radial-gradient(90% 70% at 8% -8%, color-mix(in srgb, var(--color-periwinkle-wash) 72%, transparent), transparent 62%),
+    radial-gradient(70% 55% at 96% 0%, color-mix(in srgb, var(--color-mist) 88%, var(--color-lavender-border)), transparent 58%);
 
   /* Existing component aliases keep business logic and structure untouched. */
   --paper: var(--color-pure-white);
