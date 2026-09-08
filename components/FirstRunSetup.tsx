@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import type { SetupInput } from "@/lib/setup";
+import { trackEvent } from "@/lib/analytics";
 
 const TIMES = [15, 30, 45, 60] as const;
 
@@ -9,6 +10,13 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
   const [draft, setDraft] = useState<SetupInput>({ courseName: "", examName: "", examDate: "", targetPercent: 85, availableMinutes: 45 });
   const [error, setError] = useState("");
   const [minimumDate] = useState(() => new Date(Date.now() + 86_400_000).toISOString().slice(0, 10));
+  const setupTracked = useRef(false);
+
+  useEffect(() => {
+    if (setupTracked.current) return;
+    setupTracked.current = true;
+    trackEvent({ name: "setup_started" });
+  }, []);
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -17,6 +25,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
     if (!draft.examName.trim()) return setError("Tell Kelus what you are working toward.");
     if (!draft.examDate) return setError("Choose the date of your exam.");
     try {
+      trackEvent({ name: "setup_completed", available_minutes: draft.availableMinutes });
       onComplete(draft);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Kelus could not set up your exam yet.");

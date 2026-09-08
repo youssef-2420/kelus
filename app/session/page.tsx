@@ -262,6 +262,7 @@ function SessionBody() {
             <span>Leave this session?</span>
             <button type="button" className="text-btn" onClick={() => setConfirmExit(false)}>Stay</button>
             <button type="button" className="text-btn is-danger" onClick={() => {
+              trackEvent({ name: "session_abandoned" });
               abandon(session.id);
               router.push("/today");
             }}>Exit</button>

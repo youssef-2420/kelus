@@ -263,6 +263,7 @@ export function MaterialLibrary() {
       }
       updateMaterialProcessingStatus(material.id, "ready");
       setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals, pages });
+      trackEvent({ name: "concept_review_started", concept_count: proposals.length });
       setReadySummary(null);
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
