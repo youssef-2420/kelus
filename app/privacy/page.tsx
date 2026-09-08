@@ -82,6 +82,14 @@ export default function PrivacyPage() {
           <li>We do not use your syllabus to train a public model as part of the current static product.</li>
         </ul>
 
+        <h2>Exam Pass</h2>
+        <p>
+          If you buy Exam Pass, this browser stores an on-device unlock so you can see the remaining-day plan, calendar
+          file, and printable topic list. It is not a grade guarantee. Set the Stripe success URL to{" "}
+          <code>https://kelus.me/today/?pass=1</code> so checkout can return you here. Contact{" "}
+          <a href="mailto:hello@kelus.me">hello@kelus.me</a> if you paid and the plan is still locked.
+        </p>
+
         <h2>Shared devices</h2>
         <p>
           Study answers, course PDFs, and on-device waitlist or questions backups live in this browser’s storage. On a

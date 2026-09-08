@@ -6,6 +6,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
+import { buildExamCoveragePlan } from "@/domain/exam-coverage";
+import { ExamWeekPlan } from "@/components/ExamWeekPlan";
 import { percent } from "@/lib/format";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
@@ -30,6 +32,13 @@ function CompleteBody() {
     ? state.snapshot.concepts.filter((concept) => concept.courseId === course.id)
     : [];
   const nextRoute = course && exam ? generateRoute({
+    concepts: courseConcepts,
+    relationships: state.snapshot.relationships,
+    events: state.snapshot.events,
+    exam,
+    nowIso: state.nowIso,
+  }) : null;
+  const coverage = course && exam ? buildExamCoveragePlan({
     concepts: courseConcepts,
     relationships: state.snapshot.relationships,
     events: state.snapshot.events,
@@ -117,7 +126,20 @@ function CompleteBody() {
           <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
         </details>
       ) : null}
+<<<<<<< HEAD
       {completedSessions === 1 ? <details><summary>Optional support through exam day</summary><SoftUpgradePrompt moment="first_session" /></details> : null}
+=======
+      {coverage && course && exam ? (
+        <ExamWeekPlan
+          plan={coverage}
+          courseName={course.name}
+          examTarget={exam.target}
+          examDateIso={exam.examDate}
+          source="session_complete"
+        />
+      ) : null}
+      {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" coverage={coverage} /> : null}
+>>>>>>> d941032 (Sell Exam Pass as the remaining days until the exam.)
       {completedSessions >= 2 ? (
         <details className="complete-waitlist">
           <summary>Get product updates</summary>

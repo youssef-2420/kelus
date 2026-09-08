@@ -27,6 +27,7 @@ import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome,
 import type { SetupInput } from "@/lib/setup";
 import { readLearnerState, writeLearnerState } from "@/lib/learner-sync";
 import { claimGuestMaterials, getMaterialOwner, setMaterialOwner, subscribeMaterials } from "@/lib/material-store";
+import { claimGuestExamPass } from "@/lib/exam-pass";
 import { flushMaterialSyncQueue, initializeMaterialSync, writeRemoteMaterialState } from "@/lib/material-sync";
 
 type Store = {
@@ -140,6 +141,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
         // switched its owner by the time this effect runs.
         await claimGuestMaterials(userId);
         if (!active) return;
+        claimGuestExamPass(userId);
         await initializeMaterialSync(userId);
         if (active) initialized = true;
       } catch {

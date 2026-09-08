@@ -25,7 +25,7 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
           Get Exam Pass · $9 <span aria-hidden="true">→</span>
         </a>
         <p className="founding-cta-note">
-          One exam, one payment. Priority support follows the exam date you set.
+          One exam, one payment. Today’s route stays free. Exam Pass is the remaining days until the date you set.
           {syncReady ? " Sync across devices is included with free sign-in." : " Study stays on this device until account sync is enabled."}
         </p>
       </div>

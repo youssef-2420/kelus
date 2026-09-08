@@ -12,6 +12,8 @@ import { trackEvent } from "@/lib/analytics";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
+import { buildExamCoveragePlan } from "@/domain/exam-coverage";
+import { ExamWeekPlan } from "@/components/ExamWeekPlan";
 import { greeting } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
 
@@ -220,6 +222,19 @@ function TodayBody() {
           startLabel={openSession ? "Resume session" : undefined}
         />
       </section>
+      <ExamWeekPlan
+        plan={buildExamCoveragePlan({
+          concepts,
+          relationships: snapshot.relationships,
+          events: snapshot.events,
+          exam,
+          nowIso,
+        })}
+        courseName={course.name}
+        examTarget={exam.target}
+        examDateIso={exam.examDate}
+        source="today"
+      />
     </AppShell>
   );
 }

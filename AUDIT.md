@@ -131,11 +131,11 @@ If those tables were ever applied in production, PostgREST would expose them to 
 
 **Follow-up:** in the Supabase dashboard, drop unused 001 tables or add `auth.uid()` policies. Do not apply 001 to a live project as-is.
 
-### P2 — Exam Pass value is still support-shaped
+### P1 — Exam Pass had nothing a student would pay for
 
-Pricing promises “priority access to new study features” without naming what $9 buys *today* besides email support.
+Free already included the full loop plus optional sync. $9 bought “priority support” and unnamed future features.
 
-**Follow-up:** list two concrete launch benefits or drop the features line.
+**Fixed in this PR:** Exam Pass is the remaining-day plan. Today’s route stays free. The product now shows how many topics still need a session, which remaining days they fit into, and which would be left at the daily minutes the student set. Checkout unlocks named days, a calendar file, and a printable list. Support is a backup, not the product.
 
 ### P2 — Core loop is long before the first real session
 

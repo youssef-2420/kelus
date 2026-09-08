@@ -6642,6 +6642,99 @@ h3,
   font-size: 0.9rem;
 }
 
+.exam-week {
+  margin: var(--spacing-32, 2rem) 0;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--color-frost);
+}
+
+.exam-week h2 {
+  margin: 0 0 8px;
+  max-width: 18ch;
+  font-weight: 300;
+  font-size: clamp(28px, 4vw, 36px);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.exam-week > p {
+  margin: 0 0 16px;
+  max-width: 62ch;
+  color: var(--color-steel);
+}
+
+.exam-week-days {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  border-top: 1px solid var(--color-frost);
+}
+
+.exam-week-days li {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-frost);
+}
+
+.exam-week-days li span,
+.exam-week-days li b {
+  color: var(--color-smoke);
+  font-weight: 400;
+}
+
+.exam-week-days li strong {
+  display: block;
+  font-weight: 500;
+}
+
+.exam-week-days li small {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-steel);
+}
+
+.exam-week-days li.is-locked small {
+  color: var(--color-smoke);
+}
+
+.exam-week-gap,
+.exam-week-meta {
+  margin: 0 0 12px;
+  color: var(--color-steel);
+  font-size: var(--text-body-sm, 14px);
+}
+
+.exam-week-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.exam-week-actions small {
+  flex: 1 1 16rem;
+  color: var(--color-steel);
+}
+
+.exam-week-note {
+  min-height: 1.35em;
+  margin: 8px 0 0;
+  color: var(--color-steel);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 390px) {
+  .exam-week-days li {
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+  .exam-week-days li b {
+    grid-column: 2;
+  }
+}
+
 .questions-actions {
   display: flex;
   flex-wrap: wrap;
