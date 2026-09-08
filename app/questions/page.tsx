@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { QuestionsForm } from "@/components/QuestionsForm";
 import { QuestionsExport } from "@/components/QuestionsExport";
+import { QuestionsInboxStatus } from "@/components/QuestionsInboxStatus";
 
 export const metadata: Metadata = {
   title: "Ask a question — Kelus",
@@ -20,6 +21,7 @@ export default function QuestionsPage() {
           Stuck on Materials, Map, Today, or Exam Pass? Send a question here. It goes to{" "}
           <a href="mailto:hello@kelus.me">hello@kelus.me</a> and we reply by email — not a public forum.
         </p>
+        <QuestionsInboxStatus />
         <QuestionsForm source="questions_page" />
         <QuestionsExport />
         <p className="legal-inline-links">

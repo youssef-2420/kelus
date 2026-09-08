@@ -120,6 +120,31 @@ export type OcrProgress = {
 
 const OCR_MIN_PAGE_CHARS = 40;
 
+export function pageNeedsOcr(page: ExtractedMaterialPage) {
+  if (page.pageNumber <= 0) return false;
+  const text = page.text.trim();
+  if (text.length < OCR_MIN_PAGE_CHARS) return true;
+  const letters = (text.match(/[A-Za-z]/g) ?? []).length;
+  // Selectable junk / OCR leftovers: enough length but almost no letters.
+  return text.length >= OCR_MIN_PAGE_CHARS && letters / text.length < 0.35;
+}
+
+function synthesizeBlocksFromText(text: string): ExtractedTextBlock[] {
+  return text
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .slice(0, 80)
+    .map((line, index) => ({
+      text: line,
+      x: 0,
+      y: -index * 16,
+      width: Math.max(24, line.length * 7),
+      height: 14,
+      fontSize: line.length <= 48 ? 16 : 13,
+    }));
+}
+
 function throwIfAborted(signal?: AbortSignal) {
   if (signal?.aborted) {
     const error = new Error("OCR cancelled.");
@@ -148,7 +173,7 @@ export async function ocrPdfPages(
   const timeBudgetMs = options?.timeBudgetMs ?? 60_000;
   const startedAt = Date.now();
   const targets = pages
-    .filter((page) => page.pageNumber > 0 && page.text.trim().length < OCR_MIN_PAGE_CHARS)
+    .filter((page) => pageNeedsOcr(page))
     .slice(0, maxPages);
 
   if (!targets.length) {
@@ -207,7 +232,11 @@ export async function ocrPdfPages(
       throwIfAborted(options?.signal);
       const text = result.data.text.replace(/[ \t]+\n/g, "\n").trim();
       if (text.length > target.text.trim().length) {
-        byNumber.set(target.pageNumber, { pageNumber: target.pageNumber, text });
+        byNumber.set(target.pageNumber, {
+          pageNumber: target.pageNumber,
+          text,
+          blocks: synthesizeBlocksFromText(text),
+        });
         ocrPages += 1;
       }
       canvas.width = 0;

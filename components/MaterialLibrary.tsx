@@ -21,7 +21,7 @@ import {
   updateMaterialProcessingStatus,
 } from "@/lib/material-store";
 import { readMaterialPdf, removeRemoteMaterial, uploadMaterialPdf } from "@/lib/material-sync";
-import { assessPdfTextQuality, extractPdfPages, ocrPdfPages } from "@/lib/pdf-extraction";
+import { assessPdfTextQuality, extractPdfPages, ocrPdfPages, pageNeedsOcr } from "@/lib/pdf-extraction";
 
 function formatBytes(bytes: number | null) {
   if (bytes === null) return null;
@@ -170,13 +170,14 @@ export function MaterialLibrary() {
       let pages = await extractPdfPages(pdfFile);
       let quality = assessPdfTextQuality(pages);
       let usedOcr = false;
-      if (quality.density === "sparse" || quality.density === "empty") {
+
+      async function runOcr(reason: string) {
         attemptedOcr = true;
         setOcrRunning(true);
-        setStatusMessage("Scanned PDF detected — reading pages with on-device OCR…");
+        setStatusMessage(reason);
         const ocr = await ocrPdfPages(pdfFile, pages, {
           maxPages: 12,
-          timeBudgetMs: 60_000,
+          timeBudgetMs: 75_000,
           signal: controller.signal,
           onProgress: (progress) => setStatusMessage(progress.message),
         });
@@ -185,7 +186,13 @@ export function MaterialLibrary() {
           pages = ocr.pages;
           quality = assessPdfTextQuality(pages);
           usedOcr = true;
-        } else if (quality.density === "empty") {
+        }
+        return ocr.ocrPages;
+      }
+
+      if (quality.density === "sparse" || quality.density === "empty" || pages.some(pageNeedsOcr)) {
+        const recovered = await runOcr("Scanned or weak PDF text — reading pages with on-device OCR…");
+        if (recovered === 0 && quality.density === "empty") {
           const ocrError = new Error(
             "On-device OCR finished without usable English text. Export a text PDF, try a clearer English scan, or continue with the sample course.",
           );
@@ -193,9 +200,17 @@ export function MaterialLibrary() {
           throw ocrError;
         }
       }
+
       setStatusMessage(usedOcr ? "Building concepts from scanned text…" : "Building concepts…");
       let proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
-      if (proposals.length < 3 && (quality.density === "sparse" || quality.density === "empty")) {
+
+      if (proposals.length < 3 && !attemptedOcr && pages.some(pageNeedsOcr)) {
+        await runOcr("Few concepts found — retrying weak pages with on-device OCR…");
+        setStatusMessage("Building concepts from recovered text…");
+        proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
+      }
+
+      if (proposals.length < 3) {
         const relaxed = proposeConceptsFromPages({
           materialId: material.id,
           sourceLabel: material.title,

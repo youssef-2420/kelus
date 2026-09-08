@@ -11,6 +11,9 @@ import type { Concept, ExtractedMaterialPage, LearnerSnapshot, LearningEvent, Pr
 import { createLearnerSnapshot, type SetupInput } from "./setup";
 
 const STORAGE_KEY = "kelus-learning-state-v2";
+const LAST_SESSION_KEY = "kelus:last-session-completed-at";
+/** Advance frozen learner clocks once wall time has moved (return visits). */
+const CLOCK_STALE_MS = 60_000;
 const SERVER_NOW_MS = Date.parse("2026-09-05T12:00:00.000Z");
 
 export type DemoState = {
@@ -26,6 +29,33 @@ function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapsh
     learningActivities: snapshot.learningActivities ?? [],
     concepts: snapshot.concepts.map((concept) => withCachedState(concept, recomputeConceptCache(concept, snapshot.events, nowIso))),
   };
+}
+
+export function advanceNowIfNeeded(state: DemoState, nowMs = Date.now()): { state: DemoState; changed: boolean } {
+  const stored = Date.parse(state.nowIso);
+  if (!Number.isFinite(stored) || nowMs - stored < CLOCK_STALE_MS) {
+    return { state: { ...state, snapshot: refreshCaches(state.snapshot, state.nowIso) }, changed: false };
+  }
+  const nowIso = new Date(nowMs).toISOString();
+  return { state: { ...state, nowIso, snapshot: refreshCaches(state.snapshot, nowIso) }, changed: true };
+}
+
+export function markSessionCompleted(atIso = new Date().toISOString()) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LAST_SESSION_KEY, atIso);
+  } catch {
+    /* Optional retention signal. */
+  }
+}
+
+export function lastSessionCompletedAt() {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(LAST_SESSION_KEY);
+  } catch {
+    return null;
+  }
 }
 
 export function initialDemoState(nowMs = Date.now()): DemoState {
@@ -64,7 +94,7 @@ export function stateForAuthenticatedUser(state: DemoState, userId: string): Dem
 
 export function replaceDemoState(value: unknown) {
   if (!validStoredState(value)) throw new Error("The saved learner state is not compatible with this version of Kelus.");
-  const state = { ...value, snapshot: refreshCaches(value.snapshot, value.nowIso) };
+  const { state } = advanceNowIfNeeded(value);
   persistDemoState(state);
   return state;
 }
@@ -74,7 +104,9 @@ export function readStoredDemoState(): DemoState | null {
   try {
     const parsed: unknown = JSON.parse(window.localStorage.getItem(STORAGE_KEY) ?? "null");
     if (!validStoredState(parsed)) return null;
-    return { ...parsed, snapshot: refreshCaches(parsed.snapshot, parsed.nowIso) };
+    const { state, changed } = advanceNowIfNeeded(parsed);
+    if (changed) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    return state;
   } catch {
     return null;
   }
@@ -339,6 +371,7 @@ export function finishSession(state: DemoState, sessionId: string, before: Conce
     : item);
   const next = { ...state, snapshot: { ...state.snapshot, sessions } };
   persistDemoState(next);
+  markSessionCompleted(state.nowIso);
   return next;
 }
 

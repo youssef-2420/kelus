@@ -12,6 +12,8 @@ import { trackEvent } from "@/lib/analytics";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
+import { greeting } from "@/lib/format";
+import { lastSessionCompletedAt } from "@/lib/demo-store";
 
 function TodayBody() {
   const router = useRouter();
@@ -124,6 +126,9 @@ function TodayBody() {
   const courseId = course.id;
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
+  const lastCompleted = lastSessionCompletedAt();
+  const dueCount = concepts.filter((concept) => concept.nextReviewAt && Date.parse(concept.nextReviewAt) <= Date.parse(nowIso)).length;
+  const returning = Boolean(lastCompleted) && snapshot.sessions.some((session) => session.status === "complete");
 
   function begin() {
     const sessionId = start(courseId, examId);
@@ -169,6 +174,12 @@ function TodayBody() {
         <div className="today-brief-copy">
           <p className="kicker">Today · {course.name}</p>
           <h1 id="today-title">Today’s route</h1>
+          {returning ? (
+            <p className="today-welcome">
+              {greeting(nowIso)}. Welcome back
+              {dueCount > 0 ? ` · ${dueCount} concept${dueCount === 1 ? "" : "s"} due for review` : ""}.
+            </p>
+          ) : null}
           <p>
             {firstName} first · {route.availableMinutes} minutes · exam in {days} days · aim {exam.targetPercent}%
           </p>

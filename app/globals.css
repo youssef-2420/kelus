@@ -6494,3 +6494,51 @@ h3,
 
 .material-sync-label.is-syncing { color: var(--color-indigo-ink); }
 .material-sync-label.is-retrying { color: #8a5a20; }
+
+.questions-mailto-fallback {
+  margin: 0.65rem 0 0;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.92rem;
+}
+
+.questions-inbox-status {
+  margin: 0 0 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--color-product-border, #d7dde8) 88%, transparent);
+  border-radius: 12px;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.questions-inbox-status.is-proven {
+  color: var(--color-ink, #1a2233);
+  background: color-mix(in srgb, var(--color-product-surface, #fff) 82%, #e7f3ea);
+}
+
+.complete-return {
+  margin: var(--spacing-32, 2rem) 0;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--color-product-border, #d7dde8) 88%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-product-surface, #fff) 88%, #eef2ff);
+}
+
+.complete-return h2 {
+  margin: 0.35rem 0 0.5rem;
+  font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+  line-height: 1.3;
+}
+
+.complete-return p {
+  margin: 0;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.today-welcome {
+  margin: 0 0 0.35rem;
+  color: var(--color-product-secondary, #5b6578);
+  font-size: 0.95rem;
+}

@@ -10,7 +10,7 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [question, setQuestion] = useState("");
-  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "local" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "local" | "needs_activation" | "error">("idle");
   const [message, setMessage] = useState("");
 
   async function onSubmit(event: FormEvent) {
@@ -40,9 +40,14 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
       return;
     }
 
-    trackEvent({ name: "question_submitted", source });
+    trackEvent({ name: "question_submitted", source, delivery: result.delivery });
     window.dispatchEvent(new Event(QUESTIONS_UPDATED_EVENT));
-    if (result.delivery === "local") {
+    if (result.delivery === "needs_activation") {
+      setStatus("needs_activation");
+      setMessage(
+        "Your question is saved on this device, but the Kelus inbox still needs a one-time activation on our side. Email hello@kelus.me directly if you need a reply today.",
+      );
+    } else if (result.delivery === "local") {
       setStatus("local");
       setMessage(
         "Couldn’t reach the Kelus inbox just now. Your question is saved on this device — download the backup below or email hello@kelus.me if you need a reply today.",
@@ -128,12 +133,20 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
         <span aria-hidden="true">→</span>
       </button>
       <p
-        className={status === "error" || status === "local" ? "waitlist-message is-error" : "waitlist-message"}
-        role={status === "error" ? "alert" : status === "saved" || status === "local" ? "status" : undefined}
+        className={
+          status === "error" || status === "local" || status === "needs_activation"
+            ? "waitlist-message is-error"
+            : "waitlist-message"
+        }
+        role={status === "error" ? "alert" : status === "saved" || status === "local" || status === "needs_activation" ? "status" : undefined}
         aria-live="polite"
       >
         {message ||
           "Questions go to hello@kelus.me. We reply by email — no public comment thread."}
+      </p>
+      <p className="questions-mailto-fallback">
+        Prefer a guaranteed inbox hit?{" "}
+        <a href="mailto:hello@kelus.me?subject=Kelus%20question">Email hello@kelus.me</a>
       </p>
     </form>
   );

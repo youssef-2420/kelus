@@ -1,4 +1,5 @@
 const STORAGE_KEY = "kelus:questions:v1";
+const LAST_REMOTE_KEY = "kelus:questions:last-remote-at";
 const DEFAULT_QUESTIONS_INBOX = "hello@kelus.me";
 /** FormSubmit delivers browser POSTs to the inbox without a GitHub secret. */
 const DEFAULT_QUESTIONS_ENDPOINT = `https://formsubmit.co/ajax/${DEFAULT_QUESTIONS_INBOX}`;
@@ -10,6 +11,8 @@ export type QuestionEntry = {
   source: string;
   createdAt: string;
 };
+
+export type QuestionDelivery = "remote" | "local" | "needs_activation";
 
 export function questionsInboxEmail() {
   return DEFAULT_QUESTIONS_INBOX;
@@ -43,6 +46,24 @@ function writeEntries(entries: QuestionEntry[]) {
   }
 }
 
+function markRemoteDelivery(atIso = new Date().toISOString()) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(LAST_REMOTE_KEY, atIso);
+  } catch {
+    /* Optional proof signal. */
+  }
+}
+
+export function lastRemoteQuestionDeliveryAt() {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.localStorage.getItem(LAST_REMOTE_KEY);
+  } catch {
+    return null;
+  }
+}
+
 export function normalizeQuestionEmail(email: string) {
   return email.trim().toLowerCase();
 }
@@ -55,12 +76,16 @@ function isFormSubmitEndpoint(endpoint: string) {
   return /formsubmit\.co/i.test(endpoint);
 }
 
+function isActivationFailure(message = "") {
+  return /activate|confirm your email|disabled|not activated/i.test(message);
+}
+
 export async function submitClientQuestion(input: {
   name: string;
   email: string;
   question: string;
   source?: string;
-}): Promise<{ ok: true; delivery: "remote" | "local" } | { ok: false; error: string }> {
+}): Promise<{ ok: true; delivery: QuestionDelivery } | { ok: false; error: string }> {
   const name = input.name.trim();
   const email = normalizeQuestionEmail(input.email);
   const question = input.question.trim();
@@ -129,11 +154,14 @@ export async function submitClientQuestion(input: {
         | { success?: boolean | string; message?: string; error?: string }
         | null;
       if (body) {
+        const message = `${body.message ?? ""} ${body.error ?? ""}`.trim();
+        if (isActivationFailure(message)) {
+          return { ok: true, delivery: "needs_activation" };
+        }
         const failed =
           body.success === false
           || body.success === "false"
-          || Boolean(body.error)
-          || /activate|confirm your email|disabled/i.test(body.message ?? "");
+          || Boolean(body.error);
         if (failed) return { ok: true, delivery: "local" };
       }
     }
@@ -141,6 +169,7 @@ export async function submitClientQuestion(input: {
     return { ok: true, delivery: "local" };
   }
 
+  markRemoteDelivery(entry.createdAt);
   return { ok: true, delivery: "remote" };
 }
 

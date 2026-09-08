@@ -20,13 +20,24 @@ function CompleteBody() {
   const exam = state.snapshot.exams.find((item) => item.id === session?.examId);
   const name = (id: string) => state.snapshot.concepts.find((concept) => concept.id === id)?.name ?? id;
   const completedSessions = state.snapshot.sessions.filter((item) => item.status === "complete").length;
+  const courseConcepts = course
+    ? state.snapshot.concepts.filter((concept) => concept.courseId === course.id)
+    : [];
   const nextRoute = course && exam ? generateRoute({
-    concepts: state.snapshot.concepts.filter((concept) => concept.courseId === course.id),
+    concepts: courseConcepts,
     relationships: state.snapshot.relationships,
     events: state.snapshot.events,
     exam,
     nowIso: state.nowIso,
   }) : null;
+  const nextStopId = nextRoute?.allocations[0]?.conceptId;
+  const nextStopName = nextStopId
+    ? (nextStopId === "mixed-retrieval" ? "mixed retrieval" : name(nextStopId))
+    : null;
+  const dueCount = courseConcepts.filter((concept) => {
+    if (!concept.nextReviewAt) return false;
+    return Date.parse(concept.nextReviewAt) <= Date.parse(state.nowIso);
+  }).length;
 
   return (
     <AppShell>
@@ -41,6 +52,20 @@ function CompleteBody() {
           <section><p className="kicker">Needs attention</p>{summary.stillWeakIds.length ? summary.stillWeakIds.slice(0, 3).map((id) => <p key={id}>{name(id)}</p>) : <p>No urgent gap</p>}</section>
         </div>
       ) : null}
+      <section className="complete-return" aria-labelledby="complete-return-title">
+        <p className="kicker">Come back tomorrow</p>
+        <h2 id="complete-return-title">
+          {nextStopName
+            ? <>Kelus will put <strong>{nextStopName}</strong> first when you return.</>
+            : "Your route stays on this device — open Today when you come back."}
+        </h2>
+        <p>
+          {dueCount > 0
+            ? `${dueCount} concept${dueCount === 1 ? "" : "s"} already due for review as memory fades.`
+            : "Tomorrow’s route will shift as retention fades — no need to rebuild from scratch."}
+          {" "}Bookmark Today or leave this tab open.
+        </p>
+      </section>
       {nextRoute ? (
         <section className="next-route">
           <p className="kicker">Next route</p>
@@ -56,7 +81,7 @@ function CompleteBody() {
           <WaitlistForm source="session_complete" compact />
         </section>
       ) : null}
-      <Link href="/today" className="cta complete-done">Back to today <span aria-hidden="true">→</span></Link>
+      <Link href="/today" className="cta complete-done">Open tomorrow’s Today <span aria-hidden="true">→</span></Link>
     </AppShell>
   );
 }
