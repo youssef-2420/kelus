@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { kelusMotion } from "@/components/motion";
 import Link from "next/link";
 import { useCallback, useState } from "react";
 import { AppShell } from "@/components/AppShell";
@@ -67,7 +68,14 @@ export default function MapPage() {
         </div>
         <AnimatePresence initial={false} mode="wait">
           {selected ? (
-            <motion.div key={selected.id} className="concept-inspector-wrap" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }} transition={{ type: "spring", bounce: 0, duration: reduceMotion ? 0.1 : 0.28 }}>
+            <motion.div
+              key={selected.id}
+              className="concept-inspector-wrap"
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }}
+              transition={reduceMotion ? { duration: 0.1 } : kelusMotion.sheet}
+            >
               <ConceptInspector concept={selected} concepts={concepts} relationships={state.snapshot.relationships} events={state.snapshot.events} nowIso={state.nowIso} onClose={closeInspector} />
             </motion.div>
           ) : null}

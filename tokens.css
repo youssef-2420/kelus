@@ -39,14 +39,61 @@
   --spacing-64: 4rem;
   --spacing-80: 5rem;
   --spacing-96: 6rem;
+  --section-rhythm: var(--spacing-96);
 
+  /* Layout widths — prefer these over hard-coded min() values */
   --page-max-width: 82.5rem;
+  --shell-width: 65rem; /* 1040 */
+  --shell-narrow: 47.5rem; /* 760 */
+  --study-width: 55rem; /* 880 */
+  --workspace-width: 70rem; /* 1120 */
+  --content-gutter: 1.5rem; /* 24 — page edge padding half */
+
   --radius-ledger: 0.25rem;
-  --dur-quick: 180ms;
+  --dur-quick: 160ms;
   --dur-medium: 280ms;
   --dur-slow: 620ms;
-  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Focus ring */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 3px;
+  --focus-ring-color: var(--color-indigo-ink);
+
+  /* Z-index scale */
+  --z-base: 0;
+  --z-raised: 1;
+  --z-sticky: 40;
+  --z-header: 60;
+  --z-overlay: 80;
+  --z-sheet: 90;
+  --z-toast: 100;
+
+  /* Materials & depth — restrained ledger craft */
+  --shadow-soft: 0 18px 48px -28px color-mix(in srgb, var(--color-deep-violet) 28%, transparent);
+  --shadow-panel: 0 1px 0 color-mix(in srgb, var(--color-pure-white) 70%, transparent) inset,
+    0 22px 50px -34px color-mix(in srgb, var(--color-deep-violet) 24%, transparent),
+    0 10px 24px -16px color-mix(in srgb, var(--color-indigo-ink) 14%, transparent);
+  --shadow-lift: 0 12px 28px -18px color-mix(in srgb, var(--color-indigo-ink) 22%, transparent);
+  --material-header: color-mix(in srgb, var(--color-pure-white) 78%, transparent);
+  --material-panel: color-mix(in srgb, var(--color-pure-white) 92%, var(--color-periwinkle-wash));
+  --material-mist: color-mix(in srgb, var(--color-mist) 70%, var(--color-periwinkle-wash));
+  --atmosphere-top: radial-gradient(90% 70% at 8% -8%, color-mix(in srgb, var(--color-periwinkle-wash) 72%, transparent), transparent 62%),
+    radial-gradient(70% 55% at 96% 0%, color-mix(in srgb, var(--color-mist) 88%, var(--color-lavender-border)), transparent 58%);
+
+  /* Surface levels — flat ledger by default; materials where separation needs presence */
+  --surface-0: var(--color-pure-white);
+  --surface-1: var(--color-mist);
+  --surface-2: var(--material-panel);
+  --surface-3: var(--material-header);
+  --surface-sheet: color-mix(in srgb, var(--color-mist) 72%, var(--color-pure-white));
+
+  /* Elevation — use sparingly; prefer hairline rules for dense product lists */
+  --elevation-0: none;
+  --elevation-1: var(--shadow-soft);
+  --elevation-2: var(--shadow-panel);
+  --elevation-3: var(--shadow-lift);
 
   /* Existing component aliases keep business logic and structure untouched. */
   --paper: var(--color-pure-white);

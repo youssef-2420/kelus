@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import BlurText from "@/components/BlurText";
+import { kelusEase, kelusMotion } from "@/components/motion";
 import { MaterialToMapIllustration, RerouteIllustration, TodayRouteIllustration } from "@/components/how/HowIllustrations";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
 
@@ -76,7 +77,14 @@ export function HowItWorks() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
   const example = LEARNING_EXAMPLES[exampleIndex];
-  const reveal = reduceMotion ? {} : { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.22 }, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const } };
+  const reveal = reduceMotion
+    ? {}
+    : {
+        initial: { opacity: 0, y: 14 },
+        whileInView: { opacity: 1, y: 0 },
+        viewport: { once: true, amount: 0.22 },
+        transition: { ...kelusMotion.enter, duration: 0.45 },
+      };
 
   return (
     <div className="how-page">
@@ -103,7 +111,7 @@ export function HowItWorks() {
               <span className="how-stage-number">{stage.number}</span>
               <div className="how-stage-copy"><h2>{stage.label}</h2><p>{stage.body}</p></div>
               <AnimatePresence mode="wait" initial={false}>
-                <motion.div key={`${example.id}-${stage.visual}`} className="how-stage-visual" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0.1 : 0.2, ease: [0.16, 1, 0.3, 1] }}>
+                <motion.div key={`${example.id}-${stage.visual}`} className="how-stage-visual" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0.1 : 0.22, ease: kelusEase }}>
                   <StageVisual type={stage.visual} reduceMotion={reduceMotion} example={example} />
                 </motion.div>
               </AnimatePresence>

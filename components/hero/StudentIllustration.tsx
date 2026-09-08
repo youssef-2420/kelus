@@ -20,8 +20,9 @@ export function StudentIllustration({ className }: Props) {
           height={538}
           decoding="async"
           fetchPriority="high"
-          animate={reduce ? undefined : { y: [0, -3, 0], scale: [1, 1.012, 1] }}
-          transition={reduce ? undefined : { duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
+          initial={reduce ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0 : 0.72, delay: reduce ? 0 : 0.2, ease: [0.22, 1, 0.36, 1] }}
         />
       </picture>
     </figure>

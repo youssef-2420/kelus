@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { kelusMotion } from "@/components/motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
 import { useLearner } from "@/components/LearnerProvider";
@@ -422,7 +423,7 @@ function SessionBody() {
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16 }}
             animate={{ opacity: 1, x: 0 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16 }}
-            transition={{ type: "spring", bounce: 0, duration: reduceMotion ? 0.1 : 0.28 }}
+            transition={reduceMotion ? { duration: 0.1 } : kelusMotion.sheet}
           >
             <header>
               <div><span>From your course</span><strong>{sourcePanel.title}</strong>{sourcePanel.locator ? <small>{sourcePanel.locator}</small> : null}</div>

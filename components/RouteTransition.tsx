@@ -3,8 +3,7 @@
 import { animate, motion, useReducedMotion } from "motion/react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, type ReactNode } from "react";
-
-const transition = { duration: 0.22, ease: [0.22, 1, 0.36, 1] } as const;
+import { kelusMotion } from "@/components/motion";
 
 export function RouteTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -16,7 +15,7 @@ export function RouteTransition({ children }: { children: ReactNode }) {
     if (previousPath.current === pathname) return;
     previousPath.current = pathname;
     if (!element.current || reduceMotion) return;
-    const animation = animate(element.current, { y: [6, 0] }, transition);
+    const animation = animate(element.current, { y: [6, 0] }, kelusMotion.route);
     return () => animation.stop();
   }, [pathname, reduceMotion]);
 
@@ -27,7 +26,7 @@ export function RouteTransition({ children }: { children: ReactNode }) {
       className="route-transition"
       initial={false}
       animate={{ opacity: 1, y: 0 }}
-      transition={reduceMotion ? { duration: 0.1 } : transition}
+      transition={reduceMotion ? { duration: 0.1 } : kelusMotion.route}
     >
       {children}
     </motion.div>
