@@ -17,10 +17,10 @@ test("nine-path: sample-first hero, today auto-load, PDF fail UX, inbox docs", a
     source("lib/analytics.ts"),
   ]);
 
-  assert.match(hero, /className="home-brand"/);
   assert.match(hero, /Try sample \(~1 min\)/);
   assert.match(hero, /href="\/today\?sample=1"/);
   assert.match(hero, /Build with my PDF/);
+  assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
 
   assert.match(today, /sample=== ?"1"|get\("sample"\) === "1"/);

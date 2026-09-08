@@ -122,10 +122,10 @@ test("primary CTA language and readiness stay consistent", async () => {
     source("app/today/page.tsx"),
     source("components/HowItWorks.tsx"),
   ]);
-  assert.match(hero, /home-brand/);
   assert.match(hero, /Try sample \(~1 min\)/);
   assert.match(hero, /today\?sample=1/);
   assert.match(hero, /Build with my PDF/);
+  assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
   assert.match(header, /Build today’s route/);
   assert.match(home, /Build today’s route/);
