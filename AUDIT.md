@@ -183,7 +183,7 @@ There are no API routes, middleware, or server actions. Security is RLS + client
 
 `tests/kelus-audit.test.mjs` pins: scope gate + header, phase labels, complete CTA, rail “Map”, Reveal reduced motion, payment allowlist, PDF magic bytes, waitlist note cap, `noopener`, `_headers`, robots disallows, privacy shared-device copy.
 
-Existing suites (`audit-harden`, `learner-sync`, `stick-under-eight`, `trust-surfaces`) were updated where copy or structure changed.
+Existing suites (`audit-harden`, `learner-sync`, `stick-under-eight`, `trust-surfaces`) were updated where copy or structure changed. Playwright `e2e/audit-surfaces.spec.ts` walks header, privacy, map recovery, sample → session labels, and a 375px pass.
 
 ## Recommended next audits (not this PR)
 
