@@ -8,6 +8,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { ExamPassCapture } from "@/components/ExamPassCapture";
 const ledger = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-inter-tight",
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <a className="skip" href="#main">Skip to content</a>
         <AuthProvider>
           <LearnerProvider>
+            <ExamPassCapture />
             <TooltipProvider>
               <SiteHeader />
               <LearnerScopeGate>

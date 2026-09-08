@@ -192,14 +192,15 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(pricing, /Pay for one exam/);
   assert.match(pricing, /FoundingCta|WaitlistForm/);
   assert.match(pricing, /Optional free sign-in to sync across devices/);
-  assert.match(pricing, /Priority access to new study features/);
+  assert.match(pricing, /remaining-day plan|remaining days until your exam/);
+  assert.doesNotMatch(pricing, /Priority access to new study features/);
   assert.doesNotMatch(pricing, /Cross-device course and learning-state sync/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
   assert.match(home, /\/pricing/);
   assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
-  assert.match(soft, /exam date/i);
+  assert.match(soft, /remaining days until your exam|Don’t leave topics off the calendar/);
   assert.match(soft, /Sign in/);
   assert.doesNotMatch(soft, /planned \$9/);
   assert.doesNotMatch(soft, /unlocks more materials/i);

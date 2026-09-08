@@ -6,6 +6,8 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
+import { buildExamCoveragePlan } from "@/domain/exam-coverage";
+import { ExamWeekPlan } from "@/components/ExamWeekPlan";
 import { percent } from "@/lib/format";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
@@ -28,6 +30,13 @@ function CompleteBody() {
     ? state.snapshot.concepts.filter((concept) => concept.courseId === course.id)
     : [];
   const nextRoute = course && exam ? generateRoute({
+    concepts: courseConcepts,
+    relationships: state.snapshot.relationships,
+    events: state.snapshot.events,
+    exam,
+    nowIso: state.nowIso,
+  }) : null;
+  const coverage = course && exam ? buildExamCoveragePlan({
     concepts: courseConcepts,
     relationships: state.snapshot.relationships,
     events: state.snapshot.events,
@@ -108,7 +117,16 @@ function CompleteBody() {
           <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
         </section>
       ) : null}
-      {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" /> : null}
+      {coverage && course && exam ? (
+        <ExamWeekPlan
+          plan={coverage}
+          courseName={course.name}
+          examTarget={exam.target}
+          examDateIso={exam.examDate}
+          source="session_complete"
+        />
+      ) : null}
+      {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" coverage={coverage} /> : null}
       {completedSessions >= 2 ? (
         <section className="complete-waitlist" aria-labelledby="complete-waitlist-title">
           <p className="kicker">Stay in the loop</p>

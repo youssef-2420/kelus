@@ -30,6 +30,20 @@ test("audit 2026: session phases use human labels and complete returns to Today"
   assert.doesNotMatch(complete, /Open tomorrow/);
 });
 
+test("audit 2026: Exam Pass sells the remaining-day plan, not vapor features", async () => {
+  const [pricing, today, complete, week] = await Promise.all([
+    source("app/pricing/page.tsx"),
+    source("app/today/page.tsx"),
+    source("app/session/complete/page.tsx"),
+    source("components/ExamWeekPlan.tsx"),
+  ]);
+  assert.match(pricing, /The remaining days until your exam/);
+  assert.match(today, /ExamWeekPlan/);
+  assert.match(complete, /ExamWeekPlan/);
+  assert.match(week, /Unlock remaining days/);
+  assert.doesNotMatch(pricing, /Priority access to new study features/);
+});
+
 test("audit 2026: workspace rail matches header Map label", async () => {
   const [header, rail] = await Promise.all([
     source("components/SiteHeader.tsx"),
