@@ -78,7 +78,7 @@ body {
   text-decoration: none;
   font-weight: 650;
 }
-.skip:focus { top: 12px; }
+.skip:focus-visible { top: 12px; }
 h1, h2, h3 {
   font-family: var(--font-ledger);
   font-style: normal;
@@ -110,7 +110,7 @@ button, input, textarea { font: inherit; }
 .cta:hover { background: var(--accent-2); }
 .cta:active { background: var(--accent); transform: scale(0.97); }
 .cta:disabled { opacity: 0.55; cursor: not-allowed; }
-.cta.compact { min-height: 40px; padding: 0 14px; font-size: 15px; }
+.cta.compact { min-height: 44px; padding: 0 14px; font-size: 15px; }
 .cta:focus-visible, .text-btn:focus-visible, .ghost:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .ghost {
   display: inline-flex;
@@ -631,7 +631,7 @@ button, input, textarea { font: inherit; }
 
 .session-help button,
 .session-apply-hint button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 var(--spacing-16);
   color: var(--color-indigo-ink);
   background: transparent;
@@ -1542,7 +1542,7 @@ button, input, textarea { font: inherit; }
   .home-hero { width: calc(100% - 28px); padding: 52px 0 70px; gap: 42px; }
   .home-copy h1 { max-width: 8ch; font-size: clamp(55px, 17vw, 72px); }
   .home-actions { align-items: stretch; flex-direction: column; }
-  .home-actions .home-secondary { min-height: 38px; }
+  .home-actions .home-secondary { min-height: 44px; }
   .home .route-engine { padding: 22px 18px 24px; }
   .home-argument { min-height: 530px; }
   .home-argument h2 { font-size: clamp(50px, 14vw, 68px); }
@@ -4343,7 +4343,7 @@ h3,
 
 .site-auth-loading {
   width: 96px;
-  height: 40px;
+  height: 44px;
   background: var(--color-mist);
   border: 1px solid var(--color-frost);
   border-radius: var(--radius-ledger);
@@ -4377,8 +4377,8 @@ h3,
   top: var(--spacing-16);
   right: var(--spacing-16);
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   place-items: center;
   color: var(--color-steel);
   background: var(--color-mist);
@@ -4713,7 +4713,7 @@ h3,
 }
 
 .session-sources button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0;
   color: var(--color-indigo-ink);
   background: transparent;
@@ -4789,7 +4789,7 @@ h3,
 }
 
 .concept-inspector > header button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0;
   color: var(--color-steel);
   background: transparent;
@@ -5044,7 +5044,7 @@ h3,
 .session-source-panel > header small { color: var(--color-steel); }
 .session-source-panel > header button,
 .session-source-link button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0;
   color: var(--color-indigo-ink);
   background: transparent;

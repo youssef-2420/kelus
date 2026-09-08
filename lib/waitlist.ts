@@ -54,7 +54,7 @@ export async function submitWaitlistSignup(input: {
   const entry: WaitlistEntry = {
     email,
     source: input.source?.trim() || "waitlist",
-    note: input.note?.trim() || undefined,
+    note: input.note?.trim().slice(0, 500) || undefined,
     createdAt: new Date().toISOString(),
   };
 

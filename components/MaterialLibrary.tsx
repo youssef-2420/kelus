@@ -90,7 +90,7 @@ function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMater
       <span className="material-actions">
         {item.storage === "local" ? <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>{item.processingStatus === "processing" ? "Reading…" : item.processingStatus === "failed" ? "Retry concepts" : item.processingStatus === "ready" ? "Review concepts" : "Build concepts"}</button> : null}
         {item.storage === "url" ? (
-          item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">Open bookmark</a> : null
+          item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">Open bookmark</a> : null
         ) : (
           <button type="button" onClick={() => void downloadPdf()} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>
         )}

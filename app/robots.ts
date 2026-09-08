@@ -7,6 +7,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/today/", "/session/", "/materials/", "/map/", "/concepts/"],
     },
     sitemap: "https://kelus.me/sitemap.xml",
     host: "https://kelus.me",

@@ -55,6 +55,7 @@ type Store = {
 };
 
 const StoreContext = createContext<Store | null>(null);
+const LearnerScopeContext = createContext(true);
 
 export function LearnerProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
@@ -202,7 +203,24 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       confirmMaterialConcepts(state, proposals, pages);
     },
   }), [state]);
-  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;
+  return (
+    <StoreContext.Provider value={store}>
+      <LearnerScopeContext.Provider value={scopeAligned}>
+        {auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}
+        {children}
+      </LearnerScopeContext.Provider>
+    </StoreContext.Provider>
+  );
+}
+
+export function LearnerScopeGate({ children }: { children: ReactNode }) {
+  const scopeAligned = useContext(LearnerScopeContext);
+  if (scopeAligned) return children;
+  return (
+    <main id="main" className="destination-page">
+      <p className="learner-sync-status" role="status">Loading your private learning route…</p>
+    </main>
+  );
 }
 
 export function useLearner() {
