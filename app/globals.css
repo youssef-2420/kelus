@@ -8007,15 +8007,6 @@ h3 {
   padding: 0 0 1.5rem;
 }
 
-.kelus-hero.is-editorial .hero-brand {
-  margin: 0 0 0.65rem;
-  color: var(--color-midnight-ink);
-  font-size: clamp(4rem, 11vw, 7.5rem);
-  font-weight: 600;
-  letter-spacing: -0.065em;
-  line-height: 0.84;
-}
-
 .kelus-hero.is-editorial .home-copy .kicker {
   margin-bottom: 1.25rem;
   color: var(--color-indigo-ink);
@@ -8207,9 +8198,6 @@ h3 {
     min-height: 0 !important;
     gap: 2.5rem;
     padding-block: 2.5rem 3.5rem !important;
-  }
-  .kelus-hero.is-editorial .hero-brand {
-    font-size: clamp(3.75rem, 18vw, 5.5rem);
   }
   .kelus-hero.is-editorial .home-copy h1 {
     max-width: 14ch;
