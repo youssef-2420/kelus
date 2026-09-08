@@ -7446,3 +7446,152 @@ h3 {
   background:
     linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 94%, var(--color-periwinkle-wash)) 0%, var(--color-pure-white) 40%);
 }
+
+/* ── Design-system foundation utilities (Fable-ready) ── */
+.focus-ring:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.surface-flat {
+  background: var(--surface-0);
+  border: 1px solid var(--color-frost);
+  border-radius: var(--radius-ledger);
+  box-shadow: var(--elevation-0);
+}
+
+.surface-quiet {
+  background: var(--surface-1);
+  border-top: 1px solid var(--color-midnight-ink);
+  border-bottom: 1px solid var(--color-frost);
+}
+
+.surface-raised {
+  background:
+    linear-gradient(165deg, var(--surface-2) 0%, var(--color-pure-white) 48%),
+    var(--color-pure-white);
+  border: 1px solid color-mix(in srgb, var(--color-lavender-border) 65%, var(--color-frost));
+  border-top: 2px solid var(--color-indigo-ink);
+  border-radius: calc(var(--radius-ledger) + 2px);
+  box-shadow: var(--elevation-2);
+}
+
+.rule-ledger {
+  border-top: 1px solid var(--color-midnight-ink);
+  border-bottom: 1px solid var(--color-frost);
+}
+
+.section-band {
+  padding-block: clamp(var(--spacing-48), 6vw, var(--section-rhythm));
+}
+
+.shell-narrow {
+  width: min(var(--shell-narrow), calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.shell-study {
+  width: min(var(--study-width), calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.shell-workspace {
+  width: min(var(--workspace-width), calc(100% - 40px));
+  margin-inline: auto;
+}
+
+/* Product surfaces wired to foundation tokens */
+.site-header {
+  z-index: var(--z-header);
+}
+
+.destination-form,
+.diagnosis-check {
+  width: min(var(--shell-narrow), calc(100% - 40px));
+}
+
+.study-shell {
+  width: min(var(--study-width), calc(100% - 40px));
+  margin-inline: auto;
+  background: transparent;
+}
+
+.destination-header,
+.diagnosis-header,
+.study-header {
+  width: min(var(--workspace-width), calc(100% - 40px));
+}
+
+.materials-head {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-mist) 70%, transparent) 0%, transparent 100%);
+}
+
+.material-drop {
+  border-radius: var(--radius-ledger);
+  background: color-mix(in srgb, var(--color-pure-white) 88%, var(--color-mist));
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--color-lavender-border) 55%, var(--color-steel));
+  transition:
+    background-color var(--dur-product-micro) var(--ease-enter),
+    border-color var(--dur-product-micro) var(--ease-enter),
+    color var(--dur-product-micro) var(--ease-enter),
+    box-shadow var(--dur-product-micro) var(--ease-enter);
+}
+
+.material-drop:hover,
+.material-drop.is-dragging {
+  box-shadow: var(--elevation-1);
+}
+
+.material-shelf ul {
+  border-top-color: var(--color-midnight-ink);
+}
+
+.material-ready,
+.concept-confirmation {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-pure-white) 94%, var(--color-periwinkle-wash)) 0%, var(--color-pure-white) 36%);
+  border-radius: var(--radius-ledger);
+}
+
+.concept-inspector-wrap {
+  z-index: var(--z-sticky);
+}
+
+.concept-inspector {
+  background: var(--surface-sheet);
+  border-top: 1px solid var(--color-midnight-ink);
+  border-bottom: 1px solid var(--color-frost);
+  border-radius: 0 0 var(--radius-ledger) var(--radius-ledger);
+  box-shadow: var(--elevation-1);
+}
+
+.session-source-panel {
+  z-index: var(--z-sticky);
+  background: var(--surface-sheet);
+  border-top: 1px solid var(--color-midnight-ink);
+  border-bottom: 1px solid var(--color-frost);
+  box-shadow: var(--elevation-1);
+}
+
+.session-sources {
+  background: color-mix(in srgb, var(--color-mist) 55%, transparent);
+  padding-inline: var(--spacing-8);
+  border-radius: var(--radius-ledger);
+}
+
+.map-list button.row.is-selected {
+  box-shadow: inset 2px 0 0 var(--color-indigo-ink);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .surface-raised,
+  .material-ready,
+  .concept-confirmation,
+  .concept-inspector,
+  .session-source-panel {
+    background: var(--color-pure-white);
+    box-shadow: none;
+  }
+}

@@ -4,10 +4,11 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { LEARNING_EXAMPLES } from "@/data/learning-examples";
+import { kelusEase, kelusMotion } from "@/components/motion";
 import { StudentIllustration } from "./StudentIllustration";
 
-const ease = [0.22, 1, 0.36, 1] as const;
-const press = { type: "spring" as const, bounce: 0, stiffness: 420, damping: 28 };
+const ease = kelusEase;
+const press = kelusMotion.press;
 
 export function KelusHero() {
   const reduceMotion = useReducedMotion() === true;
