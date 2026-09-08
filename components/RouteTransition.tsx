@@ -14,7 +14,7 @@ export function RouteTransition({ children }: { children: ReactNode }) {
     <motion.div
       key={pathname}
       className="route-transition"
-      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={reduceMotion ? { duration: 0.1 } : transition}
     >

@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView, useReducedMotion, type HTMLMotionProps } from "motion/react";
-import { useRef, type ReactNode } from "react";
+import { motion, useReducedMotion, type HTMLMotionProps } from "motion/react";
+import { type ReactNode } from "react";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -12,16 +12,11 @@ type RevealProps = {
 } & Omit<HTMLMotionProps<"div">, "children">;
 
 export function Reveal({ children, className, delay = 0, ...rest }: RevealProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion() === true;
-  const inView = useInView(ref, { once: true, margin: "0px 0px -12% 0px" });
-
   return (
     <motion.div
-      ref={ref}
       className={className}
-      initial={reduce ? false : { opacity: 0, y: 16 }}
-      animate={reduce || inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+      initial={false}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay, ease }}
       {...rest}
     >
@@ -52,17 +47,15 @@ export function Stagger({
   className?: string;
   once?: boolean;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion() === true;
-  const inView = useInView(ref, { once, margin: "-12% 0px" });
+  void once;
 
   return (
     <motion.div
-      ref={ref}
       className={className}
       variants={reduce ? undefined : list}
-      initial={reduce ? false : "hidden"}
-      animate={reduce || inView ? "show" : "hidden"}
+      initial={false}
+      animate="show"
     >
       {children}
     </motion.div>

@@ -295,11 +295,13 @@ export function MaterialLibrary() {
 
   async function savePdf(file: File | undefined) {
     if (!file) return;
+    trackEvent({ name: "material_upload_started", role });
     setError(null);
     setErrorKind(null);
     setBusy(true);
     try {
       const material = await addPdfMaterial({ courseId: course.id, file, role });
+      trackEvent({ name: "material_upload_completed", role });
       if (auth.user?.id) {
         setSyncStates((current) => ({ ...current, [material.id]: "syncing" }));
         void uploadMaterialPdf(auth.user.id, material, file).then(() => {
@@ -312,6 +314,7 @@ export function MaterialLibrary() {
       }
       await analyzePdf(material, file);
     } catch (caught) {
+      trackEvent({ name: "material_upload_failed", role });
       setErrorKind("generic");
       setError(caught instanceof Error ? caught.message : "The PDF could not be saved.");
     } finally {

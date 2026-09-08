@@ -19,7 +19,6 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://kelus.me"),
   title: "Kelus — Know what to study next",
   description: "Kelus looks at what you know, what’s fading, and the time you have — then gives you today’s exam plan.",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     url: "https://kelus.me/",

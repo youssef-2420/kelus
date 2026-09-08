@@ -1,5 +1,24 @@
 -- Record-level material synchronization. A row per source avoids whole-library
 -- last-write-wins conflicts and deleted_at prevents removed files resurfacing.
+-- Earlier prototypes used a UUID-keyed table with the same name. Preserve that
+-- data and its source-reference foreign keys before creating the normalized,
+-- account-scoped table used by the current browser sync adapter.
+do $$
+declare
+  material_id_type text;
+begin
+  select data_type into material_id_type
+  from information_schema.columns
+  where table_schema = 'public' and table_name = 'course_materials' and column_name = 'id';
+
+  if material_id_type = 'uuid' then
+    if to_regclass('public.course_materials_legacy') is not null then
+      raise exception 'course_materials_legacy already exists; reconcile it before rerunning migration 005';
+    end if;
+    alter table public.course_materials rename to course_materials_legacy;
+  end if;
+end $$;
+
 create table if not exists course_materials (
   user_id uuid not null references auth.users(id) on delete cascade,
   id text not null,
@@ -23,6 +42,11 @@ create index if not exists course_materials_user_updated_idx
   on course_materials (user_id, updated_at desc);
 
 alter table course_materials enable row level security;
+
+drop policy if exists "course_materials_select_own" on course_materials;
+drop policy if exists "course_materials_insert_own" on course_materials;
+drop policy if exists "course_materials_update_own" on course_materials;
+drop policy if exists "course_materials_delete_own" on course_materials;
 
 create policy "course_materials_select_own" on course_materials
   for select to authenticated using (auth.uid() = user_id);

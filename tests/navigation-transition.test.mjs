@@ -19,6 +19,8 @@ test("route transition is keyed by pathname and respects reduced motion", async 
   const transition = await source("components/RouteTransition.tsx");
   assert.match(transition, /key=\{pathname\}/);
   assert.match(transition, /useReducedMotion/);
+  assert.match(transition, /initial=\{false\}/);
+  assert.doesNotMatch(transition, /initial=\{[^\n]*opacity:\s*0/);
   assert.doesNotMatch(transition, /AnimatePresence/);
   assert.doesNotMatch(transition, /height:|width:|top:|left:/);
 });

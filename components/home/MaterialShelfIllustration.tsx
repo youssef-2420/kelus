@@ -1,7 +1,6 @@
 "use client";
 
-import { motion, useInView, useReducedMotion } from "motion/react";
-import { useRef } from "react";
+import { motion, useReducedMotion } from "motion/react";
 
 const sources = [
   { kind: "PDF", title: "Course syllabus", detail: "Saved on this device" },
@@ -22,12 +21,10 @@ function SourceIcon({ kind }: { kind: "PDF" | "LINK" }) {
 }
 
 export function MaterialShelfIllustration() {
-  const root = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion() === true;
-  const visible = useInView(root, { once: true, amount: 0.4 });
 
   return (
-    <div ref={root} className="v1-materials" aria-label="Example saved course materials">
+    <div className="v1-materials" aria-label="Example saved course materials">
       <header>
         <div>
           <span>Example source shelf</span>
@@ -39,8 +36,8 @@ export function MaterialShelfIllustration() {
         {sources.map((source, index) => (
           <motion.li
             key={source.title}
-            initial={reduce ? false : { opacity: 0, x: 12 }}
-            animate={reduce || visible ? { opacity: 1, x: 0 } : { opacity: 0, x: 12 }}
+            initial={false}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.36, delay: reduce ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
           >
             <i><SourceIcon kind={source.kind} /></i>
@@ -54,7 +51,7 @@ export function MaterialShelfIllustration() {
       </ul>
       <footer>
         <span aria-hidden="true">i</span>
-        Sources are stored for reference. Their contents do not change the route yet.
+        Confirmed PDF concepts shape the route. Saved links remain bookmarks.
       </footer>
     </div>
   );

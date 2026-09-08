@@ -10,6 +10,7 @@ import { percent } from "@/lib/format";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
+import { trackEvent } from "@/lib/analytics";
 
 type Phase = "learn" | "retrieve" | "apply" | "evaluate" | "result" | "reroute";
 type HelpMode = "hint" | "explain" | "example" | null;
@@ -183,6 +184,13 @@ function SessionBody() {
   function advance() {
     const updatedSession = state.snapshot.sessions.find((item) => item.id === activeSessionId);
     if (lastOutcome !== "success" || (updatedSession && updatedSession.routeChanges.length > seenRouteChanges)) {
+      if (lastOutcome === "partial" || lastOutcome === "failure") {
+        const previous = routeBeforeIds.length
+          ? routeBeforeIds
+          : activeSession.initialRoute.allocations.map((allocation) => String(allocation.conceptId));
+        const next = updatedSession?.latestRoute.allocations.map((allocation) => String(allocation.conceptId)) ?? [];
+        trackEvent({ name: "route_recalculated", changed: previous.join("|") !== next.join("|"), outcome: lastOutcome });
+      }
       setSeenRouteChanges(updatedSession?.routeChanges.length ?? seenRouteChanges);
       setPhase("reroute");
       return;

@@ -10,7 +10,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { courseMastery } from "@/domain/scheduler";
 
 export default function MapPage() {
-  const { state, useDemo } = useLearner();
+  const { state, useDemo: loadDemo } = useLearner();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
   if (!state.onboardingCompleted) {
@@ -40,7 +40,7 @@ export default function MapPage() {
           <h1>Confirm concepts from a source first.</h1>
           <p>Add a syllabus or lecture PDF, then keep the concepts this exam actually covers.</p>
           <div className="materials-empty-actions">
-            <button type="button" className="cta" onClick={() => useDemo()}>
+            <button type="button" className="cta" onClick={() => loadDemo()}>
               Try sample (~1 min) <span aria-hidden="true">→</span>
             </button>
             <Link className="text-btn" href="/materials">Add course material <span aria-hidden="true">→</span></Link>

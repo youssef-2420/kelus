@@ -33,11 +33,14 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
 });
 
 test("analytics only loads when a measurement id is configured", async () => {
-  const [analytics, ga, workflow, today] = await Promise.all([
+  const [analytics, ga, workflow, today, materials, session, complete] = await Promise.all([
     source("lib/analytics.ts"),
     source("components/GoogleAnalytics.tsx"),
     source(".github/workflows/restore-kelus-dns.yml"),
     source("app/today/page.tsx"),
+    source("components/MaterialLibrary.tsx"),
+    source("app/session/page.tsx"),
+    source("app/session/complete/page.tsx"),
   ]);
   assert.match(analytics, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
   assert.match(ga, /if \(!GA_MEASUREMENT_ID\) return null/);
@@ -45,6 +48,38 @@ test("analytics only loads when a measurement id is configured", async () => {
   assert.match(ga, /allow_google_signals: false/);
   assert.match(workflow, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
   assert.match(today, /session_started/);
+  assert.match(materials, /material_upload_started/);
+  assert.match(materials, /material_upload_completed/);
+  assert.match(materials, /material_upload_failed/);
+  assert.match(session, /route_recalculated/);
+  assert.match(complete, /session_completed/);
+});
+
+test("public metadata indexes only public pages and app state cannot inherit the home canonical", async () => {
+  const [layout, home, sitemap, todayLayout, mapLayout, sessionLayout, conceptLayout] = await Promise.all([
+    source("app/layout.tsx"),
+    source("app/page.tsx"),
+    source("app/sitemap.ts"),
+    source("app/today/layout.tsx"),
+    source("app/map/layout.tsx"),
+    source("app/session/layout.tsx"),
+    source("app/concepts/layout.tsx"),
+  ]);
+  assert.doesNotMatch(layout, /alternates:\s*\{\s*canonical:\s*["']\/["']/);
+  assert.match(home, /alternates:\s*\{\s*canonical:\s*["']\/["']/);
+  assert.doesNotMatch(sitemap, /\/today\/|\/map\/|\/concepts\//);
+  for (const privateLayout of [todayLayout, mapLayout, sessionLayout, conceptLayout]) {
+    assert.match(privateLayout, /index:\s*false/);
+    assert.match(privateLayout, /follow:\s*false/);
+  }
+});
+
+test("normalized material migration safely separates the legacy UUID schema", async () => {
+  const migration = await source("database/005_normalized_course_materials.sql");
+  assert.match(migration, /material_id_type = 'uuid'/);
+  assert.match(migration, /rename to course_materials_legacy/);
+  assert.match(migration, /drop policy if exists/);
+  assert.match(migration, /primary key \(user_id, id\)/);
 });
 
 test("waitlist capture stays honest without a remote endpoint", async () => {

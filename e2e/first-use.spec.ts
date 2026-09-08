@@ -33,13 +33,10 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.goto("/today");
   await page.getByLabel("Course").fill("Molecular Biology");
   await page.getByLabel("Exam").fill("Cell Biology Final");
-  await page.getByRole("button", { name: /Continue/ }).click();
-
   const examDate = new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10);
   await page.getByLabel("When is it?").fill(examDate);
-  await page.getByRole("button", { name: /Continue/ }).click();
   await page.getByLabel(/45/).check();
-  await page.getByRole("button", { name: /Add course material/ }).click();
+  await page.getByRole("button", { name: /Continue with my course/ }).click();
 
   await expect(page).toHaveURL(/\/materials/);
   await expect(page.getByRole("heading", { name: "Course material" })).toBeVisible();

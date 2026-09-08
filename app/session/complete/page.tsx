@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
@@ -10,11 +10,13 @@ import { percent } from "@/lib/format";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
+import { trackEvent } from "@/lib/analytics";
 
 function CompleteBody() {
   const search = useSearchParams();
   const { state } = useLearner();
   const [calendarNote, setCalendarNote] = useState("");
+  const completionTracked = useRef<string | null>(null);
   const session = state.snapshot.sessions.find((item) => item.id === search.get("id"))
     ?? [...state.snapshot.sessions].reverse().find((item) => item.status === "complete");
   const summary = session?.summary;
@@ -41,6 +43,16 @@ function CompleteBody() {
     return Date.parse(concept.nextReviewAt) <= Date.parse(state.nowIso);
   }).length;
   const minutes = session?.plannedMinutes || exam?.availableMinutes || 45;
+
+  useEffect(() => {
+    if (!session || completionTracked.current === session.id) return;
+    completionTracked.current = session.id;
+    trackEvent({
+      name: "session_completed",
+      concept_count: session.plannedConceptIds.length,
+      planned_minutes: session.plannedMinutes,
+    });
+  }, [session]);
 
   function addCalendar() {
     const ok = downloadTomorrowStudyIcs({

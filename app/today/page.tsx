@@ -22,13 +22,10 @@ function TodayBody() {
   const [confirmReset, setConfirmReset] = useState(false);
   const sampleHandled = useRef(false);
   const wantsSample = searchParams.get("sample") === "1";
-  const [sampleBooting, setSampleBooting] = useState(wantsSample);
+  const sampleBooting = wantsSample && !state.onboardingCompleted;
 
   useEffect(() => {
-    if (!wantsSample) {
-      setSampleBooting(false);
-      return;
-    }
+    if (!wantsSample) return;
     if (sampleHandled.current) return;
     sampleHandled.current = true;
     const alreadyReady = state.onboardingCompleted && state.snapshot.concepts.length > 0;
@@ -36,7 +33,6 @@ function TodayBody() {
       loadDemo();
       trackEvent({ name: "sample_loaded", source: "today_query" });
     }
-    setSampleBooting(false);
     router.replace("/today");
   }, [wantsSample, state.onboardingCompleted, state.snapshot.concepts.length, loadDemo, router]);
 
