@@ -26,7 +26,9 @@ export type KelusAnalyticsEvent =
   | { name: "pricing_viewed"; source: string }
   | { name: "soft_paywall_shown"; moment: "first_session" | "third_material" }
   | { name: "exam_pass_checkout_clicked"; source: string }
-  | { name: "exam_pass_activated"; source: string };
+  | { name: "exam_pass_activated"; source: string }
+  | { name: "exam_pass_redeem_failed"; source: string }
+  | { name: "exam_pass_bare_return"; source: string };
 
 export function readAnalyticsConsent(): AnalyticsConsent | null {
   if (typeof window === "undefined") return null;

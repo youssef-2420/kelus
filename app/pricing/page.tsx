@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FoundingCta } from "@/components/FoundingCta";
+import { ExamPassRedeem } from "@/components/ExamPassRedeem";
 import { PricingViewTracker } from "@/components/PricingViewTracker";
 import { authConfigured } from "@/lib/auth-config";
 
@@ -61,6 +62,8 @@ export default function PricingPage() {
             <FoundingCta source="pricing" />
           </article>
         </div>
+
+        <ExamPassRedeem />
 
         <p className="legal-inline-links">
           Questions? <a href="mailto:hello@kelus.me">hello@kelus.me</a>

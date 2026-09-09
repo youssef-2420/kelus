@@ -122,3 +122,27 @@ test("audit 2026: edge headers, robots disallows, and shared-device privacy", as
   assert.match(css, /\.session-help button,[\s\S]*?min-height:\s*44px/);
   assert.match(css, /\.auth-close[\s\S]*?width:\s*44px/);
 });
+
+test("audit 2026: Exam Pass unlock is edge-verified, not forgeable localStorage", async () => {
+  const [pass, capture, redeem, worker, terms, env, privacy] = await Promise.all([
+    source("lib/exam-pass.ts"),
+    source("components/ExamPassCapture.tsx"),
+    source("components/ExamPassRedeem.tsx"),
+    source("workers/kelus.js"),
+    source("app/terms/page.tsx"),
+    source(".env.example"),
+    source("app/privacy/page.tsx"),
+  ]);
+  assert.match(pass, /\/api\/exam-pass\/redeem/);
+  assert.match(pass, /\/api\/exam-pass\/status/);
+  assert.doesNotMatch(pass, /localStorage\.setItem\(examPassStorageKey/);
+  assert.doesNotMatch(capture, /activateExamPass\(\)/);
+  assert.match(capture, /redeemExamPass/);
+  assert.match(redeem, /Unlock Exam Pass/);
+  assert.match(worker, /HttpOnly/);
+  assert.match(worker, /checkout\/sessions/);
+  assert.match(terms, /Exam Pass/);
+  assert.match(terms, /14 days/);
+  assert.match(privacy, /HttpOnly cookie|verified by the Kelus edge/);
+  assert.doesNotMatch(env, /today\/\?pass=1/);
+});

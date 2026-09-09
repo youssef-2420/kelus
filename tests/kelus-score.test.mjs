@@ -52,4 +52,6 @@ test("score: CSP is report-only and workers_dev is false", async () => {
   assert.match(headers, /worker-src[^;]*blob:/);
   assert.match(wrangler, /workers_dev\s*=\s*false/);
   assert.doesNotMatch(wrangler, /workers_dev\s*=\s*true/);
+  assert.match(wrangler, /main\s*=\s*"\.\/workers\/kelus\.js"/);
+  assert.match(wrangler, /binding\s*=\s*"ASSETS"/);
 });

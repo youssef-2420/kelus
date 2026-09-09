@@ -14,7 +14,7 @@ export default function TermsPage() {
       <article className="legal-panel">
         <p className="kicker">Legal</p>
         <h1>Terms of use</h1>
-        <p className="legal-updated">Last updated: September 7, 2026</p>
+        <p className="legal-updated">Last updated: September 9, 2026</p>
         <p className="legal-lede">By using kelus.me, you agree to these terms.</p>
 
         <h2>What Kelus provides</h2>
@@ -22,6 +22,20 @@ export default function TermsPage() {
           Kelus helps you revise course materials through recall and application practice. Recommendations are guidance for
           exam prep — not grades, academic credit, medical advice, or a guarantee of exam outcomes.
         </p>
+
+        <h2>Exam Pass</h2>
+        <p>
+          Exam Pass is a one-time purchase for one exam date you set in Kelus. It unlocks the remaining-day plan view,
+          a calendar file for those days, and a printable topic list on the browser that completes a verified redeem
+          (Stripe checkout session or a code we issue). It does not guarantee grades, coverage of every topic if your
+          daily minutes are too low, or that OCR will extract every syllabus perfectly.
+        </p>
+        <ul>
+          <li>Today’s revision route stays available without Exam Pass.</li>
+          <li>Unlock is bound to the browser via a secure cookie after verification — not a public query flag.</li>
+          <li>If you pay and cannot unlock, email hello@kelus.me with your receipt within 14 days for help or a refund.</li>
+          <li>Changing your exam date does not automatically create a second paid plan; contact us if you need a reset.</li>
+        </ul>
 
         <h2>Your materials and responsibility</h2>
         <ul>

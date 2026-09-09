@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createDemoSnapshot } from "../data/demo-seed.ts";
 import { buildExamCoveragePlan, examCoverageHeadline } from "../domain/exam-coverage.ts";
-import { isExamPassReturnQuery, examPassStorageKey } from "../lib/exam-pass.ts";
+import { isExamPassReturnQuery } from "../lib/exam-pass.ts";
 import { buildExamWeekIcs, buildExamWeekSheet } from "../lib/study-reminder.ts";
 
 const now = "2026-09-05T12:00:00.000Z";
@@ -61,12 +61,11 @@ test("long exam windows disclose the 21-day planning cap", () => {
   assert.doesNotMatch(examCoverageHeadline(plan), /fit before the exam(?!.*planned)/);
 });
 
-test("exam pass return query and storage keys stay owner-scoped", () => {
+test("exam pass return query detects checkout returns without client unlock keys", () => {
   assert.equal(isExamPassReturnQuery(new URLSearchParams("pass=1")), true);
   assert.equal(isExamPassReturnQuery(new URLSearchParams("exam_pass=success")), true);
+  assert.equal(isExamPassReturnQuery(new URLSearchParams("session_id=cs_test_123")), true);
   assert.equal(isExamPassReturnQuery(new URLSearchParams("pass=0")), false);
-  assert.match(examPassStorageKey(null), /:guest$/);
-  assert.notEqual(examPassStorageKey("user-a"), examPassStorageKey("user-b"));
 });
 
 test("exam week calendar and sheet stay inspectable text", () => {

@@ -6351,6 +6351,56 @@ h3,
   border-color: var(--color-indigo-ink);
 }
 
+.exam-pass-redeem {
+  margin: 40px 0 8px;
+  padding: 24px 0 0;
+  border-top: 1px solid var(--color-frost);
+  display: grid;
+  gap: 12px;
+}
+
+.exam-pass-redeem h2 {
+  margin: 0;
+  font-family: var(--font-ledger);
+  font-weight: 300;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+
+.exam-pass-redeem-form {
+  display: grid;
+  gap: 12px;
+  max-width: 420px;
+}
+
+.exam-pass-redeem-form label {
+  display: grid;
+  gap: 6px;
+  font-size: var(--text-body-sm);
+  color: var(--color-steel);
+}
+
+.exam-pass-redeem-form input {
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-frost);
+  border-radius: var(--radius-ledger, 4px);
+  font: inherit;
+}
+
+.exam-pass-redeem-form .cta,
+.exam-pass-redeem .cta {
+  min-height: 44px;
+  width: fit-content;
+}
+
+.exam-pass-redeem-status,
+.exam-pass-capture-note {
+  margin: 0;
+  color: var(--color-steel);
+  font-size: var(--text-body-sm);
+}
+
 .pricing-plan h2 {
   margin: 0;
   font-family: var(--font-ledger);

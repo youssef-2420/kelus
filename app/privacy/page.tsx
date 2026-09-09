@@ -86,10 +86,11 @@ export default function PrivacyPage() {
 
         <h2>Exam Pass</h2>
         <p>
-          If you buy Exam Pass, this browser stores an on-device unlock so you can see the remaining-day plan, calendar
-          file, and printable topic list. It is not a grade guarantee. Set the Stripe success URL to{" "}
-          <code>https://kelus.me/today/?pass=1</code> so checkout can return you here. Contact{" "}
-          <a href="mailto:hello@kelus.me">hello@kelus.me</a> if you paid and the plan is still locked.
+          If you buy Exam Pass, unlock is verified by the Kelus edge (HttpOnly cookie after a Stripe checkout session
+          check or a redeem code from hello@kelus.me). That unlock lets this browser show the remaining-day plan, calendar
+          file, and printable topic list. It is not a grade guarantee. A bare <code>?pass=1</code> link does not unlock
+          the plan. Contact <a href="mailto:hello@kelus.me">hello@kelus.me</a> if you paid and the plan is still locked —
+          include your receipt email.
         </p>
 
         <h2>Shared devices</h2>
