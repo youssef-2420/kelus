@@ -17,6 +17,10 @@
 }
 .is-revision-studio #home-hero-title span { color: var(--color-indigo-ink); }
 .is-revision-studio .home-copy .home-lede { max-width: 35ch; font-size: 18px; line-height: 1.6; }
+.is-revision-studio .hero-loop-cue { display: flex; align-items: center; gap: 12px; margin: 24px 0 28px; color: var(--color-steel); font-size: 12px; letter-spacing: .03em; }
+.is-revision-studio .hero-loop-cue span { display: inline-flex; align-items: center; gap: 7px; }
+.is-revision-studio .hero-loop-cue b { color: var(--color-indigo-ink); font-size: 10px; font-weight: 600; letter-spacing: .08em; }
+.is-revision-studio .hero-loop-cue i { color: var(--color-lavender-border); font-style: normal; }
 .is-revision-studio .home-actions { gap: 24px; }
 .is-revision-studio .hero-honesty { max-width: 34ch; line-height: 1.6; }
 .is-revision-studio .hero-product-demo { border: 1px solid var(--color-lavender-border); border-radius: 4px; background: var(--color-pure-white); overflow: hidden; }
@@ -69,6 +73,8 @@
 @media (max-width: 480px) {
   .is-revision-studio .home-copy h1#home-hero-title { font-size: 46px; }
   .is-revision-studio .home-copy .home-lede { font-size: 16px; }
+  .is-revision-studio .hero-loop-cue { gap: 9px; margin-block: 20px 24px; }
+  .is-revision-studio .hero-loop-cue i { font-size: 11px; }
   .is-revision-studio .home-actions { align-items: stretch; gap: 16px; }
   .is-revision-studio .hero-demo-head { padding-inline: 16px; }
   .is-revision-studio .hero-demo-body { padding: 20px 16px; }

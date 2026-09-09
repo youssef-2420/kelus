@@ -3898,6 +3898,8 @@ h3,
     padding-inline: 13px;
   }
 
+  .site-header-cluster .site-header-action { display: none; }
+
   .site-nav {
     order: 3;
     width: 100%;

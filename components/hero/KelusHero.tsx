@@ -23,6 +23,9 @@ export function KelusHero() {
         <p className="home-lede">
           Turn your course notes into focused revision. Recall what you know, work through what you don’t, and know where to begin tomorrow.
         </p>
+        <div className="hero-loop-cue" aria-label="How a Kelus revision session works">
+          <span><b>01</b>Recall</span><i aria-hidden="true">→</i><span><b>02</b>Apply</span><i aria-hidden="true">→</i><span><b>03</b>Reroute</span>
+        </div>
         <div className="home-actions">
           <Link href="/today?sample=1" className="cta home-cta">
             Try sample (~1 min) <span className="arrow" aria-hidden="true">

@@ -106,6 +106,7 @@ test("ledger design keeps the mobile homepage in one column", async () => {
   assert.match(css, /\.kelus-hero\.home-hero\.is-student\s*\{[\s\S]*?grid-template-columns: minmax\(0, 1fr\)/);
   assert.match(css, /--color-indigo-ink/);
   assert.match(header, /href: "\/materials"/);
+  assert.match(layout, /revision-studio\.css/);
 });
 
 test("core product nav is visible without sign-in or onboarding", async () => {
