@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Inter_Tight } from "next/font/google";
+import { Inter, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import "./revision-studio.css";
 import "./home-folio.css";
 import "./notion-product.css";
+import "./notion-paper.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -11,10 +12,18 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
-const ledger = Inter_Tight({
+
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter-tight",
-  weight: ["300", "400", "600", "700"],
+  variable: "--font-inter",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-source-serif",
+  weight: ["400"],
   display: "swap",
 });
 
@@ -33,8 +42,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={ledger.variable} data-scroll-behavior="smooth">
-      <body className={`${ledger.variable} is-notion-system`}>
+    <html lang="en" className={`${inter.variable} ${sourceSerif.variable}`} data-scroll-behavior="smooth">
+      <body className={`${inter.variable} ${sourceSerif.variable} is-notion-system`}>
         <GoogleAnalytics />
         <a className="skip" href="#main">Skip to content</a>
         <AuthProvider>

@@ -145,73 +145,12 @@
   filter: drop-shadow(0 28px 48px color-mix(in srgb, var(--color-midnight-ink) 14%, transparent));
 }
 
-/* ── Notion-style hero workspace mock ── */
-.kelus-hero.is-folio.is-notion .folio-hero-copy h1 span {
-  color: #2383e2;
-}
-
-.kelus-hero.is-folio.is-notion .home-cta {
-  background: #2383e2;
-  border-color: #2383e2;
-  border-radius: 8px;
-}
-
-.kelus-hero.is-folio.is-notion .home-cta:hover {
-  background: #1b6ec2;
-  border-color: #1b6ec2;
-}
-
-.kelus-hero.is-folio.is-notion .home-secondary {
-  border: 1px solid #ebebea;
-  border-radius: 8px;
-  background: #fff;
-  color: #37352f;
-  backdrop-filter: none;
-}
-
-.kelus-hero.is-folio.is-notion .kicker {
-  color: #787774;
-}
-
+/* Notion paper overrides live in notion-paper.css (body.is-notion-system). */
 .kelus-hero.home-hero.is-folio.is-notion {
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  min-height: min(88vh, 820px);
-  padding-bottom: clamp(2rem, 4vh, 3rem);
-  gap: clamp(1.5rem, 3vw, 2.75rem);
-  background:
-    radial-gradient(ellipse 50% 40% at 78% 28%, rgba(35, 131, 226, 0.045), transparent 70%),
-    linear-gradient(180deg, #fafafa 0%, #f5f5f3 100%);
-}
-
-.kelus-hero.is-notion .folio-hero-copy {
-  align-self: center;
-  padding-bottom: clamp(1.5rem, 4vh, 2.75rem);
-}
-
-.kelus-hero.is-folio.is-notion .folio-hero-copy h1 {
-  max-width: 12ch;
-  margin: 0 0 1.1rem;
-  font-size: clamp(2.45rem, 5.2vw, 3.85rem);
-  font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.04em;
-}
-
-.kelus-hero.is-folio.is-notion .folio-hero-copy h1 span {
-  color: #2383e2;
-  font-weight: 600;
-}
-
-.kelus-hero.is-folio.is-notion .folio-hero-copy .home-lede {
-  margin: 0 0 1.4rem;
-  max-width: 36ch;
-  font-size: 1.05rem;
-  line-height: 1.55;
-}
-
-.kelus-hero.is-notion .folio-hero-rule {
-  background: linear-gradient(90deg, #2383e2, #ebebea 40%, transparent);
-  opacity: 0.35;
+  grid-template-columns: unset;
 }
 
 .folio-hero-notion {
