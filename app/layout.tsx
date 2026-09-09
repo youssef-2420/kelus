@@ -14,7 +14,7 @@ import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 const ledger = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-inter-tight",
-  weight: ["300", "400", "600"],
+  weight: ["300", "400", "600", "700"],
   display: "swap",
 });
 
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={ledger.variable} data-scroll-behavior="smooth">
-      <body className={ledger.variable}>
+      <body className={`${ledger.variable} is-notion-system`}>
         <GoogleAnalytics />
         <a className="skip" href="#main">Skip to content</a>
         <AuthProvider>

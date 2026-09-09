@@ -36,7 +36,10 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
     <main id="main" className="destination-page is-notion-product">
       <form className="destination-form" onSubmit={submit}>
         <p className="kicker">Step 1 · Your destination</p>
-        <h1 className="destination-page-title">Set your exam</h1>
+        <h1 className="destination-page-title">
+          <em className="notion-setup-page-mark" aria-hidden="true" />
+          Set your exam
+        </h1>
         <p className="destination-support">Choose the course you want to revise. Next, add your lessons and start practising what you remember.</p>
         <ol className="setup-progress" aria-label="Getting started">
           <li aria-current="step"><span>01</span>Exam</li>
@@ -103,7 +106,6 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
           </button>
         </aside>
       </form>
-      <div className="destination-route" aria-hidden="true"><i /><i /><i /><b>◎</b></div>
     </main>
   );
 }

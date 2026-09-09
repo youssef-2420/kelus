@@ -128,11 +128,11 @@ export function NotionRevisionBoard() {
       {/* Earned accents only — anchored to the real loop, not scattered sticker clutter */}
       <div className="notion-doodles">
         <svg className="notion-doodle is-check" viewBox="0 0 56 56" fill="none">
-          <circle cx="28" cy="28" r="22" fill="#eee8ff" stroke="#7c5cff" strokeWidth="2" />
-          <path d="M18 29l7 7 14-16" stroke="#7c5cff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="28" cy="28" r="22" fill="#e8f3ff" stroke="#2383e2" strokeWidth="2" />
+          <path d="M18 29l7 7 14-16" stroke="#2383e2" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <svg className="notion-doodle is-scribble" viewBox="0 0 80 80" fill="none">
-          <path d="M10 40c12-18 28-22 40-10 10 10 8 28-6 34-12 5-26-2-28-14" stroke="#1a1a1a" strokeWidth="2" strokeLinecap="round" />
+          <path d="M10 40c12-18 28-22 40-10 10 10 8 28-6 34-12 5-26-2-28-14" stroke="#9b9a97" strokeWidth="2" strokeLinecap="round" />
         </svg>
       </div>
     </motion.div>
