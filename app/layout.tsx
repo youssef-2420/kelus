@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter_Tight } from "next/font/google";
 import "./globals.css";
 import "./revision-studio.css";
+import "./home-folio.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";

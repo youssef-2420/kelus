@@ -2,27 +2,32 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-test("homepage presents the V1 product loop after the student hero", () => {
+test("homepage presents folio hero, product stage, and story chapters", () => {
   const page = readFileSync("app/page.tsx", "utf8");
   const hero = readFileSync("components/hero/KelusHero.tsx", "utf8");
+  const demo = readFileSync("components/hero/HeroProductDemo.tsx", "utf8");
   const story = readFileSync("components/home/HomeAfterHero.tsx", "utf8");
   assert.match(page, /KelusHero/);
   assert.doesNotMatch(page, /StartHereJourney/);
   assert.match(page, /HomeAfterHero/);
+  assert.match(hero, /is-folio/);
   assert.match(hero, /Revise your lessons/);
-  assert.match(hero, /LEARNING_EXAMPLES/);
-  assert.match(hero, /Today’s route/);
-  assert.match(hero, /Revision that adapts to your answers/);
   assert.match(hero, /Try sample \(~1 min\)/);
+  assert.match(hero, /StudentIllustration|folio-hero-student/);
+  assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
-  assert.doesNotMatch(page, /KnowledgeRouteStory/);
-  assert.doesNotMatch(page, /<RouteStory/);
+  assert.match(demo, /LEARNING_EXAMPLES/);
+  assert.match(demo, /Today’s route/);
+  assert.match(story, /HeroProductDemo/);
+  assert.match(story, /folio-product-stage|folio-chapter/);
   assert.match(story, /TodayPlanIllustration/);
   assert.match(story, /RerouteIllustration/);
   assert.match(story, /MaterialShelfIllustration/);
   assert.match(story, /Honest methodology/);
   assert.match(story, /review the proposed concepts/);
+  assert.doesNotMatch(page, /KnowledgeRouteStory/);
+  assert.doesNotMatch(page, /<RouteStory/);
 });
 
 test("the start-here route explains the full first-use loop without generic cards", () => {

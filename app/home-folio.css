@@ -1,0 +1,443 @@
+/* Homepage folio redesign — distinct from the old left-copy / right-demo hero. */
+
+/* ── Hero: one composition, full-bleed student plane ── */
+.kelus-hero.home-hero.is-folio {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  align-items: end;
+  gap: 0;
+  width: 100%;
+  max-width: none;
+  min-height: min(92vh, 860px);
+  margin: 0;
+  padding: clamp(2.5rem, 6vh, 4.5rem) max(24px, calc((100vw - var(--page-max-width)) / 2)) 0;
+  overflow: clip;
+  background:
+    radial-gradient(ellipse 70% 55% at 78% 72%, color-mix(in srgb, var(--color-periwinkle-wash) 55%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--color-pure-white) 0%, var(--color-mist) 100%);
+}
+
+.folio-hero-atmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.folio-hero-mist {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 12% 18%, color-mix(in srgb, var(--color-mist) 90%, transparent), transparent 65%),
+    radial-gradient(ellipse 40% 35% at 88% 12%, color-mix(in srgb, var(--color-periwinkle-wash) 40%, transparent), transparent 60%);
+}
+
+.folio-hero-wash {
+  position: absolute;
+  right: -8%;
+  bottom: -18%;
+  width: min(72vw, 780px);
+  height: min(72vw, 780px);
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--color-indigo-ink) 7%, transparent), transparent 68%);
+  filter: blur(8px);
+}
+
+.folio-hero-rule {
+  position: absolute;
+  left: max(24px, calc((100vw - var(--page-max-width)) / 2));
+  right: max(24px, calc((100vw - var(--page-max-width)) / 2));
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-indigo-ink), var(--color-frost) 40%, transparent);
+  opacity: 0.55;
+}
+
+.folio-hero-copy {
+  position: relative;
+  z-index: 2;
+  max-width: 34rem;
+  padding: 0 1.5rem clamp(3.5rem, 10vh, 6.5rem) 0;
+}
+
+.kelus-hero.is-folio .folio-hero-copy .kicker {
+  margin-bottom: 1.1rem;
+}
+
+.kelus-hero.is-folio .folio-hero-copy h1 {
+  max-width: 11ch;
+  margin: 0 0 1.35rem;
+  color: var(--color-midnight-ink);
+  font-size: clamp(2.75rem, 6.2vw, 4.75rem);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+
+.kelus-hero.is-folio .folio-hero-copy h1 span {
+  display: inline;
+  color: var(--color-indigo-ink);
+  font-weight: 300;
+}
+
+.kelus-hero.is-folio .folio-hero-copy .home-lede {
+  max-width: 38ch;
+  margin: 0 0 1.75rem;
+  color: var(--color-steel);
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.55;
+}
+
+.kelus-hero.is-folio .home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem 1.25rem;
+  align-items: center;
+}
+
+.kelus-hero.is-folio .home-cta {
+  min-height: 48px;
+}
+
+.kelus-hero.is-folio .home-secondary {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.65rem 1.1rem;
+  color: var(--color-midnight-ink);
+  border: 1px solid var(--color-lavender-border);
+  border-radius: var(--radius-ledger, 4px);
+  background: color-mix(in srgb, var(--color-pure-white) 72%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+  text-decoration: none;
+  font-size: var(--text-body-sm);
+}
+
+.kelus-hero.is-folio .home-secondary:active {
+  transform: scale(0.98);
+}
+
+.folio-hero-visual {
+  position: relative;
+  z-index: 1;
+  align-self: end;
+  justify-self: end;
+  width: 100%;
+  max-width: 620px;
+  margin: 0;
+  pointer-events: none;
+}
+
+.folio-hero-student {
+  margin: 0;
+  width: 100%;
+}
+
+.folio-hero-student img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  object-position: right bottom;
+  mix-blend-mode: multiply;
+  filter: drop-shadow(0 28px 48px color-mix(in srgb, var(--color-midnight-ink) 14%, transparent));
+}
+
+/* ── Product stage: demo is its own chapter, not the hero twin ── */
+.folio-product-stage {
+  position: relative;
+  width: 100%;
+  padding: clamp(4rem, 9vh, 6.5rem) max(24px, calc((100vw - var(--page-max-width)) / 2));
+  background: var(--color-pure-white);
+  border-top: 1px solid var(--color-frost);
+}
+
+.folio-product-intro {
+  max-width: 40rem;
+  margin-bottom: clamp(2rem, 4vh, 3rem);
+}
+
+.folio-product-intro h2 {
+  margin: 0.35rem 0 0.85rem;
+  max-width: 18ch;
+  color: var(--color-midnight-ink);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.folio-product-intro > p:not(.kicker) {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--color-steel);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.folio-product-frame {
+  width: min(100%, 720px);
+}
+
+.folio-product-demo.hero-product-demo {
+  border: 1px solid color-mix(in srgb, var(--color-frost) 80%, var(--color-lavender-border));
+  border-top: 2px solid var(--color-indigo-ink);
+  border-radius: var(--radius-ledger, 4px);
+  background:
+    linear-gradient(168deg, color-mix(in srgb, var(--color-pure-white) 92%, var(--color-mist)) 0%, var(--color-pure-white) 55%),
+    var(--color-pure-white);
+  box-shadow:
+    0 1px 0 color-mix(in srgb, var(--color-pure-white) 80%, transparent) inset,
+    0 28px 56px -36px color-mix(in srgb, var(--color-midnight-ink) 18%, transparent);
+  overflow: hidden;
+}
+
+/* ── Story chapters: stacked folio pages, not side-by-side marketing rows ── */
+.folio-story {
+  background: var(--color-mist);
+}
+
+.folio-chapter {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.75rem, 4vw, 2.75rem);
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin: 0 auto;
+  padding: clamp(3.5rem, 8vh, 5.5rem) max(24px, calc((100vw - var(--page-max-width)) / 2));
+  border-bottom: 1px solid color-mix(in srgb, var(--color-frost) 85%, transparent);
+}
+
+.folio-chapter.is-reroute {
+  background: var(--color-pure-white);
+}
+
+.folio-chapter-copy {
+  position: relative;
+  max-width: 36rem;
+  padding-top: 0.5rem;
+}
+
+.folio-chapter-index {
+  position: absolute;
+  top: -0.35rem;
+  right: 0;
+  margin: 0;
+  color: color-mix(in srgb, var(--color-indigo-ink) 18%, transparent);
+  font-size: clamp(4.5rem, 12vw, 7.5rem);
+  font-weight: 300;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.folio-chapter-copy .kicker {
+  margin-bottom: 0.75rem;
+}
+
+.folio-chapter-copy h2 {
+  margin: 0 0 0.9rem;
+  max-width: 14ch;
+  color: var(--color-midnight-ink);
+  font-size: clamp(2rem, 4.2vw, 3.15rem);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+.folio-chapter-copy > p:not(.kicker) {
+  margin: 0 0 1.35rem;
+  max-width: 42ch;
+  color: var(--color-steel);
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.folio-chapter-copy > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  color: var(--color-indigo-ink);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.folio-chapter-copy > a span {
+  transition: transform 160ms ease;
+}
+
+.folio-chapter-copy > a:hover span {
+  transform: translateX(3px);
+}
+
+.folio-chapter-art {
+  width: min(100%, 560px);
+  justify-self: start;
+}
+
+.folio-chapter.is-reroute .folio-chapter-art,
+.folio-chapter.is-materials .folio-chapter-art {
+  justify-self: start;
+}
+
+/* Method */
+.folio-method {
+  padding: clamp(3.5rem, 8vh, 5.5rem) max(24px, calc((100vw - var(--page-max-width)) / 2));
+  background: var(--color-pure-white);
+  border-top: 1px solid var(--color-frost);
+}
+
+.folio-method-heading {
+  max-width: 36rem;
+  margin-bottom: 2rem;
+}
+
+.folio-method-heading h2 {
+  margin: 0.4rem 0 0.75rem;
+  max-width: 16ch;
+  font-size: clamp(1.85rem, 3.5vw, 2.6rem);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: var(--color-midnight-ink);
+}
+
+.folio-method-heading > p:not(.kicker) {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--color-steel);
+  line-height: 1.5;
+}
+
+.folio-method-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid var(--color-frost);
+}
+
+.folio-method-grid > div {
+  padding: 1.35rem 1.25rem 1.35rem 0;
+  border-bottom: 1px solid var(--color-frost);
+  border-right: 1px solid var(--color-frost);
+}
+
+.folio-method-grid > div:nth-child(4n) {
+  border-right: 0;
+  padding-right: 0;
+}
+
+.folio-method-grid dt {
+  margin: 0 0 0.35rem;
+  color: var(--color-indigo-ink);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.folio-method-grid dd {
+  margin: 0;
+  color: var(--color-midnight-ink);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.folio-close.home-close {
+  background: var(--color-mist);
+}
+
+@media (max-width: 980px) {
+  .kelus-hero.home-hero.is-folio {
+    grid-template-columns: 1fr;
+    min-height: 0;
+    padding-top: 2.25rem;
+    padding-inline: 16px;
+    align-items: start;
+  }
+
+  .folio-hero-copy {
+    max-width: none;
+    padding: 0 0 1.5rem;
+  }
+
+  .kelus-hero.is-folio .folio-hero-copy h1 {
+    max-width: 14ch;
+    font-size: clamp(2.35rem, 9vw, 3.25rem);
+  }
+
+  .folio-hero-visual {
+    max-width: min(100%, 420px);
+    justify-self: center;
+    margin-inline: auto;
+  }
+
+  .folio-hero-rule {
+    left: 16px;
+    right: 16px;
+  }
+
+  .folio-product-stage,
+  .folio-chapter,
+  .folio-method {
+    padding-inline: 16px;
+  }
+
+  .folio-chapter-index {
+    font-size: 4rem;
+    opacity: 0.85;
+  }
+
+  .folio-method-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .folio-method-grid > div:nth-child(2n) {
+    border-right: 0;
+    padding-right: 0;
+  }
+
+  .folio-method-grid > div:nth-child(4n) {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .kelus-hero.is-folio .home-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kelus-hero.is-folio .home-cta,
+  .kelus-hero.is-folio .home-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .folio-method-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .folio-method-grid > div {
+    border-right: 0;
+    padding-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kelus-hero.is-folio .home-secondary:active {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .kelus-hero.is-folio .home-secondary {
+    backdrop-filter: none;
+    background: var(--color-pure-white);
+  }
+}

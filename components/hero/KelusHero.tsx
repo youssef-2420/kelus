@@ -1,137 +1,76 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useState } from "react";
-import { LEARNING_EXAMPLES } from "@/data/learning-examples";
+import { motion, useReducedMotion } from "motion/react";
 import { StudentIllustration } from "./StudentIllustration";
+import { kelusEase, kelusMotion } from "@/components/motion";
 
+const ease = kelusEase;
+const press = kelusMotion.press;
+
+/**
+ * First viewport only: one composition — copy + dominant student plane.
+ * Interactive demo lives in HeroProductDemo (below the fold).
+ */
 export function KelusHero() {
-  const reduceMotion = useReducedMotion() === true;
-  const [exampleIndex, setExampleIndex] = useState(0);
-  const [showBefore, setShowBefore] = useState(false);
-  const [answerOpen, setAnswerOpen] = useState(false);
-  const [practiceResult, setPracticeResult] = useState<"again" | "remembered" | null>(null);
-  const example = LEARNING_EXAMPLES[exampleIndex];
-  const route = showBefore ? [...example.route.slice(1), example.route[0]] : example.route;
+  const reduce = useReducedMotion() === true;
 
   return (
-    <section className="kelus-hero home-hero is-product-demo is-revision-studio" aria-labelledby="home-hero-title">
-      <div className="kelus-hero-copy home-copy">
-        <p className="kicker">A little revision. Every day.</p>
-        <h1 id="home-hero-title">Revise your lessons.<br /><span>Prepare for your exams.</span></h1>
-        <p className="home-lede">
-          Turn your course notes into focused revision. Recall what you know, work through what you don’t, and know where to begin tomorrow.
-        </p>
-        <div className="hero-loop-cue" aria-label="How a Kelus revision session works">
-          <span><b>01</b>Recall</span><i aria-hidden="true">→</i><span><b>02</b>Apply</span><i aria-hidden="true">→</i><span><b>03</b>Reroute</span>
-        </div>
-        <div className="home-actions">
-          <Link href="/today?sample=1" className="cta home-cta">
-            Try sample (~1 min) <span className="arrow" aria-hidden="true">
-              →
-            </span>
-          </Link>
-          <Link href="/today" className="home-secondary">
-            Revise my course
-          </Link>
-        </div>
-        <p className="hero-honesty">Your lessons. Regular practice. Revision that adapts to your answers.</p>
+    <section className="kelus-hero home-hero is-folio" aria-labelledby="home-hero-title">
+      <div className="folio-hero-atmosphere" aria-hidden="true">
+        <span className="folio-hero-mist" />
+        <span className="folio-hero-wash" />
+        <span className="folio-hero-rule" />
       </div>
 
-      <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
-        <header className="hero-demo-head">
-          <div className="hero-demo-identity">
-            <span>Interactive example · not saved</span>
-            <strong>{example.course}</strong>
-          </div>
-          <div className="hero-demo-tabs" role="group" aria-label="Choose an example course">
-            {LEARNING_EXAMPLES.map((item, index) => (
-              <button
-                key={item.id}
-                type="button"
-                aria-pressed={index === exampleIndex}
-                onClick={() => { setExampleIndex(index); setShowBefore(false); setAnswerOpen(false); setPracticeResult(null); }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </header>
-
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={example.id}
-            className="hero-demo-body"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -5 }}
-            transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <section className="hero-recall" aria-label="Try a revision question">
-              <ol className="hero-recall-steps" aria-label="Example revision steps">
-                <li aria-current={!answerOpen ? "step" : undefined}>01 Recall</li>
-                <li aria-current={answerOpen && !practiceResult ? "step" : undefined}>02 Check</li>
-                <li aria-current={practiceResult ? "step" : undefined}>03 Revisit</li>
-              </ol>
-              <h2>{example.question}</h2>
-              <p className="hero-recall-instruction">Try answering in your head. Then check the reasoning.</p>
-              <button type="button" className="hero-reveal-button" aria-expanded={answerOpen} aria-controls="hero-example-answer" onClick={() => { setAnswerOpen(!answerOpen); setPracticeResult(null); }}>
-                {answerOpen ? "Hide answer" : "Reveal answer"}<span aria-hidden="true">{answerOpen ? "−" : "+"}</span>
-              </button>
-              <AnimatePresence initial={false}>
-                {answerOpen && <motion.div id="hero-example-answer" className="hero-recall-answer" key="answer" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0 : 0.18 }}>
-                  <p>{example.answer}</p>
-                  <div className="hero-recall-actions" role="group" aria-label="Try an example outcome">
-                    <button type="button" aria-pressed={practiceResult === "again"} onClick={() => { setPracticeResult("again"); setShowBefore(false); }}>Practise again</button>
-                    <button type="button" aria-pressed={practiceResult === "remembered"} onClick={() => { setPracticeResult("remembered"); setShowBefore(true); }}>I remembered it</button>
-                  </div>
-                  <p className="hero-recall-result" role="status">{practiceResult === "again" ? "Example: keep this topic near the front for another attempt." : practiceResult === "remembered" ? "Example: move on to another topic, then return to this one later." : "Try either outcome to see the example order change. Actual sessions check your written answers."}</p>
-                </motion.div>}
-              </AnimatePresence>
-            </section>
-            <div className="hero-demo-route">
-              <div className="hero-demo-route-title">
-                <span>Today’s route</span>
-                <strong>Example · 45 minutes</strong>
-              </div>
-              <ol>
-                {route.map((item, index) => (
-                  <motion.li
-                    key={item.name}
-                    layout={reduceMotion ? false : "position"}
-                    className={!showBefore && index === 0 ? "is-recommended" : undefined}
-                    initial={reduceMotion ? false : { opacity: 0, x: 8 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: reduceMotion ? 0 : 0.28, layout: { type: "spring", bounce: 0, duration: 0.38 } }}
-                  >
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <div>
-                      <strong>{item.name}</strong>
-                      <small>{item.reason}</small>
-                    </div>
-                    <b>{item.minutes} min</b>
-                  </motion.li>
-                ))}
-              </ol>
-            </div>
-            <p className="hero-demo-signal" aria-live="polite">
-              <span aria-hidden="true">↳</span>
-              {practiceResult === "remembered" ? "A stronger answer can make room to practise another topic." : example.signal}
-            </p>
-            <motion.button
-              type="button"
-              className="hero-demo-replay"
-              onClick={() => { setShowBefore(false); setAnswerOpen(false); setPracticeResult(null); }}
-              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
-              transition={{ type: "spring", bounce: 0, duration: 0.2 }}
-            >
-              Reset example
-              <span aria-hidden="true">↶</span>
-            </motion.button>
+      <div className="folio-hero-copy home-copy">
+        <motion.p
+          className="kicker"
+          initial={reduce ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0 : 0.5, ease }}
+        >
+          A little revision. Every day.
+        </motion.p>
+        <motion.h1
+          id="home-hero-title"
+          initial={reduce ? false : { opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : 0.06, ease }}
+        >
+          Revise your lessons.
+          <span> Prepare for your exams.</span>
+        </motion.h1>
+        <motion.p
+          className="home-lede"
+          initial={reduce ? false : { opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.12, ease }}
+        >
+          Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
+          and revisit the topics that need more work before your exam.
+        </motion.p>
+        <motion.div
+          className="home-actions"
+          initial={reduce ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.18, ease }}
+        >
+          <motion.div whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>
+            <Link href="/today?sample=1" className="cta home-cta">
+              Try sample (~1 min) <span className="arrow" aria-hidden="true">→</span>
+            </Link>
           </motion.div>
-        </AnimatePresence>
-        <StudentIllustration className="hero-demo-student" />
+          <motion.div whileTap={reduce ? undefined : { scale: 0.98 }} transition={press}>
+            <Link href="/today" className="home-secondary">
+              Revise my course
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      <div className="folio-hero-visual" aria-hidden="true">
+        <StudentIllustration className="folio-hero-student" />
       </div>
     </section>
   );
