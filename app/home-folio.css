@@ -197,6 +197,11 @@
   letter-spacing: -0.04em;
 }
 
+.kelus-hero.is-folio.is-notion .folio-hero-copy h1 span {
+  color: #2383e2;
+  font-weight: 600;
+}
+
 .kelus-hero.is-folio.is-notion .folio-hero-copy .home-lede {
   margin: 0 0 1.4rem;
   max-width: 36ch;
@@ -675,7 +680,7 @@
   display: grid;
   gap: 12px;
   margin: 0;
-  padding: 18px 18px 0;
+  padding: 34px 18px 0;
   border: 0;
   background: transparent;
 }
