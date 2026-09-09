@@ -22,7 +22,9 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
-      - run: npx playwright install --with-deps chromium
+      # Avoid `playwright install --with-deps` — it hits Google Chrome apt and fails on
+      # intermittent Packages.gz hash mismatches, blocking kelus.me publish.
+      - run: npx playwright install chromium
       - run: npm run test:e2e
       - run: npm run build
         env:
