@@ -172,8 +172,22 @@
 .notion-board {
   position: relative;
   width: 100%;
-  transform: perspective(1400px) rotateY(-4deg) rotateX(2deg);
-  transform-origin: center center;
+  transform: none;
+}
+
+.notion-board-shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  min-height: 420px;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e8e8e5;
+  border-radius: 12px;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 28px 70px -30px rgba(15, 15, 15, 0.32),
+    0 8px 24px -12px rgba(15, 15, 15, 0.12);
 }
 
 .notion-board-chrome {
@@ -183,6 +197,7 @@
   z-index: 4;
   display: flex;
   gap: 6px;
+  pointer-events: none;
 }
 
 .notion-board-chrome span {
@@ -196,20 +211,6 @@
 .notion-board-chrome span:nth-child(1) { background: #ff5f57; }
 .notion-board-chrome span:nth-child(2) { background: #febc2e; }
 .notion-board-chrome span:nth-child(3) { background: #28c840; }
-
-.notion-board-shell {
-  display: grid;
-  grid-template-columns: 168px minmax(0, 1fr);
-  min-height: 448px;
-  overflow: hidden;
-  background: #fff;
-  border: 1px solid #e8e8e5;
-  border-radius: 12px;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.8) inset,
-    0 28px 70px -30px rgba(15, 15, 15, 0.32),
-    0 8px 24px -12px rgba(15, 15, 15, 0.12);
-}
 
 .notion-board-rail {
   display: flex;
@@ -280,6 +281,11 @@
   padding: 4px 6px;
   border-radius: 6px;
   color: #37352f;
+}
+
+.notion-board-rail li.is-active {
+  background: #efefed;
+  font-weight: 600;
 }
 
 .notion-board-rail li span,
@@ -388,7 +394,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .notion-board-tabs span {
@@ -405,55 +411,76 @@
   font-weight: 600;
 }
 
-.notion-board-cols {
+.notion-flow {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-  align-items: start;
+  gap: 12px;
 }
 
-.notion-col {
-  min-width: 0;
-  padding: 8px;
-  border-radius: 8px;
+.notion-flow-recall {
+  padding: 12px;
+  border: 1px solid #ebebea;
+  border-radius: 10px;
   background: #fafafa;
 }
 
-.notion-col:nth-child(1) { background: rgba(155, 81, 224, 0.04); }
-.notion-col:nth-child(2) { background: rgba(242, 201, 76, 0.08); }
-.notion-col:nth-child(3) { background: rgba(86, 204, 242, 0.08); }
-.notion-col:nth-child(4) { background: rgba(39, 174, 96, 0.06); }
-
-.notion-col-head {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  color: #37352f;
-  font-size: 12px;
+.notion-flow-label {
+  margin: 0 0 8px;
+  color: #9b9a97;
+  font-size: 11px;
 }
 
-.notion-col-head strong {
+.notion-flow-question {
+  margin: 0 0 12px;
+  color: #1a1a18;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+
+.notion-flow-reveal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #ebebea;
+  border-radius: 8px;
+  background: #fff;
+  color: #37352f;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.notion-flow-route {
+  padding: 12px;
+  border: 1px solid #ebebea;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.notion-flow-route-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+
+.notion-flow-route-title span {
+  color: #37352f;
+  font-size: 12px;
   font-weight: 600;
 }
 
-.notion-col-head span {
+.notion-flow-route-title strong {
   color: #9b9a97;
+  font-size: 11px;
+  font-weight: 500;
 }
 
-.notion-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #9b9a97;
-}
-
-.notion-dot.is-violet { background: #9b51e0; }
-.notion-dot.is-amber { background: #f2c94c; }
-.notion-dot.is-blue { background: #56ccf2; }
-.notion-dot.is-green { background: #27ae60; }
-
-.notion-col ul {
+.notion-flow-route ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -461,22 +488,67 @@
   gap: 6px;
 }
 
-.notion-col li {
-  min-height: 38px;
-  padding: 8px 10px;
+.notion-flow-route li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px;
   border: 1px solid #ebebea;
-  border-radius: 6px;
+  border-radius: 8px;
   background: #fff;
   color: #37352f;
-  font-size: 11.5px;
-  line-height: 1.35;
+  font-size: 12px;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.03);
 }
 
-.notion-col-new {
-  margin: 8px 0 0;
-  color: #b4b4b0;
+.notion-flow-route li.is-recommended {
+  border-color: #d3e5fa;
+  background: #f4f9ff;
+}
+
+.notion-flow-route li > span {
+  color: #9b9a97;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-flow-route li div {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.notion-flow-route li strong {
+  font-weight: 600;
+}
+
+.notion-flow-route li small {
+  color: #787774;
+  font-size: 11px;
+}
+
+.notion-flow-route li b {
   font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.notion-flow-signal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border: 1px solid #ebebea;
+  border-radius: 8px;
+  background: #fff;
+  color: #787774;
+  font-size: 12px;
+}
+
+.notion-flow-signal span {
+  color: #2383e2;
 }
 
 .notion-doodles {
@@ -491,63 +563,26 @@
   display: block;
 }
 
-.notion-doodle.is-figure {
-  left: -28px;
-  bottom: 18%;
-  width: 88px;
-  height: auto;
-  transform: rotate(-4deg);
-}
-
-.notion-doodle.is-clock {
-  top: 12%;
-  right: 18%;
-  width: 52px;
-  transform: rotate(8deg);
-}
-
-.notion-doodle.is-bulb {
-  top: 38%;
-  right: -10px;
-  width: 48px;
-  transform: rotate(6deg);
-}
-
+/* Check marks the recommended route row; scribble sits by the reveal — earned, not sticker spray */
 .notion-doodle.is-check {
-  top: 58%;
-  left: 42%;
-  width: 44px;
+  top: auto;
+  left: auto;
+  right: 6%;
+  bottom: 28%;
+  width: 40px;
   transform: rotate(-8deg);
 }
 
-.notion-doodle.is-folder {
-  bottom: 10%;
-  right: 28%;
-  width: 46px;
-  transform: rotate(-6deg);
-}
-
-.notion-doodle.is-duck {
-  right: 6%;
-  bottom: 4%;
-  width: 40px;
-  transform: rotate(4deg);
-}
-
 .notion-doodle.is-scribble {
-  top: -8px;
-  right: 8%;
-  width: 56px;
-  opacity: 0.85;
+  top: 38%;
+  right: -6px;
+  width: 44px;
+  opacity: 0.7;
 }
 
 @media (max-width: 1100px) {
   .notion-board-shell {
     grid-template-columns: 148px minmax(0, 1fr);
-  }
-
-  .notion-board-cols {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -565,17 +600,14 @@
     margin-inline: auto;
   }
 
-  .notion-doodle.is-figure {
-    left: -8px;
-    width: 64px;
+  .notion-doodle.is-check {
+    right: 4%;
+    bottom: 22%;
+    width: 34px;
   }
 }
 
 @media (max-width: 640px) {
-  .notion-board {
-    transform: none;
-  }
-
   .notion-board-shell {
     grid-template-columns: 1fr;
     min-height: 0;
@@ -585,30 +617,13 @@
     display: none;
   }
 
-  .notion-board-chrome {
-    position: static;
-    margin: 0 0 8px 4px;
+  .notion-board-main {
+    padding-top: 28px;
   }
 
-  .notion-board-cols {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .notion-col:nth-child(n + 3) li:nth-child(n + 3),
-  .notion-col:nth-child(n + 3) .notion-col-new {
-    display: none;
-  }
-
-  .notion-doodle.is-clock,
-  .notion-doodle.is-folder,
+  .notion-doodle.is-check,
   .notion-doodle.is-scribble {
     display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .notion-board {
-    transform: none;
   }
 }
 
@@ -1173,8 +1188,9 @@
   border-radius: 12px;
   background: #fff;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.8) inset,
-    0 20px 48px -28px rgba(15, 15, 15, 0.22);
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 14px 36px -22px rgba(15, 15, 15, 0.28);
+  transform: translateZ(0);
 }
 
 .folio-chapter-art .v1-plan > header,
@@ -1192,10 +1208,17 @@
   background: #fff;
 }
 
+.folio-chapter-art .v1-plan li:first-child,
+.folio-chapter-art .v1-reroute ol li:first-child {
+  border-color: #d3e5fa;
+  background: #f4f9ff;
+}
+
 .folio-chapter-art .v1-reroute-controls button.is-active,
 .folio-chapter-art .v1-reroute-controls button[aria-pressed="true"] {
   background: #efefed;
   color: #1a1a18;
+  border-radius: 6px;
 }
 
 .folio-chapter-art .v1-almost {
@@ -1203,6 +1226,14 @@
   background: #2383e2;
   border-color: #2383e2;
   color: #fff;
+}
+
+.folio-chapter-art .material-route-art {
+  transform: none;
+}
+
+.folio-chapter-art .material-route-art-frame:hover .material-route-art {
+  transform: none;
 }
 
 /* Method */

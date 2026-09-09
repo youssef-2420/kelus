@@ -17,6 +17,10 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
+  const board = readFileSync("components/hero/NotionRevisionBoard.tsx", "utf8");
+  assert.match(board, /Today’s route/);
+  assert.match(board, /Reveal answer|notion-flow-reveal/);
+  assert.doesNotMatch(board, /To revise|COLUMNS/);
   assert.match(demo, /LEARNING_EXAMPLES/);
   assert.match(demo, /Today’s route/);
   assert.match(story, /HeroProductDemo/);
@@ -25,7 +29,8 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   assert.match(story, /RerouteIllustration/);
   assert.match(story, /MaterialShelfIllustration/);
   assert.match(story, /Honest methodology/);
-  assert.match(story, /review the proposed concepts/);
+  assert.match(story, /confirm the concepts Kelus proposes/);
+  assert.match(story, /Open Today|Open Materials/);
   assert.doesNotMatch(page, /KnowledgeRouteStory/);
   assert.doesNotMatch(page, /<RouteStory/);
 });

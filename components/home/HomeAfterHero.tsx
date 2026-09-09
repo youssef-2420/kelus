@@ -29,14 +29,14 @@ export function HomeAfterHero() {
         <section className="folio-chapter is-plan" aria-labelledby="folio-plan-title">
           <Reveal className="folio-chapter-copy">
             <p className="folio-chapter-index" aria-hidden="true">01</p>
-            <p className="kicker">Today’s plan</p>
-            <h2 id="folio-plan-title">Your next 45 minutes.</h2>
+            <p className="kicker">Today’s route</p>
+            <h2 id="folio-plan-title">Your next 45 minutes, in order.</h2>
             <p>
-              Spend a short session revising your lessons: review an idea, recall it from memory, then apply it.
-              Your recent answers help Kelus choose what to practise first.
+              Open Today and get a short route: recall a topic, check the answer, then move on.
+              Weak answers pull that topic forward for another attempt.
             </p>
             <Link href="/today">
-              Start revising <span aria-hidden="true">→</span>
+              Open Today <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
           <Reveal delay={0.1} className="folio-chapter-art">
@@ -47,11 +47,11 @@ export function HomeAfterHero() {
         <section id="route" className="folio-chapter is-reroute" aria-labelledby="folio-reroute-title">
           <Reveal className="folio-chapter-copy">
             <p className="folio-chapter-index" aria-hidden="true">02</p>
-            <p className="kicker">New evidence</p>
-            <h2 id="folio-reroute-title">One answer changes the route.</h2>
+            <p className="kicker">After one answer</p>
+            <h2 id="folio-reroute-title">The route reorders itself.</h2>
             <p>
-              A weak answer shows what needs another attempt. Kelus adjusts the revision order so you can
-              practise that topic again and keep reviewing what you have already studied.
+              Mark “almost” or miss a check, and Kelus reshuffles what comes next—so you practise
+              the weak spot again without rebuilding a plan by hand.
             </p>
             <Link href="/route">
               See how rerouting works <span aria-hidden="true">→</span>
@@ -65,14 +65,14 @@ export function HomeAfterHero() {
         <section className="folio-chapter is-materials" aria-labelledby="folio-materials-title">
           <Reveal className="folio-chapter-copy">
             <p className="folio-chapter-index" aria-hidden="true">03</p>
-            <p className="kicker">Course material</p>
-            <h2 id="folio-materials-title">Revise from your own course material.</h2>
+            <p className="kicker">Your lessons</p>
+            <h2 id="folio-materials-title">Revise from your own notes.</h2>
             <p>
-              Add a syllabus or lecture PDF, review the proposed concepts, and keep each learning activity connected to
-              the page it came from.
+              Add a syllabus or lecture PDF, confirm the concepts Kelus proposes, and keep each
+              practice item tied to the page it came from.
             </p>
-            <Link href="/today">
-              Start revising <span aria-hidden="true">→</span>
+            <Link href="/materials">
+              Open Materials <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
           <Reveal delay={0.1} className="folio-chapter-art">

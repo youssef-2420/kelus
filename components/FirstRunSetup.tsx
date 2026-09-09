@@ -33,7 +33,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
   }
 
   return (
-    <main id="main" className="destination-page">
+    <main id="main" className="destination-page is-notion-product">
       <form className="destination-form" onSubmit={submit}>
         <p className="kicker">Step 1 · Your destination</p>
         <h1 className="destination-page-title">Set your exam</h1>

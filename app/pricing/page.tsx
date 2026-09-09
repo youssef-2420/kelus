@@ -15,7 +15,7 @@ export default function PricingPage() {
   const syncReady = authConfigured();
 
   return (
-    <main id="main" className="legal-page pricing-page">
+    <main id="main" className="legal-page pricing-page is-notion-product">
       <PricingViewTracker />
       <section className="legal-panel">
         <p className="kicker">Pricing</p>
