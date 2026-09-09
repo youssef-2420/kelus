@@ -833,6 +833,54 @@
 
 /* Keep secondary setup information below the primary task. */
 .is-notion-system .route-transition { background: var(--color-paper-warmth); }
+.is-notion-system .home .folio-product-stage,
+.is-notion-system .home .folio-story,
+.is-notion-system .home .folio-method { background: var(--color-paper-warmth); }
+.is-notion-system .home .folio-product-stage {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-block: 72px;
+  border-top-color: var(--color-frost);
+}
+.is-notion-system .home .folio-product-intro { align-self: center; }
+.is-notion-system .home .folio-product-frame { max-width: 560px; justify-self: end; }
+.is-notion-system .home .folio-story { border-top: 1px solid var(--color-frost); }
+.is-notion-system .home .folio-chapter {
+  max-width: 1200px;
+  min-height: 0;
+  padding-block: 72px;
+  align-items: center;
+  border-bottom-color: var(--color-frost);
+}
+.is-notion-system .home .folio-chapter-copy { align-self: center; }
+.is-notion-system .home .folio-chapter-art { max-width: 500px; }
+.is-notion-system .home .folio-chapter-art :is(.v1-plan, .v1-reroute, .v1-materials) { box-shadow: none; }
+.is-notion-system .home .folio-method {
+  padding-block: 72px;
+  border-top-color: var(--color-frost);
+}
+.is-notion-system .home .folio-method-heading,
+.is-notion-system .home .folio-method-grid { width: min(1200px, 100%); margin-inline: auto; }
+.is-notion-system .home .folio-close.home-close {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 72px max(24px, calc((100vw - 1200px) / 2)) 64px;
+  border-top-color: var(--color-frost);
+  background: #eef7ff;
+}
+.is-notion-system .home .folio-close .home-close-inner { max-width: 1200px; margin-inline: auto; }
+.is-notion-system .home .site-footer {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 28px max(24px, calc((100vw - 1200px) / 2)) 40px;
+  border-top-color: var(--color-frost);
+  background: var(--color-paper-warmth);
+}
+.is-notion-system .home .site-footer-inner,
+.is-notion-system .home .site-footer-note { max-width: 1200px; margin-inline: auto; }
+.is-notion-system .home .site-footer-note { margin-top: 16px; }
 .destination-page.is-notion-product .destination-form { width: 100%; padding: 0; margin: 0; }
 .destination-page.is-notion-product .destination-form legend { font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: 0; margin-bottom: 16px; }
 .destination-page.is-notion-product .destination-pair { gap: 16px; }
@@ -854,6 +902,11 @@
   .is-notion-product .course-workspace-progress ol { margin-top: 4px; }
   .is-notion-product .course-workspace-progress li small { display: none; }
   .is-notion-product .material-ingest { padding: 16px; }
+  .is-notion-system .home .folio-product-stage { padding-block: 48px; }
+  .is-notion-system .home .folio-chapter { padding-block: 56px; }
+  .is-notion-system .home .folio-method { padding-block: 56px; }
+  .is-notion-system .home .folio-close.home-close { padding: 56px 16px 48px; }
+  .is-notion-system .home .site-footer { padding-inline: 16px; }
   .is-notion-product .today-brief.is-revision-studio { padding: 16px; }
   .is-notion-product .today-brief.is-revision-studio h1 { font-size: 30px; }
   .is-notion-product .today-workbench.is-revision-studio .today-lead-main { margin-top: 12px; gap: 12px; }

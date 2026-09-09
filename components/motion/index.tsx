@@ -26,7 +26,10 @@ export function Reveal({ children, className, delay = 0, ...rest }: RevealProps)
   return (
     <motion.div
       className={className}
-      initial={reduce ? false : { opacity: 0, y: 18 }}
+      // Keep the document useful before hydration and for fast scrolls. The
+      // in-view animation can still enhance the first intersection, but must
+      // never make a server-rendered section look empty.
+      initial={false}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2, margin: "0px 0px -48px 0px" }}
       transition={reduce ? { duration: 0.01 } : { ...kelusMotion.reveal, delay }}
