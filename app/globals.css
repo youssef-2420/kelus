@@ -203,7 +203,7 @@ button, input, textarea { font: inherit; }
 .kelus-hero {
   --hero-paper: #fafaf7;
   --hero-ink: #171815;
-  --hero-green: #245c45;
+  --hero-green: var(--color-indigo-ink, #533afd);
   --hero-muted: #71877a;
   --hero-grey: #d9d8d1;
   --hero-soft: #ecece6;
@@ -2492,7 +2492,7 @@ button, input, textarea { font: inherit; }
 .route-story {
   --hero-paper: #fafaf7;
   --hero-ink: #171815;
-  --hero-green: #0d4640;
+  --hero-green: var(--color-indigo-ink, #533afd);
   --hero-muted: #71877a;
 }
 .route-story-stage {

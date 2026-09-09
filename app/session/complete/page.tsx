@@ -135,7 +135,8 @@ function CompleteBody() {
           source="session_complete"
         />
       ) : null}
-      {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" coverage={coverage} /> : null}
+      {/* ExamWeekPlan already sells remaining days — avoid a second paywall stack on the same screen. */}
+      {completedSessions === 1 && !coverage ? <SoftUpgradePrompt moment="first_session" coverage={coverage} /> : null}
       {completedSessions >= 2 ? (
         <details className="complete-waitlist">
           <summary>Get product updates</summary>

@@ -40,6 +40,7 @@ test("score: CSP is report-only and workers_dev is false", async () => {
     source("wrangler.toml"),
   ]);
 
+  assert.match(headers, /Strict-Transport-Security:/);
   assert.match(headers, /Content-Security-Policy-Report-Only:/);
   assert.doesNotMatch(headers, /^[^#\n]*Content-Security-Policy:/m);
   assert.match(headers, /X-Content-Type-Options:\s*nosniff/);

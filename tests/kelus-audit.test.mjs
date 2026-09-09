@@ -135,6 +135,7 @@ test("audit 2026: Exam Pass unlock is edge-verified, not forgeable localStorage"
   ]);
   assert.match(pass, /\/api\/exam-pass\/redeem/);
   assert.match(pass, /\/api\/exam-pass\/status/);
+  assert.match(pass, /markExamPassPurchased|examPassAt/);
   assert.doesNotMatch(pass, /localStorage\.setItem\(examPassStorageKey/);
   assert.doesNotMatch(capture, /activateExamPass\(\)/);
   assert.match(capture, /redeemExamPass/);
@@ -145,4 +146,10 @@ test("audit 2026: Exam Pass unlock is edge-verified, not forgeable localStorage"
   assert.match(terms, /14 days/);
   assert.match(privacy, /HttpOnly cookie|verified by the Kelus edge/);
   assert.doesNotMatch(env, /today\/\?pass=1/);
+});
+
+test("audit 2026: session complete does not stack soft upgrade over ExamWeekPlan", async () => {
+  const complete = await source("app/session/complete/page.tsx");
+  assert.match(complete, /ExamWeekPlan/);
+  assert.match(complete, /completedSessions === 1 && !coverage/);
 });

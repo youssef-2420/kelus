@@ -22,6 +22,8 @@ export type DemoState = {
   nowIso: string;
   onboardingCompleted: boolean;
   diagnosisCompleted: boolean;
+  /** ISO time Exam Pass was verified on a device that later synced — restores named days for signed-in users. */
+  examPassAt?: string | null;
 };
 
 function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapshot {
@@ -158,6 +160,18 @@ export function getDemoSnapshot() {
   if (typeof window === "undefined") return SERVER_SNAPSHOT;
   if (!clientCache) clientCache = readStoredDemoState(activeOwnerId) ?? SERVER_SNAPSHOT;
   return clientCache;
+}
+
+export function markExamPassPurchased(atIso = new Date().toISOString()) {
+  const current = getDemoSnapshot();
+  if (current.examPassAt) return current;
+  const next = { ...current, examPassAt: atIso };
+  persistDemoState(next);
+  return next;
+}
+
+export function learnerExamPassAt() {
+  return getDemoSnapshot().examPassAt ?? null;
 }
 
 export const getServerDemoSnapshot = () => SERVER_SNAPSHOT;

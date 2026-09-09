@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { getDemoSnapshot, markExamPassPurchased, subscribeDemoState } from "./demo-store";
 
 const listeners = new Set<() => void>();
 let cachedActive = false;
@@ -12,13 +13,24 @@ function emit() {
   listeners.forEach((listener) => listener());
 }
 
+function syncedPassActive() {
+  if (typeof window === "undefined") return false;
+  return Boolean(getDemoSnapshot().examPassAt);
+}
+
 export function subscribeExamPass(listener: () => void) {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  const unsubDemo = subscribeDemoState(() => {
+    emit();
+  });
+  return () => {
+    listeners.delete(listener);
+    unsubDemo();
+  };
 }
 
 export function hasExamPass() {
-  return cachedActive;
+  return cachedActive || syncedPassActive();
 }
 
 export function examPassApiConfigured() {
@@ -26,10 +38,10 @@ export function examPassApiConfigured() {
 }
 
 export function getExamPassSnapshot() {
-  return { active: cachedActive, configured: cachedConfigured, hydrated };
+  return { active: hasExamPass(), configured: cachedConfigured, hydrated, cookieActive: cachedActive };
 }
 
-/** @deprecated Bare ?pass=1 must not unlock Exam Pass. Kept only as a detector for return URLs. */
+/** Detects checkout return URLs. Bare ?pass=1 must not unlock by itself. */
 export function isExamPassReturnQuery(search: { get(name: string): string | null }) {
   return (
     search.get("pass") === "1" ||
@@ -55,9 +67,10 @@ export async function refreshExamPassStatus() {
         cachedActive = false;
         cachedConfigured = false;
       } else {
-        const data = (await res.json()) as { active?: boolean; configured?: boolean };
+        const data = (await res.json()) as { active?: boolean; configured?: boolean; at?: string | null };
         cachedActive = Boolean(data.active);
         cachedConfigured = data.configured !== false;
+        if (cachedActive && data.at) markExamPassPurchased(data.at);
       }
     } catch {
       cachedActive = false;
@@ -90,11 +103,12 @@ export async function redeemExamPass(input: { sessionId?: string; code?: string;
   cachedActive = true;
   cachedConfigured = true;
   hydrated = true;
+  markExamPassPurchased(data.at || new Date().toISOString());
   emit();
   return { ok: true as const, at: data.at, method: data.method };
 }
 
-/** Guest→account claim is a no-op for cookie entitlements (cookie is browser-scoped). */
+/** Cookie is browser-scoped; refresh status after account switch. */
 export function claimGuestExamPass(_userId: string) {
   void refreshExamPassStatus();
 }
