@@ -12,13 +12,14 @@ type RevealProps = {
 } & Omit<HTMLMotionProps<"div">, "children">;
 
 export function Reveal({ children, className, delay = 0, ...rest }: RevealProps) {
+  const reduce = useReducedMotion() === true;
   return (
     <motion.div
       className={className}
       initial={false}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay, ease }}
       {...rest}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduce ? 0.01 : 0.5, delay: reduce ? 0 : delay, ease }}
     >
       {children}
     </motion.div>

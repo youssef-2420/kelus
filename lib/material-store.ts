@@ -1,4 +1,4 @@
-import { isPdfFile, materialTitle, parseMaterialUrl } from "../domain/materials";
+import { isPdfFile, looksLikePdf, materialTitle, parseMaterialUrl } from "../domain/materials";
 import type { CourseMaterial, MaterialRole } from "../domain/types";
 
 const METADATA_KEY = "kelus-course-materials-v1";
@@ -197,6 +197,7 @@ export function addLinkMaterial(input: { courseId: string; title: string; value:
 export async function addPdfMaterial(input: { courseId: string; file: File; role: MaterialRole; nowIso?: string }) {
   if (!isPdfFile(input.file)) throw new Error("Choose a PDF file.");
   if (input.file.size > MAX_PDF_BYTES) throw new Error("PDFs must be 20 MB or smaller.");
+  if (!(await looksLikePdf(input.file))) throw new Error("That file is not a readable PDF.");
   const timestamp = input.nowIso ?? new Date().toISOString();
   const record: CourseMaterial = {
     id: `material-${crypto.randomUUID()}`,
@@ -236,6 +237,28 @@ export function clearMaterials() {
     /* Materials clear must never break the page. */
   }
   listeners.forEach((listener) => listener());
+}
+
+/** Lightweight shelf item when topics are typed by hand (no PDF). */
+export function addManualMaterial(input: { courseId: string; title?: string; nowIso?: string }) {
+  const timestamp = input.nowIso ?? new Date().toISOString();
+  const record: CourseMaterial = {
+    id: `material-manual-${crypto.randomUUID()}`,
+    courseId: input.courseId,
+    kind: "link",
+    storage: "url",
+    title: input.title?.trim() || "Topics added manually",
+    sourceUrl: "https://kelus.me/materials#manual",
+    fileName: null,
+    mimeType: null,
+    sizeBytes: null,
+    role: "notes",
+    processingStatus: "ready",
+    addedAt: timestamp,
+    updatedAt: timestamp,
+  };
+  persist([record, ...readMetadata()]);
+  return record;
 }
 
 /** Seeds a visible sample shelf item so demo courses don't look empty. */

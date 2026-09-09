@@ -20,6 +20,7 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
   assert.match(privacy, /hello@kelus\.me/);
   assert.match(privacy, /Optional account and sync/i);
   assert.match(privacy, /private storage/i);
+  assert.match(privacy, /Shared devices/);
   assert.doesNotMatch(privacy, /future sync feature/i);
   assert.match(terms, /not grades|not a guarantee|exam outcomes|Guidance/i);
   assert.match(terms, /sync learning state and course PDFs/i);
@@ -33,7 +34,7 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
 });
 
 test("analytics only loads when a measurement id is configured", async () => {
-  const [analytics, ga, workflow, today, materials, session, complete] = await Promise.all([
+  const [analytics, ga, workflow, today, materials, session, complete, privacy] = await Promise.all([
     source("lib/analytics.ts"),
     source("components/GoogleAnalytics.tsx"),
     source(".github/workflows/restore-kelus-dns.yml"),
@@ -41,12 +42,18 @@ test("analytics only loads when a measurement id is configured", async () => {
     source("components/MaterialLibrary.tsx"),
     source("app/session/page.tsx"),
     source("app/session/complete/page.tsx"),
+    source("app/privacy/page.tsx"),
   ]);
   assert.match(analytics, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
   assert.match(ga, /if \(!GA_MEASUREMENT_ID\) return null/);
   assert.match(ga, /anonymize_ip: true/);
   assert.match(ga, /allow_google_signals: false/);
+  assert.match(ga, /analytics_storage:\s*"denied"/);
+  assert.match(ga, /AnalyticsConsentBanner/);
+  assert.match(analytics, /kelus:analytics-consent:v1/);
+  assert.match(analytics, /analyticsConsentGranted/);
   assert.match(workflow, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
+  assert.match(privacy, /Accept|Decline|choice/i);
   assert.match(today, /session_started/);
   assert.match(materials, /material_upload_started/);
   assert.match(materials, /material_upload_completed/);
@@ -191,14 +198,15 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(pricing, /Pay for one exam/);
   assert.match(pricing, /FoundingCta|WaitlistForm/);
   assert.match(pricing, /Optional free sign-in to sync across devices/);
-  assert.match(pricing, /Priority access to new study features/);
+  assert.match(pricing, /remaining-day plan|remaining days until your exam/);
+  assert.doesNotMatch(pricing, /Priority access to new study features/);
   assert.doesNotMatch(pricing, /Cross-device course and learning-state sync/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
   assert.match(home, /\/pricing/);
   assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
-  assert.match(soft, /exam date/i);
+  assert.match(soft, /remaining days until your exam|Don’t leave topics off the calendar/);
   assert.match(soft, /Sign in/);
   assert.doesNotMatch(soft, /planned \$9/);
   assert.doesNotMatch(soft, /unlocks more materials/i);

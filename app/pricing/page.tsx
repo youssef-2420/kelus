@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { FoundingCta } from "@/components/FoundingCta";
+import { ExamPassRedeem } from "@/components/ExamPassRedeem";
 import { PricingViewTracker } from "@/components/PricingViewTracker";
 import { authConfigured } from "@/lib/auth-config";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Try Kelus free, then reserve a $9 Exam Pass for launch support through one exam.",
+  description: "Try today’s route free. $9 Exam Pass maps the remaining days until your exam.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -21,17 +22,17 @@ export default function PricingPage() {
         <p className="kicker">Pricing</p>
         <h1>Prepare for one exam. Pay for one exam.</h1>
         <p className="legal-lede">
-          Try a revision session free on this device.
+          Today’s revision session is free on this device.
           {syncReady
             ? " Sign in anytime to sync that progress across browsers."
             : " Account sync ships when enabled for your build."}{" "}
-          The Exam Pass is a one-time $9 launch pass for students who want priority support through exam day.
+          Exam Pass is the remaining-day plan: which topics get a session before the date you set, and which would be left at your daily minutes.
         </p>
 
         <div className="pricing-grid" role="list">
           <article className="pricing-plan" role="listitem">
             <p className="kicker">Free</p>
-            <h2>Try a revision session</h2>
+            <h2>Today’s route</h2>
             <p className="pricing-price">$0</p>
             <ul>
               <li>Add your course and exam date</li>
@@ -47,19 +48,22 @@ export default function PricingPage() {
 
           <article className="pricing-plan is-founding" role="listitem">
             <p className="kicker">Exam Pass</p>
-            <h2>Support through exam day</h2>
+            <h2>The remaining days until your exam</h2>
             <p className="pricing-price">
               $9<span>/exam</span>
             </p>
             <ul>
               <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
-              <li>Priority access to new study features while Exam Pass launches</li>
-              <li>Direct email support through the exam date you set</li>
-              <li>Funds improvements to revision and exam practice</li>
+              <li>Day-by-day plan from tomorrow through the exam date you set</li>
+              <li>Calendar file for those days, plus a printable topic list</li>
+              <li>Shows which topics would be left at your daily minutes</li>
+              <li>Direct email through exam day if something breaks</li>
             </ul>
             <FoundingCta source="pricing" />
           </article>
         </div>
+
+        <ExamPassRedeem />
 
         <p className="legal-inline-links">
           Questions? <a href="mailto:hello@kelus.me">hello@kelus.me</a>

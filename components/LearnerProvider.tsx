@@ -27,6 +27,7 @@ import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome,
 import type { SetupInput } from "@/lib/setup";
 import { readLearnerState, writeLearnerState } from "@/lib/learner-sync";
 import { claimGuestMaterials, getMaterialOwner, setMaterialOwner, subscribeMaterials } from "@/lib/material-store";
+import { claimGuestExamPass } from "@/lib/exam-pass";
 import { flushMaterialSyncQueue, initializeMaterialSync, writeRemoteMaterialState } from "@/lib/material-sync";
 
 type Store = {
@@ -55,6 +56,7 @@ type Store = {
 };
 
 const StoreContext = createContext<Store | null>(null);
+const LearnerScopeContext = createContext(true);
 
 export function LearnerProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
@@ -139,6 +141,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
         // switched its owner by the time this effect runs.
         await claimGuestMaterials(userId);
         if (!active) return;
+        claimGuestExamPass(userId);
         await initializeMaterialSync(userId);
         if (active) initialized = true;
       } catch {
@@ -202,7 +205,24 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       confirmMaterialConcepts(state, proposals, pages);
     },
   }), [state]);
-  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;
+  return (
+    <StoreContext.Provider value={store}>
+      <LearnerScopeContext.Provider value={scopeAligned}>
+        {auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}
+        {children}
+      </LearnerScopeContext.Provider>
+    </StoreContext.Provider>
+  );
+}
+
+export function LearnerScopeGate({ children }: { children: ReactNode }) {
+  const scopeAligned = useContext(LearnerScopeContext);
+  if (scopeAligned) return children;
+  return (
+    <main id="main" className="destination-page">
+      <p className="learner-sync-status" role="status">Loading your private learning route…</p>
+    </main>
+  );
 }
 
 export function useLearner() {

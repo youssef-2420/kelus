@@ -44,3 +44,8 @@ export function materialTitle(input: string, fallback: string) {
 export function isPdfFile(file: Pick<File, "name" | "type">) {
   return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 }
+
+export async function looksLikePdf(file: Blob) {
+  const header = new Uint8Array(await file.slice(0, 5).arrayBuffer());
+  return header[0] === 0x25 && header[1] === 0x50 && header[2] === 0x44 && header[3] === 0x46;
+}

@@ -14,7 +14,7 @@ export default function PrivacyPage() {
       <article className="legal-panel">
         <p className="kicker">Legal</p>
         <h1>Privacy</h1>
-        <p className="legal-updated">Last updated: September 7, 2026</p>
+        <p className="legal-updated">Last updated: September 8, 2026</p>
         <p className="legal-lede">
           Kelus is a local-first revision and exam practice tool. Without an account, your course PDFs and study progress stay on this
           device. If you sign in, Kelus can sync that work to your private account so you can continue on another
@@ -71,8 +71,10 @@ export default function PrivacyPage() {
 
         <h2>Analytics</h2>
         <p>
-          When analytics are configured for kelus.me, Kelus uses Google Analytics 4 with ads signals off and IP
-          anonymization on. It helps us understand which pages are used — not to build an advertising profile.
+          When analytics are configured for kelus.me, Kelus can use Google Analytics 4 with ads signals off and IP
+          anonymization on. Analytics stay off until you Accept in the on-site choice; Decline keeps them off. Your
+          choice is stored in this browser as <code>kelus:analytics-consent:v1</code>. It helps us understand which
+          pages are used — not to build an advertising profile.
         </p>
 
         <h2>What we do not do</h2>
@@ -82,9 +84,26 @@ export default function PrivacyPage() {
           <li>We do not use your syllabus to train a public model as part of the current static product.</li>
         </ul>
 
+        <h2>Exam Pass</h2>
+        <p>
+          If you buy Exam Pass, unlock is verified by the Kelus edge (HttpOnly cookie after a Stripe checkout session
+          check or a redeem code from hello@kelus.me). That unlock lets this browser show the remaining-day plan, calendar
+          file, and printable topic list. It is not a grade guarantee. A bare <code>?pass=1</code> link does not unlock
+          the plan. Contact <a href="mailto:hello@kelus.me">hello@kelus.me</a> if you paid and the plan is still locked —
+          include your receipt email.
+        </p>
+
+        <h2>Shared devices</h2>
+        <p>
+          Study answers, course PDFs, and on-device waitlist or questions backups live in this browser’s storage. On a
+          shared computer, anyone using the same browser can see that local data until you sign out and clear this
+          site’s data.
+        </p>
+
         <h2>Your choices</h2>
         <ul>
-          <li>Clear site data in your browser to remove local study state and on-device PDFs.</li>
+          <li>Clear site data in your browser to remove local study state, on-device PDFs, and your analytics choice.</li>
+          <li>Accept or Decline optional analytics when prompted; Decline means no Google Analytics hits from this browser.</li>
           <li>Skip sign-in and waitlist if you want to keep using Kelus only on this device.</li>
           <li>
             Contact <a href="mailto:hello@kelus.me">hello@kelus.me</a> to delete an account, synced materials, or

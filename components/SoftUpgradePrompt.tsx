@@ -5,39 +5,52 @@ import { authConfigured } from "@/lib/auth-config";
 import { foundingPaymentConfigured, foundingPaymentLink } from "@/lib/founding";
 import { useEffect, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
+import type { ExamCoveragePlan } from "@/domain/exam-coverage";
+import { examCoverageHeadline } from "@/domain/exam-coverage";
 
 export const PAYWALL_DISMISS_KEY = "kelus:paywall:dismissed:v1";
+/** Soft upgrade “Not now” lasts a week, then the offer can return. */
+export const PAYWALL_DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
+
+export function isPaywallDismissed(nowMs = Date.now()) {
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = window.localStorage.getItem(PAYWALL_DISMISS_KEY);
+    if (!raw) return false;
+    // Legacy forever flag — treat as expired so the offer can return.
+    if (raw === "1") {
+      window.localStorage.removeItem(PAYWALL_DISMISS_KEY);
+      return false;
+    }
+    const dismissedAt = Number(raw);
+    if (!Number.isFinite(dismissedAt)) return false;
+    return nowMs - dismissedAt < PAYWALL_DISMISS_MS;
+  } catch {
+    return false;
+  }
+}
+
+export function dismissPaywall(nowMs = Date.now()) {
+  try {
+    window.localStorage.setItem(PAYWALL_DISMISS_KEY, String(nowMs));
+  } catch {
+    /* ignore */
+  }
+}
 
 type SoftUpgradePromptProps = {
   moment: "first_session" | "third_material";
+  coverage?: ExamCoveragePlan | null;
 };
 
-const COPY: Record<
-  SoftUpgradePromptProps["moment"],
-  { title: string; body: string }
-> = {
-  first_session: {
-    title: "Take this route to exam day",
-    body: "Your first route is free. The $9 Exam Pass adds priority support through the exam date you set.",
-  },
-  third_material: {
-    title: "Keep this course together",
-    body: "The $9 Exam Pass is for priority support through one exam while Kelus launches.",
-  },
-};
-
-export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
+export function SoftUpgradePrompt({ moment, coverage }: SoftUpgradePromptProps) {
   const [visible, setVisible] = useState(false);
   const paymentReady = foundingPaymentConfigured();
   const syncReady = authConfigured();
 
   useEffect(() => {
     let active = true;
-    try {
-      if (window.localStorage.getItem(PAYWALL_DISMISS_KEY) === "1") return;
-    } catch {
-      /* ignore */
-    }
+    if (isPaywallDismissed()) return;
     queueMicrotask(() => {
       if (active) setVisible(true);
     });
@@ -49,34 +62,43 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
 
   if (!visible) return null;
 
-  const copy = COPY[moment];
-  const body = syncReady
-    ? `${copy.body} Sign in free anytime to sync this course across devices.`
-    : `${copy.body} Your learning stays on this device.`;
+  const title = moment === "first_session"
+    ? "See the rest of the days until your exam"
+    : "Don’t leave topics off the calendar";
+  const coverageLine = coverage
+    ? examCoverageHeadline(coverage)
+    : "Exam Pass names which remaining days get which topics, at the daily minutes you set.";
+  const body = `${coverageLine} Today’s route stays free.${syncReady ? " Sign in free anytime to sync this course across devices." : " Your learning stays on this device."}`;
 
   function dismiss() {
-    try {
-      window.localStorage.setItem(PAYWALL_DISMISS_KEY, "1");
-    } catch {
-      /* ignore */
-    }
+    dismissPaywall();
     setVisible(false);
+  }
+
+  function trackCheckout() {
+    trackEvent({ name: "exam_pass_checkout_clicked", source: `soft_upgrade_${moment}` });
   }
 
   return (
     <aside className="soft-upgrade" aria-label="Exam Pass offer">
       <div className="soft-upgrade-copy">
         <p className="soft-upgrade-kicker">Exam Pass</p>
-        <h2>{copy.title}</h2>
+        <h2>{title}</h2>
         <p>{body}</p>
       </div>
       <div className="soft-upgrade-actions">
         {paymentReady ? (
-          <a className="cta" href={foundingPaymentLink()} target="_blank" rel="noopener noreferrer">
-            Get Exam Pass · $9
+          <a
+            className="cta"
+            href={foundingPaymentLink()}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={trackCheckout}
+          >
+            Unlock remaining days · $9
           </a>
         ) : (
-          <Link href="/pricing/" className="cta">
+          <Link href="/pricing/" className="cta" onClick={trackCheckout}>
             See Exam Pass options
           </Link>
         )}

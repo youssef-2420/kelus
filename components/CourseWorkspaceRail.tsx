@@ -10,7 +10,7 @@ import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } 
 
 const workspaceLinks = [
   { href: "/today", label: "Today", matches: ["/today", "/session"] },
-  { href: "/map", label: "Knowledge Map", matches: ["/map", "/concept"] },
+  { href: "/map", label: "Map", matches: ["/map", "/concept"] },
   { href: "/materials", label: "Materials", matches: ["/materials"] },
 ] as const;
 

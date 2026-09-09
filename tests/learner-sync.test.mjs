@@ -38,7 +38,12 @@ test("local learner and material records are isolated by owner, with a separate 
 
 test("the learner shell does not render one account while private scopes are switching", async () => {
   const provider = await readFile(new URL("../components/LearnerProvider.tsx", import.meta.url), "utf8");
+  const layout = await readFile(new URL("../app/layout.tsx", import.meta.url), "utf8");
   assert.match(provider, /getDemoStateOwner\(\) === activeUserId && materialOwner === activeUserId/);
   assert.match(provider, /Loading your private learning route/);
   assert.match(provider, /claimGuestMaterials\(userId\)/);
+  assert.match(provider, /claimGuestExamPass\(userId\)/);
+  assert.match(provider, /export function LearnerScopeGate/);
+  assert.match(layout, /<SiteHeader \/>/);
+  assert.match(layout, /LearnerScopeGate/);
 });

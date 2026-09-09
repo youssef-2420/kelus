@@ -5,9 +5,16 @@ import type { SetupInput } from "@/lib/setup";
 import { trackEvent } from "@/lib/analytics";
 
 const TIMES = [15, 30, 45, 60] as const;
+const DEFAULT_TARGET_PERCENT = 85;
 
 export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: SetupInput) => void; onUseDemo: () => void }) {
-  const [draft, setDraft] = useState<SetupInput>({ courseName: "", examName: "", examDate: "", targetPercent: 85, availableMinutes: 45 });
+  const [draft, setDraft] = useState<SetupInput>({
+    courseName: "",
+    examName: "",
+    examDate: "",
+    targetPercent: DEFAULT_TARGET_PERCENT,
+    availableMinutes: 45,
+  });
   const [error, setError] = useState("");
   const [minimumDate] = useState(() => new Date(Date.now() + 86_400_000).toISOString().slice(0, 10));
   const setupTracked = useRef(false);
@@ -25,7 +32,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
     if (!draft.examName.trim()) return setError("Tell Kelus what you are working toward.");
     if (!draft.examDate) return setError("Choose the date of your exam.");
     try {
-      onComplete(draft);
+      onComplete({ ...draft, targetPercent: DEFAULT_TARGET_PERCENT });
       trackEvent({ name: "setup_completed", available_minutes: draft.availableMinutes });
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Kelus could not set up your exam yet.");
@@ -62,20 +69,6 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
                 onChange={(event) => setDraft({ ...draft, examDate: event.target.value })}
               />
             </label>
-            <label htmlFor="exam-target">
-              Aim
-              <span className="target-input">
-                <input
-                  id="exam-target"
-                  type="number"
-                  min="50"
-                  max="100"
-                  value={draft.targetPercent}
-                  onChange={(event) => setDraft({ ...draft, targetPercent: Number(event.target.value) })}
-                />
-                <b>%</b>
-              </span>
-            </label>
           </div>
           <p className="destination-support" id="time-support">Usual study block</p>
           <div className="time-choices" role="radiogroup" aria-labelledby="time-support">
@@ -86,7 +79,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
               </label>
             ))}
           </div>
-          <p id="course-support" className="destination-support">Use the names you use at school. Your PDF supplies the topics next.</p>
+          <p id="course-support" className="destination-support">Use the names you use at school. Your PDF supplies the topics next. Aim percentage comes after you have recall evidence.</p>
         </fieldset>
         <p className="setup-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error || "\u00a0"}</p>
         <div className="destination-actions">

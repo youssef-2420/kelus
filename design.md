@@ -18,7 +18,7 @@ Kelus uses the supplied Stripe reference as design DNA, not as copied branding. 
 - Primary actions are indigo fills with white labels.
 - Secondary actions are transparent with lavender hairline borders.
 - Links use indigo and a restrained directional arrow.
-- Touch targets: minimum 44×44px for header, nav, auth, and footer controls.
+- Touch targets: minimum 44×44px for header, nav, auth, footer, session help, source panel, and dialog close controls.
 - Motion is brief and functional: 180–280ms, opacity and small positional shifts only.
 - Respect reduced-motion preferences.
 

@@ -22,6 +22,14 @@ type SourcePanelState = {
 };
 
 const STEP_INDEX = { learn: 1, retrieve: 2, apply: 3, evaluate: 4 } as const;
+const PHASE_LABEL: Record<Phase, string> = {
+  learn: "Learn",
+  retrieve: "Retrieve",
+  apply: "Apply",
+  evaluate: "Evaluate",
+  result: "Evaluated",
+  reroute: "Route updated",
+};
 
 function activityFallback(concept: Concept, promptText: string, modelAnswer: string): LearningActivity {
   return {
@@ -326,7 +334,7 @@ function SessionBody() {
           </motion.section>
         ) : (
           <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
-            <p className="study-count" aria-live="polite">{String(visibleStep).padStart(2, "0")} / 04 · {phase}</p>
+            <p className="study-count" aria-live="polite">{String(visibleStep).padStart(2, "0")} / 04 · {PHASE_LABEL[phase]}</p>
 
             {phase === "learn" ? (
               <div className="session-learn">
@@ -439,7 +447,7 @@ function SessionBody() {
             {sourcePanel.kind === "link" && sourcePanel.href ? (
               <div className="session-source-link">
                 <p>This source is saved as a web link. Open it when you need the original context; your session stays here.</p>
-                <a href={sourcePanel.href} target="_blank" rel="noreferrer">Open original source <span aria-hidden="true">↗</span></a>
+                <a href={sourcePanel.href} target="_blank" rel="noopener noreferrer">Open original source <span aria-hidden="true">↗</span></a>
               </div>
             ) : null}
             {sourcePanel.kind === "unavailable" ? (

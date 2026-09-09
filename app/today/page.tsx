@@ -12,6 +12,8 @@ import { trackEvent } from "@/lib/analytics";
 import { daysUntilExam } from "@/domain/scheduler";
 import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
+import { buildExamCoveragePlan } from "@/domain/exam-coverage";
+import { ExamWeekPlan } from "@/components/ExamWeekPlan";
 import { greeting } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
 
@@ -116,6 +118,8 @@ function TodayBody() {
   const route = generateRoute({ concepts, relationships: snapshot.relationships, events: snapshot.events, exam, nowIso });
   const readiness = estimatedReadiness(concepts);
   const days = daysUntilExam(exam, nowIso);
+  const retrievalEvidence = concepts.reduce((sum, concept) => sum + concept.retrievalAttempts, 0) > 0;
+  const showAimReadiness = state.diagnosisCompleted && retrievalEvidence;
   const courseId = course.id;
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
@@ -178,31 +182,43 @@ function TodayBody() {
           </p>
         </div>
         <details className="today-exam-details">
-        <summary>Exam in {days} days <span>View target and readiness</span></summary>
+        <summary>
+          Exam in {days} days{" "}
+          <span>{showAimReadiness ? "View target and readiness" : "View exam timing"}</span>
+        </summary>
         <dl className="today-context is-equal" aria-label="Current study context">
           <div>
             <dt>Exam</dt>
             <dd>{days} days</dd>
           </div>
-          <div>
-            <dt>Target</dt>
-            <dd>{exam.targetPercent}%</dd>
-          </div>
-          <div className="today-readiness">
-            <dt>
-              <span id="today-readiness-label">Est. readiness</span>
-            </dt>
-            <dd
-              aria-labelledby="today-readiness-label"
-              aria-describedby="today-readiness-hint"
-              title="Estimate from your familiarity ratings and recall checks — not a grade prediction."
-            >
-              {Math.round(readiness * 100)}%
-            </dd>
-            <p className="today-readiness-hint" id="today-readiness-hint">
-              Estimate from your ratings and recall checks — not a grade prediction.
-            </p>
-          </div>
+          {showAimReadiness ? (
+            <>
+              <div>
+                <dt>Target</dt>
+                <dd>{exam.targetPercent}%</dd>
+              </div>
+              <div className="today-readiness">
+                <dt>
+                  <span id="today-readiness-label">Est. readiness</span>
+                </dt>
+                <dd
+                  aria-labelledby="today-readiness-label"
+                  aria-describedby="today-readiness-hint"
+                  title="Estimate from your familiarity ratings and recall checks — not a grade prediction."
+                >
+                  {Math.round(readiness * 100)}%
+                </dd>
+                <p className="today-readiness-hint" id="today-readiness-hint">
+                  Estimate from your ratings and recall checks — not a grade prediction.
+                </p>
+              </div>
+            </>
+          ) : (
+            <div>
+              <dt>Progress</dt>
+              <dd>After a recall check</dd>
+            </div>
+          )}
         </dl>
         </details>
       </section>
@@ -220,6 +236,19 @@ function TodayBody() {
           startLabel={openSession ? "Resume session" : undefined}
         />
       </section>
+      <ExamWeekPlan
+        plan={buildExamCoveragePlan({
+          concepts,
+          relationships: snapshot.relationships,
+          events: snapshot.events,
+          exam,
+          nowIso,
+        })}
+        courseName={course.name}
+        examTarget={exam.target}
+        examDateIso={exam.examDate}
+        source="today"
+      />
     </AppShell>
   );
 }
