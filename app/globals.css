@@ -6936,3 +6936,94 @@ h3,
 @media (max-width: 640px) {
   .hero-demo-replay { padding-right: 72px; }
 }
+
+/* Optional analytics consent — ledger indigo, fixed bottom, 44px targets */
+.analytics-consent {
+  position: fixed;
+  z-index: 40;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: max(16px, env(safe-area-inset-left));
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(560px, calc(100% - 32px));
+  margin-inline: auto;
+  margin-left: max(16px, env(safe-area-inset-left));
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ledger);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(16px) saturate(160%);
+  box-shadow: 0 12px 32px color-mix(in srgb, var(--ink) 8%, transparent);
+  color: var(--ink);
+}
+
+@media (min-width: 640px) {
+  .analytics-consent {
+    left: auto;
+    width: min(420px, calc(100% - 32px));
+  }
+}
+
+.analytics-consent-copy {
+  display: grid;
+  gap: 4px;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.analytics-consent-title {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.analytics-consent-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.analytics-consent-copy a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.analytics-consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.analytics-consent-actions .cta,
+.analytics-consent-actions .ghost {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.analytics-consent-actions .ghost {
+  padding-inline: 14px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .analytics-consent {
+    background: var(--surface);
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .analytics-consent {
+    transition: none;
+  }
+}
+

@@ -71,8 +71,10 @@ export default function PrivacyPage() {
 
         <h2>Analytics</h2>
         <p>
-          When analytics are configured for kelus.me, Kelus uses Google Analytics 4 with ads signals off and IP
-          anonymization on. It helps us understand which pages are used — not to build an advertising profile.
+          When analytics are configured for kelus.me, Kelus can use Google Analytics 4 with ads signals off and IP
+          anonymization on. Analytics stay off until you Accept in the on-site choice; Decline keeps them off. Your
+          choice is stored in this browser as <code>kelus:analytics-consent:v1</code>. It helps us understand which
+          pages are used — not to build an advertising profile.
         </p>
 
         <h2>What we do not do</h2>
@@ -99,7 +101,8 @@ export default function PrivacyPage() {
 
         <h2>Your choices</h2>
         <ul>
-          <li>Clear site data in your browser to remove local study state and on-device PDFs.</li>
+          <li>Clear site data in your browser to remove local study state, on-device PDFs, and your analytics choice.</li>
+          <li>Accept or Decline optional analytics when prompted; Decline means no Google Analytics hits from this browser.</li>
           <li>Skip sign-in and waitlist if you want to keep using Kelus only on this device.</li>
           <li>
             Contact <a href="mailto:hello@kelus.me">hello@kelus.me</a> to delete an account, synced materials, or

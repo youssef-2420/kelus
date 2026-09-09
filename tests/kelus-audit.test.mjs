@@ -96,6 +96,7 @@ test("audit 2026: edge headers, robots disallows, and shared-device privacy", as
   assert.match(headers, /X-Content-Type-Options: nosniff/);
   assert.match(headers, /X-Frame-Options: DENY/);
   assert.match(headers, /Referrer-Policy: strict-origin-when-cross-origin/);
+  assert.match(headers, /Content-Security-Policy-Report-Only:/);
   assert.match(robots, /disallow:\s*\[\s*"\/today\/"/);
   assert.match(privacy, /Shared devices/);
   assert.match(css, /\.skip:focus-visible/);

@@ -34,7 +34,7 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
 });
 
 test("analytics only loads when a measurement id is configured", async () => {
-  const [analytics, ga, workflow, today, materials, session, complete] = await Promise.all([
+  const [analytics, ga, workflow, today, materials, session, complete, privacy] = await Promise.all([
     source("lib/analytics.ts"),
     source("components/GoogleAnalytics.tsx"),
     source(".github/workflows/restore-kelus-dns.yml"),
@@ -42,12 +42,18 @@ test("analytics only loads when a measurement id is configured", async () => {
     source("components/MaterialLibrary.tsx"),
     source("app/session/page.tsx"),
     source("app/session/complete/page.tsx"),
+    source("app/privacy/page.tsx"),
   ]);
   assert.match(analytics, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
   assert.match(ga, /if \(!GA_MEASUREMENT_ID\) return null/);
   assert.match(ga, /anonymize_ip: true/);
   assert.match(ga, /allow_google_signals: false/);
+  assert.match(ga, /analytics_storage:\s*"denied"/);
+  assert.match(ga, /AnalyticsConsentBanner/);
+  assert.match(analytics, /kelus:analytics-consent:v1/);
+  assert.match(analytics, /analyticsConsentGranted/);
   assert.match(workflow, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
+  assert.match(privacy, /Accept|Decline|choice/i);
   assert.match(today, /session_started/);
   assert.match(materials, /material_upload_started/);
   assert.match(materials, /material_upload_completed/);
