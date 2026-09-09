@@ -13,8 +13,8 @@ export function HomeAfterHero() {
     <>
       <section id="try" className="folio-product-stage" aria-labelledby="folio-product-title">
         <Reveal className="folio-product-intro">
-          <p className="kicker">The workspace</p>
-          <h2 id="folio-product-title">Try a revision question. Watch the route move.</h2>
+          <p className="kicker">Try it</p>
+          <h2 id="folio-product-title">Reveal an answer. Watch the route move.</h2>
           <p>
             This example is not saved. Reveal an answer, pick an outcome, and see how today’s route
             would reorder before you bring your own course.

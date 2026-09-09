@@ -20,7 +20,7 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   const board = readFileSync("components/hero/NotionRevisionBoard.tsx", "utf8");
   assert.match(board, /Today’s route/);
   assert.match(board, /Reveal answer|notion-flow-reveal/);
-  assert.doesNotMatch(board, /To revise|COLUMNS/);
+  assert.doesNotMatch(board, /To revise|COLUMNS|notion-doodle|notion-board-rail/);
   assert.match(demo, /LEARNING_EXAMPLES/);
   assert.match(demo, /Today’s route/);
   assert.match(story, /HeroProductDemo/);

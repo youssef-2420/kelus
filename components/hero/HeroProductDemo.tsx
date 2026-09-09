@@ -7,13 +7,7 @@ import { kelusEase, kelusMotion } from "@/components/motion";
 
 const ease = kelusEase;
 
-const RAIL_LINKS = [
-  { label: "Today’s route", icon: "◎" },
-  { label: "Recall check", icon: "◇" },
-  { label: "Weak topics", icon: "▣" },
-] as const;
-
-/** Interactive Kelus route example — Notion-style workspace shell below the hero. */
+/** Interactive Kelus route example — clean page chrome below the hero. */
 export function HeroProductDemo() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
@@ -25,50 +19,22 @@ export function HeroProductDemo() {
 
   return (
     <div
-      className="hero-product-demo folio-product-demo notion-product-demo"
+      className="hero-product-demo folio-product-demo notion-product-demo is-clean"
       aria-label="Interactive example of a Kelus study route"
     >
       <div className="notion-product-shell">
         <div className="notion-product-chrome" aria-hidden="true">
           <span /><span /><span />
         </div>
-        <aside className="notion-product-rail" aria-hidden="true">
-          <div className="notion-product-rail-home">
-            <strong>Kelus</strong>
-            <i className="is-alert">1</i>
-          </div>
-          <p className="notion-product-rail-label">Session</p>
-          <ul>
-            {RAIL_LINKS.map((item) => (
-              <li key={item.label}>
-                <span>{item.icon}</span>
-                {item.label}
-              </li>
-            ))}
-          </ul>
-          <p className="notion-product-rail-label">Courses</p>
-          <ul>
-            {LEARNING_EXAMPLES.map((item, index) => (
-              <li key={item.id} className={index === exampleIndex ? "is-active" : undefined}>
-                <em className={`notion-product-swatch is-${item.id}`} />
-                {item.course}
-              </li>
-            ))}
-          </ul>
-          <div className="notion-product-rail-note">
-            <span>Example only</span>
-            <kbd>⌘E</kbd>
-          </div>
-        </aside>
 
         <div className="notion-product-main">
           <header className="hero-demo-head">
             <div className="hero-demo-identity">
-              <span>Interactive example · not saved</span>
               <strong>
                 <em className="notion-product-page-mark" aria-hidden="true" />
                 {example.course}
               </strong>
+              <span>Example · not saved</span>
             </div>
             <div className="hero-demo-tabs" role="group" aria-label="Choose an example course">
               {LEARNING_EXAMPLES.map((item, index) => (
