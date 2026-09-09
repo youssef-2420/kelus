@@ -145,7 +145,7 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
   assert.match(complete, /WaitlistForm|SoftUpgradePrompt/);
   assert.match(header, /auth\.configured/);
   assert.match(setup, /Try sample \(~1 min\)/);
-  assert.match(setup, /cta setup-sample-cta/);
+  assert.match(setup, /text-btn setup-sample-cta/);
   assert.match(how, /SiteFooter/);
 });
 
@@ -220,7 +220,7 @@ test("materials stay honest about PDF OCR limits and bookmark-only links", async
     source("components/MaterialLibrary.tsx"),
     source("app/map/page.tsx"),
   ]);
-  assert.match(materials, /Prefer a text PDF/);
+  assert.match(materials, /Clear, text-based PDFs work fastest/);
   assert.match(materials, /first 8 (weak )?pages|first 12 pages/);
   assert.match(materials, /Bookmarks stay on your shelf/);
   assert.match(materials, /Save bookmark/);

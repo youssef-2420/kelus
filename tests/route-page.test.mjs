@@ -47,7 +47,8 @@ test("route explainer lives on its own page", () => {
   assert.match(story, /Start today’s revision/);
   assert.match(story, /Review, recall, and apply/);
   assert.match(story, /Your answer changes the route/);
-  assert.match(story, /BlurText/);
+  assert.match(story, /<h1 id="how-title"/);
+  assert.doesNotMatch(story, /BlurText/);
   assert.match(story, /MaterialToMapIllustration/);
   assert.match(story, /TodayRouteIllustration/);
   assert.match(story, /RerouteIllustration/);

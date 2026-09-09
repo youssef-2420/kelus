@@ -48,7 +48,7 @@ test("materials support learning-purpose labels without claiming analysis", asyn
   assert.equal(materialRoleLabel("past_exam"), "Past exam");
   const library = await source("components/MaterialLibrary.tsx");
   assert.match(library, /This source is/);
-  assert.match(library, /confirm every proposed concept/);
+  assert.match(library, /review every\s+suggested topic/);
   assert.match(library, /Build my Knowledge Map/);
   assert.match(library, /proposeConceptsFromPages/);
 });

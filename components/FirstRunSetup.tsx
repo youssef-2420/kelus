@@ -35,20 +35,17 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
   return (
     <main id="main" className="destination-page">
       <form className="destination-form" onSubmit={submit}>
-        <p className="destination-brand">Kelus</p>
+        <p className="kicker">Step 1 · Your destination</p>
         <h1 className="destination-page-title">Set your exam</h1>
         <p className="destination-support">Choose the course you want to revise. Next, add your lessons and start practising what you remember.</p>
-        <aside className="setup-sample is-primary" aria-label="Fastest way to try Kelus">
-          <div>
-            <p className="kicker">Fastest path</p>
-            <p>Skip the PDF. Load a finished sample course and open Today in under a minute.</p>
-          </div>
-          <button type="button" className="cta setup-sample-cta" onClick={onUseDemo}>
-            Try sample (~1 min) <span aria-hidden="true">→</span>
-          </button>
-        </aside>
+        <ol className="setup-progress" aria-label="Getting started">
+          <li aria-current="step"><span>01</span>Exam</li>
+          <li><span>02</span>Lessons</li>
+          <li><span>03</span>Quick check</li>
+          <li><span>04</span>Today</li>
+        </ol>
         <fieldset>
-          <legend>Or set up your real exam in one step</legend>
+          <legend>Tell Kelus what you are preparing for</legend>
           <div className="destination-course-fields">
             <label htmlFor="course-name">Course<input id="course-name" autoFocus value={draft.courseName} onChange={(event) => setDraft({ ...draft, courseName: event.target.value })} placeholder="Molecular Biology" aria-describedby="course-support" /></label>
             <label htmlFor="exam-name">Exam<input id="exam-name" value={draft.examName} onChange={(event) => setDraft({ ...draft, examName: event.target.value })} placeholder="Final exam" aria-describedby="course-support" /></label>
@@ -96,6 +93,15 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
           <span className="destination-actions-spacer" />
           <button className="cta" type="submit">Continue with my course <span aria-hidden="true">→</span></button>
         </div>
+        <aside className="setup-sample" aria-label="Fastest way to try Kelus">
+          <div>
+            <p className="kicker">Just looking?</p>
+            <p>Open a finished sample course and see a real revision route before adding your own lessons.</p>
+          </div>
+          <button type="button" className="text-btn setup-sample-cta" onClick={onUseDemo}>
+            Try sample (~1 min) <span aria-hidden="true">→</span>
+          </button>
+        </aside>
       </form>
       <div className="destination-route" aria-hidden="true"><i /><i /><i /><b>◎</b></div>
     </main>

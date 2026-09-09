@@ -32,7 +32,7 @@ test("comfort friction: one-step setup, skip recall, faster PDF, calendar, mailt
     source("app/questions/page.tsx"),
   ]);
   assert.doesNotMatch(setup, /step === 1|Step<\/span>/);
-  assert.match(setup, /one step/);
+  assert.match(setup, /Tell Kelus what you are preparing for/);
   assert.match(setup, /Continue with my course/);
   assert.match(diagnosis, /Skip recall/);
   assert.match(materials, /maxContentPages:\s*16/);

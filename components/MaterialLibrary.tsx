@@ -404,9 +404,8 @@ export function MaterialLibrary() {
             {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
           <p>
-            Prefer a text PDF (syllabus or lecture notes with selectable text). Scanned image PDFs use on-device OCR for
-            roughly the first 8 weak pages and under a minute — English works best. You confirm every proposed concept
-            before it changes your route.
+            Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every
+            suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device.
           </p>
         </div>
         <label
@@ -419,7 +418,7 @@ export function MaterialLibrary() {
           <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
           <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
-          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · text PDFs work best · English scans use on-device OCR"}</span>
+          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · clear text works fastest"}</span>
         </label>
         {ocrRunning ? (
           <div className="material-ocr-progress" role="status" aria-live="polite">

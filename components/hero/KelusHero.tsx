@@ -37,7 +37,6 @@ export function KelusHero() {
       </div>
 
       <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
-        <div className="studio-window-bar"><span aria-hidden="true" className="studio-window-dots"><i /><i /><i /></span><span>Your revision space</span><span aria-hidden="true">↗</span></div>
         <header className="hero-demo-head">
           <div className="hero-demo-identity">
             <span>Interactive example · not saved</span>

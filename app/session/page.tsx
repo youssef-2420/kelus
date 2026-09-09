@@ -292,7 +292,7 @@ function SessionBody() {
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
-          <motion.section ref={focusStep} tabIndex={-1} key="reroute" className="reroute-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <motion.section ref={focusStep} tabIndex={-1} key="reroute" className="reroute-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} aria-live="polite">
             <p className="kicker">New learning evidence</p>
             <h1>{routeOrderChanged ? "Route updated." : "Route checked."}</h1>
             <p>
@@ -300,6 +300,13 @@ function SessionBody() {
                 ? `${routeChange?.movedConceptId ? `${state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "A concept"} moved forward. ` : ""}${routeChange?.explanation ?? "Your latest answer changed the best order for the remaining time."}`
                 : `Your ${lastOutcome === "failure" ? "not-yet" : "partial"} answer changed the learner estimate. The remaining order still has the highest expected value, so Kelus kept it.`}
             </p>
+            <div className="reroute-cause" aria-label="How this answer affected the route">
+              <div><span>Your answer</span><strong>{evaluation?.label ?? (lastOutcome === "failure" ? "Not enough evidence yet" : "Partial evidence")}</strong></div>
+              <i aria-hidden="true">→</i>
+              <div><span>Learner estimate</span><strong>{percent(masteryBefore)} → {percent(activeConcept.mastery)}</strong></div>
+              <i aria-hidden="true">→</i>
+              <div><span>Next route</span><strong>{routeOrderChanged ? "Order changed" : "Order kept"}</strong></div>
+            </div>
             <div className="reroute-lines" aria-label="Route before and after">
               <div><span>Previous</span>{previousNames.map((name, position) => <motion.b key={name} layout>{position + 1}. {name}</motion.b>)}</div>
               <svg viewBox="0 0 80 180" aria-hidden="true"><motion.path d="M40 5 C 6 56 72 96 40 175" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: reduceMotion ? 0.1 : 0.85 }} /></svg>

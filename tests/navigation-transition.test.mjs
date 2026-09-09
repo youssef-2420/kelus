@@ -34,7 +34,33 @@ test("one persistent header owns navigation for every page", async () => {
   assert.match(header, /href: "\/route"/);
   assert.match(header, /className="site-auth-button"/);
   assert.match(header, /auth\.openDialog/);
+  assert.match(header, /pathname\.startsWith\("\/session"\)/);
+  assert.match(header, /Pause and return to Today/);
   assert.doesNotMatch(shell, /<header|<nav/);
+});
+
+test("setup shows the real four-step path before the optional sample", async () => {
+  const setup = await source("components/FirstRunSetup.tsx");
+  assert.match(setup, /aria-label="Getting started"/);
+  assert.match(setup, /Step 1 · Your destination/);
+  assert.match(setup, /Exam[\s\S]*Lessons[\s\S]*Quick check[\s\S]*Today/);
+  assert.ok(setup.indexOf("Tell Kelus what you are preparing for") < setup.indexOf("Just looking?"));
+  assert.doesNotMatch(setup, /destination-brand/);
+});
+
+test("session makes the evidence-to-route change explicit", async () => {
+  const session = await source("app/session/page.tsx");
+  assert.match(session, /aria-label="How this answer affected the route"/);
+  assert.match(session, /Your answer/);
+  assert.match(session, /Learner estimate/);
+  assert.match(session, /Next route/);
+});
+
+test("how it works content never depends on viewport-triggered visibility", async () => {
+  const how = await source("components/HowItWorks.tsx");
+  assert.doesNotMatch(how, /whileInView|viewport:\s*\{/);
+  assert.doesNotMatch(how, /BlurText/);
+  assert.match(how, /<li key=\{stage\.number\}>/);
 });
 
 test("the course workspace keeps destination and setup progress across product pages", async () => {

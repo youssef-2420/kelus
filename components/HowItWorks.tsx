@@ -4,7 +4,6 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
-import BlurText from "@/components/BlurText";
 import { MaterialToMapIllustration, RerouteIllustration, TodayRouteIllustration } from "@/components/how/HowIllustrations";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
 
@@ -76,13 +75,12 @@ export function HowItWorks() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
   const example = LEARNING_EXAMPLES[exampleIndex];
-  const reveal = reduceMotion ? {} : { initial: { opacity: 0, y: 10 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.22 }, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const } };
 
   return (
     <div className="how-page">
       <section className="how-hero" aria-labelledby="how-title">
         <p className="kicker">How Kelus works</p>
-        <BlurText as="h1" id="how-title" text="Your lessons. A regular revision habit." delay={58} className="how-title" />
+        <h1 id="how-title" className="how-title">Your lessons. A regular revision habit.</h1>
         <div className="how-hero-foot">
           <p>Bring what you’ve studied. Recall it, practise using it, and review the parts that need another attempt before your exam.</p>
           <Link className="cta" href="/today">Start revising <span aria-hidden="true">→</span></Link>
@@ -99,7 +97,7 @@ export function HowItWorks() {
         <header><span>The loop</span><p>Add your lessons once. Return for revision and practice until the exam.</p></header>
         <ol>
           {stages.map((stage) => (
-            <motion.li key={stage.number} {...reveal}>
+            <li key={stage.number}>
               <span className="how-stage-number">{stage.number}</span>
               <div className="how-stage-copy"><h2>{stage.label}</h2><p>{stage.body}</p></div>
               <AnimatePresence mode="wait" initial={false}>
@@ -107,7 +105,7 @@ export function HowItWorks() {
                   <StageVisual type={stage.visual} reduceMotion={reduceMotion} example={example} />
                 </motion.div>
               </AnimatePresence>
-            </motion.li>
+            </li>
           ))}
         </ol>
       </section>

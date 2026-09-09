@@ -24,3 +24,18 @@ test("a direct completion URL never invents a completed session", async ({ page 
   await expect(page.getByRole("link", { name: "Back to Today" })).toBeVisible();
   await expect(page.getByText("estimated readiness", { exact: true })).toHaveCount(0);
 });
+
+test("the learning story stays continuous at every supported mobile width", async ({ page }) => {
+  for (const width of [320, 375, 414, 768]) {
+    await page.setViewportSize({ width, height: 812 });
+    await page.goto("/route");
+    const stages = page.locator(".how-loop > ol > li");
+    await expect(stages).toHaveCount(6);
+    for (const stage of await stages.all()) {
+      await stage.scrollIntoViewIfNeeded();
+      await expect(stage).toBeVisible();
+      await expect(stage.getByRole("heading", { level: 2 })).toBeVisible();
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});

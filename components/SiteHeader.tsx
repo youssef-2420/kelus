@@ -15,17 +15,18 @@ const links = [
 export function SiteHeader() {
   const pathname = usePathname();
   const auth = useAuth();
+  const inSession = pathname.startsWith("/session");
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
   const visibleLinks = links;
 
   return (
-    <header className="site-header">
+    <header className={`site-header${inSession ? " is-session" : ""}`}>
       <div className="site-header-inner">
         <Link href="/" className="mark site-wordmark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           Kelus
         </Link>
 
-        <nav className="site-nav" aria-label="Primary navigation">
+        {inSession ? <p className="site-session-label">Revision session</p> : <nav className="site-nav" aria-label="Primary navigation">
           {visibleLinks.map((link) => {
             const active = link.matches.some((prefix) => pathname.startsWith(prefix));
             return (
@@ -34,9 +35,11 @@ export function SiteHeader() {
               </Link>
             );
           })}
-        </nav>
+        </nav>}
 
-        {auth.loading ? <span className="site-auth-loading" aria-label="Checking account" /> : auth.user ? (
+        {inSession ? (
+          <Link href="/today" className="site-session-return">Pause and return to Today</Link>
+        ) : auth.loading ? <span className="site-auth-loading" aria-label="Checking account" /> : auth.user ? (
           <button type="button" className="site-auth-button is-signed-in" onClick={() => auth.signOut()} aria-label={`Sign out ${auth.user.email ?? "of Kelus"}`}>
             <span>{displayName}</span><small>Sign out</small>
           </button>

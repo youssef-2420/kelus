@@ -28,7 +28,7 @@ test("nine-path: sample-first hero, today auto-load, PDF fail UX, inbox docs", a
   assert.match(today, /Suspense/);
   assert.match(analytics, /sample_loaded/);
 
-  assert.match(setup, /cta setup-sample-cta/);
+  assert.match(setup, /text-btn setup-sample-cta/);
   assert.match(setup, /Continue with my course/);
   assert.match(map, /Try sample \(~1 min\)/);
 

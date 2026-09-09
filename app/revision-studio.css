@@ -1,3 +1,4 @@
+/* Hallmark · pre-emit critique: Philosophy 5 · Hierarchy 5 · Execution 4 · Specificity 5 · Restraint 5 · Variety 4 */
 /* The preview and the working route share one quiet revision surface. */
 .kelus-hero.home-hero.is-revision-studio {
   padding-block: clamp(48px, 7vw, 96px);
@@ -19,10 +20,6 @@
 .is-revision-studio .home-actions { gap: 24px; }
 .is-revision-studio .hero-honesty { max-width: 34ch; line-height: 1.6; }
 .is-revision-studio .hero-product-demo { border: 1px solid var(--color-lavender-border); border-radius: 4px; background: var(--color-pure-white); overflow: hidden; }
-.studio-window-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 20px; background: var(--color-mist); border-bottom: 1px solid var(--color-frost); color: var(--color-steel); font-size: 12px; }
-.studio-window-dots { display: flex; gap: 5px; }
-.studio-window-dots i { width: 7px; height: 7px; border: 1px solid var(--color-lavender-border); border-radius: 50%; }
-.studio-window-dots i:first-child { background: var(--color-indigo-ink); border-color: var(--color-indigo-ink); }
 .is-revision-studio .hero-demo-head { padding: 20px 24px 0; }
 .is-revision-studio .hero-demo-identity strong { font-size: 18px; margin-top: 5px; }
 .is-revision-studio .hero-demo-tabs { gap: 16px; margin-top: 12px; }
