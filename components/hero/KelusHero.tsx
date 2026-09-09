@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { StudentIllustration } from "./StudentIllustration";
+import { NotionRevisionBoard } from "./NotionRevisionBoard";
 import { kelusEase, kelusMotion } from "@/components/motion";
 
 const ease = kelusEase;
 const press = kelusMotion.press;
 
 /**
- * First viewport only: one composition — copy + dominant student plane.
- * Interactive demo lives in HeroProductDemo (below the fold).
+ * Notion-style hero: quiet copy + dominant workspace board mock.
+ * Interactive demo stays in HeroProductDemo below the fold.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
 
   return (
-    <section className="kelus-hero home-hero is-folio" aria-labelledby="home-hero-title">
+    <section className="kelus-hero home-hero is-folio is-notion" aria-labelledby="home-hero-title">
       <div className="folio-hero-atmosphere" aria-hidden="true">
         <span className="folio-hero-mist" />
         <span className="folio-hero-wash" />
@@ -69,8 +69,8 @@ export function KelusHero() {
         </motion.div>
       </div>
 
-      <div className="folio-hero-visual" aria-hidden="true">
-        <StudentIllustration className="folio-hero-student" />
+      <div className="folio-hero-visual folio-hero-notion">
+        <NotionRevisionBoard />
       </div>
     </section>
   );

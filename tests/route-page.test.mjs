@@ -13,7 +13,7 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   assert.match(hero, /is-folio/);
   assert.match(hero, /Revise your lessons/);
   assert.match(hero, /Try sample \(~1 min\)/);
-  assert.match(hero, /StudentIllustration|folio-hero-student/);
+  assert.match(hero, /NotionRevisionBoard|folio-hero-notion/);
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
