@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { LEARNING_EXAMPLES } from "@/data/learning-examples";
@@ -37,6 +38,18 @@ export function KelusHero() {
           </Link>
         </div>
         <p className="hero-honesty">Your lessons. Regular practice. Revision that adapts to your answers.</p>
+      </div>
+
+      <div className="hero-visual" aria-label="A visual example of turning course material into a study route">
+        <div className="hero-visual-paper">
+          <Image src="/hero/material-route.webp" alt="Course notes connected to a focused revision route" width={1000} height={667} priority sizes="(max-width: 980px) 86vw, 38vw" />
+          <span className="hero-visual-stamp">MATERIAL → ROUTE</span>
+        </div>
+        <div className="hero-visual-caption">
+          <span className="hero-visual-index">01</span>
+          <p><strong>Bring your course in.</strong><br />Kelus turns the parts you need to revisit into a clear next step.</p>
+        </div>
+        <StudentIllustration className="hero-visual-student" />
       </div>
 
       <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
@@ -131,7 +144,6 @@ export function KelusHero() {
             </motion.button>
           </motion.div>
         </AnimatePresence>
-        <StudentIllustration className="hero-demo-student" />
       </div>
     </section>
   );
