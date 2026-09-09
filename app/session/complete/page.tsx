@@ -126,9 +126,6 @@ function CompleteBody() {
           <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
         </details>
       ) : null}
-<<<<<<< HEAD
-      {completedSessions === 1 ? <details><summary>Optional support through exam day</summary><SoftUpgradePrompt moment="first_session" /></details> : null}
-=======
       {coverage && course && exam ? (
         <ExamWeekPlan
           plan={coverage}
@@ -139,7 +136,6 @@ function CompleteBody() {
         />
       ) : null}
       {completedSessions === 1 ? <SoftUpgradePrompt moment="first_session" coverage={coverage} /> : null}
->>>>>>> d941032 (Sell Exam Pass as the remaining days until the exam.)
       {completedSessions >= 2 ? (
         <details className="complete-waitlist">
           <summary>Get product updates</summary>
