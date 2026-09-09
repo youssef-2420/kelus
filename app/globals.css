@@ -3899,17 +3899,19 @@ h3,
   }
 
   .site-header-cluster .site-header-action { display: none; }
+  .site-auth-loading { width: 64px; height: 36px; }
 
   .site-nav {
     order: 3;
     width: 100%;
-    gap: var(--spacing-24);
+    gap: var(--spacing-16);
     overflow-x: auto;
     overscroll-behavior-inline: contain;
     scrollbar-width: none;
   }
 
   .site-nav::-webkit-scrollbar { display: none; }
+  .site-nav a:last-child { display: none; }
   .site-nav a { min-height: 48px; }
   .route-transition { min-height: 0; }
   .shell { padding-top: var(--spacing-32); }
