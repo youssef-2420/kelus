@@ -4,17 +4,21 @@ test("hero recall preview reveals, reorders, resets, and works on a narrow scree
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Revise your lessons");
-  const preview = page.getByRole("region", { name: "Try a revision question" });
+
+  const demo = page.locator(".hero-product-demo");
+  await demo.scrollIntoViewIfNeeded();
+  const preview = demo.getByRole("region", { name: "Try a revision question" });
+
   await expect(preview.getByText("Water moves by osmosis", { exact: false })).toHaveCount(0);
   await preview.getByRole("button", { name: "Reveal answer" }).click();
   await expect(preview.getByText("Water moves by osmosis", { exact: false })).toBeVisible();
   await preview.getByRole("button", { name: "I remembered it" }).click();
-  await expect(page.locator(".hero-demo-route li").first()).toContainText("Cell respiration");
-  await page.getByRole("button", { name: "Computer science", exact: true }).click();
+  await expect(demo.locator(".hero-demo-route li").first()).toContainText("Cell respiration");
+  await demo.getByRole("button", { name: "Computer science", exact: true }).click();
   await expect(preview.getByRole("heading")).toContainText("hash table");
   await expect(preview.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
-  await page.getByRole("button", { name: "Reset example" }).click();
-  await expect(page.locator(".hero-demo-route li").first()).toContainText("Hash tables");
+  await demo.getByRole("button", { name: "Reset example" }).click();
+  await expect(demo.locator(".hero-demo-route li").first()).toContainText("Hash tables");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
