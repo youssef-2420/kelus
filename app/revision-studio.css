@@ -2,7 +2,7 @@
 /* The preview and the working route share one quiet revision surface. */
 .kelus-hero.home-hero.is-revision-studio {
   padding-block: clamp(48px, 7vw, 96px);
-  gap: clamp(32px, 5vw, 72px);
+  gap: clamp(32px, 5vw, 80px);
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: start;
 }
@@ -23,50 +23,6 @@
 .is-revision-studio .hero-loop-cue i { color: var(--color-lavender-border); font-style: normal; }
 .is-revision-studio .home-actions { gap: 24px; }
 .is-revision-studio .hero-honesty { max-width: 34ch; line-height: 1.6; }
-.is-revision-studio .hero-visual {
-  position: relative;
-  min-height: 500px;
-  align-self: stretch;
-  padding: 14px 14px 74px;
-  background: var(--color-mist);
-  border: 1px solid var(--color-frost);
-  border-radius: 4px;
-  overflow: hidden;
-}
-.is-revision-studio .hero-visual-paper {
-  position: relative;
-  width: 78%;
-  margin-left: auto;
-  background: var(--color-pure-white);
-  border: 1px solid var(--color-lavender-border);
-  transform: rotate(1.5deg);
-  transform-origin: 80% 20%;
-}
-.is-revision-studio .hero-visual-paper img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
-.is-revision-studio .hero-visual-stamp {
-  position: absolute;
-  left: -22px;
-  bottom: 18px;
-  padding: 8px 10px;
-  background: var(--color-indigo-ink);
-  color: var(--color-pure-white);
-  font-size: 10px;
-  letter-spacing: .09em;
-}
-.is-revision-studio .hero-visual-caption {
-  position: absolute;
-  left: 30px;
-  bottom: 28px;
-  display: flex;
-  gap: 14px;
-  max-width: 250px;
-  color: var(--color-steel);
-}
-.is-revision-studio .hero-visual-caption p { margin: 0; font-size: 13px; line-height: 1.45; }
-.is-revision-studio .hero-visual-caption strong { color: var(--color-midnight-ink); font-weight: 500; }
-.is-revision-studio .hero-visual-index { color: var(--color-indigo-ink); font-size: 11px; letter-spacing: .08em; }
-.is-revision-studio .hero-visual-student { position: absolute; left: -22px; bottom: 12px; width: 185px; height: 164px; margin: 0; z-index: 2; pointer-events: none; }
-.is-revision-studio .hero-visual-student img { display: block; width: 100%; height: 100%; object-fit: contain; object-position: left bottom; mix-blend-mode: multiply; }
 .is-revision-studio .hero-product-demo { border: 1px solid var(--color-lavender-border); border-radius: 4px; background: var(--color-pure-white); overflow: hidden; }
 .is-revision-studio .hero-demo-head { padding: 20px 24px 0; }
 .is-revision-studio .hero-demo-identity strong { font-size: 18px; margin-top: 5px; }
@@ -80,32 +36,10 @@
 .is-revision-studio .hero-demo-route li.is-recommended { background: var(--color-mist); border-left: 2px solid var(--color-indigo-ink); }
 .is-revision-studio .hero-demo-signal { font-size: 13px; line-height: 1.5; }
 .is-revision-studio .hero-demo-replay { margin-top: 12px; }
-.is-revision-studio .hero-product-demo { grid-column: 1 / -1; }
 
 .today-brief.is-revision-studio { padding-top: 16px; padding-bottom: 24px; }
 .today-brief.is-revision-studio h1 { font-size: clamp(40px, 5vw, 64px); line-height: 1.04; letter-spacing: -.045em; margin-bottom: 16px; }
 .today-brief.is-revision-studio .today-exam-details { margin-top: 16px; }
-.today-brief.is-revision-studio { position: relative; overflow: hidden; }
-.today-brief.is-revision-studio .today-brief-art {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: min(28vw, 250px);
-  margin: 0;
-  opacity: .92;
-  pointer-events: none;
-}
-.today-brief.is-revision-studio .today-brief-art img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
-.today-brief.is-revision-studio .today-brief-art figcaption {
-  display: flex;
-  gap: 8px;
-  align-items: baseline;
-  padding-top: 4px;
-  color: var(--color-steel);
-  font-size: 11px;
-  line-height: 1.35;
-}
-.today-brief.is-revision-studio .today-brief-art figcaption span { color: var(--color-indigo-ink); letter-spacing: .08em; }
 .today-workbench.is-revision-studio { padding-top: 24px; }
 .today-workbench.is-revision-studio .today-workbench-heading { padding-bottom: 16px; border: 0; }
 .today-workbench.is-revision-studio .today-lead-action {
@@ -135,8 +69,6 @@
   .is-revision-studio .home-copy { padding-top: 0; max-width: 720px; }
   .is-revision-studio .home-copy h1#home-hero-title { max-width: 17ch; }
   .is-revision-studio .hero-product-demo { width: 100%; max-width: 660px; }
-  .is-revision-studio .hero-visual { min-height: 390px; max-width: 660px; }
-  .is-revision-studio .hero-product-demo { grid-column: auto; }
 }
 @media (max-width: 480px) {
   .is-revision-studio .home-copy h1#home-hero-title { font-size: 46px; }
@@ -146,14 +78,9 @@
   .is-revision-studio .home-actions { align-items: stretch; gap: 16px; }
   .is-revision-studio .hero-demo-head { padding-inline: 16px; }
   .is-revision-studio .hero-demo-body { padding: 20px 16px; }
-  .is-revision-studio .hero-visual { min-height: 300px; padding: 8px 8px 66px; }
-  .is-revision-studio .hero-visual-paper { width: 86%; }
-  .is-revision-studio .hero-visual-caption { left: 18px; bottom: 20px; }
-  .is-revision-studio .hero-visual-student { width: 122px; height: 108px; left: -14px; bottom: 10px; }
   .is-revision-studio .hero-demo-tabs { gap: 12px; flex-wrap: wrap; }
   .today-workbench.is-revision-studio .today-lead-main { grid-template-columns: minmax(0, 1fr); }
   .today-workbench.is-revision-studio .today-lead-time { grid-row: 1; display: flex; align-items: baseline; gap: 8px; text-align: left; }
   .today-workbench.is-revision-studio .today-lead-time strong { font-size: 28px; }
   .today-workbench.is-revision-studio .today-start { width: 100%; justify-content: center; }
-  .today-brief.is-revision-studio .today-brief-art { position: relative; top: auto; right: auto; width: 150px; margin: -8px 0 0 auto; opacity: .86; }
 }

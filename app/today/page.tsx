@@ -3,7 +3,6 @@
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { AppShell } from "@/components/AppShell";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
@@ -178,10 +177,6 @@ function TodayBody() {
             {route.availableMinutes} minutes for revision today. Start with one topic.
           </p>
         </div>
-        <figure className="today-brief-art" aria-hidden="true">
-          <Image src="/hero/student.webp" alt="" width={610} height={538} sizes="(max-width: 480px) 150px, 28vw" />
-          <figcaption><span>01</span>Focused work, one clear next step.</figcaption>
-        </figure>
         <details className="today-exam-details">
         <summary>Exam in {days} days <span>View target and readiness</span></summary>
         <dl className="today-context is-equal" aria-label="Current study context">
