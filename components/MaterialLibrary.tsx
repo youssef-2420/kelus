@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
@@ -466,7 +467,7 @@ export function MaterialLibrary() {
             initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}
           >
             <p className="kicker">You’re ready</p>
             <h2 id="material-ready-title" tabIndex={-1}>
@@ -488,7 +489,7 @@ export function MaterialLibrary() {
             initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: reduceMotion ? 0.1 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}
           >
             <header>
               <div><p className="kicker">Review your topics</p><h2 id="concept-confirmation-title" tabIndex={-1}>Kelus found {analysis.proposals.length} proposed concepts.</h2></div>

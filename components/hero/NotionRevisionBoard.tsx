@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 
 const ROUTE = [
   { name: "Osmosis", minutes: 18, reason: "Needs another attempt", recommended: true },
@@ -19,9 +20,13 @@ export function NotionRevisionBoard() {
     <motion.div
       className="notion-board is-honest-flow is-clean"
       aria-hidden="true"
-      initial={reduce ? false : { opacity: 0, y: 16 }}
+      initial={reduce ? false : { opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
+      transition={{
+        duration: reduce ? 0 : kelusDuration.slow,
+        delay: reduce ? 0 : kelusDuration.instant,
+        ease: kelusEase,
+      }}
     >
       <div className="notion-board-shell">
         <div className="notion-board-chrome">

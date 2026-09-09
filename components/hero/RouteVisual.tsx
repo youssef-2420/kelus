@@ -1,9 +1,10 @@
 "use client";
 
 import { motion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import type { RouteStop } from "./route-data";
 
-const spring = { type: "spring" as const, bounce: 0, duration: 0.55 };
+const spring = { duration: kelusDuration.slow, ease: kelusEase };
 
 type Props = {
   items: RouteStop[];
@@ -42,7 +43,7 @@ export function RouteVisual({ items, hoveredId, onHover, compact = false, totalM
                   className="route-bar"
                   initial={false}
                   animate={{ width: `${weight}%` }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] as const }}
+                  transition={{ duration: kelusDuration.slow, ease: kelusEase }}
                 />
               </div>
               <p className="route-name">{item.name}</p>

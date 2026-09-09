@@ -43,11 +43,20 @@
 
   --page-max-width: 82.5rem;
   --radius-ledger: 0.25rem;
-  --dur-quick: 180ms;
-  --dur-medium: 280ms;
-  --dur-slow: 620ms;
-  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-state: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Notion-inspired motion tokens — fast, quiet, functional */
+  --dur-instant: 80ms;
+  --dur-micro: 100ms;
+  --dur-fast: 150ms;
+  --dur-normal: 200ms;
+  --dur-moderate: 300ms;
+  --dur-slow: 400ms;
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Aliases for existing call sites */
+  --dur-quick: var(--dur-fast);
+  --dur-medium: var(--dur-moderate);
+  --ease-enter: var(--ease-standard);
+  --ease-state: var(--ease-standard);
 
   /* Existing component aliases keep business logic and structure untouched. */
   --paper: var(--color-pure-white);

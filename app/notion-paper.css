@@ -40,8 +40,14 @@
   --radius-small: 4px;
 
   --border-hairline: rgba(0, 0, 0, 0.08);
-  --ease-notion: ease;
+  --ease-notion: cubic-bezier(0.4, 0, 0.2, 1);
   --dur-notion: 200ms;
+  --dur-instant: 80ms;
+  --dur-micro: 100ms;
+  --dur-fast: 150ms;
+  --dur-normal: 200ms;
+  --dur-moderate: 300ms;
+  --dur-slow: 400ms;
 }
 
 body.is-notion-system {
@@ -124,7 +130,7 @@ body.is-notion-system a.cta {
   font-weight: 500;
   min-height: 36px;
   padding: 6px 15px;
-  transition: background var(--dur-notion) var(--ease-notion), transform 100ms ease-out;
+  transition: background var(--dur-fast) var(--ease-notion), transform var(--dur-micro) var(--ease-notion);
 }
 
 body.is-notion-system .site-header-action:hover,

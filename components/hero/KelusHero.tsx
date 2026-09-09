@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { NotionRevisionBoard } from "./NotionRevisionBoard";
-import { kelusEase, kelusMotion } from "@/components/motion";
+import { kelusDuration, kelusEase, kelusMotion } from "@/components/motion";
 
 const ease = kelusEase;
 const press = kelusMotion.press;
+const dur = kelusDuration;
 
 const MARKS = [
   { border: "#097fe8", fill: "#e6f3fe", face: "#097fe8" },
@@ -34,21 +35,20 @@ export function KelusHero() {
         <motion.ul
           className="hero-marks"
           aria-hidden="true"
-          initial={reduce ? false : { opacity: 0, y: 10 }}
+          initial={reduce ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : 0.45, ease }}
+          transition={{ duration: reduce ? 0 : dur.moderate, ease }}
         >
           {MARKS.map((mark, i) => (
             <motion.li
               key={mark.border}
               style={{ borderColor: mark.border, background: mark.fill }}
-              initial={reduce ? false : { opacity: 0, scale: 0.86 }}
+              initial={reduce ? false : { opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{
-                type: "spring",
-                bounce: 0,
-                duration: reduce ? 0 : 0.45,
-                delay: reduce ? 0 : 0.04 * i,
+                duration: reduce ? 0 : dur.moderate,
+                ease,
+                delay: reduce ? 0 : dur.instant * i,
               }}
             >
               <span style={{ background: mark.face }} />
@@ -58,27 +58,27 @@ export function KelusHero() {
 
         <motion.h1
           id="home-hero-title"
-          initial={reduce ? false : { opacity: 0, y: 18 }}
+          initial={reduce ? false : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.06, ease }}
+          transition={{ duration: reduce ? 0 : dur.slow, delay: reduce ? 0 : dur.instant, ease }}
         >
           Revise your lessons.{" "}
           <span className="hero-pill">Prepare</span> for your exams.
         </motion.h1>
         <motion.p
           className="home-lede"
-          initial={reduce ? false : { opacity: 0, y: 14 }}
+          initial={reduce ? false : { opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.12, ease }}
+          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.micro, ease }}
         >
           Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
           and revisit the topics that need more work before your exam.
         </motion.p>
         <motion.div
           className="home-actions"
-          initial={reduce ? false : { opacity: 0, y: 12 }}
+          initial={reduce ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : 0.45, delay: reduce ? 0 : 0.18, ease }}
+          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
         >
           <motion.div whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>
             <Link href="/today?sample=1" className="cta home-cta">

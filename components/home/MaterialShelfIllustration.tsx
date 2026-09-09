@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
+import { kelusDuration, kelusEase } from "@/components/motion";
 
 const sources = [
   { kind: "PDF", title: "Course syllabus", detail: "Saved on this device" },
@@ -42,7 +43,11 @@ export function MaterialShelfIllustration() {
             key={source.title}
             initial={false}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.36, delay: reduce ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: kelusDuration.moderate,
+              delay: reduce ? 0 : index * kelusDuration.instant,
+              ease: kelusEase,
+            }}
           >
             <i><SourceIcon kind={source.kind} /></i>
             <p>

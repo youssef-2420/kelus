@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import { useState } from "react";
 import { MaterialToMapIllustration, RerouteIllustration, TodayRouteIllustration } from "@/components/how/HowIllustrations";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
@@ -101,7 +102,7 @@ export function HowItWorks() {
               <span className="how-stage-number">{stage.number}</span>
               <div className="how-stage-copy"><h2>{stage.label}</h2><p>{stage.body}</p></div>
               <AnimatePresence mode="wait" initial={false}>
-                <motion.div key={`${example.id}-${stage.visual}`} className="how-stage-visual" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? 0.1 : 0.2, ease: [0.16, 1, 0.3, 1] }}>
+                <motion.div key={`${example.id}-${stage.visual}`} className="how-stage-visual" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}>
                   <StageVisual type={stage.visual} reduceMotion={reduceMotion} example={example} />
                 </motion.div>
               </AnimatePresence>

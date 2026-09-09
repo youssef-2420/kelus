@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useInView, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import { useRef } from "react";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const ease = kelusEase;
 
 const rows = [
   {
@@ -51,7 +52,7 @@ export function LeverageBoard() {
           initial={reduce ? false : { opacity: 0, y: 10 }}
           animate={play ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
           transition={{
-            duration: 0.42,
+            duration: kelusDuration.slow,
             delay: reduce ? 0 : row.priority ? 0.46 : 0.12 + (index - 1) * 0.14,
             ease,
           }}
@@ -67,7 +68,7 @@ export function LeverageBoard() {
               initial={reduce ? false : { scaleX: 0 }}
               animate={play ? { scaleX: 1 } : { scaleX: 0 }}
               transition={{
-                duration: 0.75,
+                duration: kelusDuration.slow,
                 delay: reduce ? 0 : row.priority ? 0.62 : 0.28 + (index - 1) * 0.14,
                 ease,
               }}

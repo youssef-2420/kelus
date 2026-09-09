@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useInView, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import { useRef } from "react";
 
 const rows = [
@@ -25,7 +26,7 @@ export function RouteLeverage() {
             layout={!reduce}
             initial={reduce ? false : { opacity: 0 }}
             animate={play ? { opacity: row.fade ? 0.34 : 1 } : undefined}
-            transition={{ type: "spring", bounce: 0, duration: 0.45, delay: reduce ? 0 : 0.08 + index * 0.1 }}
+            transition={{ duration: kelusDuration.slow, delay: reduce ? 0 : kelusDuration.instant + index * kelusDuration.micro, ease: kelusEase }}
           >
             <span>{row.name}</span>
             <b>{row.mastery}%</b>
@@ -35,7 +36,7 @@ export function RouteLeverage() {
       <motion.aside
         initial={reduce ? false : { opacity: 0 }}
         animate={play ? { opacity: 1 } : undefined}
-        transition={{ type: "spring", bounce: 0, duration: 0.4, delay: reduce ? 0 : 0.48 }}
+        transition={{ duration: kelusDuration.moderate, delay: reduce ? 0 : kelusDuration.slow, ease: kelusEase }}
       >
         <p>Why Elasticity?</p>
         <p>Very high exam value</p>
