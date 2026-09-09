@@ -26,7 +26,7 @@ export function KelusHero() {
       <div className="folio-hero-copy home-copy">
         <motion.p
           className="kicker"
-          initial={reduce ? false : { opacity: 0, y: 12 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduce ? 0 : 0.5, ease }}
         >
@@ -34,7 +34,7 @@ export function KelusHero() {
         </motion.p>
         <motion.h1
           id="home-hero-title"
-          initial={reduce ? false : { opacity: 0, y: 18 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduce ? 0 : 0.6, delay: reduce ? 0 : 0.06, ease }}
         >
@@ -43,16 +43,15 @@ export function KelusHero() {
         </motion.h1>
         <motion.p
           className="home-lede"
-          initial={reduce ? false : { opacity: 0, y: 14 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.12, ease }}
         >
-          Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
-          and revisit the topics that need more work before your exam.
+          Your notes become revision. Recall, apply and check your understanding—then see what to practise next.
         </motion.p>
         <motion.div
           className="home-actions"
-          initial={reduce ? false : { opacity: 0, y: 12 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.18, ease }}
         >

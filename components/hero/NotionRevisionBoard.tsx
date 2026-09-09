@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { useState } from "react";
 
 const ROUTE = [
   { name: "Osmosis", minutes: 18, reason: "Needs another attempt", recommended: true },
@@ -14,12 +15,12 @@ const ROUTE = [
  */
 export function NotionRevisionBoard() {
   const reduce = useReducedMotion() === true;
+  const [revealed, setRevealed] = useState(false);
 
   return (
     <motion.div
       className="notion-board is-honest-flow is-clean"
-      aria-hidden="true"
-      initial={reduce ? false : { opacity: 0, y: 16 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.08, ease: [0.22, 1, 0.36, 1] }}
     >
@@ -30,6 +31,7 @@ export function NotionRevisionBoard() {
 
         <div className="notion-board-main">
           <header className="notion-board-head">
+            <p className="board-example-label">Sample revision · try the question</p>
             <h2>
               <em className="notion-page-mark" />
               Molecular Biology
@@ -48,10 +50,11 @@ export function NotionRevisionBoard() {
               <p className="notion-flow-question">
                 Why does water move across a selectively permeable membrane?
               </p>
-              <div className="notion-flow-reveal">
-                Reveal answer
-                <span>+</span>
-              </div>
+              <button type="button" className="notion-flow-reveal" aria-expanded={revealed} aria-controls="board-answer" onClick={() => setRevealed(!revealed)}>
+                {revealed ? "Hide answer" : "Reveal answer"}
+                <span aria-hidden="true">{revealed ? "−" : "+"}</span>
+              </button>
+              {revealed && <p id="board-answer" className="board-answer">Water moves by osmosis toward the side with a higher solute concentration, across a membrane that lets water pass.</p>}
             </div>
 
             <div className="notion-flow-route">

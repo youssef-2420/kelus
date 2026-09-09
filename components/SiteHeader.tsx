@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { useEffect, useRef } from "react";
 
 const links = [
   { href: "/today", label: "Today", matches: ["/today", "/session"], always: true },
@@ -16,11 +17,20 @@ export function SiteHeader() {
   const pathname = usePathname();
   const auth = useAuth();
   const inSession = pathname.startsWith("/session");
+  const inProduct = ["/today", "/materials", "/map", "/concept"].some((path) => pathname.startsWith(path));
+  const accountMenu = useRef<HTMLDetailsElement>(null);
+  useEffect(() => {
+    const close = (event: PointerEvent) => {
+      if (accountMenu.current && !accountMenu.current.contains(event.target as Node)) accountMenu.current.open = false;
+    };
+    document.addEventListener("pointerdown", close);
+    return () => document.removeEventListener("pointerdown", close);
+  }, []);
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
   const visibleLinks = links;
 
   return (
-    <header className={`site-header${inSession ? " is-session" : ""}`}>
+    <header className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}`}>
       <div className="site-header-inner">
         <Link href="/" className="mark site-wordmark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           Kelus
@@ -40,14 +50,23 @@ export function SiteHeader() {
         {inSession ? (
           <Link href="/today" className="site-session-return">Pause and return to Today</Link>
         ) : auth.loading ? <span className="site-auth-loading" aria-label="Checking account" /> : auth.user ? (
-          <button type="button" className="site-auth-button is-signed-in" onClick={() => auth.signOut()} aria-label={`Sign out ${auth.user.email ?? "of Kelus"}`}>
-            <span>{displayName}</span><small>Sign out</small>
-          </button>
+          <details className="site-account-menu" ref={accountMenu} key={pathname} onKeyDown={(event) => {
+            if (event.key === "Escape") {
+              event.currentTarget.open = false;
+              event.currentTarget.querySelector("summary")?.focus();
+            }
+          }}>
+            <summary aria-label="Your account"><span className="account-initial" aria-hidden="true">{displayName?.slice(0, 1).toUpperCase()}</span>{displayName}<span aria-hidden="true">⌄</span></summary>
+            <div className="site-account-panel">
+              <p>Signed in as<strong>{auth.user.email}</strong></p>
+              <button type="button" onClick={() => auth.signOut()}>Sign out</button>
+            </div>
+          </details>
         ) : (
           <div className="site-header-cluster">
-            <Link href="/today" className="site-header-action">
+            {!inProduct && <Link href="/today" className="site-header-action">
               Start revising <span aria-hidden="true">→</span>
-            </Link>
+            </Link>}
             {auth.configured ? (
               <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>
                 <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10V7a5 5 0 0 1 10 0v3M5 10h14v11H5z" /></svg>
