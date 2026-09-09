@@ -16,13 +16,12 @@ export function KelusHero() {
   const route = showBefore ? [...example.route.slice(1), example.route[0]] : example.route;
 
   return (
-    <section className="kelus-hero home-hero is-product-demo" aria-labelledby="home-hero-title">
+    <section className="kelus-hero home-hero is-product-demo is-revision-studio" aria-labelledby="home-hero-title">
       <div className="kelus-hero-copy home-copy">
         <p className="kicker">A little revision. Every day.</p>
-        <h1 id="home-hero-title">Revise your lessons. Prepare for your exams.</h1>
+        <h1 id="home-hero-title">Revise your lessons.<br /><span>Prepare for your exams.</span></h1>
         <p className="home-lede">
-          Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
-          and revisit the topics that need more work before your exam.
+          Turn your course notes into focused revision. Recall what you know, work through what you don’t, and know where to begin tomorrow.
         </p>
         <div className="home-actions">
           <Link href="/today?sample=1" className="cta home-cta">
@@ -38,6 +37,7 @@ export function KelusHero() {
       </div>
 
       <div className="hero-product-demo" aria-label="Interactive example of a Kelus study route">
+        <div className="studio-window-bar"><span aria-hidden="true" className="studio-window-dots"><i /><i /><i /></span><span>Your revision space</span><span aria-hidden="true">↗</span></div>
         <header className="hero-demo-head">
           <div className="hero-demo-identity">
             <span>Interactive example · not saved</span>

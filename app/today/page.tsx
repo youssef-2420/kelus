@@ -163,7 +163,7 @@ function TodayBody() {
         )
       }
     >
-      <section className="today-brief" aria-labelledby="today-title">
+      <section className="today-brief is-revision-studio" aria-labelledby="today-title">
         <div className="today-brief-copy">
           <p className="kicker">Today · {course.name}</p>
           <h1 id="today-title">Today’s route</h1>
@@ -207,7 +207,7 @@ function TodayBody() {
         </details>
       </section>
 
-      <section className="today-workbench" aria-labelledby="route-title">
+      <section className="today-workbench is-revision-studio" aria-labelledby="route-title">
         <div className="today-workbench-heading">
           <h2 id="route-title" className="kicker">Your next study block</h2>
         </div>
