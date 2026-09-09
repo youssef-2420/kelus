@@ -6,13 +6,19 @@ import { useEffect, useRef, useState, useSyncExternalStore, type DragEvent, type
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/components/AuthProvider";
 import { useLearner } from "@/components/LearnerProvider";
-import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
+import { SoftUpgradePrompt, isPaywallDismissed } from "@/components/SoftUpgradePrompt";
 import { trackEvent } from "@/lib/analytics";
 import type { CourseMaterial, ExtractedMaterialPage, MaterialRole, ProposedConcept } from "@/domain/types";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
-import { buildConfirmedMaterialModel, proposeConceptsFromMetadata, proposeConceptsFromPages } from "@/domain/material-intelligence";
+import {
+  buildConfirmedMaterialModel,
+  proposeConceptsFromManualNames,
+  proposeConceptsFromMetadata,
+  proposeConceptsFromPages,
+} from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
+  addManualMaterial,
   addPdfMaterial,
   getMaterialsSnapshot,
   getServerMaterialsSnapshot,
@@ -127,6 +133,10 @@ export function MaterialLibrary() {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [syncStates, setSyncStates] = useState<Record<string, "syncing" | "synced" | "retrying">>({});
+  const [manualEntryOpen, setManualEntryOpen] = useState(false);
+  const [manualTopicsText, setManualTopicsText] = useState("");
+  const [manualMaterialId, setManualMaterialId] = useState<string | null>(null);
+  const [failedMaterialId, setFailedMaterialId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const ocrAbortRef = useRef<AbortController | null>(null);
   const course = state.snapshot.courses[0];
@@ -232,7 +242,7 @@ export function MaterialLibrary() {
         const recovered = await runOcr("Scanned or weak PDF text — reading pages with on-device OCR…");
         if (recovered === 0 && quality.density === "empty") {
           const ocrError = new Error(
-            "On-device OCR finished without usable English text. Export a text PDF, try a clearer English scan, or continue with the sample course.",
+            "On-device OCR finished without usable English text. Export a text PDF, add topics manually, or try the sample course.",
           );
           (ocrError as Error & { kind?: string }).kind = "ocr";
           throw ocrError;
@@ -262,13 +272,14 @@ export function MaterialLibrary() {
         const emptyScan = attemptedOcr && quality.density === "empty";
         const fail = new Error(
           emptyScan
-            ? "Kelus still could not recover usable English text from this scan. Try a clearer export, or use the sample course to see the loop."
-            : "Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text.",
+            ? "Kelus still could not recover usable English text from this scan. Export a clearer PDF, add topics manually, or try the sample course."
+            : "Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text, or add topics manually.",
         );
         if (emptyScan) (fail as Error & { kind?: string }).kind = "ocr";
         throw fail;
       }
       updateMaterialProcessingStatus(material.id, "ready");
+      setManualEntryOpen(false);
       setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals, pages });
       trackEvent({ name: "concept_review_started", concept_count: proposals.length });
       setReadySummary(null);
@@ -276,17 +287,16 @@ export function MaterialLibrary() {
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
       if (courseMaterials.filter((item) => item.storage === "local").length >= 3) {
         try {
-          if (window.localStorage.getItem(PAYWALL_DISMISS_KEY) !== "1") {
-            setShowUpgrade(true);
-          }
+          if (!isPaywallDismissed()) setShowUpgrade(true);
         } catch {
           setShowUpgrade(true);
         }
       }
     } catch (caught) {
       updateMaterialProcessingStatus(material.id, "failed");
+      setFailedMaterialId(material.id);
       if (caught instanceof Error && caught.name === "AbortError") {
-        setError("OCR cancelled. You can retry this file, export a text PDF, or try the sample course.");
+        setError("OCR cancelled. You can retry this file, add topics manually, or try the sample course.");
         setErrorKind("ocr");
       } else {
         const kind = caught instanceof Error && (caught as Error & { kind?: string }).kind === "ocr" ? "ocr" : "generic";
@@ -357,6 +367,56 @@ export function MaterialLibrary() {
     });
   }
 
+  function openManualTopics(fromMaterialId?: string | null) {
+    setError(null);
+    setManualMaterialId(fromMaterialId ?? failedMaterialId);
+    setManualTopicsText("");
+    setManualEntryOpen(true);
+    setReadySummary(null);
+    setAnalysis(null);
+  }
+
+  function beginManualReview() {
+    const names = manualTopicsText
+      .split(/\n+/)
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (!names.length) {
+      setError("Add at least one topic name (one per line).");
+      setErrorKind("generic");
+      return;
+    }
+    try {
+      const existing = manualMaterialId
+        ? courseMaterials.find((item) => item.id === manualMaterialId)
+        : undefined;
+      const material = existing ?? addManualMaterial({ courseId: course.id });
+      if (existing) updateMaterialProcessingStatus(material.id, "ready");
+      const proposals = proposeConceptsFromManualNames({
+        materialId: material.id,
+        sourceLabel: material.title,
+        names,
+      });
+      if (!proposals.length) {
+        setError("Add at least one usable topic name.");
+        setErrorKind("generic");
+        return;
+      }
+      setManualEntryOpen(false);
+      setFailedMaterialId(null);
+      setError(null);
+      setErrorKind(null);
+      setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals, pages: [] });
+      trackEvent({ name: "concept_review_started", concept_count: proposals.length });
+      setReadySummary(null);
+      setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
+      setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
+    } catch (caught) {
+      setErrorKind("generic");
+      setError(caught instanceof Error ? caught.message : "Kelus could not start the manual topics review.");
+    }
+  }
+
   function buildMap() {
     if (!analysis) return;
     const selected = analysis.proposals
@@ -396,7 +456,7 @@ export function MaterialLibrary() {
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
-      <section className="material-ingest" aria-labelledby="add-material-title" hidden={Boolean(analysis || readySummary)}>
+      <section className="material-ingest" aria-labelledby="add-material-title" hidden={Boolean(analysis || readySummary || manualEntryOpen)}>
         <div className="material-ingest-title"><p className="kicker">Add material</p><h2 id="add-material-title">Bring the course into one place.</h2></div>
         <div className="material-role-field">
           <label htmlFor="material-role">This source is</label>
@@ -404,8 +464,9 @@ export function MaterialLibrary() {
             {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
           <p>
-            Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every
-            suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device.
+            Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. OCR still has limits —
+            if a real syllabus will not yield text, add topics manually. You review every suggested topic before it
+            changes your revision route. For scans, Kelus checks up to the first 8 pages on this device.
           </p>
         </div>
         <label
@@ -440,10 +501,11 @@ export function MaterialLibrary() {
         {error && errorKind === "ocr" ? (
           <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
             <p>
-              OCR works best on clear English scans. Export a text PDF from your notes app, try a sharper scan, or
-              continue with the sample course.
+              OCR still has limits on weak or non-English scans. For a real syllabus, add topic names manually —
+              the sample course stays available if you only want to see the loop.
             </p>
             <div className="material-error-actions">
+              <button type="button" className="cta" onClick={() => openManualTopics(failedMaterialId)}>Add topics manually</button>
               <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
               <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
             </div>
@@ -451,11 +513,40 @@ export function MaterialLibrary() {
         ) : null}
         {error && errorKind === "generic" ? (
           <div className="material-error-actions">
+            <button type="button" className="text-btn" onClick={() => openManualTopics()}>Add topics manually</button>
             <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
             <a className="text-btn" href="#source-shelf-title">Choose another file</a>
           </div>
         ) : null}
       </section>
+
+      {manualEntryOpen ? (
+        <section className="material-manual" aria-labelledby="manual-topics-title">
+          <p className="kicker">Manual topics</p>
+          <h2 id="manual-topics-title">Add topics manually</h2>
+          <p>
+            Type one exam topic per line. Kelus will treat these like PDF proposals — you still confirm before they
+            enter your map. Sources are labeled “Added manually”.
+          </p>
+          <label htmlFor="manual-topics-input">Topic names</label>
+          <textarea
+            id="manual-topics-input"
+            rows={6}
+            value={manualTopicsText}
+            onChange={(event) => setManualTopicsText(event.target.value)}
+            placeholder={"Supply and demand\nElasticity\nMarket structures"}
+            autoFocus
+          />
+          <div className="material-manual-actions">
+            <button type="button" className="text-btn" onClick={() => { setManualEntryOpen(false); setManualTopicsText(""); }}>
+              Cancel
+            </button>
+            <button type="button" className="cta" disabled={!manualTopicsText.trim()} onClick={beginManualReview}>
+              Review topics <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        </section>
+      ) : null}
 
       {error ? <p className="material-error" role="alert">{error}</p> : null}
       <AnimatePresence initial={false}>
@@ -470,7 +561,7 @@ export function MaterialLibrary() {
           >
             <p className="kicker">You’re ready</p>
             <h2 id="material-ready-title" tabIndex={-1}>
-              {readySummary.conceptCount} confirmed concept{readySummary.conceptCount === 1 ? "" : "s"} from your file.
+              {readySummary.conceptCount} confirmed concept{readySummary.conceptCount === 1 ? "" : "s"} ready for revision.
             </h2>
             <p>
               Your topics are saved. Next, check what you remember so Kelus can suggest where to begin. You can inspect the map whenever you need it.</p>

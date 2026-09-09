@@ -376,6 +376,32 @@ const METADATA_STOPWORDS = new Set([
   "section", "doc", "handout", "slides", "slide", "reading", "assignment",
 ]);
 
+/** Build reviewable proposals from student-typed topic names (OCR rescue path). */
+export function proposeConceptsFromManualNames(input: {
+  materialId: string;
+  sourceLabel?: string;
+  names: string[];
+}): ProposedConcept[] {
+  const sourceLabel = input.sourceLabel?.trim() || "Topics added manually";
+  const proposals: ProposedConcept[] = [];
+  const seen = new Set<string>();
+  for (const raw of input.names) {
+    const name = cleanCandidate(raw);
+    const key = name.toLocaleLowerCase();
+    if (!name || name.length < 2 || seen.has(key)) continue;
+    seen.add(key);
+    proposals.push({
+      id: `proposal-${stablePart(`${input.materialId}:manual:${key}`)}`,
+      materialId: input.materialId,
+      name,
+      sourceLabel,
+      locator: "Added manually",
+      sourceExcerpt: `Added manually as “${name}”. Confirm only topics this exam covers.`,
+    });
+  }
+  return proposals;
+}
+
 export function proposeConceptsFromMetadata(input: {
   materialId: string;
   sourceLabel: string;

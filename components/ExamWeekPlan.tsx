@@ -58,8 +58,19 @@ export function ExamWeekPlan({
   return (
     <section className="exam-week" aria-labelledby="exam-week-title">
       <p className="kicker">Exam week</p>
-      <h2 id="exam-week-title">{plan.remainingDays > 0 ? "The remaining days until your exam." : "No remaining days to plan."}</h2>
+      <h2 id="exam-week-title">
+        {plan.remainingDays <= 0
+          ? "No remaining days to plan."
+          : plan.horizonCapped
+            ? `Next ${plan.horizonDays} of ${plan.remainingDays} days until your exam.`
+            : "The remaining days until your exam."}
+      </h2>
       <p>{headline} Guidance from your ratings and recall checks — not a grade prediction.</p>
+      {plan.horizonCapped ? (
+        <p className="exam-week-cap">
+          Free planning shows up to {plan.horizonDays} days even when more remain until the exam.
+        </p>
+      ) : null}
       {plan.days.length ? (
         <ol className="exam-week-days">
           {plan.days.map((day, index) => {

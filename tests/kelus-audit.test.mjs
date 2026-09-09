@@ -41,7 +41,26 @@ test("audit 2026: Exam Pass sells the remaining-day plan, not vapor features", a
   assert.match(today, /ExamWeekPlan/);
   assert.match(complete, /ExamWeekPlan/);
   assert.match(week, /Unlock remaining days/);
+  assert.match(week, /horizonCapped|planned days/);
   assert.doesNotMatch(pricing, /Priority access to new study features/);
+});
+
+test("audit 2026: first-run honesty — manual OCR rescue, soft dismiss, deferred aim", async () => {
+  const [materials, soft, setup, today, coverage] = await Promise.all([
+    source("components/MaterialLibrary.tsx"),
+    source("components/SoftUpgradePrompt.tsx"),
+    source("components/FirstRunSetup.tsx"),
+    source("app/today/page.tsx"),
+    source("domain/exam-coverage.ts"),
+  ]);
+  assert.match(materials, /Add topics manually/);
+  assert.match(materials, /Added manually/);
+  assert.match(soft, /PAYWALL_DISMISS_MS|7 \* 24/);
+  assert.match(soft, /exam_pass_checkout_clicked/);
+  assert.match(soft, /isPaywallDismissed|dismissPaywall/);
+  assert.doesNotMatch(setup, /id="exam-target"/);
+  assert.match(today, /showAimReadiness|retrievalEvidence/);
+  assert.match(coverage, /horizonCapped/);
 });
 
 test("audit 2026: workspace rail matches header Map label", async () => {

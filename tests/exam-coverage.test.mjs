@@ -37,9 +37,28 @@ test("a short horizon leaves uncovered topics at this pace", () => {
     nowIso: now,
   });
   assert.equal(plan.remainingDays, 1);
+  assert.equal(plan.horizonDays, 1);
+  assert.equal(plan.horizonCapped, false);
   assert.ok(plan.days.length <= 1);
   assert.ok(plan.uncoveredCount >= 1);
   assert.match(examCoverageHeadline(plan), /would be left/);
+});
+
+test("long exam windows disclose the 21-day planning cap", () => {
+  const snapshot = createDemoSnapshot(Date.parse(now));
+  const plan = buildExamCoveragePlan({
+    concepts: snapshot.concepts,
+    relationships: snapshot.relationships,
+    events: snapshot.events,
+    exam: { ...snapshot.exams[0], examDate: "2026-11-01T12:00:00.000Z", availableMinutes: 45 },
+    nowIso: now,
+  });
+  assert.ok(plan.remainingDays > 21);
+  assert.equal(plan.horizonDays, 21);
+  assert.equal(plan.horizonCapped, true);
+  assert.ok(plan.days.length <= 21);
+  assert.match(examCoverageHeadline(plan), /21 planned days|of \d+ until the exam/);
+  assert.doesNotMatch(examCoverageHeadline(plan), /fit before the exam(?!.*planned)/);
 });
 
 test("exam pass return query and storage keys stay owner-scoped", () => {

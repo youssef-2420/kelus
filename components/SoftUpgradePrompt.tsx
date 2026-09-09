@@ -9,6 +9,34 @@ import type { ExamCoveragePlan } from "@/domain/exam-coverage";
 import { examCoverageHeadline } from "@/domain/exam-coverage";
 
 export const PAYWALL_DISMISS_KEY = "kelus:paywall:dismissed:v1";
+/** Soft upgrade “Not now” lasts a week, then the offer can return. */
+export const PAYWALL_DISMISS_MS = 7 * 24 * 60 * 60 * 1000;
+
+export function isPaywallDismissed(nowMs = Date.now()) {
+  if (typeof window === "undefined") return false;
+  try {
+    const raw = window.localStorage.getItem(PAYWALL_DISMISS_KEY);
+    if (!raw) return false;
+    // Legacy forever flag — treat as expired so the offer can return.
+    if (raw === "1") {
+      window.localStorage.removeItem(PAYWALL_DISMISS_KEY);
+      return false;
+    }
+    const dismissedAt = Number(raw);
+    if (!Number.isFinite(dismissedAt)) return false;
+    return nowMs - dismissedAt < PAYWALL_DISMISS_MS;
+  } catch {
+    return false;
+  }
+}
+
+export function dismissPaywall(nowMs = Date.now()) {
+  try {
+    window.localStorage.setItem(PAYWALL_DISMISS_KEY, String(nowMs));
+  } catch {
+    /* ignore */
+  }
+}
 
 type SoftUpgradePromptProps = {
   moment: "first_session" | "third_material";
@@ -22,11 +50,7 @@ export function SoftUpgradePrompt({ moment, coverage }: SoftUpgradePromptProps) 
 
   useEffect(() => {
     let active = true;
-    try {
-      if (window.localStorage.getItem(PAYWALL_DISMISS_KEY) === "1") return;
-    } catch {
-      /* ignore */
-    }
+    if (isPaywallDismissed()) return;
     queueMicrotask(() => {
       if (active) setVisible(true);
     });
@@ -47,12 +71,12 @@ export function SoftUpgradePrompt({ moment, coverage }: SoftUpgradePromptProps) 
   const body = `${coverageLine} Today’s route stays free.${syncReady ? " Sign in free anytime to sync this course across devices." : " Your learning stays on this device."}`;
 
   function dismiss() {
-    try {
-      window.localStorage.setItem(PAYWALL_DISMISS_KEY, "1");
-    } catch {
-      /* ignore */
-    }
+    dismissPaywall();
     setVisible(false);
+  }
+
+  function trackCheckout() {
+    trackEvent({ name: "exam_pass_checkout_clicked", source: `soft_upgrade_${moment}` });
   }
 
   return (
@@ -64,11 +88,17 @@ export function SoftUpgradePrompt({ moment, coverage }: SoftUpgradePromptProps) 
       </div>
       <div className="soft-upgrade-actions">
         {paymentReady ? (
-          <a className="cta" href={foundingPaymentLink()} target="_blank" rel="noopener noreferrer">
+          <a
+            className="cta"
+            href={foundingPaymentLink()}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={trackCheckout}
+          >
             Unlock remaining days · $9
           </a>
         ) : (
-          <Link href="/pricing/" className="cta">
+          <Link href="/pricing/" className="cta" onClick={trackCheckout}>
             See Exam Pass options
           </Link>
         )}

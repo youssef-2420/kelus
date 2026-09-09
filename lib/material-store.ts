@@ -239,6 +239,28 @@ export function clearMaterials() {
   listeners.forEach((listener) => listener());
 }
 
+/** Lightweight shelf item when topics are typed by hand (no PDF). */
+export function addManualMaterial(input: { courseId: string; title?: string; nowIso?: string }) {
+  const timestamp = input.nowIso ?? new Date().toISOString();
+  const record: CourseMaterial = {
+    id: `material-manual-${crypto.randomUUID()}`,
+    courseId: input.courseId,
+    kind: "link",
+    storage: "url",
+    title: input.title?.trim() || "Topics added manually",
+    sourceUrl: "https://kelus.me/materials#manual",
+    fileName: null,
+    mimeType: null,
+    sizeBytes: null,
+    role: "notes",
+    processingStatus: "ready",
+    addedAt: timestamp,
+    updatedAt: timestamp,
+  };
+  persist([record, ...readMetadata()]);
+  return record;
+}
+
 /** Seeds a visible sample shelf item so demo courses don't look empty. */
 export function seedDemoMaterial(courseId: string, nowIso?: string) {
   const timestamp = nowIso ?? new Date().toISOString();

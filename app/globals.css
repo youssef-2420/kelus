@@ -2082,7 +2082,7 @@ button, input, textarea { font: inherit; }
 .destination-course-fields { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-16); }
 .destination-course-fields label { color: var(--color-steel); font-size: var(--text-caption); font-weight: 600; }
 .destination-course-fields input { width: 100%; margin-top: var(--spacing-8); }
-.destination-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.55fr); gap: var(--space-product-2xl); }
+.destination-pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-product-2xl); max-width: 280px; }
 .destination-pair label { color: var(--color-product-secondary); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
 .destination-pair input { display: block; margin-top: var(--space-product-sm); }
 .target-input { position: relative; display: block; }
@@ -6236,6 +6236,69 @@ h3,
   min-height: 44px;
   cursor: pointer;
   font: inherit;
+}
+
+.material-manual {
+  margin: 24px 0;
+  padding: 24px;
+  border: 1px solid var(--color-frost);
+  background: var(--color-mist);
+  display: grid;
+  gap: 12px;
+  max-width: 560px;
+}
+
+.material-manual h2 {
+  margin: 0;
+  color: var(--color-midnight-ink);
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.material-manual p {
+  margin: 0;
+  color: var(--color-steel);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.material-manual label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.material-manual textarea {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  padding: 12px 14px;
+  border: 1px solid var(--color-lavender-border);
+  background: var(--color-paper);
+  color: var(--color-midnight-ink);
+  font: inherit;
+  line-height: 1.45;
+}
+
+.material-manual textarea:focus-visible {
+  outline: 2px solid var(--color-indigo-ink);
+  outline-offset: 2px;
+}
+
+.material-manual-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.exam-week-cap {
+  margin: 0;
+  color: var(--color-steel);
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 .complete-waitlist {

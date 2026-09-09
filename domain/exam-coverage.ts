@@ -22,6 +22,10 @@ export type ExamCoverageDay = {
 
 export type ExamCoveragePlan = {
   remainingDays: number;
+  /** Days actually scheduled in this plan (≤ EXAM_COVERAGE_MAX_DAYS). */
+  horizonDays: number;
+  /** True when remainingDays exceeds the free/capped planning window. */
+  horizonCapped: boolean;
   minutesPerDay: number;
   needCount: number;
   seatedCount: number;
@@ -69,9 +73,10 @@ export function buildExamCoveragePlan(input: {
   const queue = [...needsWork, ...maintenance];
   const seated = new Set<string>();
   const days: ExamCoverageDay[] = [];
-  const horizon = Math.min(remainingDays, EXAM_COVERAGE_MAX_DAYS);
+  const horizonDays = Math.min(remainingDays, EXAM_COVERAGE_MAX_DAYS);
+  const horizonCapped = remainingDays > EXAM_COVERAGE_MAX_DAYS;
 
-  for (let offset = 1; offset <= horizon; offset += 1) {
+  for (let offset = 1; offset <= horizonDays; offset += 1) {
     let budget = minutesPerDay;
     const stops: ExamCoverageStop[] = [];
     while (queue.length && stops.length < ROUTING.maximumConceptStops && budget >= ROUTING.minimumConceptMinutes) {
@@ -103,6 +108,8 @@ export function buildExamCoveragePlan(input: {
   const uncovered = needsWork.filter((row) => !seated.has(row.concept.id));
   return {
     remainingDays,
+    horizonDays,
+    horizonCapped,
     minutesPerDay,
     needCount: needsWork.length,
     seatedCount: needsWork.filter((row) => seated.has(row.concept.id)).length,
@@ -112,15 +119,28 @@ export function buildExamCoveragePlan(input: {
   };
 }
 
+function horizonPhrase(plan: ExamCoveragePlan) {
+  if (plan.horizonCapped) {
+    return `the next ${plan.horizonDays} planned days (of ${plan.remainingDays} until the exam)`;
+  }
+  return `the next ${plan.remainingDays} day${plan.remainingDays === 1 ? "" : "s"}`;
+}
+
 export function examCoverageHeadline(plan: ExamCoveragePlan) {
   if (plan.remainingDays <= 0) {
     return "Exam day is today. Use Today’s route — there are no remaining days to plan.";
   }
   if (plan.needCount === 0) {
-    return `At ${plan.minutesPerDay} min/day for the next ${plan.remainingDays} day${plan.remainingDays === 1 ? "" : "s"}, Kelus can keep a light review calendar so strong topics do not fade.`;
+    return `At ${plan.minutesPerDay} min/day for ${horizonPhrase(plan)}, Kelus can keep a light review calendar so strong topics do not fade.`;
   }
   if (plan.uncoveredCount === 0) {
+    if (plan.horizonCapped) {
+      return `At ${plan.minutesPerDay} min/day over ${horizonPhrase(plan)}, all ${plan.needCount} topic${plan.needCount === 1 ? "" : "s"} that still need a session fit in this planning window.`;
+    }
     return `At ${plan.minutesPerDay} min/day, all ${plan.needCount} topic${plan.needCount === 1 ? "" : "s"} that still need a session fit before the exam.`;
+  }
+  if (plan.horizonCapped) {
+    return `At ${plan.minutesPerDay} min/day over ${horizonPhrase(plan)}, ${plan.seatedCount} of ${plan.needCount} topics that still need a session get a slot. ${plan.uncoveredCount} would be left at this pace.`;
   }
   return `At ${plan.minutesPerDay} min/day, ${plan.seatedCount} of ${plan.needCount} topics that still need a session get a slot. ${plan.uncoveredCount} would be left at this pace.`;
 }

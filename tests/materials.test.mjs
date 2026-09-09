@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { isPdfFile, looksLikePdf, materialTitle, parseMaterialUrl } from "../domain/materials.ts";
 import { buildConfirmedMaterialModel, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
@@ -128,6 +129,32 @@ test("filename metadata can seed concepts when PDF text is empty", async () => {
   assert.ok(proposals.length >= 1);
   assert.equal(proposals[0].locator, "From filename");
   assert.match(proposals.map((item) => item.name).join(" "), /Organic|Chemistry|Midterm/i);
+});
+
+test("manual topic names become proposals labeled Added manually", async () => {
+  const { proposeConceptsFromManualNames, buildConfirmedMaterialModel } = await import("../domain/material-intelligence.ts");
+  const proposals = proposeConceptsFromManualNames({
+    materialId: "material-manual-1",
+    names: ["Supply and demand", "Elasticity", ""],
+  });
+  assert.equal(proposals.length, 2);
+  assert.equal(proposals[0].locator, "Added manually");
+  assert.match(proposals[0].sourceExcerpt, /Added manually/);
+  const model = buildConfirmedMaterialModel({
+    proposals,
+    courseId: "course-1",
+    userId: "user-1",
+    nowIso: "2026-09-09T12:00:00.000Z",
+    pages: [],
+  });
+  assert.equal(model.concepts.length, 2);
+});
+
+test("MaterialLibrary offers Add topics manually when OCR fails", async () => {
+  const materials = await readFile(new URL("../components/MaterialLibrary.tsx", import.meta.url), "utf8");
+  assert.match(materials, /Add topics manually/);
+  assert.match(materials, /proposeConceptsFromManualNames|Added manually/);
+  assert.match(materials, /manual topics|Add topics manually/i);
 });
 
 test("empty PDF text is classified so the UI can explain scans", async () => {
