@@ -447,9 +447,239 @@
   border-top: 1px solid #ebebea;
 }
 
+/* Empty states read as Notion pages */
+.is-notion-product .materials-empty {
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+.is-notion-product .materials-empty h1 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.is-notion-product .materials-empty h1::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 30% 30%, #fff 0 18%, transparent 19%),
+    linear-gradient(135deg, #1a1a18, #444);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.is-notion-product .materials-empty .text-btn {
+  color: #2383e2;
+  font-weight: 600;
+}
+
+/* Pricing as soft workspace band */
+.pricing-page.is-notion-product {
+  background: linear-gradient(180deg, #fafafa 0%, #f3f3f1 100%);
+  padding-bottom: 3rem;
+}
+
+.pricing-page.is-notion-product .legal-panel {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.pricing-page.is-notion-product h1 {
+  color: #1a1a18;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+/* How it works — last major ledger holdout */
+.how-page.is-notion-product {
+  background: linear-gradient(180deg, #fafafa 0%, #f3f3f1 40%, #fafafa 100%);
+  color: #1a1a18;
+}
+
+.how-page.is-notion-product .how-hero {
+  max-width: var(--page-max-width, 1120px);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vh, 4rem) max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2)) 2rem;
+}
+
+.how-page.is-notion-product .kicker {
+  color: #787774;
+}
+
+.how-page.is-notion-product .how-title {
+  max-width: 16ch;
+  color: #1a1a18;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.how-page.is-notion-product .how-hero-foot p {
+  color: #787774;
+}
+
+.how-page.is-notion-product .how-example-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1.25rem;
+  color: #787774;
+}
+
+.how-page.is-notion-product .how-example-switcher [role="tablist"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.how-page.is-notion-product .how-example-switcher button {
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #787774;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.how-page.is-notion-product .how-example-switcher button[aria-selected="true"] {
+  background: #efefed;
+  color: #1a1a18;
+  font-weight: 600;
+}
+
+.how-page.is-notion-product .how-loop {
+  border-top: 1px solid #ebebea;
+  background: transparent;
+}
+
+.how-page.is-notion-product .how-loop > header {
+  max-width: var(--page-max-width, 1120px);
+  margin: 0 auto;
+  padding-inline: max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2));
+}
+
+.how-page.is-notion-product .how-loop > header span {
+  color: #787774;
+}
+
+.how-page.is-notion-product .how-loop > ol > li {
+  max-width: var(--page-max-width, 1120px);
+  margin: 0 auto;
+  padding-inline: max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2));
+  border-top: 1px solid #ebebea;
+}
+
+.how-page.is-notion-product .how-stage-number {
+  color: #9b9a97;
+  font-weight: 700;
+}
+
+.how-page.is-notion-product .how-stage-copy h2 {
+  color: #1a1a18;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.how-page.is-notion-product .how-stage-copy p {
+  color: #787774;
+}
+
+.how-page.is-notion-product .how-stage-visual > *,
+.how-page.is-notion-product .how-map-fragment,
+.how-page.is-notion-product .how-diagnosis-fragment,
+.how-page.is-notion-product .how-session-fragment {
+  border: 1px solid #e8e8e5;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 14px 36px -22px rgba(15, 15, 15, 0.22);
+}
+
+.how-page.is-notion-product .how-principle {
+  max-width: var(--page-max-width, 1120px);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vh, 4rem) max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2));
+  border-top: 1px solid #ebebea;
+}
+
+.how-page.is-notion-product .how-principle h2 {
+  color: #1a1a18;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.how-page.is-notion-product .how-principle dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.how-page.is-notion-product .how-principle dl > div {
+  padding: 1rem;
+  border: 1px solid #ebebea;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.how-page.is-notion-product .how-principle dt {
+  color: #787774;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.how-page.is-notion-product .how-principle dd {
+  margin: 0.35rem 0 0;
+  color: #1a1a18;
+}
+
+.how-page.is-notion-product .how-final {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: var(--page-max-width, 1120px);
+  margin: 0 auto 2rem;
+  padding: 1.25rem 1.35rem;
+  border: 1px solid #e8e8e5;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 15, 15, 0.03);
+}
+
+.how-page.is-notion-product .how-final p {
+  margin: 0;
+  color: #1a1a18;
+  font-weight: 600;
+}
+
 @media (max-width: 900px) {
   .destination-page.is-notion-product {
     margin: 1rem 0 2rem;
     padding: 1.15rem 1rem 1.35rem;
+  }
+
+  .how-page.is-notion-product .how-principle dl {
+    grid-template-columns: 1fr;
+  }
+
+  .how-page.is-notion-product .how-hero,
+  .how-page.is-notion-product .how-loop > header,
+  .how-page.is-notion-product .how-loop > ol > li,
+  .how-page.is-notion-product .how-principle,
+  .how-page.is-notion-product .how-final {
+    padding-inline: 16px;
   }
 }
