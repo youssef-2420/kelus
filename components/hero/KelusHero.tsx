@@ -18,11 +18,6 @@ export function KelusHero() {
 
   return (
     <section className="kelus-hero home-hero is-folio is-notion is-poster" aria-labelledby="home-hero-title">
-      <div className="poster-field" aria-hidden="true">
-        <span className="poster-glow" />
-        <span className="poster-grain" />
-      </div>
-
       <div className="poster-copy home-copy">
         <motion.p
           className="hero-brand"
