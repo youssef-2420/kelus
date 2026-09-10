@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 
 const before = ["Externalities", "Monetary policy", "Elasticity"] as const;
 const after = ["Elasticity", "Externalities", "Monetary policy"] as const;
@@ -35,7 +36,7 @@ export function RerouteIllustration() {
             initial={reduce ? false : { opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduce ? undefined : { opacity: 0, y: -6 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: kelusDuration.normal, ease: kelusEase }}
           >
             {updated ? "New evidence: keep Elasticity close." : "The route before this answer."}
           </motion.p>
@@ -48,7 +49,7 @@ export function RerouteIllustration() {
             layout
             key={topic}
             className={updated && topic === "Elasticity" ? "is-priority" : undefined}
-            transition={{ type: "spring", bounce: 0, duration: reduce ? 0 : 0.38 }}
+            transition={{ duration: reduce ? 0 : kelusDuration.slow, ease: kelusEase }}
           >
             <span>0{index + 1}</span>
             <strong>{topic}</strong>

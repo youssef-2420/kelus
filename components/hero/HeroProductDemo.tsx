@@ -3,9 +3,10 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { LEARNING_EXAMPLES } from "@/data/learning-examples";
-import { kelusEase, kelusMotion } from "@/components/motion";
+import { kelusDuration, kelusEase, kelusMotion } from "@/components/motion";
 
 const ease = kelusEase;
+const dur = kelusDuration;
 
 /** Interactive Kelus route example — clean page chrome below the hero. */
 export function HeroProductDemo() {
@@ -59,10 +60,10 @@ export function HeroProductDemo() {
             <motion.div
               key={example.id}
               className="hero-demo-body"
-              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? undefined : { opacity: 0, y: -5 }}
-              transition={{ duration: reduceMotion ? 0.01 : 0.28, ease }}
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduceMotion ? undefined : { opacity: 0 }}
+              transition={{ duration: reduceMotion ? 0.01 : dur.moderate, ease }}
             >
               <section className="hero-recall" aria-label="Try a revision question">
                 <ol className="hero-recall-steps" aria-label="Example revision steps">
@@ -94,7 +95,7 @@ export function HeroProductDemo() {
                       initial={reduceMotion ? false : { opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={reduceMotion ? undefined : { opacity: 0 }}
-                      transition={{ duration: reduceMotion ? 0 : 0.18 }}
+                      transition={{ duration: reduceMotion ? 0 : dur.fast, ease }}
                     >
                       <p>{example.answer}</p>
                       <div className="hero-recall-actions" role="group" aria-label="Try an example outcome">
@@ -142,11 +143,12 @@ export function HeroProductDemo() {
                       key={item.name}
                       layout={reduceMotion ? false : "position"}
                       className={!showBefore && index === 0 ? "is-recommended" : undefined}
-                      initial={reduceMotion ? false : { opacity: 0, x: 8 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={reduceMotion ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       transition={{
-                        duration: reduceMotion ? 0 : 0.28,
-                        layout: { type: "spring", bounce: 0, duration: 0.38 },
+                        duration: reduceMotion ? 0 : dur.moderate,
+                        ease,
+                        layout: { duration: reduceMotion ? 0 : dur.slow, ease },
                       }}
                     >
                       <span>{String(index + 1).padStart(2, "0")}</span>

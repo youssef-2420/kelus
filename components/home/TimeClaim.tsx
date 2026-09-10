@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useInView, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import { useRef } from "react";
 
 const slices = [
@@ -30,7 +31,7 @@ export function TimeClaim() {
               <motion.em
                 initial={reduce ? false : { scaleX: 0 }}
                 animate={play ? { scaleX: 1 } : { scaleX: 0 }}
-                transition={{ type: "spring", bounce: 0, duration: 0.55, delay: reduce ? 0 : 0.16 + index * 0.1 }}
+                transition={{ duration: kelusDuration.slow, delay: reduce ? 0 : kelusDuration.fast + index * kelusDuration.micro, ease: kelusEase }}
                 style={{ width: `${(slice.minutes / 45) * 100}%` }}
               />
             </i>

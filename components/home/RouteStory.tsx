@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase, kelusMotion } from "@/components/motion";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { KnowledgeLandscape } from "@/components/hero/KnowledgeLandscape";
 import { NODE_MAP } from "@/components/hero/landscape-data";
@@ -72,8 +73,8 @@ export function RouteStory() {
   const hovered = hoveredId ? NODE_MAP[hoveredId] : null;
   const focusId = chapter === "leverage" ? "elasticity" : null;
 
-  const ease = [0.22, 1, 0.36, 1] as const;
-  const press = { type: "spring" as const, bounce: 0, duration: 0.32 };
+  const ease = kelusEase;
+  const press = kelusMotion.press;
   let note = null;
   let noteKey = "none";
   if (hovered?.why) {

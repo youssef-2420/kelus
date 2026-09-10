@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 
 const plan = [
   { order: "01", topic: "Elasticity", reason: "Highest-value gap", minutes: 20, width: "100%" },
@@ -30,7 +31,11 @@ export function TodayPlanIllustration() {
             key={item.topic}
             initial={false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: reduce ? 0 : index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: kelusDuration.moderate,
+              delay: reduce ? 0 : index * kelusDuration.instant,
+              ease: kelusEase,
+            }}
           >
             <span>{item.order}</span>
             <div>
@@ -40,7 +45,11 @@ export function TodayPlanIllustration() {
                 <motion.em
                   initial={false}
                   animate={{ scaleX: 1 }}
-                  transition={{ duration: 0.55, delay: reduce ? 0 : 0.18 + index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{
+                    duration: kelusDuration.slow,
+                    delay: reduce ? 0 : kelusDuration.fast + index * kelusDuration.instant,
+                    ease: kelusEase,
+                  }}
                   style={{ width: item.width }}
                 />
               </i>

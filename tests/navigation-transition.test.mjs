@@ -102,7 +102,9 @@ test("ledger design keeps the mobile homepage in one column", async () => {
   const css = await source("app/globals.css");
   const layout = await source("app/layout.tsx");
   const header = await source("components/SiteHeader.tsx");
-  assert.match(layout, /Inter_Tight/);
+  assert.match(layout, /Inter/);
+  assert.match(layout, /Source_Serif_4/);
+  assert.match(layout, /notion-paper\.css/);
   assert.match(css, /\.kelus-hero\.home-hero\.is-student\s*\{[\s\S]*?grid-template-columns: minmax\(0, 1fr\)/);
   assert.match(css, /--color-indigo-ink/);
   assert.match(header, /href: "\/materials"/);

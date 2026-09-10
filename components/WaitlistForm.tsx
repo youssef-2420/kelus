@@ -103,7 +103,13 @@ export function WaitlistForm({ source = "waitlist", compact = false }: { source?
         <span aria-hidden="true">→</span>
       </button>
       <p
-        className={status === "error" || status === "local" ? "waitlist-message is-error" : "waitlist-message"}
+        className={
+          status === "error"
+            ? "waitlist-message is-error"
+            : status === "local"
+              ? "waitlist-message is-local"
+              : "waitlist-message"
+        }
         role={status === "error" ? "alert" : status === "saved" || status === "duplicate" || status === "local" ? "status" : undefined}
         aria-live="polite"
       >

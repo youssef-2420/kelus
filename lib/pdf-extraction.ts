@@ -166,11 +166,11 @@ export async function ocrPdfPages(
     signal?: AbortSignal;
     onProgress?: (progress: OcrProgress) => void;
   },
-): Promise<{ pages: ExtractedMaterialPage[]; ocrPages: number }> {
+): Promise<{ pages: ExtractedMaterialPage[]; ocrPages: number; timedOut: boolean }> {
   throwIfAborted(options?.signal);
 
   if (typeof document === "undefined") {
-    return { pages, ocrPages: 0 };
+    return { pages, ocrPages: 0, timedOut: false };
   }
 
   const maxPages = options?.maxPages ?? 8;
@@ -183,7 +183,7 @@ export async function ocrPdfPages(
     .slice(0, maxPages);
 
   if (!targets.length) {
-    return { pages, ocrPages: 0 };
+    return { pages, ocrPages: 0, timedOut: false };
   }
 
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
@@ -199,11 +199,15 @@ export async function ocrPdfPages(
   const worker = await createWorker("eng");
   const byNumber = new Map(pages.map((page) => [page.pageNumber, page]));
   let ocrPages = 0;
+  let timedOut = false;
 
   try {
     for (let index = 0; index < targets.length; index += 1) {
       throwIfAborted(options?.signal);
-      if (Date.now() - startedAt >= timeBudgetMs) break;
+      if (Date.now() - startedAt >= timeBudgetMs) {
+        timedOut = true;
+        break;
+      }
       if (ocrPages >= stopAfter) break;
       const target = targets[index];
       options?.onProgress?.({
@@ -260,11 +264,14 @@ export async function ocrPdfPages(
     totalPages: targets.length,
     message: ocrPages
       ? `Recovered text from ${ocrPages} scanned page${ocrPages === 1 ? "" : "s"}.`
-      : "Scan reading finished without usable text.",
+      : timedOut
+        ? "Scan reading stopped after the time limit without usable text."
+        : "Scan reading finished without usable text.",
   });
 
   return {
     pages: pages.map((page) => byNumber.get(page.pageNumber) ?? page),
     ocrPages,
+    timedOut,
   };
 }

@@ -14,10 +14,10 @@ export function HomeAfterHero() {
       <section id="try" className="folio-product-stage" aria-labelledby="folio-product-title">
         <Reveal className="folio-product-intro">
           <p className="kicker">Try it</p>
-          <h2 id="folio-product-title">Reveal an answer. Watch the route move.</h2>
+          <h2 id="folio-product-title">Reveal an answer. See what comes next.</h2>
           <p>
-            This example is not saved. Reveal an answer, pick an outcome, and see how today’s route
-            would reorder before you bring your own course.
+            This demo is not saved. Reveal an answer, choose how it went, and watch today’s plan
+            reorder — before you add your own course.
           </p>
         </Reveal>
         <Reveal delay={0.08} className="folio-product-frame">
@@ -32,8 +32,8 @@ export function HomeAfterHero() {
             <p className="kicker">Today’s route</p>
             <h2 id="folio-plan-title">Your next 45 minutes, in order.</h2>
             <p>
-              Open Today and get a short route: recall a topic, check the answer, then move on.
-              Weak answers pull that topic forward for another attempt.
+              Open Today for a short plan: recall a topic, check the answer, then move on.
+              Weak answers move that topic earlier for another try.
             </p>
             <Link href="/today">
               Open Today <span aria-hidden="true">→</span>
@@ -48,13 +48,13 @@ export function HomeAfterHero() {
           <Reveal className="folio-chapter-copy">
             <p className="folio-chapter-index" aria-hidden="true">02</p>
             <p className="kicker">After one answer</p>
-            <h2 id="folio-reroute-title">The route reorders itself.</h2>
+            <h2 id="folio-reroute-title">The plan reorders itself.</h2>
             <p>
-              Mark “almost” or miss a check, and Kelus reshuffles what comes next—so you practise
+              Mark “almost” or miss a check, and Kelus reshuffles what comes next — so you practise
               the weak spot again without rebuilding a plan by hand.
             </p>
             <Link href="/route">
-              See how rerouting works <span aria-hidden="true">→</span>
+              See how the plan changes <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
           <Reveal delay={0.1} className="folio-chapter-art">
@@ -68,8 +68,8 @@ export function HomeAfterHero() {
             <p className="kicker">Your lessons</p>
             <h2 id="folio-materials-title">Revise from your own notes.</h2>
             <p>
-              Add a syllabus or lecture PDF, confirm the concepts Kelus proposes, and keep each
-              practice item tied to the page it came from.
+              Add a syllabus or lecture PDF, confirm the topics Kelus suggests, and keep each
+              practice item linked to the page it came from.
             </p>
             <Link href="/materials">
               Open Materials <span aria-hidden="true">→</span>
@@ -112,8 +112,8 @@ export function HomeAfterHero() {
       <section className="home-close folio-close" aria-labelledby="home-close-title">
         <Reveal className="home-close-inner">
           <div className="home-close-copy">
-            <h2 id="home-close-title">Walk into the exam knowing what you worked on—and why.</h2>
-            <p>Try a revision session free on this device. See Exam Pass if you want priority support through exam day.</p>
+            <h2 id="home-close-title">Walk into the exam knowing what you worked on — and why.</h2>
+            <p>Try a free revision session on this device. See Exam Pass if you want priority support through exam day.</p>
           </div>
           <div className="home-close-actions">
             <Link href="/today" className="cta">

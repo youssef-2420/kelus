@@ -29,8 +29,9 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   assert.match(story, /RerouteIllustration/);
   assert.match(story, /MaterialShelfIllustration/);
   assert.match(story, /Honest methodology/);
-  assert.match(story, /confirm the concepts Kelus proposes/);
+  assert.match(story, /confirm the topics Kelus suggests/);
   assert.match(story, /Open Today|Open Materials/);
+  assert.match(story, /See what comes next|See how the plan changes/);
   assert.doesNotMatch(page, /KnowledgeRouteStory/);
   assert.doesNotMatch(page, /<RouteStory/);
 });

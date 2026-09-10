@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { kelusDuration, kelusEase } from "@/components/motion";
 
 type Props = {
   className?: string;
@@ -20,9 +21,9 @@ export function StudentIllustration({ className }: Props) {
           height={538}
           decoding="async"
           fetchPriority="high"
-          initial={reduce ? false : { opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : 0.85, delay: reduce ? 0 : 0.15, ease: [0.22, 1, 0.36, 1] }}
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : kelusDuration.moderate, ease: kelusEase }}
         />
       </picture>
     </figure>

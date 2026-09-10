@@ -1,0 +1,656 @@
+/* Notion paper system — warm notebook under afternoon sun.
+   Scoped via body.is-notion-system. Bounce stays 0 on Kelus. */
+
+:root {
+  --color-notion-blue: #0075de;
+  --color-paper-warmth: #f6f5f4;
+  --color-pure-white: #ffffff;
+  --color-ink-black: #000000;
+  --color-charcoal: #111111;
+  --color-stone: #757575;
+  --color-graphite: #615d59;
+  --color-slate: #696969;
+  --color-sky-tint: #e6f3fe;
+  --color-marigold: #ffb110;
+  --color-coral: #f64932;
+  --color-saffron: #e89d01;
+  --color-vermillion: #e32d14;
+  --color-mocha: #b18164;
+  --color-signal-blue: #097fe8;
+  --color-sky-wash: #62aef0;
+  --color-midnight-ink: #02093a;
+  --color-peach-pill: #f6d5b8; /* hero verb highlight */
+
+  --font-notion: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-editorial: var(--font-source-serif), "Source Serif 4", Georgia, "Times New Roman", serif;
+
+  --text-caption: 12px;
+  --text-body-sm: 14px;
+  --text-body: 16px;
+  --text-subheading: 20px;
+  --text-heading-sm: 22px;
+  --text-heading: 40px;
+  --text-heading-lg: 48px;
+  --text-display-sm: 54px;
+  --text-display: 72px;
+
+  --radius-cards: 12px;
+  --radius-buttons: 8px;
+  --radius-pills: 9999px;
+  --radius-small: 4px;
+
+  --border-hairline: rgba(0, 0, 0, 0.08);
+  --ease-notion: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-notion: 200ms;
+  --dur-instant: 80ms;
+  --dur-micro: 100ms;
+  --dur-fast: 150ms;
+  --dur-normal: 200ms;
+  --dur-moderate: 300ms;
+  --dur-slow: 400ms;
+}
+
+body.is-notion-system {
+  --font-ledger: var(--font-notion);
+  --font-display: var(--font-notion);
+  --font-sans: var(--font-notion);
+  --paper: var(--color-paper-warmth);
+  --ink: var(--color-ink-black);
+  --muted: var(--color-graphite);
+  --line: var(--border-hairline);
+  --accent: var(--color-notion-blue);
+  --accent-2: #0066c2;
+  --surface: var(--color-pure-white);
+  --strong: var(--color-notion-blue);
+  --background: var(--color-paper-warmth);
+  --foreground: var(--color-ink-black);
+  --card: var(--color-pure-white);
+  --primary: var(--color-notion-blue);
+  --primary-foreground: var(--color-pure-white);
+  --border: var(--border-hairline);
+  --ring: var(--color-notion-blue);
+  --page-max-width: 1440px;
+  --radius-ledger: var(--radius-buttons);
+
+  color: rgba(0, 0, 0, 0.95);
+  background: var(--color-paper-warmth);
+  font-family: var(--font-notion);
+  font-weight: 400;
+  letter-spacing: 0;
+  font-feature-settings: "lnum" 1, "locl" 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.is-notion-system h1,
+body.is-notion-system h2,
+body.is-notion-system h3 {
+  font-family: var(--font-notion);
+}
+
+/* ── Global chrome ── */
+body.is-notion-system .site-header {
+  background: rgba(246, 245, 244, 0.86);
+  border-bottom: 1px solid var(--border-hairline);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow:
+    0 0.7px 1.462px rgba(0, 0, 0, 0.015),
+    0 3px 9px rgba(0, 0, 0, 0.03);
+}
+
+body.is-notion-system .site-wordmark {
+  color: var(--color-ink-black);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+
+body.is-notion-system .site-nav a {
+  color: rgba(0, 0, 0, 0.54);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  border-radius: var(--radius-buttons);
+  transition: color var(--dur-notion) var(--ease-notion), background var(--dur-notion) var(--ease-notion);
+}
+
+body.is-notion-system .site-nav a:hover,
+body.is-notion-system .site-nav a.is-active,
+body.is-notion-system .site-nav a[aria-current="page"] {
+  color: rgba(0, 0, 0, 0.95);
+  background: transparent;
+  box-shadow: none;
+}
+
+body.is-notion-system .site-header-action,
+body.is-notion-system .cta,
+body.is-notion-system a.cta {
+  background: var(--color-notion-blue);
+  border-color: var(--color-notion-blue);
+  color: #fff;
+  border-radius: var(--radius-buttons);
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  min-height: 36px;
+  padding: 6px 15px;
+  transition: background var(--dur-fast) var(--ease-notion), transform var(--dur-micro) var(--ease-notion);
+}
+
+body.is-notion-system .site-header-action:hover,
+body.is-notion-system .cta:hover,
+body.is-notion-system a.cta:hover {
+  background: #0066c2;
+  border-color: #0066c2;
+}
+
+body.is-notion-system .site-header-action:active,
+body.is-notion-system .cta:active {
+  transform: scale(0.97);
+}
+
+body.is-notion-system .site-auth-button {
+  color: rgba(0, 0, 0, 0.9);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-buttons);
+  background: transparent;
+  font-weight: 500;
+}
+
+body.is-notion-system .site-footer {
+  background: var(--color-paper-warmth);
+  border-top: 1px solid var(--border-hairline);
+  color: var(--color-graphite);
+}
+
+body.is-notion-system .kicker {
+  color: rgba(0, 0, 0, 0.4);
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ── Hero: centered paper stack + product mock ── */
+body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: clamp(1.75rem, 4vw, 2.75rem);
+  min-height: min(92vh, 900px);
+  padding: clamp(2.75rem, 7vh, 4.5rem) max(20px, calc((100vw - min(1120px, var(--page-max-width))) / 2)) clamp(2rem, 5vh, 3.5rem);
+  background: var(--color-paper-warmth);
+  text-align: center;
+}
+
+body.is-notion-system .kelus-hero.is-notion .folio-hero-atmosphere,
+body.is-notion-system .kelus-hero.is-notion .folio-hero-rule {
+  display: none;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 42rem;
+  padding: 0;
+  margin: 0 auto;
+}
+
+body.is-notion-system .hero-marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 0 0 1.35rem;
+  padding: 0;
+  list-style: none;
+}
+
+body.is-notion-system .hero-marks li {
+  width: 40px;
+  height: 40px;
+  border: 2px solid;
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  box-shadow: none;
+}
+
+body.is-notion-system .hero-marks li span {
+  width: 14px;
+  height: 14px;
+  border-radius: 9999px;
+  opacity: 0.85;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 {
+  max-width: 16ch;
+  margin: 0 0 1.1rem;
+  color: var(--color-ink-black);
+  font-family: var(--font-notion);
+  font-size: clamp(2.75rem, 6.2vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 .hero-pill {
+  display: inline;
+  padding: 0.08em 0.38em;
+  border-radius: var(--radius-pills);
+  background: var(--color-peach-pill);
+  color: var(--color-ink-black);
+  font-weight: 600;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 span:not(.hero-pill) {
+  color: inherit;
+  font-weight: inherit;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .home-lede {
+  max-width: 42ch;
+  margin: 0 0 1.5rem;
+  color: var(--color-graphite);
+  font-family: var(--font-editorial);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.56;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .home-cta {
+  background: var(--color-notion-blue);
+  border-color: var(--color-notion-blue);
+  border-radius: var(--radius-buttons);
+  font-weight: 500;
+  font-size: var(--text-body-sm);
+  min-height: 36px;
+  padding: 6px 15px;
+}
+
+body.is-notion-system .kelus-hero.is-folio.is-notion .home-secondary {
+  background: var(--color-sky-tint);
+  border: 0;
+  border-radius: var(--radius-buttons);
+  color: var(--color-notion-blue);
+  font-weight: 500;
+  font-size: var(--text-body-sm);
+  min-height: 36px;
+  padding: 6px 15px;
+  backdrop-filter: none;
+}
+
+body.is-notion-system .folio-hero-notion {
+  width: min(100%, 720px);
+  margin: 0 auto;
+  justify-self: center;
+}
+
+/* Hero product mock — white card on paper, hairline only; soft product shadow ok */
+body.is-notion-system .notion-board-shell {
+  background: var(--color-pure-white);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-cards);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.is-notion-system .notion-board-main {
+  padding: 36px 22px 18px;
+}
+
+body.is-notion-system .notion-board-head h2 {
+  color: var(--color-ink-black);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .notion-page-mark,
+body.is-notion-system .notion-product-page-mark {
+  background: var(--color-charcoal);
+}
+
+body.is-notion-system .notion-board-steps {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+body.is-notion-system .notion-board-steps .is-active {
+  color: rgba(0, 0, 0, 0.95);
+}
+
+body.is-notion-system .notion-flow-question {
+  color: var(--color-ink-black);
+  font-weight: 600;
+}
+
+body.is-notion-system .notion-flow-reveal {
+  background: var(--color-paper-warmth);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-buttons);
+  color: rgba(0, 0, 0, 0.9);
+}
+
+body.is-notion-system .notion-flow-route li {
+  background: var(--color-pure-white);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-buttons);
+  box-shadow: none;
+}
+
+body.is-notion-system .notion-flow-route li.is-recommended {
+  background: var(--color-sky-tint);
+  border-color: rgba(0, 117, 222, 0.22);
+}
+
+body.is-notion-system .notion-flow-route-title span,
+body.is-notion-system .notion-flow-route li strong {
+  color: var(--color-ink-black);
+}
+
+body.is-notion-system .notion-flow-route li small,
+body.is-notion-system .notion-flow-route li b,
+body.is-notion-system .notion-flow-route-title strong {
+  color: var(--color-graphite);
+}
+
+/* ── Product stage ── */
+body.is-notion-system .folio-product-stage {
+  background: var(--color-paper-warmth);
+  border-top: 1px solid var(--border-hairline);
+  padding-block: var(--spacing-80, 80px);
+}
+
+body.is-notion-system .folio-product-intro .kicker {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+body.is-notion-system .folio-product-intro h2 {
+  color: var(--color-ink-black);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+body.is-notion-system .folio-product-intro > p {
+  color: var(--color-graphite);
+  font-family: var(--font-editorial);
+  font-size: 18px;
+  line-height: 1.56;
+}
+
+body.is-notion-system .notion-product-shell {
+  background: var(--color-pure-white);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-cards);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.is-notion-system .notion-product-demo .hero-demo-identity strong {
+  color: var(--color-ink-black);
+  font-weight: 600;
+}
+
+body.is-notion-system .notion-product-demo .hero-demo-tabs button {
+  border-radius: var(--radius-buttons);
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 500;
+}
+
+body.is-notion-system .notion-product-demo .hero-demo-tabs button[aria-pressed="true"] {
+  background: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.95);
+}
+
+body.is-notion-system .notion-product-demo .hero-reveal-button {
+  background: var(--color-paper-warmth);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-buttons);
+}
+
+body.is-notion-system .notion-product-demo .hero-recall-actions button[aria-pressed="true"] {
+  background: var(--color-notion-blue);
+  border-color: var(--color-notion-blue);
+  color: #fff;
+}
+
+body.is-notion-system .notion-product-demo .hero-demo-route li {
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-buttons);
+  box-shadow: none;
+}
+
+body.is-notion-system .notion-product-demo .hero-demo-route li.is-recommended {
+  background: var(--color-sky-tint);
+  border-color: rgba(0, 117, 222, 0.22);
+}
+
+body.is-notion-system .notion-product-demo .hero-demo-signal span {
+  color: var(--color-notion-blue);
+}
+
+/* ── Story chapters: sticky-note accent cards ── */
+body.is-notion-system .folio-story {
+  background: var(--color-paper-warmth);
+}
+
+body.is-notion-system .folio-chapter {
+  border-bottom: 1px solid var(--border-hairline);
+  padding-block: var(--spacing-80, 80px);
+}
+
+body.is-notion-system .folio-chapter-copy h2 {
+  color: var(--color-ink-black);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .folio-chapter-copy > p:not(.kicker) {
+  color: var(--color-graphite);
+  font-family: var(--font-editorial);
+  font-size: 18px;
+  line-height: 1.56;
+}
+
+body.is-notion-system .folio-chapter-copy > a {
+  color: var(--color-notion-blue);
+  font-weight: 500;
+}
+
+body.is-notion-system .folio-chapter-index {
+  color: rgba(0, 0, 0, 0.06);
+}
+
+body.is-notion-system .folio-chapter-art .v1-plan,
+body.is-notion-system .folio-chapter-art .v1-reroute,
+body.is-notion-system .folio-chapter-art .v1-materials {
+  background: var(--color-pure-white);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-cards);
+  box-shadow: none;
+}
+
+body.is-notion-system .folio-chapter.is-plan .folio-chapter-art .v1-plan {
+  background: var(--color-marigold);
+  border-color: transparent;
+}
+
+body.is-notion-system .folio-chapter.is-reroute .folio-chapter-art .v1-reroute {
+  background: var(--color-sky-wash);
+  border-color: transparent;
+}
+
+body.is-notion-system .folio-chapter.is-materials .folio-chapter-art .v1-materials {
+  background: var(--color-coral);
+  border-color: transparent;
+  color: var(--color-ink-black);
+}
+
+body.is-notion-system .folio-chapter-art .v1-plan > header,
+body.is-notion-system .folio-chapter-art .v1-reroute > header,
+body.is-notion-system .folio-chapter-art .v1-materials > header {
+  background: transparent;
+  border-bottom-color: rgba(0, 0, 0, 0.08);
+}
+
+body.is-notion-system .folio-chapter-art .v1-plan li,
+body.is-notion-system .folio-chapter-art .v1-reroute li,
+body.is-notion-system .folio-chapter-art .v1-materials li {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-buttons);
+}
+
+body.is-notion-system .folio-chapter-art .v1-almost {
+  background: var(--color-notion-blue);
+  border-color: var(--color-notion-blue);
+}
+
+/* Method + close */
+body.is-notion-system .folio-method {
+  background: var(--color-paper-warmth);
+  border-top: 1px solid var(--border-hairline);
+  padding-block: var(--spacing-80, 80px);
+}
+
+body.is-notion-system .folio-method-heading h2 {
+  color: var(--color-ink-black);
+  font-weight: 600;
+}
+
+body.is-notion-system .folio-method-heading > p:not(.kicker) {
+  color: var(--color-graphite);
+  font-family: var(--font-editorial);
+  font-size: 18px;
+  line-height: 1.56;
+}
+
+body.is-notion-system .folio-method-grid > div {
+  background: var(--color-pure-white);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-cards);
+  box-shadow: none;
+}
+
+body.is-notion-system .folio-method-grid dt {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+body.is-notion-system .folio-method-grid dd {
+  color: var(--color-ink-black);
+}
+
+body.is-notion-system .folio-close.home-close,
+body.is-notion-system .home-close.folio-close {
+  background: var(--color-midnight-ink);
+  border-top: 0;
+  color: #fff;
+}
+
+body.is-notion-system .home-close-copy h2 {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .home-close-copy p {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+body.is-notion-system .home-close-actions .cta {
+  background: var(--color-notion-blue);
+}
+
+body.is-notion-system .home-close-actions .text-btn {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Product surfaces already using is-notion-product */
+body.is-notion-system .is-notion-product .cta,
+body.is-notion-system .destination-page.is-notion-product .time-choices label.is-selected,
+body.is-notion-system .pricing-page.is-notion-product .pricing-plan .cta {
+  background: var(--color-notion-blue);
+  border-color: var(--color-notion-blue);
+}
+
+body.is-notion-system .destination-page.is-notion-product,
+body.is-notion-system .is-notion-product .materials-empty,
+body.is-notion-system .is-notion-product .materials-head,
+body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
+body.is-notion-system .is-notion-product .today-workbench.is-revision-studio {
+  background: var(--color-pure-white);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-cards);
+  box-shadow: none;
+}
+
+body.is-notion-system .course-workspace-layout.is-notion-product {
+  background: var(--color-paper-warmth);
+}
+
+body.is-notion-system .is-notion-product .course-workspace-rail {
+  background: var(--color-paper-warmth);
+  border-right: 1px solid var(--border-hairline);
+}
+
+body.is-notion-system .how-page.is-notion-product {
+  background: var(--color-paper-warmth);
+}
+
+body.is-notion-system .how-page.is-notion-product .how-title {
+  color: var(--color-ink-black);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .how-page.is-notion-product .cta {
+  background: var(--color-notion-blue);
+}
+
+@media (max-width: 980px) {
+  body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion {
+    min-height: 0;
+    gap: 1.5rem;
+    padding-top: 2rem;
+  }
+
+  body.is-notion-system .folio-hero-notion {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 {
+    max-width: 14ch;
+    font-size: clamp(2.35rem, 9vw, 3.25rem);
+  }
+
+  body.is-notion-system .hero-marks li {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* Inclusive motion: no travel/scale when reduced motion is on */
+@media (prefers-reduced-motion: reduce) {
+  body.is-notion-system *,
+  body.is-notion-system *::before,
+  body.is-notion-system *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body.is-notion-system .site-header-action:active,
+  body.is-notion-system .cta:active,
+  body.is-notion-system a.cta:active {
+    transform: none;
+  }
+}
