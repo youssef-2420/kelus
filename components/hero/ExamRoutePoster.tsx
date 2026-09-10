@@ -16,8 +16,6 @@ export function ExamRoutePoster() {
       aria-label="A desk with annotated revision notes, an exam paper, and a marked next topic"
     >
       <svg className="exam-route-art revision-still-life-art" viewBox="0 0 760 620" role="presentation">
-        <rect width="760" height="620" fill="#f6f5f4" />
-        <path d="M0 474h760v146H0z" fill="#e9e6e1" />
         <path d="M0 475h760" stroke="#c9c3bb" strokeWidth="2" />
 
         <path d="M618 48v195" stroke="#173f3b" strokeWidth="8" strokeLinecap="round" />
