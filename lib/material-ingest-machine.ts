@@ -246,3 +246,44 @@ export function focusTargetId(phase: IngestPhase): string | null {
   if (phase.status === "confirmed") return "material-ready-title";
   return null;
 }
+
+/** Per-phase UI contract: loading, errors, feedback, motion (map-states steps 3–6). */
+export type PhaseUiSpec = {
+  loading: string;
+  error: string;
+  feedback: string;
+  animation: string;
+};
+
+export const INGEST_PHASE_UI: Record<IngestPhase["status"], PhaseUiSpec> = {
+  idle: {
+    loading: "None. Drop zone idle copy.",
+    error: "None (or softNotice only).",
+    feedback: "Instant drag highlight on pointer enter; press scale on controls.",
+    animation: "Drop zone class toggle only — no enter motion.",
+  },
+  working: {
+    loading: "Indeterminate text status (saving → extracting → ocr → building). OCR exposes Cancel.",
+    error: "Not shown mid-flight; FAIL replaces phase.",
+    feedback: "aria-live polite status; disabled inputs; softNotice allowed for cloud sync.",
+    animation: "Opacity on status text only; no layout thrash.",
+  },
+  failed: {
+    loading: "None.",
+    error: "Persistent alert + kind-specific rescue CTAs (ocr | generic). Never auto-dismiss.",
+    feedback: "role=alert message near ingest; sample-course and retry escapes.",
+    animation: "Static; reduced-motion unchanged.",
+  },
+  review: {
+    loading: "None — proposals already computed.",
+    error: "Confirm failures stay on review via softNotice (selections preserved).",
+    feedback: "Focus moves to concept-confirmation-title; checkbox + name edits.",
+    animation: "Opacity (+ slight y unless reduced motion) via AnimatePresence.",
+  },
+  confirmed: {
+    loading: "None.",
+    error: "None.",
+    feedback: "Focus material-ready-title; primary Continue CTA.",
+    animation: "Same opacity presence as review; exit before idle form returns.",
+  },
+};

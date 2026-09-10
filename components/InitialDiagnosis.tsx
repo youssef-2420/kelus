@@ -2,11 +2,18 @@
 
 import { useMemo, useRef, useState, type SyntheticEvent } from "react";
 import { AppShell } from "@/components/AppShell";
-import { evaluateDiagnosisResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
+import { evaluateDiagnosisResponse } from "@/domain/answer-evaluation";
 import { DIAGNOSIS_RETRIEVAL_LIMIT } from "@/domain/constants";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
 import { selectDiagnosisConcept } from "@/domain/diagnosis";
 import { trackEvent } from "@/lib/analytics";
+import {
+  INITIAL_DIAGNOSIS_STATE,
+  allRated as areAllRated,
+  canCompare,
+  reduceDiagnosis,
+  type DiagnosisState,
+} from "@/lib/diagnosis-machine";
 
 const RATINGS: Array<{ value: SelfRating; label: string }> = [
   { value: "dont_know", label: "Don’t know" },
@@ -15,53 +22,69 @@ const RATINGS: Array<{ value: SelfRating; label: string }> = [
   { value: "strong", label: "Strong" },
 ];
 
-type Retrieval = { conceptId: string; promptId: string; responseText: string; outcome: RetrievalOutcome; responseTimeMs: number };
-
 export function InitialDiagnosis({ snapshot, onComplete }: {
   snapshot: LearnerSnapshot;
-  onComplete: (input: { ratings: Record<string, SelfRating>; retrievals: Retrieval[] }) => void;
+  onComplete: (input: {
+    ratings: Record<string, SelfRating>;
+    retrievals: Array<{
+      conceptId: string;
+      promptId: string;
+      responseText: string;
+      outcome: RetrievalOutcome;
+      responseTimeMs: number;
+    }>;
+  }) => void;
 }) {
   const concepts = snapshot.concepts;
   const ratedConcepts = useMemo(
     () => [...concepts].sort((a, b) => b.examImportance - a.examImportance || a.name.localeCompare(b.name)).slice(0, 3),
     [concepts],
   );
-  const [phase, setPhase] = useState<"rating" | "retrieval">("rating");
-  const [ratings, setRatings] = useState<Record<string, SelfRating>>({});
-  const [activeConceptId, setActiveConceptId] = useState<string | null>(null);
-  const [selectionReason, setSelectionReason] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [revealed, setRevealed] = useState(false);
-  const [evaluation, setEvaluation] = useState<AnswerEvaluation | null>(null);
-  const [retrievals, setRetrievals] = useState<Retrieval[]>([]);
+  const [diagnosis, setDiagnosis] = useState<DiagnosisState>(INITIAL_DIAGNOSIS_STATE);
   const startedAt = useRef(0);
-  const concept = concepts.find((item) => item.id === activeConceptId);
+
+  const dispatch = (event: Parameters<typeof reduceDiagnosis>[1]) => {
+    setDiagnosis((current) => reduceDiagnosis(current, event));
+  };
+
+  const { phase, ratings, retrievals } = diagnosis;
+  const activeId = phase.status === "answering" || phase.status === "revealed" ? phase.conceptId : null;
+  const concept = concepts.find((item) => item.id === activeId);
   const prompt = snapshot.prompts.find((item) => item.conceptId === concept?.id);
   const activity = snapshot.learningActivities.find((item) => item.conceptId === concept?.id);
-  const allRated = ratedConcepts.every((item) => ratings[item.id]);
+  const allRated = areAllRated(ratings, ratedConcepts.map((item) => item.id));
+  const selectionReason = phase.status === "answering" || phase.status === "revealed" ? phase.reason : "";
+  const answer = phase.status === "answering" || phase.status === "revealed" ? phase.answer : "";
+  const evaluation = phase.status === "revealed" ? phase.evaluation : null;
 
   function beginChecks(event: SyntheticEvent) {
     if (!allRated) return;
-    const selected = selectDiagnosisConcept({ concepts, relationships: snapshot.relationships, ratings, evidence: [], maximumChecks: DIAGNOSIS_RETRIEVAL_LIMIT });
+    const selected = selectDiagnosisConcept({
+      concepts,
+      relationships: snapshot.relationships,
+      ratings,
+      evidence: [],
+      maximumChecks: DIAGNOSIS_RETRIEVAL_LIMIT,
+    });
     if (!selected) {
       trackEvent({ name: "diagnosis_completed", retrieval_count: 0 });
-      return onComplete({ ratings, retrievals: [] });
+      onComplete({ ratings, retrievals: [] });
+      return;
     }
-    setActiveConceptId(selected.concept.id);
-    setSelectionReason(selected.reason);
     startedAt.current = event.timeStamp;
-    setPhase("retrieval");
+    dispatch({ type: "BEGIN_CHECKS", conceptId: selected.concept.id, reason: selected.reason });
   }
 
   function grade(outcome: RetrievalOutcome, event: SyntheticEvent) {
-    if (!concept || !prompt) return;
-    const completed = [...retrievals, {
+    if (!concept || !prompt || phase.status !== "revealed") return;
+    const retrieval = {
       conceptId: concept.id,
       promptId: prompt.id,
-      responseText: answer,
+      responseText: phase.answer,
       outcome,
       responseTimeMs: Math.max(0, Math.round(event.timeStamp - startedAt.current)),
-    }];
+    };
+    const completed = [...retrievals, retrieval];
     const selected = selectDiagnosisConcept({
       concepts,
       relationships: snapshot.relationships,
@@ -70,30 +93,37 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
       maximumChecks: DIAGNOSIS_RETRIEVAL_LIMIT,
     });
     if (!selected) {
+      dispatch({ type: "GRADE_FINISH", retrieval });
       trackEvent({ name: "diagnosis_completed", retrieval_count: completed.length });
       onComplete({ ratings, retrievals: completed });
       return;
     }
-    setRetrievals(completed);
-    setActiveConceptId(selected.concept.id);
-    setSelectionReason(selected.reason);
-    setAnswer("");
-    setRevealed(false);
-    setEvaluation(null);
     startedAt.current = event.timeStamp;
+    dispatch({
+      type: "GRADE_NEXT",
+      retrieval,
+      conceptId: selected.concept.id,
+      reason: selected.reason,
+    });
   }
 
   function compareAnswer() {
-    if (!prompt) return;
-    setEvaluation(evaluateDiagnosisResponse({ answer, modelAnswer: prompt.modelAnswer, assessment: activity?.assessment }));
-    setRevealed(true);
+    if (!prompt || phase.status !== "answering" || !canCompare(phase)) return;
+    dispatch({
+      type: "COMPARE",
+      evaluation: evaluateDiagnosisResponse({
+        answer: phase.answer,
+        modelAnswer: prompt.modelAnswer,
+        assessment: activity?.assessment,
+      }),
+    });
   }
 
   return (
     <AppShell>
     <div className="diagnosis-page is-notion-product">
       <div className="flow-context diagnosis-context"><span>One quick evidence check · then today’s first stop</span><b>Initial estimate</b></div>
-      {phase === "rating" ? (
+      {phase.status === "rating" ? (
         <section className="diagnosis-panel">
           <p className="kicker">Start with your judgment</p>
           <h1>How familiar do these feel?</h1>
@@ -113,7 +143,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
                         type="button"
                         className={selected ? "is-selected" : undefined}
                         aria-pressed={selected}
-                        onClick={() => setRatings({ ...ratings, [item.id]: rating.value })}
+                        onClick={() => dispatch({ type: "RATE", conceptId: item.id, rating: rating.value })}
                       >
                         {rating.label}
                       </button>
@@ -146,40 +176,43 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
           <p className="kicker">Recall check {retrievals.length + 1} of {DIAGNOSIS_RETRIEVAL_LIMIT}</p>
           <h1>{prompt.promptText}</h1>
           <p className="diagnosis-selection-reason">{selectionReason}</p>
-          {!revealed ? (
+          {phase.status === "answering" ? (
             <>
               <label htmlFor="diagnosis-answer">Try without notes.</label>
-              <textarea id="diagnosis-answer" autoFocus value={answer} onChange={(event) => setAnswer(event.target.value)} />
-              <button type="button" className="cta" disabled={!answer.trim()} onClick={compareAnswer}>Compare answer</button>
+              <textarea
+                id="diagnosis-answer"
+                autoFocus
+                value={answer}
+                onChange={(event) => dispatch({ type: "SET_ANSWER", answer: event.target.value })}
+              />
+              <button type="button" className="cta" disabled={!canCompare(phase)} onClick={compareAnswer}>Compare answer</button>
             </>
-          ) : (
+          ) : evaluation ? (
             <div className="diagnosis-feedback">
               <p className="kicker">A useful answer includes</p>
               <p>{prompt.modelAnswer}</p>
-              {evaluation ? (
-                <div className={`diagnosis-evaluation is-${evaluation.outcome}`} role="status">
-                  <p className="kicker">Kelus evidence check</p>
-                  <h2>{evaluation.label}</h2>
-                  <p>{evaluation.explanation}</p>
-                  {evaluation.criteria.length ? (
-                    <ul className="answer-criteria" aria-label="Assessment criteria">
-                      {evaluation.criteria.map((criterion) => (
-                        <li key={criterion.id} className={criterion.met ? "is-met" : "is-missing"}>
-                          <span aria-hidden="true">{criterion.met ? "✓" : "○"}</span>{criterion.label}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                  <small>Structured source comparison · not an instructor grade</small>
-                  <div className="diagnosis-grades" role="group" aria-label="Record diagnosis evidence">
-                    <button type="button" className="is-primary" onClick={(event) => grade(evaluation.outcome, event)}>Use this result</button>
-                    {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={(event) => grade("partial", event)}>I needed more help</button> : null}
-                    {evaluation.outcome !== "failure" ? <button type="button" className="is-ghost" onClick={(event) => grade("failure", event)}>I did not understand it</button> : null}
-                  </div>
+              <div className={`diagnosis-evaluation is-${evaluation.outcome}`} role="status">
+                <p className="kicker">Kelus evidence check</p>
+                <h2>{evaluation.label}</h2>
+                <p>{evaluation.explanation}</p>
+                {evaluation.criteria.length ? (
+                  <ul className="answer-criteria" aria-label="Assessment criteria">
+                    {evaluation.criteria.map((criterion) => (
+                      <li key={criterion.id} className={criterion.met ? "is-met" : "is-missing"}>
+                        <span aria-hidden="true">{criterion.met ? "✓" : "○"}</span>{criterion.label}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                <small>Structured source comparison · not an instructor grade</small>
+                <div className="diagnosis-grades" role="group" aria-label="Record diagnosis evidence">
+                  <button type="button" className="is-primary" onClick={(event) => grade(evaluation.outcome, event)}>Use this result</button>
+                  {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={(event) => grade("partial", event)}>I needed more help</button> : null}
+                  {evaluation.outcome !== "failure" ? <button type="button" className="is-ghost" onClick={(event) => grade("failure", event)}>I did not understand it</button> : null}
                 </div>
-              ) : null}
+              </div>
             </div>
-          )}
+          ) : null}
         </section>
       ) : null}
     </div>
