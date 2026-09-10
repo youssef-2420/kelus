@@ -421,7 +421,7 @@ body.is-notion-system .folio-product-stage {
 }
 
 body.is-notion-system .folio-product-frame .notion-board-chrome,
-body.is-notion-system .folio-product-frame .demo-chrome {
+body.is-notion-system .folio-product-frame .notion-product-chrome {
   display: none;
 }
 
