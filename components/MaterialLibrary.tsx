@@ -37,6 +37,7 @@ import {
   showIngestForm,
   statusMessage as ingestStatusMessage,
   type IngestState,
+  type WorkingStep,
 } from "@/lib/material-ingest-machine";
 import { assessPdfTextQuality, extractPdfPages, ocrPdfPages, pageNeedsOcr } from "@/lib/pdf-extraction";
 
@@ -152,9 +153,18 @@ export function MaterialLibrary() {
   const analysis = reviewAnalysis(phase);
   const readySummary = ingestReadySummary(phase);
   const statusMessage = ingestStatusMessage(phase);
-  const error = ingestErrorMessage(phase) ?? ingest.softNotice;
+  const hardError = ingestErrorMessage(phase);
+  const softNotice = ingest.softNotice;
   const errorKind = ingestErrorKind(phase);
-  const softNoticeOnly = Boolean(ingest.softNotice && phase.status !== "failed");
+  const workingStep = phase.status === "working" ? phase.step : null;
+
+  const WORKING_STEPS: WorkingStep[] = ["saving", "extracting", "ocr", "building"];
+  const workingStepLabel: Record<WorkingStep, string> = {
+    saving: "Saving",
+    extracting: "Reading",
+    ocr: "Scanning",
+    building: "Building",
+  };
 
   useEffect(() => {
     const id = focusTargetId(phase);
@@ -456,6 +466,7 @@ export function MaterialLibrary() {
         </div>
         <label
           className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}`}
+          aria-busy={busy || undefined}
           onDragEnter={() => dispatch({ type: "DRAG_ENTER" })}
           onDragLeave={() => dispatch({ type: "DRAG_LEAVE" })}
           onDragOver={(event) => event.preventDefault()}
@@ -466,10 +477,24 @@ export function MaterialLibrary() {
           <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
           <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · clear text works fastest"}</span>
         </label>
-        {ocrRunning ? (
-          <div className="material-ocr-progress" role="status" aria-live="polite">
-            <p>{statusMessage ?? "Reading scanned pages…"}</p>
-            <button type="button" className="text-btn" onClick={cancelOcr}>Cancel OCR</button>
+        {busy && workingStep ? (
+          <div className="material-work-status" role="status" aria-live="polite">
+            <ol className="material-work-steps" aria-label="PDF processing steps">
+              {WORKING_STEPS.map((step) => {
+                const currentIndex = WORKING_STEPS.indexOf(workingStep);
+                const stepIndex = WORKING_STEPS.indexOf(step);
+                const state = stepIndex < currentIndex ? "done" : stepIndex === currentIndex ? "current" : "todo";
+                return (
+                  <li key={step} className={`is-${state}`} aria-current={state === "current" ? "step" : undefined}>
+                    {workingStepLabel[step]}
+                  </li>
+                );
+              })}
+            </ol>
+            <p>{statusMessage ?? defaultStepMessage(workingStep)}</p>
+            {ocrRunning ? (
+              <button type="button" className="text-btn" onClick={cancelOcr}>Cancel OCR</button>
+            ) : null}
           </div>
         ) : null}
 
@@ -503,15 +528,16 @@ export function MaterialLibrary() {
         ) : null}
       </section>
 
-      {error ? <p className={`material-error${softNoticeOnly ? " is-soft" : ""}`} role="alert">{error}</p> : null}
+      {hardError ? <p className="material-error" role="alert">{hardError}</p> : null}
+      {softNotice && !hardError ? <p className="material-error is-soft" role="status">{softNotice}</p> : null}
       <AnimatePresence initial={false} mode="wait">
         {readySummary ? (
           <motion.section
             key="material-ready"
             className="material-ready"
             aria-labelledby="material-ready-title"
-            initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}
           >
@@ -533,8 +559,8 @@ export function MaterialLibrary() {
             key="concept-confirmation"
             className="concept-confirmation"
             aria-labelledby="concept-confirmation-title"
-            initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}
           >

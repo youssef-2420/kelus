@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState, type SyntheticEvent } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useMemo, useRef, useState, type SyntheticEvent } from "react";
 import { AppShell } from "@/components/AppShell";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import { evaluateDiagnosisResponse } from "@/domain/answer-evaluation";
 import { DIAGNOSIS_RETRIEVAL_LIMIT } from "@/domain/constants";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
@@ -35,6 +37,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
     }>;
   }) => void;
 }) {
+  const reduceMotion = useReducedMotion() === true;
   const concepts = snapshot.concepts;
   const ratedConcepts = useMemo(
     () => [...concepts].sort((a, b) => b.examImportance - a.examImportance || a.name.localeCompare(b.name)).slice(0, 3),
@@ -56,6 +59,12 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
   const selectionReason = phase.status === "answering" || phase.status === "revealed" ? phase.reason : "";
   const answer = phase.status === "answering" || phase.status === "revealed" ? phase.answer : "";
   const evaluation = phase.status === "revealed" ? phase.evaluation : null;
+
+  useEffect(() => {
+    if (phase.status !== "revealed") return;
+    const frame = requestAnimationFrame(() => document.getElementById("diagnosis-evaluation-title")?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [phase]);
 
   function beginChecks(event: SyntheticEvent) {
     if (!allRated) return;
@@ -119,12 +128,20 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
     });
   }
 
+  const phaseMotion = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase },
+  };
+
   return (
     <AppShell>
     <div className="diagnosis-page is-notion-product">
       <div className="flow-context diagnosis-context"><span>One quick evidence check · then today’s first stop</span><b>Initial estimate</b></div>
+      <AnimatePresence mode="wait" initial={false}>
       {phase.status === "rating" ? (
-        <section className="diagnosis-panel">
+        <motion.section key="rating" className="diagnosis-panel" {...phaseMotion}>
           <p className="kicker">Start with your judgment</p>
           <h1>How familiar do these feel?</h1>
           <p className="diagnosis-intro">
@@ -170,9 +187,9 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
               Skip recall — open Today with a rough estimate
             </button>
           </div>
-        </section>
+        </motion.section>
       ) : concept && prompt ? (
-        <section className="diagnosis-check">
+        <motion.section key={`check-${concept.id}-${phase.status}`} className="diagnosis-check" {...phaseMotion}>
           <p className="kicker">Recall check {retrievals.length + 1} of {DIAGNOSIS_RETRIEVAL_LIMIT}</p>
           <h1>{prompt.promptText}</h1>
           <p className="diagnosis-selection-reason">{selectionReason}</p>
@@ -193,7 +210,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
               <p>{prompt.modelAnswer}</p>
               <div className={`diagnosis-evaluation is-${evaluation.outcome}`} role="status">
                 <p className="kicker">Kelus evidence check</p>
-                <h2>{evaluation.label}</h2>
+                <h2 id="diagnosis-evaluation-title" tabIndex={-1}>{evaluation.label}</h2>
                 <p>{evaluation.explanation}</p>
                 {evaluation.criteria.length ? (
                   <ul className="answer-criteria" aria-label="Assessment criteria">
@@ -213,8 +230,9 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
               </div>
             </div>
           ) : null}
-        </section>
+        </motion.section>
       ) : null}
+      </AnimatePresence>
     </div>
     </AppShell>
   );
