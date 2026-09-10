@@ -2423,6 +2423,7 @@ button, input, textarea { font: inherit; }
 .material-link-form input:focus-visible { outline-color: var(--color-product-green); border-color: var(--color-product-border); }
 .material-link-form .cta { min-height: 48px; white-space: nowrap; }
 .material-error { min-height: 1.5em; margin: var(--space-product-xs) 0 0; color: var(--weak); font-size: 13px; }
+.material-error.is-soft { color: var(--color-product-ink); opacity: 0.78; }
 .material-link-hint {
   margin: var(--space-product-xs) 0 0;
   color: var(--color-product-secondary);

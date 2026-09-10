@@ -9,7 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useLearner } from "@/components/LearnerProvider";
 import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { trackEvent } from "@/lib/analytics";
-import type { CourseMaterial, ExtractedMaterialPage, MaterialRole, ProposedConcept } from "@/domain/types";
+import type { CourseMaterial, MaterialRole, ProposedConcept } from "@/domain/types";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 import { buildConfirmedMaterialModel, proposeConceptsFromMetadata, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
@@ -22,6 +22,22 @@ import {
   updateMaterialProcessingStatus,
 } from "@/lib/material-store";
 import { readMaterialPdf, removeRemoteMaterial, uploadMaterialPdf } from "@/lib/material-sync";
+import {
+  INITIAL_INGEST_STATE,
+  defaultStepMessage,
+  errorKind as ingestErrorKind,
+  errorMessage as ingestErrorMessage,
+  focusTargetId,
+  isBusy,
+  isDragging,
+  isOcrRunning,
+  readySummary as ingestReadySummary,
+  reduceIngest,
+  reviewAnalysis,
+  showIngestForm,
+  statusMessage as ingestStatusMessage,
+  type IngestState,
+} from "@/lib/material-ingest-machine";
 import { assessPdfTextQuality, extractPdfPages, ocrPdfPages, pageNeedsOcr } from "@/lib/pdf-extraction";
 
 function formatBytes(bytes: number | null) {
@@ -116,28 +132,36 @@ export function MaterialLibrary() {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [role, setRole] = useState<MaterialRole>("notes");
-  const [error, setError] = useState<string | null>(null);
-  const [errorKind, setErrorKind] = useState<"ocr" | "generic" | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [ocrRunning, setOcrRunning] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const [analysis, setAnalysis] = useState<{ material: CourseMaterial; proposals: ProposedConcept[]; pages: ExtractedMaterialPage[] } | null>(null);
+  const [ingest, setIngest] = useState<IngestState>(INITIAL_INGEST_STATE);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [draftNames, setDraftNames] = useState<Record<string, string>>({});
-  const [readySummary, setReadySummary] = useState<{ conceptCount: number; firstName: string | null } | null>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [syncStates, setSyncStates] = useState<Record<string, "syncing" | "synced" | "retrying">>({});
   const fileRef = useRef<HTMLInputElement>(null);
   const ocrAbortRef = useRef<AbortController | null>(null);
   const course = state.snapshot.courses[0];
 
+  const dispatch = (event: Parameters<typeof reduceIngest>[1]) => {
+    setIngest((current) => reduceIngest(current, event));
+  };
+
+  const phase = ingest.phase;
+  const busy = isBusy(phase);
+  const ocrRunning = isOcrRunning(phase);
+  const dragging = isDragging(phase);
+  const analysis = reviewAnalysis(phase);
+  const readySummary = ingestReadySummary(phase);
+  const statusMessage = ingestStatusMessage(phase);
+  const error = ingestErrorMessage(phase) ?? ingest.softNotice;
+  const errorKind = ingestErrorKind(phase);
+  const softNoticeOnly = Boolean(ingest.softNotice && phase.status !== "failed");
+
   useEffect(() => {
-    const id = analysis ? "concept-confirmation-title" : readySummary ? "material-ready-title" : null;
+    const id = focusTargetId(phase);
     if (!id) return;
     const frame = requestAnimationFrame(() => document.getElementById(id)?.focus());
     return () => cancelAnimationFrame(frame);
-  }, [analysis, readySummary]);
+  }, [phase]);
 
   if (!state.onboardingCompleted || !course) {
     return (
@@ -162,9 +186,8 @@ export function MaterialLibrary() {
   }
 
   async function analyzePdf(material: CourseMaterial, file?: File) {
-    setError(null);
-    setErrorKind(null);
-    setBusy(true);
+    dispatch({ type: "CLEAR_FEEDBACK" });
+    dispatch({ type: "WORK_STARTED", step: "extracting", message: defaultStepMessage("extracting") });
     updateMaterialProcessingStatus(material.id, "processing");
     ocrAbortRef.current?.abort();
     const controller = new AbortController();
@@ -174,7 +197,7 @@ export function MaterialLibrary() {
       const stored = file ?? await readMaterialPdf(material.id, auth.user?.id);
       if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
       const pdfFile = stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" });
-      setStatusMessage("Reading PDF text…");
+      dispatch({ type: "WORK_STEP", step: "extracting", message: defaultStepMessage("extracting") });
       let pages = await extractPdfPages(pdfFile, { maxContentPages: 16 });
       let quality = assessPdfTextQuality(pages);
       let usedOcr = false;
@@ -209,17 +232,15 @@ export function MaterialLibrary() {
 
       async function runOcr(reason: string) {
         attemptedOcr = true;
-        setOcrRunning(true);
-        setStatusMessage(reason);
+        dispatch({ type: "WORK_STEP", step: "ocr", message: reason });
         const ocr = await ocrPdfPages(pdfFile, pages, {
           maxPages: 8,
           timeBudgetMs: 45_000,
           scale: 1.5,
           stopAfterRecoveredPages: 4,
           signal: controller.signal,
-          onProgress: (progress) => setStatusMessage(progress.message),
+          onProgress: (progress) => dispatch({ type: "WORK_PROGRESS", message: progress.message }),
         });
-        setOcrRunning(false);
         if (ocr.ocrPages > 0) {
           pages = ocr.pages;
           quality = assessPdfTextQuality(pages);
@@ -240,7 +261,11 @@ export function MaterialLibrary() {
           (ocrError as Error & { kind?: string }).kind = "ocr";
           throw ocrError;
         }
-        setStatusMessage(usedOcr ? "Building concepts from scanned text…" : "Building concepts…");
+        dispatch({
+          type: "WORK_STEP",
+          step: "building",
+          message: usedOcr ? "Building concepts from scanned text…" : defaultStepMessage("building"),
+        });
         proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
         if (proposals.length < 3) {
           mergeProposals(proposeConceptsFromPages({
@@ -258,7 +283,7 @@ export function MaterialLibrary() {
           }));
         }
       } else {
-        setStatusMessage("Building concepts…");
+        dispatch({ type: "WORK_STEP", step: "building", message: defaultStepMessage("building") });
       }
 
       if (!proposals.length) {
@@ -272,9 +297,9 @@ export function MaterialLibrary() {
         throw fail;
       }
       updateMaterialProcessingStatus(material.id, "ready");
-      setAnalysis({ material: { ...material, processingStatus: "ready" }, proposals, pages });
+      const nextAnalysis = { material: { ...material, processingStatus: "ready" as const }, proposals, pages };
+      dispatch({ type: "REVIEW_READY", analysis: nextAnalysis });
       trackEvent({ name: "concept_review_started", concept_count: proposals.length });
-      setReadySummary(null);
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
       if (courseMaterials.filter((item) => item.storage === "local").length >= 3) {
@@ -289,17 +314,20 @@ export function MaterialLibrary() {
     } catch (caught) {
       updateMaterialProcessingStatus(material.id, "failed");
       if (caught instanceof Error && caught.name === "AbortError") {
-        setError("OCR cancelled. You can retry this file, export a text PDF, or try the sample course.");
-        setErrorKind("ocr");
+        dispatch({
+          type: "FAIL",
+          kind: "ocr",
+          message: "OCR cancelled. You can retry this file, export a text PDF, or try the sample course.",
+        });
       } else {
         const kind = caught instanceof Error && (caught as Error & { kind?: string }).kind === "ocr" ? "ocr" : "generic";
-        setErrorKind(kind);
-        setError(caught instanceof Error ? caught.message : "Kelus could not read this PDF.");
+        dispatch({
+          type: "FAIL",
+          kind,
+          message: caught instanceof Error ? caught.message : "Kelus could not read this PDF.",
+        });
       }
     } finally {
-      setOcrRunning(false);
-      setBusy(false);
-      setStatusMessage(null);
       if (ocrAbortRef.current === controller) ocrAbortRef.current = null;
     }
   }
@@ -307,14 +335,14 @@ export function MaterialLibrary() {
   async function savePdf(file: File | undefined) {
     if (!file) return;
     trackEvent({ name: "material_upload_started", role });
-    setError(null);
-    setErrorKind(null);
     if (file.size > 20 * 1024 * 1024) {
-      setErrorKind("generic");
-      setError("This PDF is larger than 20 MB. Export a smaller file, or split it, then try again.");
+      dispatch({
+        type: "SIZE_REJECTED",
+        message: "This PDF is larger than 20 MB. Export a smaller file, or split it, then try again.",
+      });
       return;
     }
-    setBusy(true);
+    dispatch({ type: "WORK_STARTED", step: "saving", message: defaultStepMessage("saving") });
     try {
       const material = await addPdfMaterial({ courseId: course.id, file, role });
       trackEvent({ name: "material_upload_completed", role });
@@ -324,38 +352,43 @@ export function MaterialLibrary() {
           setSyncStates((current) => ({ ...current, [material.id]: "synced" }));
         }).catch(() => {
           setSyncStates((current) => ({ ...current, [material.id]: "retrying" }));
-          setErrorKind("generic");
-          setError("The PDF is ready here. Its encrypted account copy will retry when the connection returns.");
+          dispatch({
+            type: "SOFT_NOTICE",
+            message: "The PDF is ready here. Its encrypted account copy will retry when the connection returns.",
+          });
         });
       }
       await analyzePdf(material, file);
     } catch (caught) {
       trackEvent({ name: "material_upload_failed", role });
-      setErrorKind("generic");
-      setError(caught instanceof Error ? caught.message : "The PDF could not be saved.");
+      dispatch({
+        type: "FAIL",
+        kind: "generic",
+        message: caught instanceof Error ? caught.message : "The PDF could not be saved.",
+      });
     } finally {
-      setBusy(false);
       if (fileRef.current) fileRef.current.value = "";
     }
   }
 
   function drop(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();
-    setDragging(false);
+    dispatch({ type: "DROP_RESET" });
     void savePdf(event.dataTransfer.files[0]);
   }
 
   function addLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
-    setErrorKind(null);
+    dispatch({ type: "CLEAR_FEEDBACK" });
     try {
       addLinkMaterial({ courseId: course.id, title, value: url, role });
       setTitle("");
       setUrl("");
     } catch (caught) {
-      setErrorKind("generic");
-      setError(caught instanceof Error ? caught.message : "The link could not be saved. Check the URL and try again.");
+      dispatch({
+        type: "LINK_FAILED",
+        message: caught instanceof Error ? caught.message : "The link could not be saved. Check the URL and try again.",
+      });
     }
   }
 
@@ -387,14 +420,16 @@ export function MaterialLibrary() {
       const first = [...preview.concepts].sort((left, right) => right.examImportance - left.examImportance)[0];
       confirmConcepts(selected, analysis.pages);
       trackEvent({ name: "material_confirmed", concept_count: selected.length });
-      setReadySummary({
+      dispatch({
+        type: "CONFIRM",
         conceptCount: selected.length,
         firstName: first?.name ?? selected[0]?.name ?? null,
       });
-      setAnalysis(null);
     } catch (caught) {
-      setErrorKind("generic");
-      setError(caught instanceof Error ? caught.message : "Kelus could not build the map. Check concept names and try again.");
+      dispatch({
+        type: "CONFIRM_FAILED",
+        message: caught instanceof Error ? caught.message : "Kelus could not build the map. Check concept names and try again.",
+      });
     }
   }
 
@@ -407,11 +442,11 @@ export function MaterialLibrary() {
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
-      <section className="material-ingest" aria-labelledby="add-material-title" hidden={Boolean(analysis || readySummary)}>
+      <section className="material-ingest" aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
         <div className="material-ingest-title"><p className="kicker">Add material</p><h2 id="add-material-title">Bring the course into one place.</h2></div>
         <div className="material-role-field">
           <label htmlFor="material-role">This source is</label>
-          <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)}>
+          <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
             {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
           <p>
@@ -420,9 +455,9 @@ export function MaterialLibrary() {
           </p>
         </div>
         <label
-          className={`material-drop${dragging ? " is-dragging" : ""}`}
-          onDragEnter={() => setDragging(true)}
-          onDragLeave={() => setDragging(false)}
+          className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}`}
+          onDragEnter={() => dispatch({ type: "DRAG_ENTER" })}
+          onDragLeave={() => dispatch({ type: "DRAG_LEAVE" })}
           onDragOver={(event) => event.preventDefault()}
           onDrop={drop}
         >
@@ -440,15 +475,15 @@ export function MaterialLibrary() {
 
         <details className="material-bookmarks"><summary>Save a video or web link instead</summary>
         <form className="material-link-form" onSubmit={addLink}>
-          <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" /></div>
-          <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" /></div>
-          <button className="cta" type="submit" disabled={!url.trim()}>Save bookmark</button>
+          <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" disabled={busy} /></div>
+          <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" disabled={busy} /></div>
+          <button className="cta" type="submit" disabled={!url.trim() || busy}>Save bookmark</button>
         </form>
         <p className="material-link-hint">
           Bookmarks stay on your shelf for quick open. They do not become concepts — upload a PDF for that.
         </p>
         </details>
-        {error && errorKind === "ocr" ? (
+        {errorKind === "ocr" ? (
           <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
             <p>
               OCR works best on clear English scans. Export a text PDF from your notes app, try a sharper scan, or
@@ -460,7 +495,7 @@ export function MaterialLibrary() {
             </div>
           </div>
         ) : null}
-        {error && errorKind === "generic" ? (
+        {errorKind === "generic" ? (
           <div className="material-error-actions">
             <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
             <a className="text-btn" href="#source-shelf-title">Choose another file</a>
@@ -468,10 +503,11 @@ export function MaterialLibrary() {
         ) : null}
       </section>
 
-      {error ? <p className="material-error" role="alert">{error}</p> : null}
-      <AnimatePresence initial={false}>
+      {error ? <p className={`material-error${softNoticeOnly ? " is-soft" : ""}`} role="alert">{error}</p> : null}
+      <AnimatePresence initial={false} mode="wait">
         {readySummary ? (
           <motion.section
+            key="material-ready"
             className="material-ready"
             aria-labelledby="material-ready-title"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
@@ -488,12 +524,13 @@ export function MaterialLibrary() {
             <div className="material-ready-actions">
               <Link className="cta" href="/today">Continue: short check, then study <span aria-hidden="true">→</span></Link>
               <Link className="text-btn" href="/map">Review the map</Link>
-              <button type="button" className="text-btn" onClick={() => setReadySummary(null)}>Add another source</button>
+              <button type="button" className="text-btn" onClick={() => dispatch({ type: "ADD_ANOTHER" })}>Add another source</button>
             </div>
           </motion.section>
         ) : null}
         {analysis ? (
           <motion.section
+            key="concept-confirmation"
             className="concept-confirmation"
             aria-labelledby="concept-confirmation-title"
             initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }}
@@ -537,7 +574,7 @@ export function MaterialLibrary() {
               ))}
             </ol>
             <div className="concept-confirmation-actions">
-              <button type="button" className="text-btn" onClick={() => setAnalysis(null)}>Review later</button>
+              <button type="button" className="text-btn" onClick={() => dispatch({ type: "REVIEW_LATER" })}>Review later</button>
               <button type="button" className="cta" disabled={!selectedIds.size} onClick={buildMap}>Build my Knowledge Map <span aria-hidden="true">→</span></button>
             </div>
           </motion.section>
