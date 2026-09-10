@@ -20,10 +20,10 @@ export function NotionRevisionBoard() {
     <motion.div
       className="notion-board is-honest-flow is-clean"
       aria-hidden="true"
-      initial={reduce ? false : { opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={reduce ? false : { opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{
-        duration: reduce ? 0 : kelusDuration.slow,
+        duration: reduce ? 0 : kelusDuration.moderate,
         delay: reduce ? 0 : kelusDuration.instant,
         ease: kelusEase,
       }}

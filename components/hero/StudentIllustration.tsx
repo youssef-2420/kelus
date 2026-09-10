@@ -21,9 +21,9 @@ export function StudentIllustration({ className }: Props) {
           height={538}
           decoding="async"
           fetchPriority="high"
-          initial={reduce ? false : { opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : kelusDuration.slow, delay: reduce ? 0 : kelusDuration.fast, ease: kelusEase }}
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : kelusDuration.moderate, ease: kelusEase }}
         />
       </picture>
     </figure>

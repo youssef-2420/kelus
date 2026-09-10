@@ -19,6 +19,7 @@ const MARKS = [
 
 /**
  * Notion paper hero: character marks → pill headline → editorial lede → CTAs → product mock.
+ * Motion: opacity-first, no decorative scale, respects prefers-reduced-motion.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
@@ -32,52 +33,36 @@ export function KelusHero() {
       </div>
 
       <div className="folio-hero-copy home-copy">
-        <motion.ul
-          className="hero-marks"
-          aria-hidden="true"
-          initial={reduce ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, ease }}
-        >
-          {MARKS.map((mark, i) => (
-            <motion.li
-              key={mark.border}
-              style={{ borderColor: mark.border, background: mark.fill }}
-              initial={reduce ? false : { opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: reduce ? 0 : dur.moderate,
-                ease,
-                delay: reduce ? 0 : dur.instant * i,
-              }}
-            >
+        <ul className="hero-marks" aria-hidden="true">
+          {MARKS.map((mark) => (
+            <li key={mark.border} style={{ borderColor: mark.border, background: mark.fill }}>
               <span style={{ background: mark.face }} />
-            </motion.li>
+            </li>
           ))}
-        </motion.ul>
+        </ul>
 
         <motion.h1
           id="home-hero-title"
-          initial={reduce ? false : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reduce ? 0 : dur.slow, delay: reduce ? 0 : dur.instant, ease }}
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : dur.moderate, ease }}
         >
           Revise your lessons.{" "}
           <span className="hero-pill">Prepare</span> for your exams.
         </motion.h1>
         <motion.p
           className="home-lede"
-          initial={reduce ? false : { opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.micro, ease }}
         >
-          Bring your course notes. Practise recalling and applying what you’ve studied, check your answers,
-          and revisit the topics that need more work before your exam.
+          Bring your course notes. Practise recalling what you studied, check your answers, and revisit
+          weak topics before the exam.
         </motion.p>
         <motion.div
           className="home-actions"
-          initial={reduce ? false : { opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
         >
           <motion.div whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>

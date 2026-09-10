@@ -60,9 +60,9 @@ export function HeroProductDemo() {
             <motion.div
               key={example.id}
               className="hero-demo-body"
-              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? undefined : { opacity: 0, y: -5 }}
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={reduceMotion ? undefined : { opacity: 0 }}
               transition={{ duration: reduceMotion ? 0.01 : dur.moderate, ease }}
             >
               <section className="hero-recall" aria-label="Try a revision question">
@@ -143,8 +143,8 @@ export function HeroProductDemo() {
                       key={item.name}
                       layout={reduceMotion ? false : "position"}
                       className={!showBefore && index === 0 ? "is-recommended" : undefined}
-                      initial={reduceMotion ? false : { opacity: 0, x: 6 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={reduceMotion ? false : { opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       transition={{
                         duration: reduceMotion ? 0 : dur.moderate,
                         ease,

@@ -636,3 +636,21 @@ body.is-notion-system .how-page.is-notion-product .cta {
     height: 34px;
   }
 }
+
+/* Inclusive motion: no travel/scale when reduced motion is on */
+@media (prefers-reduced-motion: reduce) {
+  body.is-notion-system *,
+  body.is-notion-system *::before,
+  body.is-notion-system *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body.is-notion-system .site-header-action:active,
+  body.is-notion-system .cta:active,
+  body.is-notion-system a.cta:active {
+    transform: none;
+  }
+}
