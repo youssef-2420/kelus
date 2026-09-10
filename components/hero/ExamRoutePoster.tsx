@@ -3,96 +3,58 @@
 import { motion, useReducedMotion } from "motion/react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 
-/**
- * Full-bleed route poster — the visual anchor for the first viewport.
- * Not a UI mock: ink path through topics toward the exam.
- */
+/** The hero's visual anchor: a tactile revision desk, not another product UI. */
 export function ExamRoutePoster() {
   const reduce = useReducedMotion() === true;
 
   return (
     <motion.figure
-      className="exam-route-poster folio-hero-notion"
+      className="exam-route-poster folio-hero-notion revision-still-life"
       initial={false}
       animate={{ opacity: 1 }}
       transition={{ duration: reduce ? 0 : kelusDuration.moderate, ease: kelusEase }}
-      aria-label="A revision route toward an exam: Osmosis, Respiration, then Homeostasis"
+      aria-label="A desk with annotated revision notes, an exam paper, and a marked next topic"
     >
-      <svg className="exam-route-art" viewBox="0 0 640 720" role="presentation">
-        <defs>
-          <linearGradient id="posterWash" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#0a1650" />
-            <stop offset="55%" stopColor="#02093a" />
-            <stop offset="100%" stopColor="#04102f" />
-          </linearGradient>
-          <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="8" result="b" />
-            <feMerge>
-              <feMergeNode in="b" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
-        </defs>
+      <svg className="exam-route-art revision-still-life-art" viewBox="0 0 760 620" role="presentation">
+        <path d="M0 475h760" stroke="#c9c3bb" strokeWidth="2" />
 
-        <rect width="640" height="720" fill="url(#posterWash)" />
+        <path d="M618 48v195" stroke="#173f3b" strokeWidth="8" strokeLinecap="round" />
+        <path d="M616 235c-54 2-94 21-112 56h224c-18-35-58-54-112-56Z" fill="#ffb110" stroke="#173f3b" strokeWidth="7" strokeLinejoin="round" />
+        <path d="M557 292h118" stroke="#173f3b" strokeWidth="7" strokeLinecap="round" />
+        <path d="M558 292 500 475M674 292l58 183" stroke="#173f3b" strokeWidth="7" strokeLinecap="round" />
+        <path d="M484 475h266" stroke="#173f3b" strokeWidth="8" strokeLinecap="round" />
 
-        {/* Paper scrap */}
-        <g transform="translate(72 86) rotate(-4)">
-          <rect width="210" height="150" fill="#f6f1e6" stroke="#e8dcc6" strokeWidth="2" />
-          <path d="M18 36h160M18 58h140M18 80h150M18 102h90" stroke="#c4b8a4" strokeWidth="3" strokeLinecap="round" />
-          <circle cx="168" cy="118" r="10" fill="#ffb110" />
-          <text x="22" y="28" fill="#6b6560" fontSize="14" fontFamily="Georgia, serif">Week 3 notes</text>
+        <g transform="translate(132 164) rotate(-5)">
+          <path d="M0 28 222 0l38 264L38 294Z" fill="#fffdf8" stroke="#173f3b" strokeWidth="5" />
+          <path d="m222 0 196 30-38 264-160-30Z" fill="#fffdf8" stroke="#173f3b" strokeWidth="5" />
+          <path d="M222 6 260 264" stroke="#c9c3bb" strokeWidth="3" />
+          <path d="M39 75 190 56M46 106l132-17M52 137l126-17M59 168l108-15" stroke="#a8aaa4" strokeWidth="5" strokeLinecap="round" />
+          <path d="M283 83 375 98M278 115l102 16M273 147l84 14" stroke="#a8aaa4" strokeWidth="5" strokeLinecap="round" />
+          <path d="m70 222 46 21 74-96" fill="none" stroke="#f64932" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="m302 198 72-42" stroke="#173f3b" strokeWidth="8" strokeLinecap="round" />
+          <circle cx="350" cy="213" r="17" fill="#ffb110" />
         </g>
 
-        {/* Route path */}
-        <path
-          d="M120 280C210 250 280 320 340 300C420 272 460 360 520 340C560 328 580 380 600 420"
-          fill="none"
-          stroke="#ffb110"
-          strokeWidth="4"
-          strokeLinecap="round"
-          filter="url(#softGlow)"
-        />
-        <path
-          d="M120 280C210 250 280 320 340 300C420 272 460 360 520 340C560 328 580 380 600 420"
-          fill="none"
-          stroke="#fff4d0"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          opacity="0.7"
-        />
-
-        {/* Stops */}
-        <g>
-          <circle cx="120" cy="280" r="14" fill="#f6f1e6" stroke="#ffb110" strokeWidth="3" />
-          <text x="148" y="276" fill="#f6f1e6" fontSize="22" fontFamily="Georgia, serif">Osmosis</text>
-          <text x="148" y="300" fill="#9bb0d8" fontSize="13" fontFamily="ui-sans-serif, system-ui, sans-serif">18 min · again</text>
-        </g>
-        <g>
-          <circle cx="340" cy="300" r="12" fill="#02093a" stroke="#62aef0" strokeWidth="3" />
-          <text x="362" y="296" fill="#e6f3fe" fontSize="20" fontFamily="Georgia, serif">Respiration</text>
-          <text x="362" y="318" fill="#7f95c0" fontSize="13" fontFamily="ui-sans-serif, system-ui, sans-serif">15 min</text>
-        </g>
-        <g>
-          <circle cx="520" cy="340" r="12" fill="#02093a" stroke="#62aef0" strokeWidth="3" />
-          <text x="430" y="380" fill="#e6f3fe" fontSize="20" fontFamily="Georgia, serif">Homeostasis</text>
-          <text x="430" y="402" fill="#7f95c0" fontSize="13" fontFamily="ui-sans-serif, system-ui, sans-serif">12 min</text>
+        <g transform="translate(390 115) rotate(7)">
+          <rect width="164" height="224" rx="3" fill="#fffdf8" stroke="#173f3b" strokeWidth="5" />
+          <path d="M25 36h92M25 55h112M25 74h72" stroke="#7c827d" strokeWidth="5" strokeLinecap="round" />
+          <path d="M25 111h107M25 130h119M25 149h105" stroke="#b2b4ae" strokeWidth="4" strokeLinecap="round" />
+          <path d="m118 181 13 14 28-43" fill="none" stroke="#f64932" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
         </g>
 
-        {/* Exam mark */}
-        <g transform="translate(420 470)">
-          <rect width="170" height="78" rx="4" fill="#f64932" />
-          <text x="18" y="34" fill="#fff4f0" fontSize="14" fontFamily="ui-sans-serif, system-ui, sans-serif" letterSpacing="0.08em">EXAM</text>
-          <text x="18" y="60" fill="#ffffff" fontSize="26" fontFamily="Georgia, serif">12 days</text>
+        <path d="m91 485 285-190" stroke="#173f3b" strokeWidth="12" strokeLinecap="round" />
+        <path d="m79 494 22-9-12-17Z" fill="#ffb110" stroke="#173f3b" strokeWidth="4" strokeLinejoin="round" />
+        <path d="M384 328c21-30 51-38 78-18 20 15 29 40 16 57-12 15-37 10-50-8l-18-24" fill="#f6d5b8" stroke="#173f3b" strokeWidth="5" strokeLinecap="round" />
+
+        <g transform="translate(55 388) rotate(4)">
+          <rect width="180" height="86" fill="#ffb110" stroke="#173f3b" strokeWidth="4" />
+          <path d="M19 31h104M19 52h78" stroke="#173f3b" strokeWidth="6" strokeLinecap="round" />
+          <circle cx="148" cy="43" r="15" fill="#f64932" />
+          <path d="m141 43 6 6 11-14" fill="none" stroke="#fffdf8" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
         </g>
 
-        {/* Sticky */}
-        <g transform="translate(70 520) rotate(3)">
-          <rect width="150" height="110" fill="#fff4d0" />
-          <text x="16" y="36" fill="#5c4a18" fontSize="16" fontFamily="Georgia, serif">Recall first.</text>
-          <text x="16" y="62" fill="#5c4a18" fontSize="16" fontFamily="Georgia, serif">Then check.</text>
-          <text x="16" y="88" fill="#5c4a18" fontSize="16" fontFamily="Georgia, serif">Then reroute.</text>
-        </g>
+        <path d="M76 104c22-24 55-28 77-11M79 112l-3-18M153 99l13-6" fill="none" stroke="#f64932" strokeWidth="5" strokeLinecap="round" />
+        <path d="M31 548c126 13 241 14 353 2" fill="none" stroke="#c9c3bb" strokeWidth="3" strokeLinecap="round" />
       </svg>
     </motion.figure>
   );

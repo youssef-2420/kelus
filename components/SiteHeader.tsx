@@ -19,7 +19,6 @@ export function SiteHeader() {
   const inSession = pathname.startsWith("/session");
   const inProduct = ["/today", "/materials", "/map", "/concept"].some((path) => pathname.startsWith(path));
   const accountMenu = useRef<HTMLDetailsElement>(null);
-  const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const close = (event: PointerEvent) => {
       if (accountMenu.current && !accountMenu.current.contains(event.target as Node)) accountMenu.current.open = false;
@@ -27,38 +26,11 @@ export function SiteHeader() {
     document.addEventListener("pointerdown", close);
     return () => document.removeEventListener("pointerdown", close);
   }, []);
-  useEffect(() => {
-    const header = headerRef.current;
-    const hero = document.querySelector(".kelus-hero.is-poster");
-    if (!header || !(hero instanceof HTMLElement)) {
-      header?.classList.remove("is-on-poster");
-      return;
-    }
-
-    const sync = () => {
-      const heroBottom = hero.getBoundingClientRect().bottom;
-      const headerHeight = header.offsetHeight;
-      header.classList.toggle("is-on-poster", heroBottom > headerHeight + 8);
-    };
-
-    sync();
-    window.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync);
-    return () => {
-      window.removeEventListener("scroll", sync);
-      window.removeEventListener("resize", sync);
-      header.classList.remove("is-on-poster");
-    };
-  }, [pathname]);
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
   const visibleLinks = links;
-  const onPosterHome = pathname === "/";
 
   return (
-    <header
-      ref={headerRef}
-      className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}${onPosterHome ? " is-on-poster" : ""}`}
-    >
+    <header className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}`}>
       <div className="site-header-inner">
         <Link href="/" className="mark site-wordmark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           Kelus

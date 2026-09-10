@@ -10,7 +10,8 @@ test("notebook preview is keyboard-operable and setup fits mobile", async ({ pag
   await expect(board.locator("#board-answer")).toBeVisible();
   await expect(board.getByRole("button", { name: "Hide answer" })).toHaveAttribute("aria-expanded", "true");
   await page.keyboard.press("Enter");
-  await expect(board.locator("#board-answer")).toHaveCount(0);
+  await expect(board.locator("#board-answer")).toBeHidden();
+  await expect(board.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
   await page.goto("/today");
   await expect(page.getByLabel("Course")).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
