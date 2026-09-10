@@ -99,3 +99,22 @@ body.is-notion-system .poster-sample-intro p { max-width: 42ch; margin: 0; color
 @media (prefers-reduced-motion: reduce) {
   body.is-notion-system .is-poster .exam-route-poster { transition: none; }
 }
+
+/* The homepage close is a pale paper-blue surface, so it must not inherit
+   the legacy midnight poster's white text treatment. */
+body.is-notion-system .home .folio-close.home-close,
+body.is-notion-system .home .folio-close.home-close .home-close-inner {
+  color: #173f3b;
+}
+
+body.is-notion-system .home .folio-close.home-close .home-close-copy h2 {
+  color: #173f3b;
+}
+
+body.is-notion-system .home .folio-close.home-close .home-close-copy p {
+  color: #536b67;
+}
+
+body.is-notion-system .home .folio-close.home-close .home-close-actions .text-btn {
+  color: #173f3b;
+}
