@@ -196,7 +196,7 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.doesNotMatch(pricing, /Cross-device course and learning-state sync/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
-  assert.match(home, /\/pricing/);
+  assert.match(home, /SiteFooter/);
   assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
   assert.match(soft, /exam date/i);

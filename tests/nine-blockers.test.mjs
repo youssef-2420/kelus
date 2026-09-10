@@ -7,13 +7,14 @@ const root = new URL("../", import.meta.url);
 const source = (path) => readFile(new URL(path, root), "utf8");
 
 test("nine blockers: sample rail, session abandon, questions honesty, trust gating", async () => {
-  const [rail, materials, questions, founding, soft, home, pricing, sessionPage, today, map] = await Promise.all([
+  const [rail, materials, questions, founding, soft, home, footer, pricing, sessionPage, today, map] = await Promise.all([
     source("components/CourseWorkspaceRail.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("lib/questions.ts"),
     source("components/FoundingCta.tsx"),
     source("components/SoftUpgradePrompt.tsx"),
     source("components/home/HomeAfterHero.tsx"),
+    source("components/SiteFooter.tsx"),
     source("app/pricing/page.tsx"),
     source("app/session/page.tsx"),
     source("app/today/page.tsx"),
@@ -25,7 +26,10 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
   assert.match(questions, /body\.success === false/);
   assert.match(founding, /authConfigured/);
   assert.match(soft, /authConfigured/);
-  assert.match(home, /See pricing/);
+  assert.match(home, /Try sample \(~1 min\)/);
+  assert.match(home, /Set my exam/);
+  assert.doesNotMatch(home, /folio-chapter|Honest methodology/);
+  assert.match(footer, /\/pricing/);
   assert.doesNotMatch(home, /Sign in to sync across devices, or get Exam Pass/);
   assert.match(pricing, /authConfigured/);
   assert.match(sessionPage, /abandon\(session\.id\)/);
