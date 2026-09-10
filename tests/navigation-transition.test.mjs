@@ -8,21 +8,46 @@ async function source(path) {
   return readFile(new URL(path, root), "utf8");
 }
 
-test("root layout applies the shared route transition without changing page routes", async () => {
+test("root layout keeps the shell outside page ViewTransitions", async () => {
   const layout = await source("app/layout.tsx");
   assert.match(layout, /<SiteHeader \/>/);
   assert.ok(layout.indexOf("<SiteHeader />") < layout.indexOf("<RouteTransition>"));
   assert.match(layout, /<RouteTransition>\{children\}<\/RouteTransition>/);
+  assert.match(layout, /view-transitions\.css/);
+  assert.doesNotMatch(layout, /<ViewTransition|DirectionalPage|LateralPage/);
 });
 
-test("route transition is keyed by pathname and respects reduced motion", async () => {
+test("route transition is a layout shell; pages own ViewTransition motion", async () => {
   const transition = await source("components/RouteTransition.tsx");
-  assert.match(transition, /key=\{pathname\}/);
-  assert.match(transition, /useReducedMotion/);
-  assert.match(transition, /initial=\{false\}/);
-  assert.doesNotMatch(transition, /initial=\{[^\n]*opacity:\s*0/);
-  assert.doesNotMatch(transition, /AnimatePresence/);
-  assert.doesNotMatch(transition, /height:|width:|top:|left:/);
+  const pages = await source("components/PageTransition.tsx");
+  assert.match(transition, /className="route-transition"/);
+  assert.doesNotMatch(transition, /pathname|useReducedMotion|AnimatePresence|import \{[^}]*ViewTransition/);
+  assert.match(pages, /import \{ ViewTransition \} from "react"/);
+  assert.match(pages, /nav-forward/);
+  assert.match(pages, /nav-back/);
+  assert.match(pages, /fade-in/);
+  assert.match(pages, /text-morph|default="none"/);
+});
+
+test("map to concept navigation is hierarchical with shared titles", async () => {
+  const [map, knowledgeMap, inspector, detail, css, header] = await Promise.all([
+    source("app/map/page.tsx"),
+    source("components/KnowledgeMap.tsx"),
+    source("components/ConceptInspector.tsx"),
+    source("app/concepts/[id]/ConceptDetail.tsx"),
+    source("app/view-transitions.css"),
+    source("components/SiteHeader.tsx"),
+  ]);
+  assert.match(map, /DirectionalPage/);
+  assert.match(knowledgeMap, /transitionTypes=\{\["nav-forward"\]\}/);
+  assert.match(knowledgeMap, /ConceptTitleTransition/);
+  assert.match(inspector, /transitionTypes=\{\["nav-forward"\]\}/);
+  assert.match(inspector, /ConceptTitleTransition/);
+  assert.match(detail, /transitionTypes=\{\["nav-back"\]\}/);
+  assert.match(detail, /ConceptTitleTransition/);
+  assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(css, /::view-transition-group\(site-header\)/);
+  assert.match(header, /viewTransitionName:\s*"site-header"/);
 });
 
 test("one persistent header owns navigation for every page", async () => {

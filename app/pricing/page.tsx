@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { FoundingCta } from "@/components/FoundingCta";
 import { PricingViewTracker } from "@/components/PricingViewTracker";
 import { authConfigured } from "@/lib/auth-config";
+import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
@@ -15,6 +16,7 @@ export default function PricingPage() {
   const syncReady = authConfigured();
 
   return (
+    <LateralPage>
     <main id="main" className="legal-page pricing-page is-notion-product">
       <PricingViewTracker />
       <section className="legal-panel">
@@ -71,5 +73,6 @@ export default function PricingPage() {
       </section>
       <SiteFooter compact />
     </main>
+  </LateralPage>
   );
 }

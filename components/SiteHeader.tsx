@@ -31,7 +31,10 @@ export function SiteHeader() {
   const visibleLinks = links;
 
   return (
-    <header className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}${onHome ? " is-home" : ""}`}>
+    <header
+      className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}${onHome ? " is-home" : ""}`}
+      style={{ viewTransitionName: "site-header" }}
+    >
       <div className="site-header-inner">
         <Link href="/" className="mark site-wordmark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           Kelus

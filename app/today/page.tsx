@@ -14,6 +14,7 @@ import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
 import { greeting } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
+import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
 function TodayBody() {
   const router = useRouter();
@@ -226,15 +227,22 @@ function TodayBody() {
 
 export default function TodayPage() {
   return (
-    <Suspense
-      fallback={
-        <main id="main" className="destination-page">
+    <LateralPage>
+      <Suspense
+        fallback={
+          <SuspenseFallbackExit>
+            <main id="main" className="destination-page">
           <p className="destination-brand">Kelus</p>
           <h1 className="destination-page-title">Opening Today…</h1>
         </main>
-      }
-    >
-      <TodayBody />
-    </Suspense>
+          </SuspenseFallbackExit>
+        }
+      >
+        <SuspenseReveal>
+          <TodayBody />
+        </SuspenseReveal>
+      </Suspense>
+    </LateralPage>
   );
 }
+

@@ -9,6 +9,7 @@ import { ConceptInspector } from "@/components/ConceptInspector";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { useLearner } from "@/components/LearnerProvider";
 import { courseMastery } from "@/domain/scheduler";
+import { DirectionalPage } from "@/components/PageTransition";
 
 export default function MapPage() {
   const { state, useDemo: loadDemo } = useLearner();
@@ -18,6 +19,7 @@ export default function MapPage() {
   const reduceMotion = useReducedMotion();
   if (!state.onboardingCompleted) {
     return (
+    <DirectionalPage>
       <AppShell>
         <section className="materials-empty">
           <p className="kicker">Knowledge Map</p>
@@ -26,7 +28,8 @@ export default function MapPage() {
           <Link href="/today" className="cta">Set your exam <span aria-hidden="true">→</span></Link>
         </section>
       </AppShell>
-    );
+    </DirectionalPage>
+  );
   }
   const course = state.snapshot.courses[0];
   if (!course) return <AppShell><p>No active course.</p></AppShell>;
@@ -37,6 +40,7 @@ export default function MapPage() {
   const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
   if (!concepts.length) {
     return (
+    <DirectionalPage>
       <AppShell>
         <section className="materials-empty">
           <p className="kicker">Knowledge Map</p>
@@ -50,9 +54,11 @@ export default function MapPage() {
           </div>
         </section>
       </AppShell>
-    );
+    </DirectionalPage>
+  );
   }
   return (
+    <DirectionalPage>
     <AppShell action={!state.diagnosisCompleted ? <Link className="text-btn" href="/today">Continue to diagnosis <span aria-hidden="true">→</span></Link> : undefined}>
       <p className="kicker">Course</p>
       <h1 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course is now a Knowledge Map"}</h1>
@@ -75,5 +81,6 @@ export default function MapPage() {
         </AnimatePresence>
       </div>
     </AppShell>
+  </DirectionalPage>
   );
 }
