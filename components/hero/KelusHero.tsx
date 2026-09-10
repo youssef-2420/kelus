@@ -43,7 +43,7 @@ export function KelusHero() {
 
         <motion.h1
           id="home-hero-title"
-          initial={reduce ? false : { opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, ease }}
         >
@@ -52,7 +52,7 @@ export function KelusHero() {
         </motion.h1>
         <motion.p
           className="home-lede"
-          initial={reduce ? false : { opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.micro, ease }}
         >
@@ -61,7 +61,7 @@ export function KelusHero() {
         </motion.p>
         <motion.div
           className="home-actions"
-          initial={reduce ? false : { opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
         >

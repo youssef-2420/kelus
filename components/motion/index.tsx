@@ -63,7 +63,8 @@ export function Reveal({ children, className, delay = 0, ...rest }: RevealProps)
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0 }}
+      // Keep the document useful before hydration; enhance on first intersection.
+      initial={false}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true, amount: 0.2, margin: "0px 0px -40px 0px" }}
       transition={{ ...kelusMotion.reveal, delay }}
