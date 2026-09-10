@@ -39,7 +39,7 @@ export function HomeAfterHero() {
               Open Today <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
-          <Reveal delay={0.1} className="folio-chapter-art">
+          <Reveal initial={{ opacity: .8 }} className="folio-chapter-art">
             <TodayPlanIllustration />
           </Reveal>
         </section>
