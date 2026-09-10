@@ -867,7 +867,17 @@
   margin: 0;
   padding: 72px max(24px, calc((100vw - 1200px) / 2)) 64px;
   border-top-color: var(--color-frost);
-  background: #eef7ff;
+  background: var(--color-paper-warmth);
+  color: var(--color-ink-black);
+}
+.is-notion-system .home .home-close-copy h2 {
+  color: var(--color-ink-black);
+}
+.is-notion-system .home .home-close-copy p {
+  color: var(--color-graphite);
+}
+.is-notion-system .home .home-close-actions .text-btn {
+  color: var(--color-graphite);
 }
 .is-notion-system .home .folio-close .home-close-inner { max-width: 1200px; margin-inline: auto; }
 .is-notion-system .home .site-footer {
