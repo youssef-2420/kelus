@@ -13,7 +13,7 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   assert.match(hero, /is-folio/);
   assert.match(hero, /Revise your lessons/);
   assert.match(hero, /Try sample \(~1 min\)/);
-  assert.match(hero, /NotionRevisionBoard|folio-hero-notion/);
+  assert.match(hero, /ExamRoutePoster|folio-hero-notion|NotionRevisionBoard/);
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
@@ -24,14 +24,15 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   assert.match(demo, /LEARNING_EXAMPLES/);
   assert.match(demo, /Today’s route/);
   assert.match(story, /HeroProductDemo/);
-  assert.match(story, /folio-product-stage|folio-chapter/);
+  assert.match(story, /NotionRevisionBoard/);
+  assert.match(story, /folio-product-stage|folio-chapter|poster-sample/);
   assert.match(story, /TodayPlanIllustration/);
   assert.match(story, /HeroProductDemo|RerouteIllustration/);
   assert.match(story, /MaterialShelfIllustration/);
   assert.match(story, /Honest methodology/);
   assert.match(story, /confirm the topics Kelus suggests/);
   assert.match(story, /Open Today|Open Materials/);
-  assert.match(story, /See what comes next|See how the plan changes/);
+  assert.match(story, /See what comes next|See how the plan changes|Watch today’s route move/);
   assert.doesNotMatch(page, /KnowledgeRouteStory/);
   assert.doesNotMatch(page, /<RouteStory/);
 });

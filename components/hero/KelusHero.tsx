@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { NotionRevisionBoard } from "./NotionRevisionBoard";
+import { ExamRoutePoster } from "./ExamRoutePoster";
 import { kelusDuration, kelusEase, kelusMotion } from "@/components/motion";
 
 const ease = kelusEase;
@@ -10,22 +10,20 @@ const press = kelusMotion.press;
 const dur = kelusDuration;
 
 /**
- * Editorial desk hero: Kelus brand lockup, Source Serif display,
- * full-bleed notebook sheet — not a SaaS browser mock.
- * Ink CTAs are intentional above the fold (desk system); product blue returns below.
+ * One-composition poster hero: brand, one headline, one line, CTAs,
+ * full-bleed route art. Interactive sample lives below the fold.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
 
   return (
-    <section className="kelus-hero home-hero is-folio is-notion paper-loop-hero is-desk" aria-labelledby="home-hero-title">
-      <div className="desk-atmosphere" aria-hidden="true">
-        <span className="desk-grain" />
-        <span className="desk-lamp" />
-        <span className="desk-spine" />
+    <section className="kelus-hero home-hero is-folio is-notion is-poster" aria-labelledby="home-hero-title">
+      <div className="poster-field" aria-hidden="true">
+        <span className="poster-glow" />
+        <span className="poster-grain" />
       </div>
 
-      <div className="folio-hero-copy home-copy">
+      <div className="poster-copy home-copy">
         <motion.p
           className="hero-brand"
           aria-hidden="true"
@@ -44,7 +42,7 @@ export function KelusHero() {
         >
           <span className="hero-brand-sr">Kelus. </span>
           Revise your lessons.
-          <span className="hero-line-break">Prepare for the exam you actually have.</span>
+          <span className="hero-line-break">Walk into the exam ready.</span>
         </motion.h1>
 
         <motion.p
@@ -53,8 +51,7 @@ export function KelusHero() {
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
         >
-          Bring your course notes. Practise recalling what you studied, check your answers, and revisit
-          weak topics before the exam.
+          Practise recalling your notes. Check the answer. See what to study next.
         </motion.p>
 
         <motion.div
@@ -76,8 +73,8 @@ export function KelusHero() {
         </motion.div>
       </div>
 
-      <div className="folio-hero-visual folio-hero-notion">
-        <NotionRevisionBoard />
+      <div className="poster-visual">
+        <ExamRoutePoster />
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ import "./home-folio.css";
 import "./notion-product.css";
 import "./notion-paper.css";
 import "./paper-loop.css";
+import "./hero-poster.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";

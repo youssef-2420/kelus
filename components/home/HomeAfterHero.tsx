@@ -3,17 +3,31 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroProductDemo } from "@/components/hero/HeroProductDemo";
+import { NotionRevisionBoard } from "@/components/hero/NotionRevisionBoard";
 import { MaterialShelfIllustration } from "@/components/home/MaterialShelfIllustration";
 import { TodayPlanIllustration } from "@/components/home/TodayPlanIllustration";
 import { Reveal } from "@/components/motion";
 
 /**
- * Below-fold story. The hero notebook owns the first interactive loop;
- * the full reorder demo lives once, in the “after one answer” chapter.
+ * Below-fold: one interactive sample (notebook), then story chapters.
+ * Hero is poster-only — no twin product chrome above the fold.
  */
 export function HomeAfterHero() {
   return (
     <>
+      <section id="try" className="poster-sample" aria-labelledby="poster-sample-title">
+        <Reveal className="poster-sample-intro">
+          <p className="kicker">Try the loop</p>
+          <h2 id="poster-sample-title">Reveal an answer. Watch today’s route move.</h2>
+          <p>
+            This sample is not saved. Mark how the check went — the order updates before you add your own course.
+          </p>
+        </Reveal>
+        <Reveal delay={0.06}>
+          <NotionRevisionBoard />
+        </Reveal>
+      </section>
+
       <div className="folio-story" id="how">
         <section className="folio-chapter is-plan" aria-labelledby="folio-plan-title">
           <Reveal className="folio-chapter-copy">
