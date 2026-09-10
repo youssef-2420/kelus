@@ -4,27 +4,16 @@ import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
 import { HeroProductDemo } from "@/components/hero/HeroProductDemo";
 import { MaterialShelfIllustration } from "@/components/home/MaterialShelfIllustration";
-import { RerouteIllustration } from "@/components/home/RerouteIllustration";
 import { TodayPlanIllustration } from "@/components/home/TodayPlanIllustration";
 import { Reveal } from "@/components/motion";
 
+/**
+ * Below-fold story. The hero notebook owns the first interactive loop;
+ * the full reorder demo lives once, in the “after one answer” chapter.
+ */
 export function HomeAfterHero() {
   return (
     <>
-      <section id="try" className="folio-product-stage" aria-labelledby="folio-product-title">
-        <Reveal className="folio-product-intro">
-          <p className="kicker">Try it</p>
-          <h2 id="folio-product-title">Reveal an answer. See what comes next.</h2>
-          <p>
-            This demo is not saved. Reveal an answer, choose how it went, and watch today’s plan
-            reorder — before you add your own course.
-          </p>
-        </Reveal>
-        <Reveal delay={0.08} className="folio-product-frame">
-          <HeroProductDemo />
-        </Reveal>
-      </section>
-
       <div className="folio-story" id="how">
         <section className="folio-chapter is-plan" aria-labelledby="folio-plan-title">
           <Reveal className="folio-chapter-copy">
@@ -44,7 +33,7 @@ export function HomeAfterHero() {
           </Reveal>
         </section>
 
-        <section id="route" className="folio-chapter is-reroute" aria-labelledby="folio-reroute-title">
+        <section id="route" className="folio-chapter is-reroute is-demo-chapter" aria-labelledby="folio-reroute-title">
           <Reveal className="folio-chapter-copy">
             <p className="folio-chapter-index" aria-hidden="true">02</p>
             <p className="kicker">After one answer</p>
@@ -57,8 +46,8 @@ export function HomeAfterHero() {
               See how the plan changes <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
-          <Reveal delay={0.1} className="folio-chapter-art">
-            <RerouteIllustration />
+          <Reveal delay={0.08} className="folio-chapter-art folio-chapter-demo">
+            <HeroProductDemo />
           </Reveal>
         </section>
 

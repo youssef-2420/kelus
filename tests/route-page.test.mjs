@@ -26,7 +26,7 @@ test("homepage presents folio hero, product stage, and story chapters", () => {
   assert.match(story, /HeroProductDemo/);
   assert.match(story, /folio-product-stage|folio-chapter/);
   assert.match(story, /TodayPlanIllustration/);
-  assert.match(story, /RerouteIllustration/);
+  assert.match(story, /HeroProductDemo|RerouteIllustration/);
   assert.match(story, /MaterialShelfIllustration/);
   assert.match(story, /Honest methodology/);
   assert.match(story, /confirm the topics Kelus suggests/);
