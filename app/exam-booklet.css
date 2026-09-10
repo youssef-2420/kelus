@@ -83,23 +83,24 @@ body.is-notion-system .is-poster .poster-copy {
 }
 
 body.is-notion-system .is-poster .hero-brand {
-  margin: 0 0 28px;
+  margin: 0 0 22px;
   font-family: var(--font-editorial);
-  font-size: clamp(56px, 9vw, 104px);
+  font-size: clamp(3.25rem, 8.5vw, 5.25rem);
   font-weight: 600;
   letter-spacing: -0.055em;
-  line-height: 0.88;
+  line-height: 0.86;
   color: var(--booklet-kelus);
 }
 
+/* One apex: brand leads; headline supports, does not compete. */
 body.is-notion-system .is-poster .poster-copy h1 {
-  max-width: 11ch;
+  max-width: 14ch;
   margin: 0;
   font-family: var(--font-editorial);
-  font-size: clamp(40px, 5.8vw, 68px);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
   font-weight: 500;
-  line-height: 1.04;
-  letter-spacing: -0.038em;
+  line-height: 1.18;
+  letter-spacing: -0.03em;
   color: var(--booklet-ink);
 }
 
@@ -363,6 +364,130 @@ body.is-notion-system .home-close-actions .text-btn {
     padding: 56px 24px 28px;
   }
   body.is-notion-system .is-poster .hero-brand {
-    font-size: clamp(48px, 14vw, 72px);
+    font-size: clamp(3rem, 15vw, 4.5rem);
   }
+  body.is-notion-system .is-poster .poster-copy h1 {
+    font-size: clamp(1.55rem, 5.5vw, 2rem);
+  }
+}
+
+
+/* ── Product chrome: same booklet as the homepage ── */
+body.is-notion-system .shell.is-notion-product,
+body.is-notion-system .course-workspace-layout.is-notion-product,
+body.is-notion-system .destination-page.is-notion-product,
+body.is-notion-system .diagnosis-page.is-notion-product,
+body.is-notion-system .how-page.is-notion-product {
+  background: var(--booklet-paper);
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .destination-page.is-notion-product,
+body.is-notion-system .diagnosis-page.is-notion-product,
+body.is-notion-system .is-notion-product .materials-empty,
+body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
+body.is-notion-system .is-notion-product .today-workbench.is-revision-studio {
+  background: var(--booklet-lift);
+  border: 1px solid var(--booklet-rule);
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+body.is-notion-system .destination-page-title,
+body.is-notion-system .today-title,
+body.is-notion-system .materials-empty h1,
+body.is-notion-system .materials-empty h2,
+body.is-notion-system .how-title {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .is-notion-product .kicker,
+body.is-notion-system .destination-page .kicker,
+body.is-notion-system .materials-empty .kicker,
+body.is-notion-system .how-page .kicker,
+body.is-notion-system .diagnosis-page .kicker,
+body.is-notion-system .shell.is-notion-product .kicker {
+  text-transform: none !important;
+  letter-spacing: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .notion-setup-page-mark {
+  display: none;
+}
+
+body.is-notion-system .is-notion-product .cta,
+body.is-notion-system .destination-page.is-notion-product .cta,
+body.is-notion-system .diagnosis-page.is-notion-product .cta,
+body.is-notion-system .how-page.is-notion-product .cta,
+body.is-notion-system .site-header.is-product .site-header-action,
+body.is-notion-system .site-header:not(.is-home) .site-header-action {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #f7f8f5;
+}
+
+body.is-notion-system .is-notion-product .cta:hover,
+body.is-notion-system .destination-page.is-notion-product .cta:hover,
+body.is-notion-system .site-header:not(.is-home) .site-header-action:hover {
+  background: #185536;
+  border-color: #185536;
+  color: #fff;
+}
+
+body.is-notion-system .is-notion-product .text-btn,
+body.is-notion-system .materials-empty .text-btn,
+body.is-notion-system .setup-sample-cta {
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .is-notion-product .course-workspace-rail {
+  background: var(--booklet-paper);
+  border-right: 1px solid var(--booklet-rule);
+}
+
+body.is-notion-system .is-notion-product .course-workspace-identity span,
+body.is-notion-system .is-notion-product .material-shelf > header > span,
+body.is-notion-system .is-notion-product .today-lead-label,
+body.is-notion-system .is-notion-product .today-lead-time span {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .destination-page.is-notion-product .time-choices label.is-selected {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #f7f8f5;
+}
+
+body.is-notion-system .destination-page.is-notion-product fieldset,
+body.is-notion-system .destination-page.is-notion-product .setup-progress,
+body.is-notion-system .destination-page.is-notion-product .setup-sample {
+  background: transparent;
+  border-color: var(--booklet-rule);
+  box-shadow: none;
+}
+
+body.is-notion-system .setup-sample {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--booklet-rule);
+  border-radius: 0;
+}
+
+body.is-notion-system .is-notion-product .today-lead-action,
+body.is-notion-system .is-notion-product .map-workspace,
+body.is-notion-system .diagnosis-page.is-notion-product .diagnosis-panel,
+body.is-notion-system .diagnosis-page.is-notion-product .diagnosis-check {
+  background: var(--booklet-lift);
+  border: 1px solid var(--booklet-rule);
+  border-radius: 4px;
+  box-shadow: none;
 }

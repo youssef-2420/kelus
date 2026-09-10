@@ -159,13 +159,14 @@ test("primary CTA language and readiness stay consistent", async () => {
   ]);
   assert.match(hero, /Try sample \(~1 min\)/);
   assert.match(hero, /today\?sample=1/);
-  assert.match(hero, /Revise my course/);
+  assert.match(hero, /Set my exam/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
-  assert.match(header, /Start revising/);
-  assert.match(home, /Start revising/);
+  assert.match(header, /Try sample/);
+  assert.match(home, /Try sample \(~1 min\)/);
+  assert.match(home, /Set my exam/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
-  assert.match(how, /Start revising/);
+  assert.match(how, /Try sample \(~1 min\)/);
   assert.match(today, /Est\. readiness/);
   assert.match(today, /not a grade prediction/);
   assert.match(today, /get\("sample"\) === "1"/);
