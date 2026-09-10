@@ -3250,8 +3250,13 @@ h3,
 @media (prefers-reduced-motion: reduce) {
   .cta,
   .home-cta .arrow,
-  .route-transition {
+  .route-transition,
+  .material-drop:active,
+  .diagnosis-list button:active,
+  .diagnosis-grades button:active,
+  .study-ratings button:active {
     transition-duration: 0.01ms;
+    transform: none;
   }
 }
 
