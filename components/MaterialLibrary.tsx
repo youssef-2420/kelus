@@ -11,6 +11,12 @@ import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgrade
 import { trackEvent } from "@/lib/analytics";
 import type { CourseMaterial, MaterialRole, ProposedConcept } from "@/domain/types";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
+
+// AnimatePresence can defer mounting this heading until the previous phase exits.
+// Focus on attachment, when the target actually exists, rather than on phase change.
+function focusPhaseHeading(node: HTMLHeadingElement | null) {
+  node?.focus();
+}
 import { buildConfirmedMaterialModel, proposeConceptsFromMetadata, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
@@ -542,7 +548,7 @@ export function MaterialLibrary() {
             transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}
           >
             <p className="kicker">You’re ready</p>
-            <h2 id="material-ready-title" tabIndex={-1}>
+            <h2 id="material-ready-title" tabIndex={-1} ref={focusPhaseHeading}>
               {readySummary.conceptCount} confirmed concept{readySummary.conceptCount === 1 ? "" : "s"} from your file.
             </h2>
             <p>
@@ -565,7 +571,7 @@ export function MaterialLibrary() {
             transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}
           >
             <header>
-              <div><p className="kicker">Review your topics</p><h2 id="concept-confirmation-title" tabIndex={-1}>Kelus found {analysis.proposals.length} proposed concepts.</h2></div>
+              <div><p className="kicker">Review your topics</p><h2 id="concept-confirmation-title" tabIndex={-1} ref={focusPhaseHeading}>Kelus found {analysis.proposals.length} proposed concepts.</h2></div>
               <p>
                 Keep only the concepts this exam actually covers. Each one retains the page where Kelus found it.
                 {state.diagnosisCompleted

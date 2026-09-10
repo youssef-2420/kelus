@@ -25,7 +25,7 @@ export function KelusHero() {
   const reduce = useReducedMotion() === true;
 
   return (
-    <section className="kelus-hero home-hero is-folio is-notion" aria-labelledby="home-hero-title">
+    <section className="kelus-hero home-hero is-folio is-notion paper-loop-hero" aria-labelledby="home-hero-title">
       <div className="folio-hero-atmosphere" aria-hidden="true">
         <span className="folio-hero-mist" />
         <span className="folio-hero-wash" />
