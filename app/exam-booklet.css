@@ -1,0 +1,368 @@
+/*
+  Kelus homepage — “marked script” system
+  Paper with a cool green cast (not Anthropic cream), ink, one pass-mark green.
+  Display = Newsreader (essay). UI = IBM Plex Sans (via --font-inter).
+*/
+
+body.is-notion-system {
+  --booklet-paper: #eef1ec;
+  --booklet-ink: #12160f;
+  --booklet-mute: #4a5246;
+  --booklet-kelus: #1f6b45;
+  --booklet-rule: #d5d9d0;
+  --booklet-lift: #f7f8f5;
+
+  --color-paper-warmth: var(--booklet-paper);
+  --color-ink-black: var(--booklet-ink);
+  --color-graphite: var(--booklet-mute);
+  --color-notion-blue: var(--booklet-kelus);
+  --border-hairline: var(--booklet-rule);
+
+  --font-notion: var(--font-inter), "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-editorial: var(--font-source-serif), Newsreader, Georgia, "Times New Roman", serif;
+  --font-display: var(--font-editorial);
+  --font-sans: var(--font-notion);
+
+  background: var(--booklet-paper);
+  color: var(--booklet-ink);
+  font-family: var(--font-sans);
+}
+
+html {
+  scroll-padding-top: 5.25rem;
+}
+
+/* ── Header: always paper on home; compact after hero ── */
+body.is-notion-system .site-header.is-home {
+  background: rgba(238, 241, 236, 0.92);
+  border-bottom: 1px solid var(--booklet-rule);
+  backdrop-filter: blur(12px) saturate(140%);
+}
+
+body.is-notion-system .site-header.is-home .site-wordmark,
+body.is-notion-system .site-header.is-home .site-nav a,
+body.is-notion-system .site-header.is-home .text-btn,
+body.is-notion-system .site-header.is-home .site-auth-button {
+  color: rgba(18, 22, 15, 0.78);
+}
+
+body.is-notion-system .site-header.is-home .site-wordmark {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .site-header.is-home .site-header-action {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #f7f8f5;
+}
+
+@media (max-width: 720px) {
+  body.is-notion-system .site-header.is-home .site-header-inner {
+    min-height: 0;
+    padding-block: 8px 6px;
+  }
+  body.is-notion-system .site-header.is-home .site-nav a {
+    min-height: 36px;
+    font-size: 14px;
+  }
+}
+
+/* ── Hero: asymmetric essay margin + edge bleed art ── */
+body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.is-poster {
+  background: var(--booklet-paper);
+  color: var(--booklet-ink);
+  min-height: min(100vh, 880px);
+}
+
+body.is-notion-system .is-poster .poster-copy {
+  max-width: 34rem;
+  padding: 88px max(32px, calc((100vw - 1180px) / 2)) 64px;
+  gap: 0;
+}
+
+body.is-notion-system .is-poster .hero-brand {
+  margin: 0 0 28px;
+  font-family: var(--font-editorial);
+  font-size: clamp(56px, 9vw, 104px);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.88;
+  color: var(--booklet-kelus);
+}
+
+body.is-notion-system .is-poster .poster-copy h1 {
+  max-width: 11ch;
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(40px, 5.8vw, 68px);
+  font-weight: 500;
+  line-height: 1.04;
+  letter-spacing: -0.038em;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .is-poster .hero-line-break {
+  display: block;
+  margin-top: 0.1em;
+  color: var(--booklet-mute);
+  font-weight: 400;
+}
+
+body.is-notion-system .is-poster .home-lede {
+  max-width: 34ch;
+  margin: 22px 0 0;
+  font-family: var(--font-editorial);
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .is-poster .home-actions {
+  margin-top: 34px;
+  gap: 12px;
+}
+
+body.is-notion-system .is-poster .home-cta {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #f7f8f5;
+  border-radius: 999px;
+  padding-inline: 22px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+body.is-notion-system .is-poster .home-cta:hover {
+  background: #185536;
+  border-color: #185536;
+  color: #fff;
+}
+
+body.is-notion-system .is-poster .home-secondary {
+  background: transparent;
+  border: 1px solid #aeb6a8;
+  color: var(--booklet-ink);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+body.is-notion-system .is-poster .home-secondary:hover {
+  background: #e3e8df;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .is-poster .poster-visual {
+  min-height: 440px;
+}
+
+body.is-notion-system .is-poster .exam-route-art {
+  object-fit: cover;
+  object-position: center top;
+}
+
+/* ── Sample: one teach, quiet ── */
+body.is-notion-system .poster-sample {
+  background: var(--booklet-lift);
+  border-top: 1px solid var(--booklet-rule);
+  padding: 56px max(24px, calc((100vw - 980px) / 2)) 72px;
+  scroll-margin-top: 5.5rem;
+}
+
+body.is-notion-system .poster-sample-intro .kicker {
+  color: var(--booklet-mute);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+body.is-notion-system .poster-sample-intro h2 {
+  margin: 6px 0 10px;
+  max-width: 16ch;
+  font-family: var(--font-editorial);
+  font-size: clamp(28px, 3.2vw, 40px);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .poster-sample-intro p {
+  max-width: 42ch;
+  margin: 0;
+  color: var(--booklet-mute);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ── Chapters: essay sections, not feature cards ── */
+body.is-notion-system .folio-story {
+  background: var(--booklet-paper);
+}
+
+body.is-notion-system .folio-chapter {
+  border-bottom: 1px solid var(--booklet-rule);
+  padding-block: clamp(3.5rem, 8vh, 5.5rem);
+  scroll-margin-top: 5.5rem;
+  align-items: center;
+}
+
+body.is-notion-system .folio-chapter-index {
+  position: static;
+  display: none; /* sequence told by reading order, not watermark chrome */
+}
+
+body.is-notion-system .folio-chapter-copy .kicker {
+  margin-bottom: 0.65rem;
+  color: var(--booklet-mute);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+body.is-notion-system .folio-chapter-copy h2 {
+  max-width: 14ch;
+  margin: 0 0 0.85rem;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.85rem, 3.4vw, 2.45rem);
+  font-weight: 550;
+  letter-spacing: -0.032em;
+  line-height: 1.12;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .folio-chapter-copy > p:not(.kicker) {
+  max-width: 40ch;
+  margin: 0 0 1.25rem;
+  color: var(--booklet-mute);
+  font-family: var(--font-editorial);
+  font-size: 1.05rem;
+  line-height: 1.55;
+  opacity: 1;
+}
+
+body.is-notion-system .folio-chapter-copy > a {
+  color: var(--booklet-kelus);
+  font-weight: 600;
+}
+
+body.is-notion-system .folio-chapter.is-plan .folio-chapter-art .v1-plan,
+body.is-notion-system .folio-chapter.is-reroute .folio-chapter-art .v1-reroute,
+body.is-notion-system .folio-chapter.is-materials .folio-chapter-art .v1-materials {
+  background: var(--booklet-lift);
+  border: 1px solid var(--booklet-rule);
+  border-radius: 10px;
+  box-shadow: none;
+  color: var(--booklet-ink);
+}
+
+/* ── Method ── */
+body.is-notion-system .folio-method {
+  background: var(--booklet-lift);
+  border-top: 1px solid var(--booklet-rule);
+  scroll-margin-top: 5.5rem;
+}
+
+body.is-notion-system .folio-method-heading .kicker {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--booklet-mute);
+  font-weight: 500;
+}
+
+body.is-notion-system .folio-method-heading h2 {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .folio-method-heading > p:not(.kicker) {
+  color: var(--booklet-mute);
+  font-family: var(--font-editorial);
+  opacity: 1;
+}
+
+body.is-notion-system .folio-method-grid {
+  border: 1px solid var(--booklet-rule);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+body.is-notion-system .folio-method-grid > div {
+  background: #fff;
+  border: 0;
+  border-radius: 0;
+  border-right: 1px solid var(--booklet-rule);
+  border-bottom: 1px solid var(--booklet-rule);
+  box-shadow: none;
+  padding: 1.15rem 1.2rem;
+}
+
+body.is-notion-system .folio-method-grid dt {
+  color: var(--booklet-mute);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+body.is-notion-system .folio-method-grid dd {
+  color: var(--booklet-ink);
+}
+
+/* ── Close cluster ── */
+body.is-notion-system .home .folio-close.home-close,
+body.is-notion-system .home-close.folio-close {
+  background: var(--booklet-paper);
+  border-top: 1px solid var(--booklet-rule);
+  color: var(--booklet-ink);
+  scroll-margin-top: 5.5rem;
+}
+
+body.is-notion-system .home .folio-close .home-close-inner,
+body.is-notion-system .home-close-inner.is-cluster {
+  display: grid !important;
+  gap: 1.2rem;
+  justify-items: start;
+  max-width: 36rem !important;
+  margin-inline: 0 !important;
+  width: min(36rem, 100%);
+}
+
+body.is-notion-system .home .home-close-copy h2,
+body.is-notion-system .home-close-copy h2 {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .home .home-close-copy p,
+body.is-notion-system .home-close-copy p {
+  color: var(--booklet-mute);
+  opacity: 1;
+}
+
+body.is-notion-system .home .home-close-actions .cta,
+body.is-notion-system .home-close-actions .cta {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #f7f8f5;
+}
+
+body.is-notion-system .home .home-close-actions .text-btn,
+body.is-notion-system .home-close-actions .text-btn {
+  color: var(--booklet-mute);
+}
+
+@media (max-width: 979px) {
+  body.is-notion-system .is-poster .poster-copy {
+    padding: 56px 24px 28px;
+  }
+  body.is-notion-system .is-poster .hero-brand {
+    font-size: clamp(48px, 14vw, 72px);
+  }
+}

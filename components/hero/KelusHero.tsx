@@ -10,8 +10,8 @@ const press = kelusMotion.press;
 const dur = kelusDuration;
 
 /**
- * One-composition poster hero: brand, one headline, one line, CTAs,
- * full-bleed route art. Interactive sample lives below the fold.
+ * Marked-script hero: Kelus as the display signal, one line, one lede, CTAs,
+ * full-bleed revision art. Interactive sample lives below the fold.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
@@ -19,6 +19,16 @@ export function KelusHero() {
   return (
     <section className="kelus-hero home-hero is-folio is-notion is-poster" aria-labelledby="home-hero-title">
       <div className="poster-copy home-copy">
+        <motion.p
+          className="hero-brand"
+          aria-hidden="true"
+          initial={false}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : dur.fast, ease }}
+        >
+          Kelus
+        </motion.p>
+
         <motion.h1
           id="home-hero-title"
           initial={false}
@@ -36,7 +46,7 @@ export function KelusHero() {
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
         >
-          Practise recalling your notes. Check the answer. See what to study next.
+          Recall from your notes. Check the answer. See what to study next.
         </motion.p>
 
         <motion.div
