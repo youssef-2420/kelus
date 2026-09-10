@@ -48,17 +48,22 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
   }
 
   return (
-    <main id="main" className="destination-page is-notion-product">
+    <main id="main" className="destination-page is-notion-product is-marked-setup">
       <form className="destination-form" onSubmit={submit} noValidate>
         <p className="kicker">Your exam</p>
         <h1 className="destination-page-title">Set your exam</h1>
-        <p className="destination-support">Choose the course you want to revise. Next, add your lessons and start practising what you remember.</p>
-        <ol className="setup-progress" aria-label="Getting started">
-          <li aria-current="step"><span>01</span>Exam</li>
-          <li><span>02</span>Lessons</li>
-          <li><span>03</span>Quick check</li>
-          <li><span>04</span>Today</li>
-        </ol>
+        <p className="destination-support">
+          Name the course and exam date. Next, add lessons and practice what you remember.
+        </p>
+        <p className="setup-sequence" aria-label="Getting started">
+          <span aria-current="step">1 Exam</span>
+          <span aria-hidden="true">·</span>
+          <span>2 Lessons</span>
+          <span aria-hidden="true">·</span>
+          <span>3 Quick check</span>
+          <span aria-hidden="true">·</span>
+          <span>4 Today</span>
+        </p>
         <fieldset disabled={submitting}>
           <legend>Tell Kelus what you are preparing for</legend>
           <div className="destination-course-fields">

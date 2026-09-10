@@ -67,10 +67,11 @@ test("one persistent header owns navigation for every page", async () => {
 test("setup shows the real four-step path before the optional sample", async () => {
   const setup = await source("components/FirstRunSetup.tsx");
   assert.match(setup, /aria-label="Getting started"/);
-  assert.match(setup, /Step 1 · Your destination/);
+  assert.match(setup, /setup-sequence/);
   assert.match(setup, /Exam[\s\S]*Lessons[\s\S]*Quick check[\s\S]*Today/);
   assert.ok(setup.indexOf("Tell Kelus what you are preparing for") < setup.indexOf("Just looking?"));
   assert.doesNotMatch(setup, /destination-brand/);
+  assert.doesNotMatch(setup, /setup-progress/);
 });
 
 test("session makes the evidence-to-route change explicit", async () => {
