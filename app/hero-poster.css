@@ -245,24 +245,24 @@ body.is-notion-system .poster-sample-intro p {
   }
 }
 
-/* Header over midnight poster */
-body.is-notion-system:has(.kelus-hero.is-poster) .site-header {
+/* Header dark only while the midnight poster is under it — not for the whole home page */
+body.is-notion-system:has(.kelus-hero.is-poster) .site-header.is-on-poster {
   background: rgba(2, 9, 58, 0.88);
   border-bottom-color: rgba(230, 243, 254, 0.12);
 }
 
-body.is-notion-system:has(.kelus-hero.is-poster) .site-wordmark,
-body.is-notion-system:has(.kelus-hero.is-poster) .site-nav a,
-body.is-notion-system:has(.kelus-hero.is-poster) .site-header .text-btn {
+body.is-notion-system:has(.kelus-hero.is-poster) .site-header.is-on-poster .site-wordmark,
+body.is-notion-system:has(.kelus-hero.is-poster) .site-header.is-on-poster .site-nav a,
+body.is-notion-system:has(.kelus-hero.is-poster) .site-header.is-on-poster .text-btn {
   color: #e6f3fe;
 }
 
-body.is-notion-system:has(.kelus-hero.is-poster) .site-nav a:hover,
-body.is-notion-system:has(.kelus-hero.is-poster) .site-wordmark:hover {
+body.is-notion-system:has(.kelus-hero.is-poster) .site-header.is-on-poster .site-nav a:hover,
+body.is-notion-system:has(.kelus-hero.is-poster) .site-header.is-on-poster .site-wordmark:hover {
   color: #ffb110;
 }
 
-body.is-notion-system:has(.kelus-hero.is-poster) .site-header-action {
+body.is-notion-system:has(.kelus-hero.is-poster) .site-header.is-on-poster .site-header-action {
   background: #ffb110;
   color: #1a1200;
   border-color: #ffb110;
