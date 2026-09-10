@@ -1,0 +1,198 @@
+/* Homepage critique ship — sticky chrome, ink contrast, close cluster, quiet chapter art */
+
+html {
+  scroll-padding-top: 5.5rem;
+}
+
+.poster-sample,
+.folio-chapter,
+.folio-method,
+.home-close {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Sticky header stays paper on home — never a dark slab over chapters */
+body.is-notion-system .site-header.is-home {
+  background: rgba(246, 245, 244, 0.92);
+  border-bottom: 1px solid var(--border-hairline, #ebebea);
+  color: var(--color-ink-black, #0a0a0a);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+body.is-notion-system .site-header.is-home .site-wordmark,
+body.is-notion-system .site-header.is-home .site-nav a,
+body.is-notion-system .site-header.is-home .site-auth-button,
+body.is-notion-system .site-header.is-home .text-btn {
+  color: rgba(15, 15, 15, 0.78);
+}
+
+body.is-notion-system .site-header.is-home .site-nav a:hover,
+body.is-notion-system .site-header.is-home .site-nav a.is-active,
+body.is-notion-system .site-header.is-home .site-wordmark:hover {
+  color: #0a0a0a;
+}
+
+body.is-notion-system .site-header.is-home.is-past-hero {
+  box-shadow: 0 1px 0 rgba(15, 15, 15, 0.06);
+}
+
+@media (max-width: 720px) {
+  body.is-notion-system .site-header.is-home .site-header-inner {
+    min-height: 0;
+    padding-block: 8px 6px;
+    gap: 6px 12px;
+  }
+
+  body.is-notion-system .site-header.is-home .site-nav {
+    gap: 4px 14px;
+  }
+
+  body.is-notion-system .site-header.is-home .site-nav a {
+    min-height: 36px;
+    font-size: 14px;
+  }
+
+  html {
+    scroll-padding-top: 6.25rem;
+  }
+
+  .poster-sample,
+  .folio-chapter,
+  .folio-method,
+  .home-close {
+    scroll-margin-top: 6.25rem;
+  }
+}
+
+/* Chapter + method body: ink on paper — never washed / ghost white */
+body.is-notion-system .folio-chapter-copy > p:not(.kicker),
+body.is-notion-system .folio-method-heading > p:not(.kicker),
+body.is-notion-system .poster-sample-intro > p,
+body.is-notion-system .home-close-copy p {
+  color: #3f3b37;
+  opacity: 1;
+}
+
+body.is-notion-system .folio-chapter-copy h2,
+body.is-notion-system .folio-method-heading h2,
+body.is-notion-system .poster-sample-intro h2,
+body.is-notion-system .home-close-copy h2 {
+  color: #0a0a0a;
+}
+
+body.is-notion-system .folio-chapter-copy .kicker,
+body.is-notion-system .folio-method-heading .kicker,
+body.is-notion-system .poster-sample-intro .kicker {
+  color: #5c574f;
+}
+
+body.is-notion-system .folio-chapter-index {
+  position: static;
+  display: inline;
+  margin: 0 0.4em 0 0;
+  font-size: 0.92em;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  line-height: inherit;
+  color: inherit;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* One paper language for chapter art — no marigold/sky product blasts */
+body.is-notion-system .folio-chapter.is-plan .folio-chapter-art .v1-plan,
+body.is-notion-system .folio-chapter.is-reroute .folio-chapter-art .v1-reroute,
+body.is-notion-system .folio-chapter.is-materials .folio-chapter-art .v1-materials {
+  background: #fff;
+  border: 1px solid #e6e2db;
+  color: #0a0a0a;
+  box-shadow: none;
+}
+
+body.is-notion-system .folio-method-grid {
+  border: 1px solid #e6e2db;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+body.is-notion-system .folio-method-grid > div {
+  padding: 1.15rem 1.2rem;
+  border: 0;
+  border-radius: 0;
+  border-right: 1px solid #ebe7e0;
+  border-bottom: 1px solid #ebe7e0;
+  background: #fff;
+  box-shadow: none;
+}
+
+body.is-notion-system .folio-method-grid dt {
+  color: #5c574f;
+  margin-bottom: 0.35rem;
+}
+
+body.is-notion-system .folio-method-grid dd {
+  color: #0a0a0a;
+}
+
+/* Close: one cluster — copy + actions together, not a split canyon */
+body.is-notion-system .home .folio-close.home-close,
+body.is-notion-system .home-close.folio-close,
+body.is-notion-system .folio-close.home-close {
+  background: #f3f0ea;
+  border-top: 1px solid #e0dbd2;
+  color: #0a0a0a;
+}
+
+body.is-notion-system .home .folio-close .home-close-inner,
+body.is-notion-system .home .folio-close .home-close-inner.is-cluster,
+body.is-notion-system .home-close-inner.is-cluster {
+  display: grid !important;
+  gap: 1.25rem;
+  justify-items: start;
+  align-items: start;
+  max-width: 38rem !important;
+  margin-inline: 0 !important;
+  width: min(38rem, 100%);
+}
+
+body.is-notion-system .home .home-close-copy,
+body.is-notion-system .home-close-copy {
+  max-width: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+body.is-notion-system .home .home-close-copy h2,
+body.is-notion-system .home-close-copy h2 {
+  color: #0a0a0a;
+}
+
+body.is-notion-system .home .home-close-copy p,
+body.is-notion-system .home-close-copy p {
+  color: #3f3b37;
+  opacity: 1;
+}
+
+body.is-notion-system .home .home-close-actions,
+body.is-notion-system .home-close-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem 1.1rem;
+  justify-content: flex-start;
+}
+
+body.is-notion-system .home .home-close-actions .text-btn,
+body.is-notion-system .home-close-actions .text-btn {
+  color: #3f3b37;
+}
+
+/* Sample strip: quieter twin — still the one interactive teach */
+body.is-notion-system .poster-sample {
+  padding-block: 48px 64px;
+}
+
+body.is-notion-system .poster-sample-intro h2 {
+  max-width: 18ch;
+}

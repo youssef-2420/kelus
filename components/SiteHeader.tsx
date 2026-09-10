@@ -18,7 +18,9 @@ export function SiteHeader() {
   const auth = useAuth();
   const inSession = pathname.startsWith("/session");
   const inProduct = ["/today", "/materials", "/map", "/concept"].some((path) => pathname.startsWith(path));
+  const onHome = pathname === "/";
   const accountMenu = useRef<HTMLDetailsElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const close = (event: PointerEvent) => {
       if (accountMenu.current && !accountMenu.current.contains(event.target as Node)) accountMenu.current.open = false;
@@ -26,11 +28,36 @@ export function SiteHeader() {
     document.addEventListener("pointerdown", close);
     return () => document.removeEventListener("pointerdown", close);
   }, []);
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header || !onHome) {
+      header?.classList.remove("is-past-hero");
+      return;
+    }
+    const hero = document.querySelector(".kelus-hero.is-poster");
+    if (!(hero instanceof HTMLElement)) return;
+
+    const sync = () => {
+      const past = hero.getBoundingClientRect().bottom <= header.offsetHeight + 4;
+      header.classList.toggle("is-past-hero", past);
+    };
+    sync();
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    return () => {
+      window.removeEventListener("scroll", sync);
+      window.removeEventListener("resize", sync);
+      header.classList.remove("is-past-hero");
+    };
+  }, [onHome, pathname]);
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
   const visibleLinks = links;
 
   return (
-    <header className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}`}>
+    <header
+      ref={headerRef}
+      className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}${onHome ? " is-home" : ""}`}
+    >
       <div className="site-header-inner">
         <Link href="/" className="mark site-wordmark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           Kelus

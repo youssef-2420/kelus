@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
-import { HeroProductDemo } from "@/components/hero/HeroProductDemo";
 import { NotionRevisionBoard } from "@/components/hero/NotionRevisionBoard";
 import { MaterialShelfIllustration } from "@/components/home/MaterialShelfIllustration";
+import { RerouteIllustration } from "@/components/home/RerouteIllustration";
 import { TodayPlanIllustration } from "@/components/home/TodayPlanIllustration";
 import { Reveal } from "@/components/motion";
 
 /**
- * Below-fold: one interactive sample (notebook), then story chapters.
- * Hero is poster-only — no twin product chrome above the fold.
+ * Below-fold: one interactive sample (the teach), then quiet story chapters.
+ * Hero is poster-only — chapter art stays in the same paper language (no second product demo).
  */
 export function HomeAfterHero() {
   return (
@@ -18,9 +18,9 @@ export function HomeAfterHero() {
       <section id="try" className="poster-sample" aria-labelledby="poster-sample-title">
         <Reveal className="poster-sample-intro">
           <p className="kicker">Try the loop</p>
-          <h2 id="poster-sample-title">Reveal an answer. Watch today’s route move.</h2>
+          <h2 id="poster-sample-title">Watch today’s route move.</h2>
           <p>
-            This sample is not saved. Mark how the check went — the order updates before you add your own course.
+            Reveal an answer, mark the check — the order updates. This sample is not saved.
           </p>
         </Reveal>
         <Reveal delay={0.06}>
@@ -31,8 +31,10 @@ export function HomeAfterHero() {
       <div className="folio-story" id="how">
         <section className="folio-chapter is-plan" aria-labelledby="folio-plan-title">
           <Reveal className="folio-chapter-copy">
-            <p className="folio-chapter-index" aria-hidden="true">01</p>
-            <p className="kicker">Today’s route</p>
+            <p className="kicker">
+              <span className="folio-chapter-index" aria-hidden="true">01</span>
+              Today’s route
+            </p>
             <h2 id="folio-plan-title">Your next 45 minutes, in order.</h2>
             <p>
               Open Today for a short plan: recall a topic, check the answer, then move on.
@@ -42,15 +44,17 @@ export function HomeAfterHero() {
               Open Today <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
-          <Reveal initial={{ opacity: .8 }} className="folio-chapter-art">
+          <Reveal className="folio-chapter-art">
             <TodayPlanIllustration />
           </Reveal>
         </section>
 
-        <section id="route" className="folio-chapter is-reroute is-demo-chapter" aria-labelledby="folio-reroute-title">
+        <section id="route" className="folio-chapter is-reroute" aria-labelledby="folio-reroute-title">
           <Reveal className="folio-chapter-copy">
-            <p className="folio-chapter-index" aria-hidden="true">02</p>
-            <p className="kicker">After one answer</p>
+            <p className="kicker">
+              <span className="folio-chapter-index" aria-hidden="true">02</span>
+              After one answer
+            </p>
             <h2 id="folio-reroute-title">The plan reorders itself.</h2>
             <p>
               Mark “almost” or miss a check, and Kelus reshuffles what comes next — so you practise
@@ -60,15 +64,17 @@ export function HomeAfterHero() {
               See how the plan changes <span aria-hidden="true">→</span>
             </Link>
           </Reveal>
-          <Reveal delay={0.08} className="folio-chapter-art folio-chapter-demo">
-            <HeroProductDemo />
+          <Reveal delay={0.08} className="folio-chapter-art">
+            <RerouteIllustration />
           </Reveal>
         </section>
 
         <section className="folio-chapter is-materials" aria-labelledby="folio-materials-title">
           <Reveal className="folio-chapter-copy">
-            <p className="folio-chapter-index" aria-hidden="true">03</p>
-            <p className="kicker">Your lessons</p>
+            <p className="kicker">
+              <span className="folio-chapter-index" aria-hidden="true">03</span>
+              Your lessons
+            </p>
             <h2 id="folio-materials-title">Revise from your own notes.</h2>
             <p>
               Add a syllabus or lecture PDF, confirm the topics Kelus suggests, and keep each
@@ -113,7 +119,7 @@ export function HomeAfterHero() {
       </section>
 
       <section className="home-close folio-close" aria-labelledby="home-close-title">
-        <Reveal className="home-close-inner">
+        <Reveal className="home-close-inner is-cluster">
           <div className="home-close-copy">
             <h2 id="home-close-title">Walk into the exam knowing what you worked on — and why.</h2>
             <p>Try a free revision session on this device. See Exam Pass if you want priority support through exam day.</p>
@@ -133,3 +139,4 @@ export function HomeAfterHero() {
     </>
   );
 }
+
