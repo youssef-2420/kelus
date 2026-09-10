@@ -17,7 +17,7 @@ export function RouteTransition({ children }: { children: ReactNode }) {
     if (previousPath.current === pathname) return;
     previousPath.current = pathname;
     if (!element.current || reduceMotion) return;
-    const animation = animate(element.current, { y: [4, 0] }, transition);
+    const animation = animate(element.current, { opacity: [0.92, 1] }, transition);
     return () => animation.stop();
   }, [pathname, reduceMotion]);
 
