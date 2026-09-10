@@ -93,12 +93,13 @@ body.is-notion-system .is-poster .hero-brand {
 }
 
 /* Brand is the apex; headline is supporting copy, not a second hero. */
+body.is-notion-system .kelus-hero.home-hero.is-poster .poster-copy.home-copy h1,
 body.is-notion-system .is-poster .poster-copy h1 {
   max-width: 22ch;
   margin: 0;
   font-family: var(--font-editorial);
-  font-size: clamp(1.2rem, 2.1vw, 1.55rem);
-  font-weight: 400;
+  font-size: clamp(1.2rem, 2.1vw, 1.55rem) !important;
+  font-weight: 400 !important;
   line-height: 1.28;
   letter-spacing: -0.02em;
   color: var(--booklet-ink);

@@ -1759,10 +1759,11 @@ button, input, textarea { font: inherit; }
   transform: none;
 }
 .kelus-hero.home-hero .home-copy h1 {
-  font-size: clamp(40px, 4.6vw, 64px);
-  line-height: 1.04;
-  letter-spacing: -0.038em;
-  max-width: none;
+  font-size: clamp(1.2rem, 2.1vw, 1.55rem);
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+  max-width: 22ch;
   overflow-wrap: normal;
   word-break: normal;
   text-wrap: wrap;
