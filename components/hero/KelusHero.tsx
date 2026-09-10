@@ -9,61 +9,56 @@ const ease = kelusEase;
 const press = kelusMotion.press;
 const dur = kelusDuration;
 
-const MARKS = [
-  { border: "#097fe8", fill: "#e6f3fe", face: "#097fe8" },
-  { border: "#f64932", fill: "#ffe8e4", face: "#f64932" },
-  { border: "#ffb110", fill: "#fff4d6", face: "#e89d01" },
-  { border: "#62aef0", fill: "#e8f4fc", face: "#097fe8" },
-  { border: "#02093a", fill: "#eceef8", face: "#02093a" },
-] as const;
-
 /**
- * Notion paper hero: character marks → pill headline → editorial lede → CTAs → product mock.
- * Motion: opacity-first, no decorative scale, respects prefers-reduced-motion.
+ * Editorial desk hero: Kelus brand lockup, Source Serif display,
+ * full-bleed notebook sheet — not a SaaS browser mock.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
 
   return (
-    <section className="kelus-hero home-hero is-folio is-notion paper-loop-hero" aria-labelledby="home-hero-title">
-      <div className="folio-hero-atmosphere" aria-hidden="true">
-        <span className="folio-hero-mist" />
-        <span className="folio-hero-wash" />
-        <span className="folio-hero-rule" />
+    <section className="kelus-hero home-hero is-folio is-notion paper-loop-hero is-desk" aria-labelledby="home-hero-title">
+      <div className="desk-atmosphere" aria-hidden="true">
+        <span className="desk-grain" />
+        <span className="desk-lamp" />
+        <span className="desk-spine" />
       </div>
 
       <div className="folio-hero-copy home-copy">
-        <ul className="hero-marks" aria-hidden="true">
-          {MARKS.map((mark) => (
-            <li key={mark.border} style={{ borderColor: mark.border, background: mark.fill }}>
-              <span style={{ background: mark.face }} />
-            </li>
-          ))}
-        </ul>
+        <motion.p
+          className="hero-brand"
+          initial={false}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduce ? 0 : dur.fast, ease }}
+        >
+          Kelus
+        </motion.p>
 
         <motion.h1
           id="home-hero-title"
           initial={false}
           animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, ease }}
+          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.micro, ease }}
         >
-          Revise your lessons.{" "}
-          <span className="hero-pill">Prepare</span> for your exams.
+          Revise your lessons.
+          <span className="hero-line-break">Prepare for the exam you actually have.</span>
         </motion.h1>
+
         <motion.p
           className="home-lede"
           initial={false}
           animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.micro, ease }}
+          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
         >
           Bring your course notes. Practise recalling what you studied, check your answers, and revisit
           weak topics before the exam.
         </motion.p>
+
         <motion.div
           className="home-actions"
           initial={false}
           animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
+          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.normal, ease }}
         >
           <motion.div whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>
             <Link href="/today?sample=1" className="cta home-cta">
