@@ -157,9 +157,11 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
       </div>
       <p
         className={
-          status === "error" || status === "local" || status === "needs_activation"
+          status === "error"
             ? "waitlist-message is-error"
-            : "waitlist-message"
+            : status === "local" || status === "needs_activation"
+              ? "waitlist-message is-local"
+              : "waitlist-message"
         }
         role={status === "error" ? "alert" : status === "saved" || status === "local" || status === "needs_activation" ? "status" : undefined}
         aria-live="polite"

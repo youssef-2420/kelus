@@ -6174,6 +6174,14 @@ h3,
   color: var(--color-midnight-ink);
 }
 
+.waitlist-message.is-local {
+  color: var(--color-steel);
+  background: color-mix(in srgb, var(--color-mist) 80%, transparent);
+  border: 1px solid var(--color-frost);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
 .v1-foot-actions {
   display: flex;
   align-items: center;

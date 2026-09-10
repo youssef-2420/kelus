@@ -225,15 +225,17 @@ export function MaterialLibrary() {
           quality = assessPdfTextQuality(pages);
           usedOcr = true;
         }
-        return ocr.ocrPages;
+        return ocr;
       }
 
       const needsScanHelp = quality.density === "sparse" || quality.density === "empty" || pages.some(pageNeedsOcr);
       if (proposals.length < 3 && needsScanHelp) {
-        const recovered = await runOcr("Scanned or weak PDF text — reading pages with on-device OCR…");
-        if (recovered === 0 && quality.density === "empty") {
+        const ocrResult = await runOcr("Scanned or weak PDF text — reading pages with on-device OCR…");
+        if (ocrResult.ocrPages === 0 && quality.density === "empty") {
           const ocrError = new Error(
-            "On-device OCR finished without usable English text. Export a text PDF, try a clearer English scan, or continue with the sample course.",
+            ocrResult.timedOut
+              ? "Scan reading hit the time limit before usable English text appeared. Export a text PDF, try a clearer scan, or continue with the sample course."
+              : "On-device OCR finished without usable English text. Export a text PDF, try a clearer English scan, or continue with the sample course.",
           );
           (ocrError as Error & { kind?: string }).kind = "ocr";
           throw ocrError;
@@ -307,6 +309,11 @@ export function MaterialLibrary() {
     trackEvent({ name: "material_upload_started", role });
     setError(null);
     setErrorKind(null);
+    if (file.size > 20 * 1024 * 1024) {
+      setErrorKind("generic");
+      setError("This PDF is larger than 20 MB. Export a smaller file, or split it, then try again.");
+      return;
+    }
     setBusy(true);
     try {
       const material = await addPdfMaterial({ courseId: course.id, file, role });
@@ -341,12 +348,14 @@ export function MaterialLibrary() {
   function addLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setErrorKind(null);
     try {
       addLinkMaterial({ courseId: course.id, title, value: url, role });
       setTitle("");
       setUrl("");
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "The link could not be saved.");
+      setErrorKind("generic");
+      setError(caught instanceof Error ? caught.message : "The link could not be saved. Check the URL and try again.");
     }
   }
 
@@ -384,7 +393,8 @@ export function MaterialLibrary() {
       });
       setAnalysis(null);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Kelus could not build the map.");
+      setErrorKind("generic");
+      setError(caught instanceof Error ? caught.message : "Kelus could not build the map. Check concept names and try again.");
     }
   }
 

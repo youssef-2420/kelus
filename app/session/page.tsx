@@ -20,6 +20,7 @@ type SourcePanelState = {
   locator: string | null;
   kind: "pdf" | "link" | "unavailable";
   href: string | null;
+  reason?: "missing" | "read_failed";
 };
 
 const STEP_INDEX = { learn: 1, retrieve: 2, apply: 3, evaluate: 4 } as const;
@@ -231,7 +232,7 @@ function SessionBody() {
       sourceObjectUrl.current = null;
     }
     if (!material) {
-      setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null });
+      setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null, reason: "missing" });
       return;
     }
     if (material.storage === "url" && material.sourceUrl) {
@@ -241,16 +242,23 @@ function SessionBody() {
     const request = ++sourceRequest.current;
     setOpeningSource(true);
     let blob: Blob | null = null;
+    let readFailed = false;
     try {
       blob = await readMaterialPdf(materialId, auth.user?.id);
     } catch {
-      // Keep the lesson usable when local or remote source storage fails.
+      readFailed = true;
     } finally {
       if (request === sourceRequest.current) setOpeningSource(false);
     }
     if (request !== sourceRequest.current) return;
     if (!blob) {
-      setSourcePanel({ title: material.title, locator, kind: "unavailable", href: null });
+      setSourcePanel({
+        title: material.title,
+        locator,
+        kind: "unavailable",
+        href: null,
+        reason: readFailed ? "read_failed" : "missing",
+      });
       return;
     }
     const page = Number(locator?.match(/\d+/)?.[0] ?? 1);
@@ -445,7 +453,11 @@ function SessionBody() {
             ) : null}
             {sourcePanel.kind === "unavailable" ? (
               <div className="session-source-link">
-                <p>The reference is part of your learning activity, but the original file is not available on this device.</p>
+                <p>
+                  {sourcePanel.reason === "read_failed"
+                    ? "Kelus could not open this PDF just now. Your session stays here — add the file again from Materials, then reopen the source."
+                    : "The reference is part of your learning activity, but the original file is not available on this device."}
+                </p>
                 <button type="button" onClick={() => router.push("/materials")}>Add the PDF again <span aria-hidden="true">→</span></button>
               </div>
             ) : null}
