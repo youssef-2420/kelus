@@ -12,6 +12,7 @@ const dur = kelusDuration;
 /**
  * Editorial desk hero: Kelus brand lockup, Source Serif display,
  * full-bleed notebook sheet — not a SaaS browser mock.
+ * Ink CTAs are intentional above the fold (desk system); product blue returns below.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
@@ -27,6 +28,7 @@ export function KelusHero() {
       <div className="folio-hero-copy home-copy">
         <motion.p
           className="hero-brand"
+          aria-hidden="true"
           initial={false}
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.fast, ease }}
@@ -40,6 +42,7 @@ export function KelusHero() {
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.micro, ease }}
         >
+          <span className="hero-brand-sr">Kelus. </span>
           Revise your lessons.
           <span className="hero-line-break">Prepare for the exam you actually have.</span>
         </motion.h1>
