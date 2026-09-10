@@ -146,7 +146,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
             {TIMES.map((minutes) => (
               <label key={minutes} className={draft.availableMinutes === minutes ? "is-selected" : undefined}>
                 <input type="radio" name="minutes" checked={draft.availableMinutes === minutes} onChange={() => setDraft({ ...draft, availableMinutes: minutes })} />
-                <strong>{minutes === 60 ? "60+" : minutes}</strong><span>MIN</span>
+                <strong>{minutes === 60 ? "60+" : minutes}</strong><span>min</span>
               </label>
             ))}
           </div>

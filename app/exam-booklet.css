@@ -141,18 +141,20 @@ body.is-notion-system .is-poster .home-cta:hover {
   color: #fff;
 }
 
+body.is-notion-system .kelus-hero.is-folio.is-notion.is-poster .home-secondary,
 body.is-notion-system .is-poster .home-secondary {
-  background: transparent;
-  border: 1px solid #aeb6a8;
-  color: var(--booklet-ink);
+  background: transparent !important;
+  border: 1px solid #aeb6a8 !important;
+  color: var(--booklet-ink) !important;
   border-radius: 999px;
   font-family: var(--font-sans);
   font-weight: 500;
 }
 
+body.is-notion-system .kelus-hero.is-folio.is-notion.is-poster .home-secondary:hover,
 body.is-notion-system .is-poster .home-secondary:hover {
-  background: #e3e8df;
-  color: var(--booklet-ink);
+  background: #e3e8df !important;
+  color: var(--booklet-ink) !important;
 }
 
 body.is-notion-system .is-poster .poster-visual {
@@ -490,4 +492,22 @@ body.is-notion-system .diagnosis-page.is-notion-product .diagnosis-check {
   border: 1px solid var(--booklet-rule);
   border-radius: 4px;
   box-shadow: none;
+}
+
+/* Kill leftover SaaS uppercase + Notion blue accents */
+body.is-notion-system .destination-pair label,
+body.is-notion-system .destination-page.is-notion-product .destination-pair label,
+body.is-notion-system .destination-page.is-notion-product .time-choices span,
+body.is-notion-system .is-notebook .notion-board-steps li,
+body.is-notion-system .is-notebook .notion-flow-route-title,
+body.is-notion-system .is-notebook .notion-flow-route-title span,
+body.is-notion-system .notion-product-rail-label,
+body.is-notion-system .is-notion-product .course-workspace-identity span {
+  text-transform: none !important;
+  letter-spacing: 0;
+}
+
+body.is-notion-system .is-notebook .notion-flow-reveal:hover,
+body.is-notion-system .notion-board .notion-flow-reveal:hover {
+  background: #e3e8df !important;
 }
