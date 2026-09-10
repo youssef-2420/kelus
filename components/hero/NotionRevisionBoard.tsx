@@ -1,8 +1,8 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
-import { kelusDuration, kelusEase } from "@/components/motion";
+import { kelusDuration, kelusEase, kelusMotion } from "@/components/motion";
 
 type Phase = "recall" | "check" | "route";
 
@@ -18,6 +18,9 @@ const BASE_ROUTE: RouteItem[] = [
   { name: "Cell respiration", minutes: 15, reason: "High exam value", recommended: false },
   { name: "Homeostasis", minutes: 12, reason: "Builds on both", recommended: false },
 ];
+
+const press = kelusMotion.press;
+const spring = { type: "spring" as const, bounce: 0, duration: 0.45 };
 
 /**
  * Open notebook sheet — ruled paper, binder holes, ink diagram.
@@ -65,12 +68,11 @@ export function NotionRevisionBoard() {
 
   return (
     <motion.div
-      className="notion-board is-honest-flow is-clean is-paper-loop is-notebook"
-      initial={false}
-      animate={{ opacity: 1 }}
+      className="notion-board is-honest-flow is-clean is-paper-loop is-notebook is-elevated"
+      initial={reduce ? false : { opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: reduce ? 0 : kelusDuration.moderate,
-        delay: reduce ? 0 : kelusDuration.instant,
         ease: kelusEase,
       }}
     >
@@ -98,43 +100,43 @@ export function NotionRevisionBoard() {
             >
               <path
                 d="M24 28h232v84H24z"
-                fill="#f7f4ee"
-                stroke="#1a1a1a"
+                fill="#f7f8f5"
+                stroke="#12160f"
                 strokeWidth="1.4"
               />
               <path
                 d="M140 32v76"
                 fill="none"
-                stroke="#097fe8"
+                stroke="#1f6b45"
                 strokeWidth="2.2"
                 strokeLinecap="round"
                 strokeDasharray="2 6"
               />
-              <circle cx="64" cy="58" r="4" fill="#097fe8" />
-              <circle cx="86" cy="78" r="4" fill="#097fe8" />
-              <circle cx="58" cy="92" r="4" fill="#097fe8" />
-              <circle cx="198" cy="54" r="7" fill="#ffb110" stroke="#1a1a1a" strokeWidth="1.1" />
-              <circle cx="222" cy="78" r="7" fill="#ffb110" stroke="#1a1a1a" strokeWidth="1.1" />
-              <circle cx="196" cy="96" r="7" fill="#ffb110" stroke="#1a1a1a" strokeWidth="1.1" />
+              <circle cx="64" cy="58" r="4" fill="#1f6b45" />
+              <circle cx="86" cy="78" r="4" fill="#1f6b45" />
+              <circle cx="58" cy="92" r="4" fill="#1f6b45" />
+              <circle cx="198" cy="54" r="7" fill="#d4b56a" stroke="#12160f" strokeWidth="1.1" />
+              <circle cx="222" cy="78" r="7" fill="#d4b56a" stroke="#12160f" strokeWidth="1.1" />
+              <circle cx="196" cy="96" r="7" fill="#d4b56a" stroke="#12160f" strokeWidth="1.1" />
               <path
                 d="M96 74h36"
                 fill="none"
-                stroke="#1a1a1a"
+                stroke="#12160f"
                 strokeWidth="1.8"
                 strokeLinecap="round"
               />
               <path
                 d="M124 68l10 6-10 6"
                 fill="none"
-                stroke="#1a1a1a"
+                stroke="#12160f"
                 strokeWidth="1.8"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <text x="48" y="122" fill="#5c574f" fontSize="10" fontFamily="ui-sans-serif, system-ui, sans-serif">
+              <text x="48" y="122" fill="#4a5246" fontSize="10" fontFamily="ui-sans-serif, system-ui, sans-serif">
                 water
               </text>
-              <text x="188" y="122" fill="#5c574f" fontSize="10" fontFamily="ui-sans-serif, system-ui, sans-serif">
+              <text x="188" y="122" fill="#4a5246" fontSize="10" fontFamily="ui-sans-serif, system-ui, sans-serif">
                 solute
               </text>
             </svg>
@@ -143,24 +145,22 @@ export function NotionRevisionBoard() {
           <header className="notion-board-head">
             <p className="board-example-label">Sample · Molecular Biology</p>
             <ol className="notion-board-steps" aria-label="Revision steps">
-              <li
-                className={phase === "recall" ? "is-active" : "is-done"}
-                aria-current={phase === "recall" ? "step" : undefined}
-              >
-                Recall
-              </li>
-              <li
-                className={phase === "check" ? "is-active" : phase === "route" ? "is-done" : undefined}
-                aria-current={phase === "check" ? "step" : undefined}
-              >
-                Check
-              </li>
-              <li
-                className={phase === "route" ? "is-active" : undefined}
-                aria-current={phase === "route" ? "step" : undefined}
-              >
-                Route
-              </li>
+              {(["recall", "check", "route"] as const).map((step) => {
+                const label = step === "recall" ? "Recall" : step === "check" ? "Check" : "Route";
+                const active = phase === step;
+                const done =
+                  (step === "recall" && phase !== "recall") ||
+                  (step === "check" && phase === "route");
+                return (
+                  <li
+                    key={step}
+                    className={active ? "is-active" : done ? "is-done" : undefined}
+                    aria-current={active ? "step" : undefined}
+                  >
+                    {label}
+                  </li>
+                );
+              })}
             </ol>
           </header>
 
@@ -169,20 +169,35 @@ export function NotionRevisionBoard() {
               <p className="notion-flow-question">
                 Why does water move across a selectively permeable membrane?
               </p>
-              <button
+              <motion.button
                 type="button"
                 className="notion-flow-reveal"
                 aria-expanded={revealed}
                 aria-controls="board-answer"
                 onClick={() => (revealed ? hide() : reveal())}
+                whileTap={reduce ? undefined : { scale: 0.97 }}
+                transition={press}
               >
                 {revealed ? "Hide answer" : "Reveal answer"}
                 <span aria-hidden="true">{revealed ? "−" : "+"}</span>
-              </button>
+              </motion.button>
 
-              <p id="board-answer" className="board-answer" hidden={!revealed} role={revealed ? "status" : undefined}>
-                Water moves by osmosis toward the side with a higher solute concentration, across a membrane that lets water pass.
-              </p>
+              <AnimatePresence initial={false}>
+                {revealed ? (
+                  <motion.p
+                    key="answer"
+                    id="board-answer"
+                    className="board-answer"
+                    role="status"
+                    initial={reduce ? false : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? undefined : { opacity: 0 }}
+                    transition={{ duration: reduce ? 0 : kelusDuration.normal, ease: kelusEase }}
+                  >
+                    Water moves by osmosis toward the side with a higher solute concentration, across a membrane that lets water pass.
+                  </motion.p>
+                ) : null}
+              </AnimatePresence>
 
               <AnimatePresence initial={false}>
                 {revealed && phase === "check" ? (
@@ -191,17 +206,29 @@ export function NotionRevisionBoard() {
                     className="notebook-grades"
                     role="group"
                     aria-label="How did that go?"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
+                    initial={reduce ? false : { opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={reduce ? undefined : { opacity: 0 }}
                     transition={{ duration: reduce ? 0 : kelusDuration.normal, ease: kelusEase }}
                   >
-                    <button type="button" className="is-primary" onClick={markShaky}>
+                    <motion.button
+                      type="button"
+                      className="is-primary"
+                      onClick={markShaky}
+                      whileTap={reduce ? undefined : { scale: 0.97 }}
+                      transition={press}
+                    >
                       I was shaky
-                    </button>
-                    <button type="button" className="is-ghost" onClick={markRemembered}>
+                    </motion.button>
+                    <motion.button
+                      type="button"
+                      className="is-ghost"
+                      onClick={markRemembered}
+                      whileTap={reduce ? undefined : { scale: 0.98 }}
+                      transition={press}
+                    >
                       I remembered
-                    </button>
+                    </motion.button>
                   </motion.div>
                 ) : null}
               </AnimatePresence>
@@ -212,25 +239,49 @@ export function NotionRevisionBoard() {
                 <span>Today’s route</span>
                 <strong>45 min</strong>
               </div>
-              {signal ? (
-                <p className="notebook-signal" role="status" aria-live="polite">
-                  <span aria-hidden="true">↳</span> {signal}
-                </p>
-              ) : (
-                <p className="notebook-signal is-quiet">Reveal, then mark how it went — the order updates.</p>
-              )}
-              <ul>
-                {route.map((item, index) => (
-                  <li key={item.name} className={item.recommended ? "is-recommended" : undefined}>
-                    <span>{String(index + 1).padStart(2, "0")}</span>
-                    <div>
-                      <strong>{item.name}</strong>
-                      <small>{item.reason}</small>
-                    </div>
-                    <b>{item.minutes}m</b>
-                  </li>
-                ))}
-              </ul>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.p
+                  key={signal ?? "quiet"}
+                  className={`notebook-signal${signal ? "" : " is-quiet"}`}
+                  role="status"
+                  aria-live="polite"
+                  initial={reduce ? false : { opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduce ? undefined : { opacity: 0 }}
+                  transition={{ duration: reduce ? 0 : kelusDuration.fast, ease: kelusEase }}
+                >
+                  {signal ? (
+                    <>
+                      <span aria-hidden="true">↳</span> {signal}
+                    </>
+                  ) : (
+                    "Reveal, then mark how it went — the order updates."
+                  )}
+                </motion.p>
+              </AnimatePresence>
+              <LayoutGroup>
+                <ul>
+                  <AnimatePresence initial={false}>
+                    {route.map((item, index) => (
+                      <motion.li
+                        key={item.name}
+                        layout={!reduce}
+                        className={item.recommended ? "is-recommended" : undefined}
+                        initial={false}
+                        animate={{ opacity: 1 }}
+                        transition={reduce ? { duration: 0 } : spring}
+                      >
+                        <span>{String(index + 1).padStart(2, "0")}</span>
+                        <div>
+                          <strong>{item.name}</strong>
+                          <small>{item.reason}</small>
+                        </div>
+                        <b>{item.minutes}m</b>
+                      </motion.li>
+                    ))}
+                  </AnimatePresence>
+                </ul>
+              </LayoutGroup>
             </div>
           </div>
         </div>

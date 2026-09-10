@@ -670,3 +670,131 @@ body.is-notion-system .is-marked-setup .text-btn.setup-sample-cta {
   color: var(--booklet-kelus) !important;
   font-weight: 600;
 }
+
+/* ── Elevation: sample board as marked notebook craft ── */
+body.is-notion-system .is-notebook.is-elevated .notebook-sheet {
+  background: #fbfcf9;
+  border-color: #c5cdc0;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 18px 48px -28px rgba(18, 22, 15, 0.28),
+    1px 1px 0 rgba(18, 22, 15, 0.04);
+  transform: rotate(-0.25deg);
+}
+
+body.is-notion-system .is-notebook.is-elevated .paper-step,
+body.is-notion-system .is-notebook.is-elevated .board-example-label,
+body.is-notion-system .is-notebook.is-elevated .notion-board-steps li,
+body.is-notion-system .is-notebook.is-elevated .notion-flow-route-title {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: 500;
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .is-notebook.is-elevated .paper-step {
+  font-size: 0.92rem;
+}
+
+body.is-notion-system .is-notebook.is-elevated .paper-source p {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.55rem, 2.4vw, 2rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .is-notebook.is-elevated .paper-source p em {
+  color: var(--booklet-kelus);
+  font-style: italic;
+  font-weight: 500;
+}
+
+body.is-notion-system .is-notebook.is-elevated .notion-board-steps li.is-active {
+  color: var(--booklet-ink);
+  font-weight: 600;
+  text-decoration-color: var(--booklet-kelus);
+}
+
+body.is-notion-system .is-notebook.is-elevated .notion-flow-question {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  font-weight: 450;
+  letter-spacing: -0.025em;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .is-notebook.is-elevated .notion-flow-reveal {
+  background: var(--booklet-kelus) !important;
+  color: #f7f8f5 !important;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+body.is-notion-system .is-notebook.is-elevated .notion-flow-reveal:hover {
+  background: #185536 !important;
+}
+
+body.is-notion-system .is-notebook.is-elevated .notebook-grades .is-primary {
+  background: var(--booklet-kelus) !important;
+  color: #f7f8f5 !important;
+  border: 0 !important;
+}
+
+body.is-notion-system .is-notebook.is-elevated .notebook-grades .is-ghost {
+  background: transparent !important;
+  border: 1px solid #aeb6a8 !important;
+  color: var(--booklet-ink) !important;
+}
+
+body.is-notion-system .is-notebook.is-elevated .notion-flow-route.is-live {
+  background: linear-gradient(180deg, rgba(31, 107, 69, 0.06), transparent 56px);
+}
+
+body.is-notion-system .is-notebook.is-elevated .notion-flow-route li {
+  border-bottom-color: var(--booklet-rule);
+}
+
+body.is-notion-system .is-notebook.is-elevated .notion-flow-route li.is-recommended {
+  background: rgba(31, 107, 69, 0.08) !important;
+  border-radius: 4px;
+  box-shadow: inset 3px 0 0 var(--booklet-kelus);
+}
+
+body.is-notion-system .is-notebook.is-elevated .notebook-signal {
+  color: var(--booklet-ink);
+  font-family: var(--font-editorial);
+  font-size: 0.98rem;
+}
+
+body.is-notion-system .is-notebook.is-elevated .notebook-signal.is-quiet {
+  color: var(--booklet-mute);
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+}
+
+body.is-notion-system .poster-sample {
+  background: var(--booklet-lift);
+}
+
+body.is-notion-system .poster-sample-intro .kicker {
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .poster-sample-intro h2 {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .home-close.folio-close {
+  background: var(--booklet-paper);
+}
+
+body.is-notion-system .home-close-copy h2 {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.75rem, 3vw, 2.35rem);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  max-width: 18ch;
+}

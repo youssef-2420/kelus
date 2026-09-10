@@ -17,10 +17,11 @@ export function HomeAfterHero() {
           <p className="kicker">See it once</p>
           <h2 id="poster-sample-title">Answer, then watch the route move.</h2>
           <p>
-            Reveal a check, mark how it went — the order updates. This sample is not saved.
+            Reveal a check. Mark how it went. The order updates — on paper, in about a minute.
+            This sample is not saved.
           </p>
         </Reveal>
-        <Reveal delay={0.06}>
+        <Reveal delay={0.08}>
           <NotionRevisionBoard />
         </Reveal>
       </section>
