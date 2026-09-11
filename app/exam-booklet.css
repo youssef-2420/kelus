@@ -82,16 +82,9 @@ body.is-notion-system .is-poster .poster-copy {
   gap: 0;
 }
 
-/* Compact brand signal in the first viewport — not a giant wordmark. */
+/* Brand lives in the site header — keep any leftover hero-brand markup hidden. */
 body.is-notion-system .is-poster .hero-brand {
-  display: block;
-  margin: 0 0 0.85rem;
-  font-family: var(--font-editorial);
-  font-size: 0.9375rem;
-  font-weight: 550;
-  letter-spacing: 0.04em;
-  line-height: 1;
-  color: var(--booklet-kelus);
+  display: none !important;
 }
 
 /* Headline is the hero apex now that the giant wordmark is gone. */
@@ -370,9 +363,7 @@ body.is-notion-system .home-close-actions .text-btn {
     padding: 56px 24px 28px;
   }
   body.is-notion-system .is-poster .hero-brand {
-    display: block;
-    margin-bottom: 0.7rem;
-    font-size: 0.875rem;
+    display: none !important;
   }
   body.is-notion-system .is-poster .poster-copy h1 {
     font-size: clamp(2.1rem, 9vw, 3rem) !important;

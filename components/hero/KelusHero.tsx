@@ -10,8 +10,8 @@ const press = kelusMotion.press;
 const dur = kelusDuration;
 
 /**
- * Marked-script hero: compact brand, one headline, one lede, one primary path.
- * Brand is a modest first-viewport signal — not a giant logo.
+ * Marked-script hero: one headline, one lede, one primary path.
+ * Brand lives in the site header — not repeated in the hero.
  * Interactive sample lives below the fold.
  */
 export function KelusHero() {
@@ -20,14 +20,6 @@ export function KelusHero() {
   return (
     <section className="kelus-hero home-hero is-folio is-notion is-poster" aria-labelledby="home-hero-title">
       <div className="poster-copy home-copy">
-        <motion.p
-          className="hero-brand"
-          initial={false}
-          animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.fast, ease }}
-        >
-          Kelus
-        </motion.p>
         <motion.h1
           id="home-hero-title"
           initial={false}
