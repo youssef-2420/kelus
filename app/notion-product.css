@@ -621,12 +621,10 @@
 .how-page.is-notion-product .how-map-fragment,
 .how-page.is-notion-product .how-diagnosis-fragment,
 .how-page.is-notion-product .how-session-fragment {
-  border: 1px solid #e8e8e5;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.85) inset,
-    0 14px 36px -22px rgba(15, 15, 15, 0.22);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .how-page.is-notion-product .how-principle {

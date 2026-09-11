@@ -5359,10 +5359,9 @@ h3,
   min-width: 0;
   margin: 0;
   color: var(--color-midnight-ink);
-  background: var(--color-mist);
-  border-top: 1px solid var(--color-midnight-ink);
-  border-bottom: 1px solid var(--color-frost);
-  overflow: hidden;
+  background: transparent;
+  border: 0;
+  overflow: visible;
 }
 .how-illustration svg { display: block; width: 100%; height: auto; }
 .how-illustration text { fill: currentColor; font-family: var(--font-ledger); }
@@ -5415,9 +5414,8 @@ h3,
 .how-today-fragment,
 .how-map-fragment {
   min-width: 0;
-  background: var(--color-pure-white);
-  border-top: 1px solid var(--color-midnight-ink);
-  border-bottom: 1px solid var(--color-frost);
+  background: transparent;
+  border: 0;
 }
 .how-material-fragment p { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: var(--spacing-16); align-items: center; min-height: 72px; margin: 0; border-bottom: 1px solid var(--color-frost); }
 .how-material-fragment p:last-child { border-bottom: 0; }
