@@ -9,6 +9,7 @@ import { ConceptInspector } from "@/components/ConceptInspector";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { useLearner } from "@/components/LearnerProvider";
 import { courseMastery } from "@/domain/scheduler";
+import { DirectionalPage } from "@/components/PageTransition";
 
 export default function MapPage() {
   const { state, useDemo: loadDemo } = useLearner();
@@ -18,15 +19,17 @@ export default function MapPage() {
   const reduceMotion = useReducedMotion();
   if (!state.onboardingCompleted) {
     return (
+    <DirectionalPage>
       <AppShell>
         <section className="materials-empty">
-          <p className="kicker">Knowledge Map</p>
+          <p className="kicker">Map</p>
           <h1>Set your exam first.</h1>
-          <p>Kelus needs a course and exam before it can show a map.</p>
-          <Link href="/today" className="cta">Set your exam <span aria-hidden="true">→</span></Link>
+          <p>Kelus needs a course and exam date before it can open the map.</p>
+          <Link href="/today" className="cta">Set my exam <span aria-hidden="true">→</span></Link>
         </section>
       </AppShell>
-    );
+    </DirectionalPage>
+  );
   }
   const course = state.snapshot.courses[0];
   if (!course) return <AppShell><p>No active course.</p></AppShell>;
@@ -37,9 +40,10 @@ export default function MapPage() {
   const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
   if (!concepts.length) {
     return (
+    <DirectionalPage>
       <AppShell>
         <section className="materials-empty">
-          <p className="kicker">Knowledge Map</p>
+          <p className="kicker">Map</p>
           <h1>Confirm concepts from a source first.</h1>
           <p>Add a syllabus or lecture PDF, then keep the concepts this exam actually covers.</p>
           <div className="materials-empty-actions">
@@ -50,9 +54,11 @@ export default function MapPage() {
           </div>
         </section>
       </AppShell>
-    );
+    </DirectionalPage>
+  );
   }
   return (
+    <DirectionalPage>
     <AppShell action={!state.diagnosisCompleted ? <Link className="text-btn" href="/today">Continue to diagnosis <span aria-hidden="true">→</span></Link> : undefined}>
       <p className="kicker">Course</p>
       <h1 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course is now a Knowledge Map"}</h1>
@@ -75,5 +81,6 @@ export default function MapPage() {
         </AnimatePresence>
       </div>
     </AppShell>
+  </DirectionalPage>
   );
 }

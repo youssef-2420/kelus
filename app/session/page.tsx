@@ -12,6 +12,7 @@ import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } 
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
 import { trackEvent } from "@/lib/analytics";
+import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
 type Phase = "learn" | "retrieve" | "apply" | "evaluate" | "result" | "reroute";
 type HelpMode = "hint" | "explain" | "example" | null;
@@ -469,5 +470,19 @@ function SessionBody() {
 }
 
 export default function SessionPage() {
-  return <Suspense fallback={<main id="main" className="study-shell"><p>Opening route…</p></main>}><SessionBody /></Suspense>;
+  return (
+    <LateralPage>
+      <Suspense
+        fallback={
+          <SuspenseFallbackExit>
+            <main id="main" className="study-shell"><p>Opening route…</p></main>
+          </SuspenseFallbackExit>
+        }
+      >
+        <SuspenseReveal>
+          <SessionBody />
+        </SuspenseReveal>
+      </Suspense>
+    </LateralPage>
+  );
 }

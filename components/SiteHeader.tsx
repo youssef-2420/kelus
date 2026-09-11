@@ -18,6 +18,7 @@ export function SiteHeader() {
   const auth = useAuth();
   const inSession = pathname.startsWith("/session");
   const inProduct = ["/today", "/materials", "/map", "/concept"].some((path) => pathname.startsWith(path));
+  const onHome = pathname === "/";
   const accountMenu = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const close = (event: PointerEvent) => {
@@ -30,7 +31,10 @@ export function SiteHeader() {
   const visibleLinks = links;
 
   return (
-    <header className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}`}>
+    <header
+      className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}${onHome ? " is-home" : ""}`}
+      style={{ viewTransitionName: "site-header" }}
+    >
       <div className="site-header-inner">
         <Link href="/" className="mark site-wordmark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           Kelus
@@ -64,8 +68,8 @@ export function SiteHeader() {
           </details>
         ) : (
           <div className="site-header-cluster">
-            {!inProduct && <Link href="/today" className="site-header-action">
-              Start revising <span aria-hidden="true">→</span>
+            {!inProduct && <Link href="/today?sample=1" className="site-header-action">
+              Try sample <span aria-hidden="true">→</span>
             </Link>}
             {auth.configured ? (
               <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>

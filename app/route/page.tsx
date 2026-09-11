@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { HowItWorks } from "@/components/HowItWorks";
+import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "How to revise with Kelus — Course notes to exam practice",
@@ -9,10 +10,12 @@ export const metadata: Metadata = {
 
 export default function RoutePage() {
   return (
+    <LateralPage>
     <div className="home route-page">
       <main id="main">
         <HowItWorks />
       </main>
     </div>
+  </LateralPage>
   );
 }

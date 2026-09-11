@@ -2,128 +2,44 @@
 
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
-import { HeroProductDemo } from "@/components/hero/HeroProductDemo";
 import { NotionRevisionBoard } from "@/components/hero/NotionRevisionBoard";
-import { MaterialShelfIllustration } from "@/components/home/MaterialShelfIllustration";
-import { TodayPlanIllustration } from "@/components/home/TodayPlanIllustration";
 import { Reveal } from "@/components/motion";
 
 /**
- * Below-fold: one interactive sample (notebook), then story chapters.
- * Hero is poster-only — no twin product chrome above the fold.
+ * Below the fold: one live proof of the loop, then close.
+ * Feature chapters and method grids belong in How it works — not the homepage.
  */
 export function HomeAfterHero() {
   return (
     <>
       <section id="try" className="poster-sample" aria-labelledby="poster-sample-title">
         <Reveal className="poster-sample-intro">
-          <p className="kicker">Try the loop</p>
-          <h2 id="poster-sample-title">Reveal an answer. Watch today’s route move.</h2>
+          <p className="kicker">See it once</p>
+          <h2 id="poster-sample-title">Answer, then watch the route move.</h2>
           <p>
-            This sample is not saved. Mark how the check went — the order updates before you add your own course.
+            Reveal a check. Mark how it went. The order updates — on paper, in about a minute.
+            This sample is not saved.
           </p>
         </Reveal>
-        <Reveal delay={0.06}>
+        <Reveal delay={0.08}>
           <NotionRevisionBoard />
         </Reveal>
       </section>
 
-      <div className="folio-story" id="how">
-        <section className="folio-chapter is-plan" aria-labelledby="folio-plan-title">
-          <Reveal className="folio-chapter-copy">
-            <p className="folio-chapter-index" aria-hidden="true">01</p>
-            <p className="kicker">Today’s route</p>
-            <h2 id="folio-plan-title">Your next 45 minutes, in order.</h2>
-            <p>
-              Open Today for a short plan: recall a topic, check the answer, then move on.
-              Weak answers move that topic earlier for another try.
-            </p>
-            <Link href="/today">
-              Open Today <span aria-hidden="true">→</span>
-            </Link>
-          </Reveal>
-          <Reveal initial={{ opacity: .8 }} className="folio-chapter-art">
-            <TodayPlanIllustration />
-          </Reveal>
-        </section>
-
-        <section id="route" className="folio-chapter is-reroute is-demo-chapter" aria-labelledby="folio-reroute-title">
-          <Reveal className="folio-chapter-copy">
-            <p className="folio-chapter-index" aria-hidden="true">02</p>
-            <p className="kicker">After one answer</p>
-            <h2 id="folio-reroute-title">The plan reorders itself.</h2>
-            <p>
-              Mark “almost” or miss a check, and Kelus reshuffles what comes next — so you practise
-              the weak spot again without rebuilding a plan by hand.
-            </p>
-            <Link href="/route">
-              See how the plan changes <span aria-hidden="true">→</span>
-            </Link>
-          </Reveal>
-          <Reveal delay={0.08} className="folio-chapter-art folio-chapter-demo">
-            <HeroProductDemo />
-          </Reveal>
-        </section>
-
-        <section className="folio-chapter is-materials" aria-labelledby="folio-materials-title">
-          <Reveal className="folio-chapter-copy">
-            <p className="folio-chapter-index" aria-hidden="true">03</p>
-            <p className="kicker">Your lessons</p>
-            <h2 id="folio-materials-title">Revise from your own notes.</h2>
-            <p>
-              Add a syllabus or lecture PDF, confirm the topics Kelus suggests, and keep each
-              practice item linked to the page it came from.
-            </p>
-            <Link href="/materials">
-              Open Materials <span aria-hidden="true">→</span>
-            </Link>
-          </Reveal>
-          <Reveal delay={0.1} className="folio-chapter-art">
-            <MaterialShelfIllustration />
-          </Reveal>
-        </section>
-      </div>
-
-      <section className="folio-method" aria-labelledby="folio-method-title">
-        <Reveal className="folio-method-heading">
-          <p className="kicker">Honest methodology</p>
-          <h2 id="folio-method-title">A recommendation you can inspect.</h2>
-          <p>Your material, recall checks, and exam date guide what Kelus suggests you revise next.</p>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <dl className="folio-method-grid">
-            <div>
-              <dt>Exam</dt>
-              <dd>Date and target score</dd>
-            </div>
-            <div>
-              <dt>Knowledge</dt>
-              <dd>Reported confidence and retrieval results</dd>
-            </div>
-            <div>
-              <dt>Constraints</dt>
-              <dd>Available study time and prerequisites</dd>
-            </div>
-            <div>
-              <dt>Boundary</dt>
-              <dd>Guidance—not a grade prediction</dd>
-            </div>
-          </dl>
-        </Reveal>
-      </section>
-
       <section className="home-close folio-close" aria-labelledby="home-close-title">
-        <Reveal className="home-close-inner">
+        <Reveal className="home-close-inner is-cluster">
           <div className="home-close-copy">
             <h2 id="home-close-title">Walk into the exam knowing what you worked on — and why.</h2>
-            <p>Try a free revision session on this device. See Exam Pass if you want priority support through exam day.</p>
+            <p>
+              Try the sample on this device, or set your exam and build Today’s route from your own notes.
+            </p>
           </div>
           <div className="home-close-actions">
-            <Link href="/today" className="cta">
-              Start revising <span aria-hidden="true">→</span>
+            <Link href="/today?sample=1" className="cta">
+              Try sample (~1 min) <span aria-hidden="true">→</span>
             </Link>
-            <Link href="/pricing" className="text-btn">
-              See pricing
+            <Link href="/today" className="text-btn">
+              Set my exam
             </Link>
           </div>
         </Reveal>

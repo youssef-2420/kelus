@@ -14,6 +14,7 @@ import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
 import { greeting } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
+import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
 function TodayBody() {
   const router = useRouter();
@@ -76,7 +77,7 @@ function TodayBody() {
     return (
       <AppShell>
         <section className="materials-empty">
-          <p className="kicker">Next step</p>
+          <p className="kicker">Materials</p>
           <h1>Bring in one real source.</h1>
           <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
           <div className="materials-empty-actions">
@@ -105,7 +106,7 @@ function TodayBody() {
         <section className="materials-empty">
           <p className="kicker">Today</p>
           <h1>Set your exam first.</h1>
-          <p>Kelus needs a course and exam before it can build today’s route.</p>
+          <p>Kelus needs a course and exam date before it can build today’s route.</p>
           <button type="button" className="cta" onClick={() => reset()}>Start over</button>
         </section>
       </AppShell>
@@ -226,15 +227,22 @@ function TodayBody() {
 
 export default function TodayPage() {
   return (
-    <Suspense
-      fallback={
-        <main id="main" className="destination-page">
+    <LateralPage>
+      <Suspense
+        fallback={
+          <SuspenseFallbackExit>
+            <main id="main" className="destination-page">
           <p className="destination-brand">Kelus</p>
           <h1 className="destination-page-title">Opening Today…</h1>
         </main>
-      }
-    >
-      <TodayBody />
-    </Suspense>
+          </SuspenseFallbackExit>
+        }
+      >
+        <SuspenseReveal>
+          <TodayBody />
+        </SuspenseReveal>
+      </Suspense>
+    </LateralPage>
   );
 }
+
