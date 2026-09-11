@@ -82,26 +82,21 @@ body.is-notion-system .is-poster .poster-copy {
   gap: 0;
 }
 
+/* Hero logo removed — brand lives in the site header only. */
 body.is-notion-system .is-poster .hero-brand {
-  margin: 0 0 14px;
-  font-family: var(--font-editorial);
-  font-size: clamp(4rem, 11vw, 6.5rem);
-  font-weight: 600;
-  letter-spacing: -0.06em;
-  line-height: 0.82;
-  color: var(--booklet-kelus);
+  display: none !important;
 }
 
-/* Brand is the apex; headline is supporting copy, not a second hero. */
+/* Headline is the hero apex now that the giant wordmark is gone. */
 body.is-notion-system .kelus-hero.home-hero.is-poster .poster-copy.home-copy h1,
 body.is-notion-system .is-poster .poster-copy h1 {
-  max-width: 22ch;
+  max-width: 14ch;
   margin: 0;
   font-family: var(--font-editorial);
-  font-size: clamp(1.2rem, 2.1vw, 1.55rem) !important;
-  font-weight: 400 !important;
-  line-height: 1.28;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.35rem, 5.5vw, 3.75rem) !important;
+  font-weight: 550 !important;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
   color: var(--booklet-ink);
 }
 
@@ -368,10 +363,10 @@ body.is-notion-system .home-close-actions .text-btn {
     padding: 56px 24px 28px;
   }
   body.is-notion-system .is-poster .hero-brand {
-    font-size: clamp(3.5rem, 16vw, 5rem);
+    display: none !important;
   }
   body.is-notion-system .is-poster .poster-copy h1 {
-    font-size: clamp(1.15rem, 4.2vw, 1.4rem);
+    font-size: clamp(2.1rem, 9vw, 3rem) !important;
   }
 }
 

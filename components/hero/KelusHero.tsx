@@ -10,8 +10,9 @@ const press = kelusMotion.press;
 const dur = kelusDuration;
 
 /**
- * Marked-script hero: Kelus as the display signal, one line, one lede,
- * one primary path. Interactive sample lives below the fold.
+ * Marked-script hero: one headline, one lede, one primary path.
+ * Brand lives in the site header — not repeated as a hero logo.
+ * Interactive sample lives below the fold.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
@@ -19,21 +20,11 @@ export function KelusHero() {
   return (
     <section className="kelus-hero home-hero is-folio is-notion is-poster" aria-labelledby="home-hero-title">
       <div className="poster-copy home-copy">
-        <motion.p
-          className="hero-brand"
-          aria-hidden="true"
-          initial={false}
-          animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.fast, ease }}
-        >
-          Kelus
-        </motion.p>
-
         <motion.h1
           id="home-hero-title"
           initial={false}
           animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.micro, ease }}
+          transition={{ duration: reduce ? 0 : dur.moderate, ease }}
         >
           <span className="hero-brand-sr">Kelus. </span>
           Revise your lessons.
