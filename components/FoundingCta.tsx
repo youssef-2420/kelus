@@ -22,7 +22,7 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
           rel="noopener noreferrer"
           onClick={() => trackEvent({ name: "exam_pass_checkout_clicked", source })}
         >
-          Get Exam Pass · $9 <span aria-hidden="true">→</span>
+          Get Exam Pass · $9.99 <span aria-hidden="true">→</span>
         </a>
         <p className="founding-cta-note">
           One exam, one payment. Priority support follows the exam date you set.
@@ -37,8 +37,8 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
       {waitlistReady ? <WaitlistForm source={source} compact /> : null}
       <p className="founding-cta-note">
         {waitlistReady
-          ? "Checkout is not live yet. Join the list to reserve the $9 Exam Pass."
-          : "Checkout is not live yet. Email hello@kelus.me to reserve the $9 Exam Pass."}
+          ? "Checkout is not live yet. Join the list to reserve the $9.99 Exam Pass."
+          : "Checkout is not live yet. Email hello@kelus.me to reserve the $9.99 Exam Pass."}
         {syncReady
           ? " Sync across devices is already available with free sign-in."
           : " Routes stay on this device for now."}
