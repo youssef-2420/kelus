@@ -798,3 +798,128 @@ body.is-notion-system .home-close-copy h2 {
   letter-spacing: -0.03em;
   max-width: 18ch;
 }
+
+/* ── To nine: one system across marketing + product ── */
+
+/* Unified Kelus wordmark (editorial), home + product */
+body.is-notion-system .site-wordmark,
+body.is-notion-system .site-header .site-wordmark,
+body.is-notion-system .site-header.is-product .site-wordmark,
+body.is-notion-system .site-header.is-session .site-wordmark {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .site-header.is-home .site-wordmark {
+  color: rgba(18, 22, 15, 0.78);
+}
+
+/* Session chrome: sentence case, quiet ink */
+body.is-notion-system .site-session-label {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: 500;
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .site-session-return {
+  color: var(--booklet-kelus);
+}
+
+/* How-it-works: no ALL CAPS kickers */
+body.is-notion-system .how-page .how-example-switcher > span,
+body.is-notion-system .how-page .how-loop > header span,
+body.is-notion-system .how-page .kicker,
+body.is-notion-system .how-illustration text {
+  text-transform: none !important;
+  letter-spacing: 0;
+}
+
+body.is-notion-system .how-page.is-notion-product .cta,
+body.is-notion-system .how-page .cta {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+}
+
+/* Product accents that still hardcode Notion blue */
+body.is-notion-system .is-notion-product .course-stage.is-complete i,
+body.is-notion-system .is-notion-product .course-stage.is-current i,
+body.is-notion-system .is-notion-product .course-workspace-progress li.is-complete i,
+body.is-notion-system .is-notion-product .course-workspace-progress li.is-current i {
+  background: var(--booklet-kelus) !important;
+  border-color: var(--booklet-kelus) !important;
+  color: #f7f8f5 !important;
+}
+
+body.is-notion-system .is-notion-product .course-workspace-progress li.is-complete i {
+  color: var(--booklet-kelus) !important;
+  background: rgba(31, 107, 69, 0.12) !important;
+}
+
+/* Soften Today / Materials: less SaaS card stack */
+body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
+body.is-notion-system .is-notion-product .today-workbench.is-revision-studio,
+body.is-notion-system .is-notion-product .materials-shelf,
+body.is-notion-system .is-notion-product .materials-ingest,
+body.is-notion-system .is-notion-product .materials-empty,
+body.is-notion-system .is-notion-product .map-workspace {
+  background: var(--booklet-lift);
+  border: 1px solid var(--booklet-rule);
+  border-radius: 2px;
+  box-shadow: none;
+}
+
+body.is-notion-system .course-workspace-layout.is-notion-product,
+body.is-notion-system .shell.is-notion-product {
+  background: var(--booklet-paper);
+}
+
+body.is-notion-system .is-notion-product .course-workspace-rail {
+  background: transparent;
+  border-right: 1px solid var(--booklet-rule);
+}
+
+body.is-notion-system .is-notion-product .course-workspace-identity strong {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  letter-spacing: -0.02em;
+}
+
+body.is-notion-system .is-notion-product .today-title,
+body.is-notion-system .is-notion-product .today-workbench-heading h2,
+body.is-notion-system .is-notion-product .materials-empty h1,
+body.is-notion-system .is-notion-product .materials-empty h2 {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .is-notion-product .today-lead-action,
+body.is-notion-system .is-notion-product .cta,
+body.is-notion-system .is-notion-product button.cta {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #f7f8f5;
+  border-radius: 4px;
+  box-shadow: none;
+}
+
+body.is-notion-system .is-notion-product .notion-product-rail-label,
+body.is-notion-system .notion-product-rail-label {
+  text-transform: none !important;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+/* Sidebar labels: sentence case (Learning loop, Current course) */
+body.is-notion-system .is-notion-product .course-workspace-identity > span,
+body.is-notion-system .is-notion-product .course-workspace-progress > div > span,
+body.is-notion-system .course-workspace-identity > span,
+body.is-notion-system .course-workspace-progress > div > span {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: 500;
+  color: var(--booklet-mute);
+}
