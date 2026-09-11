@@ -8,7 +8,7 @@ import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Try Kelus free, then reserve a $9 Exam Pass for launch support through one exam.",
+  description: "Try Kelus free, then reserve a $9.99 Exam Pass for launch support through one exam.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -27,7 +27,7 @@ export default function PricingPage() {
           {syncReady
             ? " Sign in anytime to sync that progress across browsers."
             : " Account sync ships when enabled for your build."}{" "}
-          The Exam Pass is a one-time $9 launch pass for students who want priority support through exam day.
+          The Exam Pass is a one-time $9.99 launch pass for students who want priority support through exam day.
         </p>
 
         <div className="pricing-grid" role="list">
@@ -51,7 +51,7 @@ export default function PricingPage() {
             <p className="kicker">Exam Pass</p>
             <h2>Support through exam day</h2>
             <p className="pricing-price">
-              $9<span>/exam</span>
+              $9.99<span>/exam</span>
             </p>
             <ul>
               <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
