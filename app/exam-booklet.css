@@ -923,3 +923,367 @@ body.is-notion-system .course-workspace-progress > div > span {
   font-weight: 500;
   color: var(--booklet-mute);
 }
+
+/* ── Product chrome fix: booklet page, not SaaS workspace ── */
+body.is-notion-system .course-workspace-layout.is-booklet-shell {
+  display: block;
+  width: min(44rem, calc(100% - 2.5rem));
+  margin: 0 auto;
+  padding: 1.25rem 0 4rem;
+  background: var(--booklet-paper);
+}
+
+body.is-notion-system .is-booklet-shell .course-workspace-content.shell,
+body.is-notion-system .shell.is-booklet-shell {
+  width: 100%;
+  margin: 0;
+  padding: 0 0 2rem;
+  background: transparent;
+}
+
+body.is-notion-system .is-booklet-shell .shell-context-action {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 0 0.75rem;
+  min-height: 0;
+}
+
+/* Course masthead — identity strip, not a left rail */
+body.is-notion-system .course-masthead {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0 0 1.75rem;
+  padding: 0 0 1.15rem;
+  border: 0;
+  border-bottom: 1px solid var(--booklet-rule);
+  background: transparent;
+  position: static;
+  min-height: 0;
+}
+
+body.is-notion-system .course-masthead-kicker {
+  margin: 0;
+  color: var(--booklet-mute);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+body.is-notion-system .course-masthead-title {
+  margin: 0.15rem 0 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .course-masthead-exam {
+  margin: 0.35rem 0 0;
+  color: var(--booklet-mute);
+  font-size: 0.98rem;
+  line-height: 1.4;
+}
+
+body.is-notion-system .course-masthead-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  padding: 0;
+  border: 0;
+}
+
+body.is-notion-system .course-masthead-nav a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--booklet-mute);
+  font-size: 0.98rem;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+body.is-notion-system .course-masthead-nav a:hover {
+  color: var(--booklet-ink);
+  background: transparent;
+}
+
+body.is-notion-system .course-masthead-nav a.is-active {
+  color: var(--booklet-ink);
+  font-weight: 600;
+  border-bottom-color: var(--booklet-kelus);
+  background: transparent;
+  box-shadow: none;
+}
+
+body.is-notion-system .course-masthead-phase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem 0.65rem;
+  margin: 0;
+  color: var(--booklet-mute);
+  font-size: 0.92rem;
+}
+
+body.is-notion-system .course-masthead-phase a {
+  color: var(--booklet-kelus);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+body.is-notion-system .course-masthead-phase a:hover {
+  text-decoration: underline;
+}
+
+/* Today: one paper surface, no nested cards */
+body.is-notion-system .today-brief.is-booklet-today,
+body.is-notion-system .today-workbench.is-booklet-today {
+  margin: 0;
+  padding: 0;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+body.is-notion-system .today-brief.is-booklet-today {
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--booklet-rule) !important;
+}
+
+body.is-notion-system .today-brief.is-booklet-today .kicker {
+  margin: 0 0 0.35rem;
+}
+
+body.is-notion-system .today-brief.is-booklet-today h1 {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 550;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .today-brief-lede {
+  max-width: 38ch;
+  margin: 0.85rem 0 0;
+  color: var(--booklet-mute);
+  font-size: 1.05rem;
+  line-height: 1.45;
+}
+
+body.is-notion-system .today-brief-exam {
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .today-workbench-heading {
+  margin: 0 0 0.85rem;
+  color: var(--booklet-mute);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body.is-notion-system .is-booklet-today .today-lead-action {
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+body.is-notion-system .is-booklet-today .today-lead-label {
+  margin-bottom: 0.55rem;
+  color: var(--booklet-mute);
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body.is-notion-system .is-booklet-today .today-lead-main h3 {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .is-booklet-today .today-lead-main p,
+body.is-notion-system .is-booklet-today .today-lead-main small {
+  color: var(--booklet-mute);
+}
+
+body.is-notion-system .is-booklet-today .today-lead-time strong {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .is-booklet-today .today-lead-sequence {
+  margin-top: 1.1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--booklet-rule);
+}
+
+body.is-notion-system .is-booklet-today .today-lead-sequence ol {
+  gap: 0.75rem;
+  color: var(--booklet-mute);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+body.is-notion-system .is-booklet-today .cta.today-start {
+  margin-top: 1rem;
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  border-radius: 4px;
+}
+
+/* Materials / map: same paper, no floating cards */
+body.is-notion-system .is-booklet-shell .materials-empty,
+body.is-notion-system .is-booklet-shell .map-workspace,
+body.is-notion-system .is-booklet-shell .material-shelf,
+body.is-notion-system .is-booklet-shell .materials-ingest,
+body.is-notion-system .is-booklet-shell .material-library,
+body.is-notion-system .is-booklet-shell .today-route-empty {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+body.is-notion-system .is-booklet-shell .materials-empty h1,
+body.is-notion-system .is-booklet-shell .map-workspace h1,
+body.is-notion-system .is-booklet-shell .material-library h1 {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+}
+
+@media (max-width: 720px) {
+  body.is-notion-system .course-workspace-layout.is-booklet-shell {
+    width: calc(100% - 1.5rem);
+    padding-top: 0.75rem;
+  }
+  body.is-notion-system .course-masthead-nav {
+    gap: 0.25rem 0.85rem;
+  }
+}
+
+/* Materials: kill remaining SaaS cards + blue drop zone */
+body.is-notion-system .is-booklet-shell .materials-head,
+body.is-notion-system .is-booklet-shell .material-ingest,
+body.is-notion-system .is-booklet-shell .material-shelf,
+body.is-notion-system .is-booklet-shell .material-ready,
+body.is-notion-system .is-booklet-shell .materials-head,
+body.is-notion-system .course-workspace-content .materials-head,
+body.is-notion-system .course-workspace-content .material-ingest,
+body.is-notion-system .course-workspace-content .material-shelf,
+body.is-notion-system .course-workspace-content .material-ready {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+body.is-notion-system .course-workspace-content .materials-head {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--booklet-rule) !important;
+}
+
+body.is-notion-system .course-workspace-content .materials-head h1 {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .course-workspace-content .material-ingest {
+  margin: 0 0 1.75rem;
+  padding: 0 0 1.5rem !important;
+  border-bottom: 1px solid var(--booklet-rule) !important;
+}
+
+body.is-notion-system .course-workspace-content .material-ingest-title h2 {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  letter-spacing: -0.025em;
+}
+
+body.is-notion-system .course-workspace-content .material-drop {
+  border: 1px dashed #aeb6a8 !important;
+  border-radius: 4px !important;
+  background: var(--booklet-lift) !important;
+  color: var(--booklet-ink) !important;
+}
+
+body.is-notion-system .course-workspace-content .material-drop strong,
+body.is-notion-system .course-workspace-content .material-drop svg,
+body.is-notion-system .course-workspace-content .material-drop {
+  color: var(--booklet-ink) !important;
+  stroke: var(--booklet-kelus);
+}
+
+body.is-notion-system .course-workspace-content .material-drop:hover,
+body.is-notion-system .course-workspace-content .material-drop.is-dragging {
+  border-color: var(--booklet-kelus) !important;
+  background: rgba(31, 107, 69, 0.06) !important;
+}
+
+body.is-notion-system .today-readiness-hint {
+  max-width: 42ch;
+  margin: 0.65rem 0 0;
+  color: var(--booklet-mute);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+body.is-notion-system .course-masthead-hint {
+  color: var(--booklet-mute);
+  font-size: 0.88rem;
+}
+
+/* Hide legacy sidebar rail if any leftover markup still mounts it */
+body.is-notion-system .course-workspace-rail:not(.course-masthead) {
+  display: none;
+}
+
+/* Map: paper list, sentence-case status, Kelus ink (not sky blue) */
+body.is-notion-system .is-booklet-shell .map-workspace,
+body.is-notion-system .course-workspace-content .map-workspace,
+body.is-notion-system .course-workspace-content .knowledge-map,
+body.is-notion-system .course-workspace-content .map-list {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+body.is-notion-system .mark-status {
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  font-weight: 600;
+}
+
+body.is-notion-system .mark-status.is-weak {
+  color: #8a4b2a !important; /* ink brown, not sky blue */
+}
+
+body.is-notion-system .mark-status.is-strong {
+  color: var(--booklet-kelus) !important;
+}
+
+body.is-notion-system .mark-status.is-fading {
+  color: #6b5a3e !important;
+}

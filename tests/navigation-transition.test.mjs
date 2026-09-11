@@ -96,13 +96,14 @@ test("the course workspace keeps destination and setup progress across product p
     source("components/InitialDiagnosis.tsx"),
   ]);
   assert.match(shell, /CourseWorkspaceRail/);
+  assert.match(shell, /is-booklet-shell/);
   assert.match(rail, /Current course/);
-  assert.match(rail, /Learning loop/);
-  assert.match(rail, /Materials/);
-  assert.match(rail, /Evaluation/);
-  assert.match(rail, /Rerouting/);
+  assert.match(rail, /course-masthead/);
+  assert.match(rail, /materialsReady/);
+  assert.match(rail, /Sample course model ready/);
   assert.match(rail, /aria-current="step"/);
-  assert.match(rail, /course-stage/);
+  assert.match(rail, /Est\. readiness|Quick check|Today’s route|Add materials/);
+  assert.doesNotMatch(rail, /Learning loop|Rerouting|course-stage|course-masthead-nav/);
   assert.match(diagnosis, /<AppShell>/);
 });
 

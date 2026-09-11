@@ -8,14 +8,14 @@ export function AppShell({ children, action }: { children: ReactNode; action?: R
   const { state } = useLearner();
   if (!state.onboardingCompleted) {
     return (
-      <div className="shell is-notion-product">
+      <div className="shell is-notion-product is-booklet-shell">
         {action ? <div className="shell-context-action">{action}</div> : null}
         <main id="main">{children}</main>
       </div>
     );
   }
   return (
-    <div className="course-workspace-layout is-notion-product">
+    <div className="course-workspace-layout is-notion-product is-booklet-shell">
       <CourseWorkspaceRail />
       <div className="shell course-workspace-content">
         {action ? <div className="shell-context-action">{action}</div> : null}
