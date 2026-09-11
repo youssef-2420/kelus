@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useCallback, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { ConceptInspector } from "@/components/ConceptInspector";
+import { FirstRunGate } from "@/components/FirstRunGate";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { useLearner } from "@/components/LearnerProvider";
 import { courseMastery } from "@/domain/scheduler";
@@ -21,12 +22,13 @@ export default function MapPage() {
     return (
     <DirectionalPage>
       <AppShell>
-        <section className="materials-empty">
-          <p className="kicker">Map</p>
-          <h1>Set your exam first.</h1>
-          <p>Kelus needs a course and exam date before it can open the map.</p>
-          <Link href="/today" className="cta">Set my exam <span aria-hidden="true">→</span></Link>
-        </section>
+        <FirstRunGate
+          kicker="Topic map"
+          title="Set your exam first."
+          body="After you name the course, confirmed topics appear here as a map — with links when sources show prerequisites."
+          ctaLabel="Set my exam"
+          preview="map"
+        />
       </AppShell>
     </DirectionalPage>
   );
@@ -42,15 +44,17 @@ export default function MapPage() {
     return (
     <DirectionalPage>
       <AppShell>
-        <section className="materials-empty">
-          <p className="kicker">Map</p>
-          <h1>Confirm concepts from a source first.</h1>
-          <p>Add a syllabus or lecture PDF, then keep the concepts this exam actually covers.</p>
-          <div className="materials-empty-actions">
-            <button type="button" className="cta" onClick={() => loadDemo()}>
-              Try sample (~1 min) <span aria-hidden="true">→</span>
-            </button>
-            <Link className="text-btn" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
+        <section className="materials-empty is-first-run-gate">
+          <div className="first-run-gate-copy">
+            <p className="kicker">Topic map</p>
+            <h1>Confirm topics from a source first.</h1>
+            <p>Add a syllabus or lecture PDF, keep the topics this exam covers, then see how they connect.</p>
+            <div className="materials-empty-actions">
+              <button type="button" className="cta" onClick={() => loadDemo()}>
+                Try sample (~1 min) <span aria-hidden="true">→</span>
+              </button>
+              <Link className="text-btn" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
+            </div>
           </div>
         </section>
       </AppShell>
@@ -60,16 +64,24 @@ export default function MapPage() {
   return (
     <DirectionalPage>
     <AppShell action={!state.diagnosisCompleted ? <Link className="text-btn" href="/today">Continue to diagnosis <span aria-hidden="true">→</span></Link> : undefined}>
-      <p className="kicker">Course</p>
-      <h1 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course is now a Knowledge Map"}</h1>
-      <p className="lede-line">{state.diagnosisCompleted ? "Sorted by exam importance, not by weakness." : "These are the concepts you confirmed. Diagnosis will add the first evidence about what you know."}</p>
+      <p className="kicker">Topic map</p>
+      <h1 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course topics, mapped"}</h1>
+      <p className="lede-line">{state.diagnosisCompleted ? "Sorted by exam importance, with links when topics depend on each other." : "These are the topics you confirmed. Diagnosis will add the first evidence about what you know."}</p>
       <div className="map-tools">
         <label htmlFor="topic-filter">Find a topic<input id="topic-filter" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search your course topics" /></label>
         <span role="status">{concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())).length} of {concepts.length} topics</span>
       </div>
       <div className={`map-workspace${selected ? " is-inspecting" : ""}`}>
         <div>
-        <KnowledgeMap heading={null} courseName={course.name} mastery={courseMastery(concepts)} concepts={concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase()))} selectedId={selectedId} onSelect={(concept) => setSelectedId(concept.id)} />
+        <KnowledgeMap
+          heading={null}
+          courseName={course.name}
+          mastery={courseMastery(concepts)}
+          concepts={concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase()))}
+          relationships={state.snapshot.relationships}
+          selectedId={selectedId}
+          onSelect={(concept) => setSelectedId(concept.id)}
+        />
         {query.trim() && !concepts.some((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())) ? <div className="map-no-match"><p>No topics match “{query}”. Your course is unchanged.</p><button type="button" className="text-btn" onClick={() => setQuery("")}>Clear search</button></div> : null}
         </div>
         <AnimatePresence initial={false} mode="wait">

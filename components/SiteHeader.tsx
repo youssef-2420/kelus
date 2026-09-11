@@ -68,7 +68,7 @@ export function SiteHeader() {
           </details>
         ) : (
           <div className="site-header-cluster">
-            {!inProduct && <Link href="/today?sample=1" className="site-header-action">
+            {!inProduct && !onHome && <Link href="/today?sample=1" className="site-header-action">
               Try sample <span aria-hidden="true">→</span>
             </Link>}
             {auth.configured ? (

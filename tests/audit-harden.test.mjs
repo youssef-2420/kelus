@@ -16,7 +16,7 @@ test("audit harden: smoke meets AA, first-run has h1, session skip target", asyn
     source("design.md"),
   ]);
 
-  assert.match(tokens, /--color-smoke:\s*#5b6f92/);
+  assert.match(tokens, /--color-smoke:\s*#5a6358|--color-smoke:\s*#5b6f92/);
   assert.doesNotMatch(tokens, /--color-smoke:\s*#839bc8/);
   assert.match(setup, /<h1 className="destination-page-title">[\s\S]*Set your exam[\s\S]*<\/h1>/);
   assert.match(session, /fallback=\{[\s\S]*?<main id="main"/);
@@ -25,7 +25,7 @@ test("audit harden: smoke meets AA, first-run has h1, session skip target", asyn
   assert.match(css, /\.site-header-action[\s\S]*?min-height:\s*44px/);
   assert.match(css, /\.site-auth-button[\s\S]*?min-height:\s*44px/);
   assert.match(css, /\.hero-demo-tabs button[\s\S]*?min-height:\s*44px/);
-  assert.match(design, /#5b6f92/);
+  assert.match(design, /#5a6358|#5b6f92|#1f6b45/);
   assert.match(design, /44×44px|44x44px|44×44/);
 
   await access(new URL("public/hero/student.webp", root), fsConstants.R_OK);

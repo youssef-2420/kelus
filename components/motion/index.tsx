@@ -4,9 +4,8 @@ import { motion, useReducedMotion, type HTMLMotionProps, type Transition } from 
 import { type ReactNode } from "react";
 
 /**
- * Notion-inspired motion: fast, quiet, functional.
- * No bounce, no elastic overshoot, no cinematic timing.
- * Standard ease: cubic-bezier(0.4, 0, 0.2, 1)
+ * Kelus motion: fast, quiet, functional.
+ * Bounce 0. Ease [0.22, 1, 0.36, 1].
  * Inclusive: prefer opacity over travel; honour prefers-reduced-motion.
  */
 
@@ -20,8 +19,8 @@ export const kelusDuration = {
   slow: 0.4,
 } as const;
 
-/** Standard state-transition easing — cubic-bezier(0.4, 0, 0.2, 1) */
-export const kelusEase = [0.4, 0, 0.2, 1] as const;
+/** Standard state-transition easing — cubic-bezier(0.22, 1, 0.36, 1) */
+export const kelusEase = [0.22, 1, 0.36, 1] as const;
 
 export const kelusMotion = {
   ease: kelusEase,
@@ -130,12 +129,13 @@ export function StaggerItem({ children, className }: { children: ReactNode; clas
 export function Pressable({ children, className }: { children: ReactNode; className?: string }) {
   const reduce = useReducedMotion() === true;
   return (
-    <motion.div
+    <motion.span
       className={className}
-      whileTap={reduce ? undefined : { scale: 0.98 }}
+      style={{ display: "inline-flex" }}
+      whileTap={reduce ? undefined : { scale: 0.97 }}
       transition={kelusMotion.press}
     >
       {children}
-    </motion.div>
+    </motion.span>
   );
 }

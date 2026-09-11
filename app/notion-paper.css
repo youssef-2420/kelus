@@ -2,27 +2,27 @@
    Scoped via body.is-notion-system. Bounce stays 0 on Kelus. */
 
 :root {
-  --color-notion-blue: #0075de;
-  --color-paper-warmth: #f6f5f4;
+  --color-notion-blue: #1f6b45;
+  --color-paper-warmth: #eef1ec;
   --color-pure-white: #ffffff;
-  --color-ink-black: #000000;
-  --color-charcoal: #111111;
-  --color-stone: #757575;
-  --color-graphite: #615d59;
-  --color-slate: #696969;
-  --color-sky-tint: #e6f3fe;
+  --color-ink-black: #12160f;
+  --color-charcoal: #12160f;
+  --color-stone: #4a5246;
+  --color-graphite: #4a5246;
+  --color-slate: #4a5246;
+  --color-sky-tint: #e8f1eb;
   --color-marigold: #ffb110;
   --color-coral: #f64932;
   --color-saffron: #e89d01;
   --color-vermillion: #e32d14;
   --color-mocha: #b18164;
-  --color-signal-blue: #097fe8;
-  --color-sky-wash: #62aef0;
-  --color-midnight-ink: #02093a;
+  --color-signal-blue: #1f6b45;
+  --color-sky-wash: #6a9f82;
+  --color-midnight-ink: #12160f;
   --color-peach-pill: #f6d5b8; /* hero verb highlight */
 
-  --font-notion: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-editorial: var(--font-source-serif), "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-notion: var(--font-inter), "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-editorial: var(--font-source-serif), Newsreader, Georgia, "Times New Roman", serif;
 
   --text-caption: 12px;
   --text-body-sm: 14px;
@@ -34,13 +34,13 @@
   --text-display-sm: 54px;
   --text-display: 72px;
 
-  --radius-cards: 12px;
-  --radius-buttons: 8px;
+  --radius-cards: 4px;
+  --radius-buttons: 4px;
   --radius-pills: 9999px;
   --radius-small: 4px;
 
-  --border-hairline: rgba(0, 0, 0, 0.08);
-  --ease-notion: cubic-bezier(0.4, 0, 0.2, 1);
+  --border-hairline: #d5d9d0;
+  --ease-notion: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-notion: 200ms;
   --dur-instant: 80ms;
   --dur-micro: 100ms;
@@ -52,19 +52,19 @@
 
 body.is-notion-system {
   --font-ledger: var(--font-notion);
-  --font-display: var(--font-notion);
+  --font-display: var(--font-editorial);
   --font-sans: var(--font-notion);
   --paper: var(--color-paper-warmth);
   --ink: var(--color-ink-black);
   --muted: var(--color-graphite);
   --line: var(--border-hairline);
   --accent: var(--color-notion-blue);
-  --accent-2: #0066c2;
-  --surface: var(--color-pure-white);
+  --accent-2: #185536;
+  --surface: #f7f8f5;
   --strong: var(--color-notion-blue);
   --background: var(--color-paper-warmth);
   --foreground: var(--color-ink-black);
-  --card: var(--color-pure-white);
+  --card: #f7f8f5;
   --primary: var(--color-notion-blue);
   --primary-foreground: var(--color-pure-white);
   --border: var(--border-hairline);
@@ -72,7 +72,7 @@ body.is-notion-system {
   --page-max-width: 1440px;
   --radius-ledger: var(--radius-buttons);
 
-  color: rgba(0, 0, 0, 0.95);
+  color: rgba(18, 22, 15, 0.95);
   background: var(--color-paper-warmth);
   font-family: var(--font-notion);
   font-weight: 400;

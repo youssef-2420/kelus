@@ -1306,6 +1306,167 @@ body.is-notion-system .how-page .how-paper-stack rect,
 body.is-notion-system .how-page .how-concept-node:not(.is-primary) circle,
 body.is-notion-system .how-page .how-route-node circle,
 body.is-notion-system .how-page .how-route-target circle:first-of-type,
-body.is-notion-system .how-page .how-answer-signal rect {
+body.is-notion-system .how-page .how-answer-signal rect,
+body.is-notion-system .first-run-gate-preview .how-paper-stack rect,
+body.is-notion-system .first-run-gate-preview .how-concept-node:not(.is-primary) circle {
   fill: transparent !important;
+}
+
+/* ── First-run gates: preview + copy ── */
+body.is-notion-system .materials-empty.is-first-run-gate {
+  display: grid;
+  gap: 1.75rem;
+  max-width: 52rem;
+  padding: 0.5rem 0 2rem;
+}
+
+body.is-notion-system .first-run-gate-copy {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 34rem;
+}
+
+body.is-notion-system .first-run-gate-preview {
+  margin: 0;
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--booklet-rule);
+}
+
+body.is-notion-system .first-run-gate-preview-label {
+  margin: 0 0 0.75rem;
+  color: var(--booklet-mute);
+  font-size: 0.8125rem;
+}
+
+body.is-notion-system .first-run-gate-preview .how-illustration,
+body.is-notion-system .first-run-gate-preview .how-material-map {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  max-width: 36rem;
+}
+
+body.is-notion-system .materials-empty.is-session-empty {
+  max-width: 32rem;
+}
+
+/* ── Topic map graph ── */
+body.is-notion-system .topic-map-graph {
+  margin: 0 0 1.25rem;
+  padding: 0.75rem 0 1rem;
+  border-bottom: 1px solid var(--booklet-rule);
+}
+
+body.is-notion-system .topic-map-svg {
+  display: block;
+  width: 100%;
+  max-width: 40rem;
+  height: auto;
+  aspect-ratio: 16 / 9;
+}
+
+body.is-notion-system .topic-map-edge {
+  fill: none;
+  stroke: var(--booklet-rule);
+  stroke-width: 0.45;
+}
+
+body.is-notion-system .topic-map-edge.is-prerequisite {
+  stroke: var(--booklet-kelus);
+  stroke-width: 0.55;
+  opacity: 0.85;
+}
+
+body.is-notion-system .topic-map-node circle {
+  fill: transparent;
+  stroke: var(--booklet-ink);
+  stroke-width: 0.45;
+}
+
+body.is-notion-system .topic-map-node.is-selected circle {
+  fill: var(--booklet-kelus);
+  stroke: var(--booklet-kelus);
+}
+
+body.is-notion-system .topic-map-node text {
+  fill: var(--booklet-mute);
+  font-size: 3.2px;
+  font-family: var(--font-sans);
+}
+
+body.is-notion-system .topic-map-graph-note {
+  margin: 0.5rem 0 0;
+  color: var(--booklet-mute);
+  font-size: 0.8125rem;
+}
+
+/* ── Booklet pricing (single stack, not twin SaaS cards) ── */
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-booklet {
+  max-width: 40rem;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-booklet-stack,
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 2rem 0 1rem;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-offer {
+  display: grid;
+  gap: 0.85rem;
+  padding: 1.5rem 0;
+  border: 0;
+  border-top: 1px solid var(--booklet-rule);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-offer.is-pass {
+  border-color: var(--booklet-rule);
+  background: transparent;
+  padding-bottom: 0.25rem;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-offer-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-offer h2 {
+  margin: 0;
+  font-family: var(--font-display), Newsreader, Georgia, serif;
+  font-weight: 550;
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-offer-lede {
+  margin: 0;
+  color: var(--booklet-mute);
+  max-width: 34rem;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-price {
+  color: var(--booklet-ink);
+  font-family: var(--font-display), Newsreader, Georgia, serif;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-offer .cta,
+body.is-notion-system .pricing-page.is-booklet-pricing .pricing-plan .cta {
+  border-radius: 4px;
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #fff !important;
+}
+
+body.is-notion-system .pricing-page.is-booklet-pricing .founding-cta-note {
+  max-width: 34rem;
+  overflow: visible;
+  white-space: normal;
 }

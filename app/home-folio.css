@@ -584,10 +584,10 @@
   width: 12px !important;
   height: 12px;
   border-radius: 3px;
-  background: #533afd;
+  background: #1f6b45;
 }
 
-.notion-product-swatch.is-biology { background: #533afd; }
+.notion-product-swatch.is-biology { background: #1f6b45; }
 .notion-product-swatch.is-computing { background: #e255a1; }
 .notion-product-swatch.is-history { background: #f2a93b; }
 
@@ -808,7 +808,7 @@
 .notion-product-demo .hero-demo-route li.is-recommended {
   border-color: #d3e5fa;
   background: #f4f9ff;
-  box-shadow: 0 0 0 1px rgba(35, 131, 226, 0.08);
+  box-shadow: 0 0 0 1px rgba(31, 107, 69, 0.1);
 }
 
 .notion-product-demo .hero-demo-route li > span {

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/components/AuthProvider";
+import { FirstRunGate } from "@/components/FirstRunGate";
 import { useLearner } from "@/components/LearnerProvider";
 import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { trackEvent } from "@/lib/analytics";
@@ -182,14 +183,12 @@ export function MaterialLibrary() {
   if (!state.onboardingCompleted || !course) {
     return (
       <AppShell>
-        <section className="materials-empty">
-          <p className="kicker">Course material</p>
-          <h1>Set your exam first.</h1>
-          <p>Kelus needs a course and exam before it can keep sources with it.</p>
-          <Link className="cta" href="/today">
-            Set your exam <span aria-hidden="true">→</span>
-          </Link>
-        </section>
+        <FirstRunGate
+          kicker="Course material"
+          title="Set your exam first."
+          body="Kelus keeps PDFs and notes with the course you set — then turns confirmed pages into topics on the map."
+          preview="materials"
+        />
       </AppShell>
     );
   }
@@ -607,7 +606,7 @@ export function MaterialLibrary() {
             </ol>
             <div className="concept-confirmation-actions">
               <button type="button" className="text-btn" onClick={() => dispatch({ type: "REVIEW_LATER" })}>Review later</button>
-              <button type="button" className="cta" disabled={!selectedIds.size} onClick={buildMap}>Build my Knowledge Map <span aria-hidden="true">→</span></button>
+              <button type="button" className="cta" disabled={!selectedIds.size} onClick={buildMap}>Build my topic map <span aria-hidden="true">→</span></button>
             </div>
           </motion.section>
         ) : null}

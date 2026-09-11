@@ -17,24 +17,25 @@ export default function PricingPage() {
 
   return (
     <LateralPage>
-    <main id="main" className="legal-page pricing-page is-notion-product">
+    <main id="main" className="legal-page pricing-page is-notion-product is-booklet-pricing">
       <PricingViewTracker />
-      <section className="legal-panel">
+      <section className="legal-panel pricing-booklet">
         <p className="kicker">Pricing</p>
         <h1>Prepare for one exam. Pay for one exam.</h1>
         <p className="legal-lede">
-          Try a revision session free on this device.
+          Revision starts free on this device.
           {syncReady
             ? " Sign in anytime to sync that progress across browsers."
-            : " Account sync ships when enabled for your build."}{" "}
-          The Exam Pass is a one-time $9.99 launch pass for students who want priority support through exam day.
+            : " Account sync ships when enabled for your build."}
         </p>
 
-        <div className="pricing-grid" role="list">
-          <article className="pricing-plan" role="listitem">
-            <p className="kicker">Free</p>
+        <div className="pricing-booklet-stack pricing-grid" role="list">
+          <article className="pricing-offer is-free pricing-plan" role="listitem">
+            <div className="pricing-offer-head">
+              <p className="kicker">Free</p>
+              <p className="pricing-price">$0</p>
+            </div>
             <h2>Try a revision session</h2>
-            <p className="pricing-price">$0</p>
             <ul>
               <li>Add your course and exam date</li>
               <li>Get topics to revise from your answer evidence</li>
@@ -47,11 +48,16 @@ export default function PricingPage() {
             </Link>
           </article>
 
-          <article className="pricing-plan is-founding" role="listitem">
-            <p className="kicker">Exam Pass</p>
+          <article className="pricing-offer is-pass pricing-plan is-founding" role="listitem">
+            <div className="pricing-offer-head">
+              <p className="kicker">Exam Pass</p>
+              <p className="pricing-price">
+                $9.99<span>/exam</span>
+              </p>
+            </div>
             <h2>Support through exam day</h2>
-            <p className="pricing-price">
-              $9.99<span>/exam</span>
+            <p className="pricing-offer-lede">
+              A one-time launch pass for students who want priority support through the exam date they set.
             </p>
             <ul>
               <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
