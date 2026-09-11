@@ -91,9 +91,9 @@ export function TodayRoute({
             <li>Evaluate</li>
           </ol>
           <small>
-            {firstActivity?.sourceReferences.length
-              ? `Grounded in ${firstActivity.sourceReferences.length} confirmed course source${firstActivity.sourceReferences.length === 1 ? "" : "s"}.`
-              : "Uses the current course model; no uploaded source is cited yet."}
+            {firstSource
+              ? `Cited: ${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}.`
+              : "Uses the current course model; no source is cited yet."}
           </small>
         </div>
         <details className="today-evidence-disclosure">
@@ -101,7 +101,7 @@ export function TodayRoute({
         <dl className="today-lead-evidence" aria-label={`Why Kelus recommends ${firstName}`}>
           <div>
             <dt>Course evidence</dt>
-            <dd>{firstSource ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}` : "No uploaded source cited"}</dd>
+            <dd>{firstSource ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}` : "No source cited yet"}</dd>
           </div>
           <div>
             <dt>Learner evidence</dt>
@@ -203,11 +203,11 @@ export function TodayRoute({
                           )}
                         </ol>
                         <small>
-                          {activity?.sourceReferences.length
-                            ? `Grounded in ${activity.sourceReferences.length} confirmed course source${activity.sourceReferences.length === 1 ? "" : "s"}.`
+                          {activity?.sourceReferences[0]
+                            ? `Cited: ${activity.sourceReferences[0].label}${activity.sourceReferences[0].locator ? ` · ${activity.sourceReferences[0].locator}` : ""}.`
                             : isMixed
                               ? "Pulls short prompts from topics already on today’s route."
-                              : "Uses the current course model; no uploaded source is cited yet."}
+                              : "Uses the current course model; no source is cited yet."}
                         </small>
                       </div>
                     </div>
