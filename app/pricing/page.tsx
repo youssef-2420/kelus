@@ -4,16 +4,18 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { FoundingCta } from "@/components/FoundingCta";
 import { PricingViewTracker } from "@/components/PricingViewTracker";
 import { authConfigured } from "@/lib/auth-config";
+import { foundingPaymentConfigured } from "@/lib/founding";
 import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Try Kelus free, then reserve a $9.99 Exam Pass for launch support through one exam.",
+  description: "Try Kelus free. Exam Pass is $9.99 for launch support through one exam when checkout is live.",
   alternates: { canonical: "/pricing" },
 };
 
 export default function PricingPage() {
   const syncReady = authConfigured();
+  const paymentReady = foundingPaymentConfigured();
 
   return (
     <LateralPage>
@@ -27,12 +29,15 @@ export default function PricingPage() {
           {syncReady
             ? " Sign in anytime to sync that progress across browsers."
             : " Account sync ships when enabled for your build."}
+          {paymentReady
+            ? " Exam Pass is a one-time $9.99 launch pass through exam day."
+            : " Exam Pass ($9.99) opens with checkout — reserve interest below if you want priority support later."}
         </p>
 
         <div className="pricing-booklet-stack pricing-grid" role="list">
           <article className="pricing-offer is-free pricing-plan" role="listitem">
             <div className="pricing-offer-head">
-              <p className="kicker">Free</p>
+              <p className="kicker">Free · available now</p>
               <p className="pricing-price">$0</p>
             </div>
             <h2>Try a revision session</h2>
@@ -48,9 +53,9 @@ export default function PricingPage() {
             </Link>
           </article>
 
-          <article className="pricing-offer is-pass pricing-plan is-founding" role="listitem">
+          <article className={`pricing-offer is-pass pricing-plan is-founding${paymentReady ? "" : " is-upcoming"}`} role="listitem">
             <div className="pricing-offer-head">
-              <p className="kicker">Exam Pass</p>
+              <p className="kicker">{paymentReady ? "Exam Pass" : "Exam Pass · coming soon"}</p>
               <p className="pricing-price">
                 $9.99<span>/exam</span>
               </p>

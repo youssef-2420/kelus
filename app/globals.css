@@ -99,7 +99,7 @@ button, input, textarea { font: inherit; }
 .nav a.is-active { font-weight: 650; }
 .nav a:hover::after, .nav a.is-active::after { transform: scaleX(1); transform-origin: left; }
 .nav a:active { color: var(--accent); }
-.kicker { color: var(--muted); font-size: 12px; letter-spacing: var(--type-label-tracking); text-transform: uppercase; font-weight: 400; }
+.kicker { color: var(--muted); font-size: 12px; letter-spacing: 0.02em; text-transform: none; font-weight: 500; }
 .quiet { color: var(--muted); }
 .hero h1 { font-size: clamp(32px, 6vw, 48px); margin: 0 0 28px; }
 .pulse { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
@@ -6726,7 +6726,7 @@ h3,
   position: absolute;
   inset: 12px;
   z-index: 1;
-  border: 1px solid rgba(83, 58, 253, .14);
+  border: 1px solid rgba(31, 107, 69, .18);
   opacity: 0;
   pointer-events: none;
   transform: scale(.985);

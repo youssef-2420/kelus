@@ -185,7 +185,7 @@ export function MaterialLibrary() {
       <AppShell>
         <FirstRunGate
           kicker="Course material"
-          title="Set your exam first."
+          title="Set my exam first."
           body="Kelus keeps PDFs and notes with the course you set — then turns confirmed pages into topics on the map."
           preview="materials"
         />
@@ -625,10 +625,15 @@ export function MaterialLibrary() {
           </div>
         ) : (
           <div className="material-shelf-empty">
-            <p>Start with the syllabus or the lecture you are studying now — or try the sample in about a minute.</p>
-            <button type="button" className="cta" onClick={() => loadDemo()}>
-              Try sample (~1 min) <span aria-hidden="true">→</span>
-            </button>
+            <p>No sources on this shelf yet. Add the syllabus or lecture you’re studying — Kelus will propose topics you confirm.</p>
+            <div className="materials-empty-actions">
+              <a className="cta" href="#add-material-title">
+                Add first PDF <span aria-hidden="true">→</span>
+              </a>
+              <button type="button" className="text-btn" onClick={() => loadDemo()}>
+                Try sample (~1 min)
+              </button>
+            </div>
           </div>
         )}
       </section>

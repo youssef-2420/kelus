@@ -33,21 +33,21 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
   }
 
   return (
-    <div className="founding-cta">
-      {waitlistReady ? <WaitlistForm source={source} compact /> : null}
+    <div className="founding-cta is-reserve">
+      <p className="founding-cta-status">Checkout isn’t live yet</p>
       <p className="founding-cta-note">
         {waitlistReady
-          ? "Checkout is not live yet. Join the list to reserve the $9.99 Exam Pass."
-          : "Checkout is not live yet. Email hello@kelus.me to reserve the $9.99 Exam Pass."}
+          ? "Reserve the $9.99 Exam Pass for when payments open. Free revision stays available now."
+          : "Email hello@kelus.me to reserve the $9.99 Exam Pass. Free revision stays available now."}
         {syncReady
           ? " Sync across devices is already available with free sign-in."
           : " Routes stay on this device for now."}
       </p>
-      {!waitlistReady ? (
-        <a className="cta" href="mailto:hello@kelus.me?subject=Exam%20Pass%20interest">
+      {waitlistReady ? <WaitlistForm source={source} compact /> : (
+        <a className="text-btn" href="mailto:hello@kelus.me?subject=Exam%20Pass%20interest">
           Email about Exam Pass <span aria-hidden="true">→</span>
         </a>
-      ) : null}
+      )}
     </div>
   );
 }

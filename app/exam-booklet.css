@@ -610,18 +610,22 @@ body.is-notion-system .is-marked-setup .time-choices label {
   display: inline-flex;
   align-items: baseline;
   gap: 0.25rem;
-  min-height: 0;
-  padding: 0.35rem 0;
-  border: 0 !important;
-  border-bottom: 2px solid transparent;
-  border-radius: 0 !important;
-  background: transparent !important;
+  min-height: 44px;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--booklet-rule) !important;
+  border-radius: 4px !important;
+  background: #f7f8f5 !important;
   color: var(--booklet-mute);
   cursor: pointer;
+  transition: transform 100ms var(--ease-enter, ease), border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+body.is-notion-system .is-marked-setup .time-choices label:active {
+  transform: scale(0.97);
 }
 
 body.is-notion-system .is-marked-setup .time-choices label strong {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: inherit;
 }
@@ -631,8 +635,8 @@ body.is-notion-system .is-marked-setup .time-choices label span {
 }
 
 body.is-notion-system .is-marked-setup .time-choices label.is-selected {
-  background: transparent !important;
-  border-bottom-color: var(--booklet-kelus) !important;
+  background: #e8f1eb !important;
+  border-color: var(--booklet-kelus) !important;
   color: var(--booklet-ink) !important;
 }
 
