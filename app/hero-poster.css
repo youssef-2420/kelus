@@ -28,13 +28,7 @@ body.is-notion-system .is-poster .poster-copy {
 }
 
 body.is-notion-system .is-poster .hero-brand {
-  margin: 0 0 20px;
-  font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
-  font-size: clamp(42px, 6vw, 72px);
-  font-weight: 600;
-  letter-spacing: -0.045em;
-  line-height: 0.92;
-  color: #173f3b;
+  display: none !important;
 }
 
 body.is-notion-system .is-poster .hero-brand-sr {
@@ -50,13 +44,13 @@ body.is-notion-system .is-poster .hero-brand-sr {
 }
 
 body.is-notion-system .is-poster .poster-copy h1 {
-  max-width: 22ch;
+  max-width: 14ch;
   margin: 0;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
-  font-size: clamp(1.2rem, 2.1vw, 1.55rem);
-  font-weight: 400;
-  line-height: 1.28;
-  letter-spacing: -0.02em;
+  font-size: clamp(2.35rem, 5.5vw, 3.75rem);
+  font-weight: 550;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
   color: #173f3b;
 }
 
