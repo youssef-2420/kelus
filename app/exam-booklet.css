@@ -1282,3 +1282,30 @@ body.is-notion-system .mark-status.is-strong {
 body.is-notion-system .mark-status.is-fading {
   color: #6b5a3e !important;
 }
+
+/* How-it-works illustrations: no white card — ink on paper */
+body.is-notion-system .how-page .how-stage-visual > *,
+body.is-notion-system .how-page .how-illustration,
+body.is-notion-system .how-page .how-map-fragment,
+body.is-notion-system .how-page .how-diagnosis-fragment,
+body.is-notion-system .how-page .how-session-fragment,
+body.is-notion-system .how-page .how-material-fragment,
+body.is-notion-system .how-page .how-reroute-fragment,
+body.is-notion-system .how-page .how-today-fragment {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+body.is-notion-system .how-page .how-illustration svg {
+  background: transparent;
+}
+
+body.is-notion-system .how-page .how-paper-stack rect,
+body.is-notion-system .how-page .how-concept-node:not(.is-primary) circle,
+body.is-notion-system .how-page .how-route-node circle,
+body.is-notion-system .how-page .how-route-target circle:first-of-type,
+body.is-notion-system .how-page .how-answer-signal rect {
+  fill: transparent !important;
+}
