@@ -142,7 +142,7 @@ button, input, textarea { font: inherit; }
 .row .bar { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; margin-top: 6px; }
 .row .bar i { display: block; height: 100%; background: var(--accent); }
 .row .pct { font-variant-numeric: tabular-nums; font-weight: 650; text-align: right; }
-.mark-status { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.mark-status { font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; }
 .is-strong { color: var(--strong); }
 .is-stable { color: var(--stable); }
 .is-fading { color: var(--fading); }

@@ -10,7 +10,6 @@ import { TodayRoute } from "@/components/TodayRoute";
 import { useLearner } from "@/components/LearnerProvider";
 import { trackEvent } from "@/lib/analytics";
 import { daysUntilExam } from "@/domain/scheduler";
-import { estimatedReadiness } from "@/domain/readiness";
 import { generateRoute } from "@/domain/routing-engine";
 import { greeting } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
@@ -115,7 +114,6 @@ function TodayBody() {
 
   const concepts = snapshot.concepts.filter((concept) => concept.courseId === course.id);
   const route = generateRoute({ concepts, relationships: snapshot.relationships, events: snapshot.events, exam, nowIso });
-  const readiness = estimatedReadiness(concepts);
   const days = daysUntilExam(exam, nowIso);
   const courseId = course.id;
   const examId = exam.id;
@@ -164,9 +162,9 @@ function TodayBody() {
         )
       }
     >
-      <section className="today-brief is-revision-studio" aria-labelledby="today-title">
+      <section className="today-brief is-booklet-today" aria-labelledby="today-title">
         <div className="today-brief-copy">
-          <p className="kicker">Today · {course.name}</p>
+          <p className="kicker">Today</p>
           <h1 id="today-title">Today’s route</h1>
           {returning ? (
             <p className="today-welcome">
@@ -174,44 +172,20 @@ function TodayBody() {
               {dueCount > 0 ? ` · ${dueCount} concept${dueCount === 1 ? "" : "s"} due for review` : ""}.
             </p>
           ) : null}
-          <p>
+          <p className="today-brief-lede">
             {route.availableMinutes} minutes for revision today. Start with one topic.
+            <span className="today-brief-exam"> Exam in {days} days · target {exam.targetPercent}%.</span>
+          </p>
+          <p className="today-readiness-hint" id="today-readiness-hint">
+            Est. readiness is from your ratings and recall checks — not a grade prediction.
           </p>
         </div>
-        <details className="today-exam-details">
-        <summary>Exam in {days} days <span>View target and readiness</span></summary>
-        <dl className="today-context is-equal" aria-label="Current study context">
-          <div>
-            <dt>Exam</dt>
-            <dd>{days} days</dd>
-          </div>
-          <div>
-            <dt>Target</dt>
-            <dd>{exam.targetPercent}%</dd>
-          </div>
-          <div className="today-readiness">
-            <dt>
-              <span id="today-readiness-label">Est. readiness</span>
-            </dt>
-            <dd
-              aria-labelledby="today-readiness-label"
-              aria-describedby="today-readiness-hint"
-              title="Estimate from your familiarity ratings and recall checks — not a grade prediction."
-            >
-              {Math.round(readiness * 100)}%
-            </dd>
-            <p className="today-readiness-hint" id="today-readiness-hint">
-              Estimate from your ratings and recall checks — not a grade prediction.
-            </p>
-          </div>
-        </dl>
-        </details>
       </section>
 
-      <section className="today-workbench is-revision-studio" aria-labelledby="route-title">
-        <div className="today-workbench-heading">
-          <h2 id="route-title" className="kicker">Your next study block</h2>
-        </div>
+      <section className="today-workbench is-booklet-today" aria-labelledby="route-title">
+        <h2 id="route-title" className="today-workbench-heading">
+          Next
+        </h2>
         <TodayRoute
           route={route}
           concepts={concepts}
