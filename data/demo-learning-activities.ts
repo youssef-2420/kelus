@@ -136,6 +136,102 @@ const ACTIVITIES: Record<string, ActivitySeed> = {
       modelAnswer: "Some of the tax cut may be saved, while government spending enters aggregate demand directly.",
     },
   },
+
+  "c-opportunity-cost": {
+    learn: {
+      title: "Every choice has a next-best alternative.",
+      explanation: "Opportunity cost is the value of what you give up when you choose one option over another. Explicit money costs matter, but so do time and missed alternatives.",
+      keyPoints: ["Compare the chosen option with the next-best forgone option.", "Ignore sunk costs that cannot be recovered."],
+    },
+    retrieve: {
+      prompt: "What is opportunity cost?",
+      hint: "Think about the value of the alternative you did not take.",
+      explanation: "It measures the true trade-off behind a decision.",
+      example: "Studying for two hours means forgoing two hours of paid work or rest.",
+      modelAnswer: "The value of the next-best alternative forgone when a choice is made.",
+    },
+    apply: {
+      prompt: "You can spend an evening reviewing elasticity or working a paid shift. How do you state the opportunity cost of reviewing?",
+      hint: "Name the best alternative you give up.",
+      modelAnswer: "The wages and experience from the paid shift you forgo by reviewing instead.",
+    },
+  },
+  "c-comparative-advantage": {
+    learn: {
+      title: "Specialize where your opportunity cost is lower.",
+      explanation: "Comparative advantage compares opportunity costs across producers. A person or country should specialize in the good they can produce at a lower opportunity cost, then trade.",
+      keyPoints: ["Absolute advantage is about productivity; comparative advantage is about relative opportunity cost.", "Mutual gains from trade come from specialization."],
+    },
+    retrieve: {
+      prompt: "When should a country specialize in a good?",
+      hint: "Compare opportunity costs, not just raw productivity.",
+      explanation: "Specialization follows the lower opportunity cost.",
+      example: "A country may import cloth even if it can produce cloth, if its opportunity cost of cloth is higher than its partner's.",
+      modelAnswer: "When it has a lower opportunity cost of producing that good than its trading partner.",
+    },
+    apply: {
+      prompt: "Nation A forgoes 2 tons of wheat to make 1 machine; Nation B forgoes 5 tons of wheat to make 1 machine. Who has comparative advantage in machines?",
+      hint: "Lower opportunity cost wins.",
+      modelAnswer: "Nation A, because it gives up less wheat per machine.",
+    },
+  },
+  "c-externalities": {
+    learn: {
+      title: "Some costs and benefits spill outside the market price.",
+      explanation: "An externality arises when a transaction affects third parties. Negative externalities understate social cost; positive externalities understate social benefit.",
+      keyPoints: ["Private markets ignore unpriced spillover effects.", "Policy can try to align private and social incentives."],
+    },
+    retrieve: {
+      prompt: "What is a negative externality?",
+      hint: "Think of a cost paid by someone outside the deal.",
+      explanation: "The market price does not include that third-party cost.",
+      example: "Factory pollution imposes health and cleanup costs on nearby residents.",
+      modelAnswer: "A cost of production or consumption imposed on third parties not reflected in the market price.",
+    },
+    apply: {
+      prompt: "Why might an unregulated polluting firm produce more than the socially efficient quantity?",
+      hint: "Compare private marginal cost with social marginal cost.",
+      modelAnswer: "It faces only private costs, so it ignores external damage and expands output past the social optimum.",
+    },
+  },
+  "c-deadweight-loss": {
+    learn: {
+      title: "Missing trades destroy surplus.",
+      explanation: "Deadweight loss is the surplus lost when quantity moves away from the efficient equilibrium—through taxes, quotas, monopoly pricing, or externalities.",
+      keyPoints: ["It is the triangle of mutually beneficial trades that no longer happen.", "Larger distortions usually mean larger deadweight loss."],
+    },
+    retrieve: {
+      prompt: "What does deadweight loss measure?",
+      hint: "Focus on lost total surplus, not transfers.",
+      explanation: "Transfers move surplus; deadweight loss destroys it.",
+      example: "A tax that blocks some buyer–seller trades removes surplus neither side captures.",
+      modelAnswer: "The loss of total surplus from producing a quantity different from the efficient market equilibrium.",
+    },
+    apply: {
+      prompt: "A binding price ceiling creates a shortage. Where does deadweight loss appear?",
+      hint: "Look for trades valued above cost that no longer occur.",
+      modelAnswer: "In the units buyers value above sellers' cost but that are not exchanged because the ceiling blocks them.",
+    },
+  },
+  "c-perfect-competition": {
+    learn: {
+      title: "Many price-takers, one market price.",
+      explanation: "Perfect competition is a benchmark with many buyers and sellers, homogeneous products, free entry and exit, and firms that take price as given.",
+      keyPoints: ["Firms produce where price equals marginal cost in the long-run benchmark.", "Entry drives economic profit toward zero in the long run."],
+    },
+    retrieve: {
+      prompt: "Name one condition of perfect competition.",
+      hint: "Think about numbers of firms, product sameness, or pricing power.",
+      explanation: "Any core assumption of the competitive model works.",
+      example: "A wheat farmer sells into a market too large for one farm to move the price.",
+      modelAnswer: "Many buyers and sellers, a homogeneous product, free entry and exit, or price-taking firms.",
+    },
+    apply: {
+      prompt: "Why can a perfectly competitive firm sell as much as it wants at the market price but nothing above it?",
+      hint: "Buyers can switch to identical rivals.",
+      modelAnswer: "Goods are perfect substitutes, so buyers refuse a higher price and the firm is a price taker.",
+    },
+  },
 };
 
 const DEMO_SOURCE = {

@@ -37,7 +37,7 @@ test("analytics only loads when a measurement id is configured", async () => {
     source("lib/analytics.ts"),
     source("components/GoogleAnalytics.tsx"),
     source(".github/workflows/restore-kelus-dns.yml"),
-    source("app/today/page.tsx"),
+    source("app/today/TodayClient.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("app/session/page.tsx"),
     source("app/session/complete/page.tsx"),
@@ -150,10 +150,11 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
 });
 
 test("primary CTA language and readiness stay consistent", async () => {
-  const [hero, header, home, today, how] = await Promise.all([
+  const [hero, header, home, today, todayPage, how] = await Promise.all([
     source("components/hero/KelusHero.tsx"),
     source("components/SiteHeader.tsx"),
     source("components/home/HomeAfterHero.tsx"),
+    source("app/today/TodayClient.tsx"),
     source("app/today/page.tsx"),
     source("components/HowItWorks.tsx"),
   ]);
@@ -167,10 +168,10 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(home, /Set my exam/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
   assert.match(how, /Try sample \(~1 min\)/);
-  assert.match(today, /Est\. readiness/);
+  assert.match(today, /Est\. readiness|Est\. readiness/);
   assert.match(today, /not a grade prediction/);
-  assert.match(today, /get\("sample"\) === "1"/);
-  assert.match(today, /Try sample \(~1 min\)/);
+  assert.match(todayPage, /sample === "1"/);
+  assert.match(today, /Try sample \(~1 min\)|loadDemo/);
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {

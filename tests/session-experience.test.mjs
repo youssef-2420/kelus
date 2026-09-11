@@ -73,7 +73,7 @@ test("sessions expose a confirmed course source and its page", async () => {
 
 test("today exposes confidence while reroutes explain the evidence that changed", async () => {
   const today = await source("components/TodayRoute.tsx");
-  const page = await source("app/today/page.tsx");
+  const page = await source("app/today/TodayClient.tsx");
   const store = await source("lib/demo-store.ts");
   assert.match(today, /confidenceLabel/);
   assert.match(today, /Course evidence/);

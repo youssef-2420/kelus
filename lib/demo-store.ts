@@ -1,4 +1,5 @@
 import { createDemoSnapshot } from "../data/demo-seed";
+import { clearHasRouteFlag, setHasRouteFlag } from "./route-flag";
 import { ALGORITHM_KIND, SELF_RATING_MASTERY } from "../domain/constants";
 import { advanceDemoClock, isDemoClockEnabled } from "../domain/demo-clock";
 import { recomputeConceptCache, withCachedState } from "../domain/learner-model";
@@ -165,6 +166,7 @@ export const getServerDemoSnapshot = () => SERVER_SNAPSHOT;
 export function resetDemoState(nowMs = Date.now()) {
   const state = initialDemoState(nowMs);
   persistDemoState(state);
+  clearHasRouteFlag();
   if (typeof window !== "undefined") {
     void import("./material-store").then(({ clearMaterials }) => clearMaterials());
   }
@@ -180,6 +182,7 @@ export function loadAminaDemo(nowMs = Date.now()) {
     diagnosisCompleted: true,
   };
   persistDemoState(state);
+  setHasRouteFlag();
   if (typeof window !== "undefined") {
     void import("./material-store").then(({ clearMaterials, seedDemoMaterial }) => {
       clearMaterials();
@@ -198,6 +201,7 @@ export function completeOnboarding(input: SetupInput, nowMs = Date.now()) {
     diagnosisCompleted: false,
   };
   persistDemoState(state);
+  setHasRouteFlag();
   if (typeof window !== "undefined") {
     void import("./material-store").then(({ clearMaterials }) => clearMaterials());
   }

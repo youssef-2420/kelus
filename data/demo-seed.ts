@@ -24,6 +24,11 @@ const MICROECONOMICS_CONCEPTS: SeedConcept[] = [
   { id: "c-game-theory", name: "Game Theory", examImportance: 0.25, difficulty: 0.7, estimatedMinutes: 26, mastery: 0.31, lastReviewedDays: 3, history: ["partial"] },
   { id: "c-monetary-policy", name: "Monetary Policy", examImportance: 0.82, difficulty: 0.58, estimatedMinutes: 18, mastery: 0.57, lastReviewedDays: 12, history: ["success", "failure"] },
   { id: "c-fiscal-policy", name: "Fiscal Policy", examImportance: 0.72, difficulty: 0.5, estimatedMinutes: 17, mastery: 0.69, lastReviewedDays: 5, history: ["success", "partial"] },
+  { id: "c-opportunity-cost", name: "Opportunity Cost", examImportance: 0.91, difficulty: 0.34, estimatedMinutes: 16, mastery: 0.74, lastReviewedDays: 3, history: ["success", "success"] },
+  { id: "c-comparative-advantage", name: "Comparative Advantage", examImportance: 0.77, difficulty: 0.55, estimatedMinutes: 20, mastery: 0.52, lastReviewedDays: 9, history: ["partial", "partial"] },
+  { id: "c-externalities", name: "Externalities", examImportance: 0.83, difficulty: 0.58, estimatedMinutes: 19, mastery: 0.44, lastReviewedDays: 7, history: ["partial", "failure"] },
+  { id: "c-deadweight-loss", name: "Deadweight Loss", examImportance: 0.79, difficulty: 0.62, estimatedMinutes: 18, mastery: 0.39, lastReviewedDays: 10, history: ["failure", "partial"] },
+  { id: "c-perfect-competition", name: "Perfect Competition", examImportance: 0.74, difficulty: 0.48, estimatedMinutes: 17, mastery: 0.58, lastReviewedDays: 6, history: ["success", "partial"] },
 ];
 
 const PROMPTS = {
@@ -34,6 +39,11 @@ const PROMPTS = {
   "c-game-theory": ["What is a dominant strategy?", "A strategy that gives a player the best outcome regardless of what the other player chooses."],
   "c-monetary-policy": ["How can a higher policy interest rate reduce inflationary pressure?", "It raises borrowing costs, restrains demand and investment, and can reduce upward pressure on prices."],
   "c-fiscal-policy": ["Name one expansionary fiscal-policy action.", "Increasing government spending or reducing taxes to raise aggregate demand."],
+  "c-opportunity-cost": ["What is opportunity cost?", "The value of the next-best alternative forgone when a choice is made."],
+  "c-comparative-advantage": ["When should a country specialize in a good?", "When it has a lower opportunity cost of producing that good than its trading partner."],
+  "c-externalities": ["What is a negative externality?", "A cost of production or consumption imposed on third parties not reflected in the market price."],
+  "c-deadweight-loss": ["What does deadweight loss measure?", "The loss of total surplus from producing a quantity different from the efficient market equilibrium."],
+  "c-perfect-competition": ["Name one condition of perfect competition.", "Many buyers and sellers, a homogeneous product, free entry and exit, and price-taking firms."],
 } as const;
 
 export function createDemoSnapshot(nowMs = Date.now()): LearnerSnapshot {
@@ -77,6 +87,10 @@ export function createDemoSnapshot(nowMs = Date.now()): LearnerSnapshot {
       { id: "r-elasticity-markets", fromId: "c-elasticity", toId: "c-market-structures", kind: "prerequisite" },
       { id: "r-choice-markets", fromId: "c-consumer-choice", toId: "c-market-structures", kind: "related" },
       { id: "r-monetary-fiscal", fromId: "c-monetary-policy", toId: "c-fiscal-policy", kind: "related" },
+      { id: "r-opportunity-comparative", fromId: "c-opportunity-cost", toId: "c-comparative-advantage", kind: "prerequisite" },
+      { id: "r-markets-competition", fromId: "c-market-structures", toId: "c-perfect-competition", kind: "related" },
+      { id: "r-externalities-dwl", fromId: "c-externalities", toId: "c-deadweight-loss", kind: "prerequisite" },
+      { id: "r-competition-externalities", fromId: "c-perfect-competition", toId: "c-externalities", kind: "related" },
     ],
     prompts: concepts.map((concept) => ({
       id: `p-${concept.id}`,
