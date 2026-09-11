@@ -138,13 +138,19 @@ const ACTIVITIES: Record<string, ActivitySeed> = {
   },
 };
 
+const DEMO_SOURCE = {
+  materialId: "demo-syllabus-microeconomics",
+  label: "Sample syllabus",
+  locator: "demo · not your upload",
+} as const;
+
 export function createDemoLearningActivities(): LearningActivity[] {
   return Object.entries(ACTIVITIES).map(([conceptId, activity]) => ({
     id: `activity-${conceptId}`,
     conceptId,
     ...activity,
-    // Demo lessons are deterministic course-model content. No uploaded source is
-    // cited until source processing exists and produces a verifiable reference.
-    sourceReferences: [],
+    // Honest sample citation: demo content is grounded in a sample syllabus,
+    // not a user-uploaded file.
+    sourceReferences: [DEMO_SOURCE],
   }));
 }

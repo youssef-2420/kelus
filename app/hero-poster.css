@@ -28,7 +28,14 @@ body.is-notion-system .is-poster .poster-copy {
 }
 
 body.is-notion-system .is-poster .hero-brand {
-  display: none !important;
+  display: block;
+  margin: 0 0 0.85rem;
+  font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
+  font-size: 0.9375rem;
+  font-weight: 550;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: #1f6b45;
 }
 
 body.is-notion-system .is-poster .hero-brand-sr {

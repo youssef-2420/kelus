@@ -35,6 +35,51 @@ export function MaterialToMapIllustration({ reduceMotion, concepts }: { reduceMo
   );
 }
 
+export function MapPreviewIllustration({ reduceMotion, concepts }: { reduceMotion: boolean; concepts: readonly [string, string, string] }) {
+  return (
+    <figure className="how-illustration how-map-preview">
+      <svg viewBox="0 0 640 280" role="img" aria-labelledby="map-preview-title map-preview-desc">
+        <title id="map-preview-title">Topic map with linked course concepts</title>
+        <desc id="map-preview-desc">Three linked topics: {concepts.join(", ")}.</desc>
+        <motion.path className="how-map-link is-primary" d="M120 150C210 150 230 70 320 70" {...draw(reduceMotion, 0.06)} />
+        <motion.path className="how-map-link" d="M320 70C410 70 430 150 520 150" {...draw(reduceMotion, 0.16)} />
+        <motion.path className="how-map-link" d="M320 70C360 120 360 180 320 220" {...draw(reduceMotion, 0.24)} />
+        <g className="how-concept-node"><circle cx="120" cy="150" r="10" /><text x="120" y="178" textAnchor="middle">{concepts[0]}</text></g>
+        <g className="how-concept-node is-primary"><circle cx="320" cy="70" r="12" /><text x="320" y="48" textAnchor="middle">{concepts[1]}</text></g>
+        <g className="how-concept-node"><circle cx="520" cy="150" r="10" /><text x="520" y="178" textAnchor="middle">{concepts[2]}</text></g>
+        <g className="how-concept-node"><circle cx="320" cy="220" r="8" /><text x="320" y="248" textAnchor="middle">Exam link</text></g>
+        <text className="how-figure-note" x="40" y="268">Importance · prerequisites · what you know</text>
+      </svg>
+    </figure>
+  );
+}
+
+export function MaterialsPreviewIllustration({ reduceMotion }: { reduceMotion: boolean }) {
+  return (
+    <figure className="how-illustration how-materials-preview">
+      <svg viewBox="0 0 640 280" role="img" aria-labelledby="materials-preview-title materials-preview-desc">
+        <title id="materials-preview-title">Course sources kept with the exam</title>
+        <desc id="materials-preview-desc">A syllabus and lecture PDF sit on a shelf with page anchors.</desc>
+        <g className="how-paper-stack">
+          <rect x="70" y="48" width="150" height="190" />
+          <rect x="92" y="36" width="150" height="190" />
+          <path d="M114 70H210M114 92H198M114 128H218M114 150H186M114 186H206" />
+          <text x="114" y="58">Syllabus.pdf</text>
+          <text x="114" y="214">12 pages</text>
+        </g>
+        <g className="how-paper-stack">
+          <rect x="300" y="58" width="150" height="180" />
+          <path d="M322 88H418M322 110H406M322 146H426M322 168H394" />
+          <text x="322" y="78">Lecture 04.pdf</text>
+          <text x="322" y="214">p. 7–9 kept</text>
+        </g>
+        <motion.path className="how-flow-line is-primary" d="M250 140H292" {...draw(reduceMotion, 0.1)} />
+        <g className="how-concept-node is-primary"><circle cx="520" cy="140" r="11" /><text x="540" y="144">Shelf</text></g>
+        <text className="how-figure-note" x="40" y="262">Sources stay with the course — not a generic file dump</text>
+      </svg>
+    </figure>
+  );
+}
 export function TodayRouteIllustration({ reduceMotion, concepts }: { reduceMotion: boolean; concepts: readonly [string, string, string] }) {
   return (
     <figure className="how-illustration how-route-figure">

@@ -128,7 +128,25 @@ function SessionBody() {
         <section className="materials-empty is-session-empty">
           <p className="kicker">Session</p>
           <h1>No active revision yet.</h1>
-          <p>A session opens from Today’s route. Set your exam or open today’s plan to start reviewing.</p>
+          <p>Sessions open from Today’s route. Each block walks one topic through the same loop:</p>
+          <ol className="session-empty-preview" aria-label="Revision loop preview">
+            <li>
+              <strong>Learn</strong>
+              <span>Short explanation from your course</span>
+            </li>
+            <li>
+              <strong>Retrieve</strong>
+              <span>Recall without looking</span>
+            </li>
+            <li>
+              <strong>Apply</strong>
+              <span>Use it on a fresh prompt</span>
+            </li>
+            <li>
+              <strong>Evaluate</strong>
+              <span>Check — then Kelus updates the route</span>
+            </li>
+          </ol>
           <div className="materials-empty-actions">
             <button className="cta" type="button" onClick={() => router.replace("/today")}>
               Go to Today <span aria-hidden="true">→</span>
