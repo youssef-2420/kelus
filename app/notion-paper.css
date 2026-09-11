@@ -278,10 +278,10 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .home-cta {
 }
 
 body.is-notion-system .kelus-hero.is-folio.is-notion .home-secondary {
-  background: var(--color-sky-tint);
-  border: 0;
-  border-radius: var(--radius-buttons);
-  color: var(--color-notion-blue);
+  background: transparent;
+  border: 1px solid #aeb6a8;
+  border-radius: 999px;
+  color: var(--booklet-ink, #12160f);
   font-weight: 500;
   font-size: var(--text-body-sm);
   min-height: 36px;

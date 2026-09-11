@@ -543,10 +543,10 @@
 .notion-product-rail-label {
   margin: 10px 6px 4px;
   color: #9b9a97;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .notion-product-rail ul {
@@ -751,8 +751,8 @@
 }
 
 .notion-product-demo .hero-recall-actions button[aria-pressed="true"] {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
   color: #fff;
 }
 
@@ -831,7 +831,7 @@
 }
 
 .notion-product-demo .hero-demo-signal span {
-  color: #2383e2;
+  color: #1f6b45;
 }
 
 .notion-product-demo .hero-demo-replay {
@@ -851,7 +851,7 @@
 .notion-product-demo .hero-recall-actions button:focus-visible,
 .notion-product-demo .hero-demo-tabs button:focus-visible,
 .notion-product-demo .hero-demo-replay:focus-visible {
-  outline: 2px solid #2383e2;
+  outline: 2px solid #1f6b45;
   outline-offset: 2px;
 }
 
@@ -943,7 +943,7 @@
   align-items: center;
   gap: 0.35rem;
   min-height: 44px;
-  color: #2383e2;
+  color: #1f6b45;
   font-weight: 600;
   text-decoration: none;
 }
@@ -1011,8 +1011,8 @@
 
 .folio-chapter-art .v1-almost {
   border-radius: 8px;
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
   color: #fff;
 }
 
@@ -1081,10 +1081,10 @@
 .folio-method-grid dt {
   margin: 0 0 0.35rem;
   color: #787774;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .folio-method-grid dd {

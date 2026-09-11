@@ -8,6 +8,7 @@ import "./notion-paper.css";
 import "./paper-loop.css";
 import "./hero-poster.css";
 import "./exam-booklet.css";
+import "./view-transitions.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";

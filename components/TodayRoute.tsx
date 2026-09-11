@@ -29,12 +29,12 @@ export function TodayRoute({
   if (!first) {
     return (
       <div className="today-route-empty materials-empty">
-        <p className="kicker">Today’s route</p>
+        <p className="kicker">Today</p>
         <h2>No study action is ready yet.</h2>
-        <p>Review the Knowledge Map or add course material so Kelus can build a route.</p>
+        <p>Add course material or open the map so Kelus can build a route.</p>
         <div className="today-route-empty-actions">
           <Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
-          <Link className="text-btn" href="/map">Open Knowledge Map</Link>
+          <Link className="text-btn" href="/map">Open map</Link>
         </div>
       </div>
     );

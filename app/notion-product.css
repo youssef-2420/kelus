@@ -2,10 +2,10 @@
    remain aliases so every existing product surface inherits the rebrand. */
 .is-notion-system {
   --color-paper-warmth: #f6f5f4;
-  --color-notion-blue: #0075de;
-  --color-sky-tint: #e6f3fe;
+  --color-notion-blue: #1f6b45;
+  --color-sky-tint: #e4efe8;
   --color-indigo-ink: var(--color-notion-blue);
-  --color-indigo-hover: #0065c0;
+  --color-indigo-hover: #185536;
   --color-midnight-ink: #111111;
   --color-steel: #615d59;
   --color-smoke: #615d59;
@@ -15,7 +15,7 @@
   --color-lavender-border: #dedbd7;
   --color-lilac-border: #dedbd7;
   --color-periwinkle-wash: var(--color-sky-tint);
-  --color-deep-violet: #005bab;
+  --color-deep-violet: #164a32;
   --background: var(--color-paper-warmth);
   --paper: var(--color-paper-warmth);
   background: var(--color-paper-warmth);
@@ -98,7 +98,7 @@
 
 .is-notion-product .course-stage.is-complete i,
 .is-notion-product .course-stage.is-current i {
-  background: #2383e2;
+  background: #1f6b45;
   color: #fff;
 }
 
@@ -218,8 +218,8 @@
 }
 
 .destination-page.is-notion-product .time-choices label.is-selected {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
   color: #fff;
 }
 
@@ -258,14 +258,14 @@
 
 .pricing-page.is-notion-product .pricing-plan .cta {
   border-radius: 8px;
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
 }
 
 /* ── Site-wide Notion accent (header lives outside AppShell) ── */
 .is-notion-system .site-header-action {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
   border-radius: 8px;
 }
 
@@ -286,13 +286,13 @@
 
 .is-notion-system .site-wordmark:hover,
 .is-notion-system .site-auth-button:hover {
-  color: #2383e2;
+  color: #1f6b45;
 }
 
 .is-notion-system .cta,
 .is-notion-system .cta:hover {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
   border-radius: 8px;
 }
 
@@ -304,19 +304,19 @@
 .is-notion-system .cta:focus-visible,
 .is-notion-system a:focus-visible,
 .is-notion-system button:focus-visible {
-  outline-color: #2383e2;
+  outline-color: #1f6b45;
 }
 
 .is-notion-system .home-close-actions .cta {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
 }
 
 .is-notion-product .cta,
 .is-notion-product .materials-empty-actions .cta,
 .is-notion-product .destination-actions .cta {
-  background: #2383e2;
-  border-color: #2383e2;
+  background: #1f6b45;
+  border-color: #1f6b45;
   border-radius: 8px;
 }
 
@@ -353,20 +353,20 @@
 
 .is-notion-product .material-drop:hover,
 .is-notion-product .material-drop.is-dragging {
-  border-color: #2383e2;
+  border-color: #1f6b45;
   background: rgba(35, 131, 226, 0.04);
 }
 
 /* Today lead accents */
 .is-notion-product .today-workbench.is-revision-studio .today-lead-action,
 .is-notion-product .today-brief.is-revision-studio .today-lead-action {
-  border-left-color: #2383e2;
+  border-left-color: #1f6b45;
 }
 
 .is-notion-product .today-lead-sequence li::before,
 .is-notion-product .plan-execution li::before,
 .is-notion-product .plan-time i {
-  color: #2383e2;
+  color: #1f6b45;
   background: transparent;
 }
 
@@ -403,7 +403,7 @@
   margin-top: 1rem;
   padding: 12px 14px;
   border: 1px solid #ebebea;
-  border-left: 3px solid #2383e2;
+  border-left: 3px solid #1f6b45;
   border-radius: 10px;
   background: #f1f1ef;
 }
@@ -420,7 +420,7 @@
 }
 
 .destination-page.is-notion-product .setup-sample-cta {
-  color: #2383e2;
+  color: #1f6b45;
   font-weight: 600;
 }
 
@@ -449,7 +449,7 @@
 }
 
 .destination-page.is-notion-product input:not([type="radio"]):not([type="checkbox"]):focus {
-  border-bottom-color: #2383e2;
+  border-bottom-color: #1f6b45;
   outline: none;
 }
 
@@ -496,7 +496,7 @@
 }
 
 .is-notion-product .materials-empty .text-btn {
-  color: #2383e2;
+  color: #1f6b45;
   font-weight: 600;
 }
 
@@ -720,7 +720,7 @@
 .is-notion-system .cta,
 .is-notion-system .is-notion-product .cta { background: var(--color-notion-blue); border-color: var(--color-notion-blue); min-height: 44px; }
 .is-notion-system .site-header-action:hover,
-.is-notion-system .cta:hover { background: #0065c0; border-color: #0065c0; }
+.is-notion-system .cta:hover { background: #185536; border-color: #185536; }
 .is-notion-system :is(a, button, summary, input, textarea, select):focus-visible { outline: 2px solid var(--color-notion-blue); outline-offset: 3px; }
 .is-notion-system :is(button, .cta) { transition: background-color 180ms ease, transform 180ms ease; }
 .is-notion-system button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
@@ -740,7 +740,7 @@
 .is-notion-system .kelus-hero.is-folio .folio-hero-copy h1 { color: #111; font-size: clamp(40px, 4.5vw, 64px); line-height: 1.08; letter-spacing: -.045em; }
 .is-notion-system .kelus-hero.is-folio .folio-hero-copy h1 span { color: #111; }
 .is-notion-system .kelus-hero.is-folio .home-lede { max-width: 38ch; font-size: 18px; line-height: 1.55; }
-.is-notion-system .kelus-hero.is-folio .home-secondary { background: var(--color-sky-tint); border-color: transparent; color: #005bab; border-radius: 8px; }
+.is-notion-system .kelus-hero.is-folio .home-secondary { background: transparent; border: 1px solid #aeb6a8; color: #12160f; border-radius: 999px; }
 .is-notion-system .folio-hero-notion { padding: 0; }
 .is-notion-system .notion-board { pointer-events: auto; }
 .is-notion-system .notion-board.is-clean .notion-board-shell { box-shadow: 0 4px 12px rgba(0,0,0,.06); }
@@ -758,7 +758,7 @@
 .shell.is-notion-product { background: transparent; min-width: 0; }
 .is-notion-product .course-workspace-progress { margin-top: 24px; padding-top: 20px; }
 .is-notion-product .course-workspace-progress li i { color: var(--color-steel); background: #ebe9e6; border-color: #dedbd7; }
-.is-notion-product .course-workspace-progress li.is-complete i { color: #005bab; background: var(--color-sky-tint); }
+.is-notion-product .course-workspace-progress li.is-complete i { color: #1f6b45; background: var(--color-sky-tint); }
 .is-notion-product .course-workspace-progress li.is-current i { color: white; background: var(--color-notion-blue); border-color: var(--color-notion-blue); }
 .is-notion-product .course-workspace-identity span,
 .is-notion-product .course-workspace-identity small { color: var(--color-steel); }
@@ -787,7 +787,7 @@
 .destination-page.is-notion-product input:not([type="radio"]):not([type="checkbox"]) { border: 1px solid #bdb9b4; border-radius: 8px; background: #fff; min-height: 48px; padding: 10px 12px; font-size: 16px; }
 .destination-page.is-notion-product input:focus-visible { outline: 2px solid var(--color-notion-blue); outline-offset: 2px; }
 .destination-page.is-notion-product .time-choices label { min-height: 60px; }
-.destination-page.is-notion-product .time-choices label.is-selected { background: var(--color-sky-tint); color: #005bab; border-color: var(--color-notion-blue); }
+.destination-page.is-notion-product .time-choices label.is-selected { background: var(--color-sky-tint); color: #1f6b45; border-color: var(--color-notion-blue); }
 .destination-page.is-notion-product .time-choices label:focus-within { outline: 2px solid var(--color-notion-blue); outline-offset: 3px; }
 .destination-page.is-notion-product .setup-sample { border-left: 1px solid var(--color-frost); background: var(--color-paper-warmth); }
 .destination-page.is-notion-product .destination-support { color: var(--color-steel); }

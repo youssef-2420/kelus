@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import type { Concept, ConceptRelationship, LearningEvent } from "@/domain/types";
 import { deriveStatus } from "@/domain/learner-model";
 import { daysAgoLabel, percent, statusLabel } from "@/lib/format";
+import { ConceptTitleTransition } from "@/components/PageTransition";
 
 export function ConceptInspector({ concept, concepts, relationships, events, nowIso, onClose }: {
   concept: Concept;
@@ -50,7 +51,9 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
         <span className={`mark-status is-${status}`}>{statusLabel(status)}</span>
         <button ref={closeRef} type="button" onClick={onClose} aria-label="Close concept details">Close</button>
       </header>
-      <h2 id="concept-inspector-title">{concept.name}</h2>
+      <ConceptTitleTransition id={concept.id}>
+        <h2 id="concept-inspector-title">{concept.name}</h2>
+      </ConceptTitleTransition>
       <p>Learning estimates from your recorded answers. These are not exam grades.</p>
 
       <dl>
@@ -70,7 +73,7 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
         {related.length ? <ul>{related.map((item) => <li key={item.concept.id}><b>{item.concept.name}</b><small>{item.kind}</small></li>)}</ul> : <p>No linked concepts yet.</p>}
       </section>
 
-      <Link href={`/concepts/${encodeURIComponent(concept.id)}`}>Open full learning history <span aria-hidden="true">→</span></Link>
+      <Link href={`/concepts/${encodeURIComponent(concept.id)}`} transitionTypes={["nav-forward"]} prefetch={true}>Open full learning history <span aria-hidden="true">→</span></Link>
     </aside>
   );
 }

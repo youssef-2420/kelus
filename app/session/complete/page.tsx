@@ -11,6 +11,7 @@ import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
+import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
 function CompleteBody() {
   const search = useSearchParams();
@@ -131,5 +132,20 @@ function CompleteBody() {
 }
 
 export default function SessionCompletePage() {
-  return <Suspense fallback={<AppShell><p>Updating your route…</p></AppShell>}><CompleteBody /></Suspense>;
+  return (
+    <LateralPage>
+      <Suspense
+        fallback={
+          <SuspenseFallbackExit>
+            <AppShell><p>Updating your route…</p></AppShell>
+          </SuspenseFallbackExit>
+        }
+      >
+        <SuspenseReveal>
+          <CompleteBody />
+        </SuspenseReveal>
+      </Suspense>
+    </LateralPage>
+  );
 }
+

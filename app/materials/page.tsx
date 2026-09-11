@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
+import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Course material — Kelus",
@@ -8,5 +9,5 @@ export const metadata: Metadata = {
 };
 
 export default function MaterialsPage() {
-  return <MaterialLibrary />;
+  return <LateralPage><MaterialLibrary /></LateralPage>;
 }

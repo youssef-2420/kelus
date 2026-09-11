@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { KelusHero } from "@/components/hero/KelusHero";
 import { HomeAfterHero } from "@/components/home/HomeAfterHero";
+import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Kelus — Revise your lessons. Prepare for exams.",
@@ -27,12 +28,14 @@ export default function Home() {
   };
 
   return (
-    <div className="home">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
-      <main id="main">
-        <KelusHero />
-        <HomeAfterHero />
-      </main>
-    </div>
+    <LateralPage>
+      <div className="home">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} />
+        <main id="main">
+          <KelusHero />
+          <HomeAfterHero />
+        </main>
+      </div>
+    </LateralPage>
   );
 }
