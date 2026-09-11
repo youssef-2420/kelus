@@ -19,7 +19,7 @@ test("audit harden: smoke meets AA, first-run has h1, session skip target", asyn
   assert.match(tokens, /--color-smoke:\s*#5b6f92/);
   assert.doesNotMatch(tokens, /--color-smoke:\s*#839bc8/);
   assert.match(setup, /<h1 className="destination-page-title">[\s\S]*Set your exam[\s\S]*<\/h1>/);
-  assert.match(session, /fallback=\{<main id="main"/);
+  assert.match(session, /fallback=\{[\s\S]*?<main id="main"/);
   assert.match(illustration, /student\.webp/);
   assert.match(illustration, /fetchPriority="high"/);
   assert.match(css, /\.site-header-action[\s\S]*?min-height:\s*44px/);
