@@ -50,13 +50,13 @@ body.is-notion-system .is-poster .hero-brand-sr {
 }
 
 body.is-notion-system .is-poster .poster-copy h1 {
-  max-width: 11ch;
+  max-width: 22ch;
   margin: 0;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
-  font-size: clamp(40px, 5.6vw, 72px);
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  font-size: clamp(1.2rem, 2.1vw, 1.55rem);
+  font-weight: 400;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
   color: #173f3b;
 }
 
@@ -66,7 +66,7 @@ body.is-notion-system .is-poster .home-actions { display: flex; flex-wrap: wrap;
 body.is-notion-system .is-poster .home-cta { background: #173f3b; border-color: #173f3b; color: #f6f5f4; border-radius: 999px; padding-inline: 22px; }
 body.is-notion-system .is-poster .home-cta:hover { background: #245b54; border-color: #245b54; color: #fff; }
 body.is-notion-system .is-poster .home-secondary { background: transparent; border: 1px solid #aabbb7; color: #173f3b; border-radius: 999px; }
-body.is-notion-system .is-poster .home-secondary:hover { background: #e6f3fe; color: #173f3b; }
+body.is-notion-system .is-poster .home-secondary:hover { background: #e3e8df; color: #173f3b; }
 
 body.is-notion-system .is-poster .poster-visual { display: flex; align-items: stretch; min-height: 420px; }
 body.is-notion-system .is-poster .exam-route-poster { width: 100%; height: 100%; min-height: inherit; margin: 0; }

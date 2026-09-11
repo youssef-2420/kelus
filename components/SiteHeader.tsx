@@ -68,8 +68,8 @@ export function SiteHeader() {
           </details>
         ) : (
           <div className="site-header-cluster">
-            {!inProduct && <Link href="/today" className="site-header-action">
-              Start revising <span aria-hidden="true">→</span>
+            {!inProduct && <Link href="/today?sample=1" className="site-header-action">
+              Try sample <span aria-hidden="true">→</span>
             </Link>}
             {auth.configured ? (
               <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>

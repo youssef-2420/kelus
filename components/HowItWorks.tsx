@@ -84,7 +84,7 @@ export function HowItWorks() {
         <h1 id="how-title" className="how-title">Your lessons. A regular revision habit.</h1>
         <div className="how-hero-foot">
           <p>Bring what you’ve studied. Recall it, practise using it, and review the parts that need another attempt before your exam.</p>
-          <Link className="cta" href="/today">Start revising <span aria-hidden="true">→</span></Link>
+          <Link className="cta" href="/today?sample=1">Try sample (~1 min) <span aria-hidden="true">→</span></Link>
         </div>
         <div className="how-example-switcher" aria-label="Choose an example course">
           <span>See the loop with</span>
@@ -123,7 +123,7 @@ export function HowItWorks() {
 
       <footer className="how-final">
         <p>Bring one lesson. Start practising for your exam.</p>
-        <Link className="cta" href="/today">Start revising <span aria-hidden="true">→</span></Link>
+        <Link className="cta" href="/today?sample=1">Try sample (~1 min) <span aria-hidden="true">→</span></Link>
       </footer>
       <SiteFooter />
     </div>

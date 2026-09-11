@@ -10,8 +10,8 @@ const press = kelusMotion.press;
 const dur = kelusDuration;
 
 /**
- * Marked-script hero: Kelus as the display signal, one line, one lede, CTAs,
- * full-bleed revision art. Interactive sample lives below the fold.
+ * Marked-script hero: Kelus as the display signal, one line, one lede,
+ * one primary path. Interactive sample lives below the fold.
  */
 export function KelusHero() {
   const reduce = useReducedMotion() === true;
@@ -62,7 +62,7 @@ export function KelusHero() {
           </motion.div>
           <motion.div whileTap={reduce ? undefined : { scale: 0.98 }} transition={press}>
             <Link href="/today" className="home-secondary">
-              Revise my course
+              Set my exam
             </Link>
           </motion.div>
         </motion.div>

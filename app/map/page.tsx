@@ -22,10 +22,10 @@ export default function MapPage() {
     <DirectionalPage>
       <AppShell>
         <section className="materials-empty">
-          <p className="kicker">Knowledge Map</p>
+          <p className="kicker">Map</p>
           <h1>Set your exam first.</h1>
-          <p>Kelus needs a course and exam before it can show a map.</p>
-          <Link href="/today" className="cta">Set your exam <span aria-hidden="true">→</span></Link>
+          <p>Kelus needs a course and exam date before it can open the map.</p>
+          <Link href="/today" className="cta">Set my exam <span aria-hidden="true">→</span></Link>
         </section>
       </AppShell>
     </DirectionalPage>
@@ -43,7 +43,7 @@ export default function MapPage() {
     <DirectionalPage>
       <AppShell>
         <section className="materials-empty">
-          <p className="kicker">Knowledge Map</p>
+          <p className="kicker">Map</p>
           <h1>Confirm concepts from a source first.</h1>
           <p>Add a syllabus or lecture PDF, then keep the concepts this exam actually covers.</p>
           <div className="materials-empty-actions">
