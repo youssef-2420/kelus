@@ -82,9 +82,16 @@ body.is-notion-system .is-poster .poster-copy {
   gap: 0;
 }
 
-/* Hero logo removed — brand lives in the site header only. */
+/* Compact brand signal in the first viewport — not a giant wordmark. */
 body.is-notion-system .is-poster .hero-brand {
-  display: none !important;
+  display: block;
+  margin: 0 0 0.85rem;
+  font-family: var(--font-editorial);
+  font-size: 0.9375rem;
+  font-weight: 550;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--booklet-kelus);
 }
 
 /* Headline is the hero apex now that the giant wordmark is gone. */
@@ -363,7 +370,9 @@ body.is-notion-system .home-close-actions .text-btn {
     padding: 56px 24px 28px;
   }
   body.is-notion-system .is-poster .hero-brand {
-    display: none !important;
+    display: block;
+    margin-bottom: 0.7rem;
+    font-size: 0.875rem;
   }
   body.is-notion-system .is-poster .poster-copy h1 {
     font-size: clamp(2.1rem, 9vw, 3rem) !important;
@@ -1343,7 +1352,9 @@ body.is-notion-system .first-run-gate-preview-label {
 }
 
 body.is-notion-system .first-run-gate-preview .how-illustration,
-body.is-notion-system .first-run-gate-preview .how-material-map {
+body.is-notion-system .first-run-gate-preview .how-material-map,
+body.is-notion-system .first-run-gate-preview .how-map-preview,
+body.is-notion-system .first-run-gate-preview .how-materials-preview {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
@@ -1352,6 +1363,38 @@ body.is-notion-system .first-run-gate-preview .how-material-map {
 
 body.is-notion-system .materials-empty.is-session-empty {
   max-width: 32rem;
+}
+
+body.is-notion-system .session-empty-preview {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.is-notion-system .session-empty-preview li {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.55rem 0;
+  border-top: 1px solid var(--booklet-rule);
+}
+
+body.is-notion-system .session-empty-preview li:last-child {
+  border-bottom: 1px solid var(--booklet-rule);
+}
+
+body.is-notion-system .session-empty-preview strong {
+  font-family: var(--font-editorial);
+  font-weight: 550;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .session-empty-preview span {
+  color: var(--booklet-mute);
+  font-size: 0.9375rem;
 }
 
 /* ── Topic map graph ── */
@@ -1394,7 +1437,7 @@ body.is-notion-system .topic-map-node.is-selected circle {
 
 body.is-notion-system .topic-map-node text {
   fill: var(--booklet-mute);
-  font-size: 3.2px;
+  font-size: 3.8px;
   font-family: var(--font-sans);
 }
 

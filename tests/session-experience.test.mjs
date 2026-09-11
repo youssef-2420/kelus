@@ -20,7 +20,13 @@ test("every demo concept has a deterministic learn, retrieve and apply activity"
     assert.ok(activity.retrieve.hint.length > 10);
     assert.ok(activity.apply.prompt.length > 10);
     assert.ok(activity.apply.modelAnswer.length > 10);
-    assert.deepEqual(activity.sourceReferences, []);
+    assert.deepEqual(activity.sourceReferences, [
+      {
+        materialId: "demo-syllabus-microeconomics",
+        label: "Sample syllabus",
+        locator: "demo · not your upload",
+      },
+    ]);
   }
 });
 

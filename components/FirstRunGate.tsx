@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useReducedMotion } from "motion/react";
-import { MaterialToMapIllustration } from "@/components/how/HowIllustrations";
+import { MapPreviewIllustration, MaterialsPreviewIllustration } from "@/components/how/HowIllustrations";
 import { Pressable } from "@/components/motion";
 
 const PREVIEW_TOPICS = ["Cell membranes", "Osmosis", "Homeostasis"] as const;
@@ -46,9 +46,15 @@ export function FirstRunGate({
       </div>
       <div className="first-run-gate-preview">
         <p className="first-run-gate-preview-label">
-          {preview === "map" ? "What the topic map looks like" : "What Materials keeps with your course"}
+          {preview === "map"
+            ? "What the topic map looks like"
+            : "What Materials keeps with your course"}
         </p>
-        <MaterialToMapIllustration reduceMotion={reduceMotion} concepts={PREVIEW_TOPICS} />
+        {preview === "map" ? (
+          <MapPreviewIllustration reduceMotion={reduceMotion} concepts={PREVIEW_TOPICS} />
+        ) : (
+          <MaterialsPreviewIllustration reduceMotion={reduceMotion} />
+        )}
       </div>
     </section>
   );

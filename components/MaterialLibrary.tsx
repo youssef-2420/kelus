@@ -186,7 +186,7 @@ export function MaterialLibrary() {
         <FirstRunGate
           kicker="Course material"
           title="Set my exam first."
-          body="Kelus keeps PDFs and notes with the course you set — then turns confirmed pages into topics on the map."
+          body="Materials is your source shelf — syllabus and lecture PDFs stay with the exam. Confirmed pages become topics on the map next."
           preview="materials"
         />
       </AppShell>

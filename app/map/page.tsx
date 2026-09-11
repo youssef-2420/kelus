@@ -7,10 +7,13 @@ import { useCallback, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { ConceptInspector } from "@/components/ConceptInspector";
 import { FirstRunGate } from "@/components/FirstRunGate";
+import { MapPreviewIllustration } from "@/components/how/HowIllustrations";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { useLearner } from "@/components/LearnerProvider";
 import { courseMastery } from "@/domain/scheduler";
 import { DirectionalPage } from "@/components/PageTransition";
+
+const MAP_PREVIEW_TOPICS = ["Supply & Demand", "Elasticity", "Fiscal Policy"] as const;
 
 export default function MapPage() {
   const { state, useDemo: loadDemo } = useLearner();
@@ -25,7 +28,7 @@ export default function MapPage() {
         <FirstRunGate
           kicker="Topic map"
           title="Set my exam first."
-          body="After you name the course, confirmed topics appear here as a map — with links when sources show prerequisites."
+          body="The map is where confirmed topics live — importance, what you know, and links when sources show prerequisites. Materials holds the PDFs; this page holds the graph."
           preview="map"
         />
       </AppShell>
@@ -47,7 +50,7 @@ export default function MapPage() {
           <div className="first-run-gate-copy">
             <p className="kicker">Topic map</p>
             <h1>Confirm topics from a source first.</h1>
-            <p>Add a syllabus or lecture PDF, keep the topics this exam covers, then see how they connect.</p>
+            <p>Materials holds the PDFs. Here you’ll see the graph — exam importance, what you know, and links when pages show prerequisites.</p>
             <div className="materials-empty-actions">
               <Link className="cta" href="/materials">
                 Add course material <span aria-hidden="true">→</span>
@@ -59,6 +62,10 @@ export default function MapPage() {
                 Try sample (~1 min)
               </button>
             </p>
+          </div>
+          <div className="first-run-gate-preview">
+            <p className="first-run-gate-preview-label">What the topic map looks like</p>
+            <MapPreviewIllustration reduceMotion={reduceMotion === true} concepts={MAP_PREVIEW_TOPICS} />
           </div>
         </section>
       </AppShell>
