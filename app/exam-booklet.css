@@ -1306,3 +1306,11 @@ body.is-notion-system .how-page .how-today-fragment {
 body.is-notion-system .how-page .how-illustration svg {
   background: transparent;
 }
+
+body.is-notion-system .how-page .how-paper-stack rect,
+body.is-notion-system .how-page .how-concept-node:not(.is-primary) circle,
+body.is-notion-system .how-page .how-route-node circle,
+body.is-notion-system .how-page .how-route-target circle:first-of-type,
+body.is-notion-system .how-page .how-answer-signal rect {
+  fill: transparent !important;
+}
