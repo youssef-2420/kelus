@@ -48,14 +48,14 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeFocused();
   await expect(page.locator(".material-ingest")).toBeHidden();
-  await page.getByRole("button", { name: /Build my Knowledge Map/ }).click();
+  await page.getByRole("button", { name: /Build my topic map/ }).click();
   await expect(page.getByText(/confirmed concept/)).toBeVisible();
   await expect(page.locator("#material-ready-title")).toBeFocused();
   await page.getByRole("button", { name: "Add another source" }).click();
   await expect(page.locator(".material-ingest")).toBeVisible();
   await page.getByRole("button", { name: "Review concepts", exact: true }).click();
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeFocused();
-  await page.getByRole("button", { name: /Build my Knowledge Map/ }).click();
+  await page.getByRole("button", { name: /Build my topic map/ }).click();
   await page.getByRole("link", { name: /Continue: short check/ }).click();
 
   const groups = page.getByRole("group", { name: /Familiarity with/ });
