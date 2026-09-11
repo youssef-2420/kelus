@@ -1,4 +1,4 @@
-/* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4 · theme: indigo ledger · product logic preserved · contrast: pass · honest: pass · responsive: pass */
+/* Hallmark · Kelus booklet: paper / ink / kelus green · product logic preserved */
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -7,25 +7,25 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --paper: var(--color-pure-white);
+  --paper: #eef1ec;
   --ink: var(--color-midnight-ink);
   --muted: var(--color-steel);
   --line: var(--color-frost);
-  --accent: var(--color-indigo-ink);
-  --accent-2: var(--color-indigo-hover);
-  --surface: var(--color-pure-white);
-  --strong: var(--color-indigo-ink);
+  --accent: var(--color-kelus, var(--color-indigo-ink));
+  --accent-2: var(--color-kelus-hover, var(--color-indigo-hover));
+  --surface: var(--color-mist);
+  --strong: var(--color-kelus, var(--color-indigo-ink));
   --stable: var(--color-deep-violet);
   --fading: var(--color-amethyst-edge);
   --weak: var(--color-steel);
   --new: var(--color-smoke);
-  --background: var(--color-pure-white);
+  --background: #eef1ec;
   --foreground: var(--color-midnight-ink);
-  --card: var(--color-pure-white);
+  --card: var(--color-mist);
   --card-foreground: var(--color-midnight-ink);
   --popover: var(--color-pure-white);
   --popover-foreground: var(--color-midnight-ink);
-  --primary: var(--color-indigo-ink);
+  --primary: var(--color-kelus, var(--color-indigo-ink));
   --primary-foreground: var(--color-pure-white);
   --secondary: var(--color-mist);
   --secondary-foreground: var(--color-midnight-ink);
@@ -34,7 +34,7 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: var(--color-frost);
   --input: var(--color-frost);
-  --ring: var(--color-indigo-ink);
+  --ring: var(--color-kelus, var(--color-indigo-ink));
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -49,7 +49,7 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --coral: var(--color-indigo-hover);
+  --coral: var(--color-kelus-hover, var(--color-indigo-hover));
   --input-line: var(--color-frost);
   --mint-soft: var(--color-periwinkle-wash);
 }
@@ -158,8 +158,8 @@ button, input, textarea { font: inherit; }
 .prompt textarea { width: 100%; min-height: 120px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: #fff; }
 .reveal { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
 .rates { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
-.text-btn { background: none; border: 0; color: var(--muted); cursor: pointer; min-height: 44px; }
-.text-btn:active { color: var(--ink); }
+.text-btn { background: none; border: 0; color: var(--muted); cursor: pointer; min-height: 44px; transition: transform var(--dur-quick) var(--ease-enter), color var(--dur-quick) var(--ease-enter); }
+.text-btn:active { color: var(--ink); transform: scale(0.97); }
 .text-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 .related a { display: block; padding: 10px 0; border-top: 1px solid var(--line); }
 
@@ -6343,7 +6343,7 @@ h3,
 }
 
 .pricing-plan.is-founding {
-  border-color: var(--color-indigo-ink);
+  border-color: var(--color-kelus, var(--color-indigo-ink));
 }
 
 .pricing-plan h2 {
@@ -6390,7 +6390,7 @@ h3,
   width: fit-content;
   max-width: 100%;
   color: var(--color-pure-white) !important;
-  background: var(--color-indigo-ink);
+  background: var(--color-kelus, var(--color-indigo-ink));
   text-decoration: none !important;
 }
 
@@ -6405,11 +6405,11 @@ h3,
 
 .soft-upgrade-kicker {
   margin: 0;
-  color: var(--color-indigo-ink);
+  color: var(--color-kelus, var(--color-indigo-ink));
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 .soft-upgrade-copy {

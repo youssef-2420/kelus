@@ -18,7 +18,7 @@ const stages = [
   {
     number: "02",
     label: "Confirm your revision topics",
-    body: "Review the topics proposed from your PDF. The Knowledge Map keeps them together with their source references.",
+    body: "Review the topics proposed from your PDF. The topic map keeps them together with their source references.",
     visual: "map",
   },
   {

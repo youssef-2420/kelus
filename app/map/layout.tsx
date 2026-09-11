@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Knowledge Map — Kelus",
+  title: "Topic map — Kelus",
   robots: { index: false, follow: false },
 };
 

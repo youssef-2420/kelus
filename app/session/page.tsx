@@ -125,11 +125,21 @@ function SessionBody() {
   if (!session || !concept || !prompt || !activity) {
     return (
       <main id="main" className="study-shell">
-        <section className="materials-empty">
+        <section className="materials-empty is-session-empty">
           <p className="kicker">Session</p>
-          <h1>No active route.</h1>
-          <p>Start from Today when Kelus has a plan ready for this exam.</p>
-          <button className="cta" type="button" onClick={() => router.push("/today")}>Back to today <span aria-hidden="true">→</span></button>
+          <h1>No active revision yet.</h1>
+          <p>
+            A session opens from Today’s route — review, recall, apply, then check your answer.
+            Start a plan, or try the one-minute sample.
+          </p>
+          <div className="materials-empty-actions">
+            <button className="cta" type="button" onClick={() => router.push("/today")}>
+              Back to Today <span aria-hidden="true">→</span>
+            </button>
+            <button className="text-btn" type="button" onClick={() => router.push("/today?sample=1")}>
+              Try sample (~1 min) <span aria-hidden="true">→</span>
+            </button>
+          </div>
         </section>
       </main>
     );

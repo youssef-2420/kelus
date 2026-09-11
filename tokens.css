@@ -1,25 +1,27 @@
-/* Kelus ledger system — adapted from the supplied Stripe reference. */
+/* Kelus booklet tokens — paper, ink, one green. */
 :root {
-  --color-indigo-ink: #533afd;
-  --color-indigo-hover: #7389ff;
-  --color-midnight-ink: #061b31;
-  --color-slate: #64748d;
-  --color-steel: #50617a;
-  /* AA body/caption on white: ≥4.5:1 (was #839bc8 @ ~2.8:1) */
-  --color-smoke: #5b6f92;
+  --color-kelus: #1f6b45;
+  --color-kelus-hover: #185536;
+  --color-indigo-ink: var(--color-kelus); /* legacy alias */
+  --color-indigo-hover: var(--color-kelus-hover); /* legacy alias */
+  --color-midnight-ink: #12160f;
+  --color-slate: #4a5246;
+  --color-steel: #4a5246;
+  /* AA body/caption on paper */
+  --color-smoke: #5a6358;
   --color-pure-white: #ffffff;
-  --color-mist: #f8fafd;
-  --color-frost: #e5edf5;
-  --color-lavender-border: #b9b9f9;
-  --color-lilac-border: #d6d9fc;
-  --color-periwinkle-wash: #e8e9ff;
-  --color-deep-violet: #182659;
-  --color-amethyst-edge: #7f71e6;
+  --color-mist: #f7f8f5;
+  --color-frost: #d5d9d0;
+  --color-lavender-border: #d5d9d0;
+  --color-lilac-border: #e2e6df;
+  --color-periwinkle-wash: #e8f1eb;
+  --color-deep-violet: #173f3b;
+  --color-amethyst-edge: #1f6b45;
 
-  --font-ledger: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: var(--font-ledger);
+  --font-ledger: var(--font-inter), "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: var(--font-source-serif), Newsreader, Georgia, "Times New Roman", serif;
   --font-sans: var(--font-ledger);
-  --font-editorial: var(--font-source-serif), "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-editorial: var(--font-display);
 
   --text-caption: 0.75rem;
   --text-body-sm: 0.875rem;
@@ -44,35 +46,33 @@
   --page-max-width: 82.5rem;
   --radius-ledger: 0.25rem;
 
-  /* Notion-inspired motion tokens — fast, quiet, functional */
+  /* Kelus motion — bounce 0, easeOut-ish */
   --dur-instant: 80ms;
   --dur-micro: 100ms;
   --dur-fast: 150ms;
   --dur-normal: 200ms;
   --dur-moderate: 300ms;
   --dur-slow: 400ms;
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  /* Aliases for existing call sites */
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-quick: var(--dur-fast);
   --dur-medium: var(--dur-moderate);
   --ease-enter: var(--ease-standard);
   --ease-state: var(--ease-standard);
 
-  /* Existing component aliases keep business logic and structure untouched. */
-  --paper: var(--color-pure-white);
+  --paper: #eef1ec;
   --ink: var(--color-midnight-ink);
   --muted: var(--color-steel);
   --line: var(--color-frost);
-  --accent: var(--color-indigo-ink);
-  --accent-2: var(--color-indigo-hover);
-  --surface: var(--color-pure-white);
-  --background: var(--color-pure-white);
+  --accent: var(--color-kelus);
+  --accent-2: var(--color-kelus-hover);
+  --surface: var(--color-mist);
+  --background: var(--paper);
   --foreground: var(--color-midnight-ink);
-  --card: var(--color-pure-white);
+  --card: var(--color-mist);
   --card-foreground: var(--color-midnight-ink);
   --popover: var(--color-pure-white);
   --popover-foreground: var(--color-midnight-ink);
-  --primary: var(--color-indigo-ink);
+  --primary: var(--color-kelus);
   --primary-foreground: var(--color-pure-white);
   --secondary: var(--color-mist);
   --secondary-foreground: var(--color-midnight-ink);
@@ -80,10 +80,10 @@
   --accent-foreground: var(--color-pure-white);
   --border: var(--color-frost);
   --input: var(--color-frost);
-  --ring: var(--color-indigo-ink);
-  --strong: var(--color-indigo-ink);
+  --ring: var(--color-kelus);
+  --strong: var(--color-kelus);
   --stable: var(--color-deep-violet);
-  --fading: var(--color-amethyst-edge);
+  --fading: #b8892a;
   --weak: var(--color-steel);
   --new: var(--color-smoke);
   --input-line: var(--color-frost);
@@ -91,11 +91,11 @@
 
   --color-terrain: var(--color-deep-violet);
   --color-terrain-deep: var(--color-midnight-ink);
-  --color-terrain-paper: var(--color-pure-white);
+  --color-terrain-paper: var(--paper);
   --color-terrain-muted: var(--color-lavender-border);
-  --color-terrain-line: var(--color-amethyst-edge);
+  --color-terrain-line: var(--color-kelus);
   --color-terrain-mist: var(--color-periwinkle-wash);
-  --color-signal: var(--color-indigo-hover);
+  --color-signal: var(--color-kelus-hover);
   --color-signal-soft: var(--color-periwinkle-wash);
   --space-terrain: var(--spacing-24);
   --radius-terrain: var(--radius-ledger);
@@ -105,14 +105,14 @@
   --type-reading-tracking: -0.01em;
   --type-label-tracking: 0.06em;
 
-  --color-product-paper: var(--color-pure-white);
-  --color-product-surface: var(--color-pure-white);
+  --color-product-paper: var(--paper);
+  --color-product-surface: var(--color-mist);
   --color-product-ink: var(--color-midnight-ink);
   --color-product-secondary: var(--color-steel);
   --color-product-border: var(--color-frost);
-  --color-product-green: var(--color-indigo-ink);
+  --color-product-green: var(--color-kelus);
   --color-product-green-soft: var(--color-periwinkle-wash);
-  --color-product-warm: var(--color-indigo-hover);
+  --color-product-warm: var(--color-kelus-hover);
   --space-product-xs: var(--spacing-8);
   --space-product-sm: 0.75rem;
   --space-product-md: var(--spacing-16);

@@ -245,19 +245,20 @@
 }
 
 .pricing-page.is-notion-product .pricing-plan {
-  border: 1px solid #e8e8e5;
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(15, 15, 15, 0.03);
+  border: 1px solid var(--booklet-rule, #d5d9d0);
+  border-radius: 4px;
+  background: transparent;
+  box-shadow: none;
 }
 
 .pricing-page.is-notion-product .pricing-plan.is-founding {
-  border-color: #c9dff8;
-  box-shadow: 0 0 0 1px rgba(35, 131, 226, 0.12);
+  border-color: var(--booklet-kelus, #1f6b45);
+  box-shadow: none;
+  background: #f7f8f5;
 }
 
 .pricing-page.is-notion-product .pricing-plan .cta {
-  border-radius: 8px;
+  border-radius: 4px;
   background: #1f6b45;
   border-color: #1f6b45;
 }
@@ -266,12 +267,12 @@
 .is-notion-system .site-header-action {
   background: #1f6b45;
   border-color: #1f6b45;
-  border-radius: 8px;
+  border-radius: 4px;
 }
 
 .is-notion-system .site-header-action:hover {
-  background: #1b6ec2;
-  border-color: #1b6ec2;
+  background: #185536;
+  border-color: #185536;
 }
 
 .is-notion-system .site-nav a.is-active,
@@ -297,8 +298,8 @@
 }
 
 .is-notion-system .cta:hover {
-  background: #1b6ec2;
-  border-color: #1b6ec2;
+  background: #185536;
+  border-color: #185536;
 }
 
 .is-notion-system .cta:focus-visible,
@@ -323,8 +324,8 @@
 .is-notion-product .cta:hover,
 .is-notion-product .materials-empty-actions .cta:hover,
 .is-notion-product .destination-actions .cta:hover {
-  background: #1b6ec2;
-  border-color: #1b6ec2;
+  background: #185536;
+  border-color: #185536;
 }
 
 /* Empty states + materials head: page, not billboard */
@@ -354,7 +355,7 @@
 .is-notion-product .material-drop:hover,
 .is-notion-product .material-drop.is-dragging {
   border-color: #1f6b45;
-  background: rgba(35, 131, 226, 0.04);
+  background: rgba(31, 107, 69, 0.06);
 }
 
 /* Today lead accents */
