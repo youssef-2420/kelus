@@ -8,16 +8,32 @@ import { ConceptTitleTransition } from "@/components/PageTransition";
 
 function layoutNodes(concepts: Concept[]) {
   const count = concepts.length;
-  if (!count) return [] as Array<{ concept: Concept; x: number; y: number }>;
-  const cols = Math.min(4, Math.max(2, Math.ceil(Math.sqrt(count))));
+  if (!count) return [] as Array<{ concept: Concept; x: number; y: number; rank: number }>;
+  // Prefer a single importance row when small; wrap denser for larger sets.
+  if (count <= 5) {
+    return concepts.map((concept, index) => ({
+      concept,
+      x: 10 + ((index + 0.5) * 80) / count,
+      y: 42,
+      rank: index,
+    }));
+  }
+  const cols = Math.min(4, Math.ceil(count / 2));
   const rows = Math.ceil(count / cols);
   return concepts.map((concept, index) => {
     const col = index % cols;
     const row = Math.floor(index / cols);
-    const x = 12 + (col + 0.5) * (76 / cols);
-    const y = 14 + (row + 0.5) * (72 / Math.max(rows, 1));
-    return { concept, x, y };
+    const x = 8 + ((col + 0.5) * 84) / cols;
+    const y = 18 + ((row + 0.5) * 64) / Math.max(rows, 1);
+    return { concept, x, y, rank: index };
   });
+}
+
+function shortLabel(name: string) {
+  if (name.length <= 14) return name;
+  const cut = name.slice(0, 13);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > 6 ? cut.slice(0, space) : cut).trim()}…`;
 }
 
 export function KnowledgeMap({
@@ -37,7 +53,8 @@ export function KnowledgeMap({
   selectedId?: string | null;
   onSelect?: (concept: Concept) => void;
 }) {
-  const nodes = layoutNodes(concepts.slice(0, 12));
+  const visibleConcepts = concepts.slice(0, 12);
+  const nodes = layoutNodes(visibleConcepts);
   const byId = new Map(nodes.map((node) => [node.concept.id, node]));
   const edges = relationships
     .map((rel) => {
@@ -60,7 +77,7 @@ export function KnowledgeMap({
 
         {nodes.length ? (
           <div className="topic-map-graph" aria-hidden="true">
-            <svg viewBox="0 0 100 100" className="topic-map-svg" preserveAspectRatio="xMidYMid meet">
+            <svg viewBox="0 0 100 70" className="topic-map-svg" preserveAspectRatio="xMidYMid meet">
               {edges.map((edge) => (
                 <path
                   key={edge.id}
@@ -70,17 +87,17 @@ export function KnowledgeMap({
               ))}
               {nodes.map((node) => (
                 <g key={node.concept.id} className={`topic-map-node${selectedId === node.concept.id ? " is-selected" : ""}`}>
-                  <circle cx={node.x} cy={node.y} r={selectedId === node.concept.id ? 2.8 : 2.2} />
-                  <text x={node.x} y={node.y + 6} textAnchor="middle">
-                    {node.concept.name.length > 18 ? `${node.concept.name.slice(0, 16)}…` : node.concept.name}
+                  <circle cx={node.x} cy={node.y} r={selectedId === node.concept.id ? 3.1 : 2.6} />
+                  <text x={node.x} y={node.y - 5} textAnchor="middle">
+                    {shortLabel(node.concept.name)}
                   </text>
                 </g>
               ))}
             </svg>
             <p className="topic-map-graph-note">
-              {edges.length
-                ? "Lines show prerequisites and related topics you confirmed."
-                : "Topics by exam importance — links appear when sources confirm relationships."}
+              Showing {nodes.length} of {concepts.length} topics
+              {edges.length ? " · lines mark prerequisites and related topics" : " · links appear when sources confirm relationships"}
+              {concepts.length > nodes.length ? " · open a topic below for the full list" : ""}.
             </p>
           </div>
         ) : null}

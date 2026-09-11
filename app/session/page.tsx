@@ -128,16 +128,10 @@ function SessionBody() {
         <section className="materials-empty is-session-empty">
           <p className="kicker">Session</p>
           <h1>No active revision yet.</h1>
-          <p>
-            A session opens from Today’s route — review, recall, apply, then check your answer.
-            Start a plan, or try the one-minute sample.
-          </p>
+          <p>A session opens from Today’s route. Set your exam or open today’s plan to start reviewing.</p>
           <div className="materials-empty-actions">
-            <button className="cta" type="button" onClick={() => router.push("/today")}>
-              Back to Today <span aria-hidden="true">→</span>
-            </button>
-            <button className="text-btn" type="button" onClick={() => router.push("/today?sample=1")}>
-              Try sample (~1 min) <span aria-hidden="true">→</span>
+            <button className="cta" type="button" onClick={() => router.replace("/today")}>
+              Go to Today <span aria-hidden="true">→</span>
             </button>
           </div>
         </section>

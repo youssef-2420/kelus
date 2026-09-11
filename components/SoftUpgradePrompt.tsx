@@ -18,11 +18,11 @@ const COPY: Record<
 > = {
   first_session: {
     title: "Take this route to exam day",
-    body: "Your first route is free. The $9.99 Exam Pass adds priority support through the exam date you set.",
+    body: "Your first route is free. Exam Pass ($9.99) will add priority support through the exam date you set when checkout opens.",
   },
   third_material: {
     title: "Keep this course together",
-    body: "The $9.99 Exam Pass is for priority support through one exam while Kelus launches.",
+    body: "Exam Pass ($9.99) is for priority support through one exam. Checkout isn’t live yet — free revision stays available now.",
   },
 };
 
@@ -76,8 +76,8 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
             Get Exam Pass · $9.99
           </a>
         ) : (
-          <Link href="/pricing/" className="cta">
-            See Exam Pass options
+          <Link href="/pricing/" className="text-btn">
+            Exam Pass coming soon
           </Link>
         )}
         <button type="button" className="ghost" onClick={dismiss}>

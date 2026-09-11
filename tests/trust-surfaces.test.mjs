@@ -227,6 +227,6 @@ test("materials stay honest about PDF OCR limits and bookmark-only links", async
   assert.match(materials, /Save bookmark/);
   assert.match(materials, /Bookmark ·/);
   assert.match(materials, /replaces your current map and asks you to redo/);
-  assert.match(map, /Set your exam first/);
-  assert.match(map, /Set your exam/);
+  assert.match(map, /Set my exam first|Set your exam first/);
+  assert.match(map, /Set my exam|Set your exam/);
 });

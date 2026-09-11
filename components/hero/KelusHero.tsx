@@ -47,13 +47,13 @@ export function KelusHero() {
           transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.normal, ease }}
         >
           <motion.div whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>
-            <Link href="/today?sample=1" className="cta home-cta">
-              Try sample (~1 min) <span className="arrow" aria-hidden="true">→</span>
+            <Link href="/today" className="cta home-cta">
+              Set my exam <span className="arrow" aria-hidden="true">→</span>
             </Link>
           </motion.div>
           <motion.div whileTap={reduce ? undefined : { scale: 0.98 }} transition={press}>
-            <Link href="/today" className="home-secondary">
-              Set my exam
+            <Link href="/today?sample=1" className="home-secondary">
+              Try sample (~1 min)
             </Link>
           </motion.div>
         </motion.div>

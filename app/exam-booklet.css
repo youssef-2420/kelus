@@ -610,18 +610,22 @@ body.is-notion-system .is-marked-setup .time-choices label {
   display: inline-flex;
   align-items: baseline;
   gap: 0.25rem;
-  min-height: 0;
-  padding: 0.35rem 0;
-  border: 0 !important;
-  border-bottom: 2px solid transparent;
-  border-radius: 0 !important;
-  background: transparent !important;
+  min-height: 44px;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--booklet-rule) !important;
+  border-radius: 4px !important;
+  background: #f7f8f5 !important;
   color: var(--booklet-mute);
   cursor: pointer;
+  transition: transform 100ms var(--ease-enter, ease), border-color 150ms ease, background 150ms ease, color 150ms ease;
+}
+
+body.is-notion-system .is-marked-setup .time-choices label:active {
+  transform: scale(0.97);
 }
 
 body.is-notion-system .is-marked-setup .time-choices label strong {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 600;
   color: inherit;
 }
@@ -631,8 +635,8 @@ body.is-notion-system .is-marked-setup .time-choices label span {
 }
 
 body.is-notion-system .is-marked-setup .time-choices label.is-selected {
-  background: transparent !important;
-  border-bottom-color: var(--booklet-kelus) !important;
+  background: #e8f1eb !important;
+  border-color: var(--booklet-kelus) !important;
   color: var(--booklet-ink) !important;
 }
 
@@ -1469,4 +1473,95 @@ body.is-notion-system .pricing-page.is-booklet-pricing .founding-cta-note {
   max-width: 34rem;
   overflow: visible;
   white-space: normal;
+}
+
+/* First-run: one primary CTA; sample as aside */
+body.is-notion-system .first-run-gate-aside {
+  margin: 0.35rem 0 0;
+  color: var(--booklet-mute);
+  font-size: 0.9rem;
+}
+
+body.is-notion-system .first-run-gate-aside a,
+body.is-notion-system .first-run-gate-aside .text-btn {
+  color: var(--booklet-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  min-height: 0;
+  padding: 0;
+  display: inline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+body.is-notion-system .first-run-gate-aside .text-btn:active {
+  transform: none;
+}
+
+/* Map graph denser */
+body.is-notion-system .topic-map-svg {
+  max-width: 42rem;
+  aspect-ratio: 10 / 5.5;
+}
+
+body.is-notion-system .topic-map-node text {
+  font-size: 3.6px;
+  fill: var(--booklet-ink);
+}
+
+body.is-notion-system .topic-map-node circle {
+  fill: #f7f8f5;
+  stroke: var(--booklet-ink);
+  stroke-width: 0.55;
+}
+
+body.is-notion-system .topic-map-node.is-selected circle {
+  fill: var(--booklet-kelus);
+  stroke: var(--booklet-kelus);
+}
+
+/* Mobile setup: keep Continue visible */
+@media (max-width: 720px) {
+  body.is-notion-system .is-marked-setup .destination-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 4;
+    margin: 0.75rem -0.25rem 0;
+    padding: 0.75rem 0.25rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(180deg, rgba(238, 241, 236, 0), var(--booklet-paper) 28%);
+  }
+
+  body.is-notion-system .is-marked-setup .destination-actions .cta {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  body.is-notion-system .is-marked-setup .destination-actions-spacer {
+    display: none;
+  }
+
+  body.is-notion-system .site-nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.85rem;
+  }
+
+  body.is-notion-system .site-nav::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Pricing honesty when checkout is upcoming */
+body.is-notion-system .pricing-page .pricing-offer.is-upcoming {
+  opacity: 0.96;
+}
+
+body.is-notion-system .pricing-page .founding-cta.is-reserve .founding-cta-status {
+  margin: 0 0 0.35rem;
+  color: var(--booklet-mute);
+  font-size: 0.85rem;
+  font-weight: 600;
 }

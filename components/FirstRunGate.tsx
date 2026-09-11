@@ -21,7 +21,7 @@ export function FirstRunGate({
   title,
   body,
   ctaHref = "/today",
-  ctaLabel = "Set your exam",
+  ctaLabel = "Set my exam",
   preview = "materials",
 }: FirstRunGateProps) {
   const reduceMotion = useReducedMotion() === true;
@@ -38,14 +38,13 @@ export function FirstRunGate({
               {ctaLabel} <span aria-hidden="true">→</span>
             </Link>
           </Pressable>
-          <Pressable>
-            <Link className="text-btn" href="/today?sample=1">
-              Try sample (~1 min) <span aria-hidden="true">→</span>
-            </Link>
-          </Pressable>
         </div>
+        <p className="first-run-gate-aside">
+          Just looking?{" "}
+          <Link href="/today?sample=1">Try sample (~1 min)</Link>
+        </p>
       </div>
-      <div className="first-run-gate-preview" aria-hidden={false}>
+      <div className="first-run-gate-preview">
         <p className="first-run-gate-preview-label">
           {preview === "map" ? "What the topic map looks like" : "What Materials keeps with your course"}
         </p>

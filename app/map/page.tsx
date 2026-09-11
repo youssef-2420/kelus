@@ -24,9 +24,8 @@ export default function MapPage() {
       <AppShell>
         <FirstRunGate
           kicker="Topic map"
-          title="Set your exam first."
+          title="Set my exam first."
           body="After you name the course, confirmed topics appear here as a map — with links when sources show prerequisites."
-          ctaLabel="Set my exam"
           preview="map"
         />
       </AppShell>
@@ -50,11 +49,16 @@ export default function MapPage() {
             <h1>Confirm topics from a source first.</h1>
             <p>Add a syllabus or lecture PDF, keep the topics this exam covers, then see how they connect.</p>
             <div className="materials-empty-actions">
-              <button type="button" className="cta" onClick={() => loadDemo()}>
-                Try sample (~1 min) <span aria-hidden="true">→</span>
-              </button>
-              <Link className="text-btn" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
+              <Link className="cta" href="/materials">
+                Add course material <span aria-hidden="true">→</span>
+              </Link>
             </div>
+            <p className="first-run-gate-aside">
+              Just looking?{" "}
+              <button type="button" className="text-btn inline" onClick={() => loadDemo()}>
+                Try sample (~1 min)
+              </button>
+            </p>
           </div>
         </section>
       </AppShell>

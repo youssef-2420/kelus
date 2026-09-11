@@ -768,7 +768,7 @@
 .is-notion-product .today-workbench.is-revision-studio { padding: 24px 28px; box-shadow: none; }
 .is-notion-product .today-workbench-heading { display: block; margin-bottom: 16px; }
 .is-notion-product .today-route-execution { border-top: 0; }
-.is-notion-product .today-workbench.is-revision-studio .today-lead-action { padding: 24px; background: #f5f9fd; border: 1px solid #c5dcef; border-radius: 12px; }
+.is-notion-product .today-workbench.is-revision-studio .today-lead-action { padding: 24px; background: #f7f8f5; border: 1px solid #d5d9d0; border-radius: 4px; }
 .is-notion-product .today-lead-main h3 { color: #111; font-weight: 600; }
 .is-notion-product .today-workbench.is-revision-studio .today-lead-main h3 { font-size: clamp(26px, 3vw, 36px); }
 .is-notion-product .today-queue-label { padding-top: 8px; }
