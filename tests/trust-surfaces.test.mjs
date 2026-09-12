@@ -170,7 +170,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(how, /Try sample \(~1 min\)/);
   assert.match(today, /Est\. readiness|Est\. readiness/);
   assert.match(today, /not a grade prediction/);
-  assert.match(todayPage, /sample === "1"/);
+  assert.match(today, /get\("sample"\) === "1"/);
   assert.match(today, /Try sample \(~1 min\)|loadDemo/);
 });
 

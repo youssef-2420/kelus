@@ -24,11 +24,12 @@ test("nine-path: sample-first hero, today auto-load, PDF fail UX, inbox docs", a
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
 
-  assert.match(todayPage, /sample === "1"/);
+  assert.match(today, /get\("sample"\) === "1"/);
   assert.match(today, /sample_loaded/);
-  assert.doesNotMatch(todayPage, /Opening Today/);
+  assert.match(today, /hasRouteHint/);
+  assert.doesNotMatch(todayPage, /Opening Today|cookies\(\)|useSearchParams/);
   assert.doesNotMatch(today, /useSearchParams/);
-  assert.match(todayPage, /hasRouteHint/);
+  assert.match(todayPage, /TodayClient/);
   assert.match(analytics, /sample_loaded/);
 
   assert.match(setup, /text-btn setup-sample-cta/);

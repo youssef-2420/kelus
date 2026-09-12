@@ -13,12 +13,8 @@ import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
 import { greeting } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
+import { ROUTE_FLAG } from "@/lib/route-flag";
 import { LateralPage } from "@/components/PageTransition";
-
-type TodayClientProps = {
-  hasRouteHint?: boolean;
-  wantsSample?: boolean;
-};
 
 function RestoringToday() {
   return (
@@ -30,15 +26,43 @@ function RestoringToday() {
   );
 }
 
-export function TodayClient({ hasRouteHint = false, wantsSample = false }: TodayClientProps) {
+function QuietTodayBoot() {
+  return (
+    <main id="main" className="destination-page is-restoring-today" aria-busy="true">
+      <p className="destination-brand">Kelus</p>
+      <h1 className="destination-page-title">Today’s route</h1>
+    </main>
+  );
+}
+
+function readHasRouteHint() {
+  return document.cookie.split("; ").some((part) => part === `${ROUTE_FLAG}=1`);
+}
+
+export function TodayClient() {
   const router = useRouter();
   const { state, start, reset, completeSetup, completeDiagnosis, useDemo: loadDemo } = useLearner();
   const [confirmReset, setConfirmReset] = useState(false);
+  const [boot, setBoot] = useState<{ ready: boolean; hasRouteHint: boolean; wantsSample: boolean }>({
+    ready: false,
+    hasRouteHint: false,
+    wantsSample: false,
+  });
   const sampleHandled = useRef(false);
-  const sampleBooting = wantsSample && !state.onboardingCompleted;
+  const sampleBooting = boot.ready && boot.wantsSample && !state.onboardingCompleted;
 
   useEffect(() => {
-    if (!wantsSample) return;
+    const params = new URLSearchParams(window.location.search);
+    const wantsSample = params.get("sample") === "1";
+    setBoot({
+      ready: true,
+      hasRouteHint: readHasRouteHint(),
+      wantsSample,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!boot.ready || !boot.wantsSample) return;
     if (sampleHandled.current) return;
     sampleHandled.current = true;
     const alreadyReady = state.onboardingCompleted && state.snapshot.concepts.length > 0;
@@ -47,7 +71,7 @@ export function TodayClient({ hasRouteHint = false, wantsSample = false }: Today
       trackEvent({ name: "sample_loaded", source: "today_query" });
     }
     router.replace("/today");
-  }, [wantsSample, state.onboardingCompleted, state.snapshot.concepts.length, loadDemo, router]);
+  }, [boot.ready, boot.wantsSample, state.onboardingCompleted, state.snapshot.concepts.length, loadDemo, router]);
 
   function finishDiagnosis(input: Parameters<typeof completeDiagnosis>[0]) {
     completeDiagnosis(input);
@@ -62,6 +86,14 @@ export function TodayClient({ hasRouteHint = false, wantsSample = false }: Today
     trackEvent({ name: "first_route_ready", elapsed_ms: elapsedMs, concept_count: state.snapshot.concepts.length });
   }
 
+  if (!boot.ready) {
+    return (
+      <LateralPage>
+        <QuietTodayBoot />
+      </LateralPage>
+    );
+  }
+
   if (sampleBooting) {
     return (
       <LateralPage>
@@ -74,9 +106,9 @@ export function TodayClient({ hasRouteHint = false, wantsSample = false }: Today
     );
   }
 
-  // Hard refresh: store still empty on the server snapshot. Prefer a Today-shaped
+  // Hard refresh: store still empty on the first client paint. Prefer a Today-shaped
   // restore shell over flashing FirstRunSetup when this device already has a route.
-  if (!state.onboardingCompleted && hasRouteHint) {
+  if (!state.onboardingCompleted && boot.hasRouteHint) {
     return (
       <LateralPage>
         <RestoringToday />
