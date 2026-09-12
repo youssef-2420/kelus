@@ -42,6 +42,7 @@ export default function MapPage() {
     .slice()
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
   const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
+  const exam = state.snapshot.exams.find((item) => item.courseId === course.id && item.isActive);
   if (!concepts.length) {
     return (
     <DirectionalPage>
@@ -92,6 +93,7 @@ export default function MapPage() {
           relationships={state.snapshot.relationships}
           selectedId={selectedId}
           onSelect={(concept) => setSelectedId(concept.id)}
+          examTargetPercent={exam?.targetPercent ?? null}
         />
         {query.trim() && !concepts.some((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())) ? <div className="map-no-match"><p>No topics match “{query}”. Your course is unchanged.</p><button type="button" className="text-btn" onClick={() => setQuery("")}>Clear search</button></div> : null}
         </div>

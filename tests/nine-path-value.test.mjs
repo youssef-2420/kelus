@@ -6,8 +6,9 @@ const root = new URL("../", import.meta.url);
 const source = (path) => readFile(new URL(path, root), "utf8");
 
 test("nine-path: sample-first hero, today auto-load, PDF fail UX, inbox docs", async () => {
-  const [hero, today, materials, pdf, env, setup, map, analytics] = await Promise.all([
+  const [hero, today, todayPage, materials, pdf, env, setup, map, analytics] = await Promise.all([
     source("components/hero/KelusHero.tsx"),
+    source("app/today/TodayClient.tsx"),
     source("app/today/page.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("lib/pdf-extraction.ts"),
@@ -23,9 +24,12 @@ test("nine-path: sample-first hero, today auto-load, PDF fail UX, inbox docs", a
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
 
-  assert.match(today, /sample=== ?"1"|get\("sample"\) === "1"/);
+  assert.match(today, /get\("sample"\) === "1"/);
   assert.match(today, /sample_loaded/);
-  assert.match(today, /Suspense/);
+  assert.match(today, /hasRouteHint/);
+  assert.doesNotMatch(todayPage, /Opening Today|cookies\(\)|useSearchParams/);
+  assert.doesNotMatch(today, /useSearchParams/);
+  assert.match(todayPage, /TodayClient/);
   assert.match(analytics, /sample_loaded/);
 
   assert.match(setup, /text-btn setup-sample-cta/);

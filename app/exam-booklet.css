@@ -1599,3 +1599,85 @@ body.is-notion-system .pricing-page .founding-cta.is-reserve .founding-cta-statu
   font-size: 0.85rem;
   font-weight: 600;
 }
+
+
+/* Today restore shell — same destination chrome, no Opening Today flash */
+body.is-notion-system .destination-page.is-restoring-today {
+  max-width: 36rem;
+  padding: 2.5rem 0 3rem;
+}
+
+/* Owned topic map */
+body.is-notion-system .map-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+body.is-notion-system .map-head-copy {
+  display: grid;
+  gap: 0.2rem;
+}
+
+body.is-notion-system .map-head-course {
+  font-family: var(--font-display), Newsreader, Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 550;
+  letter-spacing: -0.02em;
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .map-head-meta {
+  color: var(--booklet-mute);
+  font-size: 0.875rem;
+}
+
+body.is-notion-system .map-head-mastery {
+  font-family: var(--font-display), Newsreader, Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 550;
+  color: var(--booklet-kelus);
+}
+
+body.is-notion-system .topic-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.85rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+body.is-notion-system .topic-map-legend .mark-status {
+  font-size: 0.75rem;
+}
+
+body.is-notion-system .topic-map-svg {
+  max-width: min(100%, 48rem);
+  aspect-ratio: 10 / 5.2;
+}
+
+body.is-notion-system .topic-map-node text {
+  font-size: 4.2px;
+  fill: var(--booklet-ink);
+  font-weight: 500;
+}
+
+body.is-notion-system .topic-map-node.is-exam-critical circle {
+  stroke-width: 0.75;
+}
+
+body.is-notion-system .topic-map-node.is-strong circle {
+  fill: color-mix(in srgb, var(--booklet-kelus) 18%, #f7f8f5);
+}
+
+body.is-notion-system .topic-map-node.is-weak circle,
+body.is-notion-system .topic-map-node.is-not_learned circle {
+  fill: #f7f8f5;
+}
+
+body.is-notion-system .topic-map-graph-note {
+  margin-top: 0.65rem;
+}

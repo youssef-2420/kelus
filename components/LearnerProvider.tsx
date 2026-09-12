@@ -60,6 +60,8 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
   const auth = useAuth();
   const state = useSyncExternalStore(subscribeDemoState, getDemoSnapshot, getServerDemoSnapshot);
   const activeUserId = auth.user?.id ?? null;
+  // Align owner before paint when auth resolves so Today/Map do not blank for a frame.
+  if (getDemoStateOwner() !== activeUserId) setDemoStateOwner(activeUserId);
   const materialOwner = useSyncExternalStore(subscribeMaterials, getMaterialOwner, () => null);
   const scopeAligned = getDemoStateOwner() === activeUserId && materialOwner === activeUserId;
   const syncedUser = useRef<string | null>(null);
@@ -202,7 +204,8 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       confirmMaterialConcepts(state, proposals, pages);
     },
   }), [state]);
-  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;
+  const blockForPrivateScope = Boolean(auth.user) && !auth.loading && !scopeAligned;
+  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{blockForPrivateScope ? <p className="learner-sync-status" role="status">Loading your private learning route…</p> : children}</StoreContext.Provider>;
 }
 
 export function useLearner() {

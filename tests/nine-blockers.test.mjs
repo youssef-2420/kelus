@@ -17,7 +17,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
     source("components/SiteFooter.tsx"),
     source("app/pricing/page.tsx"),
     source("app/session/page.tsx"),
-    source("app/today/page.tsx"),
+    source("app/today/TodayClient.tsx"),
     source("app/map/page.tsx"),
   ]);
 
