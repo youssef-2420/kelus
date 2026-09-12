@@ -1862,6 +1862,13 @@ body.is-notion-system .topic-map-svg[data-layout="sparse"] text {
 
 /* ── CSS STACK LOCK: booklet owns paper ──
    Legacy notion/paper-loop sheets stay for notebook chrome, but cannot paint cream. */
+body.is-notion-system {
+  --color-paper-warmth: var(--booklet-paper);
+  --paper: var(--booklet-paper);
+  --background: var(--booklet-paper);
+  --hero-paper: var(--booklet-paper);
+}
+
 body.is-notion-system,
 body.is-notion-system .is-notion-product,
 body.is-notion-system .course-workspace-layout,
@@ -1869,7 +1876,10 @@ body.is-notion-system .route-transition,
 body.is-notion-system .destination-page,
 body.is-notion-system .folio-product-stage,
 body.is-notion-system .folio-chapter,
-body.is-notion-system .folio-method {
+body.is-notion-system .folio-method,
+body.is-notion-system .kelus-hero,
+body.is-notion-system .paper-loop-hero,
+body.is-notion-system .is-notebook .notebook-sheet {
   background-color: var(--booklet-paper) !important;
 }
 
