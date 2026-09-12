@@ -110,14 +110,23 @@ export function KnowledgeMap({
               ))}
               {nodes.map((node) => {
                 const selected = selectedId === node.concept.id;
+                const status = deriveStatus(
+                  node.concept.mastery,
+                  node.concept.predictedRetention,
+                  node.concept.retrievalAttempts,
+                );
                 const radius = selected ? 3.4 : 2.8;
                 return (
                   <g
                     key={node.concept.id}
-                    className={`topic-map-node${selected ? " is-selected" : ""}`}
+                    className={`topic-map-node is-${status}${selected ? " is-selected" : ""}`}
                     role={onSelect ? "button" : undefined}
                     tabIndex={onSelect ? 0 : undefined}
-                    aria-label={onSelect ? node.concept.name : undefined}
+                    aria-label={
+                      onSelect
+                        ? `${node.concept.name}, ${statusLabel(status)}`
+                        : undefined
+                    }
                     onClick={onSelect ? () => onSelect(node.concept) : undefined}
                     onKeyDown={
                       onSelect
@@ -139,6 +148,13 @@ export function KnowledgeMap({
                 );
               })}
             </svg>
+            <ul className="topic-map-legend" aria-label="Topic status colours">
+              <li><i className="is-strong" aria-hidden="true" /> Strong</li>
+              <li><i className="is-stable" aria-hidden="true" /> Stable</li>
+              <li><i className="is-fading" aria-hidden="true" /> Fading</li>
+              <li><i className="is-weak" aria-hidden="true" /> Weak</li>
+              <li><i className="is-not_learned" aria-hidden="true" /> New</li>
+            </ul>
             <p className="topic-map-graph-note">
               {nodes.length} of {concepts.length} topics on the map
               {edges.length ? ` · ${edges.length} link${edges.length === 1 ? "" : "s"} between them` : " · links appear when sources confirm relationships"}

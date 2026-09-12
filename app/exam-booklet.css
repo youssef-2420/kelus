@@ -1287,6 +1287,14 @@ body.is-notion-system .mark-status.is-fading {
   color: #6b5a3e !important;
 }
 
+body.is-notion-system .mark-status.is-stable {
+  color: var(--booklet-ink) !important;
+}
+
+body.is-notion-system .mark-status.is-not_learned {
+  color: var(--booklet-mute) !important;
+}
+
 /* How-it-works illustrations: no white card — ink on paper */
 body.is-notion-system .how-page .how-stage-visual > *,
 body.is-notion-system .how-page .how-illustration,
@@ -1551,9 +1559,91 @@ body.is-notion-system .topic-map-node circle {
   stroke-width: 0.55;
 }
 
+/* Visceral: status colour on the graph — same language as the list marks */
+body.is-notion-system .topic-map-node.is-strong circle {
+  fill: color-mix(in srgb, var(--booklet-kelus) 22%, #f7f8f5);
+  stroke: var(--booklet-kelus);
+}
+
+body.is-notion-system .topic-map-node.is-stable circle {
+  fill: color-mix(in srgb, var(--booklet-ink) 8%, #f7f8f5);
+  stroke: var(--booklet-ink);
+}
+
+body.is-notion-system .topic-map-node.is-fading circle {
+  fill: color-mix(in srgb, #6b5a3e 18%, #f7f8f5);
+  stroke: #6b5a3e;
+}
+
+body.is-notion-system .topic-map-node.is-weak circle {
+  fill: color-mix(in srgb, #8a4b2a 20%, #f7f8f5);
+  stroke: #8a4b2a;
+}
+
+body.is-notion-system .topic-map-node.is-not_learned circle {
+  fill: transparent;
+  stroke: var(--booklet-mute);
+  stroke-dasharray: 1.2 0.9;
+}
+
 body.is-notion-system .topic-map-node.is-selected circle {
   fill: var(--booklet-kelus);
   stroke: var(--booklet-kelus);
+  stroke-dasharray: none;
+}
+
+body.is-notion-system .topic-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  color: var(--booklet-mute);
+  font-size: 0.75rem;
+}
+
+body.is-notion-system .topic-map-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+body.is-notion-system .topic-map-legend i {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  border: 1.5px solid currentColor;
+  display: inline-block;
+}
+
+body.is-notion-system .topic-map-legend i.is-strong {
+  background: color-mix(in srgb, var(--booklet-kelus) 22%, #f7f8f5);
+  border-color: var(--booklet-kelus);
+  color: var(--booklet-kelus);
+}
+
+body.is-notion-system .topic-map-legend i.is-stable {
+  background: color-mix(in srgb, var(--booklet-ink) 8%, #f7f8f5);
+  border-color: var(--booklet-ink);
+}
+
+body.is-notion-system .topic-map-legend i.is-fading {
+  background: color-mix(in srgb, #6b5a3e 18%, #f7f8f5);
+  border-color: #6b5a3e;
+  color: #6b5a3e;
+}
+
+body.is-notion-system .topic-map-legend i.is-weak {
+  background: color-mix(in srgb, #8a4b2a 20%, #f7f8f5);
+  border-color: #8a4b2a;
+  color: #8a4b2a;
+}
+
+body.is-notion-system .topic-map-legend i.is-not_learned {
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--booklet-mute);
 }
 
 /* Mobile setup: keep Continue visible */
@@ -1598,4 +1688,54 @@ body.is-notion-system .pricing-page .founding-cta.is-reserve .founding-cta-statu
   color: var(--booklet-mute);
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+
+/* ── Emotional design: reflective honesty + completion craft ── */
+body.is-notion-system .sample-course-banner {
+  margin: 0 0 1rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--booklet-rule);
+  color: var(--booklet-mute);
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+body.is-notion-system .sample-course-banner p {
+  margin: 0;
+  max-width: 42rem;
+}
+
+body.is-notion-system .sample-course-banner strong {
+  color: var(--booklet-ink);
+  font-weight: 600;
+}
+
+body.is-notion-system .sample-course-banner a {
+  color: var(--booklet-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+body.is-notion-system .sample-course-banner a:active {
+  opacity: 0.75;
+}
+
+body.is-notion-system .today-welcome.is-first-route {
+  color: var(--booklet-ink);
+}
+
+body.is-notion-system .complete-hero h1 {
+  max-width: 16ch;
+  letter-spacing: -0.03em;
+}
+
+body.is-notion-system .complete-return h2 strong {
+  color: var(--booklet-kelus);
+  font-weight: 600;
+}
+
+body.is-notion-system .readiness-change,
+body.is-notion-system .complete-hero .readiness-change {
+  margin-top: 1.25rem;
 }
