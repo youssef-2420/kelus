@@ -84,6 +84,7 @@ export function KnowledgeMap({
   const visibleConcepts = concepts.slice(0, 12);
   const nodes = layoutNodes(visibleConcepts);
   const byId = new Map(nodes.map((node) => [node.concept.id, node]));
+  // Prefer prerequisite links; keep related faint and few so the graph stays calm.
   const edges = relationships
     .map((rel) => {
       const from = byId.get(rel.fromId);
@@ -92,7 +93,13 @@ export function KnowledgeMap({
       return { id: rel.id, from, to, kind: rel.kind };
     })
     .filter((edge): edge is NonNullable<typeof edge> => Boolean(edge))
-    .slice(0, 20);
+    .sort((a, b) => Number(b.kind === "prerequisite") - Number(a.kind === "prerequisite"))
+    .filter((edge, index, all) => {
+      if (edge.kind === "prerequisite") return true;
+      const relatedBefore = all.slice(0, index).filter((item) => item.kind === "related").length;
+      return relatedBefore < 2;
+    })
+    .slice(0, 8);
 
   return (
     <section className="section topic-map" aria-labelledby={heading ? "map-heading" : undefined} aria-label={heading ? undefined : "Topic map"}>

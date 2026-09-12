@@ -105,7 +105,7 @@
 .is-notion-product.shell,
 .is-notion-product .shell,
 .shell.is-notion-product {
-  background: #fafafa;
+  background: var(--color-paper-warmth, #eef1ec);
 }
 
 .is-notion-product .today-brief.is-revision-studio,
@@ -195,7 +195,7 @@
   border: 1px solid #ebebea;
   border-radius: 10px;
   padding: 1rem 1rem 1.1rem;
-  background: #fafafa;
+  background: var(--color-paper-warmth, #eef1ec);
 }
 
 .destination-page.is-notion-product legend {
@@ -241,7 +241,7 @@
 .diagnosis-page.is-notion-product .diagnosis-check {
   border: 1px solid #ebebea;
   border-radius: 10px;
-  background: #fafafa;
+  background: var(--color-paper-warmth, #eef1ec);
 }
 
 .pricing-page.is-notion-product .pricing-plan {
@@ -503,7 +503,7 @@
 
 /* Pricing as soft workspace band */
 .pricing-page.is-notion-product {
-  background: linear-gradient(180deg, #fafafa 0%, #f3f3f1 100%);
+  background: var(--color-paper-warmth, #eef1ec);
   padding-bottom: 3rem;
 }
 
@@ -521,7 +521,7 @@
 
 /* How it works — last major ledger holdout */
 .how-page.is-notion-product {
-  background: linear-gradient(180deg, #fafafa 0%, #f3f3f1 40%, #fafafa 100%);
+  background: var(--color-paper-warmth, #eef1ec);
   color: #1a1a18;
 }
 

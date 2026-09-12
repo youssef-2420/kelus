@@ -1405,14 +1405,23 @@ body.is-notion-system .topic-map-svg {
 
 body.is-notion-system .topic-map-edge {
   fill: none;
-  stroke: var(--booklet-rule);
-  stroke-width: 0.45;
+  stroke: color-mix(in srgb, var(--booklet-ink) 14%, transparent);
+  stroke-width: 0.32;
+  opacity: 0.55;
+}
+
+body.is-notion-system .topic-map-edge.is-related {
+  stroke: color-mix(in srgb, var(--booklet-ink) 10%, transparent);
+  stroke-width: 0.28;
+  opacity: 0.35;
+  stroke-dasharray: 1.2 1.4;
 }
 
 body.is-notion-system .topic-map-edge.is-prerequisite {
-  stroke: var(--booklet-kelus);
-  stroke-width: 0.55;
-  opacity: 0.85;
+  stroke: color-mix(in srgb, var(--booklet-kelus) 55%, var(--booklet-rule));
+  stroke-width: 0.42;
+  opacity: 0.7;
+  stroke-dasharray: none;
 }
 
 body.is-notion-system .topic-map-node circle {
@@ -1859,6 +1868,27 @@ body.is-notion-system .topic-map-svg[data-layout="sparse"] text {
   letter-spacing: 0.01em;
 }
 
+/* Small screens: drop secondary related edges; keep prerequisite spine only */
+@media (max-width: 720px) {
+  body.is-notion-system .topic-map-edge.is-related {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  body.is-notion-system .topic-map-svg[data-layout="sparse"] {
+    max-width: 100%;
+  }
+
+  body.is-notion-system .topic-map-svg[data-layout="sparse"] text {
+    font-size: 3.6px;
+  }
+
+  body.is-notion-system .topic-map-edge.is-prerequisite {
+    opacity: 0.55;
+    stroke-width: 0.36;
+  }
+}
+
 
 /* ── CSS STACK LOCK: booklet owns paper ──
    Legacy notion/paper-loop sheets stay for notebook chrome, but cannot paint cream. */
@@ -1885,4 +1915,53 @@ body.is-notion-system .is-notebook .notebook-sheet {
 
 body.is-notion-system .site-header {
   background: color-mix(in srgb, var(--booklet-paper) 92%, transparent) !important;
+}
+
+
+/* ── TEN POLISH: flatten leftover SaaS chrome under booklet ── */
+body.is-notion-system .is-notion-product .shell,
+body.is-notion-system .shell.is-notion-product,
+body.is-notion-system .is-notion-product.shell {
+  background: var(--booklet-paper) !important;
+}
+
+body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
+body.is-notion-system .is-notion-product .today-workbench.is-revision-studio,
+body.is-notion-system .is-notion-product .materials-empty,
+body.is-notion-system .is-notion-product .materials-head,
+body.is-notion-system .is-notion-product .materials-shelf,
+body.is-notion-system .is-notion-product .materials-ingest,
+body.is-notion-system .is-notion-product .map-workspace,
+body.is-notion-system .is-notion-product .diagnosis-panel,
+body.is-notion-system .is-notion-product .diagnosis-check {
+  background: transparent !important;
+  border: 0 !important;
+  border-top: 1px solid var(--booklet-rule) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+body.is-notion-system .is-notion-product .course-workspace-rail {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.is-notion-system .is-notion-product .today-lead-action,
+body.is-notion-system .is-notion-product .map-workspace .map,
+body.is-notion-system .is-notion-product .topic-map .map {
+  background: var(--booklet-lift) !important;
+  border: 1px solid var(--booklet-rule) !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
+}
+
+/* Kill leftover #fafafa / soft-gray product panels */
+body.is-notion-system .is-notion-product .setup-sample,
+body.is-notion-system .is-notion-product .setup-progress,
+body.is-notion-system .destination-page.is-notion-product fieldset,
+body.is-notion-system .destination-page.is-notion-product .setup-sample,
+body.is-notion-system .is-notion-product .diagnosis-panel,
+body.is-notion-system .is-notion-product .site-account-panel {
+  background: var(--booklet-paper) !important;
+  box-shadow: none !important;
 }
