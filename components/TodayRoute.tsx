@@ -6,6 +6,7 @@ import { useState } from "react";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
 import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
 import { confidenceLabel, percent } from "@/lib/format";
+import { Pressable } from "@/components/motion";
 
 export function TodayRoute({
   route,
@@ -33,7 +34,9 @@ export function TodayRoute({
         <h2>No study action is ready yet.</h2>
         <p>Add course material or open the map so Kelus can build a route.</p>
         <div className="today-route-empty-actions">
-          <Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
+          <Pressable>
+            <Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
+          </Pressable>
           <Link className="text-btn" href="/map">Open map</Link>
         </div>
       </div>
@@ -74,9 +77,11 @@ export function TodayRoute({
             <h3>{firstName}</h3>
             <p>{conciseReason(first.reasons)}</p>
             <small>{firstConcept ? confidenceLabel(firstConcept.confidence) : "Mixed evidence across weak spots"}</small>
-            <button type="button" className="cta today-start" onClick={onStart}>
-              {startLabel ?? `Start ${firstName}`} <span aria-hidden="true">→</span>
-            </button>
+            <Pressable>
+              <button type="button" className="cta today-start" onClick={onStart}>
+                {startLabel ?? `Start ${firstName}`} <span aria-hidden="true">→</span>
+              </button>
+            </Pressable>
           </div>
           <div className="today-lead-time">
             <strong>{first.minutes}</strong>

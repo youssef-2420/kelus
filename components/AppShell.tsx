@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { CourseWorkspaceRail } from "@/components/CourseWorkspaceRail";
+import { SampleCourseBanner } from "@/components/SampleCourseBanner";
 import { useLearner } from "@/components/LearnerProvider";
 
 export function AppShell({ children, action }: { children: ReactNode; action?: ReactNode }) {
@@ -10,6 +11,7 @@ export function AppShell({ children, action }: { children: ReactNode; action?: R
     return (
       <div className="shell is-notion-product is-booklet-shell">
         {action ? <div className="shell-context-action">{action}</div> : null}
+        <SampleCourseBanner />
         <main id="main">{children}</main>
       </div>
     );
@@ -19,6 +21,7 @@ export function AppShell({ children, action }: { children: ReactNode; action?: R
       <CourseWorkspaceRail />
       <div className="shell course-workspace-content">
         {action ? <div className="shell-context-action">{action}</div> : null}
+        <SampleCourseBanner />
         <main id="main">{children}</main>
       </div>
     </div>

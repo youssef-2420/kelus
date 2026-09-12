@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { kelusDuration, kelusEase } from "@/components/motion";
+import { kelusDuration, kelusEase, Pressable } from "@/components/motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
 import { useLearner } from "@/components/LearnerProvider";
@@ -148,9 +148,11 @@ function SessionBody() {
             </li>
           </ol>
           <div className="materials-empty-actions">
-            <button className="cta" type="button" onClick={() => router.replace("/today")}>
-              Go to Today <span aria-hidden="true">→</span>
-            </button>
+            <Pressable>
+              <button className="cta" type="button" onClick={() => router.replace("/today")}>
+                Go to Today <span aria-hidden="true">→</span>
+              </button>
+            </Pressable>
           </div>
         </section>
       </main>
@@ -344,7 +346,9 @@ function SessionBody() {
               <svg viewBox="0 0 80 180" aria-hidden="true"><motion.path d="M40 5 C 6 56 72 96 40 175" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: reduceMotion ? 0.1 : 0.85 }} /></svg>
               <div><span>Now</span>{nextNames.map((name, position) => <motion.b key={name} layout>{position + 1}. {name}</motion.b>)}</div>
             </div>
-            <button type="button" className="cta" onClick={continueAfterReroute}>Continue route <span aria-hidden="true">→</span></button>
+            <Pressable>
+              <button type="button" className="cta" onClick={continueAfterReroute}>Continue route <span aria-hidden="true">→</span></button>
+            </Pressable>
           </motion.section>
         ) : phase === "result" ? (
           <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-result`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
@@ -353,7 +357,9 @@ function SessionBody() {
             <div className="mastery-reward">
               <div><span>{percent(masteryBefore)}</span><i aria-hidden="true">→</i><motion.strong initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>{percent(concept.mastery)}</motion.strong></div>
               <p>One new piece of evidence changed the estimate. Kelus will now reconsider what belongs next.</p>
-              <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
+              <Pressable>
+                <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
+              </Pressable>
             </div>
           </motion.section>
         ) : (
@@ -377,7 +383,9 @@ function SessionBody() {
                   </div>
                 ) : <p className="session-source-note">Demo course model · No uploaded source cited</p>}
                 {openingSource ? <p role="status" className="session-source-note">Opening your source…</p> : null}
-                <button type="button" className="cta" onClick={() => { setPhase("retrieve"); startedAt.current = performance.now(); }}>Retrieve it <span aria-hidden="true">→</span></button>
+                <Pressable>
+                  <button type="button" className="cta" onClick={() => { setPhase("retrieve"); startedAt.current = performance.now(); }}>Retrieve it <span aria-hidden="true">→</span></button>
+                </Pressable>
               </div>
             ) : null}
 
@@ -396,7 +404,9 @@ function SessionBody() {
                   </div>
                   <AnimatePresence mode="wait">{helpCopy ? <motion.p key={helpMode} initial={{ opacity: 0, y: reduceMotion ? 0 : -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{helpCopy}</motion.p> : null}</AnimatePresence>
                 </div>
-                <button type="button" className="cta" disabled={!retrieveAnswer.trim()} onClick={() => { setHelpMode(null); setPhase("apply"); }}>Continue <span aria-hidden="true">→</span></button>
+                <Pressable>
+                  <button type="button" className="cta" disabled={!retrieveAnswer.trim()} onClick={() => { setHelpMode(null); setPhase("apply"); }}>Continue <span aria-hidden="true">→</span></button>
+                </Pressable>
                 <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("learn"); }}>Back to explanation</button>
               </>
             ) : null}
@@ -408,7 +418,9 @@ function SessionBody() {
                 <label htmlFor="application-answer">Use the idea in a different situation.</label>
                 <textarea id="application-answer" autoFocus value={applicationAnswer} onChange={(event) => setApplicationAnswer(event.target.value)} placeholder="Work through the new case…" />
                 <div className="session-apply-hint"><button type="button" onClick={() => setHelpMode(helpMode === "hint" ? null : "hint")} aria-expanded={helpMode === "hint"}>Need a hint?</button>{helpMode === "hint" ? <p>{activity.apply.hint}</p> : null}</div>
-                <button type="button" className="cta" disabled={!applicationAnswer.trim()} onClick={checkAnswers}>Check my thinking <span aria-hidden="true">→</span></button>
+                <Pressable>
+                  <button type="button" className="cta" disabled={!applicationAnswer.trim()} onClick={checkAnswers}>Check my thinking <span aria-hidden="true">→</span></button>
+                </Pressable>
                 <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("retrieve"); }}>Edit recall answer</button>
               </>
             ) : null}
@@ -439,7 +451,9 @@ function SessionBody() {
                     ) : null}
                     <small>Structured source comparison · not an instructor grade</small>
                     <div className="study-ratings" role="group" aria-label="Record answer evidence">
-                      <button type="button" className="is-primary" onClick={() => grade(evaluation.outcome)}>Use this result</button>
+                      <Pressable>
+                        <button type="button" className="is-primary" onClick={() => grade(evaluation.outcome)}>Use this result</button>
+                      </Pressable>
                       {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={() => grade("partial")}>I needed more help</button> : null}
                       {evaluation.outcome !== "failure" ? <button type="button" className="is-ghost" onClick={() => grade("failure")}>I did not understand it</button> : null}
                     </div>

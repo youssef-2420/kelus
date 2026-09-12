@@ -171,7 +171,11 @@ function TodayBody() {
               {greeting(nowIso)}. Welcome back
               {dueCount > 0 ? ` · ${dueCount} concept${dueCount === 1 ? "" : "s"} due for review` : ""}.
             </p>
-          ) : null}
+          ) : (
+            <p className="today-welcome is-first-route">
+              {greeting(nowIso)}. Your first route is ready — one clear start, then follow the plan.
+            </p>
+          )}
           <p className="today-brief-lede">
             {route.availableMinutes} minutes for revision today. Start with one topic.
             <span className="today-brief-exam"> Exam in {days} days · target {exam.targetPercent}%.</span>

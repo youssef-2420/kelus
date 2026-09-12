@@ -9,6 +9,7 @@ import { generateRoute } from "@/domain/routing-engine";
 import { percent } from "@/lib/format";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
+import { Pressable } from "@/components/motion";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
@@ -80,8 +81,11 @@ function CompleteBody() {
     <AppShell>
       <section className="complete-hero">
         <p className="kicker">Today’s route complete</p>
-        <h1>You’ve done your revision for now.</h1>
-        <p>{practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}{course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.</p>
+        <h1>You showed up — and the route remembers.</h1>
+        <p>
+          {practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}
+          {course ? ` in ${course.name}` : ""}. That effort is yours; Kelus only keeps the evidence so tomorrow’s plan stays honest.
+        </p>
         {summary ? <div className="readiness-change"><span>{percent(summary.readinessBefore)}</span><i aria-hidden="true">→</i><strong>{percent(summary.readinessAfter)}</strong><small>estimated readiness</small></div> : null}
       </section>
       {summary ? (
@@ -94,7 +98,7 @@ function CompleteBody() {
         <p className="kicker">Come back tomorrow</p>
         <h2 id="complete-return-title">
           {nextStopName
-            ? <>Next suggested review: <strong>{nextStopName}</strong>.</>
+            ? <>You left a clear next step: <strong>{nextStopName}</strong>.</>
             : "Your route stays on this device — open Today when you come back."}
         </h2>
         <p>
@@ -103,7 +107,9 @@ function CompleteBody() {
             : "Tomorrow’s route will shift as retention fades — no need to rebuild from scratch."}
         </p>
         <div className="complete-return-actions">
-          <Link href="/today" className="cta">Back to Today <span aria-hidden="true">→</span></Link>
+          <Pressable>
+            <Link href="/today" className="cta">Back to Today <span aria-hidden="true">→</span></Link>
+          </Pressable>
           <button type="button" className="text-btn" onClick={addCalendar}>
             Add tomorrow to calendar <span aria-hidden="true">→</span>
           </button>
