@@ -6,56 +6,63 @@ import type { Concept, ConceptRelationship } from "@/domain/types";
 import { percent, statusLabel } from "@/lib/format";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 
-function layoutNodes(concepts: Concept[]) {
-  const count = concepts.length;
-  if (!count) return [] as Array<{ concept: Concept; x: number; y: number; rank: number }>;
+type MapNode = { concept: Concept; x: number; y: number; rank: number; labelBelow: boolean };
 
-  // Arc / packed layout: denser canvas, readable labels, less empty paper.
+function layoutNodes(concepts: Concept[]): MapNode[] {
+  const count = concepts.length;
+  if (!count) return [];
+
+  // Prefer fewer nodes per row so SVG labels stay readable (audit P0).
   if (count === 1) {
-    return [{ concept: concepts[0], x: 50, y: 36, rank: 0 }];
+    return [{ concept: concepts[0], x: 50, y: 34, rank: 0, labelBelow: false }];
   }
-  if (count <= 4) {
+  if (count <= 3) {
     return concepts.map((concept, index) => ({
       concept,
-      x: 14 + ((index + 0.5) * 72) / count,
+      x: 18 + ((index + 0.5) * 64) / count,
       y: 34,
       rank: index,
+      labelBelow: false,
     }));
   }
-  if (count <= 7) {
-    // Two rows: top row highest importance, bottom the rest — tight vertical.
+  if (count <= 6) {
     const top = Math.ceil(count / 2);
     return concepts.map((concept, index) => {
       const onTop = index < top;
       const rowIndex = onTop ? index : index - top;
       const rowCount = onTop ? top : count - top;
+      // Stagger bottom row so labels don't stack under top-row text.
+      const xBias = onTop ? 0 : (rowCount === top ? 0 : 4);
       return {
         concept,
-        x: 12 + ((rowIndex + 0.5) * 76) / rowCount,
-        y: onTop ? 22 : 48,
+        x: 14 + xBias + ((rowIndex + 0.5) * (72 - xBias * 2)) / rowCount,
+        y: onTop ? 20 : 44,
         rank: index,
+        labelBelow: !onTop,
       };
     });
   }
-  const cols = Math.min(4, Math.ceil(Math.sqrt(count)));
+  // 7–12: three rows, max 4 per row, alternating label sides by column.
+  const cols = Math.min(4, Math.ceil(count / 3));
   const rows = Math.ceil(count / cols);
   return concepts.map((concept, index) => {
     const col = index % cols;
     const row = Math.floor(index / cols);
     return {
       concept,
-      x: 10 + ((col + 0.5) * 80) / cols,
-      y: 14 + ((row + 0.5) * 52) / Math.max(rows, 1),
+      x: 12 + ((col + 0.5) * 76) / cols,
+      y: 14 + ((row + 0.5) * 46) / Math.max(rows, 1),
       rank: index,
+      labelBelow: row % 2 === 1 || (row === 0 && col % 2 === 1),
     };
   });
 }
 
 function shortLabel(name: string) {
-  if (name.length <= 18) return name;
-  const cut = name.slice(0, 17);
+  if (name.length <= 12) return name;
+  const cut = name.slice(0, 11);
   const space = cut.lastIndexOf(" ");
-  return `${(space > 8 ? cut.slice(0, space) : cut).trim()}…`;
+  return `${(space > 5 ? cut.slice(0, space) : cut).trim()}…`;
 }
 
 export function KnowledgeMap({
@@ -111,10 +118,11 @@ export function KnowledgeMap({
               {nodes.map((node) => {
                 const selected = selectedId === node.concept.id;
                 const radius = selected ? 3.4 : 2.8;
+                const labelY = node.labelBelow ? node.y + 7.2 : node.y - 5.8;
                 return (
                   <g
                     key={node.concept.id}
-                    className={`topic-map-node${selected ? " is-selected" : ""}`}
+                    className={`topic-map-node${selected ? " is-selected" : ""}${node.labelBelow ? " is-label-below" : ""}`}
                     role={onSelect ? "button" : undefined}
                     tabIndex={onSelect ? 0 : undefined}
                     aria-label={onSelect ? node.concept.name : undefined}
@@ -132,7 +140,7 @@ export function KnowledgeMap({
                     style={onSelect ? { cursor: "pointer" } : undefined}
                   >
                     <circle cx={node.x} cy={node.y} r={radius} />
-                    <text x={node.x} y={node.y - 5.5} textAnchor="middle">
+                    <text x={node.x} y={labelY} textAnchor="middle">
                       {shortLabel(node.concept.name)}
                     </text>
                   </g>

@@ -5,13 +5,19 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useEffect, useRef } from "react";
 
-const links = [
+const links: Array<{
+  href: string;
+  label: string;
+  shortLabel?: string;
+  matches: string[];
+  always: true;
+}> = [
   { href: "/today", label: "Today", matches: ["/today", "/session"], always: true },
   { href: "/materials", label: "Materials", matches: ["/materials"], always: true },
   { href: "/map", label: "Map", matches: ["/map", "/concept", "/concepts"], always: true },
-  { href: "/route", label: "How it works", matches: ["/route"], always: true },
+  { href: "/route", label: "How it works", shortLabel: "How", matches: ["/route"], always: true },
   { href: "/pricing", label: "Pricing", matches: ["/pricing", "/waitlist"], always: true },
-] as const;
+];
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -48,7 +54,7 @@ export function SiteHeader() {
             const active = link.matches.some((prefix) => pathname.startsWith(prefix));
             return (
               <Link key={link.href} href={link.href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>
-                {link.label}
+                {link.shortLabel ? <><span className="nav-label-full">{link.label}</span><span className="nav-label-short">{link.shortLabel}</span></> : link.label}
               </Link>
             );
           })}

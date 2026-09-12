@@ -126,7 +126,7 @@ body.is-notion-system .is-poster .home-cta {
   background: var(--booklet-kelus);
   border-color: var(--booklet-kelus);
   color: #f7f8f5;
-  border-radius: 999px;
+  border-radius: 4px;
   padding-inline: 22px;
   font-family: var(--font-sans);
   font-weight: 600;
@@ -143,7 +143,7 @@ body.is-notion-system .is-poster .home-secondary {
   background: transparent !important;
   border: 1px solid #aeb6a8 !important;
   color: var(--booklet-ink) !important;
-  border-radius: 999px;
+  border-radius: 4px;
   font-family: var(--font-sans);
   font-weight: 500;
 }
@@ -726,7 +726,7 @@ body.is-notion-system .is-notebook.is-elevated .notion-flow-question {
 body.is-notion-system .is-notebook.is-elevated .notion-flow-reveal {
   background: var(--booklet-kelus) !important;
   color: #f7f8f5 !important;
-  border-radius: 999px;
+  border-radius: 4px;
   font-weight: 600;
 }
 
@@ -1598,4 +1598,156 @@ body.is-notion-system .pricing-page .founding-cta.is-reserve .founding-cta-statu
   color: var(--booklet-mute);
   font-size: 0.85rem;
   font-weight: 600;
+}
+
+
+body.is-notion-system .site-nav .nav-label-short { display: none; }
+body.is-notion-system .site-nav .nav-label-full { display: inline; }
+
+/* ── AUDIT FIX: booklet geometry, map labels, mobile chrome, paper dropzone ── */
+body.is-notion-system .is-poster .home-cta,
+body.is-notion-system .is-poster .home-secondary,
+body.is-notion-system .is-poster .cta,
+body.is-notion-system .kelus-hero.is-folio.is-notion.is-poster .home-cta,
+body.is-notion-system .kelus-hero.is-folio.is-notion.is-poster .home-secondary,
+body.is-notion-system .kelus-hero.is-folio.is-notion.is-poster .cta {
+  border-radius: 4px !important;
+}
+
+body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.is-poster {
+  background: var(--booklet-paper) !important;
+}
+
+body.is-notion-system .topic-map-node text {
+  font-size: 3.1px;
+  paint-order: stroke;
+  stroke: var(--booklet-paper, #eef1ec);
+  stroke-width: 0.55px;
+  stroke-linejoin: round;
+}
+
+body.is-notion-system .topic-map-node.is-label-below text {
+  dominant-baseline: hanging;
+}
+
+/* Mobile header: keep Pricing reachable without wrapping into a wall */
+@media (max-width: 720px) {
+  body.is-notion-system .site-header-inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "mark actions"
+      "nav nav";
+    gap: 0.55rem 0.75rem;
+    align-items: center;
+  }
+
+  body.is-notion-system .site-wordmark,
+  body.is-notion-system .mark.site-wordmark { grid-area: mark; }
+  body.is-notion-system .site-header-cluster,
+  body.is-notion-system .site-account-menu,
+  body.is-notion-system .site-auth-loading,
+  body.is-notion-system .site-session-return { grid-area: actions; justify-self: end; }
+
+  body.is-notion-system .site-nav {
+    grid-area: nav;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0.95rem;
+    padding: 0 0 0.15rem;
+    min-width: 0;
+  }
+
+  body.is-notion-system .site-nav a {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    font-size: 0.92rem;
+  }
+
+  body.is-notion-system .site-nav .nav-label-full { display: none; }
+  body.is-notion-system .site-nav .nav-label-short { display: inline; }
+
+  body.is-notion-system .site-nav {
+    mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.25rem), transparent);
+  }
+
+  body.is-notion-system .course-masthead {
+    gap: 0.55rem;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.85rem;
+  }
+
+  body.is-notion-system .course-masthead-title {
+    font-size: clamp(1.35rem, 6vw, 1.7rem);
+  }
+
+  body.is-notion-system .course-masthead-nav {
+    gap: 0.25rem 0.85rem;
+  }
+
+  body.is-notion-system .course-masthead-nav a {
+    min-height: 36px;
+    font-size: 0.92rem;
+  }
+
+  body.is-notion-system .course-masthead-hint,
+  body.is-notion-system .course-sample-note,
+  body.is-notion-system .sample-course-note {
+    margin-bottom: 0.55rem;
+    font-size: 0.84rem;
+    line-height: 1.35;
+  }
+}
+
+/* Materials dropzone: paper tray, not SaaS upload card */
+body.is-notion-system .material-drop,
+body.is-notion-system .course-workspace-content .material-drop,
+body.is-notion-system .is-booklet-shell .material-drop {
+  min-height: 132px !important;
+  border: 0 !important;
+  border-top: 1px solid var(--booklet-rule) !important;
+  border-bottom: 1px solid var(--booklet-rule) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  gap: 0.3rem !important;
+  padding: 1.15rem 0.15rem !important;
+  box-shadow: none !important;
+}
+
+body.is-notion-system .material-drop svg,
+body.is-notion-system .course-workspace-content .material-drop svg,
+body.is-notion-system .is-booklet-shell .material-drop svg {
+  width: 28px !important;
+  height: 28px !important;
+  stroke: var(--booklet-kelus) !important;
+  opacity: 0.85;
+}
+
+body.is-notion-system .material-drop strong,
+body.is-notion-system .course-workspace-content .material-drop strong,
+body.is-notion-system .is-booklet-shell .material-drop strong {
+  font-family: var(--font-editorial), Georgia, serif;
+  font-size: 1.15rem !important;
+  font-weight: 550;
+  color: var(--booklet-ink) !important;
+}
+
+body.is-notion-system .material-drop span,
+body.is-notion-system .course-workspace-content .material-drop span,
+body.is-notion-system .is-booklet-shell .material-drop span {
+  color: var(--booklet-mute) !important;
+  font-size: 0.88rem !important;
+}
+
+body.is-notion-system .material-drop:hover,
+body.is-notion-system .material-drop.is-dragging,
+body.is-notion-system .course-workspace-content .material-drop:hover,
+body.is-notion-system .course-workspace-content .material-drop.is-dragging,
+body.is-notion-system .is-booklet-shell .material-drop:hover,
+body.is-notion-system .is-booklet-shell .material-drop.is-dragging {
+  background: color-mix(in srgb, var(--booklet-kelus) 6%, transparent) !important;
+  border-color: var(--booklet-kelus) !important;
 }
