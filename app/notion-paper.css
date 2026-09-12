@@ -525,7 +525,7 @@ body.is-notion-system .folio-chapter.is-materials .v1-materials li {
 }
 
 body.is-notion-system .folio-chapter.is-materials .v1-materials > footer {
-  background: #f3f0ea;
+  background: var(--color-paper-warmth, #eef1ec);
   color: var(--color-graphite);
 }
 

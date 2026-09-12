@@ -1751,3 +1751,98 @@ body.is-notion-system .is-booklet-shell .material-drop.is-dragging {
   background: color-mix(in srgb, var(--booklet-kelus) 6%, transparent) !important;
   border-color: var(--booklet-kelus) !important;
 }
+
+
+/* ── AUDIT FIX 9+: thinner mobile chrome + cream kill ── */
+body.is-notion-system,
+body.is-notion-system .is-notion-product,
+body.is-notion-system .course-workspace-layout,
+body.is-notion-system .route-transition {
+  --color-paper-warmth: var(--booklet-paper);
+  background-color: var(--booklet-paper);
+}
+
+body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.paper-loop-hero.is-desk {
+  background: var(--booklet-paper) !important;
+}
+
+@media (max-width: 720px) {
+  /* Masthead: identity one line, drop the “Current course” kicker */
+  body.is-notion-system .course-masthead {
+    gap: 0.35rem;
+    margin: 0 0 0.85rem;
+    padding: 0 0 0.65rem;
+  }
+
+  body.is-notion-system .course-masthead-kicker {
+    display: none;
+  }
+
+  body.is-notion-system .course-masthead-title {
+    margin: 0;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+  }
+
+  body.is-notion-system .course-masthead-exam {
+    margin: 0.15rem 0 0;
+    font-size: 0.84rem;
+    line-height: 1.3;
+  }
+
+  body.is-notion-system .course-masthead-phase {
+    margin-top: 0.15rem;
+    font-size: 0.84rem;
+    gap: 0.3rem 0.45rem;
+  }
+
+  body.is-notion-system .course-masthead-phase > span:first-child {
+    /* Drop the “Now” label — the link is enough */
+    display: none;
+  }
+
+  body.is-notion-system .course-masthead-hint {
+    display: block;
+    width: 100%;
+    margin: 0.2rem 0 0;
+    font-size: 0.8rem;
+  }
+
+  /* Today: less title weight once masthead already names the course */
+  body.is-notion-system .today-brief.is-booklet-today {
+    margin-top: 0;
+  }
+
+  body.is-notion-system .today-brief.is-booklet-today h1 {
+    font-size: clamp(1.55rem, 7vw, 1.85rem);
+    margin: 0.15rem 0 0.45rem;
+  }
+
+  body.is-notion-system .today-brief.is-booklet-today .kicker {
+    font-size: 0.8rem;
+  }
+
+  body.is-notion-system .today-brief-lede,
+  body.is-notion-system .today-welcome,
+  body.is-notion-system .today-readiness-hint {
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+
+  body.is-notion-system .today-workbench.is-booklet-today {
+    margin-top: 1rem;
+  }
+
+  body.is-notion-system .today-workbench-heading {
+    font-size: 1rem;
+    margin-bottom: 0.55rem;
+  }
+
+  /* Materials / map page titles: less air under masthead */
+  body.is-notion-system .course-workspace-content .materials-head,
+  body.is-notion-system .course-workspace-content .map-head-block,
+  body.is-notion-system .destination-page .materials-empty,
+  body.is-notion-system .map-page .map-intro {
+    margin-top: 0;
+  }
+}

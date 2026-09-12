@@ -1,7 +1,7 @@
 /* Shared paper palette from the supplied Notion reference. Legacy token names
    remain aliases so every existing product surface inherits the rebrand. */
 .is-notion-system {
-  --color-paper-warmth: #f6f5f4;
+  --color-paper-warmth: #eef1ec; /* booklet paper — not Anthropic cream */
   --color-notion-blue: #1f6b45;
   --color-sky-tint: #e4efe8;
   --color-indigo-ink: var(--color-notion-blue);
@@ -26,13 +26,13 @@
 
 .is-notion-product.course-workspace-layout,
 .course-workspace-layout.is-notion-product {
-  background: #f7f7f5;
+  background: var(--color-paper-warmth, #eef1ec);
 }
 
 .is-notion-product .course-workspace-rail {
-  background: #f7f7f5;
-  border-right: 1px solid #ebebea;
-  color: #37352f;
+  background: var(--color-paper-warmth, #eef1ec);
+  border-right: 1px solid var(--color-frost, #d5d9d0);
+  color: var(--color-midnight-ink, #12160f);
 }
 
 .is-notion-product .course-workspace-identity {
@@ -175,7 +175,7 @@
   padding: 10px;
   border: 1px solid #ebebea;
   border-radius: 10px;
-  background: #f7f7f5;
+  background: var(--color-paper-warmth, #eef1ec);
 }
 
 .destination-page.is-notion-product .setup-progress li {
@@ -226,7 +226,7 @@
 .destination-page.is-notion-product .setup-sample {
   border: 1px solid #ebebea;
   border-radius: 10px;
-  background: #f7f7f5;
+  background: var(--color-paper-warmth, #eef1ec);
 }
 
 .diagnosis-page.is-notion-product {
