@@ -5,7 +5,7 @@ import { useReducedMotion } from "motion/react";
 import { MapPreviewIllustration, MaterialsPreviewIllustration } from "@/components/how/HowIllustrations";
 import { Pressable } from "@/components/motion";
 
-const PREVIEW_TOPICS = ["Cell membranes", "Osmosis", "Homeostasis"] as const;
+const PREVIEW_TOPICS = ["Elasticity", "Supply & Demand", "Market Structures"] as const;
 
 type FirstRunGateProps = {
   kicker: string;

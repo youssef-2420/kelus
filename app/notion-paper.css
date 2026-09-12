@@ -520,7 +520,7 @@ body.is-notion-system .folio-chapter.is-materials .v1-materials li {
   min-height: 64px;
   margin: 8px 12px;
   padding: 12px 14px;
-  background: #faf9f6;
+  background: var(--booklet-paper, #eef1ec);
   border: 1px solid var(--border-hairline);
 }
 

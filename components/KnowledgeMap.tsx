@@ -8,61 +8,59 @@ import { ConceptTitleTransition } from "@/components/PageTransition";
 
 type MapNode = { concept: Concept; x: number; y: number; rank: number; labelBelow: boolean };
 
+/** Prefer short exam-map labels without ugly mid-word ellipsis. */
+function shortLabel(name: string) {
+  const aliases: Record<string, string> = {
+    "Supply & Demand": "Supply/Demand",
+    "Market Structures": "Markets",
+    "Monetary Policy": "Monetary",
+    "Fiscal Policy": "Fiscal",
+    "Consumer Choice": "Consumer",
+    "Game Theory": "Game theory",
+    Elasticity: "Elasticity",
+  };
+  // Demo seed names (exact).
+  if (aliases[name]) return aliases[name];
+  if (name.length <= 14) return name;
+  const cut = name.slice(0, 13);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > 6 ? cut.slice(0, space) : cut).trim()}…`;
+}
+
 function layoutNodes(concepts: Concept[]): MapNode[] {
   const count = concepts.length;
   if (!count) return [];
 
-  // Prefer fewer nodes per row so SVG labels stay readable (audit P0).
+  // Sparse layout: max 2 per row when labels need room (final audit).
   if (count === 1) {
-    return [{ concept: concepts[0], x: 50, y: 34, rank: 0, labelBelow: false }];
+    return [{ concept: concepts[0], x: 50, y: 32, rank: 0, labelBelow: false }];
   }
-  if (count <= 3) {
+  if (count === 2) {
     return concepts.map((concept, index) => ({
       concept,
-      x: 18 + ((index + 0.5) * 64) / count,
-      y: 34,
+      x: 28 + index * 44,
+      y: 32,
       rank: index,
       labelBelow: false,
     }));
   }
-  if (count <= 6) {
-    const top = Math.ceil(count / 2);
-    return concepts.map((concept, index) => {
-      const onTop = index < top;
-      const rowIndex = onTop ? index : index - top;
-      const rowCount = onTop ? top : count - top;
-      // Stagger bottom row so labels don't stack under top-row text.
-      const xBias = onTop ? 0 : (rowCount === top ? 0 : 4);
-      return {
-        concept,
-        x: 14 + xBias + ((rowIndex + 0.5) * (72 - xBias * 2)) / rowCount,
-        y: onTop ? 20 : 44,
-        rank: index,
-        labelBelow: !onTop,
-      };
-    });
-  }
-  // 7–12: three rows, max 4 per row, alternating label sides by column.
-  const cols = Math.min(4, Math.ceil(count / 3));
+
+  // Two columns, labels always under the node so adjacent rows never collide.
+  const cols = 2;
   const rows = Math.ceil(count / cols);
   return concepts.map((concept, index) => {
     const col = index % cols;
     const row = Math.floor(index / cols);
+    const rowCount = Math.min(cols, count - row * cols);
+    const x0 = 18 + (cols - rowCount) * 32;
     return {
       concept,
-      x: 12 + ((col + 0.5) * 76) / cols,
-      y: 14 + ((row + 0.5) * 46) / Math.max(rows, 1),
+      x: x0 + ((col + 0.5) * 64) / cols,
+      y: 10 + ((row + 0.35) * 58) / Math.max(rows, 1),
       rank: index,
-      labelBelow: row % 2 === 1 || (row === 0 && col % 2 === 1),
+      labelBelow: true,
     };
   });
-}
-
-function shortLabel(name: string) {
-  if (name.length <= 12) return name;
-  const cut = name.slice(0, 11);
-  const space = cut.lastIndexOf(" ");
-  return `${(space > 5 ? cut.slice(0, space) : cut).trim()}…`;
 }
 
 export function KnowledgeMap({
@@ -107,7 +105,7 @@ export function KnowledgeMap({
 
         {nodes.length ? (
           <div className="topic-map-graph" aria-hidden={onSelect ? undefined : true}>
-            <svg viewBox="0 0 100 62" className="topic-map-svg" preserveAspectRatio="xMidYMid meet">
+            <svg viewBox="0 0 100 78" className="topic-map-svg" data-layout="sparse" preserveAspectRatio="xMidYMid meet">
               {edges.map((edge) => (
                 <path
                   key={edge.id}
@@ -117,8 +115,8 @@ export function KnowledgeMap({
               ))}
               {nodes.map((node) => {
                 const selected = selectedId === node.concept.id;
-                const radius = selected ? 3.4 : 2.8;
-                const labelY = node.labelBelow ? node.y + 7.2 : node.y - 5.8;
+                const radius = selected ? 3.2 : 2.6;
+                const labelY = node.labelBelow ? node.y + 6.4 : node.y - 5.8;
                 return (
                   <g
                     key={node.concept.id}

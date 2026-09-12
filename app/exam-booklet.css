@@ -1846,3 +1846,33 @@ body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.paper-loop-hero.i
     margin-top: 0;
   }
 }
+
+
+/* Sparse map graph: room for label-under nodes without collisions */
+body.is-notion-system .topic-map-svg[data-layout="sparse"] {
+  aspect-ratio: 100 / 78;
+  max-width: 42rem;
+}
+
+body.is-notion-system .topic-map-svg[data-layout="sparse"] text {
+  font-size: 3.2px;
+  letter-spacing: 0.01em;
+}
+
+
+/* ── CSS STACK LOCK: booklet owns paper ──
+   Legacy notion/paper-loop sheets stay for notebook chrome, but cannot paint cream. */
+body.is-notion-system,
+body.is-notion-system .is-notion-product,
+body.is-notion-system .course-workspace-layout,
+body.is-notion-system .route-transition,
+body.is-notion-system .destination-page,
+body.is-notion-system .folio-product-stage,
+body.is-notion-system .folio-chapter,
+body.is-notion-system .folio-method {
+  background-color: var(--booklet-paper) !important;
+}
+
+body.is-notion-system .site-header {
+  background: color-mix(in srgb, var(--booklet-paper) 92%, transparent) !important;
+}

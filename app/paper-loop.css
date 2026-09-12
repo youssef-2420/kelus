@@ -1,3 +1,4 @@
+/* BOOKLET LOCK: cream hex redirected to booklet paper */
 /* Desk hero — editorial notebook, not SaaS browser mock.
    Keeps paper tokens; author a distinctive first viewport. */
 
@@ -140,7 +141,7 @@ body.is-notion-system .paper-loop-hero.is-desk .home-cta {
   border-radius: 999px;
   padding-inline: 22px;
   background: #0a0a0a;
-  color: #f6f5f4;
+  color: #f7f8f5;
 }
 
 body.is-notion-system .paper-loop-hero.is-desk .home-cta:hover {
@@ -171,8 +172,8 @@ body.is-notion-system .is-notebook.notion-board {
 
 body.is-notion-system .is-notebook .notebook-sheet {
   position: relative;
-  background: #fbfaf7;
-  border: 1px solid #cfc9bf;
+  background: var(--booklet-paper, #eef1ec);
+  border: 1px solid color-mix(in srgb, var(--booklet-ink, #12160f) 14%, transparent);
   border-radius: 2px 10px 10px 2px;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.7) inset,

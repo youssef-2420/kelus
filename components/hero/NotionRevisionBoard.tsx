@@ -14,9 +14,9 @@ type RouteItem = {
 };
 
 const BASE_ROUTE: RouteItem[] = [
-  { name: "Osmosis", minutes: 18, reason: "Needs another attempt", recommended: true },
-  { name: "Cell respiration", minutes: 15, reason: "High exam value", recommended: false },
-  { name: "Homeostasis", minutes: 12, reason: "Builds on both", recommended: false },
+  { name: "Elasticity", minutes: 18, reason: "Needs another attempt", recommended: true },
+  { name: "Supply & Demand", minutes: 15, reason: "High exam value", recommended: false },
+  { name: "Market Structures", minutes: 12, reason: "Builds on both", recommended: false },
 ];
 
 const press = kelusMotion.press;
@@ -49,21 +49,21 @@ export function NotionRevisionBoard() {
   function markShaky() {
     setPhase("route");
     setRoute([
-      { name: "Osmosis", minutes: 18, reason: "Needs another attempt", recommended: true },
-      { name: "Cell respiration", minutes: 15, reason: "High exam value", recommended: false },
-      { name: "Homeostasis", minutes: 12, reason: "Builds on both", recommended: false },
+      { name: "Elasticity", minutes: 18, reason: "Needs another attempt", recommended: true },
+      { name: "Supply & Demand", minutes: 15, reason: "High exam value", recommended: false },
+      { name: "Market Structures", minutes: 12, reason: "Builds on both", recommended: false },
     ]);
-    setSignal("Osmosis moves up for another attempt.");
+    setSignal("Elasticity moves up for another attempt.");
   }
 
   function markRemembered() {
     setPhase("route");
     setRoute([
-      { name: "Cell respiration", minutes: 15, reason: "High exam value", recommended: true },
-      { name: "Homeostasis", minutes: 12, reason: "Builds on both", recommended: false },
-      { name: "Osmosis", minutes: 12, reason: "Reviewed just now", recommended: false },
+      { name: "Supply & Demand", minutes: 15, reason: "High exam value", recommended: true },
+      { name: "Market Structures", minutes: 12, reason: "Builds on both", recommended: false },
+      { name: "Elasticity", minutes: 12, reason: "Reviewed just now", recommended: false },
     ]);
-    setSignal("Osmosis can wait — respiration comes next.");
+    setSignal("Elasticity can wait — supply and demand comes next.");
   }
 
   return (
@@ -96,54 +96,21 @@ export function NotionRevisionBoard() {
               className="paper-membrane"
               viewBox="0 0 280 140"
               role="img"
-              aria-label="Ink diagram: water crosses a membrane toward higher solute concentration"
+              aria-label="Ink diagram: a flatter demand curve when substitutes make quantity more price-sensitive"
             >
-              <path
-                d="M24 28h232v84H24z"
-                fill="#f7f8f5"
-                stroke="#12160f"
-                strokeWidth="1.4"
-              />
-              <path
-                d="M140 32v76"
-                fill="none"
-                stroke="#1f6b45"
-                strokeWidth="2.2"
-                strokeLinecap="round"
-                strokeDasharray="2 6"
-              />
-              <circle cx="64" cy="58" r="4" fill="#1f6b45" />
-              <circle cx="86" cy="78" r="4" fill="#1f6b45" />
-              <circle cx="58" cy="92" r="4" fill="#1f6b45" />
-              <circle cx="198" cy="54" r="7" fill="#d4b56a" stroke="#12160f" strokeWidth="1.1" />
-              <circle cx="222" cy="78" r="7" fill="#d4b56a" stroke="#12160f" strokeWidth="1.1" />
-              <circle cx="196" cy="96" r="7" fill="#d4b56a" stroke="#12160f" strokeWidth="1.1" />
-              <path
-                d="M96 74h36"
-                fill="none"
-                stroke="#12160f"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-              />
-              <path
-                d="M124 68l10 6-10 6"
-                fill="none"
-                stroke="#12160f"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <text x="48" y="122" fill="#4a5246" fontSize="10" fontFamily="ui-sans-serif, system-ui, sans-serif">
-                water
-              </text>
-              <text x="188" y="122" fill="#4a5246" fontSize="10" fontFamily="ui-sans-serif, system-ui, sans-serif">
-                solute
-              </text>
+              <path d="M24 28h232v84H24z" fill="#f7f8f5" stroke="#12160f" strokeWidth="1.4" />
+              <path d="M48 100V44" fill="none" stroke="#12160f" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M48 100h168" fill="none" stroke="#12160f" strokeWidth="1.4" strokeLinecap="round" />
+              <path d="M60 52l140 40" fill="none" stroke="#8a8f84" strokeWidth="1.6" strokeLinecap="round" />
+              <path d="M60 60l140 20" fill="none" stroke="#1f6b45" strokeWidth="2.2" strokeLinecap="round" />
+              <text x="52" y="40" fill="#4a5246" fontSize="9" fontFamily="ui-sans-serif, system-ui, sans-serif">P</text>
+              <text x="214" y="112" fill="#4a5246" fontSize="9" fontFamily="ui-sans-serif, system-ui, sans-serif">Q</text>
+              <text x="150" y="58" fill="#1f6b45" fontSize="9" fontFamily="ui-sans-serif, system-ui, sans-serif">more elastic</text>
             </svg>
           </div>
 
           <header className="notion-board-head">
-            <p className="board-example-label">Sample · Molecular Biology</p>
+            <p className="board-example-label">Sample · Microeconomics</p>
             <ol className="notion-board-steps" aria-label="Revision steps">
               {(["recall", "check", "route"] as const).map((step) => {
                 const label = step === "recall" ? "Recall" : step === "check" ? "Check" : "Route";
@@ -167,7 +134,7 @@ export function NotionRevisionBoard() {
           <div className="notion-flow">
             <div className="notion-flow-recall">
               <p className="notion-flow-question">
-                Why does water move across a selectively permeable membrane?
+                Why does demand become more elastic when close substitutes exist?
               </p>
               <motion.button
                 type="button"
@@ -194,7 +161,7 @@ export function NotionRevisionBoard() {
                     exit={reduce ? undefined : { opacity: 0 }}
                     transition={{ duration: reduce ? 0 : kelusDuration.normal, ease: kelusEase }}
                   >
-                    Water moves by osmosis toward the side with a higher solute concentration, across a membrane that lets water pass.
+                    Buyers can switch when price rises, so quantity demanded responds more strongly to the price change.
                   </motion.p>
                 ) : null}
               </AnimatePresence>

@@ -36,13 +36,13 @@ test("hero recall preview reveals, reorders, resets, and works on a narrow scree
 
   await expect(board.locator("#board-answer")).toBeHidden();
   await board.getByRole("button", { name: "Reveal answer" }).click();
-  await expect(board.getByText("Water moves by osmosis", { exact: false })).toBeVisible();
+  await expect(board.getByText("Buyers can switch when price rises", { exact: false })).toBeVisible();
   await board.getByRole("button", { name: "I remembered" }).click();
-  await expect(board.locator(".notion-flow-route li").first()).toContainText("Cell respiration");
+  await expect(board.locator(".notion-flow-route li").first()).toContainText("Supply & Demand");
   await board.getByRole("button", { name: "Hide answer" }).click();
   await expect(board.locator("#board-answer")).toBeHidden();
   await expect(board.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
-  await expect(board.locator(".notion-flow-route li").first()).toContainText("Osmosis");
+  await expect(board.locator(".notion-flow-route li").first()).toContainText("Elasticity");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

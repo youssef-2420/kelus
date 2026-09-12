@@ -80,7 +80,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
                     setErrorField(null);
                   }
                 }}
-                placeholder="Molecular Biology"
+                placeholder="Microeconomics"
                 aria-describedby={errorField === "courseName" ? "setup-error" : "course-support"}
                 aria-invalid={errorField === "courseName" || undefined}
               />

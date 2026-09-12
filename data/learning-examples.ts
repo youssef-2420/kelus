@@ -1,16 +1,16 @@
 export const LEARNING_EXAMPLES = [
   {
-    id: "biology", label: "Biology", course: "Molecular Biology", destination: "Cell Biology final", days: 12,
-    concepts: ["Cell membranes", "Osmosis", "Homeostasis"] as const,
-    moved: "Active transport",
-    question: "Why does water move across a selectively permeable membrane?",
-    answer: "Water moves by osmosis from higher to lower water potential across a membrane that lets water pass. Dissolved solutes affect that water potential.",
+    id: "economics", label: "Economics", course: "Microeconomics", destination: "Microeconomics Final", days: 12,
+    concepts: ["Elasticity", "Supply & Demand", "Market Structures"] as const,
+    moved: "Price discrimination",
+    question: "Why does demand become more elastic when close substitutes exist?",
+    answer: "Buyers can switch when price rises, so quantity demanded responds more strongly to the price change.",
     route: [
-      { name: "Osmosis", minutes: 18, reason: "Recall was uncertain" },
-      { name: "Cell respiration", minutes: 15, reason: "High exam value" },
-      { name: "Homeostasis", minutes: 12, reason: "Builds on both" },
+      { name: "Elasticity", minutes: 18, reason: "Recall was uncertain" },
+      { name: "Supply & Demand", minutes: 15, reason: "High exam value" },
+      { name: "Market Structures", minutes: 12, reason: "Builds on both" },
     ],
-    signal: "Osmosis moved first after an uncertain recall answer.",
+    signal: "Elasticity moved first after an uncertain recall answer.",
   },
   {
     id: "computing", label: "Computer science", course: "Data Structures", destination: "Algorithms exam", days: 8,
