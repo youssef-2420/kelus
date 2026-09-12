@@ -19,7 +19,7 @@ export default function PricingPage() {
 
   return (
     <LateralPage>
-    <main id="main" className="legal-page pricing-page is-notion-product is-booklet-pricing">
+    <main id="main" className="legal-page pricing-page is-booklet-product is-booklet-pricing">
       <PricingViewTracker />
       <section className="legal-panel pricing-booklet">
         <p className="kicker">Pricing</p>

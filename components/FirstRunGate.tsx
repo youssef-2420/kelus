@@ -27,11 +27,11 @@ export function FirstRunGate({
   const reduceMotion = useReducedMotion() === true;
 
   return (
-    <section className="materials-empty is-first-run-gate">
+    <section className="materials-empty is-first-run-gate is-booklet-gate">
       <div className="first-run-gate-copy">
         <p className="kicker">{kicker}</p>
         <h1>{title}</h1>
-        <p>{body}</p>
+        <p className="first-run-gate-lede">{body}</p>
         <div className="materials-empty-actions">
           <Pressable>
             <Link className="cta" href={ctaHref}>
@@ -44,7 +44,14 @@ export function FirstRunGate({
           <Link href="/today?sample=1">Try sample (~1 min)</Link>
         </p>
       </div>
-      <div className="first-run-gate-preview">
+      <aside className="first-run-gate-preview is-booklet-sheet" aria-label="Preview">
+        <div className="booklet-sheet-holes" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="booklet-sheet-ruled" aria-hidden="true" />
         <p className="first-run-gate-preview-label">
           {preview === "map"
             ? "What the topic map looks like"
@@ -55,7 +62,7 @@ export function FirstRunGate({
         ) : (
           <MaterialsPreviewIllustration reduceMotion={reduceMotion} />
         )}
-      </div>
+      </aside>
     </section>
   );
 }

@@ -137,7 +137,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
 
   return (
     <AppShell>
-    <div className="diagnosis-page is-notion-product">
+    <div className="diagnosis-page is-booklet-product">
       <div className="flow-context diagnosis-context"><span>One quick evidence check · then today’s first stop</span><b>Initial estimate</b></div>
       <AnimatePresence mode="wait" initial={false}>
       {phase.status === "rating" ? (

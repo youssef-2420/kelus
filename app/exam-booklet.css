@@ -372,20 +372,20 @@ body.is-notion-system .home-close-actions .text-btn {
 
 
 /* ── Product chrome: same booklet as the homepage ── */
-body.is-notion-system .shell.is-notion-product,
-body.is-notion-system .course-workspace-layout.is-notion-product,
-body.is-notion-system .destination-page.is-notion-product,
-body.is-notion-system .diagnosis-page.is-notion-product,
-body.is-notion-system .how-page.is-notion-product {
+body.is-notion-system .shell.is-booklet-product,
+body.is-notion-system .course-workspace-layout.is-booklet-product,
+body.is-notion-system .destination-page.is-booklet-product,
+body.is-notion-system .diagnosis-page.is-booklet-product,
+body.is-notion-system .how-page.is-booklet-product {
   background: var(--booklet-paper);
   color: var(--booklet-ink);
 }
 
-body.is-notion-system .destination-page.is-notion-product,
-body.is-notion-system .diagnosis-page.is-notion-product,
-body.is-notion-system .is-notion-product .materials-empty,
-body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
-body.is-notion-system .is-notion-product .today-workbench.is-revision-studio {
+body.is-notion-system .destination-page.is-booklet-product,
+body.is-notion-system .diagnosis-page.is-booklet-product,
+body.is-notion-system .is-booklet-product .materials-empty,
+body.is-notion-system .is-booklet-product .today-brief.is-revision-studio,
+body.is-notion-system .is-booklet-product .today-workbench.is-revision-studio {
   background: var(--booklet-lift);
   border: 1px solid var(--booklet-rule);
   border-radius: 4px;
@@ -403,12 +403,12 @@ body.is-notion-system .how-title {
   color: var(--booklet-ink);
 }
 
-body.is-notion-system .is-notion-product .kicker,
+body.is-notion-system .is-booklet-product .kicker,
 body.is-notion-system .destination-page .kicker,
 body.is-notion-system .materials-empty .kicker,
 body.is-notion-system .how-page .kicker,
 body.is-notion-system .diagnosis-page .kicker,
-body.is-notion-system .shell.is-notion-product .kicker {
+body.is-notion-system .shell.is-booklet-product .kicker {
   text-transform: none !important;
   letter-spacing: 0;
   font-size: 0.95rem;
@@ -420,10 +420,10 @@ body.is-notion-system .notion-setup-page-mark {
   display: none;
 }
 
-body.is-notion-system .is-notion-product .cta,
-body.is-notion-system .destination-page.is-notion-product .cta,
-body.is-notion-system .diagnosis-page.is-notion-product .cta,
-body.is-notion-system .how-page.is-notion-product .cta,
+body.is-notion-system .is-booklet-product .cta,
+body.is-notion-system .destination-page.is-booklet-product .cta,
+body.is-notion-system .diagnosis-page.is-booklet-product .cta,
+body.is-notion-system .how-page.is-booklet-product .cta,
 body.is-notion-system .site-header.is-product .site-header-action,
 body.is-notion-system .site-header:not(.is-home) .site-header-action {
   background: var(--booklet-kelus);
@@ -431,44 +431,44 @@ body.is-notion-system .site-header:not(.is-home) .site-header-action {
   color: #f7f8f5;
 }
 
-body.is-notion-system .is-notion-product .cta:hover,
-body.is-notion-system .destination-page.is-notion-product .cta:hover,
+body.is-notion-system .is-booklet-product .cta:hover,
+body.is-notion-system .destination-page.is-booklet-product .cta:hover,
 body.is-notion-system .site-header:not(.is-home) .site-header-action:hover {
   background: #185536;
   border-color: #185536;
   color: #fff;
 }
 
-body.is-notion-system .is-notion-product .text-btn,
+body.is-notion-system .is-booklet-product .text-btn,
 body.is-notion-system .materials-empty .text-btn,
 body.is-notion-system .setup-sample-cta {
   color: var(--booklet-mute);
 }
 
-body.is-notion-system .is-notion-product .course-workspace-rail {
+body.is-notion-system .is-booklet-product .course-workspace-rail {
   background: var(--booklet-paper);
   border-right: 1px solid var(--booklet-rule);
 }
 
-body.is-notion-system .is-notion-product .course-workspace-identity span,
-body.is-notion-system .is-notion-product .material-shelf > header > span,
-body.is-notion-system .is-notion-product .today-lead-label,
-body.is-notion-system .is-notion-product .today-lead-time span {
+body.is-notion-system .is-booklet-product .course-workspace-identity span,
+body.is-notion-system .is-booklet-product .material-shelf > header > span,
+body.is-notion-system .is-booklet-product .today-lead-label,
+body.is-notion-system .is-booklet-product .today-lead-time span {
   text-transform: none;
   letter-spacing: 0;
   font-weight: 500;
   color: var(--booklet-mute);
 }
 
-body.is-notion-system .destination-page.is-notion-product .time-choices label.is-selected {
+body.is-notion-system .destination-page.is-booklet-product .time-choices label.is-selected {
   background: var(--booklet-kelus);
   border-color: var(--booklet-kelus);
   color: #f7f8f5;
 }
 
-body.is-notion-system .destination-page.is-notion-product fieldset,
-body.is-notion-system .destination-page.is-notion-product .setup-progress,
-body.is-notion-system .destination-page.is-notion-product .setup-sample {
+body.is-notion-system .destination-page.is-booklet-product fieldset,
+body.is-notion-system .destination-page.is-booklet-product .setup-progress,
+body.is-notion-system .destination-page.is-booklet-product .setup-sample {
   background: transparent;
   border-color: var(--booklet-rule);
   box-shadow: none;
@@ -481,10 +481,10 @@ body.is-notion-system .setup-sample {
   border-radius: 0;
 }
 
-body.is-notion-system .is-notion-product .today-lead-action,
-body.is-notion-system .is-notion-product .map-workspace,
-body.is-notion-system .diagnosis-page.is-notion-product .diagnosis-panel,
-body.is-notion-system .diagnosis-page.is-notion-product .diagnosis-check {
+body.is-notion-system .is-booklet-product .today-lead-action,
+body.is-notion-system .is-booklet-product .map-workspace,
+body.is-notion-system .diagnosis-page.is-booklet-product .diagnosis-panel,
+body.is-notion-system .diagnosis-page.is-booklet-product .diagnosis-check {
   background: var(--booklet-lift);
   border: 1px solid var(--booklet-rule);
   border-radius: 4px;
@@ -493,13 +493,13 @@ body.is-notion-system .diagnosis-page.is-notion-product .diagnosis-check {
 
 /* Kill leftover SaaS uppercase + Notion blue accents */
 body.is-notion-system .destination-pair label,
-body.is-notion-system .destination-page.is-notion-product .destination-pair label,
-body.is-notion-system .destination-page.is-notion-product .time-choices span,
+body.is-notion-system .destination-page.is-booklet-product .destination-pair label,
+body.is-notion-system .destination-page.is-booklet-product .time-choices span,
 body.is-notion-system .is-notebook .notion-board-steps li,
 body.is-notion-system .is-notebook .notion-flow-route-title,
 body.is-notion-system .is-notebook .notion-flow-route-title span,
 body.is-notion-system .notion-product-rail-label,
-body.is-notion-system .is-notion-product .course-workspace-identity span {
+body.is-notion-system .is-booklet-product .course-workspace-identity span {
   text-transform: none !important;
   letter-spacing: 0;
 }
@@ -510,7 +510,7 @@ body.is-notion-system .notion-board .notion-flow-reveal:hover {
 }
 
 /* ── First-run: marked page, not SaaS form card ── */
-body.is-notion-system .destination-page.is-notion-product.is-marked-setup {
+body.is-notion-system .destination-page.is-booklet-product.is-marked-setup {
   width: min(40rem, calc(100% - 2.5rem));
   margin: 2.5rem auto 4rem;
   padding: 0;
@@ -836,68 +836,68 @@ body.is-notion-system .how-illustration text {
   letter-spacing: 0;
 }
 
-body.is-notion-system .how-page.is-notion-product .cta,
+body.is-notion-system .how-page.is-booklet-product .cta,
 body.is-notion-system .how-page .cta {
   background: var(--booklet-kelus);
   border-color: var(--booklet-kelus);
 }
 
 /* Product accents that still hardcode Notion blue */
-body.is-notion-system .is-notion-product .course-stage.is-complete i,
-body.is-notion-system .is-notion-product .course-stage.is-current i,
-body.is-notion-system .is-notion-product .course-workspace-progress li.is-complete i,
-body.is-notion-system .is-notion-product .course-workspace-progress li.is-current i {
+body.is-notion-system .is-booklet-product .course-stage.is-complete i,
+body.is-notion-system .is-booklet-product .course-stage.is-current i,
+body.is-notion-system .is-booklet-product .course-workspace-progress li.is-complete i,
+body.is-notion-system .is-booklet-product .course-workspace-progress li.is-current i {
   background: var(--booklet-kelus) !important;
   border-color: var(--booklet-kelus) !important;
   color: #f7f8f5 !important;
 }
 
-body.is-notion-system .is-notion-product .course-workspace-progress li.is-complete i {
+body.is-notion-system .is-booklet-product .course-workspace-progress li.is-complete i {
   color: var(--booklet-kelus) !important;
   background: rgba(31, 107, 69, 0.12) !important;
 }
 
 /* Soften Today / Materials: less SaaS card stack */
-body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
-body.is-notion-system .is-notion-product .today-workbench.is-revision-studio,
-body.is-notion-system .is-notion-product .materials-shelf,
-body.is-notion-system .is-notion-product .materials-ingest,
-body.is-notion-system .is-notion-product .materials-empty,
-body.is-notion-system .is-notion-product .map-workspace {
+body.is-notion-system .is-booklet-product .today-brief.is-revision-studio,
+body.is-notion-system .is-booklet-product .today-workbench.is-revision-studio,
+body.is-notion-system .is-booklet-product .materials-shelf,
+body.is-notion-system .is-booklet-product .materials-ingest,
+body.is-notion-system .is-booklet-product .materials-empty,
+body.is-notion-system .is-booklet-product .map-workspace {
   background: var(--booklet-lift);
   border: 1px solid var(--booklet-rule);
   border-radius: 2px;
   box-shadow: none;
 }
 
-body.is-notion-system .course-workspace-layout.is-notion-product,
-body.is-notion-system .shell.is-notion-product {
+body.is-notion-system .course-workspace-layout.is-booklet-product,
+body.is-notion-system .shell.is-booklet-product {
   background: var(--booklet-paper);
 }
 
-body.is-notion-system .is-notion-product .course-workspace-rail {
+body.is-notion-system .is-booklet-product .course-workspace-rail {
   background: transparent;
   border-right: 1px solid var(--booklet-rule);
 }
 
-body.is-notion-system .is-notion-product .course-workspace-identity strong {
+body.is-notion-system .is-booklet-product .course-workspace-identity strong {
   font-family: var(--font-editorial);
   font-weight: 550;
   letter-spacing: -0.02em;
 }
 
-body.is-notion-system .is-notion-product .today-title,
-body.is-notion-system .is-notion-product .today-workbench-heading h2,
-body.is-notion-system .is-notion-product .materials-empty h1,
-body.is-notion-system .is-notion-product .materials-empty h2 {
+body.is-notion-system .is-booklet-product .today-title,
+body.is-notion-system .is-booklet-product .today-workbench-heading h2,
+body.is-notion-system .is-booklet-product .materials-empty h1,
+body.is-notion-system .is-booklet-product .materials-empty h2 {
   font-family: var(--font-editorial);
   font-weight: 550;
   letter-spacing: -0.03em;
 }
 
-body.is-notion-system .is-notion-product .today-lead-action,
-body.is-notion-system .is-notion-product .cta,
-body.is-notion-system .is-notion-product button.cta {
+body.is-notion-system .is-booklet-product .today-lead-action,
+body.is-notion-system .is-booklet-product .cta,
+body.is-notion-system .is-booklet-product button.cta {
   background: var(--booklet-kelus);
   border-color: var(--booklet-kelus);
   color: #f7f8f5;
@@ -905,7 +905,7 @@ body.is-notion-system .is-notion-product button.cta {
   box-shadow: none;
 }
 
-body.is-notion-system .is-notion-product .notion-product-rail-label,
+body.is-notion-system .is-booklet-product .notion-product-rail-label,
 body.is-notion-system .notion-product-rail-label {
   text-transform: none !important;
   letter-spacing: 0;
@@ -913,8 +913,8 @@ body.is-notion-system .notion-product-rail-label {
 }
 
 /* Sidebar labels: sentence case (Learning loop, Current course) */
-body.is-notion-system .is-notion-product .course-workspace-identity > span,
-body.is-notion-system .is-notion-product .course-workspace-progress > div > span,
+body.is-notion-system .is-booklet-product .course-workspace-identity > span,
+body.is-notion-system .is-booklet-product .course-workspace-progress > div > span,
 body.is-notion-system .course-workspace-identity > span,
 body.is-notion-system .course-workspace-progress > div > span {
   text-transform: none !important;
@@ -1316,12 +1316,19 @@ body.is-notion-system .first-run-gate-preview .how-concept-node:not(.is-primary)
   fill: transparent !important;
 }
 
-/* ── First-run gates: preview + copy ── */
-body.is-notion-system .materials-empty.is-first-run-gate {
+/* ── First-run gates: booklet paper preview + copy ── */
+body.is-notion-system .materials-empty.is-first-run-gate.is-booklet-gate {
   display: grid;
-  gap: 1.75rem;
-  max-width: 52rem;
-  padding: 0.5rem 0 2rem;
+  gap: clamp(1.5rem, 3vw, 2.25rem);
+  max-width: 54rem;
+  padding: 0.25rem 0 2.25rem;
+}
+
+@media (min-width: 900px) {
+  body.is-notion-system .materials-empty.is-first-run-gate.is-booklet-gate {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
 }
 
 body.is-notion-system .first-run-gate-copy {
@@ -1330,22 +1337,74 @@ body.is-notion-system .first-run-gate-copy {
   max-width: 34rem;
 }
 
-body.is-notion-system .first-run-gate-preview {
+body.is-notion-system .first-run-gate-lede {
   margin: 0;
-  padding: 1rem 0 0;
-  border-top: 1px solid var(--booklet-rule);
+  color: var(--booklet-mute);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  max-width: 36ch;
+}
+
+body.is-notion-system .first-run-gate-preview.is-booklet-sheet {
+  position: relative;
+  margin: 0;
+  padding: 1.15rem 1.15rem 1.15rem 2.35rem;
+  border: 1px solid var(--booklet-rule);
+  border-radius: 2px;
+  background: var(--booklet-lift);
+  overflow: hidden;
+}
+
+body.is-notion-system .booklet-sheet-holes {
+  position: absolute;
+  top: 1rem;
+  bottom: 1rem;
+  left: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+body.is-notion-system .booklet-sheet-holes span {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--booklet-ink) 18%, transparent);
+  background: var(--booklet-paper);
+  box-shadow: inset 0 0.5px 0 rgba(255, 255, 255, 0.55);
+}
+
+body.is-notion-system .booklet-sheet-ruled {
+  position: absolute;
+  inset: 0 0 0 1.85rem;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 1.55rem,
+    color-mix(in srgb, var(--booklet-kelus) 12%, transparent) 1.55rem,
+    color-mix(in srgb, var(--booklet-kelus) 12%, transparent) calc(1.55rem + 1px)
+  );
+  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
 }
 
 body.is-notion-system .first-run-gate-preview-label {
-  margin: 0 0 0.75rem;
+  position: relative;
+  z-index: 1;
+  margin: 0 0 0.85rem;
   color: var(--booklet-mute);
   font-size: 0.8125rem;
+  letter-spacing: 0.01em;
 }
 
 body.is-notion-system .first-run-gate-preview .how-illustration,
 body.is-notion-system .first-run-gate-preview .how-material-map,
 body.is-notion-system .first-run-gate-preview .how-map-preview,
 body.is-notion-system .first-run-gate-preview .how-materials-preview {
+  position: relative;
+  z-index: 1;
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
@@ -1405,23 +1464,15 @@ body.is-notion-system .topic-map-svg {
 
 body.is-notion-system .topic-map-edge {
   fill: none;
-  stroke: color-mix(in srgb, var(--booklet-ink) 14%, transparent);
-  stroke-width: 0.32;
-  opacity: 0.55;
-}
-
-body.is-notion-system .topic-map-edge.is-related {
-  stroke: color-mix(in srgb, var(--booklet-ink) 10%, transparent);
-  stroke-width: 0.28;
-  opacity: 0.35;
-  stroke-dasharray: 1.2 1.4;
+  stroke: color-mix(in srgb, var(--booklet-kelus) 50%, var(--booklet-rule));
+  stroke-width: 0.38;
+  opacity: 0.62;
 }
 
 body.is-notion-system .topic-map-edge.is-prerequisite {
-  stroke: color-mix(in srgb, var(--booklet-kelus) 55%, var(--booklet-rule));
-  stroke-width: 0.42;
-  opacity: 0.7;
-  stroke-dasharray: none;
+  stroke: color-mix(in srgb, var(--booklet-kelus) 58%, var(--booklet-rule));
+  stroke-width: 0.4;
+  opacity: 0.65;
 }
 
 body.is-notion-system .topic-map-node circle {
@@ -1764,7 +1815,7 @@ body.is-notion-system .is-booklet-shell .material-drop.is-dragging {
 
 /* ── AUDIT FIX 9+: thinner mobile chrome + cream kill ── */
 body.is-notion-system,
-body.is-notion-system .is-notion-product,
+body.is-notion-system .is-booklet-product,
 body.is-notion-system .course-workspace-layout,
 body.is-notion-system .route-transition {
   --color-paper-warmth: var(--booklet-paper);
@@ -1868,13 +1919,8 @@ body.is-notion-system .topic-map-svg[data-layout="sparse"] text {
   letter-spacing: 0.01em;
 }
 
-/* Small screens: drop secondary related edges; keep prerequisite spine only */
+/* Small screens: keep the prerequisite spine only (related edges already omitted in markup) */
 @media (max-width: 720px) {
-  body.is-notion-system .topic-map-edge.is-related {
-    opacity: 0;
-    pointer-events: none;
-  }
-
   body.is-notion-system .topic-map-svg[data-layout="sparse"] {
     max-width: 100%;
   }
@@ -1900,7 +1946,7 @@ body.is-notion-system {
 }
 
 body.is-notion-system,
-body.is-notion-system .is-notion-product,
+body.is-notion-system .is-booklet-product,
 body.is-notion-system .course-workspace-layout,
 body.is-notion-system .route-transition,
 body.is-notion-system .destination-page,
@@ -1919,21 +1965,21 @@ body.is-notion-system .site-header {
 
 
 /* ── TEN POLISH: flatten leftover SaaS chrome under booklet ── */
-body.is-notion-system .is-notion-product .shell,
-body.is-notion-system .shell.is-notion-product,
-body.is-notion-system .is-notion-product.shell {
+body.is-notion-system .is-booklet-product .shell,
+body.is-notion-system .shell.is-booklet-product,
+body.is-notion-system .is-booklet-product.shell {
   background: var(--booklet-paper) !important;
 }
 
-body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
-body.is-notion-system .is-notion-product .today-workbench.is-revision-studio,
-body.is-notion-system .is-notion-product .materials-empty,
-body.is-notion-system .is-notion-product .materials-head,
-body.is-notion-system .is-notion-product .materials-shelf,
-body.is-notion-system .is-notion-product .materials-ingest,
-body.is-notion-system .is-notion-product .map-workspace,
-body.is-notion-system .is-notion-product .diagnosis-panel,
-body.is-notion-system .is-notion-product .diagnosis-check {
+body.is-notion-system .is-booklet-product .today-brief.is-revision-studio,
+body.is-notion-system .is-booklet-product .today-workbench.is-revision-studio,
+body.is-notion-system .is-booklet-product .materials-empty,
+body.is-notion-system .is-booklet-product .materials-head,
+body.is-notion-system .is-booklet-product .materials-shelf,
+body.is-notion-system .is-booklet-product .materials-ingest,
+body.is-notion-system .is-booklet-product .map-workspace,
+body.is-notion-system .is-booklet-product .diagnosis-panel,
+body.is-notion-system .is-booklet-product .diagnosis-check {
   background: transparent !important;
   border: 0 !important;
   border-top: 1px solid var(--booklet-rule) !important;
@@ -1941,14 +1987,14 @@ body.is-notion-system .is-notion-product .diagnosis-check {
   box-shadow: none !important;
 }
 
-body.is-notion-system .is-notion-product .course-workspace-rail {
+body.is-notion-system .is-booklet-product .course-workspace-rail {
   background: transparent !important;
   box-shadow: none !important;
 }
 
-body.is-notion-system .is-notion-product .today-lead-action,
-body.is-notion-system .is-notion-product .map-workspace .map,
-body.is-notion-system .is-notion-product .topic-map .map {
+body.is-notion-system .is-booklet-product .today-lead-action,
+body.is-notion-system .is-booklet-product .map-workspace .map,
+body.is-notion-system .is-booklet-product .topic-map .map {
   background: var(--booklet-lift) !important;
   border: 1px solid var(--booklet-rule) !important;
   border-radius: 2px !important;
@@ -1956,12 +2002,12 @@ body.is-notion-system .is-notion-product .topic-map .map {
 }
 
 /* Kill leftover #fafafa / soft-gray product panels */
-body.is-notion-system .is-notion-product .setup-sample,
-body.is-notion-system .is-notion-product .setup-progress,
-body.is-notion-system .destination-page.is-notion-product fieldset,
-body.is-notion-system .destination-page.is-notion-product .setup-sample,
-body.is-notion-system .is-notion-product .diagnosis-panel,
-body.is-notion-system .is-notion-product .site-account-panel {
+body.is-notion-system .is-booklet-product .setup-sample,
+body.is-notion-system .is-booklet-product .setup-progress,
+body.is-notion-system .destination-page.is-booklet-product fieldset,
+body.is-notion-system .destination-page.is-booklet-product .setup-sample,
+body.is-notion-system .is-booklet-product .diagnosis-panel,
+body.is-notion-system .is-booklet-product .site-account-panel {
   background: var(--booklet-paper) !important;
   box-shadow: none !important;
 }

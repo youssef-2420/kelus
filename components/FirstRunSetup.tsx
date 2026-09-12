@@ -48,7 +48,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
   }
 
   return (
-    <main id="main" className="destination-page is-notion-product is-marked-setup">
+    <main id="main" className="destination-page is-booklet-product is-marked-setup">
       <form className="destination-form" onSubmit={submit} noValidate>
         <p className="kicker">Your exam</p>
         <h1 className="destination-page-title">Set your exam</h1>

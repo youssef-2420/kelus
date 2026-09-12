@@ -78,7 +78,7 @@ export function HowItWorks() {
   const example = LEARNING_EXAMPLES[exampleIndex];
 
   return (
-    <div className="how-page is-notion-product">
+    <div className="how-page is-booklet-product">
       <section className="how-hero" aria-labelledby="how-title">
         <p className="kicker">How Kelus works</p>
         <h1 id="how-title" className="how-title">Your lessons. A regular revision habit.</h1>

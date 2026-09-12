@@ -608,45 +608,45 @@ body.is-notion-system .home-close-actions .text-btn {
   color: var(--color-graphite);
 }
 
-/* Product surfaces already using is-notion-product */
-body.is-notion-system .is-notion-product .cta,
-body.is-notion-system .destination-page.is-notion-product .time-choices label.is-selected,
-body.is-notion-system .pricing-page.is-notion-product .pricing-plan .cta {
+/* Product surfaces already using is-booklet-product */
+body.is-notion-system .is-booklet-product .cta,
+body.is-notion-system .destination-page.is-booklet-product .time-choices label.is-selected,
+body.is-notion-system .pricing-page.is-booklet-product .pricing-plan .cta {
   background: var(--color-notion-blue);
   border-color: var(--color-notion-blue);
 }
 
-body.is-notion-system .destination-page.is-notion-product,
-body.is-notion-system .is-notion-product .materials-empty,
-body.is-notion-system .is-notion-product .materials-head,
-body.is-notion-system .is-notion-product .today-brief.is-revision-studio,
-body.is-notion-system .is-notion-product .today-workbench.is-revision-studio {
+body.is-notion-system .destination-page.is-booklet-product,
+body.is-notion-system .is-booklet-product .materials-empty,
+body.is-notion-system .is-booklet-product .materials-head,
+body.is-notion-system .is-booklet-product .today-brief.is-revision-studio,
+body.is-notion-system .is-booklet-product .today-workbench.is-revision-studio {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-cards);
   box-shadow: none;
 }
 
-body.is-notion-system .course-workspace-layout.is-notion-product {
+body.is-notion-system .course-workspace-layout.is-booklet-product {
   background: var(--color-paper-warmth);
 }
 
-body.is-notion-system .is-notion-product .course-workspace-rail {
+body.is-notion-system .is-booklet-product .course-workspace-rail {
   background: var(--color-paper-warmth);
   border-right: 1px solid var(--border-hairline);
 }
 
-body.is-notion-system .how-page.is-notion-product {
+body.is-notion-system .how-page.is-booklet-product {
   background: var(--color-paper-warmth);
 }
 
-body.is-notion-system .how-page.is-notion-product .how-title {
+body.is-notion-system .how-page.is-booklet-product .how-title {
   color: var(--color-ink-black);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
 
-body.is-notion-system .how-page.is-notion-product .cta {
+body.is-notion-system .how-page.is-booklet-product .cta {
   background: var(--color-notion-blue);
 }
 

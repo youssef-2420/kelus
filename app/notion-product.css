@@ -22,52 +22,52 @@
   color: #111111;
 }
 
-/* Notion product chrome — scoped under .is-notion-product. */
+/* Notion product chrome — scoped under .is-booklet-product. */
 
-.is-notion-product.course-workspace-layout,
-.course-workspace-layout.is-notion-product {
+.is-booklet-product.course-workspace-layout,
+.course-workspace-layout.is-booklet-product {
   background: var(--color-paper-warmth, #eef1ec);
 }
 
-.is-notion-product .course-workspace-rail {
+.is-booklet-product .course-workspace-rail {
   background: var(--color-paper-warmth, #eef1ec);
   border-right: 1px solid var(--color-frost, #d5d9d0);
   color: var(--color-midnight-ink, #12160f);
 }
 
-.is-notion-product .course-workspace-identity {
+.is-booklet-product .course-workspace-identity {
   padding-bottom: 14px;
   border-bottom: 1px solid #ebebea;
 }
 
-.is-notion-product .course-workspace-identity span {
+.is-booklet-product .course-workspace-identity span {
   color: #9b9a97;
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
-.is-notion-product .course-workspace-identity strong {
+.is-booklet-product .course-workspace-identity strong {
   color: #1a1a18;
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-.is-notion-product .course-workspace-identity small {
+.is-booklet-product .course-workspace-identity small {
   color: #787774;
 }
 
-.is-notion-product .course-workspace-nav a {
+.is-booklet-product .course-workspace-nav a {
   border-radius: 6px;
   color: #37352f;
 }
 
-.is-notion-product .course-workspace-nav a:hover {
+.is-booklet-product .course-workspace-nav a:hover {
   background: #efefed;
   color: #1a1a18;
 }
 
-.is-notion-product .course-workspace-nav a.is-active {
+.is-booklet-product .course-workspace-nav a.is-active {
   background: #efefed;
   color: #1a1a18;
   font-weight: 600;
@@ -75,41 +75,41 @@
   border: 0;
 }
 
-.is-notion-product .course-workspace-progress {
+.is-booklet-product .course-workspace-progress {
   border-top: 1px solid #ebebea;
 }
 
-.is-notion-product .course-stage {
+.is-booklet-product .course-stage {
   border-radius: 8px;
   border: 1px solid transparent;
 }
 
-.is-notion-product .course-stage.is-current {
+.is-booklet-product .course-stage.is-current {
   background: #fff;
   border-color: #ebebea;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.04);
 }
 
-.is-notion-product .course-stage i {
+.is-booklet-product .course-stage i {
   background: #efefed;
   color: #787774;
   border-radius: 6px;
 }
 
-.is-notion-product .course-stage.is-complete i,
-.is-notion-product .course-stage.is-current i {
+.is-booklet-product .course-stage.is-complete i,
+.is-booklet-product .course-stage.is-current i {
   background: #1f6b45;
   color: #fff;
 }
 
-.is-notion-product.shell,
-.is-notion-product .shell,
-.shell.is-notion-product {
+.is-booklet-product.shell,
+.is-booklet-product .shell,
+.shell.is-booklet-product {
   background: var(--color-paper-warmth, #eef1ec);
 }
 
-.is-notion-product .today-brief.is-revision-studio,
-.is-notion-product .today-workbench.is-revision-studio {
+.is-booklet-product .today-brief.is-revision-studio,
+.is-booklet-product .today-workbench.is-revision-studio {
   border: 1px solid #e8e8e5;
   border-radius: 12px;
   background: #fff;
@@ -118,33 +118,33 @@
     0 18px 40px -28px rgba(15, 15, 15, 0.18);
 }
 
-.is-notion-product .today-brief.is-revision-studio {
+.is-booklet-product .today-brief.is-revision-studio {
   border-top-color: #e8e8e5;
 }
 
-.is-notion-product .materials-empty,
-.is-notion-product .materials-head {
+.is-booklet-product .materials-empty,
+.is-booklet-product .materials-head {
   border: 1px solid #e8e8e5;
   border-radius: 12px;
   background: #fff;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.03);
 }
 
-.is-notion-product .materials-empty h1,
-.is-notion-product .materials-head h1,
-.is-notion-product .today-title {
+.is-booklet-product .materials-empty h1,
+.is-booklet-product .materials-head h1,
+.is-booklet-product .today-title {
   color: #1a1a18;
   letter-spacing: -0.03em;
 }
 
-.is-notion-product .materials-empty-actions .cta,
-.is-notion-product .destination-actions .cta,
-.is-notion-product .cta {
+.is-booklet-product .materials-empty-actions .cta,
+.is-booklet-product .destination-actions .cta,
+.is-booklet-product .cta {
   border-radius: 8px;
 }
 
 /* First-run: workspace page, not bare form */
-.destination-page.is-notion-product {
+.destination-page.is-booklet-product {
   max-width: 720px;
   margin: 1.5rem auto 3rem;
   padding: 1.5rem 1.35rem 1.75rem;
@@ -156,21 +156,21 @@
     0 24px 56px -32px rgba(15, 15, 15, 0.22);
 }
 
-.destination-page.is-notion-product .destination-page-title {
+.destination-page.is-booklet-product .destination-page-title {
   color: #1a1a18;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
-.destination-page.is-notion-product .kicker {
+.destination-page.is-booklet-product .kicker {
   color: #787774;
 }
 
-.destination-page.is-notion-product .destination-support {
+.destination-page.is-booklet-product .destination-support {
   color: #787774;
 }
 
-.destination-page.is-notion-product .setup-progress {
+.destination-page.is-booklet-product .setup-progress {
   gap: 8px;
   padding: 10px;
   border: 1px solid #ebebea;
@@ -178,58 +178,58 @@
   background: var(--color-paper-warmth, #eef1ec);
 }
 
-.destination-page.is-notion-product .setup-progress li {
+.destination-page.is-booklet-product .setup-progress li {
   padding: 6px 10px;
   border-radius: 6px;
   color: #787774;
 }
 
-.destination-page.is-notion-product .setup-progress li[aria-current="step"] {
+.destination-page.is-booklet-product .setup-progress li[aria-current="step"] {
   background: #fff;
   color: #1a1a18;
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.04);
 }
 
-.destination-page.is-notion-product fieldset {
+.destination-page.is-booklet-product fieldset {
   border: 1px solid #ebebea;
   border-radius: 10px;
   padding: 1rem 1rem 1.1rem;
   background: var(--color-paper-warmth, #eef1ec);
 }
 
-.destination-page.is-notion-product legend {
+.destination-page.is-booklet-product legend {
   color: #37352f;
   font-weight: 600;
   padding: 0 0.35rem;
 }
 
-.destination-page.is-notion-product input:not([type="radio"]):not([type="checkbox"]) {
+.destination-page.is-booklet-product input:not([type="radio"]):not([type="checkbox"]) {
   border-radius: 8px;
   border: 1px solid #ebebea;
   background: #fff;
   box-shadow: none;
 }
 
-.destination-page.is-notion-product .time-choices label {
+.destination-page.is-booklet-product .time-choices label {
   border: 1px solid #ebebea;
   border-radius: 8px;
   background: #fff;
 }
 
-.destination-page.is-notion-product .time-choices label.is-selected {
+.destination-page.is-booklet-product .time-choices label.is-selected {
   background: #1f6b45;
   border-color: #1f6b45;
   color: #fff;
 }
 
-.destination-page.is-notion-product .setup-sample {
+.destination-page.is-booklet-product .setup-sample {
   border: 1px solid #ebebea;
   border-radius: 10px;
   background: var(--color-paper-warmth, #eef1ec);
 }
 
-.diagnosis-page.is-notion-product {
+.diagnosis-page.is-booklet-product {
   border: 1px solid #e8e8e5;
   border-radius: 12px;
   background: #fff;
@@ -237,27 +237,27 @@
   padding: 1.25rem;
 }
 
-.diagnosis-page.is-notion-product .diagnosis-panel,
-.diagnosis-page.is-notion-product .diagnosis-check {
+.diagnosis-page.is-booklet-product .diagnosis-panel,
+.diagnosis-page.is-booklet-product .diagnosis-check {
   border: 1px solid #ebebea;
   border-radius: 10px;
   background: var(--color-paper-warmth, #eef1ec);
 }
 
-.pricing-page.is-notion-product .pricing-plan {
+.pricing-page.is-booklet-product .pricing-plan {
   border: 1px solid var(--booklet-rule, #d5d9d0);
   border-radius: 4px;
   background: transparent;
   box-shadow: none;
 }
 
-.pricing-page.is-notion-product .pricing-plan.is-founding {
+.pricing-page.is-booklet-product .pricing-plan.is-founding {
   border-color: var(--booklet-kelus, #1f6b45);
   box-shadow: none;
   background: #f7f8f5;
 }
 
-.pricing-page.is-notion-product .pricing-plan .cta {
+.pricing-page.is-booklet-product .pricing-plan .cta {
   border-radius: 4px;
   background: #1f6b45;
   border-color: #1f6b45;
@@ -313,30 +313,30 @@
   border-color: #1f6b45;
 }
 
-.is-notion-product .cta,
-.is-notion-product .materials-empty-actions .cta,
-.is-notion-product .destination-actions .cta {
+.is-booklet-product .cta,
+.is-booklet-product .materials-empty-actions .cta,
+.is-booklet-product .destination-actions .cta {
   background: #1f6b45;
   border-color: #1f6b45;
   border-radius: 8px;
 }
 
-.is-notion-product .cta:hover,
-.is-notion-product .materials-empty-actions .cta:hover,
-.is-notion-product .destination-actions .cta:hover {
+.is-booklet-product .cta:hover,
+.is-booklet-product .materials-empty-actions .cta:hover,
+.is-booklet-product .destination-actions .cta:hover {
   background: #185536;
   border-color: #185536;
 }
 
 /* Empty states + materials head: page, not billboard */
-.is-notion-product .materials-empty,
-.is-notion-product .materials-head {
+.is-booklet-product .materials-empty,
+.is-booklet-product .materials-head {
   padding: 1.35rem 1.35rem 1.5rem;
 }
 
-.is-notion-product .materials-empty h1,
-.is-notion-product .materials-head h1,
-.is-notion-product .today-title {
+.is-booklet-product .materials-empty h1,
+.is-booklet-product .materials-head h1,
+.is-booklet-product .today-title {
   max-width: 18ch;
   color: #1a1a18;
   font-size: clamp(1.75rem, 3.5vw, 2.35rem);
@@ -345,47 +345,47 @@
   line-height: 1.15;
 }
 
-.is-notion-product .materials-empty .kicker,
-.is-notion-product .materials-head .kicker,
-.is-notion-product .materials-empty p,
-.is-notion-product .materials-head p {
+.is-booklet-product .materials-empty .kicker,
+.is-booklet-product .materials-head .kicker,
+.is-booklet-product .materials-empty p,
+.is-booklet-product .materials-head p {
   color: #787774;
 }
 
-.is-notion-product .material-drop:hover,
-.is-notion-product .material-drop.is-dragging {
+.is-booklet-product .material-drop:hover,
+.is-booklet-product .material-drop.is-dragging {
   border-color: #1f6b45;
   background: rgba(31, 107, 69, 0.06);
 }
 
 /* Today lead accents */
-.is-notion-product .today-workbench.is-revision-studio .today-lead-action,
-.is-notion-product .today-brief.is-revision-studio .today-lead-action {
+.is-booklet-product .today-workbench.is-revision-studio .today-lead-action,
+.is-booklet-product .today-brief.is-revision-studio .today-lead-action {
   border-left-color: #1f6b45;
 }
 
-.is-notion-product .today-lead-sequence li::before,
-.is-notion-product .plan-execution li::before,
-.is-notion-product .plan-time i {
+.is-booklet-product .today-lead-sequence li::before,
+.is-booklet-product .plan-execution li::before,
+.is-booklet-product .plan-time i {
   color: #1f6b45;
   background: transparent;
 }
 
-.is-notion-product .today-brief.is-revision-studio h1,
-.is-notion-product .today-workbench.is-revision-studio h1 {
+.is-booklet-product .today-brief.is-revision-studio h1,
+.is-booklet-product .today-workbench.is-revision-studio h1 {
   font-weight: 700;
   letter-spacing: -0.03em;
   color: #1a1a18;
 }
 
 /* First-run workspace page mark + callout */
-.destination-page.is-notion-product .destination-page-title {
+.destination-page.is-booklet-product .destination-page-title {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.destination-page.is-notion-product .notion-setup-page-mark {
+.destination-page.is-booklet-product .notion-setup-page-mark {
   width: 28px;
   height: 28px;
   border-radius: 8px;
@@ -395,7 +395,7 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-.destination-page.is-notion-product .setup-sample {
+.destination-page.is-booklet-product .setup-sample {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -409,39 +409,39 @@
   background: #f1f1ef;
 }
 
-.destination-page.is-notion-product .setup-sample .kicker {
+.destination-page.is-booklet-product .setup-sample .kicker {
   margin: 0 0 4px;
 }
 
-.destination-page.is-notion-product .setup-sample p {
+.destination-page.is-booklet-product .setup-sample p {
   margin: 0;
   color: #37352f;
   font-size: 0.95rem;
   line-height: 1.45;
 }
 
-.destination-page.is-notion-product .setup-sample-cta {
+.destination-page.is-booklet-product .setup-sample-cta {
   color: #1f6b45;
   font-weight: 600;
 }
 
-.destination-page.is-notion-product .destination-route {
+.destination-page.is-booklet-product .destination-route {
   display: none;
 }
 
-.destination-page.is-notion-product fieldset {
+.destination-page.is-booklet-product fieldset {
   border: 0;
   border-radius: 0;
   padding: 0.25rem 0 0;
   background: transparent;
 }
 
-.destination-page.is-notion-product legend {
+.destination-page.is-booklet-product legend {
   padding: 0;
   margin-bottom: 0.75rem;
 }
 
-.destination-page.is-notion-product input:not([type="radio"]):not([type="checkbox"]) {
+.destination-page.is-booklet-product input:not([type="radio"]):not([type="checkbox"]) {
   border: 0;
   border-bottom: 1px solid #ebebea;
   border-radius: 0;
@@ -449,7 +449,7 @@
   box-shadow: none;
 }
 
-.destination-page.is-notion-product input:not([type="radio"]):not([type="checkbox"]):focus {
+.destination-page.is-booklet-product input:not([type="radio"]):not([type="checkbox"]):focus {
   border-bottom-color: #1f6b45;
   outline: none;
 }
@@ -473,18 +473,18 @@
 }
 
 /* Empty states read as Notion pages */
-.is-notion-product .materials-empty {
+.is-booklet-product .materials-empty {
   max-width: 640px;
   margin-inline: auto;
 }
 
-.is-notion-product .materials-empty h1 {
+.is-booklet-product .materials-empty h1 {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.is-notion-product .materials-empty h1::before {
+.is-booklet-product .materials-empty h1::before {
   content: "";
   flex: 0 0 auto;
   width: 28px;
@@ -496,46 +496,46 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
-.is-notion-product .materials-empty .text-btn {
+.is-booklet-product .materials-empty .text-btn {
   color: #1f6b45;
   font-weight: 600;
 }
 
 /* Pricing as soft workspace band */
-.pricing-page.is-notion-product {
+.pricing-page.is-booklet-product {
   background: var(--color-paper-warmth, #eef1ec);
   padding-bottom: 3rem;
 }
 
-.pricing-page.is-notion-product .legal-panel {
+.pricing-page.is-booklet-product .legal-panel {
   border: 0;
   background: transparent;
   box-shadow: none;
 }
 
-.pricing-page.is-notion-product h1 {
+.pricing-page.is-booklet-product h1 {
   color: #1a1a18;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
 /* How it works — last major ledger holdout */
-.how-page.is-notion-product {
+.how-page.is-booklet-product {
   background: var(--color-paper-warmth, #eef1ec);
   color: #1a1a18;
 }
 
-.how-page.is-notion-product .how-hero {
+.how-page.is-booklet-product .how-hero {
   max-width: var(--page-max-width, 1120px);
   margin: 0 auto;
   padding: clamp(2.5rem, 6vh, 4rem) max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2)) 2rem;
 }
 
-.how-page.is-notion-product .kicker {
+.how-page.is-booklet-product .kicker {
   color: #787774;
 }
 
-.how-page.is-notion-product .how-title {
+.how-page.is-booklet-product .how-title {
   max-width: 16ch;
   color: #1a1a18;
   font-size: clamp(2.2rem, 5vw, 3.4rem);
@@ -544,11 +544,11 @@
   line-height: 1.05;
 }
 
-.how-page.is-notion-product .how-hero-foot p {
+.how-page.is-booklet-product .how-hero-foot p {
   color: #787774;
 }
 
-.how-page.is-notion-product .how-example-switcher {
+.how-page.is-booklet-product .how-example-switcher {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -557,13 +557,13 @@
   color: #787774;
 }
 
-.how-page.is-notion-product .how-example-switcher [role="tablist"] {
+.how-page.is-booklet-product .how-example-switcher [role="tablist"] {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.how-page.is-notion-product .how-example-switcher button {
+.how-page.is-booklet-product .how-example-switcher button {
   min-height: 32px;
   padding: 4px 12px;
   border: 0;
@@ -575,86 +575,86 @@
   cursor: pointer;
 }
 
-.how-page.is-notion-product .how-example-switcher button[aria-selected="true"] {
+.how-page.is-booklet-product .how-example-switcher button[aria-selected="true"] {
   background: #efefed;
   color: #1a1a18;
   font-weight: 600;
 }
 
-.how-page.is-notion-product .how-loop {
+.how-page.is-booklet-product .how-loop {
   border-top: 1px solid #ebebea;
   background: transparent;
 }
 
-.how-page.is-notion-product .how-loop > header {
+.how-page.is-booklet-product .how-loop > header {
   max-width: var(--page-max-width, 1120px);
   margin: 0 auto;
   padding-inline: max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2));
 }
 
-.how-page.is-notion-product .how-loop > header span {
+.how-page.is-booklet-product .how-loop > header span {
   color: #787774;
 }
 
-.how-page.is-notion-product .how-loop > ol > li {
+.how-page.is-booklet-product .how-loop > ol > li {
   max-width: var(--page-max-width, 1120px);
   margin: 0 auto;
   padding-inline: max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2));
   border-top: 1px solid #ebebea;
 }
 
-.how-page.is-notion-product .how-stage-number {
+.how-page.is-booklet-product .how-stage-number {
   color: #9b9a97;
   font-weight: 700;
 }
 
-.how-page.is-notion-product .how-stage-copy h2 {
+.how-page.is-booklet-product .how-stage-copy h2 {
   color: #1a1a18;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
-.how-page.is-notion-product .how-stage-copy p {
+.how-page.is-booklet-product .how-stage-copy p {
   color: #787774;
 }
 
-.how-page.is-notion-product .how-stage-visual > *,
-.how-page.is-notion-product .how-map-fragment,
-.how-page.is-notion-product .how-diagnosis-fragment,
-.how-page.is-notion-product .how-session-fragment {
+.how-page.is-booklet-product .how-stage-visual > *,
+.how-page.is-booklet-product .how-map-fragment,
+.how-page.is-booklet-product .how-diagnosis-fragment,
+.how-page.is-booklet-product .how-session-fragment {
   border: 0;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
 }
 
-.how-page.is-notion-product .how-principle {
+.how-page.is-booklet-product .how-principle {
   max-width: var(--page-max-width, 1120px);
   margin: 0 auto;
   padding: clamp(2.5rem, 6vh, 4rem) max(24px, calc((100vw - var(--page-max-width, 1120px)) / 2));
   border-top: 1px solid #ebebea;
 }
 
-.how-page.is-notion-product .how-principle h2 {
+.how-page.is-booklet-product .how-principle h2 {
   color: #1a1a18;
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
-.how-page.is-notion-product .how-principle dl {
+.how-page.is-booklet-product .how-principle dl {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
 }
 
-.how-page.is-notion-product .how-principle dl > div {
+.how-page.is-booklet-product .how-principle dl > div {
   padding: 1rem;
   border: 1px solid #ebebea;
   border-radius: 10px;
   background: #fff;
 }
 
-.how-page.is-notion-product .how-principle dt {
+.how-page.is-booklet-product .how-principle dt {
   color: #787774;
   font-size: 0.7rem;
   font-weight: 600;
@@ -662,12 +662,12 @@
   text-transform: uppercase;
 }
 
-.how-page.is-notion-product .how-principle dd {
+.how-page.is-booklet-product .how-principle dd {
   margin: 0.35rem 0 0;
   color: #1a1a18;
 }
 
-.how-page.is-notion-product .how-final {
+.how-page.is-booklet-product .how-final {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -682,27 +682,27 @@
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.03);
 }
 
-.how-page.is-notion-product .how-final p {
+.how-page.is-booklet-product .how-final p {
   margin: 0;
   color: #1a1a18;
   font-weight: 600;
 }
 
 @media (max-width: 900px) {
-  .destination-page.is-notion-product {
+  .destination-page.is-booklet-product {
     margin: 1rem 0 2rem;
     padding: 1.15rem 1rem 1.35rem;
   }
 
-  .how-page.is-notion-product .how-principle dl {
+  .how-page.is-booklet-product .how-principle dl {
     grid-template-columns: 1fr;
   }
 
-  .how-page.is-notion-product .how-hero,
-  .how-page.is-notion-product .how-loop > header,
-  .how-page.is-notion-product .how-loop > ol > li,
-  .how-page.is-notion-product .how-principle,
-  .how-page.is-notion-product .how-final {
+  .how-page.is-booklet-product .how-hero,
+  .how-page.is-booklet-product .how-loop > header,
+  .how-page.is-booklet-product .how-loop > ol > li,
+  .how-page.is-booklet-product .how-principle,
+  .how-page.is-booklet-product .how-final {
     padding-inline: 16px;
   }
 }
@@ -717,7 +717,7 @@
 .is-notion-system .site-auth-button { border-color: var(--color-frost); border-radius: 8px; color: #111; background: white; }
 .is-notion-system .site-header-action,
 .is-notion-system .cta,
-.is-notion-system .is-notion-product .cta { background: var(--color-notion-blue); border-color: var(--color-notion-blue); min-height: 44px; }
+.is-notion-system .is-booklet-product .cta { background: var(--color-notion-blue); border-color: var(--color-notion-blue); min-height: 44px; }
 .is-notion-system .site-header-action:hover,
 .is-notion-system .cta:hover { background: #185536; border-color: #185536; }
 .is-notion-system :is(a, button, summary, input, textarea, select):focus-visible { outline: 2px solid var(--color-notion-blue); outline-offset: 3px; }
@@ -747,49 +747,49 @@
 .notion-board .notion-flow-reveal { width: 100%; min-height: 44px; cursor: pointer; font: inherit; text-align: left; }
 .notion-board .notion-flow-reveal:hover { background: var(--color-sky-tint); }
 .board-answer { margin: 12px 0; padding: 14px; background: #fff7df; border-radius: 8px; font-size: 14px; line-height: 1.6; color: #37352f; }
-.is-notion-system :is(.folio-product-stage, .folio-chapter, .folio-method, .how-page.is-notion-product, .pricing-page.is-notion-product) { background: var(--color-paper-warmth); }
+.is-notion-system :is(.folio-product-stage, .folio-chapter, .folio-method, .how-page.is-booklet-product, .pricing-page.is-booklet-product) { background: var(--color-paper-warmth); }
 .is-notion-system :is(.folio-chapter-art, .how-stage-visual) { box-shadow: none; }
 
 /* A compact course rail and a spacious, consistent work surface. */
-.course-workspace-layout.is-notion-product { gap: 32px; background: var(--color-paper-warmth); }
-.is-notion-product .course-workspace-rail { background: transparent; padding-right: 20px; }
-.is-notion-product .shell,
-.shell.is-notion-product { background: transparent; min-width: 0; }
-.is-notion-product .course-workspace-progress { margin-top: 24px; padding-top: 20px; }
-.is-notion-product .course-workspace-progress li i { color: var(--color-steel); background: #ebe9e6; border-color: #dedbd7; }
-.is-notion-product .course-workspace-progress li.is-complete i { color: #1f6b45; background: var(--color-sky-tint); }
-.is-notion-product .course-workspace-progress li.is-current i { color: white; background: var(--color-notion-blue); border-color: var(--color-notion-blue); }
-.is-notion-product .course-workspace-identity span,
-.is-notion-product .course-workspace-identity small { color: var(--color-steel); }
-.is-notion-product .course-workspace-nav a.is-active::before { display: none; }
-.is-notion-product .shell-context-action { min-height: 32px; margin-bottom: 8px; }
-.is-notion-product .today-brief.is-revision-studio { padding: 24px 28px; box-shadow: none; margin-bottom: 20px; }
-.is-notion-product .today-brief.is-revision-studio h1 { font-size: clamp(32px, 3.5vw, 44px); line-height: 1.1; }
-.is-notion-product .today-workbench.is-revision-studio { padding: 24px 28px; box-shadow: none; }
-.is-notion-product .today-workbench-heading { display: block; margin-bottom: 16px; }
-.is-notion-product .today-route-execution { border-top: 0; }
-.is-notion-product .today-workbench.is-revision-studio .today-lead-action { padding: 24px; background: #f7f8f5; border: 1px solid #d5d9d0; border-radius: 4px; }
-.is-notion-product .today-lead-main h3 { color: #111; font-weight: 600; }
-.is-notion-product .today-workbench.is-revision-studio .today-lead-main h3 { font-size: clamp(26px, 3vw, 36px); }
-.is-notion-product .today-queue-label { padding-top: 8px; }
-.is-notion-product :is(.materials-head, .materials-empty, .diagnosis-panel, .diagnosis-check) { box-shadow: none; }
-.is-notion-product .materials-head { margin-bottom: 24px; }
-.is-notion-product .materials-empty h1::before { display: none; }
-.is-notion-product :is(.today-title, .materials-head h1, .materials-empty h1) { line-height: 1.15; font-weight: 600; }
-.is-notion-product :is(.material-drop, .material-card, .concept-inspector, .map-tools input) { border-radius: 12px; border-color: var(--color-frost); box-shadow: none; }
-.is-notion-product :is(.materials-empty, .materials-head) p { color: var(--color-steel); }
+.course-workspace-layout.is-booklet-product { gap: 32px; background: var(--color-paper-warmth); }
+.is-booklet-product .course-workspace-rail { background: transparent; padding-right: 20px; }
+.is-booklet-product .shell,
+.shell.is-booklet-product { background: transparent; min-width: 0; }
+.is-booklet-product .course-workspace-progress { margin-top: 24px; padding-top: 20px; }
+.is-booklet-product .course-workspace-progress li i { color: var(--color-steel); background: #ebe9e6; border-color: #dedbd7; }
+.is-booklet-product .course-workspace-progress li.is-complete i { color: #1f6b45; background: var(--color-sky-tint); }
+.is-booklet-product .course-workspace-progress li.is-current i { color: white; background: var(--color-notion-blue); border-color: var(--color-notion-blue); }
+.is-booklet-product .course-workspace-identity span,
+.is-booklet-product .course-workspace-identity small { color: var(--color-steel); }
+.is-booklet-product .course-workspace-nav a.is-active::before { display: none; }
+.is-booklet-product .shell-context-action { min-height: 32px; margin-bottom: 8px; }
+.is-booklet-product .today-brief.is-revision-studio { padding: 24px 28px; box-shadow: none; margin-bottom: 20px; }
+.is-booklet-product .today-brief.is-revision-studio h1 { font-size: clamp(32px, 3.5vw, 44px); line-height: 1.1; }
+.is-booklet-product .today-workbench.is-revision-studio { padding: 24px 28px; box-shadow: none; }
+.is-booklet-product .today-workbench-heading { display: block; margin-bottom: 16px; }
+.is-booklet-product .today-route-execution { border-top: 0; }
+.is-booklet-product .today-workbench.is-revision-studio .today-lead-action { padding: 24px; background: #f7f8f5; border: 1px solid #d5d9d0; border-radius: 4px; }
+.is-booklet-product .today-lead-main h3 { color: #111; font-weight: 600; }
+.is-booklet-product .today-workbench.is-revision-studio .today-lead-main h3 { font-size: clamp(26px, 3vw, 36px); }
+.is-booklet-product .today-queue-label { padding-top: 8px; }
+.is-booklet-product :is(.materials-head, .materials-empty, .diagnosis-panel, .diagnosis-check) { box-shadow: none; }
+.is-booklet-product .materials-head { margin-bottom: 24px; }
+.is-booklet-product .materials-empty h1::before { display: none; }
+.is-booklet-product :is(.today-title, .materials-head h1, .materials-empty h1) { line-height: 1.15; font-weight: 600; }
+.is-booklet-product :is(.material-drop, .material-card, .concept-inspector, .map-tools input) { border-radius: 12px; border-color: var(--color-frost); box-shadow: none; }
+.is-booklet-product :is(.materials-empty, .materials-head) p { color: var(--color-steel); }
 .is-notion-system .map-tools input { min-height: 44px; }
 
 /* Setup fields should look editable and retain a visible focus ring. */
-.destination-page.is-notion-product { margin: 32px auto 64px; width: min(720px, calc(100% - 32px)); padding: clamp(24px, 4vw, 40px); box-shadow: none; }
-.destination-page.is-notion-product .notion-setup-page-mark { background: #ffb110; box-shadow: none; }
-.destination-page.is-notion-product input:not([type="radio"]):not([type="checkbox"]) { border: 1px solid #bdb9b4; border-radius: 8px; background: #fff; min-height: 48px; padding: 10px 12px; font-size: 16px; }
-.destination-page.is-notion-product input:focus-visible { outline: 2px solid var(--color-notion-blue); outline-offset: 2px; }
-.destination-page.is-notion-product .time-choices label { min-height: 60px; }
-.destination-page.is-notion-product .time-choices label.is-selected { background: var(--color-sky-tint); color: #1f6b45; border-color: var(--color-notion-blue); }
-.destination-page.is-notion-product .time-choices label:focus-within { outline: 2px solid var(--color-notion-blue); outline-offset: 3px; }
-.destination-page.is-notion-product .setup-sample { border-left: 1px solid var(--color-frost); background: var(--color-paper-warmth); }
-.destination-page.is-notion-product .destination-support { color: var(--color-steel); }
+.destination-page.is-booklet-product { margin: 32px auto 64px; width: min(720px, calc(100% - 32px)); padding: clamp(24px, 4vw, 40px); box-shadow: none; }
+.destination-page.is-booklet-product .notion-setup-page-mark { background: #ffb110; box-shadow: none; }
+.destination-page.is-booklet-product input:not([type="radio"]):not([type="checkbox"]) { border: 1px solid #bdb9b4; border-radius: 8px; background: #fff; min-height: 48px; padding: 10px 12px; font-size: 16px; }
+.destination-page.is-booklet-product input:focus-visible { outline: 2px solid var(--color-notion-blue); outline-offset: 2px; }
+.destination-page.is-booklet-product .time-choices label { min-height: 60px; }
+.destination-page.is-booklet-product .time-choices label.is-selected { background: var(--color-sky-tint); color: #1f6b45; border-color: var(--color-notion-blue); }
+.destination-page.is-booklet-product .time-choices label:focus-within { outline: 2px solid var(--color-notion-blue); outline-offset: 3px; }
+.destination-page.is-booklet-product .setup-sample { border-left: 1px solid var(--color-frost); background: var(--color-paper-warmth); }
+.destination-page.is-booklet-product .destination-support { color: var(--color-steel); }
 
 /* The study session is the same paper notebook, with room to write. */
 .is-notion-system .study-shell { max-width: 880px; width: calc(100% - 40px); padding-top: 24px; }
@@ -811,17 +811,17 @@
   .is-notion-system .kelus-hero.home-hero.is-folio.is-notion { grid-template-columns: 1fr; padding: 32px 20px 40px; gap: 32px; }
   .is-notion-system .folio-hero-copy { max-width: 640px; }
   .is-notion-system .folio-hero-visual { max-width: 640px; width: 100%; }
-  .course-workspace-layout.is-notion-product { gap: 16px; }
-  .is-notion-product .course-workspace-progress { margin-top: 8px; padding-top: 8px; }
-  .is-notion-product .today-brief.is-revision-studio,
-  .is-notion-product .today-workbench.is-revision-studio { padding: 20px; }
+  .course-workspace-layout.is-booklet-product { gap: 16px; }
+  .is-booklet-product .course-workspace-progress { margin-top: 8px; padding-top: 8px; }
+  .is-booklet-product .today-brief.is-revision-studio,
+  .is-booklet-product .today-workbench.is-revision-studio { padding: 20px; }
 }
 @media (max-width: 480px) {
   .is-notion-system .kelus-hero.is-folio .folio-hero-copy h1 { font-size: 40px; }
   .is-notion-system .kelus-hero.is-folio .home-lede { font-size: 16px; }
-  .is-notion-product .today-brief.is-revision-studio,
-  .is-notion-product .today-workbench.is-revision-studio { padding: 16px; }
-  .is-notion-product .today-workbench.is-revision-studio .today-lead-action { padding: 16px; }
+  .is-booklet-product .today-brief.is-revision-studio,
+  .is-booklet-product .today-workbench.is-revision-studio { padding: 16px; }
+  .is-booklet-product .today-workbench.is-revision-studio .today-lead-action { padding: 16px; }
   .is-notion-system .study-shell { width: calc(100% - 24px); }
   .is-notion-system .study-question { padding: 20px 16px; }
   .is-notion-system .study-question .cta { width: 100%; justify-content: center; }
@@ -890,33 +890,33 @@
 .is-notion-system .home .site-footer-inner,
 .is-notion-system .home .site-footer-note { max-width: 1200px; margin-inline: auto; }
 .is-notion-system .home .site-footer-note { margin-top: 16px; }
-.destination-page.is-notion-product .destination-form { width: 100%; padding: 0; margin: 0; }
-.destination-page.is-notion-product .destination-form legend { font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: 0; margin-bottom: 16px; }
-.destination-page.is-notion-product .destination-pair { gap: 16px; }
-.destination-page.is-notion-product .destination-course-fields { margin-bottom: 20px; }
-.destination-page.is-notion-product .destination-pair + .destination-support { margin-top: 20px; margin-bottom: 8px; }
-.destination-page.is-notion-product .target-input b { top: 50%; transform: translateY(-50%); right: 12px; }
+.destination-page.is-booklet-product .destination-form { width: 100%; padding: 0; margin: 0; }
+.destination-page.is-booklet-product .destination-form legend { font-size: 18px; font-weight: 600; line-height: 1.4; letter-spacing: 0; margin-bottom: 16px; }
+.destination-page.is-booklet-product .destination-pair { gap: 16px; }
+.destination-page.is-booklet-product .destination-course-fields { margin-bottom: 20px; }
+.destination-page.is-booklet-product .destination-pair + .destination-support { margin-top: 20px; margin-bottom: 8px; }
+.destination-page.is-booklet-product .target-input b { top: 50%; transform: translateY(-50%); right: 12px; }
 .is-notion-system .study-progress i { background: var(--color-notion-blue); }
-.destination-page.is-notion-product .time-choices { gap: 8px; }
-.is-notion-product .material-ingest { padding: 24px; border: 1px solid var(--color-frost); border-radius: 12px; background: white; }
-.is-notion-product .material-ingest-title { margin-bottom: 16px; }
-.is-notion-product .material-ingest-title h2 { font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; }
-.is-notion-product .material-role-field { margin-bottom: 20px; }
+.destination-page.is-booklet-product .time-choices { gap: 8px; }
+.is-booklet-product .material-ingest { padding: 24px; border: 1px solid var(--color-frost); border-radius: 12px; background: white; }
+.is-booklet-product .material-ingest-title { margin-bottom: 16px; }
+.is-booklet-product .material-ingest-title h2 { font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; }
+.is-booklet-product .material-role-field { margin-bottom: 20px; }
 @media (max-width: 900px) {
-  .is-notion-product .course-workspace-rail { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
-  .is-notion-product .course-workspace-identity { min-width: 0; }
-  .is-notion-product .course-workspace-identity small { display: none; }
-  .is-notion-product .course-workspace-progress { flex-shrink: 0; margin: 0; padding: 0; border: 0; }
-  .is-notion-product .course-workspace-progress > div { margin: 0; }
-  .is-notion-product .course-workspace-progress ol { margin-top: 4px; }
-  .is-notion-product .course-workspace-progress li small { display: none; }
-  .is-notion-product .material-ingest { padding: 16px; }
+  .is-booklet-product .course-workspace-rail { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
+  .is-booklet-product .course-workspace-identity { min-width: 0; }
+  .is-booklet-product .course-workspace-identity small { display: none; }
+  .is-booklet-product .course-workspace-progress { flex-shrink: 0; margin: 0; padding: 0; border: 0; }
+  .is-booklet-product .course-workspace-progress > div { margin: 0; }
+  .is-booklet-product .course-workspace-progress ol { margin-top: 4px; }
+  .is-booklet-product .course-workspace-progress li small { display: none; }
+  .is-booklet-product .material-ingest { padding: 16px; }
   .is-notion-system .home .folio-product-stage { padding-block: 48px; }
   .is-notion-system .home .folio-chapter { padding-block: 56px; }
   .is-notion-system .home .folio-method { padding-block: 56px; }
   .is-notion-system .home .folio-close.home-close { padding: 56px 16px 48px; }
   .is-notion-system .home .site-footer { padding-inline: 16px; }
-  .is-notion-product .today-brief.is-revision-studio { padding: 16px; }
-  .is-notion-product .today-brief.is-revision-studio h1 { font-size: 30px; }
-  .is-notion-product .today-workbench.is-revision-studio .today-lead-main { margin-top: 12px; gap: 12px; }
+  .is-booklet-product .today-brief.is-revision-studio { padding: 16px; }
+  .is-booklet-product .today-brief.is-revision-studio h1 { font-size: 30px; }
+  .is-booklet-product .today-workbench.is-revision-studio .today-lead-main { margin-top: 12px; gap: 12px; }
 }
