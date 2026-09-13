@@ -3797,6 +3797,7 @@ h3,
 .site-header .site-footer-mark {
   flex: 0 0 auto;
   margin-right: auto;
+  font-size: 24px;
   transition: color var(--dur-product-micro) var(--ease-enter), transform var(--dur-product-micro) var(--ease-enter);
 }
 
@@ -5596,7 +5597,7 @@ h3,
 
 @media (max-width: 720px) {
   .site-header.is-session .site-header-inner { flex-wrap: nowrap; padding-top: 0; }
-  .site-header.is-session .site-footer-mark { font-size: 20px; }
+  .site-header.is-session .site-footer-mark { font-size: 24px; }
   .site-session-label { display: none; }
   .site-session-return { margin-left: auto; text-align: right; }
   .setup-progress { margin: var(--spacing-24) 0 var(--spacing-40); }

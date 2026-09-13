@@ -805,6 +805,10 @@ body.is-booklet-system .site-footer .site-footer-mark {
   color: #111;
 }
 
+body.is-booklet-system .site-header .site-footer-mark {
+  font-size: 24px;
+}
+
 /* Session chrome: sentence case, quiet ink */
 body.is-booklet-system .site-session-label {
   text-transform: none !important;
