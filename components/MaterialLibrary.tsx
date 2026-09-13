@@ -132,7 +132,7 @@ function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMater
   );
 }
 
-export function MaterialLibrary() {
+export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {}) {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const { state, confirmConcepts, useDemo: loadDemo } = useLearner();
@@ -181,16 +181,15 @@ export function MaterialLibrary() {
   }, [phase]);
 
   if (!state.onboardingCompleted || !course) {
-    return (
-      <AppShell>
+    const gate = (
         <FirstRunGate
           kicker="Course material"
           title="Set my exam first."
           body="Materials is your source shelf — syllabus and lecture PDFs stay with the exam. Confirmed pages become topics on the map next."
           preview="materials"
         />
-      </AppShell>
     );
+    return embedded ? gate : <AppShell>{gate}</AppShell>;
   }
 
   const courseMaterials = materials.filter((item) => item.courseId === course.id);
@@ -448,8 +447,8 @@ export function MaterialLibrary() {
     }
   }
 
-  return (
-    <AppShell>
+  const shelf = (
+      <>
       <header className={`materials-head${readySummary ? " is-complete" : ""}`}>
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
         <p>
@@ -650,6 +649,7 @@ export function MaterialLibrary() {
         <p className="kicker">Private and reviewable</p>
         <p>{auth.user ? "Signed-in materials are stored in your private Kelus account and cached on this device. " : "Materials stay on this device until you sign in. "}Kelus uses only the concepts you confirm, and every learning activity keeps its source page visible.</p>
       </aside>
-    </AppShell>
+      </>
   );
+  return embedded ? shelf : <AppShell>{shelf}</AppShell>;
 }

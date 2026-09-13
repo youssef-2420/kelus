@@ -8,6 +8,7 @@ import "./booklet-paper.css";
 import "./paper-loop.css";
 import "./hero-poster.css";
 import "./exam-booklet.css";
+import "./workbench.css";
 import "./view-transitions.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";

@@ -78,6 +78,12 @@ export default function MapPage() {
       <p className="kicker">Topic map</p>
       <h1 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course topics, mapped"}</h1>
       <p className="lede-line">{state.diagnosisCompleted ? "Sorted by exam importance, with links when topics depend on each other." : "These are the topics you confirmed. Diagnosis will add the first evidence about what you know."}</p>
+      {state.diagnosisCompleted ? (
+        <p className="workbench-bridge">
+          <span>Today’s next stop comes from this map.</span>
+          <Link className="text-btn" href="/today">Open Today’s route <span aria-hidden="true">→</span></Link>
+        </p>
+      ) : null}
       <div className="map-tools">
         <label htmlFor="topic-filter">Find a topic<input id="topic-filter" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search your course topics" /></label>
         <span role="status">{concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase())).length} of {concepts.length} topics</span>

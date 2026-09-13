@@ -24,7 +24,8 @@ const RATINGS: Array<{ value: SelfRating; label: string }> = [
   { value: "strong", label: "Strong" },
 ];
 
-export function InitialDiagnosis({ snapshot, onComplete }: {
+export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
+  embedded?: boolean;
   snapshot: LearnerSnapshot;
   onComplete: (input: {
     ratings: Record<string, SelfRating>;
@@ -135,8 +136,8 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
     transition: { duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase },
   };
 
-  return (
-    <AppShell>
+  const panel = (
+    <>
     <div className="diagnosis-page is-booklet-product">
       <div className="flow-context diagnosis-context"><span>One quick evidence check · then today’s first stop</span><b>Initial estimate</b></div>
       <AnimatePresence mode="wait" initial={false}>
@@ -234,6 +235,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
       ) : null}
       </AnimatePresence>
     </div>
-    </AppShell>
+    </>
   );
+  return embedded ? panel : <AppShell>{panel}</AppShell>;
 }
