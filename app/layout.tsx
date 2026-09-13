@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, Newsreader } from "next/font/google";
+import { IBM_Plex_Sans, Literata } from "next/font/google";
 import "./globals.css";
 import "./revision-studio.css";
 import "./home-folio.css";
@@ -17,7 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 
-/* Marked-script system: Newsreader (essay) + IBM Plex Sans (UI).
+/* Marked-script system: Literata (reading / display) + IBM Plex Sans (UI).
    Keep --font-inter / --font-source-serif variable names for existing CSS. */
 const plex = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -26,10 +26,10 @@ const plex = IBM_Plex_Sans({
   display: "swap",
 });
 
-const newsreader = Newsreader({
+const literata = Literata({
   subsets: ["latin"],
   variable: "--font-source-serif",
-  weight: ["400", "500", "600", "700"],
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -48,8 +48,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${plex.variable} ${newsreader.variable}`} data-scroll-behavior="smooth">
-      <body className={`${plex.variable} ${newsreader.variable} is-booklet-system`}>
+    <html lang="en" className={`${plex.variable} ${literata.variable}`} data-scroll-behavior="smooth">
+      <body className={`${plex.variable} ${literata.variable} is-booklet-system`}>
         <GoogleAnalytics />
         <a className="skip" href="#main">Skip to content</a>
         <AuthProvider>

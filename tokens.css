@@ -19,7 +19,7 @@
   --color-amethyst-edge: #1f6b45;
 
   --font-ledger: var(--font-inter), "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: var(--font-source-serif), Newsreader, Georgia, "Times New Roman", serif;
+  --font-display: var(--font-source-serif), Literata, Georgia, "Times New Roman", serif;
   --font-sans: var(--font-ledger);
   --font-editorial: var(--font-display);
 

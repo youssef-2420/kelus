@@ -736,7 +736,7 @@
 .is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet { background: var(--color-paper-warmth); min-height: 0; padding-block: clamp(40px, 5vw, 72px); align-items: center; gap: clamp(32px, 5vw, 72px); }
 .is-booklet-system .folio-hero-atmosphere { display: none; }
 .is-booklet-system .kelus-hero.is-folio .folio-hero-copy { padding: 0; }
-.is-booklet-system .kelus-hero.is-folio .folio-hero-copy h1 { color: #111; font-size: clamp(40px, 4.5vw, 64px); line-height: 1.08; letter-spacing: -.045em; }
+.is-booklet-system .kelus-hero.is-folio .folio-hero-copy h1 { color: #111; font-family: var(--font-editorial); font-optical-sizing: auto; font-size: clamp(40px, 4.5vw, 58px); font-weight: 600; line-height: 1.1; letter-spacing: -.028em; }
 .is-booklet-system .kelus-hero.is-folio .folio-hero-copy h1 span { color: #111; }
 .is-booklet-system .kelus-hero.is-folio .home-lede { max-width: 38ch; font-size: 18px; line-height: 1.55; }
 .is-booklet-system .kelus-hero.is-folio .home-secondary { background: transparent; border: 1px solid #aeb6a8; color: #12160f; border-radius: 999px; }

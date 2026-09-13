@@ -1,7 +1,7 @@
 /*
   Kelus homepage — “marked script” system
   White paper field, ink, one pass-mark green.
-  Display = Newsreader (essay). UI = IBM Plex Sans (via --font-inter).
+  Display = Literata (essay). UI = IBM Plex Sans (via --font-inter).
 */
 
 body.is-booklet-system {
@@ -19,7 +19,7 @@ body.is-booklet-system {
   --border-hairline: var(--booklet-rule);
 
   --font-booklet: var(--font-inter), "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-editorial: var(--font-source-serif), Newsreader, Georgia, "Times New Roman", serif;
+  --font-editorial: var(--font-source-serif), Literata, Georgia, "Times New Roman", serif;
   --font-display: var(--font-editorial);
   --font-sans: var(--font-booklet);
 
@@ -28,13 +28,18 @@ body.is-booklet-system {
   font-family: var(--font-sans);
 }
 
+/* Literata opsz: display cuts for large type, text cuts for reading */
+body.is-booklet-system :is(h1, h2, h3, h4, .home-lede, .poster-sample-intro p) {
+  font-optical-sizing: auto;
+}
+
 html {
   scroll-padding-top: 5.25rem;
 }
 
 /* ── Header: always paper on home; compact after hero ── */
 body.is-booklet-system .site-header.is-home {
-  background: rgba(238, 241, 236, 0.92);
+  background: rgba(255, 255, 255, 0.92);
   border-bottom: 1px solid var(--booklet-rule);
   backdrop-filter: blur(12px) saturate(140%);
 }
@@ -86,28 +91,32 @@ body.is-booklet-system .is-poster .poster-copy h1 {
   max-width: 13.5ch;
   margin: 0;
   font-family: var(--font-editorial);
-  font-size: clamp(2.45rem, 5.6vw, 3.85rem) !important;
-  font-weight: 560 !important;
-  line-height: 1.02;
-  letter-spacing: -0.045em;
+  font-optical-sizing: auto;
+  font-size: clamp(2.5rem, 5.2vw, 3.6rem) !important;
+  font-weight: 600 !important;
+  line-height: 1.1;
+  letter-spacing: -0.028em;
   color: var(--booklet-ink);
 }
 
 body.is-booklet-system .is-poster .hero-line-break {
   display: block;
-  margin-top: 0.08em;
+  margin-top: 0.1em;
   color: var(--booklet-mute);
-  font-weight: 400;
+  font-weight: 450;
   font-size: 0.94em;
-  letter-spacing: -0.035em;
+  letter-spacing: -0.02em;
 }
 
 body.is-booklet-system .is-poster .home-lede {
-  max-width: 32ch;
-  margin: 18px 0 0;
+  max-width: 34ch;
+  margin: 20px 0 0;
   font-family: var(--font-editorial);
-  font-size: 18px;
-  line-height: 1.4;
+  font-optical-sizing: auto;
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
   color: var(--booklet-mute);
 }
 
@@ -1531,7 +1540,7 @@ body.is-booklet-system .pricing-page.is-booklet-pricing .pricing-offer-head {
 
 body.is-booklet-system .pricing-page.is-booklet-pricing .pricing-offer h2 {
   margin: 0;
-  font-family: var(--font-display), Newsreader, Georgia, serif;
+  font-family: var(--font-display), Literata, Georgia, serif;
   font-weight: 550;
   font-size: clamp(1.35rem, 2.4vw, 1.75rem);
   letter-spacing: -0.02em;
@@ -1546,7 +1555,7 @@ body.is-booklet-system .pricing-page.is-booklet-pricing .pricing-offer-lede {
 
 body.is-booklet-system .pricing-page.is-booklet-pricing .pricing-price {
   color: var(--booklet-ink);
-  font-family: var(--font-display), Newsreader, Georgia, serif;
+  font-family: var(--font-display), Literata, Georgia, serif;
 }
 
 body.is-booklet-system .pricing-page.is-booklet-pricing .pricing-offer .cta,
