@@ -182,9 +182,9 @@ function TodayBody() {
         </div>
       </section>
 
-      <section className="today-workbench is-booklet-today" aria-labelledby="route-title">
-        <h2 id="route-title" className="today-workbench-heading">
-          Next
+      <section className="today-workbench is-booklet-today" aria-labelledby="today-lead-heading">
+        <h2 id="today-lead-heading" className="today-workbench-heading sr-only">
+          Start here
         </h2>
         <TodayRoute
           route={route}

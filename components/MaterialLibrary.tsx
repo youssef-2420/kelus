@@ -611,8 +611,10 @@ export function MaterialLibrary() {
               ))}
             </ol>
             <div className="concept-confirmation-actions">
-              <button type="button" className="text-btn" onClick={() => dispatch({ type: "REVIEW_LATER" })}>Review later</button>
               <button type="button" className="cta" disabled={!selectedIds.size} onClick={buildMap}>Build my topic map <span aria-hidden="true">→</span></button>
+              <div className="concept-confirmation-secondary">
+                <button type="button" onClick={() => dispatch({ type: "REVIEW_LATER" })}>Review later</button>
+              </div>
             </div>
           </motion.section>
         ) : null}

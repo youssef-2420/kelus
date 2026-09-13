@@ -37,7 +37,11 @@ export function SiteHeader() {
     return () => document.removeEventListener("pointerdown", close);
   }, []);
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
-  const visibleLinks = links;
+  // In the study loop, keep chrome to Today / Materials / Map.
+  // Marketing links stay in `links` (footer + tests) but leave product focus alone.
+  const visibleLinks = inProduct
+    ? links.filter((link) => link.href === "/today" || link.href === "/materials" || link.href === "/map")
+    : links;
 
   return (
     <header
