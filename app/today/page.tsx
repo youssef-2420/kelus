@@ -6,6 +6,7 @@ import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
+import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { TodayRoute } from "@/components/TodayRoute";
 import { useLearner } from "@/components/LearnerProvider";
 import { trackEvent } from "@/lib/analytics";
@@ -75,25 +76,33 @@ function TodayBody() {
   if (!state.snapshot.concepts.length) {
     return (
       <AppShell>
-        <section className="materials-empty">
-          <p className="kicker">Materials</p>
-          <h1>Bring in one real source.</h1>
-          <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
-          <div className="materials-empty-actions">
-            <button type="button" className="cta" onClick={() => loadDemo()}>
-              Try sample (~1 min) <span aria-hidden="true">→</span>
-            </button>
-            <Link className="text-btn" href="/materials">
-              Add course material <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </section>
+        <div className="workbench-chapter" data-chapter="materials">
+          <p className="workbench-chapter-label">Chapter 2 · Materials</p>
+          <section className="materials-empty workbench-chapter-intro">
+            <p className="kicker">Materials</p>
+            <h1>Bring in one real source.</h1>
+            <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
+            <div className="materials-empty-actions">
+              <button type="button" className="cta" onClick={() => loadDemo()}>
+                Try sample (~1 min) <span aria-hidden="true">→</span>
+              </button>
+            </div>
+          </section>
+          <MaterialLibrary embedded />
+        </div>
       </AppShell>
     );
   }
 
   if (!state.diagnosisCompleted) {
-    return <InitialDiagnosis snapshot={state.snapshot} onComplete={finishDiagnosis} />;
+    return (
+      <AppShell>
+        <div className="workbench-chapter" data-chapter="check">
+          <p className="workbench-chapter-label">Chapter 3 · Quick check</p>
+          <InitialDiagnosis snapshot={state.snapshot} onComplete={finishDiagnosis} embedded />
+        </div>
+      </AppShell>
+    );
   }
 
   const { snapshot, nowIso } = state;
@@ -162,6 +171,7 @@ function TodayBody() {
         )
       }
     >
+      <div className="workbench-focus is-ready">
       <section className="today-brief is-booklet-today" aria-labelledby="today-title">
         <div className="today-brief-copy">
           <p className="kicker">Today</p>
@@ -195,6 +205,7 @@ function TodayBody() {
           startLabel={openSession ? "Resume session" : undefined}
         />
       </section>
+      </div>
     </AppShell>
   );
 }

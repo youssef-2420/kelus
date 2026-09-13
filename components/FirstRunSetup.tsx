@@ -55,6 +55,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
         <p className="destination-support">
           Name the course and exam date. Next, add lessons and practice what you remember.
         </p>
+        <p className="workbench-chapter-label">Chapter 1 · Exam</p>
         <p className="setup-sequence" aria-label="Getting started">
           <span aria-current="step">1 Exam</span>
           <span aria-hidden="true">·</span>
