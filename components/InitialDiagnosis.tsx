@@ -177,7 +177,7 @@ export function InitialDiagnosis({ snapshot, onComplete }: {
             </button>
             <button
               type="button"
-              className="text-btn diagnosis-skip"
+              className="diagnosis-skip"
               disabled={!allRated}
               onClick={() => {
                 trackEvent({ name: "diagnosis_completed", retrieval_count: 0 });

@@ -2150,7 +2150,9 @@ button, input, textarea { font: inherit; }
 }
 .diagnosis-cta {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-12, 0.75rem);
   margin-top: var(--space-product-xl);
   padding: var(--space-product-md) 0;
 }
@@ -4637,9 +4639,10 @@ h3,
   transition: background-color var(--dur-quick) var(--ease-enter);
 }
 
-.concept-proposal-list li.is-selected { background: var(--color-periwinkle-wash); }
+.concept-proposal-list li.is-selected { background: color-mix(in srgb, var(--booklet-kelus, #1f6b45) 8%, transparent); }
 
-.concept-proposal-list label {
+.concept-proposal-list label,
+.concept-proposal-list .proposal-row {
   min-height: 72px;
   display: grid;
   grid-template-columns: 20px 42px minmax(0, 1fr);
@@ -4654,7 +4657,7 @@ h3,
   height: 18px;
   margin: 0;
   flex: 0 0 auto;
-  accent-color: var(--color-indigo-ink);
+  accent-color: var(--booklet-kelus, #1f6b45);
 }
 
 .proposal-index {
@@ -4788,11 +4791,49 @@ h3,
 
 .concept-confirmation-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: var(--spacing-16);
   margin-top: var(--spacing-32);
 }
+
+.concept-confirmation-secondary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  align-items: center;
+}
+
+.concept-confirmation-secondary button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-steel);
+  font: inherit;
+  font-size: var(--text-body-sm, 0.9375rem);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-steel) 35%, transparent);
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.concept-confirmation-secondary button:hover {
+  color: var(--color-midnight-ink);
+  text-decoration-color: color-mix(in srgb, var(--color-midnight-ink) 45%, transparent);
+}
+
+.concept-confirmation-secondary button:focus-visible {
+  outline: 2px solid var(--accent, var(--color-indigo-ink));
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.concept-confirmation-secondary button:active { transform: scale(0.98); }
 
 .session-sources {
   display: flex;
@@ -6732,10 +6773,37 @@ h3,
 }
 
 .diagnosis-skip {
-  display: block;
-  margin-top: 0.75rem;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-steel);
+  font: inherit;
+  font-size: var(--text-body-sm, 0.9375rem);
+  font-weight: 500;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-steel) 35%, transparent);
+  text-underline-offset: 0.18em;
+  cursor: pointer;
 }
+.diagnosis-skip:hover {
+  color: var(--color-midnight-ink);
+  text-decoration-color: color-mix(in srgb, var(--color-midnight-ink) 45%, transparent);
+}
+.diagnosis-skip:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.diagnosis-skip:focus-visible {
+  outline: 2px solid var(--accent, var(--color-indigo-ink));
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.diagnosis-skip:active { transform: scale(0.98); }
 
 .complete-return-actions {
   display: flex;
@@ -6902,7 +6970,7 @@ h3,
 .concept-confirmation [tabindex="-1"] { scroll-margin-top: 120px; }
 /* Ready actions: column stack is owned above; do not re-wrap onto the CTA row. */
 .material-ready-actions { flex-wrap: nowrap; }
-.concept-confirmation-actions { position: sticky; bottom: 0; z-index: 2; background: var(--color-pure-white); padding-block: var(--spacing-16); border-top: 1px solid var(--color-frost); }
+.concept-confirmation-actions { position: sticky; bottom: 0; z-index: 2; background: var(--booklet-paper, var(--color-pure-white)); padding-block: var(--spacing-16); border-top: 1px solid var(--booklet-rule, var(--color-frost)); }
 .destination-actions .cta { min-height: 48px; }
 .study-question textarea { min-height: 160px; line-height: 1.65; resize: vertical; }
 .study-question { scroll-margin-top: 100px; }

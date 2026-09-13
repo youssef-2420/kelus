@@ -2080,3 +2080,191 @@ body.is-booklet-system .site-header-action:active {
   transition: transform 90ms ease-out;
 }
 
+
+/* ── First-run loop craft: confirm → check → Today ── */
+
+/* Concept confirm: editorial heading, paper sticky, green selection */
+body.is-booklet-system .concept-confirmation > header {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+}
+
+body.is-booklet-system .concept-confirmation h2 {
+  max-width: 22ch;
+  font-family: var(--font-editorial), Literata, Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 550;
+  line-height: 1.12;
+  letter-spacing: -0.028em;
+}
+
+body.is-booklet-system .concept-confirmation > header > p {
+  max-width: 54ch;
+}
+
+body.is-booklet-system .concept-proposal-list li.is-selected {
+  background: color-mix(in srgb, var(--booklet-kelus) 9%, transparent);
+}
+
+body.is-booklet-system .concept-proposal-list input[type="checkbox"] {
+  accent-color: var(--booklet-kelus);
+}
+
+body.is-booklet-system .concept-proposal-list .proposal-row {
+  min-height: 72px;
+  padding-inline: 0.25rem;
+}
+
+body.is-booklet-system .concept-confirmation-actions {
+  background: var(--booklet-paper);
+  border-top-color: var(--booklet-rule);
+}
+
+body.is-booklet-system .concept-confirmation-secondary button {
+  color: var(--booklet-mute);
+  text-decoration-color: color-mix(in srgb, var(--booklet-mute) 40%, transparent);
+}
+
+body.is-booklet-system .concept-confirmation-secondary button:hover {
+  color: var(--booklet-ink);
+  text-decoration-color: color-mix(in srgb, var(--booklet-ink) 45%, transparent);
+}
+
+/* Diagnosis: sentence-case meta, flatten nesting, kelus grades */
+body.is-booklet-system .flow-context,
+body.is-booklet-system .diagnosis-context {
+  width: min(940px, calc(100% - 40px));
+  margin-left: auto;
+  margin-right: auto;
+  text-transform: none;
+  letter-spacing: -0.01em;
+  font-size: 0.92rem;
+  color: var(--booklet-mute);
+  border-bottom-color: var(--booklet-rule);
+}
+
+body.is-booklet-system .flow-context b,
+body.is-booklet-system .diagnosis-context b {
+  color: var(--booklet-ink);
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: -0.01em;
+}
+
+body.is-booklet-system .diagnosis-page.is-booklet-product {
+  background: var(--booklet-paper);
+  border: 0;
+  box-shadow: none;
+}
+
+body.is-booklet-system .diagnosis-page.is-booklet-product .diagnosis-panel,
+body.is-booklet-system .diagnosis-page.is-booklet-product .diagnosis-check {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding-top: 1.5rem;
+}
+
+body.is-booklet-system .diagnosis-page .diagnosis-panel h1,
+body.is-booklet-system .diagnosis-page .diagnosis-check h1 {
+  font-family: var(--font-editorial), Literata, Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  color: var(--booklet-ink);
+}
+
+body.is-booklet-system .diagnosis-list button.is-selected {
+  color: #f7f8f5;
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+}
+
+body.is-booklet-system .diagnosis-list button:focus-visible,
+body.is-booklet-system .diagnosis-grades button:focus-visible {
+  outline-color: var(--booklet-kelus);
+}
+
+body.is-booklet-system .diagnosis-cta {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 0.75rem;
+}
+
+body.is-booklet-system .diagnosis-skip {
+  color: var(--booklet-mute);
+  text-decoration-color: color-mix(in srgb, var(--booklet-mute) 40%, transparent);
+}
+
+body.is-booklet-system .diagnosis-skip:hover {
+  color: var(--booklet-ink);
+  text-decoration-color: color-mix(in srgb, var(--booklet-ink) 45%, transparent);
+}
+
+body.is-booklet-system .diagnosis-grades button.is-primary {
+  background: var(--booklet-kelus);
+  border-color: var(--booklet-kelus);
+  color: #f7f8f5;
+}
+
+body.is-booklet-system .diagnosis-grades button.is-outline {
+  color: var(--booklet-ink);
+  border-color: var(--booklet-kelus);
+}
+
+body.is-booklet-system .diagnosis-grades button.is-primary:hover {
+  background: #185536;
+  border-color: #185536;
+}
+
+body.is-booklet-system .diagnosis-grades button.is-ghost {
+  color: var(--booklet-mute);
+}
+
+/* Today: quieter masthead phase, one lead action */
+body.is-booklet-system .course-masthead-phase {
+  color: var(--booklet-mute);
+  font-size: 0.92rem;
+}
+
+body.is-booklet-system .course-masthead-phase a {
+  color: var(--booklet-ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--booklet-ink) 28%, transparent);
+  text-underline-offset: 0.16em;
+}
+
+body.is-booklet-system .course-masthead-phase a:hover {
+  color: var(--booklet-kelus);
+  text-decoration-color: color-mix(in srgb, var(--booklet-kelus) 45%, transparent);
+}
+
+body.is-booklet-system .shell-context-action .text-btn {
+  color: var(--booklet-mute);
+  font-weight: 500;
+}
+
+body.is-booklet-system .today-brief.is-booklet-today h1 {
+  max-width: 14ch;
+}
+
+body.is-booklet-system .is-booklet-today .today-lead-label strong {
+  font-weight: 600;
+  color: var(--booklet-ink);
+}
+
+body.is-booklet-system .is-booklet-today .cta.today-start:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.is-booklet-system .concept-confirmation-secondary button:active,
+  body.is-booklet-system .diagnosis-skip:active,
+  body.is-booklet-system .is-booklet-today .cta.today-start:active {
+    transform: none;
+  }
+}
