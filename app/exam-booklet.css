@@ -39,17 +39,10 @@ body.is-booklet-system .site-header.is-home {
   backdrop-filter: blur(12px) saturate(140%);
 }
 
-body.is-booklet-system .site-header.is-home .site-wordmark,
 body.is-booklet-system .site-header.is-home .site-nav a,
 body.is-booklet-system .site-header.is-home .text-btn,
 body.is-booklet-system .site-header.is-home .site-auth-button {
   color: rgba(18, 22, 15, 0.78);
-}
-
-body.is-booklet-system .site-header.is-home .site-wordmark {
-  font-family: var(--font-editorial);
-  font-weight: 600;
-  letter-spacing: -0.03em;
 }
 
 body.is-booklet-system .site-header.is-home .site-header-action {
@@ -801,19 +794,15 @@ body.is-booklet-system .home-close-copy h2 {
 
 /* ── To nine: one system across marketing + product ── */
 
-/* Unified Kelus wordmark (editorial), home + product */
-body.is-booklet-system .site-wordmark,
-body.is-booklet-system .site-header .site-wordmark,
-body.is-booklet-system .site-header.is-product .site-wordmark,
-body.is-booklet-system .site-header.is-session .site-wordmark {
-  font-family: var(--font-editorial);
+/* Header + footer share one mark (IBM Plex / ledger), not editorial */
+body.is-booklet-system .site-header .site-footer-mark,
+body.is-booklet-system .site-footer .site-footer-mark {
+  font-family: var(--font-ledger), var(--font-booklet), "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  font-size: 20px;
   font-weight: 600;
-  letter-spacing: -0.03em;
-  color: var(--booklet-ink);
-}
-
-body.is-booklet-system .site-header.is-home .site-wordmark {
-  color: rgba(18, 22, 15, 0.78);
+  letter-spacing: -0.045em;
+  line-height: 1;
+  color: #111;
 }
 
 /* Session chrome: sentence case, quiet ink */
@@ -1703,8 +1692,8 @@ body.is-booklet-system .topic-map-node.is-label-below text {
     align-items: center;
   }
 
-  body.is-booklet-system .site-wordmark,
-  body.is-booklet-system .mark.site-wordmark { grid-area: mark; }
+  body.is-booklet-system .site-header .mark,
+  body.is-booklet-system .site-header .site-footer-mark { grid-area: mark; }
   body.is-booklet-system .site-header-cluster,
   body.is-booklet-system .site-account-menu,
   body.is-booklet-system .site-auth-loading,

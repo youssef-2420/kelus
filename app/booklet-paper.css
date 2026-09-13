@@ -97,10 +97,10 @@ body.is-booklet-system .site-header {
     0 3px 9px rgba(0, 0, 0, 0.03);
 }
 
-body.is-booklet-system .site-wordmark {
-  color: var(--color-ink-black);
-  font-weight: 700;
-  letter-spacing: -0.04em;
+body.is-booklet-system .site-footer-mark {
+  color: #111;
+  font-weight: 600;
+  letter-spacing: -0.045em;
 }
 
 body.is-booklet-system .site-nav a {
