@@ -3,8 +3,8 @@ import { IBM_Plex_Sans, Newsreader } from "next/font/google";
 import "./globals.css";
 import "./revision-studio.css";
 import "./home-folio.css";
-import "./notion-product.css";
-import "./notion-paper.css";
+import "./booklet-product.css";
+import "./booklet-paper.css";
 import "./paper-loop.css";
 import "./hero-poster.css";
 import "./exam-booklet.css";
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${plex.variable} ${newsreader.variable}`} data-scroll-behavior="smooth">
-      <body className={`${plex.variable} ${newsreader.variable} is-notion-system`}>
+      <body className={`${plex.variable} ${newsreader.variable} is-booklet-system`}>
         <GoogleAnalytics />
         <a className="skip" href="#main">Skip to content</a>
         <AuthProvider>

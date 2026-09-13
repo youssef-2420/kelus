@@ -26,7 +26,7 @@ const spring = { type: "spring" as const, bounce: 0, duration: 0.45 };
  * Open notebook sheet — ruled paper, binder holes, ink diagram.
  * Interactive sample: recall → check → route reacts to the answer.
  */
-export function NotionRevisionBoard() {
+export function BookletRevisionBoard() {
   const reduce = useReducedMotion() === true;
   const [phase, setPhase] = useState<Phase>("recall");
   const [revealed, setRevealed] = useState(false);
@@ -68,7 +68,7 @@ export function NotionRevisionBoard() {
 
   return (
     <motion.div
-      className="notion-board is-honest-flow is-clean is-paper-loop is-notebook is-elevated"
+      className="booklet-board is-honest-flow is-clean is-paper-loop is-notebook is-elevated"
       initial={reduce ? false : { opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -82,7 +82,7 @@ export function NotionRevisionBoard() {
         </div>
         <div className="notebook-ruled" aria-hidden="true" />
 
-        <div className="notion-board-main">
+        <div className="booklet-board-main">
           <div className="paper-source">
             <div className="paper-source-copy">
               <span className="paper-step">From your notes</span>
@@ -109,9 +109,9 @@ export function NotionRevisionBoard() {
             </svg>
           </div>
 
-          <header className="notion-board-head">
+          <header className="booklet-board-head">
             <p className="board-example-label">Sample · Microeconomics</p>
-            <ol className="notion-board-steps" aria-label="Revision steps">
+            <ol className="booklet-board-steps" aria-label="Revision steps">
               {(["recall", "check", "route"] as const).map((step) => {
                 const label = step === "recall" ? "Recall" : step === "check" ? "Check" : "Route";
                 const active = phase === step;
@@ -131,14 +131,14 @@ export function NotionRevisionBoard() {
             </ol>
           </header>
 
-          <div className="notion-flow">
-            <div className="notion-flow-recall">
-              <p className="notion-flow-question">
+          <div className="booklet-flow">
+            <div className="booklet-flow-recall">
+              <p className="booklet-flow-question">
                 Why does demand become more elastic when close substitutes exist?
               </p>
               <motion.button
                 type="button"
-                className="notion-flow-reveal"
+                className="booklet-flow-reveal"
                 aria-expanded={revealed}
                 aria-controls="board-answer"
                 onClick={() => (revealed ? hide() : reveal())}
@@ -201,8 +201,8 @@ export function NotionRevisionBoard() {
               </AnimatePresence>
             </div>
 
-            <div className={`notion-flow-route${phase === "route" ? " is-live" : ""}`}>
-              <div className="notion-flow-route-title">
+            <div className={`booklet-flow-route${phase === "route" ? " is-live" : ""}`}>
+              <div className="booklet-flow-route-title">
                 <span>Today’s route</span>
                 <strong>45 min</strong>
               </div>

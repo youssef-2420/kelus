@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("notebook preview is keyboard-operable and setup fits mobile", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
-  const board = page.locator(".notion-board");
+  const board = page.locator(".booklet-board");
   const reveal = board.getByRole("button", { name: "Reveal answer" });
   await reveal.focus();
   await page.keyboard.press("Enter");
@@ -22,7 +22,10 @@ test("hero content is visible before hydration", async ({ browser }) => {
   const page = await context.newPage();
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  await expect(page.locator(".notion-board")).toBeVisible();
+  expect(await page.locator("h1").textContent()).toBe("Revise your lessons. Walk into the exam ready.");
+  await expect(page.locator("[class*=notion]")).toHaveCount(0);
+  await expect(page.locator(".site-header")).toHaveCSS("box-shadow", "none");
+  await expect(page.locator(".booklet-board")).toBeVisible();
   await context.close();
 });
 
@@ -31,18 +34,18 @@ test("hero recall preview reveals, reorders, resets, and works on a narrow scree
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Revise your lessons");
 
-  const board = page.locator(".notion-board");
+  const board = page.locator(".booklet-board");
   await board.scrollIntoViewIfNeeded();
 
   await expect(board.locator("#board-answer")).toBeHidden();
   await board.getByRole("button", { name: "Reveal answer" }).click();
   await expect(board.getByText("Buyers can switch when price rises", { exact: false })).toBeVisible();
   await board.getByRole("button", { name: "I remembered" }).click();
-  await expect(board.locator(".notion-flow-route li").first()).toContainText("Supply & Demand");
+  await expect(board.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
   await board.getByRole("button", { name: "Hide answer" }).click();
   await expect(board.locator("#board-answer")).toBeHidden();
   await expect(board.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
-  await expect(board.locator(".notion-flow-route li").first()).toContainText("Elasticity");
+  await expect(board.locator(".booklet-flow-route li").first()).toContainText("Elasticity");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

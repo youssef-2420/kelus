@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
-import { NotionRevisionBoard } from "@/components/hero/NotionRevisionBoard";
+import { BookletRevisionBoard } from "@/components/hero/BookletRevisionBoard";
 import { Reveal } from "@/components/motion";
 
 /**
@@ -22,7 +22,7 @@ export function HomeAfterHero() {
           </p>
         </Reveal>
         <Reveal delay={0.08}>
-          <NotionRevisionBoard />
+          <BookletRevisionBoard />
         </Reveal>
       </section>
 

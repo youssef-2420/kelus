@@ -18,7 +18,7 @@ export function KelusHero() {
   const reduce = useReducedMotion() === true;
 
   return (
-    <section className="kelus-hero home-hero is-folio is-notion is-poster" aria-labelledby="home-hero-title">
+    <section className="kelus-hero home-hero is-folio is-booklet is-poster" aria-labelledby="home-hero-title">
       <div className="poster-copy home-copy">
         <motion.h1
           id="home-hero-title"
@@ -26,7 +26,7 @@ export function KelusHero() {
           animate={{ opacity: 1 }}
           transition={{ duration: reduce ? 0 : dur.moderate, ease }}
         >
-          Revise your lessons.
+          Revise your lessons.{" "}
           <span className="hero-line-break">Walk into the exam ready.</span>
         </motion.h1>
 

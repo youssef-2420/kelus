@@ -20,19 +20,19 @@ export function HeroProductDemo() {
 
   return (
     <div
-      className="hero-product-demo folio-product-demo notion-product-demo is-clean"
+      className="hero-product-demo folio-product-demo booklet-product-demo is-clean"
       aria-label="Interactive example of a Kelus study route"
     >
-      <div className="notion-product-shell">
-        <div className="notion-product-chrome" aria-hidden="true">
+      <div className="booklet-product-shell">
+        <div className="booklet-product-chrome" aria-hidden="true">
           <span /><span /><span />
         </div>
 
-        <div className="notion-product-main">
+        <div className="booklet-product-main">
           <header className="hero-demo-head">
             <div className="hero-demo-identity">
               <strong>
-                <em className="notion-product-page-mark" aria-hidden="true" />
+                <em className="booklet-product-page-mark" aria-hidden="true" />
                 {example.course}
               </strong>
               <span>Example · not saved</span>

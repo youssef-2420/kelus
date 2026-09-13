@@ -18,11 +18,11 @@ test("homepage presents marked-script hero, one sample proof, and close", () => 
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
-  const board = readFileSync("components/hero/NotionRevisionBoard.tsx", "utf8");
+  const board = readFileSync("components/hero/BookletRevisionBoard.tsx", "utf8");
   assert.match(board, /Today’s route|today/i);
-  assert.match(board, /Reveal answer|notion-flow-reveal|Reveal/);
+  assert.match(board, /Reveal answer|booklet-flow-reveal|Reveal/);
   assert.doesNotMatch(story, /HeroProductDemo/);
-  assert.match(story, /NotionRevisionBoard/);
+  assert.match(story, /BookletRevisionBoard/);
   assert.match(story, /poster-sample/);
   assert.match(story, /home-close|folio-close/);
   assert.match(story, /Try sample \(~1 min\)/);

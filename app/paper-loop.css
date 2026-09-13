@@ -2,7 +2,7 @@
 /* Desk hero — editorial notebook, not SaaS browser mock.
    Keeps paper tokens; author a distinctive first viewport. */
 
-body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.paper-loop-hero.is-desk {
+body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.paper-loop-hero.is-desk {
   position: relative;
   isolation: isolate;
   min-height: min(92vh, 900px);
@@ -54,22 +54,22 @@ body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.paper-loop-hero.i
   display: none;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .folio-hero-copy,
-body.is-notion-system .paper-loop-hero.is-desk .folio-hero-visual {
+body.is-booklet-system .paper-loop-hero.is-desk .folio-hero-copy,
+body.is-booklet-system .paper-loop-hero.is-desk .folio-hero-visual {
   position: relative;
   z-index: 1;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .folio-hero-atmosphere {
+body.is-booklet-system .paper-loop-hero.is-desk .folio-hero-atmosphere {
   display: none;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .hero-marks {
+body.is-booklet-system .paper-loop-hero.is-desk .hero-marks {
   display: none;
 }
 
 /* Brand lockup — must pass brand test without nav */
-body.is-notion-system .paper-loop-hero.is-desk .hero-brand {
+body.is-booklet-system .paper-loop-hero.is-desk .hero-brand {
   margin: 0 0 18px;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
   font-size: clamp(28px, 3.2vw, 40px);
@@ -79,7 +79,7 @@ body.is-notion-system .paper-loop-hero.is-desk .hero-brand {
   color: #0a0a0a;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .hero-brand-sr {
+body.is-booklet-system .paper-loop-hero.is-desk .hero-brand-sr {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -91,13 +91,13 @@ body.is-notion-system .paper-loop-hero.is-desk .hero-brand-sr {
   border: 0;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .folio-hero-copy {
+body.is-booklet-system .paper-loop-hero.is-desk .folio-hero-copy {
   align-items: flex-start;
   text-align: left;
   max-width: 34rem;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .folio-hero-copy h1 {
+body.is-booklet-system .paper-loop-hero.is-desk .folio-hero-copy h1 {
   margin: 0;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
   font-size: clamp(40px, 5.2vw, 68px);
@@ -108,13 +108,13 @@ body.is-notion-system .paper-loop-hero.is-desk .folio-hero-copy h1 {
   max-width: none;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .hero-line-break {
+body.is-booklet-system .paper-loop-hero.is-desk .hero-line-break {
   display: block;
   margin-top: 0.12em;
   color: #1a1a1a;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .hero-pill {
+body.is-booklet-system .paper-loop-hero.is-desk .hero-pill {
   display: inline;
   background: none;
   border-radius: 0;
@@ -122,7 +122,7 @@ body.is-notion-system .paper-loop-hero.is-desk .hero-pill {
   box-shadow: none;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .home-lede {
+body.is-booklet-system .paper-loop-hero.is-desk .home-lede {
   margin-top: 22px;
   max-width: 34ch;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
@@ -131,24 +131,24 @@ body.is-notion-system .paper-loop-hero.is-desk .home-lede {
   color: #3d3a36;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .home-actions {
+body.is-booklet-system .paper-loop-hero.is-desk .home-actions {
   justify-content: flex-start;
   margin-top: 28px;
   gap: 12px;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .home-cta {
+body.is-booklet-system .paper-loop-hero.is-desk .home-cta {
   border-radius: 999px;
   padding-inline: 22px;
   background: #0a0a0a;
   color: #f7f8f5;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .home-cta:hover {
+body.is-booklet-system .paper-loop-hero.is-desk .home-cta:hover {
   background: #1a1a1a;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .home-secondary {
+body.is-booklet-system .paper-loop-hero.is-desk .home-secondary {
   border-radius: 999px;
   background: transparent;
   border: 1px solid #c9c4bb;
@@ -156,21 +156,21 @@ body.is-notion-system .paper-loop-hero.is-desk .home-secondary {
   backdrop-filter: none;
 }
 
-body.is-notion-system .paper-loop-hero.is-desk .home-secondary:hover {
+body.is-booklet-system .paper-loop-hero.is-desk .home-secondary:hover {
   background: rgba(255, 255, 255, 0.55);
 }
 
 /* Notebook sheet */
-body.is-notion-system .paper-loop-hero.is-desk .folio-hero-notion {
+body.is-booklet-system .paper-loop-hero.is-desk .folio-hero-booklet {
   max-width: none;
   width: 100%;
 }
 
-body.is-notion-system .is-notebook.notion-board {
+body.is-booklet-system .is-notebook.booklet-board {
   text-align: left;
 }
 
-body.is-notion-system .is-notebook .notebook-sheet {
+body.is-booklet-system .is-notebook .notebook-sheet {
   position: relative;
   background: var(--booklet-paper, #eef1ec);
   border: 1px solid color-mix(in srgb, var(--booklet-ink, #12160f) 14%, transparent);
@@ -183,7 +183,7 @@ body.is-notion-system .is-notebook .notebook-sheet {
   transform: rotate(-0.4deg);
 }
 
-body.is-notion-system .is-notebook .notebook-holes {
+body.is-booklet-system .is-notebook .notebook-holes {
   position: absolute;
   top: 18px;
   bottom: 18px;
@@ -195,7 +195,7 @@ body.is-notion-system .is-notebook .notebook-holes {
   z-index: 2;
 }
 
-body.is-notion-system .is-notebook .notebook-holes span {
+body.is-booklet-system .is-notebook .notebook-holes span {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -205,7 +205,7 @@ body.is-notion-system .is-notebook .notebook-holes span {
     0 0 0 1px #d5cfc4;
 }
 
-body.is-notion-system .is-notebook .notebook-ruled {
+body.is-booklet-system .is-notebook .notebook-ruled {
   position: absolute;
   inset: 0 0 0 42px;
   background-image: repeating-linear-gradient(
@@ -219,11 +219,11 @@ body.is-notion-system .is-notebook .notebook-ruled {
   z-index: 0;
 }
 
-body.is-notion-system .is-notebook .notion-board-chrome {
+body.is-booklet-system .is-notebook .booklet-board-chrome {
   display: none;
 }
 
-body.is-notion-system .is-notebook .notion-board-shell {
+body.is-booklet-system .is-notebook .booklet-board-shell {
   border: 0;
   border-radius: 0;
   box-shadow: none;
@@ -231,14 +231,14 @@ body.is-notion-system .is-notebook .notion-board-shell {
   overflow: visible;
 }
 
-body.is-notion-system .is-notebook .notion-board-main {
+body.is-booklet-system .is-notebook .booklet-board-main {
   position: relative;
   z-index: 1;
   padding: 28px 28px 24px 52px;
   background: transparent;
 }
 
-body.is-notion-system .is-notebook .paper-source {
+body.is-booklet-system .is-notebook .paper-source {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   gap: 18px;
@@ -248,8 +248,8 @@ body.is-notion-system .is-notebook .paper-source {
   border-bottom: 1px solid #e2ddd4;
 }
 
-body.is-notion-system .is-notebook .paper-step {
-  font-family: var(--font-notion), Inter, sans-serif;
+body.is-booklet-system .is-notebook .paper-step {
+  font-family: var(--font-booklet), Inter, sans-serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0;
@@ -257,7 +257,7 @@ body.is-notion-system .is-notebook .paper-step {
   color: #6b6560;
 }
 
-body.is-notion-system .is-notebook .paper-source p {
+body.is-booklet-system .is-notebook .paper-source p {
   margin: 10px 0 8px;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
   font-size: clamp(26px, 2.5vw, 36px);
@@ -266,35 +266,35 @@ body.is-notion-system .is-notebook .paper-source p {
   color: #0a0a0a;
 }
 
-body.is-notion-system .is-notebook .paper-source p em {
+body.is-booklet-system .is-notebook .paper-source p em {
   font-style: italic;
   font-weight: 400;
   color: #1a3a66;
 }
 
-body.is-notion-system .is-notebook .paper-source-caption {
+body.is-booklet-system .is-notebook .paper-source-caption {
   font-size: 12px;
   color: #6b6560;
 }
 
-body.is-notion-system .is-notebook .paper-membrane {
+body.is-booklet-system .is-notebook .paper-membrane {
   width: 100%;
   height: auto;
   display: block;
 }
 
-body.is-notion-system .is-notebook .notion-board-head {
+body.is-booklet-system .is-notebook .booklet-board-head {
   margin-bottom: 12px;
 }
 
-body.is-notion-system .is-notebook .board-example-label {
+body.is-booklet-system .is-notebook .board-example-label {
   margin: 0 0 6px;
   font-size: 12px;
   letter-spacing: 0.02em;
   color: #6b6560;
 }
 
-body.is-notion-system .is-notebook .notion-board-head h2 {
+body.is-booklet-system .is-notebook .booklet-board-head h2 {
   margin: 0;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
   font-size: 22px;
@@ -303,7 +303,7 @@ body.is-notion-system .is-notebook .notion-board-head h2 {
   color: #0a0a0a;
 }
 
-body.is-notion-system .is-notebook .notion-board-steps {
+body.is-booklet-system .is-notebook .booklet-board-steps {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 14px;
@@ -314,25 +314,25 @@ body.is-notion-system .is-notebook .notion-board-steps {
   color: #8a847c;
 }
 
-body.is-notion-system .is-notebook .notion-board-steps li {
+body.is-booklet-system .is-notebook .booklet-board-steps li {
   position: relative;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
 }
 
-body.is-notion-system .is-notebook .notion-board-steps li.is-done {
+body.is-booklet-system .is-notebook .booklet-board-steps li.is-done {
   color: #6b6560;
 }
 
-body.is-notion-system .is-notebook .notion-board-steps li.is-active {
+body.is-booklet-system .is-notebook .booklet-board-steps li.is-active {
   color: #0a0a0a;
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-body.is-notion-system .is-notebook .notion-flow-question {
+body.is-booklet-system .is-notebook .booklet-flow-question {
   margin: 0 0 14px;
   font-family: var(--font-editorial), "Source Serif 4", Georgia, serif;
   font-size: clamp(20px, 2vw, 26px);
@@ -342,7 +342,7 @@ body.is-notion-system .is-notebook .notion-flow-question {
   color: #0a0a0a;
 }
 
-body.is-notion-system .is-notebook .notion-flow-reveal {
+body.is-booklet-system .is-notebook .booklet-flow-reveal {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -356,15 +356,15 @@ body.is-notion-system .is-notebook .notion-flow-reveal {
   cursor: pointer;
 }
 
-body.is-notion-system .is-notebook .notion-flow-reveal:hover {
+body.is-booklet-system .is-notebook .booklet-flow-reveal:hover {
   background: #1a1a1a;
 }
 
-body.is-notion-system .is-notebook .notion-flow-reveal:active {
+body.is-booklet-system .is-notebook .booklet-flow-reveal:active {
   transform: scale(0.97);
 }
 
-body.is-notion-system .is-notebook .board-answer {
+body.is-booklet-system .is-notebook .board-answer {
   margin: 14px 0 0;
   padding: 12px 0 0;
   border-top: 1px dashed #d5cfc4;
@@ -373,18 +373,18 @@ body.is-notion-system .is-notebook .board-answer {
   color: #2c2a27;
 }
 
-body.is-notion-system .is-notebook .board-answer[hidden] {
+body.is-booklet-system .is-notebook .board-answer[hidden] {
   display: none;
 }
 
-body.is-notion-system .is-notebook .notebook-grades {
+body.is-booklet-system .is-notebook .notebook-grades {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
 }
 
-body.is-notion-system .is-notebook .notebook-grades button {
+body.is-booklet-system .is-notebook .notebook-grades button {
   min-height: 40px;
   padding: 0 14px;
   border-radius: 999px;
@@ -392,36 +392,36 @@ body.is-notion-system .is-notebook .notebook-grades button {
   cursor: pointer;
 }
 
-body.is-notion-system .is-notebook .notebook-grades .is-primary {
+body.is-booklet-system .is-notebook .notebook-grades .is-primary {
   background: #1f6b45;
   color: #fff;
   border: 0;
 }
 
-body.is-notion-system .is-notebook .notebook-grades .is-ghost {
+body.is-booklet-system .is-notebook .notebook-grades .is-ghost {
   background: transparent;
   color: #0a0a0a;
   border: 1px solid #c9c4bb;
 }
 
-body.is-notion-system .is-notebook .notebook-grades button:active {
+body.is-booklet-system .is-notebook .notebook-grades button:active {
   transform: scale(0.97);
 }
 
-body.is-notion-system .is-notebook .notion-flow-route {
+body.is-booklet-system .is-notebook .booklet-flow-route {
   margin-top: 22px;
   padding-top: 16px;
   border-top: 1px solid #e2ddd4;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route.is-live {
+body.is-booklet-system .is-notebook .booklet-flow-route.is-live {
   background: linear-gradient(180deg, rgba(255, 244, 208, 0.35), transparent 48px);
   margin-inline: -8px;
   padding-inline: 8px;
   border-radius: 8px;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route-title {
+body.is-booklet-system .is-notebook .booklet-flow-route-title {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -432,31 +432,31 @@ body.is-notion-system .is-notebook .notion-flow-route-title {
   color: #6b6560;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route-title strong {
+body.is-booklet-system .is-notebook .booklet-flow-route-title strong {
   font-size: 13px;
   letter-spacing: 0;
   text-transform: none;
   color: #0a0a0a;
 }
 
-body.is-notion-system .is-notebook .notebook-signal {
+body.is-booklet-system .is-notebook .notebook-signal {
   margin: 0 0 10px;
   font-size: 13px;
   line-height: 1.4;
   color: #0a0a0a;
 }
 
-body.is-notion-system .is-notebook .notebook-signal.is-quiet {
+body.is-booklet-system .is-notebook .notebook-signal.is-quiet {
   color: #6b6560;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route ul {
+body.is-booklet-system .is-notebook .booklet-flow-route ul {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route li {
+body.is-booklet-system .is-notebook .booklet-flow-route li {
   display: grid;
   grid-template-columns: 28px minmax(0, 1fr) auto;
   gap: 10px;
@@ -468,7 +468,7 @@ body.is-notion-system .is-notebook .notion-flow-route li {
   background: transparent;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route li.is-recommended {
+body.is-booklet-system .is-notebook .booklet-flow-route li.is-recommended {
   background: rgba(31, 107, 69, 0.08);
   border-radius: 4px;
   border-bottom-color: transparent;
@@ -477,50 +477,50 @@ body.is-notion-system .is-notebook .notion-flow-route li.is-recommended {
   margin-inline: -4px;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route li > span {
+body.is-booklet-system .is-notebook .booklet-flow-route li > span {
   font-variant-numeric: tabular-nums;
   color: #8a847c;
   font-size: 12px;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route strong {
+body.is-booklet-system .is-notebook .booklet-flow-route strong {
   display: block;
   font-size: 14px;
   color: #0a0a0a;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route small {
+body.is-booklet-system .is-notebook .booklet-flow-route small {
   color: #6b6560;
 }
 
-body.is-notion-system .is-notebook .notion-flow-route b {
+body.is-booklet-system .is-notebook .booklet-flow-route b {
   font-size: 13px;
   font-weight: 500;
   color: #0a0a0a;
 }
 
 /* Demo chapter: one full interactive teach, not a twin hero stage */
-body.is-notion-system .folio-chapter.is-demo-chapter {
+body.is-booklet-system .folio-chapter.is-demo-chapter {
   align-items: start;
 }
 
-body.is-notion-system .folio-chapter-demo {
+body.is-booklet-system .folio-chapter-demo {
   width: 100%;
   max-width: 560px;
 }
 
-body.is-notion-system .folio-chapter-demo .notion-product-chrome {
+body.is-booklet-system .folio-chapter-demo .booklet-product-chrome {
   display: none;
 }
 
-body.is-notion-system .folio-method-grid {
+body.is-booklet-system .folio-method-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0;
   border-top: 1px solid #ddd7cd;
 }
 
-body.is-notion-system .folio-method-grid > div {
+body.is-booklet-system .folio-method-grid > div {
   padding: 20px 0;
   border-bottom: 1px solid #ddd7cd;
   border-right: 1px solid #ddd7cd;
@@ -529,19 +529,19 @@ body.is-notion-system .folio-method-grid > div {
   border-radius: 0;
 }
 
-body.is-notion-system .folio-method-grid > div:nth-child(2n) {
+body.is-booklet-system .folio-method-grid > div:nth-child(2n) {
   padding-left: 24px;
   border-right: 0;
 }
 
 @media (min-width: 980px) {
-  body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.paper-loop-hero.is-desk {
+  body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.paper-loop-hero.is-desk {
     grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1.15fr);
     gap: 48px 64px;
     padding: 64px max(28px, calc((100vw - 1240px) / 2)) 80px;
   }
 
-  body.is-notion-system .paper-loop-hero.is-desk .desk-spine {
+  body.is-booklet-system .paper-loop-hero.is-desk .desk-spine {
     display: block;
     position: absolute;
     top: 0;
@@ -551,55 +551,55 @@ body.is-notion-system .folio-method-grid > div:nth-child(2n) {
     background: linear-gradient(180deg, transparent, rgba(20, 16, 10, 0.08) 20%, rgba(20, 16, 10, 0.08) 80%, transparent);
   }
 
-  body.is-notion-system .is-notebook .notebook-sheet {
+  body.is-booklet-system .is-notebook .notebook-sheet {
     transform: rotate(-0.6deg) translateY(4px);
   }
 }
 
 @media (max-width: 979px) {
-  body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion.paper-loop-hero.is-desk {
+  body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.paper-loop-hero.is-desk {
     min-height: 0;
     padding-top: 40px;
     padding-bottom: 48px;
   }
 
-  body.is-notion-system .is-notebook .notebook-sheet {
+  body.is-booklet-system .is-notebook .notebook-sheet {
     transform: none;
   }
 
-  body.is-notion-system .is-notebook .paper-source {
+  body.is-booklet-system .is-notebook .paper-source {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 640px) {
-  body.is-notion-system .is-notebook .notion-board-main {
+  body.is-booklet-system .is-notebook .booklet-board-main {
     padding: 22px 18px 18px 44px;
   }
 
-  body.is-notion-system .is-notebook .notebook-holes {
+  body.is-booklet-system .is-notebook .notebook-holes {
     left: 10px;
   }
 
-  body.is-notion-system .paper-loop-hero.is-desk .home-actions {
+  body.is-booklet-system .paper-loop-hero.is-desk .home-actions {
     flex-direction: column;
     align-items: stretch;
   }
 
-  body.is-notion-system .paper-loop-hero.is-desk .home-cta,
-  body.is-notion-system .paper-loop-hero.is-desk .home-secondary {
+  body.is-booklet-system .paper-loop-hero.is-desk .home-cta,
+  body.is-booklet-system .paper-loop-hero.is-desk .home-secondary {
     justify-content: center;
     text-align: center;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.is-notion-system .is-notebook .notion-flow-reveal:active,
-  body.is-notion-system .is-notebook .notebook-grades button:active {
+  body.is-booklet-system .is-notebook .booklet-flow-reveal:active,
+  body.is-booklet-system .is-notebook .notebook-grades button:active {
     transform: none;
   }
 }
 
 /* Legacy paper-loop selectors kept as no-ops / soft fallbacks */
-.is-notion-system .paper-loop-hero .hero-marks { display: none; }
-.is-notion-system .is-paper-loop .notion-board-chrome { display: none; }
+.is-booklet-system .paper-loop-hero .hero-marks { display: none; }
+.is-booklet-system .is-paper-loop .booklet-board-chrome { display: none; }

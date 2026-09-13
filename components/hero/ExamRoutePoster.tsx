@@ -9,7 +9,7 @@ export function ExamRoutePoster() {
 
   return (
     <motion.figure
-      className="exam-route-poster folio-hero-notion revision-still-life"
+      className="exam-route-poster folio-hero-booklet revision-still-life"
       initial={false}
       animate={{ opacity: 1 }}
       transition={{ duration: reduce ? 0 : kelusDuration.moderate, ease: kelusEase }}

@@ -1,8 +1,8 @@
-/* Notion paper system — warm notebook under afternoon sun.
-   Scoped via body.is-notion-system. Bounce stays 0 on Kelus. */
+/* Booklet paper system — warm notebook under afternoon sun.
+   Scoped via body.is-booklet-system. Bounce stays 0 on Kelus. */
 
 :root {
-  --color-notion-blue: #1f6b45;
+  --color-booklet-blue: #1f6b45;
   --color-paper-warmth: #eef1ec;
   --color-pure-white: #ffffff;
   --color-ink-black: #12160f;
@@ -21,7 +21,7 @@
   --color-midnight-ink: #12160f;
   --color-peach-pill: #f6d5b8; /* hero verb highlight */
 
-  --font-notion: var(--font-inter), "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-booklet: var(--font-inter), "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-editorial: var(--font-source-serif), Newsreader, Georgia, "Times New Roman", serif;
 
   --text-caption: 12px;
@@ -40,8 +40,8 @@
   --radius-small: 4px;
 
   --border-hairline: #d5d9d0;
-  --ease-notion: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur-notion: 200ms;
+  --ease-booklet: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-booklet: 200ms;
   --dur-instant: 80ms;
   --dur-micro: 100ms;
   --dur-fast: 150ms;
@@ -50,45 +50,45 @@
   --dur-slow: 400ms;
 }
 
-body.is-notion-system {
-  --font-ledger: var(--font-notion);
+body.is-booklet-system {
+  --font-ledger: var(--font-booklet);
   --font-display: var(--font-editorial);
-  --font-sans: var(--font-notion);
+  --font-sans: var(--font-booklet);
   --paper: var(--color-paper-warmth);
   --ink: var(--color-ink-black);
   --muted: var(--color-graphite);
   --line: var(--border-hairline);
-  --accent: var(--color-notion-blue);
+  --accent: var(--color-booklet-blue);
   --accent-2: #185536;
   --surface: #f7f8f5;
-  --strong: var(--color-notion-blue);
+  --strong: var(--color-booklet-blue);
   --background: var(--color-paper-warmth);
   --foreground: var(--color-ink-black);
   --card: #f7f8f5;
-  --primary: var(--color-notion-blue);
+  --primary: var(--color-booklet-blue);
   --primary-foreground: var(--color-pure-white);
   --border: var(--border-hairline);
-  --ring: var(--color-notion-blue);
+  --ring: var(--color-booklet-blue);
   --page-max-width: 1440px;
   --radius-ledger: var(--radius-buttons);
 
   color: rgba(18, 22, 15, 0.95);
   background: var(--color-paper-warmth);
-  font-family: var(--font-notion);
+  font-family: var(--font-booklet);
   font-weight: 400;
   letter-spacing: 0;
   font-feature-settings: "lnum" 1, "locl" 0;
   -webkit-font-smoothing: antialiased;
 }
 
-body.is-notion-system h1,
-body.is-notion-system h2,
-body.is-notion-system h3 {
-  font-family: var(--font-notion);
+body.is-booklet-system h1,
+body.is-booklet-system h2,
+body.is-booklet-system h3 {
+  font-family: var(--font-booklet);
 }
 
 /* ── Global chrome ── */
-body.is-notion-system .site-header {
+body.is-booklet-system .site-header {
   background: rgba(246, 245, 244, 0.86);
   border-bottom: 1px solid var(--border-hairline);
   backdrop-filter: blur(16px) saturate(140%);
@@ -97,55 +97,55 @@ body.is-notion-system .site-header {
     0 3px 9px rgba(0, 0, 0, 0.03);
 }
 
-body.is-notion-system .site-wordmark {
+body.is-booklet-system .site-wordmark {
   color: var(--color-ink-black);
   font-weight: 700;
   letter-spacing: -0.04em;
 }
 
-body.is-notion-system .site-nav a {
+body.is-booklet-system .site-nav a {
   color: rgba(0, 0, 0, 0.54);
   font-size: var(--text-body-sm);
   font-weight: 500;
   border-radius: var(--radius-buttons);
-  transition: color var(--dur-notion) var(--ease-notion), background var(--dur-notion) var(--ease-notion);
+  transition: color var(--dur-booklet) var(--ease-booklet), background var(--dur-booklet) var(--ease-booklet);
 }
 
-body.is-notion-system .site-nav a:hover,
-body.is-notion-system .site-nav a.is-active,
-body.is-notion-system .site-nav a[aria-current="page"] {
+body.is-booklet-system .site-nav a:hover,
+body.is-booklet-system .site-nav a.is-active,
+body.is-booklet-system .site-nav a[aria-current="page"] {
   color: rgba(0, 0, 0, 0.95);
   background: transparent;
   box-shadow: none;
 }
 
-body.is-notion-system .site-header-action,
-body.is-notion-system .cta,
-body.is-notion-system a.cta {
-  background: var(--color-notion-blue);
-  border-color: var(--color-notion-blue);
+body.is-booklet-system .site-header-action,
+body.is-booklet-system .cta,
+body.is-booklet-system a.cta {
+  background: var(--color-booklet-blue);
+  border-color: var(--color-booklet-blue);
   color: #fff;
   border-radius: var(--radius-buttons);
   font-size: var(--text-body-sm);
   font-weight: 500;
   min-height: 36px;
   padding: 6px 15px;
-  transition: background var(--dur-fast) var(--ease-notion), transform var(--dur-micro) var(--ease-notion);
+  transition: background var(--dur-fast) var(--ease-booklet), transform var(--dur-micro) var(--ease-booklet);
 }
 
-body.is-notion-system .site-header-action:hover,
-body.is-notion-system .cta:hover,
-body.is-notion-system a.cta:hover {
+body.is-booklet-system .site-header-action:hover,
+body.is-booklet-system .cta:hover,
+body.is-booklet-system a.cta:hover {
   background: #0066c2;
   border-color: #0066c2;
 }
 
-body.is-notion-system .site-header-action:active,
-body.is-notion-system .cta:active {
+body.is-booklet-system .site-header-action:active,
+body.is-booklet-system .cta:active {
   transform: scale(0.97);
 }
 
-body.is-notion-system .site-auth-button {
+body.is-booklet-system .site-auth-button {
   color: rgba(0, 0, 0, 0.9);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-buttons);
@@ -153,13 +153,13 @@ body.is-notion-system .site-auth-button {
   font-weight: 500;
 }
 
-body.is-notion-system .site-footer {
+body.is-booklet-system .site-footer {
   background: var(--color-paper-warmth);
   border-top: 1px solid var(--border-hairline);
   color: var(--color-graphite);
 }
 
-body.is-notion-system .kicker {
+body.is-booklet-system .kicker {
   color: rgba(0, 0, 0, 0.4);
   font-size: var(--text-caption);
   font-weight: 500;
@@ -168,7 +168,7 @@ body.is-notion-system .kicker {
 }
 
 /* ── Hero: centered paper stack + product mock ── */
-body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion {
+body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -180,12 +180,12 @@ body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion {
   text-align: center;
 }
 
-body.is-notion-system .kelus-hero.is-notion .folio-hero-atmosphere,
-body.is-notion-system .kelus-hero.is-notion .folio-hero-rule {
+body.is-booklet-system .kelus-hero.is-booklet .folio-hero-atmosphere,
+body.is-booklet-system .kelus-hero.is-booklet .folio-hero-rule {
   display: none;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy {
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -194,7 +194,7 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy {
   margin: 0 auto;
 }
 
-body.is-notion-system .hero-marks {
+body.is-booklet-system .hero-marks {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -204,7 +204,7 @@ body.is-notion-system .hero-marks {
   list-style: none;
 }
 
-body.is-notion-system .hero-marks li {
+body.is-booklet-system .hero-marks li {
   width: 40px;
   height: 40px;
   border: 2px solid;
@@ -214,18 +214,18 @@ body.is-notion-system .hero-marks li {
   box-shadow: none;
 }
 
-body.is-notion-system .hero-marks li span {
+body.is-booklet-system .hero-marks li span {
   width: 14px;
   height: 14px;
   border-radius: 9999px;
   opacity: 0.85;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 {
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 {
   max-width: 16ch;
   margin: 0 0 1.1rem;
   color: var(--color-ink-black);
-  font-family: var(--font-notion);
+  font-family: var(--font-booklet);
   font-size: clamp(2.75rem, 6.2vw, 4.5rem);
   font-weight: 600;
   line-height: 1.04;
@@ -233,7 +233,7 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 {
   text-wrap: balance;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 .hero-pill {
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 .hero-pill {
   display: inline;
   padding: 0.08em 0.38em;
   border-radius: var(--radius-pills);
@@ -244,12 +244,12 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 .hero-p
   -webkit-box-decoration-break: clone;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 span:not(.hero-pill) {
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 span:not(.hero-pill) {
   color: inherit;
   font-weight: inherit;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .home-lede {
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-lede {
   max-width: 42ch;
   margin: 0 0 1.5rem;
   color: var(--color-graphite);
@@ -259,7 +259,7 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .home-lede {
   line-height: 1.56;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .home-actions {
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -267,9 +267,9 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .home-actions {
   gap: 8px;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .home-cta {
-  background: var(--color-notion-blue);
-  border-color: var(--color-notion-blue);
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-cta {
+  background: var(--color-booklet-blue);
+  border-color: var(--color-booklet-blue);
   border-radius: var(--radius-buttons);
   font-weight: 500;
   font-size: var(--text-body-sm);
@@ -277,7 +277,7 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .home-cta {
   padding: 6px 15px;
 }
 
-body.is-notion-system .kelus-hero.is-folio.is-notion .home-secondary {
+body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-secondary {
   background: transparent;
   border: 1px solid #aeb6a8;
   border-radius: 999px;
@@ -289,234 +289,234 @@ body.is-notion-system .kelus-hero.is-folio.is-notion .home-secondary {
   backdrop-filter: none;
 }
 
-body.is-notion-system .folio-hero-notion {
+body.is-booklet-system .folio-hero-booklet {
   width: min(100%, 720px);
   margin: 0 auto;
   justify-self: center;
 }
 
 /* Hero product mock — white card on paper, hairline only; soft product shadow ok */
-body.is-notion-system .notion-board-shell {
+body.is-booklet-system .booklet-board-shell {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-cards);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-body.is-notion-system .notion-board-main {
+body.is-booklet-system .booklet-board-main {
   padding: 36px 22px 18px;
 }
 
-body.is-notion-system .notion-board-head h2 {
+body.is-booklet-system .booklet-board-head h2 {
   color: var(--color-ink-black);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
 
-body.is-notion-system .notion-page-mark,
-body.is-notion-system .notion-product-page-mark {
+body.is-booklet-system .booklet-page-mark,
+body.is-booklet-system .booklet-product-page-mark {
   background: var(--color-charcoal);
 }
 
-body.is-notion-system .notion-board-steps {
+body.is-booklet-system .booklet-board-steps {
   color: rgba(0, 0, 0, 0.4);
 }
 
-body.is-notion-system .notion-board-steps .is-active {
+body.is-booklet-system .booklet-board-steps .is-active {
   color: rgba(0, 0, 0, 0.95);
 }
 
-body.is-notion-system .notion-flow-question {
+body.is-booklet-system .booklet-flow-question {
   color: var(--color-ink-black);
   font-weight: 600;
 }
 
-body.is-notion-system .notion-flow-reveal {
+body.is-booklet-system .booklet-flow-reveal {
   background: var(--color-paper-warmth);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-buttons);
   color: rgba(0, 0, 0, 0.9);
 }
 
-body.is-notion-system .notion-flow-route li {
+body.is-booklet-system .booklet-flow-route li {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-buttons);
   box-shadow: none;
 }
 
-body.is-notion-system .notion-flow-route li.is-recommended {
+body.is-booklet-system .booklet-flow-route li.is-recommended {
   background: var(--color-sky-tint);
   border-color: rgba(0, 117, 222, 0.22);
 }
 
-body.is-notion-system .notion-flow-route-title span,
-body.is-notion-system .notion-flow-route li strong {
+body.is-booklet-system .booklet-flow-route-title span,
+body.is-booklet-system .booklet-flow-route li strong {
   color: var(--color-ink-black);
 }
 
-body.is-notion-system .notion-flow-route li small,
-body.is-notion-system .notion-flow-route li b,
-body.is-notion-system .notion-flow-route-title strong {
+body.is-booklet-system .booklet-flow-route li small,
+body.is-booklet-system .booklet-flow-route li b,
+body.is-booklet-system .booklet-flow-route-title strong {
   color: var(--color-graphite);
 }
 
 /* ── Product stage ── */
-body.is-notion-system .folio-product-stage {
+body.is-booklet-system .folio-product-stage {
   background: var(--color-paper-warmth);
   border-top: 1px solid var(--border-hairline);
   padding-block: var(--spacing-80, 80px);
 }
 
-body.is-notion-system .folio-product-intro .kicker {
+body.is-booklet-system .folio-product-intro .kicker {
   color: rgba(0, 0, 0, 0.4);
 }
 
-body.is-notion-system .folio-product-intro h2 {
+body.is-booklet-system .folio-product-intro h2 {
   color: var(--color-ink-black);
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1.1;
 }
 
-body.is-notion-system .folio-product-intro > p {
+body.is-booklet-system .folio-product-intro > p {
   color: var(--color-graphite);
   font-family: var(--font-editorial);
   font-size: 18px;
   line-height: 1.56;
 }
 
-body.is-notion-system .notion-product-shell {
+body.is-booklet-system .booklet-product-shell {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-cards);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-body.is-notion-system .notion-product-demo .hero-demo-identity strong {
+body.is-booklet-system .booklet-product-demo .hero-demo-identity strong {
   color: var(--color-ink-black);
   font-weight: 600;
 }
 
-body.is-notion-system .notion-product-demo .hero-demo-tabs button {
+body.is-booklet-system .booklet-product-demo .hero-demo-tabs button {
   border-radius: var(--radius-buttons);
   color: rgba(0, 0, 0, 0.54);
   font-weight: 500;
 }
 
-body.is-notion-system .notion-product-demo .hero-demo-tabs button[aria-pressed="true"] {
+body.is-booklet-system .booklet-product-demo .hero-demo-tabs button[aria-pressed="true"] {
   background: rgba(0, 0, 0, 0.06);
   color: rgba(0, 0, 0, 0.95);
 }
 
-body.is-notion-system .notion-product-demo .hero-reveal-button {
+body.is-booklet-system .booklet-product-demo .hero-reveal-button {
   background: var(--color-paper-warmth);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-buttons);
 }
 
-body.is-notion-system .notion-product-demo .hero-recall-actions button[aria-pressed="true"] {
-  background: var(--color-notion-blue);
-  border-color: var(--color-notion-blue);
+body.is-booklet-system .booklet-product-demo .hero-recall-actions button[aria-pressed="true"] {
+  background: var(--color-booklet-blue);
+  border-color: var(--color-booklet-blue);
   color: #fff;
 }
 
-body.is-notion-system .notion-product-demo .hero-demo-route li {
+body.is-booklet-system .booklet-product-demo .hero-demo-route li {
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-buttons);
   box-shadow: none;
 }
 
-body.is-notion-system .notion-product-demo .hero-demo-route li.is-recommended {
+body.is-booklet-system .booklet-product-demo .hero-demo-route li.is-recommended {
   background: var(--color-sky-tint);
   border-color: rgba(0, 117, 222, 0.22);
 }
 
-body.is-notion-system .notion-product-demo .hero-demo-signal span {
-  color: var(--color-notion-blue);
+body.is-booklet-system .booklet-product-demo .hero-demo-signal span {
+  color: var(--color-booklet-blue);
 }
 
 /* ── Story chapters: sticky-note accent cards ── */
-body.is-notion-system .folio-story {
+body.is-booklet-system .folio-story {
   background: var(--color-paper-warmth);
 }
 
-body.is-notion-system .folio-chapter {
+body.is-booklet-system .folio-chapter {
   border-bottom: 1px solid var(--border-hairline);
   padding-block: var(--spacing-80, 80px);
 }
 
-body.is-notion-system .folio-chapter-copy h2 {
+body.is-booklet-system .folio-chapter-copy h2 {
   color: var(--color-ink-black);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
 
-body.is-notion-system .folio-chapter-copy > p:not(.kicker) {
+body.is-booklet-system .folio-chapter-copy > p:not(.kicker) {
   color: var(--color-graphite);
   font-family: var(--font-editorial);
   font-size: 18px;
   line-height: 1.56;
 }
 
-body.is-notion-system .folio-chapter-copy > a {
-  color: var(--color-notion-blue);
+body.is-booklet-system .folio-chapter-copy > a {
+  color: var(--color-booklet-blue);
   font-weight: 500;
 }
 
-body.is-notion-system .folio-chapter-index {
+body.is-booklet-system .folio-chapter-index {
   color: rgba(0, 0, 0, 0.06);
 }
 
-body.is-notion-system .folio-chapter-art .v1-plan,
-body.is-notion-system .folio-chapter-art .v1-reroute,
-body.is-notion-system .folio-chapter-art .v1-materials {
+body.is-booklet-system .folio-chapter-art .v1-plan,
+body.is-booklet-system .folio-chapter-art .v1-reroute,
+body.is-booklet-system .folio-chapter-art .v1-materials {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-cards);
   box-shadow: none;
 }
 
-body.is-notion-system .folio-chapter.is-plan .folio-chapter-art .v1-plan {
+body.is-booklet-system .folio-chapter.is-plan .folio-chapter-art .v1-plan {
   background: var(--color-marigold);
   border-color: transparent;
 }
 
-body.is-notion-system .folio-chapter.is-reroute .folio-chapter-art .v1-reroute {
+body.is-booklet-system .folio-chapter.is-reroute .folio-chapter-art .v1-reroute {
   background: var(--color-sky-wash);
   border-color: transparent;
 }
 
 /* Materials chapter: quiet paper shelf, not a coral blast */
-body.is-notion-system .folio-chapter.is-materials .folio-chapter-art .v1-materials {
+body.is-booklet-system .folio-chapter.is-materials .folio-chapter-art .v1-materials {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   color: var(--color-ink-black);
 }
 
-body.is-notion-system .folio-chapter.is-materials .material-route-art-frame {
+body.is-booklet-system .folio-chapter.is-materials .material-route-art-frame {
   margin: 0;
   border-bottom: 1px solid var(--border-hairline);
   background: #f7f5f0;
 }
 
-body.is-notion-system .folio-chapter.is-materials .material-route-art-frame::before,
-body.is-notion-system .folio-chapter.is-materials .material-route-art-frame::after {
+body.is-booklet-system .folio-chapter.is-materials .material-route-art-frame::before,
+body.is-booklet-system .folio-chapter.is-materials .material-route-art-frame::after {
   display: none;
 }
 
-body.is-notion-system .folio-chapter.is-materials .material-route-art {
+body.is-booklet-system .folio-chapter.is-materials .material-route-art {
   max-height: 220px;
   object-fit: cover;
   object-position: center top;
 }
 
-body.is-notion-system .folio-chapter.is-materials .v1-materials > header {
+body.is-booklet-system .folio-chapter.is-materials .v1-materials > header {
   min-height: 0;
   padding: 16px 20px;
 }
 
-body.is-notion-system .folio-chapter.is-materials .v1-materials li {
+body.is-booklet-system .folio-chapter.is-materials .v1-materials li {
   min-height: 64px;
   margin: 8px 12px;
   padding: 12px 14px;
@@ -524,150 +524,150 @@ body.is-notion-system .folio-chapter.is-materials .v1-materials li {
   border: 1px solid var(--border-hairline);
 }
 
-body.is-notion-system .folio-chapter.is-materials .v1-materials > footer {
+body.is-booklet-system .folio-chapter.is-materials .v1-materials > footer {
   background: var(--color-paper-warmth, #eef1ec);
   color: var(--color-graphite);
 }
 
-body.is-notion-system .folio-chapter-art .v1-plan > header,
-body.is-notion-system .folio-chapter-art .v1-reroute > header,
-body.is-notion-system .folio-chapter-art .v1-materials > header {
+body.is-booklet-system .folio-chapter-art .v1-plan > header,
+body.is-booklet-system .folio-chapter-art .v1-reroute > header,
+body.is-booklet-system .folio-chapter-art .v1-materials > header {
   background: transparent;
   border-bottom-color: rgba(0, 0, 0, 0.08);
 }
 
-body.is-notion-system .folio-chapter-art .v1-plan li,
-body.is-notion-system .folio-chapter-art .v1-reroute li,
-body.is-notion-system .folio-chapter-art .v1-materials li {
+body.is-booklet-system .folio-chapter-art .v1-plan li,
+body.is-booklet-system .folio-chapter-art .v1-reroute li,
+body.is-booklet-system .folio-chapter-art .v1-materials li {
   background: rgba(255, 255, 255, 0.72);
   border-color: rgba(0, 0, 0, 0.08);
   border-radius: var(--radius-buttons);
 }
 
-body.is-notion-system .folio-chapter-art .v1-almost {
-  background: var(--color-notion-blue);
-  border-color: var(--color-notion-blue);
+body.is-booklet-system .folio-chapter-art .v1-almost {
+  background: var(--color-booklet-blue);
+  border-color: var(--color-booklet-blue);
 }
 
 /* Method + close */
-body.is-notion-system .folio-method {
+body.is-booklet-system .folio-method {
   background: var(--color-paper-warmth);
   border-top: 1px solid var(--border-hairline);
   padding-block: var(--spacing-80, 80px);
 }
 
-body.is-notion-system .folio-method-heading h2 {
+body.is-booklet-system .folio-method-heading h2 {
   color: var(--color-ink-black);
   font-weight: 600;
 }
 
-body.is-notion-system .folio-method-heading > p:not(.kicker) {
+body.is-booklet-system .folio-method-heading > p:not(.kicker) {
   color: var(--color-graphite);
   font-family: var(--font-editorial);
   font-size: 18px;
   line-height: 1.56;
 }
 
-body.is-notion-system .folio-method-grid > div {
+body.is-booklet-system .folio-method-grid > div {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-cards);
   box-shadow: none;
 }
 
-body.is-notion-system .folio-method-grid dt {
+body.is-booklet-system .folio-method-grid dt {
   color: rgba(0, 0, 0, 0.4);
 }
 
-body.is-notion-system .folio-method-grid dd {
+body.is-booklet-system .folio-method-grid dd {
   color: var(--color-ink-black);
 }
 
-body.is-notion-system .folio-close.home-close,
-body.is-notion-system .home-close.folio-close {
+body.is-booklet-system .folio-close.home-close,
+body.is-booklet-system .home-close.folio-close {
   background: var(--color-paper-warmth);
   border-top: 1px solid var(--border-hairline);
   color: var(--color-ink-black);
 }
 
-body.is-notion-system .home-close-copy h2 {
+body.is-booklet-system .home-close-copy h2 {
   color: var(--color-ink-black);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
 
-body.is-notion-system .home-close-copy p {
+body.is-booklet-system .home-close-copy p {
   color: var(--color-graphite);
 }
 
-body.is-notion-system .home-close-actions .cta {
-  background: var(--color-notion-blue);
+body.is-booklet-system .home-close-actions .cta {
+  background: var(--color-booklet-blue);
 }
 
-body.is-notion-system .home-close-actions .text-btn {
+body.is-booklet-system .home-close-actions .text-btn {
   color: var(--color-graphite);
 }
 
 /* Product surfaces already using is-booklet-product */
-body.is-notion-system .is-booklet-product .cta,
-body.is-notion-system .destination-page.is-booklet-product .time-choices label.is-selected,
-body.is-notion-system .pricing-page.is-booklet-product .pricing-plan .cta {
-  background: var(--color-notion-blue);
-  border-color: var(--color-notion-blue);
+body.is-booklet-system .is-booklet-product .cta,
+body.is-booklet-system .destination-page.is-booklet-product .time-choices label.is-selected,
+body.is-booklet-system .pricing-page.is-booklet-product .pricing-plan .cta {
+  background: var(--color-booklet-blue);
+  border-color: var(--color-booklet-blue);
 }
 
-body.is-notion-system .destination-page.is-booklet-product,
-body.is-notion-system .is-booklet-product .materials-empty,
-body.is-notion-system .is-booklet-product .materials-head,
-body.is-notion-system .is-booklet-product .today-brief.is-revision-studio,
-body.is-notion-system .is-booklet-product .today-workbench.is-revision-studio {
+body.is-booklet-system .destination-page.is-booklet-product,
+body.is-booklet-system .is-booklet-product .materials-empty,
+body.is-booklet-system .is-booklet-product .materials-head,
+body.is-booklet-system .is-booklet-product .today-brief.is-revision-studio,
+body.is-booklet-system .is-booklet-product .today-workbench.is-revision-studio {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-cards);
   box-shadow: none;
 }
 
-body.is-notion-system .course-workspace-layout.is-booklet-product {
+body.is-booklet-system .course-workspace-layout.is-booklet-product {
   background: var(--color-paper-warmth);
 }
 
-body.is-notion-system .is-booklet-product .course-workspace-rail {
+body.is-booklet-system .is-booklet-product .course-workspace-rail {
   background: var(--color-paper-warmth);
   border-right: 1px solid var(--border-hairline);
 }
 
-body.is-notion-system .how-page.is-booklet-product {
+body.is-booklet-system .how-page.is-booklet-product {
   background: var(--color-paper-warmth);
 }
 
-body.is-notion-system .how-page.is-booklet-product .how-title {
+body.is-booklet-system .how-page.is-booklet-product .how-title {
   color: var(--color-ink-black);
   font-weight: 600;
   letter-spacing: -0.03em;
 }
 
-body.is-notion-system .how-page.is-booklet-product .cta {
-  background: var(--color-notion-blue);
+body.is-booklet-system .how-page.is-booklet-product .cta {
+  background: var(--color-booklet-blue);
 }
 
 @media (max-width: 980px) {
-  body.is-notion-system .kelus-hero.home-hero.is-folio.is-notion {
+  body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet {
     min-height: 0;
     gap: 1.5rem;
     padding-top: 2rem;
   }
 
-  body.is-notion-system .folio-hero-notion {
+  body.is-booklet-system .folio-hero-booklet {
     width: 100%;
     max-width: 520px;
   }
 
-  body.is-notion-system .kelus-hero.is-folio.is-notion .folio-hero-copy h1 {
+  body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 {
     max-width: 14ch;
     font-size: clamp(2.35rem, 9vw, 3.25rem);
   }
 
-  body.is-notion-system .hero-marks li {
+  body.is-booklet-system .hero-marks li {
     width: 34px;
     height: 34px;
   }
@@ -675,18 +675,18 @@ body.is-notion-system .how-page.is-booklet-product .cta {
 
 /* Inclusive motion: no travel/scale when reduced motion is on */
 @media (prefers-reduced-motion: reduce) {
-  body.is-notion-system *,
-  body.is-notion-system *::before,
-  body.is-notion-system *::after {
+  body.is-booklet-system *,
+  body.is-booklet-system *::before,
+  body.is-booklet-system *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 
-  body.is-notion-system .site-header-action:active,
-  body.is-notion-system .cta:active,
-  body.is-notion-system a.cta:active {
+  body.is-booklet-system .site-header-action:active,
+  body.is-booklet-system .cta:active,
+  body.is-booklet-system a.cta:active {
     transform: none;
   }
 }
