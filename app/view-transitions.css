@@ -1,25 +1,16 @@
-/* React View Transition recipes — see .agents/skills/vercel-react-view-transitions */
+/* Kelus view transitions — ink settle, not SaaS slide theater.
+   Lateral + hierarchical: short opacity only. Shared titles still morph. */
 
 :root {
-  --vt-duration-exit: 150ms;
-  --vt-duration-enter: 210ms;
-  --vt-duration-move: 400ms;
+  --vt-duration-exit: 90ms;
+  --vt-duration-enter: 140ms;
+  --vt-duration-move: 280ms;
   --vt-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes vt-fade {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-
-@keyframes vt-slide {
-  from { translate: var(--slide-offset); }
-  to { translate: 0; }
-}
-
-@keyframes vt-slide-y {
-  from { transform: translateY(var(--slide-y-offset, 10px)); }
-  to { transform: translateY(0); }
 }
 
 /* Keep the root live so unnamed chrome stays interactive during transitions. */
@@ -35,7 +26,7 @@
   pointer-events: none;
 }
 
-/* Persistent site header — never slide with page content. */
+/* Persistent site header — never animates with page content. */
 ::view-transition-group(site-header) {
   animation: none;
   z-index: 100;
@@ -49,55 +40,33 @@
   animation: none;
 }
 
-/* Fade — lateral / unordered navigation */
+/* Lateral / unordered navigation — opacity settle only (no slide). */
 ::view-transition-old(.fade-out) {
-  animation: var(--vt-duration-exit) ease-in vt-fade reverse;
+  animation: var(--vt-duration-exit) ease-out both vt-fade reverse;
 }
 
 ::view-transition-new(.fade-in) {
-  animation: var(--vt-duration-enter) ease-out var(--vt-duration-exit) both vt-fade;
+  animation: var(--vt-duration-enter) var(--vt-ease) both vt-fade;
 }
 
-/* Suspense reveal — content arriving */
+/* Suspense handoff — same quiet fade; no rise/fall double-motion. */
 ::view-transition-old(.slide-down) {
-  animation:
-    var(--vt-duration-exit) ease-out both vt-fade reverse,
-    var(--vt-duration-exit) ease-out both vt-slide-y reverse;
+  animation: var(--vt-duration-exit) ease-out both vt-fade reverse;
 }
 
 ::view-transition-new(.slide-up) {
-  animation:
-    var(--vt-duration-enter) ease-in var(--vt-duration-exit) both vt-fade,
-    var(--vt-duration-move) var(--vt-ease) both vt-slide-y;
+  animation: var(--vt-duration-enter) var(--vt-ease) both vt-fade;
 }
 
-/* Hierarchical navigation — Map ↔ concept detail */
-::view-transition-old(.nav-forward) {
-  --slide-offset: -48px;
-  animation:
-    var(--vt-duration-exit) ease-in both vt-fade reverse,
-    var(--vt-duration-move) var(--vt-ease) both vt-slide reverse;
-}
-
-::view-transition-new(.nav-forward) {
-  --slide-offset: 48px;
-  animation:
-    var(--vt-duration-enter) ease-out var(--vt-duration-exit) both vt-fade,
-    var(--vt-duration-move) var(--vt-ease) both vt-slide;
-}
-
+/* Hierarchical (Map ↔ concept) — opacity only; shared title carries continuity. */
+::view-transition-old(.nav-forward),
 ::view-transition-old(.nav-back) {
-  --slide-offset: 48px;
-  animation:
-    var(--vt-duration-exit) ease-in both vt-fade reverse,
-    var(--vt-duration-move) var(--vt-ease) both vt-slide reverse;
+  animation: var(--vt-duration-exit) ease-out both vt-fade reverse;
 }
 
+::view-transition-new(.nav-forward),
 ::view-transition-new(.nav-back) {
-  --slide-offset: -48px;
-  animation:
-    var(--vt-duration-enter) ease-out var(--vt-duration-exit) both vt-fade,
-    var(--vt-duration-move) var(--vt-ease) both vt-slide;
+  animation: var(--vt-duration-enter) var(--vt-ease) both vt-fade;
 }
 
 /* Shared concept titles — avoid raster scale ghosts on text */

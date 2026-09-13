@@ -90,36 +90,37 @@ body.is-booklet-system .is-poster .hero-brand {
 /* Headline is the hero apex now that the giant wordmark is gone. */
 body.is-booklet-system .kelus-hero.home-hero.is-poster .poster-copy.home-copy h1,
 body.is-booklet-system .is-poster .poster-copy h1 {
-  max-width: 14ch;
+  max-width: 13.5ch;
   margin: 0;
   font-family: var(--font-editorial);
-  font-size: clamp(2.35rem, 5.5vw, 3.75rem) !important;
-  font-weight: 550 !important;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
+  font-size: clamp(2.45rem, 5.6vw, 3.85rem) !important;
+  font-weight: 560 !important;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
   color: var(--booklet-ink);
 }
 
 body.is-booklet-system .is-poster .hero-line-break {
   display: block;
-  margin-top: 0.12em;
+  margin-top: 0.08em;
   color: var(--booklet-mute);
   font-weight: 400;
-  font-size: 0.96em;
+  font-size: 0.94em;
+  letter-spacing: -0.035em;
 }
 
 body.is-booklet-system .is-poster .home-lede {
-  max-width: 34ch;
-  margin: 22px 0 0;
+  max-width: 32ch;
+  margin: 18px 0 0;
   font-family: var(--font-editorial);
-  font-size: 19px;
-  line-height: 1.45;
+  font-size: 18px;
+  line-height: 1.4;
   color: var(--booklet-mute);
 }
 
 body.is-booklet-system .is-poster .home-actions {
-  margin-top: 34px;
-  gap: 12px;
+  margin-top: 28px;
+  gap: 10px;
 }
 
 body.is-booklet-system .is-poster .home-cta {
@@ -2012,3 +2013,68 @@ body.is-booklet-system .is-booklet-product .site-account-panel {
   background: var(--booklet-paper) !important;
   box-shadow: none !important;
 }
+
+/* ── Feel: paper tooth + denser product type ── */
+body.is-booklet-system {
+  isolation: isolate;
+}
+
+body.is-booklet-system::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body.is-booklet-system::before {
+    opacity: 0;
+  }
+}
+
+body.is-booklet-system .course-workspace-content,
+body.is-booklet-system .shell.is-booklet-shell main,
+body.is-booklet-system .map-workspace,
+body.is-booklet-system .today-brief.is-booklet-today {
+  letter-spacing: -0.005em;
+}
+
+body.is-booklet-system .today-brief.is-booklet-today h1,
+body.is-booklet-system .map-workspace h1,
+body.is-booklet-system .materials-empty h1,
+body.is-booklet-system .is-booklet-gate h1 {
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+body.is-booklet-system .today-brief-lede,
+body.is-booklet-system .first-run-gate-lede,
+body.is-booklet-system .map-intro p {
+  line-height: 1.42;
+  max-width: 38rem;
+}
+
+body.is-booklet-system .site-header .site-nav a {
+  letter-spacing: -0.01em;
+}
+
+body.is-booklet-system .cta,
+body.is-booklet-system .home-cta,
+body.is-booklet-system .today-start {
+  letter-spacing: -0.015em;
+}
+
+/* Press: ink settles into the page */
+body.is-booklet-system .cta:active,
+body.is-booklet-system .home-cta:active,
+body.is-booklet-system .today-start:active,
+body.is-booklet-system .site-header-action:active {
+  transform: scale(0.98);
+  transition: transform 90ms ease-out;
+}
+

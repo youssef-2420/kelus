@@ -22,8 +22,8 @@ export function DirectionalPage({ children }: { children: ReactNode }) {
 }
 
 /**
- * Lateral / unordered routes (header tabs, home ↔ product). Cross-fade only —
- * no directional depth.
+ * Lateral / unordered routes (header tabs, home ↔ product).
+ * Short opacity settle only — no slide theater.
  */
 export function LateralPage({ children }: { children: ReactNode }) {
   return (
@@ -33,10 +33,10 @@ export function LateralPage({ children }: { children: ReactNode }) {
   );
 }
 
-/** Suspense fallback → content handoff. */
+/** Suspense fallback → content handoff (opacity only; matches route settle). */
 export function SuspenseReveal({ children }: { children: ReactNode }) {
   return (
-    <ViewTransition enter="slide-up" default="none">
+    <ViewTransition enter="fade-in" default="none">
       {children}
     </ViewTransition>
   );
@@ -44,7 +44,7 @@ export function SuspenseReveal({ children }: { children: ReactNode }) {
 
 export function SuspenseFallbackExit({ children }: { children: ReactNode }) {
   return (
-    <ViewTransition exit="slide-down" default="none">
+    <ViewTransition exit="fade-out" default="none">
       {children}
     </ViewTransition>
   );
