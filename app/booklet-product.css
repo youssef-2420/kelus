@@ -285,7 +285,7 @@
   color: #1a1a18;
 }
 
-.is-booklet-system .site-wordmark:hover,
+.is-booklet-system .site-footer-mark:hover,
 .is-booklet-system .site-auth-button:hover {
   color: #1f6b45;
 }
@@ -710,7 +710,7 @@
 /* The same readable controls and paper surfaces throughout the journey. */
 .is-booklet-system .site-header { background: var(--color-paper-warmth); border-bottom: 1px solid var(--color-frost); backdrop-filter: none; }
 .is-booklet-system .site-header-inner { min-height: 72px; padding-block: 8px; }
-.is-booklet-system .site-wordmark { color: #111; }
+.is-booklet-system .site-footer-mark { color: #111; }
 .is-booklet-system .site-nav a { color: var(--color-steel); border-radius: 8px; padding: 10px 12px; border: 0; min-height: 44px; }
 .is-booklet-system .site-nav a:hover { background: #ebe9e6; }
 .is-booklet-system .site-nav a.is-active { background: #ebe9e6; color: #111; box-shadow: none; }

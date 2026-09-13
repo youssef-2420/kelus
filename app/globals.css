@@ -3794,23 +3794,13 @@ h3,
   margin: 0 auto;
 }
 
-.site-wordmark {
+.site-header .site-footer-mark {
   flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
   margin-right: auto;
-  color: var(--color-midnight-ink);
-  font-size: 32px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: -0.045em;
-  text-decoration: none;
   transition: color var(--dur-product-micro) var(--ease-enter), transform var(--dur-product-micro) var(--ease-enter);
 }
 
-.site-wordmark:hover { color: var(--color-indigo-ink); }
-.site-wordmark:active { transform: scale(0.97); }
+.site-header .site-footer-mark:active { transform: scale(0.97); }
 
 .site-nav {
   display: flex;
@@ -3981,7 +3971,7 @@ h3,
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-wordmark,
+  .site-footer-mark,
   .site-nav a,
   .site-nav a::after,
   .site-header-action {
@@ -5606,7 +5596,7 @@ h3,
 
 @media (max-width: 720px) {
   .site-header.is-session .site-header-inner { flex-wrap: nowrap; padding-top: 0; }
-  .site-header.is-session .site-wordmark { font-size: 26px; }
+  .site-header.is-session .site-footer-mark { font-size: 20px; }
   .site-session-label { display: none; }
   .site-session-return { margin-left: auto; text-align: right; }
   .setup-progress { margin: var(--spacing-24) 0 var(--spacing-40); }
@@ -6096,9 +6086,13 @@ h3,
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  font-family: var(--font-ledger);
   font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.045em;
   text-decoration: none;
-  color: var(--color-midnight-ink);
+  color: #111;
 }
 
 .site-footer-nav {

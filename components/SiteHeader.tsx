@@ -45,7 +45,7 @@ export function SiteHeader() {
       style={{ viewTransitionName: "site-header" }}
     >
       <div className="site-header-inner">
-        <Link href="/" className="mark site-wordmark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
+        <Link href="/" className="mark site-footer-mark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           Kelus
         </Link>
 
