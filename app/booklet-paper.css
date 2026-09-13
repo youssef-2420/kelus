@@ -3,7 +3,7 @@
 
 :root {
   --color-booklet-blue: #1f6b45;
-  --color-paper-warmth: #eef1ec;
+  --color-paper-warmth: #ffffff;
   --color-pure-white: #ffffff;
   --color-ink-black: #12160f;
   --color-charcoal: #12160f;
@@ -520,12 +520,12 @@ body.is-booklet-system .folio-chapter.is-materials .v1-materials li {
   min-height: 64px;
   margin: 8px 12px;
   padding: 12px 14px;
-  background: var(--booklet-paper, #eef1ec);
+  background: var(--booklet-paper, #ffffff);
   border: 1px solid var(--border-hairline);
 }
 
 body.is-booklet-system .folio-chapter.is-materials .v1-materials > footer {
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
   color: var(--color-graphite);
 }
 

@@ -1,7 +1,7 @@
 /* Shared paper palette from the supplied Booklet reference. Legacy token names
    remain aliases so every existing product surface inherits the rebrand. */
 .is-booklet-system {
-  --color-paper-warmth: #eef1ec; /* booklet paper — not Anthropic cream */
+  --color-paper-warmth: #ffffff; /* white paper field */
   --color-booklet-blue: #1f6b45;
   --color-sky-tint: #e4efe8;
   --color-indigo-ink: var(--color-booklet-blue);
@@ -26,11 +26,11 @@
 
 .is-booklet-product.course-workspace-layout,
 .course-workspace-layout.is-booklet-product {
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
 }
 
 .is-booklet-product .course-workspace-rail {
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
   border-right: 1px solid var(--color-frost, #d5d9d0);
   color: var(--color-midnight-ink, #12160f);
 }
@@ -105,7 +105,7 @@
 .is-booklet-product.shell,
 .is-booklet-product .shell,
 .shell.is-booklet-product {
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
 }
 
 .is-booklet-product .today-brief.is-revision-studio,
@@ -175,7 +175,7 @@
   padding: 10px;
   border: 1px solid #ebebea;
   border-radius: 10px;
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
 }
 
 .destination-page.is-booklet-product .setup-progress li {
@@ -195,7 +195,7 @@
   border: 1px solid #ebebea;
   border-radius: 10px;
   padding: 1rem 1rem 1.1rem;
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
 }
 
 .destination-page.is-booklet-product legend {
@@ -226,7 +226,7 @@
 .destination-page.is-booklet-product .setup-sample {
   border: 1px solid #ebebea;
   border-radius: 10px;
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
 }
 
 .diagnosis-page.is-booklet-product {
@@ -241,7 +241,7 @@
 .diagnosis-page.is-booklet-product .diagnosis-check {
   border: 1px solid #ebebea;
   border-radius: 10px;
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
 }
 
 .pricing-page.is-booklet-product .pricing-plan {
@@ -503,7 +503,7 @@
 
 /* Pricing as soft workspace band */
 .pricing-page.is-booklet-product {
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
   padding-bottom: 3rem;
 }
 
@@ -521,7 +521,7 @@
 
 /* How it works — last major ledger holdout */
 .how-page.is-booklet-product {
-  background: var(--color-paper-warmth, #eef1ec);
+  background: var(--color-paper-warmth, #ffffff);
   color: #1a1a18;
 }
 

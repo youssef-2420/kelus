@@ -7,7 +7,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --paper: #eef1ec;
+  --paper: #ffffff;
   --ink: var(--color-midnight-ink);
   --muted: var(--color-steel);
   --line: var(--color-frost);
@@ -19,7 +19,7 @@
   --fading: var(--color-amethyst-edge);
   --weak: var(--color-steel);
   --new: var(--color-smoke);
-  --background: #eef1ec;
+  --background: #ffffff;
   --foreground: var(--color-midnight-ink);
   --card: var(--color-mist);
   --card-foreground: var(--color-midnight-ink);
