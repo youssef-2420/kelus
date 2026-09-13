@@ -1,11 +1,11 @@
 /*
   Kelus homepage — “marked script” system
-  Paper with a cool green cast (not Anthropic cream), ink, one pass-mark green.
+  White paper field, ink, one pass-mark green.
   Display = Newsreader (essay). UI = IBM Plex Sans (via --font-inter).
 */
 
 body.is-booklet-system {
-  --booklet-paper: #eef1ec;
+  --booklet-paper: #ffffff;
   --booklet-ink: #12160f;
   --booklet-mute: #4a5246;
   --booklet-kelus: #1f6b45;
@@ -1675,7 +1675,7 @@ body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.is-poster {
 body.is-booklet-system .topic-map-node text {
   font-size: 3.1px;
   paint-order: stroke;
-  stroke: var(--booklet-paper, #eef1ec);
+  stroke: var(--booklet-paper, #ffffff);
   stroke-width: 0.55px;
   stroke-linejoin: round;
 }
