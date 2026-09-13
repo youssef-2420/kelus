@@ -87,6 +87,16 @@ body.is-booklet-system h3 {
   font-family: var(--font-booklet);
 }
 
+/* Ready confirmation keeps Literata — this is a reading moment, not chrome. */
+body.is-booklet-system .material-ready h2,
+body.is-booklet-system .concept-confirmation h2 {
+  font-family: var(--font-source-serif), Literata, Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
+  font-weight: 550;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
 /* ── Global chrome ── */
 body.is-booklet-system .site-header {
   background: rgba(246, 245, 244, 0.86);

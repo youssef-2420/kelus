@@ -2359,6 +2359,9 @@ button, input, textarea { font: inherit; }
   margin: 0;
   color: var(--color-product-secondary);
 }
+.materials-head.is-complete > p {
+  color: var(--color-steel, var(--color-product-secondary));
+}
 .material-ingest {
   padding: var(--space-product-2xl) 0;
   border-bottom: 1px solid var(--color-product-border);
@@ -4646,10 +4649,11 @@ h3,
   cursor: pointer;
 }
 
-.concept-proposal-list input {
+.concept-proposal-list input[type="checkbox"] {
   width: 18px;
   height: 18px;
   margin: 0;
+  flex: 0 0 auto;
   accent-color: var(--color-indigo-ink);
 }
 
@@ -4664,7 +4668,10 @@ h3,
 .concept-proposal-list small { color: var(--color-steel); overflow-wrap: anywhere; }
 
 .proposal-name-input {
+  box-sizing: border-box;
   width: 100%;
+  min-width: 0;
+  height: auto;
   min-height: 36px;
   padding: 0;
   color: var(--color-midnight-ink);
@@ -4674,6 +4681,7 @@ h3,
   border-radius: 0;
   font: inherit;
   font-weight: 600;
+  line-height: 1.35;
 }
 
 .proposal-name-input:hover { border-bottom-color: var(--color-lavender-border); }
@@ -4706,11 +4714,15 @@ h3,
   background: var(--color-pure-white);
 }
 .material-ready h2 {
-  max-width: 18ch;
+  max-width: 22ch;
   margin: var(--spacing-8) 0 var(--spacing-16);
+  font-family: var(--font-editorial), Literata, Georgia, "Times New Roman", serif;
+  font-optical-sizing: auto;
   font-size: clamp(28px, 4vw, 40px);
-  font-weight: 300;
-  letter-spacing: -0.03em;
+  font-weight: 550;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--color-midnight-ink);
 }
 .material-ready > p {
   max-width: 52ch;
@@ -4719,14 +4731,59 @@ h3,
 }
 .material-ready-actions {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-16);
+}
+.material-ready-actions .cta {
+  width: auto;
+}
+.material-ready-secondary {
+  display: flex;
   flex-wrap: wrap;
-  gap: var(--spacing-12) var(--spacing-16);
+  gap: 4px 20px;
   align-items: center;
+}
+.material-ready-secondary a,
+.material-ready-secondary button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-steel);
+  font: inherit;
+  font-size: var(--text-body-sm, 0.9375rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-steel) 35%, transparent);
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+  transition: color var(--dur-quick, 150ms) var(--ease-enter, ease), text-decoration-color var(--dur-quick, 150ms) var(--ease-enter, ease);
+}
+.material-ready-secondary a:hover,
+.material-ready-secondary button:hover {
+  color: var(--color-midnight-ink);
+  text-decoration-color: color-mix(in srgb, var(--color-midnight-ink) 45%, transparent);
+}
+.material-ready-secondary a:focus-visible,
+.material-ready-secondary button:focus-visible {
+  outline: 2px solid var(--accent, var(--color-indigo-ink));
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.material-ready-secondary a:active,
+.material-ready-secondary button:active {
+  transform: scale(0.98);
 }
 @media (max-width: 720px) {
   .material-ready { padding: var(--spacing-24); }
-  .material-ready-actions { flex-direction: column; align-items: stretch; }
-  .material-ready-actions .cta { width: 100%; }
+  .material-ready-actions { align-items: stretch; }
+  .material-ready-actions .cta { width: 100%; justify-content: center; }
+  .material-ready-secondary { flex-direction: column; align-items: flex-start; gap: 0; }
 }
 
 .concept-confirmation-actions {
@@ -6843,7 +6900,8 @@ h3,
 .complete-waitlist > summary { min-height: 44px; padding: 12px 0; color: var(--color-indigo-ink); cursor: pointer; }
 .material-ready [tabindex="-1"],
 .concept-confirmation [tabindex="-1"] { scroll-margin-top: 120px; }
-.material-ready-actions { flex-wrap: wrap; }
+/* Ready actions: column stack is owned above; do not re-wrap onto the CTA row. */
+.material-ready-actions { flex-wrap: nowrap; }
 .concept-confirmation-actions { position: sticky; bottom: 0; z-index: 2; background: var(--color-pure-white); padding-block: var(--spacing-16); border-top: 1px solid var(--color-frost); }
 .destination-actions .cta { min-height: 48px; }
 .study-question textarea { min-height: 160px; line-height: 1.65; resize: vertical; }

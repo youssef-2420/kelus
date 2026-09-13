@@ -450,9 +450,13 @@ export function MaterialLibrary() {
 
   return (
     <AppShell>
-      <header className="materials-head">
+      <header className={`materials-head${readySummary ? " is-complete" : ""}`}>
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
-        <p>Add the lessons you want to revise for this exam. PDFs supply proposed revision topics; links are bookmarks only.</p>
+        <p>
+          {readySummary
+            ? "Your topics are on the map. Continue below, or add another source from the shelf when you need it."
+            : "Add the lessons you want to revise for this exam. PDFs supply proposed revision topics; links are bookmarks only."}
+        </p>
       </header>
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
@@ -554,8 +558,10 @@ export function MaterialLibrary() {
               Your topics are saved. Next, check what you remember so Kelus can suggest where to begin. You can inspect the map whenever you need it.</p>
             <div className="material-ready-actions">
               <Link className="cta" href="/today">Continue: short check, then study <span aria-hidden="true">→</span></Link>
-              <Link className="text-btn" href="/map">Review the map</Link>
-              <button type="button" className="text-btn" onClick={() => dispatch({ type: "ADD_ANOTHER" })}>Add another source</button>
+              <div className="material-ready-secondary">
+                <Link href="/map">Review the map</Link>
+                <button type="button" onClick={() => dispatch({ type: "ADD_ANOTHER" })}>Add another source</button>
+              </div>
             </div>
           </motion.section>
         ) : null}
