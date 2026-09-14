@@ -31,7 +31,7 @@
   overflow-wrap: anywhere;
   min-width: 0;
 }
-.secondLine { display: block; margin-top: .12em; color: var(--mute); font-weight: 400; }
+.secondLine { display: block; margin-top: .12em; color: var(--mute); font-weight: 430; }
 .hero .lede { max-width: 30ch; margin: 28px 0 0; font-family: var(--font-source-serif), Georgia, serif; font-size: 17px; line-height: 1.65; letter-spacing: -.02em; color: var(--mute); }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 20px; margin-top: 36px; }
 .primary, .secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; font-family: var(--font-inter), sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; text-decoration: none; border-radius: 3px; box-shadow: none; }
@@ -40,8 +40,8 @@
 .primary:hover { background: var(--ink); border-color: var(--ink); }
 .secondary:hover { color: var(--ink); border-color: var(--ink); }
 .primary:focus-visible, .secondary:focus-visible, .motionControl:focus-visible { outline: 2px solid var(--green); outline-offset: 5px; }
-.visual { position: absolute; inset: 0 -8% 0 38%; min-width: 0; }
-.script { position: absolute; inset: -80px 0 0; margin: 0; }
+.visual { position: absolute; inset: 0 -8% 0 31%; min-width: 0; }
+.script { position: absolute; inset: -114px 0 0; margin: 0; }
 .art { display: block; width: 100%; height: auto; overflow: visible; }
 .paperEdge { fill: none; stroke: var(--rule); stroke-width: 1; }
 .paper { fill: #fff; stroke: var(--rule); stroke-width: 1; }
@@ -57,7 +57,7 @@
 .pen, .startPen { fill: none; stroke: var(--mute); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .startPen { stroke: var(--mute); stroke-width: 1; }
 .startTopic { fill: var(--ink); }
-.startWash { fill: var(--green); opacity: .13; transform-origin: 177px 354px; }
+.startWash { fill: var(--green); opacity: .18; transform-origin: 177px 354px; }
 .startAnnotation { fill: var(--green); font: italic 25px var(--font-source-serif), Georgia, serif; }
 .startAnnotation path { fill: none; stroke: var(--green); stroke-width: 1.6; stroke-linecap: round; }
 .guide { fill: none; stroke: var(--rule); stroke-width: 1; }
@@ -75,8 +75,8 @@
 }
 @media (min-width: 48rem) and (max-width: 63.99rem) {
   .copy { width: 48%; padding-left: 32px; }
-  .visual { left: 43%; right: -24%; }
-  .script { top: -16px; }
+  .visual { left: 39%; right: -24%; }
+  .script { top: -32px; }
   .startAnnotation { translate: -120px -8px; }
 }
 @media (max-width: 47.99rem) {
@@ -86,7 +86,7 @@
   .hero .lede { max-width: 32ch; margin-top: 20px; font-size: 17px; }
   .actions { margin-top: 24px; gap: 8px 18px; }
   .visual { position: relative; inset: auto; height: 420px; min-height: 0; margin-top: 8px; }
-  .script { inset: -60px -24% 0 -12%; }
+  .script { inset: -80px -24% 0 -12%; }
   .art { min-width: 520px; height: auto; }
   .motionControl { right: calc(24vw + 16px); bottom: 8px; }
   .startAnnotation { translate: -24px 0; }
@@ -96,7 +96,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .routeInk { stroke-dashoffset: 0 !important; }
-  .startWash { opacity: .13 !important; transform: none !important; }
+  .startWash { opacity: .18 !important; transform: none !important; }
   .startAnnotation { opacity: 1 !important; transform: none !important; }
   .motionControl { display: none; }
 }

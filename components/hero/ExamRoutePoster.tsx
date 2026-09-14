@@ -41,11 +41,11 @@ export function ExamRoutePoster() {
     });
     const arrival = .6 + 7.4 * lengths[0] / total;
     sequence.push(
-      ["[data-start-wash]", { opacity: [.04, .13], scaleX: [.94, 1] },
+      ["[data-start-wash]", { opacity: [.16, .18], scaleX: [.94, 1] },
         { at: arrival, type: "spring", bounce: 0, duration: 1 }],
-      ["[data-start-note]", { opacity: [.55, 1], y: [2, 0] },
+      ["[data-start-note]", { opacity: [.85, 1], y: [2, 0] },
         { at: arrival, type: "spring", bounce: 0, duration: 1 }],
-      ["[data-start-wash]", { opacity: .13 }, { at: 8, duration: 2 }],
+      ["[data-start-wash]", { opacity: .18 }, { at: 8, duration: 2 }],
     );
     const controls = animate(sequence);
     playback.current = controls;

@@ -1,8 +1,6 @@
-Bleed — enlarged the existing script into an edge-cropped plane; compacted later topics to keep the route legible.
-Type — Literata now reaches 72px at 1.06 leading, with a stronger 440/400 weight pairing.
-Green — removed green from the printed topic and oval; retained route ink, Start here, its wash, the primary CTA, and focus rings.
-Motion — corrected the CSS override that prevented drawing; distance-weighted segments hand off velocity, and Start here settles at Elasticity.
-CTA grammar — unchanged exact labels and destinations; one solid green primary, one quiet text/hairline secondary.
+- Field bleed — moved the paper left under the copy field and further above the top edge; tightened the mobile crop without changing the stacked layout.
+- Start-here rest signal — increased the finished wash to 18%, with 16% wash and 85% annotation opacity during the initial drawing; Elasticity and its oval remain ink.
+- Second-line authority — raised the second line to Literata 430 beside the first line’s 440, preserving mute color, optical sizing, tight leading, and exact copy.
 
 ## Preview provenance
 
