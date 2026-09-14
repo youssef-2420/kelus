@@ -2,25 +2,25 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { AppShell } from "@/components/AppShell";
+import { useEffect, useState } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useLearner } from "@/components/LearnerProvider";
+import { estimatedReadiness } from "@/domain/readiness";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
-import { greeting } from "@/lib/format";
+import { greeting, percent } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
 import { trackEvent } from "@/lib/analytics";
 
 export type SurfaceMode = "today" | "materials" | "map";
 
-const MODES: Array<{ id: SurfaceMode; label: string }> = [
-  { id: "today", label: "Today" },
-  { id: "materials", label: "Materials" },
-  { id: "map", label: "Map" },
+const MODES: Array<{ id: SurfaceMode; label: string; hint: string }> = [
+  { id: "today", label: "Today", hint: "Today’s route" },
+  { id: "materials", label: "Materials", hint: "Sources" },
+  { id: "map", label: "Map", hint: "Topics" },
 ];
 
 function modeFromSection(section: string | null): SurfaceMode {
@@ -33,8 +33,8 @@ function hrefForMode(mode: SurfaceMode) {
 }
 
 /**
- * The whole product workbench on one page: Today / Materials / Map as sections.
- * Session stays its own focused route. First-run still uses /materials before diagnosis.
+ * Kelus course space — one page for the whole product.
+ * YouLearn-like spatial model (rail + stage), Kelus booklet craft.
  */
 export function RevisionSurface() {
   const router = useRouter();
@@ -44,13 +44,18 @@ export function RevisionSurface() {
   const [confirmReset, setConfirmReset] = useState(false);
   const mode = modeFromSection(searchParams.get("section"));
 
+  useEffect(() => {
+    document.body.classList.add("is-kelus-space");
+    return () => document.body.classList.remove("is-kelus-space");
+  }, []);
+
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
   const exam = snapshot.exams.find((item) => item.courseId === course?.id && item.isActive);
 
   if (!course || !exam) {
     return (
-      <AppShell>
+      <main id="main" className="kelus-space is-empty">
         <section className="materials-empty">
           <p className="kicker">Today</p>
           <h1>Set your exam first.</h1>
@@ -59,7 +64,7 @@ export function RevisionSurface() {
             Start over
           </button>
         </section>
-      </AppShell>
+      </main>
     );
   }
 
@@ -72,12 +77,14 @@ export function RevisionSurface() {
     nowIso,
   });
   const days = daysUntilExam(exam, nowIso);
+  const readiness = estimatedReadiness(concepts);
   const courseId = course.id;
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
   const lastCompleted = lastSessionCompletedAt();
   const dueCount = concepts.filter((concept) => concept.nextReviewAt && Date.parse(concept.nextReviewAt) <= Date.parse(nowIso)).length;
   const returning = Boolean(lastCompleted) && snapshot.sessions.some((session) => session.status === "complete");
+  const modeMeta = MODES.find((item) => item.id === mode)!;
 
   function setMode(next: SurfaceMode) {
     if (next === mode) return;
@@ -101,39 +108,74 @@ export function RevisionSurface() {
     router.push(`/session?id=${openSession.id}`);
   }
 
+  const resetControl = confirmReset ? (
+    <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
+      <span>Erase this route?</span>
+      <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>
+        Cancel
+      </button>
+      <button
+        type="button"
+        className="text-btn is-danger"
+        onClick={() => {
+          setConfirmReset(false);
+          reset();
+        }}
+      >
+        Start over
+      </button>
+    </span>
+  ) : (
+    <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
+      Start over
+    </button>
+  );
+
   return (
-    <AppShell
-      action={
-        confirmReset ? (
-          <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
-            <span>Erase this route?</span>
-            <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>
-              Cancel
-            </button>
-            <button
-              type="button"
-              className="text-btn is-danger"
-              onClick={() => {
-                setConfirmReset(false);
-                reset();
-              }}
-            >
-              Start over
-            </button>
-          </span>
-        ) : (
-          <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
-            Start over
-          </button>
-        )
-      }
-    >
-      <section className="revision-surface is-ready" aria-label="Revision workbench">
-        <header className="revision-surface-head">
-          <div className="revision-surface-brief">
-            <p className="kicker">Revision</p>
+    <section className="kelus-space" aria-label="Revision workbench">
+      <aside className="kelus-space-rail" aria-label="Course space">
+        <div className="kelus-space-rail-brand">
+          <p className="kelus-space-rail-mark">Kelus</p>
+          <p className="kelus-space-rail-course">{course.name}</p>
+        </div>
+
+        <nav className="kelus-space-nav revision-surface-modes" aria-label="Revision sections">
+          {MODES.map((item) => {
+            const active = item.id === mode;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={active ? "is-active" : undefined}
+                aria-pressed={active}
+                aria-label={item.label}
+                onClick={() => setMode(item.id)}
+              >
+                <span className="kelus-space-nav-label" aria-hidden="true">{item.label}</span>
+                <span className="kelus-space-nav-hint" aria-hidden="true">{item.hint}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="kelus-space-rail-foot">
+          <p className="kelus-space-rail-meta">
+            Exam in {days} day{days === 1 ? "" : "s"}
+            <span aria-hidden="true"> · </span>
+            <span title="Estimate from your familiarity ratings and recall checks — not a grade prediction.">
+              {percent(readiness)} Est. readiness
+            </span>
+          </p>
+          {resetControl}
+        </div>
+      </aside>
+
+      <main id="main" className="kelus-space-stage">
+        <header className="kelus-space-top">
+          <div className="kelus-space-identity">
+            <p className="kicker">{modeMeta.hint}</p>
             <h1 id="today-title">{course.name}</h1>
-            <p className="revision-surface-lede">
+            <p className="kelus-space-lede">
               {route.availableMinutes} minutes for revision today
               <span className="today-brief-exam">
                 {" "}
@@ -152,28 +194,17 @@ export function RevisionSurface() {
             </p>
           </div>
 
-          <nav className="revision-surface-modes" aria-label="Revision sections">
-            {MODES.map((item) => {
-              const active = item.id === mode;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  className={active ? "is-active" : undefined}
-                  aria-pressed={active}
-                  onClick={() => setMode(item.id)}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </nav>
+          {mode === "today" ? (
+            <button type="button" className="cta kelus-space-start" onClick={openSession ? resume : begin}>
+              {openSession ? "Resume session" : "Start today’s route"} <span aria-hidden="true">→</span>
+            </button>
+          ) : null}
         </header>
 
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={mode}
-            className="revision-surface-panel"
+            className="kelus-space-panel revision-surface-panel"
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
@@ -198,7 +229,7 @@ export function RevisionSurface() {
             {mode === "map" ? <TopicMapPanel /> : null}
           </motion.div>
         </AnimatePresence>
-      </section>
-    </AppShell>
+      </main>
+    </section>
   );
 }

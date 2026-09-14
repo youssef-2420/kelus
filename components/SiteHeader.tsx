@@ -50,16 +50,20 @@ export function SiteHeader() {
     document.addEventListener("pointerdown", close);
     return () => document.removeEventListener("pointerdown", close);
   }, []);
+  const spaceMode = studyReady && pathname.startsWith("/today");
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
   // In the study loop, keep chrome to Today / Materials / Map.
   // Marketing links stay in `links` (footer + tests) but leave product focus alone.
-  const visibleLinks = inProduct
-    ? links.filter((link) => link.href === "/today" || link.href === "/materials" || link.href === "/map")
-    : links;
+  // After diagnosis the course space rail owns section switching — hide duplicate header nav.
+  const visibleLinks = spaceMode
+    ? []
+    : inProduct
+      ? links.filter((link) => link.href === "/today" || link.href === "/materials" || link.href === "/map")
+      : links;
 
   return (
     <header
-      className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}${onHome ? " is-home" : ""}`}
+      className={`site-header${inSession ? " is-session" : ""}${inProduct ? " is-product" : ""}${onHome ? " is-home" : ""}${spaceMode ? " is-space" : ""}`}
       style={{ viewTransitionName: "site-header" }}
     >
       <div className="site-header-inner">
@@ -67,21 +71,27 @@ export function SiteHeader() {
           Kelus
         </Link>
 
-        {inSession ? <p className="site-session-label">Revision session</p> : <nav className={`site-nav${inProduct ? " is-workbench" : ""}`} aria-label="Primary navigation">
-          {visibleLinks.map((link) => {
-            const href = productHref(link.href, studyReady);
-            const active = studyReady && pathname.startsWith("/today")
-              ? (link.href === "/today" && !section) ||
-                (link.href === "/materials" && section === "materials") ||
-                (link.href === "/map" && section === "map")
-              : link.matches.some((prefix) => pathname.startsWith(prefix));
-            return (
-              <Link key={link.href} href={href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>
-                {link.shortLabel ? <><span className="nav-label-full">{link.label}</span><span className="nav-label-short">{link.shortLabel}</span></> : link.label}
-              </Link>
-            );
-          })}
-        </nav>}
+        {inSession ? (
+          <p className="site-session-label">Revision session</p>
+        ) : visibleLinks.length ? (
+          <nav className={`site-nav${inProduct ? " is-workbench" : ""}`} aria-label="Primary navigation">
+            {visibleLinks.map((link) => {
+              const href = productHref(link.href, studyReady);
+              const active = studyReady && pathname.startsWith("/today")
+                ? (link.href === "/today" && !section) ||
+                  (link.href === "/materials" && section === "materials") ||
+                  (link.href === "/map" && section === "map")
+                : link.matches.some((prefix) => pathname.startsWith(prefix));
+              return (
+                <Link key={link.href} href={href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>
+                  {link.shortLabel ? <><span className="nav-label-full">{link.label}</span><span className="nav-label-short">{link.shortLabel}</span></> : link.label}
+                </Link>
+              );
+            })}
+          </nav>
+        ) : (
+          <p className="site-space-label">Course space</p>
+        )}
 
         {inSession ? (
           <Link href="/today" className="site-session-return">Pause and return to Today</Link>

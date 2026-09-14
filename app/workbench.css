@@ -284,3 +284,237 @@
     flex: 1 1 auto;
   }
 }
+
+/* Kelus course space — YouLearn spatial model, booklet craft */
+body.is-kelus-space .site-header.is-space {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
+  background: color-mix(in srgb, #fff 92%, var(--color-fog, #ebe9e6));
+}
+
+body.is-kelus-space .site-header.is-space .site-header-inner {
+  justify-content: space-between;
+}
+
+body.is-kelus-space .site-space-label {
+  margin: 0 auto 0 16px;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+}
+
+.kelus-space {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  min-height: calc(100vh - 64px);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--color-fog, #f3f1ee) 70%, #fff), #f7f5f2 40%, #fff);
+}
+
+.kelus-space.is-empty {
+  display: block;
+  padding: 48px 24px;
+}
+
+.kelus-space-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  padding: 28px 18px 24px;
+  border-right: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  background: color-mix(in srgb, #fff 78%, var(--color-fog, #ebe9e6));
+  box-sizing: border-box;
+}
+
+.kelus-space-rail-brand {
+  padding: 0 8px;
+}
+
+.kelus-space-rail-mark {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-steel, #5c6570);
+}
+
+.kelus-space-rail-course {
+  margin: 0;
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-optical-sizing: auto;
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  color: var(--color-ink, #12160f);
+}
+
+.kelus-space-nav.revision-surface-modes {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.kelus-space-nav.revision-surface-modes button {
+  display: grid;
+  gap: 2px;
+  justify-content: start;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  text-align: left;
+  box-shadow: none;
+}
+
+.kelus-space-nav.revision-surface-modes button.is-active,
+.kelus-space-nav.revision-surface-modes button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--color-ink, #111);
+  box-shadow: 0 1px 0 color-mix(in srgb, #111 5%, transparent);
+  outline: 1px solid color-mix(in srgb, var(--color-kelus, #1f6b45) 22%, transparent);
+}
+
+.kelus-space-nav-label {
+  font-size: 0.98rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.kelus-space-nav-hint {
+  font-size: 0.78rem;
+  color: var(--color-steel, #5c6570);
+  font-weight: 400;
+}
+
+.kelus-space-nav button.is-active .kelus-space-nav-hint {
+  color: color-mix(in srgb, var(--color-kelus, #1f6b45) 70%, var(--color-steel, #5c6570));
+}
+
+.kelus-space-rail-foot {
+  margin-top: auto;
+  display: grid;
+  gap: 12px;
+  padding: 0 8px;
+}
+
+.kelus-space-rail-meta {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--color-steel, #5c6570);
+}
+
+.kelus-space-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 28px;
+  padding: 28px clamp(20px, 3vw, 40px) 48px;
+  min-width: 0;
+}
+
+.kelus-space-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px 28px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+}
+
+.kelus-space-identity {
+  min-width: min(100%, 28rem);
+  max-width: 42rem;
+}
+
+.kelus-space-identity .kicker {
+  margin: 0 0 8px;
+}
+
+.kelus-space-identity h1 {
+  margin: 0;
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-optical-sizing: auto;
+  font-size: clamp(1.85rem, 3.2vw, 2.55rem);
+  font-weight: 440;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--color-ink, #12160f);
+}
+
+.kelus-space-lede {
+  margin: 12px 0 0;
+  color: var(--color-steel, #5c6570);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.kelus-space-start {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.kelus-space-panel {
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kelus-space-nav.revision-surface-modes button,
+  .kelus-space-nav.revision-surface-modes button:active {
+    transition: none;
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .kelus-space {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .kelus-space-rail {
+    position: static;
+    height: auto;
+    gap: 16px;
+    padding: 16px 16px 12px;
+    border-right: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  }
+
+  .kelus-space-rail-course {
+    font-size: 1.05rem;
+  }
+
+  .kelus-space-nav.revision-surface-modes {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .kelus-space-nav.revision-surface-modes button {
+    flex: 1 1 auto;
+    min-height: 44px;
+    gap: 0;
+  }
+
+  .kelus-space-nav-hint {
+    display: none;
+  }
+
+  .kelus-space-rail-foot {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    margin-top: 0;
+  }
+
+  .kelus-space-stage {
+    padding: 20px 16px 40px;
+  }
+}
