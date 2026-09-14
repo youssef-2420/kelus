@@ -39,7 +39,7 @@
 .secondary { color: var(--ink); border-bottom: 1px solid var(--rule); border-radius: 0; }
 .primary:hover { background: var(--ink); border-color: var(--ink); }
 .secondary:hover { color: var(--ink); border-color: var(--ink); }
-.primary:focus-visible, .secondary:focus-visible, .motionControl:focus-visible { outline: 2px solid var(--green); outline-offset: 5px; }
+.primary:focus-visible, .secondary:focus-visible { outline: 2px solid var(--green); outline-offset: 5px; }
 .visual { position: absolute; inset: 0 -8% 0 31%; min-width: 0; }
 .script { position: absolute; inset: -114px 0 0; margin: 0; }
 .art { display: block; width: 100%; height: auto; overflow: visible; }
@@ -63,10 +63,6 @@
 .guide { fill: none; stroke: var(--rule); stroke-width: 1; }
 .routeInk { fill: none; stroke: var(--green); stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 1; }
 .startDot { fill: var(--green); }
-.motionControl { position: absolute; right: calc(8vw + 24px); bottom: 12px; display: inline-flex; align-items: center; gap: 7px; min-height: 44px; padding: 0 8px; border: 0; border-radius: 0; box-shadow: none; background: #fff; color: var(--mute); font: 12px var(--font-inter), sans-serif; cursor: pointer; }
-.motionControl svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.3; }
-.motionControl:hover { color: var(--ink); }
-.motionControl:active { opacity: .65; }
 @media (min-width: 90rem) {
   .hero { min-height: 840px; }
 }
@@ -88,7 +84,6 @@
   .visual { position: relative; inset: auto; height: 420px; min-height: 0; margin-top: 8px; }
   .script { inset: -80px -24% 0 -12%; }
   .art { min-width: 520px; height: auto; }
-  .motionControl { right: calc(24vw + 16px); bottom: 8px; }
   .startAnnotation { translate: -24px 0; }
 }
 @media (max-width: 22.49rem) {
@@ -98,5 +93,4 @@
   .routeInk { stroke-dashoffset: 0 !important; }
   .startWash { opacity: .18 !important; transform: none !important; }
   .startAnnotation { opacity: 1 !important; transform: none !important; }
-  .motionControl { display: none; }
 }

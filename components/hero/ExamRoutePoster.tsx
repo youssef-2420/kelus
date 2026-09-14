@@ -19,8 +19,7 @@ export function ExamRoutePoster() {
   const [scope, animate] = useAnimate<HTMLElement>();
   const inView = useInView(scope, { amount: .15 });
   const playback = useRef<ReturnType<typeof animate> | null>(null);
-  const [run, setRun] = useState(0);
-  const [phase, setPhase] = useState<"drawing" | "paused" | "finished">("drawing");
+  const [phase, setPhase] = useState<"drawing" | "finished">("drawing");
 
   useEffect(() => {
     if (reduce !== false) return;
@@ -51,23 +50,18 @@ export function ExamRoutePoster() {
     playback.current = controls;
     controls.then(() => { if (active) setPhase("finished"); });
     return () => { active = false; controls.stop(); };
-  }, [animate, reduce, run, scope]);
+  }, [animate, reduce, scope]);
 
   useEffect(() => {
     const sync = () => {
       if (phase === "finished") return;
-      if (!inView || document.hidden || phase === "paused") playback.current?.pause();
+      if (!inView || document.hidden) playback.current?.pause();
       else playback.current?.play();
     };
     sync();
     document.addEventListener("visibilitychange", sync);
     return () => document.removeEventListener("visibilitychange", sync);
-  }, [inView, phase, run]);
-
-  function toggle() {
-    if (phase === "finished") { setPhase("drawing"); setRun(value => value + 1); }
-    else setPhase(value => value === "paused" ? "drawing" : "paused");
-  }
+  }, [inView, phase]);
 
   return (
     <figure ref={scope} className={styles.script} data-drawing={hydrated && reduce ? "static" : phase}>
@@ -132,12 +126,6 @@ export function ExamRoutePoster() {
           </g>
         </g>
       </svg>
-      {hydrated && reduce === false && <button type="button" className={styles.motionControl} onClick={toggle}>
-        <svg viewBox="0 0 12 12" aria-hidden="true">
-          {phase === "drawing" ? <path d="M4 2v8M8 2v8" /> : <path d="m4 2 6 4-6 4Z" />}
-        </svg>
-        {phase === "finished" ? "Replay ink" : phase === "paused" ? "Resume ink" : "Pause ink"}
-      </button>}
     </figure>
   );
 }

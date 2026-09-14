@@ -20,24 +20,19 @@ test("marked script preserves copy, links, and narrow-screen layout", async ({ p
   expect(errors).toEqual([]);
 });
 
-test("ink can pause, finish, and replay without blocking navigation", async ({ page }) => {
+test("ink draws without blocking navigation, and finishes on its own", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
   const hero = page.locator('[data-hero="marked-script"]');
-  await hero.getByRole("button", { name: "Pause ink" }).click();
-  await expect(hero.locator("figure")).toHaveAttribute("data-drawing", "paused");
+  await expect(hero.locator("figure")).toHaveAttribute("data-drawing", "drawing");
+  await expect(hero.getByRole("button", { name: /Pause ink|Resume ink|Replay ink/ })).toHaveCount(0);
   const lastInk = hero.locator('[data-ink="3"]');
-  expect(await lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.9);
-  await expect(hero.getByRole("link", { name: "Set my exam" })).toBeEnabled();
-  await hero.getByRole("button", { name: "Resume ink" }).click();
-  await expect(hero.locator('[data-ink="0"]')).toHaveCSS("stroke-dashoffset", "0px");
-  await expect.poll(() => hero.locator("[data-start-wash]").evaluate(element => parseFloat(getComputedStyle(element).opacity))).toBeGreaterThan(.12);
   expect(await lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.3);
-  await expect(hero.getByRole("button", { name: "Replay ink" })).toBeVisible({ timeout: 15000 });
+  await expect(hero.getByRole("link", { name: "Set my exam" })).toBeEnabled();
+  await expect(hero.locator('[data-ink="0"]')).toHaveCSS("stroke-dashoffset", "0px", { timeout: 15000 });
+  await expect.poll(() => hero.locator("[data-start-wash]").evaluate(element => parseFloat(getComputedStyle(element).opacity))).toBeGreaterThan(.12);
+  await expect(hero.locator("figure")).toHaveAttribute("data-drawing", "finished", { timeout: 20000 });
   await expect(lastInk).toHaveCSS("stroke-dashoffset", "0px");
-  await hero.getByRole("button", { name: "Replay ink" }).click();
-  await expect(hero.getByRole("button", { name: "Pause ink" })).toBeVisible();
-  await expect.poll(() => lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.9);
 });
 
 test("reduced motion presents the finished script without hydration errors", async ({ page }) => {
