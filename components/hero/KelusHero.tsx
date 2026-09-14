@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { ExamRoutePoster } from "./ExamRoutePoster";
-import { kelusDuration, kelusEase, kelusMotion } from "@/components/motion";
+import styles from "./MarkedScriptHero.module.css";
 
-const ease = kelusEase;
-const press = kelusMotion.press;
-const dur = kelusDuration;
+const press = { type: "spring", bounce: 0, duration: 0.24 } as const;
 
 /**
  * Marked-script hero: one headline, one lede, one primary path.
@@ -18,47 +16,39 @@ export function KelusHero() {
   const reduce = useReducedMotion() === true;
 
   return (
-    <section className="kelus-hero home-hero is-folio is-booklet is-poster" aria-labelledby="home-hero-title">
-      <div className="poster-copy home-copy">
-        <motion.h1
+    <section className={`${styles.hero} is-poster`} aria-labelledby="home-hero-title" data-hero="marked-script">
+      <div className={styles.copy}>
+        <h1
           id="home-hero-title"
-          initial={false}
-          animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, ease }}
+          className={styles.headline}
         >
           Revise your lessons.{" "}
-          <span className="hero-line-break">Walk into the exam ready.</span>
-        </motion.h1>
+          <span className={styles.secondLine}>Walk into the exam ready.</span>
+        </h1>
 
-        <motion.p
-          className="home-lede"
-          initial={false}
-          animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.fast, ease }}
+        <p
+          className={styles.lede}
         >
           Recall from your notes. Check the answer. See what to study next.
-        </motion.p>
+        </p>
 
-        <motion.div
-          className="home-actions"
-          initial={false}
-          animate={{ opacity: 1 }}
-          transition={{ duration: reduce ? 0 : dur.moderate, delay: reduce ? 0 : dur.normal, ease }}
+        <div
+          className={styles.actions}
         >
-          <motion.div whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>
-            <Link href="/today" className="cta home-cta">
+          <motion.div tabIndex={-1} whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>
+            <Link href="/today" className={styles.primary}>
               Set my exam <span className="arrow" aria-hidden="true">→</span>
             </Link>
           </motion.div>
-          <motion.div whileTap={reduce ? undefined : { scale: 0.98 }} transition={press}>
-            <Link href="/today?sample=1" className="home-secondary">
+          <motion.div tabIndex={-1} whileTap={reduce ? undefined : { scale: 0.98 }} transition={press}>
+            <Link href="/today?sample=1" className={styles.secondary}>
               Try sample (~1 min)
             </Link>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
-      <div className="poster-visual">
+      <div className={styles.visual}>
         <ExamRoutePoster />
       </div>
     </section>

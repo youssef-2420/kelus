@@ -1,61 +1,126 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { kelusDuration, kelusEase } from "@/components/motion";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useAnimate, useInView, useReducedMotion, type AnimationSequence } from "motion/react";
+import { kelusEase } from "@/components/motion";
+import styles from "./MarkedScriptHero.module.css";
 
-/** The hero's visual anchor: a tactile revision desk, not another product UI. */
+const route = [
+  "M132 354 C105 359 102 426 123 446",
+  "M123 446 C146 473 105 504 113 527 C118 540 127 542 132 548",
+  "M132 548 C160 575 97 602 113 650 C117 661 125 666 132 683",
+  "M132 683 C153 710 110 746 132 807",
+];
+const subscribe = () => () => {};
+const sequence: AnimationSequence = [
+  ...route.map((_, i): AnimationSequence[number] => [
+    `[data-ink="${i}"]`, { strokeDashoffset: [1, 0] },
+    { at: .6 + i * 1.7, duration: 1.8, ease: kelusEase },
+  ]),
+  ["[data-start-wash]", { opacity: [.04, .13], scaleX: [.92, 1] },
+    { at: 7.4, type: "spring", bounce: 0, duration: 1 }],
+  ["[data-start-wash]", { opacity: .13 }, { at: 8.4, duration: 1.6 }],
+];
+
+/** Printed content is present before JS. Only the ink is progressively drawn. */
 export function ExamRoutePoster() {
-  const reduce = useReducedMotion() === true;
+  const reduce = useReducedMotion();
+  const hydrated = useSyncExternalStore(subscribe, () => true, () => false);
+  const [scope, animate] = useAnimate<HTMLElement>();
+  const inView = useInView(scope, { amount: .15 });
+  const playback = useRef<ReturnType<typeof animate> | null>(null);
+  const [run, setRun] = useState(0);
+  const [phase, setPhase] = useState<"drawing" | "paused" | "finished">("drawing");
+
+  useEffect(() => {
+    if (reduce !== false) return;
+    let active = true;
+    const controls = animate(sequence);
+    playback.current = controls;
+    controls.then(() => { if (active) setPhase("finished"); });
+    return () => { active = false; controls.stop(); };
+  }, [animate, reduce, run]);
+
+  useEffect(() => {
+    const sync = () => {
+      if (phase === "finished") return;
+      if (!inView || document.hidden || phase === "paused") playback.current?.pause();
+      else playback.current?.play();
+    };
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, [inView, phase, run]);
+
+  function toggle() {
+    if (phase === "finished") { setPhase("drawing"); setRun(value => value + 1); }
+    else setPhase(value => value === "paused" ? "drawing" : "paused");
+  }
 
   return (
-    <motion.figure
-      className="exam-route-poster folio-hero-booklet revision-still-life"
-      initial={false}
-      animate={{ opacity: 1 }}
-      transition={{ duration: reduce ? 0 : kelusDuration.moderate, ease: kelusEase }}
-      aria-label="A desk with annotated revision notes, an exam paper, and a marked next topic"
-    >
-      <svg className="exam-route-art revision-still-life-art" viewBox="0 0 760 620" role="presentation">
-        <path d="M0 475h760" stroke="#c9c3bb" strokeWidth="2" />
+    <figure ref={scope} className={styles.script} data-drawing={hydrated && reduce ? "static" : phase}>
+      <svg className={styles.art} viewBox="0 0 840 920" role="img" aria-labelledby="script-title script-description">
+        <title id="script-title">Marked script → Today’s route</title>
+        <desc id="script-description">An illustrative Microeconomics revision script. Supply and demand is checked. A correction to Elasticity marks it as Start here. The ink route continues to Market structures, Externalities, and Game theory.</desc>
+        <g transform="rotate(-5 420 445)">
+          <path className={styles.paperEdge} d="M69 73 806 65 822 951 76 955Z M73 67 812 60 829 944" />
+          <path className={styles.paper} d="M80 51H830V950H80Z" />
+          <path className={styles.rule} d="M111 82V915 M137 171H794" />
+          <text className={styles.metadata} x="139" y="99">SAMPLE REVISION SCRIPT</text>
+          <text className={styles.metadata} x="787" y="99" textAnchor="end">01 / 05</text>
+          <text className={styles.scriptTitle} x="137" y="146">Microeconomics</text>
+          <path className={styles.rule} d="M778 133h16m-8-8v16" />
 
-        <path d="M618 48v195" stroke="#173f3b" strokeWidth="8" strokeLinecap="round" />
-        <path d="M616 235c-54 2-94 21-112 56h224c-18-35-58-54-112-56Z" fill="#ffb110" stroke="#173f3b" strokeWidth="7" strokeLinejoin="round" />
-        <path d="M557 292h118" stroke="#173f3b" strokeWidth="7" strokeLinecap="round" />
-        <path d="M558 292 500 475M674 292l58 183" stroke="#173f3b" strokeWidth="7" strokeLinecap="round" />
-        <path d="M484 475h266" stroke="#173f3b" strokeWidth="8" strokeLinecap="round" />
+          <text className={styles.number} x="139" y="217">01</text>
+          <text className={styles.topic} x="181" y="217">Supply &amp; demand</text>
+          <text className={styles.answer} x="181" y="249">A change in price moves us along the curve.</text>
+          <path className={styles.answerRule} d="M181 263H655 M181 286H746" />
+          <path className={styles.pen} d="m709 232 7 8 18-24" />
+          <text className={styles.pencilNote} x="536" y="284" transform="rotate(3 536 284)">movement, not a shift</text>
 
-        <g transform="translate(132 164) rotate(-5)">
-          <path d="M0 28 222 0l38 264L38 294Z" fill="#fffdf8" stroke="#173f3b" strokeWidth="5" />
-          <path d="m222 0 196 30-38 264-160-30Z" fill="#fffdf8" stroke="#173f3b" strokeWidth="5" />
-          <path d="M222 6 260 264" stroke="#c9c3bb" strokeWidth="3" />
-          <path d="M39 75 190 56M46 106l132-17M52 137l126-17M59 168l108-15" stroke="#a8aaa4" strokeWidth="5" strokeLinecap="round" />
-          <path d="M283 83 375 98M278 115l102 16M273 147l84 14" stroke="#a8aaa4" strokeWidth="5" strokeLinecap="round" />
-          <path d="m70 222 46 21 74-96" fill="none" stroke="#f64932" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="m302 198 72-42" stroke="#173f3b" strokeWidth="8" strokeLinecap="round" />
-          <circle cx="350" cy="213" r="17" fill="#ffb110" />
+          <text className={styles.number} x="139" y="354">02</text>
+          <path data-start-wash="" className={styles.startWash} d="m177 347 176-3 12 11-179 2Z" />
+          <text className={styles.startTopic} x="181" y="354">Elasticity</text>
+          <text className={styles.question} x="181" y="391">Why do close substitutes change demand?</text>
+          <text className={styles.answer} x="181" y="421">More substitutes. A steeper demand curve.</text>
+          <path className={styles.pen} d="m316 418 285 5m-279-1 282-8" />
+          <path className={styles.answerRule} d="M181 433H682 M181 458H746" />
+          <text className={styles.pencilNote} x="374" y="457" transform="rotate(-2 374 457)">more responsive to price.</text>
+          <path className={styles.startPen} d="M167 333c39-12 151-14 187 2 25 22-34 42-100 39-73-2-97-17-87-41Z" />
+          <g className={styles.startAnnotation} transform="rotate(6 558 335)">
+            <text x="563" y="329">Start here</text>
+            <path d="M553 332c-46-2-76 13-123 12m9-6-10 6 9 5" />
+          </g>
+          <path className={styles.guide} d="M132 238c-17 28-16 64 0 87" />
+          {route.map((d, i) => <g key={d}>
+            <path className={styles.guide} d={d} />
+            <path className={styles.routeInk} data-ink={i} d={d} pathLength="1" />
+          </g>)}
+          <circle className={styles.startDot} cx="132" cy="354" r="4" />
+
+          <text className={styles.number} x="139" y="548">03</text>
+          <text className={styles.topic} x="181" y="548">Market structures</text>
+          <text className={styles.question} x="181" y="581">Who has the power to set a price?</text>
+          <path className={styles.answerRule} d="M181 600H746 M181 623H661" />
+          <path className={styles.pen} d="M706 565c18-6 27 2 16 11-5 4-5 5-5 9m-1 8v1" />
+
+          <text className={styles.number} x="139" y="683">04</text>
+          <text className={styles.topic} x="181" y="683">Externalities</text>
+          <text className={styles.question} x="181" y="716">Which costs are missing from the price?</text>
+          <path className={styles.answerRule} d="M181 735H746" />
+
+          <text className={styles.number} x="139" y="807">05</text>
+          <text className={styles.topic} x="181" y="807">Game theory</text>
+          <text className={styles.question} x="181" y="840">What changes when the other person chooses?</text>
+          <path className={styles.answerRule} d="M181 859H746 M181 882H711" />
         </g>
-
-        <g transform="translate(390 115) rotate(7)">
-          <rect width="164" height="224" rx="3" fill="#fffdf8" stroke="#173f3b" strokeWidth="5" />
-          <path d="M25 36h92M25 55h112M25 74h72" stroke="#7c827d" strokeWidth="5" strokeLinecap="round" />
-          <path d="M25 111h107M25 130h119M25 149h105" stroke="#b2b4ae" strokeWidth="4" strokeLinecap="round" />
-          <path d="m118 181 13 14 28-43" fill="none" stroke="#f64932" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-
-        <path d="m91 485 285-190" stroke="#173f3b" strokeWidth="12" strokeLinecap="round" />
-        <path d="m79 494 22-9-12-17Z" fill="#ffb110" stroke="#173f3b" strokeWidth="4" strokeLinejoin="round" />
-        <path d="M384 328c21-30 51-38 78-18 20 15 29 40 16 57-12 15-37 10-50-8l-18-24" fill="#f6d5b8" stroke="#173f3b" strokeWidth="5" strokeLinecap="round" />
-
-        <g transform="translate(55 388) rotate(4)">
-          <rect width="180" height="86" fill="#ffb110" stroke="#173f3b" strokeWidth="4" />
-          <path d="M19 31h104M19 52h78" stroke="#173f3b" strokeWidth="6" strokeLinecap="round" />
-          <circle cx="148" cy="43" r="15" fill="#f64932" />
-          <path d="m141 43 6 6 11-14" fill="none" stroke="#fffdf8" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-        </g>
-
-        <path d="M76 104c22-24 55-28 77-11M79 112l-3-18M153 99l13-6" fill="none" stroke="#f64932" strokeWidth="5" strokeLinecap="round" />
-        <path d="M31 548c126 13 241 14 353 2" fill="none" stroke="#c9c3bb" strokeWidth="3" strokeLinecap="round" />
       </svg>
-    </motion.figure>
+      {hydrated && reduce === false && <button type="button" className={styles.motionControl} onClick={toggle}>
+        <svg viewBox="0 0 12 12" aria-hidden="true">
+          {phase === "drawing" ? <path d="M4 2v8M8 2v8" /> : <path d="m4 2 6 4-6 4Z" />}
+        </svg>
+        {phase === "finished" ? "Replay ink" : phase === "paused" ? "Resume ink" : "Pause ink"}
+      </button>}
+    </figure>
   );
 }
