@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import type { Concept, ConceptRelationship, LearningEvent } from "@/domain/types";
 import { deriveStatus } from "@/domain/learner-model";
-import { daysAgoLabel, percent, statusLabel } from "@/lib/format";
+import { daysAgoLabel, percent } from "@/lib/format";
+import { useLearner } from "@/components/LearnerProvider";
+import { topicEvidence } from "@/domain/mastery-evidence";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 
 export function ConceptInspector({ concept, concepts, relationships, events, nowIso, onClose }: {
@@ -15,6 +17,8 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
   nowIso: string;
   onClose: () => void;
 }) {
+  const { state } = useLearner();
+  const evidence = topicEvidence(concept, state.snapshot.prompts, events, nowIso);
   const status = deriveStatus(concept.mastery, concept.predictedRetention, concept.retrievalAttempts);
   const related = relationships
     .filter((relationship) => relationship.fromId === concept.id || relationship.toId === concept.id)
@@ -48,7 +52,7 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
   return (
     <aside className="concept-inspector" role="dialog" aria-modal="false" aria-labelledby="concept-inspector-title">
       <header>
-        <span className={`mark-status is-${status}`}>{statusLabel(status)}</span>
+        <span className={`mark-status is-${status}`}>{evidence.readinessLabel}</span>
         <button ref={closeRef} type="button" onClick={onClose} aria-label="Close concept details">Close</button>
       </header>
       <ConceptTitleTransition id={concept.id}>
@@ -57,15 +61,16 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
       <p>Learning estimates from your recorded answers. These are not exam grades.</p>
 
       <dl>
-        <div><dt>Mastery</dt><dd>{percent(concept.mastery)}</dd></div>
+        <div><dt>Mastery on reviewed questions</dt><dd>{evidence.mastery === null ? "Not enough evidence" : percent(evidence.mastery)}</dd></div>
+        <div><dt>Question coverage</dt><dd>{evidence.attemptedQuestions}/{evidence.availableQuestions} ({percent(evidence.coverage)})</dd></div>
         <div><dt>Retention</dt><dd>{percent(concept.predictedRetention)}</dd></div>
-        <div><dt>Confidence</dt><dd>{percent(concept.confidence)}</dd></div>
         <div><dt>Last reviewed</dt><dd>{daysAgoLabel(concept.lastReviewedAt, nowIso)}</dd></div>
       </dl>
 
       <section>
         <span>Evidence</span>
         <p>{retrievals ? `${retrievals} retrieval${retrievals === 1 ? "" : "s"} recorded.` : "No retrieval evidence yet."}</p>
+        {evidence.reasons.map(reason => <p key={reason}>{reason}</p>)}
       </section>
 
       <section>

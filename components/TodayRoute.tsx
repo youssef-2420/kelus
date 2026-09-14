@@ -6,6 +6,8 @@ import { useState } from "react";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
 import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
 import { confidenceLabel, percent } from "@/lib/format";
+import { useLearner } from "@/components/LearnerProvider";
+import { topicEvidence } from "@/domain/mastery-evidence";
 
 export function TodayRoute({
   route,
@@ -24,6 +26,7 @@ export function TodayRoute({
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
+  const { state } = useLearner();
   const [first, ...remaining] = route.allocations;
 
   if (!first) {
@@ -127,6 +130,7 @@ export function TodayRoute({
       <ol className="today-plan-list">
         {remaining.map((allocation, index) => {
           const concept = concepts.find((item) => item.id === allocation.conceptId);
+          const evidence = concept ? topicEvidence(concept, state.snapshot.prompts, events, state.nowIso) : null;
           const activity = activities.find((item) => item.conceptId === allocation.conceptId);
           const isMixed = !concept || allocation.conceptId === "mixed-retrieval";
           const name = concept?.name ?? "Mixed Retrieval";
@@ -166,7 +170,7 @@ export function TodayRoute({
                   >
                     {concept ? (
                       <p>
-                        <span>{percent(concept.mastery)}</span> estimated mastery
+                        <span>{evidence?.mastery == null ? "Not enough evidence" : percent(evidence.mastery)}</span> mastery on reviewed questions
                       </p>
                     ) : (
                       <p>

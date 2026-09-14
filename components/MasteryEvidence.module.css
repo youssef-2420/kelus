@@ -1,0 +1,24 @@
+.evidence {
+  border-top: 1px solid var(--color-frost);
+  margin-top: 2rem;
+  padding-top: 1rem;
+  color: var(--color-slate);
+  font-size: .875rem;
+  line-height: 1.6;
+}
+.evidence h2, .evidence h3 {
+  font-family: var(--font-ledger);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-midnight-ink);
+  margin: 0 0 .5rem;
+}
+.evidence p { margin: .5rem 0; }
+.evidence summary {
+  cursor: pointer;
+  padding: .75rem 0;
+  min-height: 44px;
+  color: var(--color-kelus);
+}
+.evidence summary:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 2px; }
+.evidence details section { border-top: 1px solid var(--color-frost); padding: 1rem 0; }

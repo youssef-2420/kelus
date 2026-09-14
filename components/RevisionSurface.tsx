@@ -8,10 +8,10 @@ import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useLearner } from "@/components/LearnerProvider";
-import { estimatedReadiness } from "@/domain/readiness";
+import { MasteryEvidence } from "@/components/MasteryEvidence";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
-import { greeting, percent } from "@/lib/format";
+import { greeting } from "@/lib/format";
 import { lastSessionCompletedAt } from "@/lib/demo-store";
 import { trackEvent } from "@/lib/analytics";
 
@@ -91,7 +91,6 @@ export function RevisionSurface() {
     nowIso,
   });
   const days = daysUntilExam(exam, nowIso);
-  const readiness = estimatedReadiness(concepts);
   const courseId = course.id;
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
@@ -185,10 +184,6 @@ export function RevisionSurface() {
         <div className="kelus-space-rail-foot">
           <p className="kelus-space-rail-meta">
             Exam in {days} day{days === 1 ? "" : "s"}
-            <span aria-hidden="true"> · </span>
-            <span title="Estimate from your familiarity ratings and recall checks — not a grade prediction.">
-              {percent(readiness)} Est. readiness
-            </span>
           </p>
           {resetControl}
         </div>
@@ -225,7 +220,7 @@ export function RevisionSurface() {
               ) : null}
             </p>
             <p className="today-readiness-hint" id="today-readiness-hint">
-              Est. readiness is from your ratings and recall checks — not a grade prediction.
+              Your route comes first. Practice evidence is below it — not a grade prediction.
             </p>
           </div>
 
@@ -265,6 +260,7 @@ export function RevisionSurface() {
                   onStart={openSession ? resume : begin}
                   startLabel={openSession ? "Resume session" : undefined}
                 />
+                <MasteryEvidence />
               </div>
             ) : null}
             {mode === "materials" ? <MaterialLibrary embedded /> : null}

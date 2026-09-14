@@ -6,7 +6,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
-import { percent } from "@/lib/format";
+import { MasteryEvidence } from "@/components/MasteryEvidence";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
@@ -82,7 +82,6 @@ function CompleteBody() {
         <p className="kicker">Today’s route complete</p>
         <h1>You’ve done your revision for now.</h1>
         <p>{practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}{course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.</p>
-        {summary ? <div className="readiness-change"><span>{percent(summary.readinessBefore)}</span><i aria-hidden="true">→</i><strong>{percent(summary.readinessAfter)}</strong><small>estimated readiness</small></div> : null}
       </section>
       {summary ? (
         <div className="complete-columns">
@@ -118,6 +117,7 @@ function CompleteBody() {
           <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
         </details>
       ) : null}
+      <MasteryEvidence />
       {completedSessions === 1 ? <details><summary>Optional support through exam day</summary><SoftUpgradePrompt moment="first_session" /></details> : null}
       {completedSessions >= 2 ? (
         <details className="complete-waitlist">
@@ -148,4 +148,3 @@ export default function SessionCompletePage() {
     </LateralPage>
   );
 }
-

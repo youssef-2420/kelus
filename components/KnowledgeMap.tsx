@@ -5,6 +5,8 @@ import { deriveStatus } from "@/domain/learner-model";
 import type { Concept, ConceptRelationship } from "@/domain/types";
 import { percent, statusLabel } from "@/lib/format";
 import { ConceptTitleTransition } from "@/components/PageTransition";
+import { useLearner } from "@/components/LearnerProvider";
+import { topicEvidence } from "@/domain/mastery-evidence";
 
 type MapNode = { concept: Concept; x: number; y: number; rank: number; labelBelow: boolean };
 
@@ -65,7 +67,6 @@ function layoutNodes(concepts: Concept[]): MapNode[] {
 
 export function KnowledgeMap({
   courseName,
-  mastery,
   concepts,
   relationships = [],
   heading = "Topic map",
@@ -80,6 +81,7 @@ export function KnowledgeMap({
   selectedId?: string | null;
   onSelect?: (concept: Concept) => void;
 }) {
+  const { state } = useLearner();
   // Show every topic when the course is still small; never hide 7 as 4.
   const visibleConcepts = concepts.slice(0, 12);
   const nodes = layoutNodes(visibleConcepts);
@@ -102,7 +104,7 @@ export function KnowledgeMap({
       <div className="map">
         <div className="map-head">
           <span>{courseName}</span>
-          <strong>{percent(mastery)}</strong>
+          <span>Evidence by topic</span>
         </div>
 
         {nodes.length ? (
@@ -158,6 +160,7 @@ export function KnowledgeMap({
         <ul className="map-list" aria-label="Topics by exam importance">
           {concepts.map((concept) => {
             const status = deriveStatus(concept.mastery, concept.predictedRetention, concept.retrievalAttempts);
+            const evidence = topicEvidence(concept, state.snapshot.prompts, state.snapshot.events, state.nowIso);
             const title = (
               <ConceptTitleTransition id={concept.id}>
                 <span className="map-concept-name">{concept.name}</span>
@@ -175,22 +178,22 @@ export function KnowledgeMap({
                     <span>
                       {title}
                       <span className="bar" aria-hidden="true">
-                        <i style={{ width: percent(concept.mastery) }} />
+                        <i style={{ width: percent(evidence.mastery ?? 0) }} />
                       </span>
                     </span>
                     <span className={`mark-status is-${status}`}>{statusLabel(status)}</span>
-                    <span className="pct">{percent(concept.mastery)}</span>
+                    <span className="pct" title="Mastery on reviewed questions">{evidence.mastery === null ? "—" : percent(evidence.mastery)}</span>
                   </button>
                 ) : (
                   <Link href={`/concepts/${encodeURIComponent(concept.id)}`} className="row" transitionTypes={["nav-forward"]} prefetch={true}>
                     <span>
                       {title}
                       <span className="bar" aria-hidden="true">
-                        <i style={{ width: percent(concept.mastery) }} />
+                        <i style={{ width: percent(evidence.mastery ?? 0) }} />
                       </span>
                     </span>
                     <span className={`mark-status is-${status}`}>{statusLabel(status)}</span>
-                    <span className="pct">{percent(concept.mastery)}</span>
+                    <span className="pct" title="Mastery on reviewed questions">{evidence.mastery === null ? "—" : percent(evidence.mastery)}</span>
                   </Link>
                 )}
               </li>
