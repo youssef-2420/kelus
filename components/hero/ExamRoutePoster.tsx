@@ -2,25 +2,15 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useAnimate, useInView, useReducedMotion, type AnimationSequence } from "motion/react";
-import { kelusEase } from "@/components/motion";
 import styles from "./MarkedScriptHero.module.css";
 
 const route = [
-  "M132 354 C105 359 102 426 123 446",
-  "M123 446 C146 473 105 504 113 527 C118 540 127 542 132 548",
-  "M132 548 C160 575 97 602 113 650 C117 661 125 666 132 683",
-  "M132 683 C153 710 110 746 132 807",
+  "M132 238 C116 278 116 315 132 354",
+  "M132 354 C148 393 108 429 132 498",
+  "M132 498 C156 567 112 568 132 613",
+  "M132 613 C152 658 112 647 132 695",
 ];
 const subscribe = () => () => {};
-const sequence: AnimationSequence = [
-  ...route.map((_, i): AnimationSequence[number] => [
-    `[data-ink="${i}"]`, { strokeDashoffset: [1, 0] },
-    { at: .6 + i * 1.7, duration: 1.8, ease: kelusEase },
-  ]),
-  ["[data-start-wash]", { opacity: [.04, .13], scaleX: [.92, 1] },
-    { at: 7.4, type: "spring", bounce: 0, duration: 1 }],
-  ["[data-start-wash]", { opacity: .13 }, { at: 8.4, duration: 1.6 }],
-];
 
 /** Printed content is present before JS. Only the ink is progressively drawn. */
 export function ExamRoutePoster() {
@@ -35,11 +25,33 @@ export function ExamRoutePoster() {
   useEffect(() => {
     if (reduce !== false) return;
     let active = true;
+    // Equal distance/time and matching end/start slopes preserve velocity at joins.
+    // Drawing the SVG stroke is the sole non-compositor animation in the hero.
+    const lengths = Array.from(scope.current.querySelectorAll<SVGPathElement>("[data-ink]"), path => path.getTotalLength());
+    const total = lengths.reduce((sum, length) => sum + length, 0);
+    let at = .6;
+    const sequence: AnimationSequence = lengths.map((length, i) => {
+      const duration = 7.4 * length / total;
+      const segment: AnimationSequence[number] = [
+        `[data-ink="${i}"]`, { strokeDashoffset: [1, 0] },
+        { at, duration, ease: [.3, i === 0 ? 0 : .2, .7, i === lengths.length - 1 ? 1 : .8] },
+      ];
+      at += duration;
+      return segment;
+    });
+    const arrival = .6 + 7.4 * lengths[0] / total;
+    sequence.push(
+      ["[data-start-wash]", { opacity: [.04, .13], scaleX: [.94, 1] },
+        { at: arrival, type: "spring", bounce: 0, duration: 1 }],
+      ["[data-start-note]", { opacity: [.55, 1], y: [2, 0] },
+        { at: arrival, type: "spring", bounce: 0, duration: 1 }],
+      ["[data-start-wash]", { opacity: .13 }, { at: 8, duration: 2 }],
+    );
     const controls = animate(sequence);
     playback.current = controls;
     controls.then(() => { if (active) setPhase("finished"); });
     return () => { active = false; controls.stop(); };
-  }, [animate, reduce, run]);
+  }, [animate, reduce, run, scope]);
 
   useEffect(() => {
     const sync = () => {
@@ -87,32 +99,37 @@ export function ExamRoutePoster() {
           <path className={styles.answerRule} d="M181 433H682 M181 458H746" />
           <text className={styles.pencilNote} x="374" y="457" transform="rotate(-2 374 457)">more responsive to price.</text>
           <path className={styles.startPen} d="M167 333c39-12 151-14 187 2 25 22-34 42-100 39-73-2-97-17-87-41Z" />
-          <g className={styles.startAnnotation} transform="rotate(6 558 335)">
+          <g transform="rotate(6 558 335)"><g data-start-note="" className={styles.startAnnotation}>
             <text x="563" y="329">Start here</text>
             <path d="M553 332c-46-2-76 13-123 12m9-6-10 6 9 5" />
-          </g>
-          <path className={styles.guide} d="M132 238c-17 28-16 64 0 87" />
+          </g></g>
           {route.map((d, i) => <g key={d}>
             <path className={styles.guide} d={d} />
-            <path className={styles.routeInk} data-ink={i} d={d} pathLength="1" />
+            <path className={styles.routeInk} data-ink={i} d={d} pathLength="1" strokeDashoffset="0" />
           </g>)}
           <circle className={styles.startDot} cx="132" cy="354" r="4" />
 
+          <g transform="translate(0 -50)">
           <text className={styles.number} x="139" y="548">03</text>
           <text className={styles.topic} x="181" y="548">Market structures</text>
           <text className={styles.question} x="181" y="581">Who has the power to set a price?</text>
           <path className={styles.answerRule} d="M181 600H746 M181 623H661" />
           <path className={styles.pen} d="M706 565c18-6 27 2 16 11-5 4-5 5-5 9m-1 8v1" />
+          </g>
 
+          <g transform="translate(0 -70)">
           <text className={styles.number} x="139" y="683">04</text>
           <text className={styles.topic} x="181" y="683">Externalities</text>
           <text className={styles.question} x="181" y="716">Which costs are missing from the price?</text>
           <path className={styles.answerRule} d="M181 735H746" />
+          </g>
 
+          <g transform="translate(0 -112)">
           <text className={styles.number} x="139" y="807">05</text>
           <text className={styles.topic} x="181" y="807">Game theory</text>
           <text className={styles.question} x="181" y="840">What changes when the other person chooses?</text>
           <path className={styles.answerRule} d="M181 859H746 M181 882H711" />
+          </g>
         </g>
       </svg>
       {hydrated && reduce === false && <button type="button" className={styles.motionControl} onClick={toggle}>

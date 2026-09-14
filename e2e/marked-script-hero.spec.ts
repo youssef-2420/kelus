@@ -11,6 +11,10 @@ test("marked script preserves copy, links, and narrow-screen layout", async ({ p
     await expect(hero.getByRole("link", { name: "Set my exam" })).toHaveAttribute("href", /^\/today\/?$/);
     await expect(hero.getByRole("link", { name: "Try sample (~1 min)" })).toHaveAttribute("href", /^\/today\/?\?sample=1$/);
     await expect(hero.locator("svg text").filter({ hasText: /^Start here$/ })).toHaveCount(1);
+    const start = await hero.locator("[data-start-note] text").boundingBox();
+    expect(start).not.toBeNull();
+    expect(start!.x).toBeGreaterThanOrEqual(0);
+    expect(start!.x + start!.width).toBeLessThanOrEqual(width);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
   expect(errors).toEqual([]);
@@ -22,11 +26,18 @@ test("ink can pause, finish, and replay without blocking navigation", async ({ p
   const hero = page.locator('[data-hero="marked-script"]');
   await hero.getByRole("button", { name: "Pause ink" }).click();
   await expect(hero.locator("figure")).toHaveAttribute("data-drawing", "paused");
+  const lastInk = hero.locator('[data-ink="3"]');
+  expect(await lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.9);
   await expect(hero.getByRole("link", { name: "Set my exam" })).toBeEnabled();
   await hero.getByRole("button", { name: "Resume ink" }).click();
+  await expect(hero.locator('[data-ink="0"]')).toHaveCSS("stroke-dashoffset", "0px");
+  await expect.poll(() => hero.locator("[data-start-wash]").evaluate(element => parseFloat(getComputedStyle(element).opacity))).toBeGreaterThan(.12);
+  expect(await lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.3);
   await expect(hero.getByRole("button", { name: "Replay ink" })).toBeVisible({ timeout: 15000 });
+  await expect(lastInk).toHaveCSS("stroke-dashoffset", "0px");
   await hero.getByRole("button", { name: "Replay ink" }).click();
   await expect(hero.getByRole("button", { name: "Pause ink" })).toBeVisible();
+  await expect.poll(() => lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.9);
 });
 
 test("reduced motion presents the finished script without hydration errors", async ({ page }) => {
