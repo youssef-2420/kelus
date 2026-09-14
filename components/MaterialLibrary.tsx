@@ -450,8 +450,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
   const shelf = (
       <>
       {embedded ? (
-        <header className="surface-panel-head">
-          <p className="kicker">Materials</p>
+        <header className="surface-panel-head is-embedded">
           <h2 className="today-title">{concepts.length || readySummary ? "Sources for this exam" : "Bring the course into one place"}</h2>
           <p className="lede-line">
             {concepts.length || readySummary
@@ -472,9 +471,9 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
-      <section className="material-ingest" aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
+      <section className={`material-ingest${embedded ? " is-embedded" : ""}`} aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
         <div className="material-ingest-title">
-          <p className="kicker">Add material</p>
+          {embedded ? null : <p className="kicker">Add material</p>}
           <h2 id="add-material-title">{embedded ? "Add another source." : "Bring the course into one place."}</h2>
         </div>
         <div className="material-role-field">

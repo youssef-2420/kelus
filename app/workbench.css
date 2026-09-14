@@ -372,6 +372,11 @@ body.is-kelus-space .site-space-label {
   border-radius: 12px;
   text-align: left;
   box-shadow: none;
+  transform-origin: center left;
+}
+
+.kelus-space-nav.revision-surface-modes button:active {
+  transform: scale(0.97);
 }
 
 .kelus-space-nav.revision-surface-modes button.is-active,
@@ -464,6 +469,24 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-panel {
   min-width: 0;
+}
+
+.kelus-space-stage .surface-panel-head.is-embedded {
+  margin-bottom: 14px;
+}
+
+.kelus-space-stage .surface-panel-head.is-embedded .today-title {
+  font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+  letter-spacing: -0.025em;
+}
+
+.kelus-space-stage .material-ingest.is-embedded {
+  margin-top: 4px;
+}
+
+.kelus-space-stage .material-ingest.is-embedded .material-ingest-title h2 {
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
 }
 
 @media (prefers-reduced-motion: reduce) {

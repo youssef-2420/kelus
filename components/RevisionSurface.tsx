@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
@@ -22,6 +22,10 @@ const MODES: Array<{ id: SurfaceMode; label: string; hint: string }> = [
   { id: "materials", label: "Materials", hint: "Sources" },
   { id: "map", label: "Map", hint: "Topics" },
 ];
+
+const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };
+
+const pressSpring = { type: "spring", bounce: 0, duration: 0.24 } as const;
 
 function modeFromSection(section: string | null): SurfaceMode {
   if (section === "materials" || section === "map") return section;
@@ -43,6 +47,12 @@ export function RevisionSurface() {
   const { state, start, reset } = useLearner();
   const [confirmReset, setConfirmReset] = useState(false);
   const mode = modeFromSection(searchParams.get("section"));
+  const previousMode = useRef(mode);
+  const direction = MODE_ORDER[mode] >= MODE_ORDER[previousMode.current] ? 1 : -1;
+
+  useEffect(() => {
+    previousMode.current = mode;
+  }, [mode]);
 
   useEffect(() => {
     document.body.classList.add("is-kelus-space");
@@ -131,6 +141,10 @@ export function RevisionSurface() {
     </button>
   );
 
+  const panelTransition = reduceMotion
+    ? { duration: 0.12, ease: kelusEase }
+    : { type: "spring" as const, bounce: 0, duration: 0.4 };
+
   return (
     <section className="kelus-space" aria-label="Revision workbench">
       <aside className="kelus-space-rail" aria-label="Course space">
@@ -143,17 +157,23 @@ export function RevisionSurface() {
           {MODES.map((item) => {
             const active = item.id === mode;
             return (
-              <button
+              <motion.button
                 key={item.id}
                 type="button"
                 className={active ? "is-active" : undefined}
                 aria-pressed={active}
                 aria-label={item.label}
                 onClick={() => setMode(item.id)}
+                whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                transition={pressSpring}
               >
-                <span className="kelus-space-nav-label" aria-hidden="true">{item.label}</span>
-                <span className="kelus-space-nav-hint" aria-hidden="true">{item.hint}</span>
-              </button>
+                <span className="kelus-space-nav-label" aria-hidden="true">
+                  {item.label}
+                </span>
+                <span className="kelus-space-nav-hint" aria-hidden="true">
+                  {item.hint}
+                </span>
+              </motion.button>
             );
           })}
         </nav>
@@ -173,7 +193,18 @@ export function RevisionSurface() {
       <main id="main" className="kelus-space-stage">
         <header className="kelus-space-top">
           <div className="kelus-space-identity">
-            <p className="kicker">{modeMeta.hint}</p>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.p
+                key={modeMeta.hint}
+                className="kicker"
+                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
+                transition={{ duration: reduceMotion ? 0.1 : kelusDuration.fast, ease: kelusEase }}
+              >
+                {modeMeta.hint}
+              </motion.p>
+            </AnimatePresence>
             <h1 id="today-title">{course.name}</h1>
             <p className="kelus-space-lede">
               {route.availableMinutes} minutes for revision today
@@ -195,20 +226,27 @@ export function RevisionSurface() {
           </div>
 
           {mode === "today" ? (
-            <button type="button" className="cta kelus-space-start" onClick={openSession ? resume : begin}>
+            <motion.button
+              type="button"
+              className="cta kelus-space-start"
+              onClick={openSession ? resume : begin}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              transition={pressSpring}
+            >
               {openSession ? "Resume session" : "Start today’s route"} <span aria-hidden="true">→</span>
-            </button>
+            </motion.button>
           ) : null}
         </header>
 
-        <AnimatePresence mode="wait" initial={false}>
+        <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
             key={mode}
             className="kelus-space-panel revision-surface-panel"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-            transition={{ duration: reduceMotion ? 0.12 : kelusDuration.moderate, ease: kelusEase }}
+            custom={direction}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * 14 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -10 }}
+            transition={panelTransition}
           >
             {mode === "today" ? (
               <div className="workbench-focus is-ready" aria-labelledby="today-lead-heading">
