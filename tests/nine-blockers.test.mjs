@@ -7,7 +7,7 @@ const root = new URL("../", import.meta.url);
 const source = (path) => readFile(new URL(path, root), "utf8");
 
 test("nine blockers: sample rail, session abandon, questions honesty, trust gating", async () => {
-  const [rail, materials, questions, founding, soft, home, footer, pricing, sessionPage, today, map] = await Promise.all([
+  const [rail, materials, questions, founding, soft, home, footer, pricing, sessionPage, today, surface, map] = await Promise.all([
     source("components/CourseWorkspaceRail.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("lib/questions.ts"),
@@ -18,6 +18,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
     source("app/pricing/page.tsx"),
     source("app/session/page.tsx"),
     source("app/today/page.tsx"),
+    source("components/RevisionSurface.tsx"),
     source("app/map/page.tsx"),
   ]);
 
@@ -33,7 +34,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
   assert.doesNotMatch(home, /Sign in to sync across devices, or get Exam Pass/);
   assert.match(pricing, /authConfigured/);
   assert.match(sessionPage, /abandon\(session\.id\)/);
-  assert.match(today, /Resume session|openSession/);
+  assert.match(`${today}\n${surface}`, /Resume session|openSession/);
   assert.match(map, /Try sample \(~1 min\)|Try a sample course/);
 });
 

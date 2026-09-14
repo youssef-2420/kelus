@@ -33,11 +33,12 @@ test("privacy, terms, and waitlist pages ship with local-first trust copy", asyn
 });
 
 test("analytics only loads when a measurement id is configured", async () => {
-  const [analytics, ga, workflow, today, materials, session, complete] = await Promise.all([
+  const [analytics, ga, workflow, today, surface, materials, session, complete] = await Promise.all([
     source("lib/analytics.ts"),
     source("components/GoogleAnalytics.tsx"),
     source(".github/workflows/restore-kelus-dns.yml"),
     source("app/today/page.tsx"),
+    source("components/RevisionSurface.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("app/session/page.tsx"),
     source("app/session/complete/page.tsx"),
@@ -47,7 +48,7 @@ test("analytics only loads when a measurement id is configured", async () => {
   assert.match(ga, /anonymize_ip: true/);
   assert.match(ga, /allow_google_signals: false/);
   assert.match(workflow, /NEXT_PUBLIC_GA_MEASUREMENT_ID/);
-  assert.match(today, /session_started/);
+  assert.match(`${today}\n${surface}`, /session_started/);
   assert.match(materials, /material_upload_started/);
   assert.match(materials, /material_upload_completed/);
   assert.match(materials, /material_upload_failed/);
@@ -150,11 +151,12 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
 });
 
 test("primary CTA language and readiness stay consistent", async () => {
-  const [hero, header, home, today, how] = await Promise.all([
+  const [hero, header, home, today, surface, how] = await Promise.all([
     source("components/hero/KelusHero.tsx"),
     source("components/SiteHeader.tsx"),
     source("components/home/HomeAfterHero.tsx"),
     source("app/today/page.tsx"),
+    source("components/RevisionSurface.tsx"),
     source("components/HowItWorks.tsx"),
   ]);
   assert.match(hero, /Try sample \(~1 min\)/);
@@ -167,8 +169,8 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(home, /Set my exam/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
   assert.match(how, /Try sample \(~1 min\)/);
-  assert.match(today, /Est\. readiness/);
-  assert.match(today, /not a grade prediction/);
+  assert.match(`${today}\n${surface}`, /Est\. readiness/);
+  assert.match(`${today}\n${surface}`, /not a grade prediction/);
   assert.match(today, /get\("sample"\) === "1"/);
   assert.match(today, /Try sample \(~1 min\)/);
 });

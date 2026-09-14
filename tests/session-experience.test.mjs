@@ -74,6 +74,7 @@ test("sessions expose a confirmed course source and its page", async () => {
 test("today exposes confidence while reroutes explain the evidence that changed", async () => {
   const today = await source("components/TodayRoute.tsx");
   const page = await source("app/today/page.tsx");
+  const surface = await source("components/RevisionSurface.tsx");
   const store = await source("lib/demo-store.ts");
   assert.match(today, /confidenceLabel/);
   assert.match(today, /Course evidence/);
@@ -84,8 +85,8 @@ test("today exposes confidence while reroutes explain the evidence that changed"
   assert.match(today, /Retrieve/);
   assert.match(today, /Apply/);
   assert.match(today, /Evaluate/);
-  assert.match(page, /route\.availableMinutes\} minutes/);
-  assert.doesNotMatch(page, /RouteKnowledgeMap/);
+  assert.match(`${page}\n${surface}`, /route\.availableMinutes\} minutes/);
+  assert.doesNotMatch(`${page}\n${surface}`, /RouteKnowledgeMap/);
   assert.match(store, /answer on \$\{concept\.name\} changed its mastery estimate/);
   assert.match(store, /higher learning value for the remaining time/);
 });

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MaterialLibrary } from "@/components/MaterialLibrary";
+import { MaterialsClient } from "@/components/MaterialsClient";
 import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
@@ -9,5 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default function MaterialsPage() {
-  return <LateralPage><MaterialLibrary /></LateralPage>;
+  return (
+    <LateralPage>
+      <MaterialsClient />
+    </LateralPage>
+  );
 }

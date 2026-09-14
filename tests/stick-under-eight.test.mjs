@@ -55,9 +55,10 @@ test("relaxed proposal mode still finds short topic lines in ok-density prose PD
 });
 
 test("stick-under-eight surfaces: return copy, inbox proof, OCR helpers", async () => {
-  const [complete, today, questions, form, materials, pdf, env] = await Promise.all([
+  const [complete, today, surface, questions, form, materials, pdf, env] = await Promise.all([
     source("app/session/complete/page.tsx"),
     source("app/today/page.tsx"),
+    source("components/RevisionSurface.tsx"),
     source("app/questions/page.tsx"),
     source("components/QuestionsForm.tsx"),
     source("components/MaterialLibrary.tsx"),
@@ -66,8 +67,8 @@ test("stick-under-eight surfaces: return copy, inbox proof, OCR helpers", async 
   ]);
   assert.match(complete, /Come back tomorrow/);
   assert.match(complete, /Back to Today/);
-  assert.match(today, /Welcome back/);
-  assert.match(today, /lastSessionCompletedAt/);
+  assert.match(`${today}\n${surface}`, /Welcome back/);
+  assert.match(`${today}\n${surface}`, /lastSessionCompletedAt/);
   assert.match(questions, /QuestionsInboxStatus/);
   assert.match(form, /needs_activation/);
   assert.match(form, /mailto:|questionsInboxEmail/);

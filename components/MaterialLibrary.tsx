@@ -449,6 +449,17 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
 
   const shelf = (
       <>
+      {embedded ? (
+        <header className="surface-panel-head">
+          <p className="kicker">Materials</p>
+          <h2 className="today-title">{readySummary ? "Sources for this exam" : "Bring the course into one place"}</h2>
+          <p className="lede-line">
+            {readySummary
+              ? "Add another PDF when you need it — confirmed topics stay on the map."
+              : "PDFs supply proposed topics; links are bookmarks only."}
+          </p>
+        </header>
+      ) : (
       <header className={`materials-head${readySummary ? " is-complete" : ""}`}>
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
         <p>
@@ -457,6 +468,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
             : "Add the lessons you want to revise for this exam. PDFs supply proposed revision topics; links are bookmarks only."}
         </p>
       </header>
+      )}
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
