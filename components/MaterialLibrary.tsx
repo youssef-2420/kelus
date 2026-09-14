@@ -452,9 +452,9 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
       {embedded ? (
         <header className="surface-panel-head">
           <p className="kicker">Materials</p>
-          <h2 className="today-title">{readySummary ? "Sources for this exam" : "Bring the course into one place"}</h2>
+          <h2 className="today-title">{concepts.length || readySummary ? "Sources for this exam" : "Bring the course into one place"}</h2>
           <p className="lede-line">
-            {readySummary
+            {concepts.length || readySummary
               ? "Add another PDF when you need it — confirmed topics stay on the map."
               : "PDFs supply proposed topics; links are bookmarks only."}
           </p>
@@ -473,7 +473,10 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
       <section className="material-ingest" aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
-        <div className="material-ingest-title"><p className="kicker">Add material</p><h2 id="add-material-title">Bring the course into one place.</h2></div>
+        <div className="material-ingest-title">
+          <p className="kicker">Add material</p>
+          <h2 id="add-material-title">{embedded ? "Add another source." : "Bring the course into one place."}</h2>
+        </div>
         <div className="material-role-field">
           <label htmlFor="material-role">This source is</label>
           <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
