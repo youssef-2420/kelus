@@ -47,11 +47,15 @@ export function RevisionSurface() {
   const { state, start, reset } = useLearner();
   const [confirmReset, setConfirmReset] = useState(false);
   const mode = modeFromSection(searchParams.get("section"));
+  const [direction, setDirection] = useState(1);
   const previousMode = useRef(mode);
-  const direction = MODE_ORDER[mode] >= MODE_ORDER[previousMode.current] ? 1 : -1;
 
   useEffect(() => {
-    previousMode.current = mode;
+    const from = previousMode.current;
+    if (from !== mode) {
+      setDirection(MODE_ORDER[mode] >= MODE_ORDER[from] ? 1 : -1);
+      previousMode.current = mode;
+    }
   }, [mode]);
 
   useEffect(() => {
