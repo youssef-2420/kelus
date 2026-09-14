@@ -99,7 +99,7 @@ function TodayBody() {
     );
   }
 
-  return <RevisionSurface mode="today" />;
+  return <RevisionSurface />;
 }
 
 

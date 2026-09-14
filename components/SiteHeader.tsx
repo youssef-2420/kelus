@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { useLearner } from "@/components/LearnerProvider";
 import { useEffect, useRef } from "react";
 
 const links: Array<{
@@ -19,9 +20,22 @@ const links: Array<{
   { href: "/pricing", label: "Pricing", matches: ["/pricing", "/waitlist"], always: true },
 ];
 
+function productHref(href: string, studyReady: boolean) {
+  if (!studyReady) return href;
+  if (href === "/materials") return "/today?section=materials";
+  if (href === "/map") return "/today?section=map";
+  if (href === "/today") return "/today";
+  return href;
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const auth = useAuth();
+  const { state } = useLearner();
+  const studyReady =
+    state.onboardingCompleted && state.diagnosisCompleted && state.snapshot.concepts.length > 0;
+  const section = searchParams.get("section");
   const inSession = pathname.startsWith("/session");
   const inProduct = ["/today", "/materials", "/map", "/concept"].some((path) => pathname.startsWith(path));
   const onHome = pathname === "/";
@@ -55,9 +69,14 @@ export function SiteHeader() {
 
         {inSession ? <p className="site-session-label">Revision session</p> : <nav className={`site-nav${inProduct ? " is-workbench" : ""}`} aria-label="Primary navigation">
           {visibleLinks.map((link) => {
-            const active = link.matches.some((prefix) => pathname.startsWith(prefix));
+            const href = productHref(link.href, studyReady);
+            const active = studyReady && pathname.startsWith("/today")
+              ? (link.href === "/today" && !section) ||
+                (link.href === "/materials" && section === "materials") ||
+                (link.href === "/map" && section === "map")
+              : link.matches.some((prefix) => pathname.startsWith(prefix));
             return (
-              <Link key={link.href} href={link.href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>
+              <Link key={link.href} href={href} className={active ? "is-active" : undefined} aria-current={active ? "page" : undefined}>
                 {link.shortLabel ? <><span className="nav-label-full">{link.label}</span><span className="nav-label-short">{link.shortLabel}</span></> : link.label}
               </Link>
             );

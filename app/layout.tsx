@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { IBM_Plex_Sans, Literata } from "next/font/google";
 import "./globals.css";
 import "./revision-studio.css";
@@ -56,7 +57,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <AuthProvider>
           <LearnerProvider>
             <TooltipProvider>
-              <SiteHeader />
+              <Suspense fallback={null}>
+                <SiteHeader />
+              </Suspense>
               <RouteTransition>{children}</RouteTransition>
               <Toaster />
             </TooltipProvider>

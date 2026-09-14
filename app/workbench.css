@@ -217,34 +217,37 @@
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
 }
 
-.revision-surface-modes a {
+.revision-surface-modes button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   min-height: 40px;
   padding: 8px 16px;
+  border: 0;
   border-radius: 999px;
+  background: transparent;
   color: var(--color-steel, #5c6570);
-  text-decoration: none;
+  font: inherit;
   font-size: 0.92rem;
   letter-spacing: -0.01em;
+  cursor: pointer;
   transition: background 140ms ease, color 140ms ease, transform 100ms ease;
 }
 
-.revision-surface-modes a:hover {
+.revision-surface-modes button:hover {
   background: color-mix(in srgb, #fff 70%, transparent);
   color: var(--color-ink, #111);
 }
 
-.revision-surface-modes a.is-active,
-.revision-surface-modes a[aria-current="page"] {
+.revision-surface-modes button.is-active,
+.revision-surface-modes button[aria-pressed="true"] {
   background: #fff;
   color: var(--color-ink, #111);
   font-weight: 500;
   box-shadow: 0 1px 0 color-mix(in srgb, #111 6%, transparent);
 }
 
-.revision-surface-modes a:active {
+.revision-surface-modes button:active {
   transform: scale(0.97);
 }
 
@@ -265,8 +268,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .revision-surface-modes a,
-  .revision-surface-modes a:active {
+  .revision-surface-modes button,
+  .revision-surface-modes button:active {
     transition: none;
     transform: none;
   }
@@ -277,7 +280,7 @@
     width: 100%;
   }
 
-  .revision-surface-modes a {
+  .revision-surface-modes button {
     flex: 1 1 auto;
   }
 }

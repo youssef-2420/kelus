@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
@@ -18,21 +17,32 @@ import { trackEvent } from "@/lib/analytics";
 
 export type SurfaceMode = "today" | "materials" | "map";
 
-const MODES: Array<{ id: SurfaceMode; href: string; label: string }> = [
-  { id: "today", href: "/today", label: "Today" },
-  { id: "materials", href: "/materials", label: "Materials" },
-  { id: "map", href: "/map", label: "Map" },
+const MODES: Array<{ id: SurfaceMode; label: string }> = [
+  { id: "today", label: "Today" },
+  { id: "materials", label: "Materials" },
+  { id: "map", label: "Map" },
 ];
 
+function modeFromSection(section: string | null): SurfaceMode {
+  if (section === "materials" || section === "map") return section;
+  return "today";
+}
+
+function hrefForMode(mode: SurfaceMode) {
+  return mode === "today" ? "/today" : `/today?section=${mode}`;
+}
+
 /**
- * One revision section: Today / Materials / Map as modes of the same booklet surface.
- * Routes stay for deep links + tests; the experience does not feel like three apps.
+ * The whole product workbench on one page: Today / Materials / Map as sections.
+ * Session stays its own focused route. First-run still uses /materials before diagnosis.
  */
-export function RevisionSurface({ mode }: { mode: SurfaceMode }) {
+export function RevisionSurface() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion() === true;
   const { state, start, reset } = useLearner();
   const [confirmReset, setConfirmReset] = useState(false);
+  const mode = modeFromSection(searchParams.get("section"));
 
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
@@ -68,6 +78,11 @@ export function RevisionSurface({ mode }: { mode: SurfaceMode }) {
   const lastCompleted = lastSessionCompletedAt();
   const dueCount = concepts.filter((concept) => concept.nextReviewAt && Date.parse(concept.nextReviewAt) <= Date.parse(nowIso)).length;
   const returning = Boolean(lastCompleted) && snapshot.sessions.some((session) => session.status === "complete");
+
+  function setMode(next: SurfaceMode) {
+    if (next === mode) return;
+    router.replace(hrefForMode(next), { scroll: false });
+  }
 
   function begin() {
     const sessionId = start(courseId, examId);
@@ -141,14 +156,15 @@ export function RevisionSurface({ mode }: { mode: SurfaceMode }) {
             {MODES.map((item) => {
               const active = item.id === mode;
               return (
-                <Link
+                <button
                   key={item.id}
-                  href={item.href}
+                  type="button"
                   className={active ? "is-active" : undefined}
-                  aria-current={active ? "page" : undefined}
+                  aria-pressed={active}
+                  onClick={() => setMode(item.id)}
                 >
                   {item.label}
-                </Link>
+                </button>
               );
             })}
           </nav>

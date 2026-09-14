@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { useReducedMotion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { FirstRunGate } from "@/components/FirstRunGate";
 import { MapPreviewIllustration } from "@/components/how/HowIllustrations";
-import { RevisionSurface } from "@/components/RevisionSurface";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { useLearner } from "@/components/LearnerProvider";
 import { DirectionalPage } from "@/components/PageTransition";
@@ -13,8 +14,27 @@ import { DirectionalPage } from "@/components/PageTransition";
 const MAP_PREVIEW_TOPICS = ["Supply & Demand", "Elasticity", "Fiscal Policy"] as const;
 
 export default function MapPage() {
+  const router = useRouter();
   const { state, useDemo: loadDemo } = useLearner();
   const reduceMotion = useReducedMotion();
+  const course = state.snapshot.courses[0];
+  const concepts = course ? state.snapshot.concepts.filter((concept) => concept.courseId === course.id) : [];
+  const studyReady = state.onboardingCompleted && state.diagnosisCompleted && concepts.length > 0;
+
+  useEffect(() => {
+    if (studyReady) router.replace("/today?section=map");
+  }, [studyReady, router]);
+
+  if (studyReady) {
+    return (
+      <DirectionalPage>
+        <main id="main" className="destination-page">
+          <p className="destination-brand">Kelus</p>
+          <h1 className="destination-page-title">Opening Map…</h1>
+        </main>
+      </DirectionalPage>
+    );
+  }
 
   if (!state.onboardingCompleted) {
     return (
@@ -31,10 +51,8 @@ export default function MapPage() {
     );
   }
 
-  const course = state.snapshot.courses[0];
   if (!course) return <AppShell><p>No active course.</p></AppShell>;
 
-  const concepts = state.snapshot.concepts.filter((concept) => concept.courseId === course.id);
   if (!concepts.length) {
     return (
       <DirectionalPage>
@@ -62,14 +80,6 @@ export default function MapPage() {
             </div>
           </section>
         </AppShell>
-      </DirectionalPage>
-    );
-  }
-
-  if (state.diagnosisCompleted) {
-    return (
-      <DirectionalPage>
-        <RevisionSurface mode="map" />
       </DirectionalPage>
     );
   }
