@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { SiteFooter } from "@/components/SiteFooter";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useState } from "react";
@@ -88,8 +87,8 @@ export function HowItWorks() {
         </div>
         <div className="how-example-switcher" aria-label="Choose an example course">
           <span>See the loop with</span>
-          <div role="tablist">
-            {LEARNING_EXAMPLES.map((item, index) => <button key={item.id} type="button" role="tab" aria-selected={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>)}
+          <div role="group" aria-label="Example course">
+            {LEARNING_EXAMPLES.map((item, index) => <button key={item.id} type="button" aria-pressed={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>)}
           </div>
         </div>
       </section>
@@ -125,7 +124,6 @@ export function HowItWorks() {
         <p>Bring one lesson. Start practising for your exam.</p>
         <Link className="cta" href="/today?sample=1">Try sample (~1 min) <span aria-hidden="true">→</span></Link>
       </footer>
-      <SiteFooter />
     </div>
   );
 }

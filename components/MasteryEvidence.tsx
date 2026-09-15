@@ -14,6 +14,7 @@ export function MasteryEvidence() {
     <p>Question coverage: {percent(evidence.coverage)} · Mastery on reviewed questions: {evidence.mastery === null ? "Not enough evidence" : percent(evidence.mastery)}</p>
     <p>Weighted by exam importance. Practice evidence, not a predicted grade or a measure of all your notes.</p>
     {evidence.incomplete ? <p>Coverage is incomplete: some topics do not have questions yet.</p> : null}
+    {evidence.topics.some(topic => topic.availableQuestions > 0 && topic.availableQuestions < 3) ? <p>Some topics have only one or two questions. Reviewing them all does not establish broad topic mastery.</p> : null}
     <details><summary>See evidence by topic</summary>
       {evidence.topics.map((topic, index) => <section key={topic.conceptId}>
         <h3>{concepts[index].name} — {topic.readinessLabel}</h3>

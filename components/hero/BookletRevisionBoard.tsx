@@ -53,7 +53,7 @@ export function BookletRevisionBoard() {
       { name: "Supply & Demand", minutes: 15, reason: "High exam value", recommended: false },
       { name: "Market Structures", minutes: 12, reason: "Builds on both", recommended: false },
     ]);
-    setSignal("Elasticity moves up for another attempt.");
+    setSignal("Elasticity stays first for another attempt.");
   }
 
   function markRemembered() {
@@ -69,7 +69,7 @@ export function BookletRevisionBoard() {
   return (
     <motion.div
       className="booklet-board is-honest-flow is-clean is-paper-loop is-notebook is-elevated"
-      initial={reduce ? false : { opacity: 0, y: 14 }}
+      initial={false}
       animate={{ opacity: 1, y: 0 }}
       transition={{
         duration: reduce ? 0 : kelusDuration.moderate,
@@ -138,6 +138,7 @@ export function BookletRevisionBoard() {
               </p>
               <motion.button
                 type="button"
+                tabIndex={0}
                 className="booklet-flow-reveal"
                 aria-expanded={revealed}
                 aria-controls="board-answer"
@@ -149,11 +150,11 @@ export function BookletRevisionBoard() {
                 <span aria-hidden="true">{revealed ? "−" : "+"}</span>
               </motion.button>
 
+              <div id="board-answer" hidden={!revealed}>
               <AnimatePresence initial={false}>
                 {revealed ? (
                   <motion.p
                     key="answer"
-                    id="board-answer"
                     className="board-answer"
                     role="status"
                     initial={reduce ? false : { opacity: 0, y: 6 }}
@@ -165,6 +166,7 @@ export function BookletRevisionBoard() {
                   </motion.p>
                 ) : null}
               </AnimatePresence>
+              </div>
 
               <AnimatePresence initial={false}>
                 {revealed && phase === "check" ? (
@@ -204,7 +206,7 @@ export function BookletRevisionBoard() {
             <div className={`booklet-flow-route${phase === "route" ? " is-live" : ""}`}>
               <div className="booklet-flow-route-title">
                 <span>Today’s route</span>
-                <strong>45 min</strong>
+                <strong>{route.reduce((total, item) => total + item.minutes, 0)} min</strong>
               </div>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.p

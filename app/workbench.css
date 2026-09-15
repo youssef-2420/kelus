@@ -518,16 +518,24 @@ body.is-kelus-space .site-space-label {
 
   .kelus-space-nav.revision-surface-modes {
     flex-direction: row;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .kelus-space-nav.revision-surface-modes button {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
     min-height: 44px;
     gap: 0;
   }
 
   .kelus-space-nav-hint {
+    display: none;
+  }
+
+  .kelus-space-rail-brand,
+  .kelus-space-rail-meta,
+  .kelus-space-start {
     display: none;
   }
 

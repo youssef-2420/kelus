@@ -19,7 +19,8 @@ export default function PricingPage() {
 
   return (
     <LateralPage>
-    <main id="main" data-marketing="editorial" className="legal-page pricing-page is-booklet-product is-booklet-pricing">
+    <div data-marketing="editorial" className="legal-page pricing-page is-booklet-product is-booklet-pricing">
+    <main id="main">
       <PricingViewTracker />
       <section className="legal-panel pricing-booklet">
         <p className="kicker">Pricing</p>
@@ -82,8 +83,9 @@ export default function PricingPage() {
           <Link href="/privacy">Privacy</Link>
         </p>
       </section>
-      <SiteFooter compact />
     </main>
+      <SiteFooter compact />
+    </div>
   </LateralPage>
   );
 }

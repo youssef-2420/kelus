@@ -147,7 +147,7 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
   assert.match(header, /auth\.configured/);
   assert.match(setup, /Try sample \(~1 min\)/);
   assert.match(setup, /text-btn setup-sample-cta/);
-  assert.match(how, /SiteFooter/);
+  assert.match(await source("app/route/page.tsx"), /<\/main>\s*<SiteFooter/);
 });
 
 test("primary CTA language and readiness stay consistent", async () => {
@@ -199,7 +199,7 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.doesNotMatch(pricing, /Cross-device course and learning-state sync/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
-  assert.match(home, /SiteFooter/);
+  assert.match(await source("app/page.tsx"), /<\/main>\s*<SiteFooter/);
   assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
   assert.match(soft, /exam date/i);

@@ -727,6 +727,7 @@ body.is-booklet-system .is-notebook.is-elevated .booklet-flow-question {
 }
 
 body.is-booklet-system .is-notebook.is-elevated .booklet-flow-reveal {
+  min-height: 44px;
   background: var(--booklet-kelus) !important;
   color: #f7f8f5 !important;
   border-radius: 4px;

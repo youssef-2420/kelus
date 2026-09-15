@@ -46,11 +46,13 @@ export function KelusHero() {
             </Link>
           </motion.div>
         </div>
+        <p className={styles.actionHint}>Set up with your own material, or try a prepared example.</p>
       </div>
 
       <div className={styles.visual}>
         <ExamRoutePoster />
       </div>
+      <p className={styles.mobileCaption}>In this example, Elasticity needs another attempt — so it comes first.</p>
     </section>
   );
 }

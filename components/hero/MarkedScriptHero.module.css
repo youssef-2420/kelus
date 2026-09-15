@@ -32,6 +32,8 @@
   min-width: 0;
 }
 .secondLine { display: block; margin-top: .12em; color: var(--mute); font-weight: 430; }
+.hero .actionHint { margin: 12px 0 0; max-width: 34ch; font-size: 13px; line-height: 1.5; color: var(--mute); }
+.mobileCaption { display: none; }
 .hero .lede { max-width: 30ch; margin: 28px 0 0; font-family: var(--font-source-serif), Georgia, serif; font-size: 17px; line-height: 1.65; letter-spacing: -.02em; color: var(--mute); }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 20px; margin-top: 36px; }
 .primary, .secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; font-family: var(--font-inter), sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; text-decoration: none; border-radius: 3px; box-shadow: none; }
@@ -76,6 +78,7 @@
   .startAnnotation { translate: -120px -8px; }
 }
 @media (max-width: 47.99rem) {
+  .hero .mobileCaption { display: block; position: relative; margin: 0; padding: 0 24px 24px; font-size: 14px; line-height: 1.5; color: var(--mute); }
   .hero { grid-template-columns: 1fr; min-height: 0; }
   .copy { width: 100%; padding: 32px 24px 24px; }
   .hero .headline { max-width: 12ch; font-size: clamp(42px, 9vw, 54px); }

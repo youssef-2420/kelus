@@ -68,7 +68,7 @@ export function ExamRoutePoster() {
       <svg className={styles.art} viewBox="0 0 840 920" role="img" aria-labelledby="script-title script-description">
         <title id="script-title">Marked script → Today’s route</title>
         <desc id="script-description">An illustrative Microeconomics revision script. Supply and demand is checked. A correction to Elasticity marks it as Start here. The ink route continues to Market structures, Externalities, and Game theory.</desc>
-        <g transform="rotate(-5 420 445)">
+        <g aria-hidden="true" transform="rotate(-5 420 445)">
           <path className={styles.paperEdge} d="M69 73 806 65 822 951 76 955Z M73 67 812 60 829 944" />
           <path className={styles.paper} d="M80 51H830V950H80Z" />
           <path className={styles.rule} d="M111 82V915 M137 171H794" />

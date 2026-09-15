@@ -10,6 +10,7 @@ import { RevisionSurface } from "@/components/RevisionSurface";
 import { useLearner } from "@/components/LearnerProvider";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
+import styles from "./loading.module.css";
 
 function TodayBody() {
   const router = useRouter();
@@ -110,9 +111,9 @@ export default function TodayPage() {
         fallback={
           <SuspenseFallbackExit>
             <main id="main" className="destination-page">
-          <p className="destination-brand">Kelus</p>
-          <h1 className="destination-page-title">Opening Today…</h1>
-        </main>
+              <h1 className="destination-page-title" role="status">Opening Today…</h1>
+              <div className={styles.lines} aria-hidden="true"><span /><span /><span /></div>
+            </main>
           </SuspenseFallbackExit>
         }
       >
@@ -123,4 +124,3 @@ export default function TodayPage() {
     </LateralPage>
   );
 }
-

@@ -557,7 +557,7 @@
   color: #787774;
 }
 
-.how-page.is-booklet-product .how-example-switcher [role="tablist"] {
+.how-page.is-booklet-product .how-example-switcher [role="group"] {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
@@ -575,7 +575,7 @@
   cursor: pointer;
 }
 
-.how-page.is-booklet-product .how-example-switcher button[aria-selected="true"] {
+.how-page.is-booklet-product .how-example-switcher button[aria-pressed="true"] {
   background: #efefed;
   color: #1a1a18;
   font-weight: 600;

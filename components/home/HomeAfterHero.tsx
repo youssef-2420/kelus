@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { SiteFooter } from "@/components/SiteFooter";
 import { BookletRevisionBoard } from "@/components/hero/BookletRevisionBoard";
 import { Reveal } from "@/components/motion";
 
@@ -14,7 +13,7 @@ export function HomeAfterHero() {
     <>
       <section id="try" className="poster-sample" aria-labelledby="poster-sample-title">
         <Reveal className="poster-sample-intro">
-          <p className="kicker">See it once</p>
+          <p className="kicker">Interactive sample</p>
           <h2 id="poster-sample-title">Answer, then watch the route move.</h2>
           <p>
             Reveal a check. Mark how it went. The order updates — on paper, in about a minute.
@@ -45,7 +44,6 @@ export function HomeAfterHero() {
         </Reveal>
       </section>
 
-      <SiteFooter />
     </>
   );
 }

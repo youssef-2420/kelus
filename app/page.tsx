@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { KelusHero } from "@/components/hero/KelusHero";
 import { HomeAfterHero } from "@/components/home/HomeAfterHero";
 import { LateralPage } from "@/components/PageTransition";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   title: "Kelus — Revise your lessons. Prepare for exams.",
@@ -35,6 +36,7 @@ export default function Home() {
           <KelusHero />
           <HomeAfterHero />
         </main>
+        <SiteFooter />
       </div>
     </LateralPage>
   );
