@@ -110,7 +110,7 @@ export default function TodayPage() {
       <Suspense
         fallback={
           <SuspenseFallbackExit>
-            <main id="main" className="destination-page">
+            <main id="main" className={`destination-page ${styles.loading}`}>
               <h1 className="destination-page-title" role="status">Opening Today…</h1>
               <div className={styles.lines} aria-hidden="true"><span /><span /><span /></div>
             </main>
