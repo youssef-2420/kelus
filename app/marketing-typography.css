@@ -1,0 +1,27 @@
+/* Typeface-only opt-in. Explicit families beat legacy visual-sheet overrides;
+   no sizes, weights, colors, spacing or motion change here. */
+[data-marketing="editorial"],
+[data-marketing="editorial"] :where(*) {
+  font-family: var(--font-marketing-sans) !important;
+}
+
+/* Shared header changes only while one of the three marketing pages is mounted.
+   App routes retain their existing type, even after client-side navigation. */
+body:has([data-marketing="editorial"]) .site-header,
+body:has([data-marketing="editorial"]) .site-header :where(*) {
+  font-family: var(--font-marketing-sans) !important;
+}
+
+[data-marketing="editorial"] :is(
+  #home-hero-title,
+  #poster-sample-title,
+  #home-close-title,
+  #how-title,
+  .how-principle h2,
+  .pricing-offer h2
+),
+[data-marketing="editorial"].pricing-page h1,
+[data-marketing="editorial"] #home-hero-title span {
+  font-family: var(--font-marketing-heading) !important;
+  font-optical-sizing: auto;
+}

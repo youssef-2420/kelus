@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { IBM_Plex_Sans, Literata } from "next/font/google";
+import { Fraunces, Inter, IBM_Plex_Sans, Literata } from "next/font/google";
 import "./globals.css";
 import "./revision-studio.css";
 import "./home-folio.css";
@@ -10,6 +10,7 @@ import "./paper-loop.css";
 import "./hero-poster.css";
 import "./exam-booklet.css";
 import "./workbench.css";
+import "./marketing-typography.css";
 import "./view-transitions.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
@@ -35,6 +36,10 @@ const literata = Literata({
   display: "swap",
 });
 
+// Opt-in marketing families. No global replacement or app-route preload.
+const marketingSerif = Fraunces({ subsets: ["latin"], axes: ["opsz"], variable: "--font-fraunces", display: "swap", preload: false });
+const marketingSans = Inter({ subsets: ["latin"], variable: "--font-marketing-inter", display: "swap", preload: false });
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://kelus.me"),
   title: "Kelus — Revise your lessons. Prepare for exams.",
@@ -50,7 +55,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${plex.variable} ${literata.variable}`} data-scroll-behavior="smooth">
+    <html lang="en" className={`${plex.variable} ${literata.variable} ${marketingSerif.variable} ${marketingSans.variable}`} data-scroll-behavior="smooth">
       <body className={`${plex.variable} ${literata.variable} is-booklet-system`}>
         <GoogleAnalytics />
         <a className="skip" href="#main">Skip to content</a>

@@ -15,6 +15,16 @@ Kelus is paper, ink, and one pass-mark green. Marketing and product share the sa
 
 ## Interaction
 
+### Marketing typography exception
+
+Only `/`, `/route/`, and `/pricing/` opt into quiet editorial typography via
+`data-marketing="editorial"`. Major headings use `--font-marketing-heading`
+(Fraunces, optical sizing; Georgia/Times fallback). Body, instructions, examples,
+nav, buttons and footer use `--font-marketing-sans` (Inter; Arial/Helvetica fallback).
+Both are self-hosted by next/font with swap, without adding app-route preloads.
+Existing type sizes and weights remain. The revision app retains its current
+fonts in this marketing-only pass; do not repoint global editorial/UI tokens.
+
 - Primary actions are Kelus green fills with white labels.
 - Secondary actions are text buttons with instant press scale (`0.97`).
 - Links use Kelus green and a restrained directional arrow.
