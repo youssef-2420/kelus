@@ -1063,3 +1063,175 @@ body.is-booklet-system .answer-evaluation {
   }
 }
 
+/* Session: paper pages, not app chrome */
+body.is-session-booklet.is-booklet-system .site-header.is-session {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
+  background: transparent;
+  backdrop-filter: none;
+}
+
+body.is-session-booklet.is-booklet-system .site-header.is-session .site-footer-mark {
+  font-size: 1.15rem;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+
+body.is-session-booklet.is-booklet-system .site-session-label {
+  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
+  font-weight: 450;
+}
+
+body.is-session-booklet.is-booklet-system .site-session-return {
+  min-height: 40px;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.9rem;
+  border-bottom: 0;
+}
+
+body.is-session-booklet.is-booklet-system .site-session-return:hover,
+body.is-session-booklet.is-booklet-system .site-session-return:focus-visible {
+  color: var(--color-kelus, #1f6b45);
+}
+
+body.is-session-booklet.is-booklet-system .study-context {
+  align-items: baseline;
+}
+
+body.is-session-booklet.is-booklet-system .study-leave,
+body.is-session-booklet.is-booklet-system .study-context .text-btn {
+  color: var(--color-steel, #5c6570);
+  font-size: 0.85rem;
+}
+
+body.is-session-booklet.is-booklet-system .study-progress {
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+/* Map: start-here + weight readable on the graph */
+body.is-booklet-system .topic-map-node.is-start circle {
+  fill: color-mix(in srgb, var(--booklet-kelus, #1f6b45) 28%, transparent);
+  stroke: var(--booklet-kelus, #1f6b45);
+  stroke-width: 0.7;
+}
+
+body.is-booklet-system .topic-map-node.is-start .topic-map-status {
+  fill: var(--booklet-kelus, #1f6b45);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-size: 2.8px;
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-list-details {
+  margin-top: 0.35rem;
+  border-top: 0;
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-list-details > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 0;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-list-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-list-details > summary::after {
+  content: "Show";
+  float: right;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--color-kelus, #1f6b45);
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-list-details[open] > summary::after {
+  content: "Hide";
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-list .row.is-start .map-concept-name {
+  color: var(--color-kelus, #1f6b45);
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-list .row.is-start .mark-status {
+  color: var(--color-kelus, #1f6b45);
+  font-weight: 600;
+}
+
+/* Sources: exam binder, not admin upload UI */
+.kelus-space-stage .material-ingest.is-embedded .material-ingest-lede {
+  margin: 0 0 14px;
+  max-width: 42ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.kelus-space-stage .material-drop.is-quiet {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+  padding: 18px 0;
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--color-ink, #12160f);
+}
+
+.kelus-space-stage .material-drop.is-quiet:hover,
+.kelus-space-stage .material-drop.is-quiet.is-dragging {
+  background: transparent;
+  border-color: var(--color-kelus, #1f6b45);
+}
+
+.kelus-space-stage .material-drop.is-quiet strong {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-kelus, #1f6b45);
+}
+
+.kelus-space-stage .material-drop.is-quiet span {
+  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
+}
+
+.kelus-space-stage .material-shelf.is-binder > header .kicker {
+  color: var(--color-steel, #5c6570);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.kelus-space-stage .material-shelf.is-binder > header h2 {
+  font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+}
+
+.kelus-space-stage .material-binder-note {
+  margin: 1.25rem 0 0;
+  max-width: 42ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.kelus-space-stage .material-ingest.is-embedded .material-bookmarks {
+  margin-top: 12px;
+}
+
+.kelus-space-stage .material-ingest.is-embedded .material-bookmarks > summary {
+  color: var(--color-steel, #5c6570);
+  font-size: 0.9rem;
+}
+

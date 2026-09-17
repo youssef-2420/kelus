@@ -17,8 +17,8 @@ export type SurfaceMode = "today" | "materials" | "map";
 
 const MODES: Array<{ id: SurfaceMode; label: string; hint: string }> = [
   { id: "today", label: "Route", hint: "Today’s stops" },
-  { id: "materials", label: "Sources", hint: "PDFs & links" },
-  { id: "map", label: "Topics", hint: "By exam weight" },
+  { id: "materials", label: "Sources", hint: "Exam binder" },
+  { id: "map", label: "Topics", hint: "Weak first" },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };
@@ -218,8 +218,8 @@ export function RevisionSurface() {
               {mode === "today"
                 ? <>{route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
                 : mode === "materials"
-                  ? "PDFs and links for this exam."
-                  : "What matters versus what you know."}
+                  ? "Pages for this exam, ready to open."
+                  : "Weak topics and today’s start, at a glance."}
             </p>
           </div>
         </header>

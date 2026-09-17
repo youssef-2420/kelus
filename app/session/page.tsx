@@ -96,6 +96,11 @@ function SessionBody() {
     if (node && phase !== "retrieve" && phase !== "apply") node.focus();
   }, [phase]);
 
+  useEffect(() => {
+    document.body.classList.add("is-session-booklet");
+    return () => document.body.classList.remove("is-session-booklet");
+  }, []);
+
   useEffect(() => () => {
     sourceRequest.current += 1;
     if (sourceObjectUrl.current) URL.revokeObjectURL(sourceObjectUrl.current);
@@ -311,9 +316,7 @@ function SessionBody() {
         <span>
           <b>{concept.name}</b>
           <small>
-            {index + 1}/{total}
-            <span aria-hidden="true"> · </span>
-            {routeMinutes} min
+            {index + 1} of {total}
           </small>
         </span>
         {confirmExit ? (
@@ -327,7 +330,7 @@ function SessionBody() {
             }}>Exit</button>
           </span>
         ) : (
-          <button type="button" className="text-btn" onClick={() => setConfirmExit(true)}>Exit</button>
+          <button type="button" className="text-btn study-leave" onClick={() => setConfirmExit(true)}>Leave</button>
         )}
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>

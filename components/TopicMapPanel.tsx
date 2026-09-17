@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { ConceptInspector } from "@/components/ConceptInspector";
 import { KnowledgeMap } from "@/components/KnowledgeMap";
 import { useLearner } from "@/components/LearnerProvider";
+import { generateRoute } from "@/domain/routing-engine";
 import { courseMastery } from "@/domain/scheduler";
 
 /** Topic map body for the shared revision surface (no page chrome). */
@@ -22,6 +23,16 @@ export function TopicMapPanel() {
     .filter((concept) => concept.courseId === course.id)
     .slice()
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
+  const exam = state.snapshot.exams.find((item) => item.courseId === course.id && item.isActive);
+  const startConceptId = exam
+    ? generateRoute({
+        concepts,
+        relationships: state.snapshot.relationships,
+        events: state.snapshot.events,
+        exam,
+        nowIso: state.nowIso,
+      }).allocations.find((item) => item.conceptId !== "mixed-retrieval")?.conceptId ?? null
+    : null;
   const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
   const filtered = concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase()));
 
@@ -51,6 +62,7 @@ export function TopicMapPanel() {
             concepts={filtered}
             relationships={state.snapshot.relationships}
             selectedId={selectedId}
+            startConceptId={startConceptId}
             onSelect={(concept) => setSelectedId(concept.id)}
           />
           {query.trim() && !filtered.length ? (

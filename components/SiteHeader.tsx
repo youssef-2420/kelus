@@ -54,7 +54,7 @@ export function SiteHeader() {
         </Link>
 
         {inSession ? (
-          <p className="site-session-label">Revision session</p>
+          <p className="site-session-label">Open pages</p>
         ) : inProduct ? (
           <p className="site-space-label">Course space</p>
         ) : (
@@ -72,7 +72,7 @@ export function SiteHeader() {
 
         {inSession ? (
           <Link href="/today" className="site-session-return">
-            Back to Today
+            Close
           </Link>
         ) : auth.loading ? (
           <span className="site-auth-loading" aria-label="Checking account" />

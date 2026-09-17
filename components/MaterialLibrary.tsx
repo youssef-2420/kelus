@@ -469,21 +469,33 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
       <section className={`material-ingest${embedded ? " is-embedded" : ""}`} aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
         <div className="material-ingest-title">
           {embedded ? null : <p className="kicker">Add material</p>}
-          <h2 id="add-material-title">{embedded ? "Add a PDF" : "Bring the course into one place."}</h2>
+          <h2 id="add-material-title">{embedded ? "Add to the binder" : "Bring the course into one place."}</h2>
+          {embedded ? (
+            <p className="material-ingest-lede">
+              Syllabus or lecture PDF — you confirm every topic before the route changes.
+            </p>
+          ) : null}
         </div>
-        <div className="material-role-field">
-          <label htmlFor="material-role">This source is</label>
-          <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
-            {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-          </select>
-          <p>
-            {embedded
-              ? "Text PDFs work fastest. You review every suggested topic before it changes your route."
-              : "Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device."}
-          </p>
-        </div>
+        {embedded ? (
+          <div className="sr-only">
+            <label htmlFor="material-role">This source is</label>
+            <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
+              {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+          </div>
+        ) : (
+          <div className="material-role-field">
+            <label htmlFor="material-role">This source is</label>
+            <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
+              {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+            <p>
+              Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device.
+            </p>
+          </div>
+        )}
         <label
-          className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}`}
+          className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}${embedded ? " is-quiet" : ""}`}
           aria-busy={busy || undefined}
           onDragEnter={() => dispatch({ type: "DRAG_ENTER" })}
           onDragLeave={() => dispatch({ type: "DRAG_LEAVE" })}
@@ -491,9 +503,9 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
           onDrop={drop}
         >
           <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
-          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
-          <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
-          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · clear text works fastest"}</span>
+          {embedded ? null : <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>}
+          <strong>{busy ? (statusMessage ?? "Working on your PDF…") : embedded ? "Choose a PDF" : "Drop a PDF here"}</strong>
+          <span>{busy && statusMessage ? statusMessage : embedded ? "or drop one here · clear text works fastest" : "or choose a file · up to 20 MB · clear text works fastest"}</span>
         </label>
         {busy && workingStep ? (
           <div className="material-work-status" role="status" aria-live="polite">
@@ -629,8 +641,22 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         ) : null}
       </AnimatePresence>
 
-      <section className="material-shelf" aria-labelledby="source-shelf-title">
-        <header><div><p className="kicker">Source shelf</p><h2 id="source-shelf-title">{courseMaterials.length ? `${courseMaterials.length} saved` : concepts.length ? "Sample model ready" : "Nothing saved yet"}</h2></div><span>This device</span></header>
+      <section className={`material-shelf${embedded ? " is-binder" : ""}`} aria-labelledby="source-shelf-title">
+        <header>
+          <div>
+            <p className="kicker">{embedded ? "Exam binder" : "Source shelf"}</p>
+            <h2 id="source-shelf-title">
+              {courseMaterials.length
+                ? `${courseMaterials.length} ${embedded ? (courseMaterials.length === 1 ? "page" : "pages") : "saved"}`
+                : concepts.length
+                  ? "Sample model ready"
+                  : embedded
+                    ? "Empty binder"
+                    : "Nothing saved yet"}
+            </h2>
+          </div>
+          <span>{embedded ? "For this exam" : "This device"}</span>
+        </header>
         {courseMaterials.length ? (
           <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
         ) : concepts.length ? (
@@ -642,7 +668,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
           </div>
         ) : (
           <div className="material-shelf-empty">
-            <p>No sources on this shelf yet. Add the syllabus or lecture you’re studying — Kelus will propose topics you confirm.</p>
+            <p>{embedded ? "Add the syllabus or lecture for this exam. Kelus proposes topics you confirm." : "No sources on this shelf yet. Add the syllabus or lecture you’re studying — Kelus will propose topics you confirm."}</p>
             <div className="materials-empty-actions">
               <a className="cta" href="#add-material-title">
                 Add first PDF <span aria-hidden="true">→</span>
@@ -655,10 +681,14 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         )}
       </section>
 
-      <aside className="material-honesty">
-        <p className="kicker">Private and reviewable</p>
-        <p>{auth.user ? "Signed-in materials are stored in your private Kelus account and cached on this device. " : "Materials stay on this device until you sign in. "}Kelus uses only the concepts you confirm, and every learning activity keeps its source page visible.</p>
-      </aside>
+      {embedded ? (
+        <p className="material-binder-note">Only confirmed topics change your route. Pages stay with this exam.</p>
+      ) : (
+        <aside className="material-honesty">
+          <p className="kicker">Private and reviewable</p>
+          <p>{auth.user ? "Signed-in materials are stored in your private Kelus account and cached on this device. " : "Materials stay on this device until you sign in. "}Kelus uses only the concepts you confirm, and every learning activity keeps its source page visible.</p>
+        </aside>
+      )}
       </>
   );
   return embedded ? shelf : <AppShell>{shelf}</AppShell>;
