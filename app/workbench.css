@@ -856,3 +856,59 @@ body.is-booklet-system .session-sources > span {
   font-size: 0.7rem;
 }
 
+/* Session as paper, not a floating card */
+body.is-booklet-system .study-shell {
+  max-width: 42rem;
+  padding-top: 12px;
+  padding-bottom: 48px;
+}
+
+body.is-booklet-system .study-context {
+  margin-bottom: 4px;
+}
+
+body.is-booklet-system .study-context > span b {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+body.is-booklet-system .study-context > span small {
+  color: var(--color-steel, #5c6570);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+body.is-booklet-system .study-question {
+  margin-block: 8px 0;
+  padding: 18px 0 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+  box-shadow: none;
+}
+
+body.is-booklet-system .study-question :is(h1, h2) {
+  font-weight: 440;
+  max-width: 22ch;
+}
+
+body.is-booklet-system .session-explanation {
+  max-width: 48ch;
+  color: color-mix(in srgb, var(--color-ink, #12160f) 82%, transparent);
+}
+
+body.is-booklet-system .answer-evaluation {
+  border-radius: 4px;
+  border-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  background: #fff;
+}
+
+@media (max-width: 480px) {
+  body.is-booklet-system .study-question {
+    padding: 16px 0 0;
+  }
+}
+

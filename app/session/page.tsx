@@ -311,15 +311,9 @@ function SessionBody() {
         <span>
           <b>{concept.name}</b>
           <small>
-            {routeMinutes} min
-            <span aria-hidden="true"> · </span>
             {index + 1}/{total}
-            {phase !== "result" && phase !== "reroute" ? (
-              <>
-                <span aria-hidden="true"> · </span>
-                {PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}
-              </>
-            ) : null}
+            <span aria-hidden="true"> · </span>
+            {routeMinutes} min
           </small>
         </span>
         {confirmExit ? (
