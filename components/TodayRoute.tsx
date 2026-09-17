@@ -100,14 +100,14 @@ export function TodayRoute({
           </small>
         </div>
         <details className="today-evidence-disclosure">
-        <summary>Why this topic? <span>Sources and learning evidence</span></summary>
-        <dl className="today-lead-evidence" aria-label={`Why Kelus recommends ${firstName}`}>
+        <summary>Why this? <span>Source notes</span></summary>
+        <dl className="today-lead-evidence" aria-label={`Why ${firstName} is first`}>
           <div>
-            <dt>Course evidence</dt>
+            <dt>From your course</dt>
             <dd>{firstSource ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}` : "No source cited yet"}</dd>
           </div>
           <div>
-            <dt>Learner evidence</dt>
+            <dt>From your answers</dt>
             <dd>{learnerEvidence}</dd>
           </div>
           <div>

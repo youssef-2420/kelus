@@ -1683,11 +1683,9 @@ body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.is-poster {
 }
 
 body.is-booklet-system .topic-map-node text {
-  font-size: 3.1px;
-  paint-order: stroke;
-  stroke: var(--booklet-paper, #ffffff);
-  stroke-width: 0.55px;
-  stroke-linejoin: round;
+  font-size: 3.05px;
+  paint-order: normal;
+  stroke: none;
 }
 
 body.is-booklet-system .topic-map-node.is-label-below text {
@@ -1914,13 +1912,17 @@ body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.paper-loop-hero
 
 /* Sparse map graph: room for label-under nodes without collisions */
 body.is-booklet-system .topic-map-svg[data-layout="sparse"] {
-  aspect-ratio: 100 / 78;
+  width: 100%;
   max-width: 42rem;
+  height: auto;
+  aspect-ratio: auto;
 }
 
 body.is-booklet-system .topic-map-svg[data-layout="sparse"] text {
-  font-size: 3.2px;
+  font-size: 3.05px;
   letter-spacing: 0.01em;
+  fill: var(--booklet-ink);
+  stroke: none;
 }
 
 /* Small screens: keep the prerequisite spine only (related edges already omitted in markup) */
@@ -2269,3 +2271,62 @@ body.is-booklet-system .is-booklet-today .cta.today-start:active {
     transform: none;
   }
 }
+
+/* ── Premium craft lock: one ink, no Notion blue leftovers ── */
+body.is-booklet-system .cta,
+body.is-booklet-system a.cta,
+body.is-booklet-system button.cta,
+body.is-booklet-system .today-start,
+body.is-booklet-system .cta.today-start,
+body.is-booklet-system .study-shell .cta,
+body.is-booklet-system .study-ratings button.is-primary,
+body.is-booklet-system .diagnosis-grades button.is-primary {
+  background: var(--color-kelus, #1f6b45) !important;
+  border-color: var(--color-kelus, #1f6b45) !important;
+  color: #fff !important;
+}
+
+body.is-booklet-system .cta:hover,
+body.is-booklet-system a.cta:hover,
+body.is-booklet-system button.cta:hover,
+body.is-booklet-system .today-start:hover,
+body.is-booklet-system .study-shell .cta:hover,
+body.is-booklet-system .study-ratings button.is-primary:hover {
+  background: var(--color-kelus-hover, #185536) !important;
+  border-color: var(--color-kelus-hover, #185536) !important;
+}
+
+body.is-booklet-system .study-question textarea:focus,
+body.is-booklet-system .study-question textarea:focus-visible {
+  outline-color: var(--color-kelus, #1f6b45);
+  border-color: var(--color-kelus, #1f6b45);
+}
+
+body.is-booklet-system .study-wayfinding [aria-current="step"] {
+  color: var(--color-kelus, #1f6b45);
+}
+
+body.is-booklet-system .study-progress i {
+  background: var(--color-kelus, #1f6b45);
+}
+
+body.is-booklet-system .session-apply-hint button,
+body.is-booklet-system .session-help button[aria-pressed="true"] {
+  color: var(--color-kelus, #1f6b45);
+}
+
+body.is-booklet-system .today-evidence-disclosure > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem 0.75rem;
+}
+
+body.is-booklet-system .today-evidence-disclosure > summary span {
+  margin-left: 0;
+}
+
+body.is-booklet-system .kelus-space-top {
+  border-bottom-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent);
+}
+

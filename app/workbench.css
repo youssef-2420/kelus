@@ -462,10 +462,6 @@ body.is-kelus-space .site-space-label {
   line-height: 1.55;
 }
 
-.kelus-space-start {
-  flex: 0 0 auto;
-  align-self: center;
-}
 
 .kelus-space-panel {
   min-width: 0;
@@ -549,3 +545,19 @@ body.is-kelus-space .site-space-label {
     padding: 20px 16px 40px;
   }
 }
+
+/* Today lead: one start, quieter sequence chrome */
+.kelus-space-stage .today-lead-sequence {
+  opacity: 0.82;
+}
+
+.kelus-space-stage .today-lead-sequence ol {
+  gap: 0;
+}
+
+.kelus-space-stage .cta.today-start {
+  background: var(--color-kelus, #1f6b45);
+  border-color: var(--color-kelus, #1f6b45);
+  color: #fff;
+}
+

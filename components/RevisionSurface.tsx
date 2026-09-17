@@ -11,8 +11,6 @@ import { useLearner } from "@/components/LearnerProvider";
 import { MasteryEvidence } from "@/components/MasteryEvidence";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
-import { greeting } from "@/lib/format";
-import { lastSessionCompletedAt } from "@/lib/demo-store";
 import { trackEvent } from "@/lib/analytics";
 
 export type SurfaceMode = "today" | "materials" | "map";
@@ -94,9 +92,6 @@ export function RevisionSurface() {
   const courseId = course.id;
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
-  const lastCompleted = lastSessionCompletedAt();
-  const dueCount = concepts.filter((concept) => concept.nextReviewAt && Date.parse(concept.nextReviewAt) <= Date.parse(nowIso)).length;
-  const returning = Boolean(lastCompleted) && snapshot.sessions.some((session) => session.status === "complete");
   const modeMeta = MODES.find((item) => item.id === mode)!;
 
   function setMode(next: SurfaceMode) {
@@ -207,34 +202,9 @@ export function RevisionSurface() {
             <h1 id="today-title">{course.name}</h1>
             <p className="kelus-space-lede">
               {route.availableMinutes} minutes for revision today
-              <span className="today-brief-exam">
-                {" "}
-                · Exam in {days} days · target {exam.targetPercent}%.
-              </span>
-              {returning ? (
-                <span className="today-welcome">
-                  {" "}
-                  {greeting(nowIso)}. Welcome back
-                  {dueCount > 0 ? ` · ${dueCount} concept${dueCount === 1 ? "" : "s"} due` : ""}.
-                </span>
-              ) : null}
-            </p>
-            <p className="today-readiness-hint" id="today-readiness-hint">
-              Your route comes first. Practice evidence is below it — not a grade prediction.
+              <span className="today-brief-exam"> · target {exam.targetPercent}%.</span>
             </p>
           </div>
-
-          {mode === "today" ? (
-            <motion.button
-              type="button"
-              className="cta kelus-space-start"
-              onClick={openSession ? resume : begin}
-              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-              transition={pressSpring}
-            >
-              {openSession ? "Resume session" : "Start today’s route"} <span aria-hidden="true">→</span>
-            </motion.button>
-          ) : null}
         </header>
 
         <AnimatePresence mode="wait" initial={false} custom={direction}>

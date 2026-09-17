@@ -10,59 +10,67 @@ import { topicEvidence } from "@/domain/mastery-evidence";
 
 type MapNode = { concept: Concept; x: number; y: number; rank: number; labelBelow: boolean };
 
-/** Prefer short exam-map labels without ugly mid-word ellipsis. */
+/** Prefer readable exam-map labels without mid-word ellipsis. */
 function shortLabel(name: string) {
   const aliases: Record<string, string> = {
-    "Supply & Demand": "Supply/Demand",
-    "Market Structures": "Markets",
-    "Monetary Policy": "Monetary",
-    "Fiscal Policy": "Fiscal",
-    "Consumer Choice": "Consumer",
+    "Supply & Demand": "Supply / demand",
+    "Market Structures": "Market structures",
+    "Monetary Policy": "Monetary policy",
+    "Fiscal Policy": "Fiscal policy",
+    "Consumer Choice": "Consumer choice",
     "Game Theory": "Game theory",
     Elasticity: "Elasticity",
   };
-  // Demo seed names (exact).
   if (aliases[name]) return aliases[name];
-  if (name.length <= 14) return name;
-  const cut = name.slice(0, 13);
+  const cleaned = name.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= 22) return cleaned;
+  const cut = cleaned.slice(0, 21);
   const space = cut.lastIndexOf(" ");
-  return `${(space > 6 ? cut.slice(0, space) : cut).trim()}…`;
+  return `${(space > 8 ? cut.slice(0, space) : cut).trim()}…`;
 }
 
 function layoutNodes(concepts: Concept[]): MapNode[] {
   const count = concepts.length;
   if (!count) return [];
 
-  // Sparse layout: max 2 per row when labels need room (final audit).
   if (count === 1) {
-    return [{ concept: concepts[0], x: 50, y: 32, rank: 0, labelBelow: false }];
+    return [{ concept: concepts[0], x: 50, y: 28, rank: 0, labelBelow: true }];
   }
   if (count === 2) {
     return concepts.map((concept, index) => ({
       concept,
       x: 28 + index * 44,
-      y: 32,
+      y: 28,
       rank: index,
-      labelBelow: false,
+      labelBelow: true,
     }));
   }
 
-  // Two columns, labels always under the node so adjacent rows never collide.
+  // Two columns with generous row pitch so labels under nodes never collide.
   const cols = 2;
   const rows = Math.ceil(count / cols);
+  const top = 8;
+  const rowPitch = 14;
   return concepts.map((concept, index) => {
     const col = index % cols;
     const row = Math.floor(index / cols);
     const rowCount = Math.min(cols, count - row * cols);
-    const x0 = 18 + (cols - rowCount) * 32;
+    const x0 = 16 + (cols - rowCount) * 34;
     return {
       concept,
-      x: x0 + ((col + 0.5) * 64) / cols,
-      y: 10 + ((row + 0.35) * 58) / Math.max(rows, 1),
+      x: x0 + ((col + 0.5) * 68) / cols,
+      y: top + row * rowPitch,
       rank: index,
       labelBelow: true,
     };
   });
+}
+
+function mapViewBox(nodeCount: number) {
+  if (nodeCount <= 2) return "0 0 100 48";
+  const rows = Math.ceil(nodeCount / 2);
+  const height = Math.max(48, 8 + rows * 14 + 10);
+  return `0 0 100 ${height}`;
 }
 
 export function KnowledgeMap({
@@ -109,7 +117,7 @@ export function KnowledgeMap({
 
         {nodes.length ? (
           <div className="topic-map-graph" aria-hidden={onSelect ? undefined : true}>
-            <svg viewBox="0 0 100 78" className="topic-map-svg" data-layout="sparse" preserveAspectRatio="xMidYMid meet">
+            <svg viewBox={mapViewBox(nodes.length)} className="topic-map-svg" data-layout="sparse" preserveAspectRatio="xMidYMid meet">
               {edges.map((edge) => (
                 <path
                   key={edge.id}
@@ -119,12 +127,12 @@ export function KnowledgeMap({
               ))}
               {nodes.map((node) => {
                 const selected = selectedId === node.concept.id;
-                const radius = selected ? 3.2 : 2.6;
-                const labelY = node.labelBelow ? node.y + 6.4 : node.y - 5.8;
+                const radius = selected ? 2.8 : 2.2;
+                const labelY = node.y + 5.2;
                 return (
                   <g
                     key={node.concept.id}
-                    className={`topic-map-node${selected ? " is-selected" : ""}${node.labelBelow ? " is-label-below" : ""}`}
+                    className={`topic-map-node${selected ? " is-selected" : ""} is-label-below`}
                     role={onSelect ? "button" : undefined}
                     tabIndex={onSelect ? 0 : undefined}
                     aria-label={onSelect ? node.concept.name : undefined}
@@ -142,7 +150,8 @@ export function KnowledgeMap({
                     style={onSelect ? { cursor: "pointer" } : undefined}
                   >
                     <circle cx={node.x} cy={node.y} r={radius} />
-                    <text x={node.x} y={labelY} textAnchor="middle">
+                    <title>{node.concept.name}</title>
+                    <text x={node.x} y={labelY} textAnchor="middle" dominantBaseline="hanging">
                       {shortLabel(node.concept.name)}
                     </text>
                   </g>

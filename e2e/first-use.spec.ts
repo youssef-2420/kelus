@@ -98,7 +98,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page).not.toHaveURL(/section=/);
   await page.locator(".today-evidence-disclosure > summary").click();
-  await expect(page.getByText("Course evidence", { exact: true })).toBeVisible();
+  await expect(page.getByText("From your course", { exact: true })).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-today-mobile.png", fullPage: true });
   const start = page.locator("button.today-start");
@@ -127,7 +127,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
   await page.getByRole("button", { name: /Check my thinking/ }).click();
   await page.getByRole("button", { name: "Use this result" }).click();
-  await expect(page.getByText("Learner model updated")).toBeVisible();
+  await expect(page.getByText("Estimate updated")).toBeVisible();
   await page.getByRole("button", { name: /Continue/ }).click();
   await expect(page.getByRole("heading", { name: /Route (updated|checked)/ })).toBeVisible();
 });

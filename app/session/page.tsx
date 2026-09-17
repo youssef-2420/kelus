@@ -24,6 +24,13 @@ type SourcePanelState = {
   reason?: "missing" | "read_failed";
 };
 
+const PHASE_LABEL: Record<"learn" | "retrieve" | "apply" | "evaluate", string> = {
+  learn: "Learn",
+  retrieve: "Recall",
+  apply: "Apply",
+  evaluate: "Check",
+};
+
 const STEP_INDEX = { learn: 1, retrieve: 2, apply: 3, evaluate: 4 } as const;
 
 function activityFallback(concept: Concept, promptText: string, modelAnswer: string): LearningActivity {
@@ -325,7 +332,7 @@ function SessionBody() {
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
           <motion.section ref={focusStep} tabIndex={-1} key="reroute" className="reroute-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} aria-live="polite">
-            <p className="kicker">New learning evidence</p>
+            <p className="kicker">Next</p>
             <h1>{routeOrderChanged ? "Route updated." : "Route checked."}</h1>
             <p>
               {routeOrderChanged
@@ -335,7 +342,7 @@ function SessionBody() {
             <div className="reroute-cause" aria-label="How this answer affected the route">
               <div><span>Your answer</span><strong>{evaluation?.label ?? (lastOutcome === "failure" ? "Not enough evidence yet" : "Partial evidence")}</strong></div>
               <i aria-hidden="true">→</i>
-              <div><span>Learner estimate</span><strong>{percent(masteryBefore)} → {percent(activeConcept.mastery)}</strong></div>
+              <div><span>Estimate</span><strong>{percent(masteryBefore)} → {percent(activeConcept.mastery)}</strong></div>
               <i aria-hidden="true">→</i>
               <div><span>Next route</span><strong>{routeOrderChanged ? "Order changed" : "Order kept"}</strong></div>
             </div>
@@ -348,17 +355,17 @@ function SessionBody() {
           </motion.section>
         ) : phase === "result" ? (
           <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-result`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <p className="study-count" aria-live="polite">04 / 04 · Evaluated</p>
-            <p className="kicker">Learner model updated</p>
+            <p className="study-count" aria-live="polite">Done</p>
+            <p className="kicker">Estimate updated</p>
             <div className="mastery-reward">
               <div><span>{percent(masteryBefore)}</span><i aria-hidden="true">→</i><motion.strong initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>{percent(concept.mastery)}</motion.strong></div>
-              <p>One new piece of evidence changed the estimate. Kelus will now reconsider what belongs next.</p>
+              <p>Your answer updated the estimate. Next up is chosen from what’s left.</p>
               <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
             </div>
           </motion.section>
         ) : (
           <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
-            <p className="study-count" aria-live="polite">{String(visibleStep).padStart(2, "0")} / 04 · {phase}</p>
+            <p className="study-count" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
             {phase === "learn" ? (
               <div className="session-learn">
@@ -383,7 +390,6 @@ function SessionBody() {
 
             {phase === "retrieve" ? (
               <>
-                <p className="kicker">Retrieve</p>
                 <h1>{activity.retrieve.prompt}</h1>
                 <label htmlFor="retrieve-answer">Write from memory before checking the explanation.</label>
                 <textarea id="retrieve-answer" autoFocus value={retrieveAnswer} onChange={(event) => setRetrieveAnswer(event.target.value)} placeholder="Explain it in your own words…" />
@@ -403,7 +409,6 @@ function SessionBody() {
 
             {phase === "apply" ? (
               <>
-                <p className="kicker">Apply</p>
                 <h1>{activity.apply.prompt}</h1>
                 <label htmlFor="application-answer">Use the idea in a different situation.</label>
                 <textarea id="application-answer" autoFocus value={applicationAnswer} onChange={(event) => setApplicationAnswer(event.target.value)} placeholder="Work through the new case…" />
@@ -415,7 +420,6 @@ function SessionBody() {
 
             {phase === "evaluate" ? (
               <div className="study-feedback">
-                <div className="kicker">Evaluate</div>
                 <h1>Compare the reasoning.</h1>
                 <div className="answer-comparison">
                   <section><span>Your retrieval</span><p>{retrieveAnswer}</p></section>
@@ -425,7 +429,7 @@ function SessionBody() {
                 </div>
                 {evaluation ? (
                   <div className={`answer-evaluation is-${evaluation.outcome}`} role="status">
-                    <p className="kicker">Kelus evidence check</p>
+                    <p className="kicker">Answer check</p>
                     <h2>{evaluation.label}</h2>
                     <p>{evaluation.explanation}</p>
                     {evaluation.criteria.length ? (
@@ -437,7 +441,7 @@ function SessionBody() {
                         ))}
                       </ul>
                     ) : null}
-                    <small>Structured source comparison · not an instructor grade</small>
+                    <small>Compared with the source · not a grade</small>
                     <div className="study-ratings" role="group" aria-label="Record answer evidence">
                       <button type="button" className="is-primary" onClick={() => grade(evaluation.outcome)}>Use this result</button>
                       {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={() => grade("partial")}>I needed more help</button> : null}

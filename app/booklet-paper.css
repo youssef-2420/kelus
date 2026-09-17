@@ -146,8 +146,8 @@ body.is-booklet-system a.cta {
 body.is-booklet-system .site-header-action:hover,
 body.is-booklet-system .cta:hover,
 body.is-booklet-system a.cta:hover {
-  background: #0066c2;
-  border-color: #0066c2;
+  background: var(--color-kelus-hover, #185536);
+  border-color: var(--color-kelus-hover, #185536);
 }
 
 body.is-booklet-system .site-header-action:active,

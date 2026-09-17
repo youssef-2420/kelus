@@ -78,7 +78,7 @@ test("session makes the evidence-to-route change explicit", async () => {
   const session = await source("app/session/page.tsx");
   assert.match(session, /aria-label="How this answer affected the route"/);
   assert.match(session, /Your answer/);
-  assert.match(session, /Learner estimate/);
+  assert.match(session, /Estimate/);
   assert.match(session, /Next route/);
 });
 

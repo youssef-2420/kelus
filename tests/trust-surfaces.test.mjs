@@ -171,7 +171,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(how, /Try sample \(~1 min\)/);
   assert.match(surface, /<MasteryEvidence/);
   assert.doesNotMatch(surface, /Est\. readiness/);
-  assert.match(`${today}\n${surface}`, /not a grade prediction/);
+  assert.match(await source("components/MasteryEvidence.tsx"), /not a predicted grade|not a grade prediction/);
   assert.match(today, /get\("sample"\) === "1"/);
   assert.match(today, /Try sample \(~1 min\)/);
 });

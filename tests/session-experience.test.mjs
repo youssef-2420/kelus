@@ -77,8 +77,8 @@ test("today exposes confidence while reroutes explain the evidence that changed"
   const surface = await source("components/RevisionSurface.tsx");
   const store = await source("lib/demo-store.ts");
   assert.match(today, /confidenceLabel/);
-  assert.match(today, /Course evidence/);
-  assert.match(today, /Learner evidence/);
+  assert.match(today, /From your course/);
+  assert.match(today, /From your answers/);
   assert.match(today, /Start here/);
   assert.match(today, /startLabel \?\? `Start \$\{firstName\}`|Start \{firstName\}/);
   assert.match(today, /Learn/);
