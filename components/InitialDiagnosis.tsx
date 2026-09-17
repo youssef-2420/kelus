@@ -177,7 +177,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
           </ol>
           <div className="diagnosis-cta">
             <button type="button" className="cta diagnosis-continue" disabled={!allRated} onClick={beginChecks}>
-              {allRated ? "Recall check, then today’s route" : "Rate every topic first"}
+              {allRated ? "Continue to recall check" : "Rate every topic first"}
               <span aria-hidden="true">→</span>
             </button>
             <button
@@ -189,7 +189,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
                 onComplete({ ratings, retrievals: [] });
               }}
             >
-              Skip recall — open Today with a rough estimate
+              Skip recall — open Today
             </button>
           </div>
         </motion.section>

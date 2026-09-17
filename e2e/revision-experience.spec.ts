@@ -52,7 +52,7 @@ test("hero recall preview reveals, reorders, resets, and works on a narrow scree
 test("a direct completion URL never invents a completed session", async ({ page }) => {
   await page.goto("/session/complete?id=missing-session");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("No completed session here yet.");
-  await expect(page.getByRole("link", { name: "Back to Today" })).toBeVisible();
+  await expect(page.locator(".complete-hero .cta")).toContainText("Back to Today");
   await expect(page.getByText("estimated readiness", { exact: true })).toHaveCount(0);
 });
 

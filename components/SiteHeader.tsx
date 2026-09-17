@@ -72,7 +72,7 @@ export function SiteHeader() {
 
         {inSession ? (
           <Link href="/today" className="site-session-return">
-            Pause and return to Today
+            Back to Today
           </Link>
         ) : auth.loading ? (
           <span className="site-auth-loading" aria-label="Checking account" />

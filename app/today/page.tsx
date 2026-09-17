@@ -34,6 +34,11 @@ function TodayBody() {
 
   function finishDiagnosis(input: Parameters<typeof completeDiagnosis>[0]) {
     completeDiagnosis(input);
+    try {
+      sessionStorage.setItem("kelus-focus-today-start", "1");
+    } catch {
+      /* Focus handoff is optional. */
+    }
     let elapsedMs = 0;
     try {
       const startedAt = Number(window.localStorage.getItem("kelus-first-route-started-at"));

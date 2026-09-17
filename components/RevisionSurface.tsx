@@ -61,6 +61,21 @@ export function RevisionSurface() {
     return () => document.body.classList.remove("is-kelus-space");
   }, []);
 
+  useEffect(() => {
+    let shouldFocus = false;
+    try {
+      shouldFocus = sessionStorage.getItem("kelus-focus-today-start") === "1";
+      if (shouldFocus) sessionStorage.removeItem("kelus-focus-today-start");
+    } catch {
+      shouldFocus = false;
+    }
+    if (!shouldFocus || mode !== "today") return;
+    const frame = requestAnimationFrame(() => {
+      document.querySelector<HTMLButtonElement>("button.today-start")?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [mode]);
+
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
   const exam = snapshot.exams.find((item) => item.courseId === course?.id && item.isActive);
