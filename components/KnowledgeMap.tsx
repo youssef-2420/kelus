@@ -188,7 +188,7 @@ export function KnowledgeMap({
           </div>
         ) : null}
 
-        <details className="map-list-details" open={!startOnGraph}>
+        <details className="map-list-details" open={!startOnGraph || concepts.length < 4}>
           <summary>All topics by exam weight</summary>
           <ul className="map-list" aria-label="Topics by exam importance">
             {concepts.map((concept) => {
