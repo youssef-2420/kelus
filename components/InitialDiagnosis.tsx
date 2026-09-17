@@ -62,6 +62,10 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
   const evaluation = phase.status === "revealed" ? phase.evaluation : null;
 
   useEffect(() => {
+    if (phase.status === "rating") {
+      const frame = requestAnimationFrame(() => document.getElementById("diagnosis-rating-title")?.focus());
+      return () => cancelAnimationFrame(frame);
+    }
     if (phase.status !== "revealed") return;
     const frame = requestAnimationFrame(() => document.getElementById("diagnosis-evaluation-title")?.focus());
     return () => cancelAnimationFrame(frame);
@@ -144,7 +148,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
       {phase.status === "rating" ? (
         <motion.section key="rating" className="diagnosis-panel" {...phaseMotion}>
           <p className="kicker">Start with your judgment</p>
-          <h1>How familiar do these feel?</h1>
+          <h1 id="diagnosis-rating-title" tabIndex={-1}>How familiar do these feel?</h1>
           <p className="diagnosis-intro">
             Rate these {ratedConcepts.length} suggested topics. A short recall check helps Kelus choose your starting point — rough answers are enough.
           </p>

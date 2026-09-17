@@ -283,7 +283,7 @@ export const INGEST_PHASE_UI: Record<IngestPhase["status"], PhaseUiSpec> = {
   confirmed: {
     loading: "None.",
     error: "None.",
-    feedback: "Focus material-ready-title; primary Continue CTA.",
-    animation: "Same opacity presence as review; exit before idle form returns.",
+    feedback: "Navigate to /today diagnosis immediately; ready UI is non-blocking if still mounted.",
+    animation: "Navigation replaces the ready presence for first-run.",
   },
 };

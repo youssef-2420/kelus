@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/components/AuthProvider";
@@ -135,6 +136,7 @@ function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMater
 export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {}) {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
+  const router = useRouter();
   const { state, confirmConcepts, useDemo: loadDemo } = useLearner();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
@@ -439,6 +441,8 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         conceptCount: selected.length,
         firstName: first?.name ?? selected[0]?.name ?? null,
       });
+      // Continue the booklet: diagnosis is next — do not park on a ready interstitial.
+      router.replace("/today");
     } catch (caught) {
       dispatch({
         type: "CONFIRM_FAILED",
@@ -616,7 +620,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
               ))}
             </ol>
             <div className="concept-confirmation-actions">
-              <button type="button" className="cta" disabled={!selectedIds.size} onClick={buildMap}>Build my topic map <span aria-hidden="true">→</span></button>
+              <button type="button" className="cta" disabled={!selectedIds.size} onClick={buildMap}>Confirm topics <span aria-hidden="true">→</span></button>
               <div className="concept-confirmation-secondary">
                 <button type="button" onClick={() => dispatch({ type: "REVIEW_LATER" })}>Review later</button>
               </div>
