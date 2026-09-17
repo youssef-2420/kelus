@@ -561,3 +561,132 @@ body.is-kelus-space .site-space-label {
   color: #fff;
 }
 
+
+/* ── Premium elevation: quieter Today + session ── */
+.kelus-space-rail-brand {
+  padding-top: 4px;
+}
+
+.kelus-space-rail-course {
+  margin: 0;
+}
+
+.kelus-space-stage .today-lead-cite {
+  margin: 18px 0 0;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.kelus-space-stage .today-lead-time strong {
+  font-size: clamp(1.65rem, 2.4vw, 2rem);
+  font-weight: 440;
+  letter-spacing: -0.03em;
+}
+
+.kelus-space-stage .today-lead-main h3 {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-weight: 440;
+  letter-spacing: -0.03em;
+}
+
+.kelus-space-stage .today-queue-label {
+  padding: 28px 0 10px;
+}
+
+.kelus-space-stage .today-queue-label span {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.kelus-space-stage .today-plan-list > li > button {
+  min-height: 64px;
+}
+
+.kelus-space-stage .today-plan-list .plan-topic strong {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.kelus-space-stage .today-plan-list .plan-time strong {
+  font-size: 1.15rem;
+}
+
+.kelus-space-stage .today-reroute-note {
+  margin-top: 18px;
+  font-size: 0.88rem;
+}
+
+body.is-booklet-system .study-progress {
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
+}
+
+body.is-booklet-system .study-progress i {
+  background: var(--color-kelus, #1f6b45);
+  border-radius: inherit;
+}
+
+body.is-booklet-system .study-wayfinding {
+  justify-content: flex-end;
+  padding-top: 10px;
+  font-size: 12px;
+  letter-spacing: 0.01em;
+}
+
+body.is-booklet-system .study-wayfinding ol {
+  gap: 14px;
+}
+
+body.is-booklet-system .study-context > span small {
+  font-variant-numeric: tabular-nums;
+}
+
+body.is-booklet-system .study-shell .study-question h1 {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-weight: 440;
+  letter-spacing: -0.03em;
+}
+
+
+
+body.is-kelus-space .site-header.is-space .site-space-label {
+  display: none;
+}
+
+.kelus-space-stage .today-lead-foot {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
+}
+
+.kelus-space-stage .today-lead-foot .today-lead-cite {
+  margin: 0;
+}
+
+.kelus-space-stage .today-lead-foot .today-evidence-disclosure {
+  border-top: 0;
+  margin: 0;
+}
+
+.kelus-space-stage .today-lead-foot .today-evidence-disclosure > summary {
+  padding: 0;
+  min-height: 0;
+  font-size: 0.9rem;
+}
+
+.kelus-space-stage .today-lead-action {
+  display: block;
+  padding: 8px 0 4px;
+}
+

@@ -86,44 +86,36 @@ export function TodayRoute({
             <span>minutes</span>
           </div>
         </div>
-        <div className="today-lead-sequence">
-          <ol aria-label={`Learning sequence for ${firstName}`}>
-            <li>Learn</li>
-            <li>Retrieve</li>
-            <li>Apply</li>
-            <li>Evaluate</li>
-          </ol>
-          <small>
+        <footer className="today-lead-foot">
+          <p className="today-lead-cite">
             {firstSource
               ? `Cited: ${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}.`
               : "Uses the current course model; no source is cited yet."}
-          </small>
-        </div>
-        <details className="today-evidence-disclosure">
-        <summary>Why this? <span>Source notes</span></summary>
-        <dl className="today-lead-evidence" aria-label={`Why ${firstName} is first`}>
-          <div>
-            <dt>From your course</dt>
-            <dd>{firstSource ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}` : "No source cited yet"}</dd>
-          </div>
-          <div>
-            <dt>From your answers</dt>
-            <dd>{learnerEvidence}</dd>
-          </div>
-          <div>
-            <dt>Why first</dt>
-            <dd>{conciseReason(first.reasons)}</dd>
-          </div>
-        </dl>
-        </details>
+          </p>
+          <details className="today-evidence-disclosure">
+            <summary>Why this?</summary>
+            <dl className="today-lead-evidence" aria-label={`Why ${firstName} is first`}>
+              <div>
+                <dt>From your course</dt>
+                <dd>{firstSource ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}` : "No source cited yet"}</dd>
+              </div>
+              <div>
+                <dt>From your answers</dt>
+                <dd>{learnerEvidence}</dd>
+              </div>
+              <div>
+                <dt>Why first</dt>
+                <dd>{conciseReason(first.reasons)}</dd>
+              </div>
+            </dl>
+          </details>
+        </footer>
       </motion.article>
 
       {remaining.length ? (
         <div className="today-queue-label">
           <span>Then</span>
-          <small>
-            {remaining.length} more action{remaining.length === 1 ? "" : "s"}
-          </small>
+          <small>{remaining.length}</small>
         </div>
       ) : null}
 
@@ -150,7 +142,6 @@ export function TodayRoute({
                 <span className="plan-topic">
                   <strong>{name}</strong>
                   <small>{conciseReason(allocation.reasons)}</small>
-                  <em>{concept ? confidenceLabel(concept.confidence) : "Spaced mix across weak spots"}</em>
                 </span>
                 <span className="plan-time">
                   <strong>{allocation.minutes}</strong>
@@ -222,7 +213,7 @@ export function TodayRoute({
           );
         })}
       </ol>
-      <p className="today-reroute-note">Review your lessons, answer from memory, and practise applying them. Your results guide what to revise next.</p>
+      <p className="today-reroute-note">Your answers guide what comes next.</p>
     </div>
   );
 }

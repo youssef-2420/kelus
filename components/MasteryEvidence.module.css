@@ -1,24 +1,71 @@
 .evidence {
-  border-top: 1px solid var(--color-frost);
-  margin-top: 2rem;
-  padding-top: 1rem;
-  color: var(--color-slate);
-  font-size: .875rem;
-  line-height: 1.6;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  margin-top: 2.5rem;
+  padding: 0;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
-.evidence h2, .evidence h3 {
-  font-family: var(--font-ledger);
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-midnight-ink);
-  margin: 0 0 .5rem;
-}
-.evidence p { margin: .5rem 0; }
-.evidence summary {
+
+.evidence > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.35rem 1rem;
   cursor: pointer;
-  padding: .75rem 0;
+  list-style: none;
+  padding: 0.85rem 0;
   min-height: 44px;
-  color: var(--color-kelus);
+  color: var(--color-ink, #12160f);
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
-.evidence summary:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 2px; }
-.evidence details section { border-top: 1px solid var(--color-frost); padding: 1rem 0; }
+
+.evidence > summary::-webkit-details-marker { display: none; }
+
+.evidence > summary small {
+  color: var(--color-steel, #5c6570);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.evidence > summary:focus-visible {
+  outline: 2px solid var(--color-kelus, #1f6b45);
+  outline-offset: 3px;
+}
+
+.evidence[open] > summary {
+  color: var(--color-kelus, #1f6b45);
+}
+
+.evidence p {
+  margin: 0.45rem 0;
+  max-width: 54ch;
+}
+
+.evidence h3 {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-ink, #12160f);
+}
+
+.topics {
+  display: grid;
+  gap: 0;
+  margin-top: 0.75rem;
+}
+
+.topics section {
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+  padding: 0.9rem 0;
+}
+
+.note {
+  margin-top: 0.75rem !important;
+  color: var(--color-smoke, #8a9184) !important;
+  font-size: 0.82rem !important;
+}

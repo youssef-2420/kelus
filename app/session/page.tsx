@@ -308,7 +308,20 @@ function SessionBody() {
   return (
     <main id="main" className={`study-shell${sourcePanel ? " is-source-open" : ""}`}>
       <div className="study-context">
-        <span><b>{concept.name}</b><small>{routeMinutes} min</small></span>
+        <span>
+          <b>{concept.name}</b>
+          <small>
+            {routeMinutes} min
+            <span aria-hidden="true"> · </span>
+            {index + 1}/{total}
+            {phase !== "result" && phase !== "reroute" ? (
+              <>
+                <span aria-hidden="true"> · </span>
+                {PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}
+              </>
+            ) : null}
+          </small>
+        </span>
         {confirmExit ? (
           <span className="today-reset-confirm" role="group" aria-label="Confirm exit session">
             <span>Leave this session?</span>
@@ -320,14 +333,13 @@ function SessionBody() {
             }}>Exit</button>
           </span>
         ) : (
-          <button type="button" className="text-btn" onClick={() => setConfirmExit(true)}>Exit session</button>
+          <button type="button" className="text-btn" onClick={() => setConfirmExit(true)}>Exit</button>
         )}
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
-      <div className="study-wayfinding">
-        <span>Topic {index + 1} of {total}</span>
+      <nav className="study-wayfinding" aria-label="Revision steps">
         <ol aria-label="Revision steps">{(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>{step === "retrieve" ? "Recall" : step === "evaluate" ? "Check" : step[0].toUpperCase() + step.slice(1)}</li>)}</ol>
-      </div>
+      </nav>
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
@@ -355,7 +367,7 @@ function SessionBody() {
           </motion.section>
         ) : phase === "result" ? (
           <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-result`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <p className="study-count" aria-live="polite">Done</p>
+            <p className="study-count sr-only" aria-live="polite">Done</p>
             <p className="kicker">Estimate updated</p>
             <div className="mastery-reward">
               <div><span>{percent(masteryBefore)}</span><i aria-hidden="true">→</i><motion.strong initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>{percent(concept.mastery)}</motion.strong></div>
@@ -365,7 +377,7 @@ function SessionBody() {
           </motion.section>
         ) : (
           <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
-            <p className="study-count" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
+            <p className="study-count sr-only" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
             {phase === "learn" ? (
               <div className="session-learn">

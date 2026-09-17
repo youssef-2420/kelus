@@ -67,7 +67,7 @@ test("stick-under-eight surfaces: return copy, inbox proof, OCR helpers", async 
   ]);
   assert.match(complete, /Come back tomorrow/);
   assert.match(complete, /Back to Today/);
-  assert.match(`${today}\n${surface}`, /minutes for revision today/);
+  assert.match(`${today}\n${surface}`, /minutes today|minutes for revision today/);
   assert.doesNotMatch(surface, /today-readiness-hint|kelus-space-start/);
   assert.match(questions, /QuestionsInboxStatus/);
   assert.match(form, /needs_activation/);

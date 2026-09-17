@@ -147,7 +147,6 @@ export function RevisionSurface() {
     <section className="kelus-space" aria-label="Revision workbench">
       <aside className="kelus-space-rail" aria-label="Course space">
         <div className="kelus-space-rail-brand">
-          <p className="kelus-space-rail-mark">Kelus</p>
           <p className="kelus-space-rail-course">{course.name}</p>
         </div>
 
@@ -201,8 +200,11 @@ export function RevisionSurface() {
             </AnimatePresence>
             <h1 id="today-title">{course.name}</h1>
             <p className="kelus-space-lede">
-              {route.availableMinutes} minutes for revision today
-              <span className="today-brief-exam"> · target {exam.targetPercent}%.</span>
+              {mode === "today"
+                ? <>{route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
+                : mode === "materials"
+                  ? "Sources for this course."
+                  : "Topics by exam importance."}
             </p>
           </div>
         </header>
