@@ -9,6 +9,13 @@ import { confidenceLabel, percent } from "@/lib/format";
 import { useLearner } from "@/components/LearnerProvider";
 import { topicEvidence } from "@/domain/mastery-evidence";
 
+function citeLabel(source: { label: string; locator?: string | null } | undefined) {
+  if (!source) return "Uses the current course model; no source is cited yet.";
+  const locator = source.locator?.trim();
+  if (!locator || /not your upload/i.test(locator)) return `Cited: ${source.label}.`;
+  return `Cited: ${source.label} · ${locator}.`;
+}
+
 export function TodayRoute({
   route,
   concepts,
@@ -69,29 +76,20 @@ export function TodayRoute({
         transition={{ duration: reduceMotion ? 0.1 : 0.24 }}
       >
         <div className="today-lead-label">
-          <span>01</span>
           <strong>Start here</strong>
+          <span className="today-lead-mins">{first.minutes} min</span>
         </div>
         <div className="today-lead-main">
           <div>
             <h3>{firstName}</h3>
             <p>{conciseReason(first.reasons)}</p>
-            <small>{firstConcept ? confidenceLabel(firstConcept.confidence) : "Mixed evidence across weak spots"}</small>
             <button type="button" className="cta today-start" onClick={onStart}>
               {startLabel ?? `Start ${firstName}`} <span aria-hidden="true">→</span>
             </button>
           </div>
-          <div className="today-lead-time">
-            <strong>{first.minutes}</strong>
-            <span>minutes</span>
-          </div>
         </div>
         <footer className="today-lead-foot">
-          <p className="today-lead-cite">
-            {firstSource
-              ? `Cited: ${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}.`
-              : "Uses the current course model; no source is cited yet."}
-          </p>
+          <p className="today-lead-cite">{citeLabel(firstSource)}</p>
           <details className="today-evidence-disclosure">
             <summary>Why this?</summary>
             <dl className="today-lead-evidence" aria-label={`Why ${firstName} is first`}>
@@ -102,6 +100,10 @@ export function TodayRoute({
               <div>
                 <dt>From your answers</dt>
                 <dd>{learnerEvidence}</dd>
+              </div>
+              <div>
+                <dt>Estimate</dt>
+                <dd>{firstConcept ? confidenceLabel(firstConcept.confidence) : "Mixed evidence across weak spots"}</dd>
               </div>
               <div>
                 <dt>Why first</dt>
@@ -141,12 +143,10 @@ export function TodayRoute({
                 <span className="plan-index">{String(index + 2).padStart(2, "0")}</span>
                 <span className="plan-topic">
                   <strong>{name}</strong>
-                  <small>{conciseReason(allocation.reasons)}</small>
                 </span>
                 <span className="plan-time">
                   <strong>{allocation.minutes}</strong>
-                  <small>MIN</small>
-                  <i aria-hidden="true">{open ? "−" : "+"}</i>
+                  <small>min</small>
                 </span>
               </button>
               <AnimatePresence initial={false}>
@@ -159,6 +159,7 @@ export function TodayRoute({
                     exit={{ opacity: 0, y: -4 }}
                     transition={{ duration: reduceMotion ? 0.1 : 0.22, bounce: 0 }}
                   >
+                    <p className="plan-why">{conciseReason(allocation.reasons)}</p>
                     {concept ? (
                       <p>
                         <span>{evidence?.mastery == null ? "Not enough evidence" : percent(evidence.mastery)}</span> mastery on reviewed questions
@@ -213,7 +214,6 @@ export function TodayRoute({
           );
         })}
       </ol>
-      <p className="today-reroute-note">Your answers guide what comes next.</p>
     </div>
   );
 }

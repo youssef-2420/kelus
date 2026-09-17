@@ -26,29 +26,20 @@ export function TopicMapPanel() {
   const filtered = concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase()));
 
   return (
-    <div className="surface-map">
-      <header className="surface-panel-head">
-        <p className="kicker">Topic map</p>
-        <h2 className="today-title">{state.diagnosisCompleted ? "What matters versus what you know" : "Your course topics, mapped"}</h2>
-        <p className="lede-line">
-          {state.diagnosisCompleted
-            ? "Sorted by exam importance, with links when topics depend on each other."
-            : "These are the topics you confirmed. Diagnosis will add the first evidence about what you know."}
-        </p>
-      </header>
+    <div className="surface-map is-luxury">
       <div className="map-tools">
         <label htmlFor="topic-filter">
-          Find a topic
+          <span className="sr-only">Find a topic</span>
           <input
             id="topic-filter"
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search your course topics"
+            placeholder="Find a topic"
           />
         </label>
         <span role="status">
-          {filtered.length} of {concepts.length} topics
+          {filtered.length}/{concepts.length}
         </span>
       </div>
       <div className={`map-workspace${selected ? " is-inspecting" : ""}`}>

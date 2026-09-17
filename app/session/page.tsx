@@ -338,7 +338,7 @@ function SessionBody() {
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
       <nav className="study-wayfinding" aria-label="Revision steps">
-        <ol aria-label="Revision steps">{(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>{step === "retrieve" ? "Recall" : step === "evaluate" ? "Check" : step[0].toUpperCase() + step.slice(1)}</li>)}</ol>
+        <ol className="study-steps" aria-label="Revision steps">{(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>{step === "retrieve" ? "Recall" : step === "evaluate" ? "Check" : step[0].toUpperCase() + step.slice(1)}</li>)}</ol>
       </nav>
 
       <AnimatePresence mode="wait" initial={false}>
@@ -381,7 +381,6 @@ function SessionBody() {
 
             {phase === "learn" ? (
               <div className="session-learn">
-                <p className="kicker">{concept.name}</p>
                 <h1>{activity.learn.title}</h1>
                 <p className="session-explanation">{activity.learn.explanation}</p>
                 <ul>{activity.learn.keyPoints.map((point) => <li key={point}>{point}</li>)}</ul>
@@ -394,7 +393,7 @@ function SessionBody() {
                       </button>
                     ))}
                   </div>
-                ) : <p className="session-source-note">Demo course model · No uploaded source cited</p>}
+                ) : <p className="session-source-note">Sample course model</p>}
                 {openingSource ? <p role="status" className="session-source-note">Opening your source…</p> : null}
                 <button type="button" className="cta" onClick={() => { setPhase("retrieve"); startedAt.current = performance.now(); }}>Retrieve it <span aria-hidden="true">→</span></button>
               </div>

@@ -690,3 +690,169 @@ body.is-kelus-space .site-header.is-space .site-space-label {
   padding: 8px 0 4px;
 }
 
+
+/* ── Luxury finish ── */
+.kelus-space-stage .today-lead-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.kelus-space-stage .today-lead-label strong {
+  font-weight: 600;
+  color: var(--color-kelus, #1f6b45);
+}
+
+.kelus-space-stage .today-lead-mins {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  font-size: 0.9rem;
+  color: var(--color-steel, #5c6570);
+}
+
+.kelus-space-stage .today-lead-main {
+  display: block;
+  margin: 0;
+}
+
+.kelus-space-stage .today-lead-main h3 {
+  max-width: 18ch;
+  font-size: clamp(2rem, 3.6vw, 2.75rem);
+  font-weight: 440;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+.kelus-space-stage .today-lead-main p {
+  margin-top: 10px;
+  max-width: 42ch;
+}
+
+.kelus-space-stage .today-lead-action {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  padding-bottom: 22px;
+}
+
+.kelus-space-stage .today-plan-list > li > button {
+  min-height: 56px;
+  grid-template-columns: 40px minmax(0, 1fr) 64px;
+  padding: 6px 2px;
+}
+
+.kelus-space-stage .today-plan-list .plan-index {
+  color: var(--color-steel, #5c6570);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+.kelus-space-stage .today-plan-list .plan-time {
+  text-align: right;
+}
+
+.kelus-space-stage .today-plan-list .plan-time small {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.kelus-space-stage .plan-why {
+  margin: 0 0 10px;
+  color: var(--color-steel, #5c6570);
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 0 18px;
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-tools label {
+  flex: 1 1 auto;
+  max-width: 22rem;
+  margin: 0;
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-tools input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+.kelus-space-stage .surface-map.is-luxury .map-tools [role="status"] {
+  color: var(--color-steel, #5c6570);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.kelus-space-stage .surface-map.is-luxury .topic-map .map-head {
+  margin-bottom: 8px;
+}
+
+.kelus-space-stage .surface-map.is-luxury .topic-map .map-head strong {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-weight: 440;
+  letter-spacing: -0.02em;
+}
+
+body.is-booklet-system .study-wayfinding {
+  padding-top: 8px;
+  margin-bottom: 4px;
+}
+
+body.is-booklet-system .study-wayfinding .study-steps {
+  gap: 0;
+  width: 100%;
+  max-width: 22rem;
+  margin-left: auto;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+}
+
+body.is-booklet-system .study-wayfinding .study-steps li {
+  position: relative;
+  padding: 10px 8px 0 0;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-steel, #5c6570);
+  border-top: 2px solid transparent;
+  margin-top: -1px;
+}
+
+body.is-booklet-system .study-wayfinding .study-steps [aria-current="step"] {
+  color: var(--color-kelus, #1f6b45);
+  border-top-color: var(--color-kelus, #1f6b45);
+  font-weight: 600;
+}
+
+body.is-booklet-system .study-question textarea {
+  padding: 16px 18px;
+  border-radius: 4px;
+  background: #fff;
+  border-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
+  font-size: 1.02rem;
+}
+
+body.is-booklet-system .session-learn ul {
+  border-top-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+}
+
+body.is-booklet-system .session-sources > span {
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+}
+
