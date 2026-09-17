@@ -449,16 +449,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
 
   const shelf = (
       <>
-      {embedded ? (
-        <header className="surface-panel-head is-embedded">
-          <h2 className="today-title">{concepts.length || readySummary ? "Sources for this exam" : "Bring the course into one place"}</h2>
-          <p className="lede-line">
-            {concepts.length || readySummary
-              ? "Add another PDF when you need it — confirmed topics stay on the map."
-              : "PDFs supply proposed topics; links are bookmarks only."}
-          </p>
-        </header>
-      ) : (
+      {embedded ? null : (
       <header className={`materials-head${readySummary ? " is-complete" : ""}`}>
         <div><p className="kicker">{course.name}</p><h1>Course material</h1></div>
         <p>
@@ -474,7 +465,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
       <section className={`material-ingest${embedded ? " is-embedded" : ""}`} aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
         <div className="material-ingest-title">
           {embedded ? null : <p className="kicker">Add material</p>}
-          <h2 id="add-material-title">{embedded ? "Add another source." : "Bring the course into one place."}</h2>
+          <h2 id="add-material-title">{embedded ? "Add a PDF" : "Bring the course into one place."}</h2>
         </div>
         <div className="material-role-field">
           <label htmlFor="material-role">This source is</label>
@@ -482,8 +473,9 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
             {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
           </select>
           <p>
-            Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every
-            suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device.
+            {embedded
+              ? "Text PDFs work fastest. You review every suggested topic before it changes your route."
+              : "Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device."}
           </p>
         </div>
         <label
@@ -639,7 +631,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
           <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
         ) : concepts.length ? (
           <div className="material-shelf-empty">
-            <p>Sample course model is loaded — concepts are ready without a PDF on this shelf. Add your own syllabus when you want Kelus grounded in your files.</p>
+            <p>Sample model is ready. Add your own syllabus when you want Kelus grounded in your files.</p>
             <Link className="cta" href="/today">
               Continue to Today <span aria-hidden="true">→</span>
             </Link>

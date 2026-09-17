@@ -23,7 +23,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
   ]);
 
   assert.match(rail, /Sample course model ready|materialsReady/);
-  assert.match(materials, /Sample course model is loaded|Sample model ready/);
+  assert.match(materials, /Sample model is ready|Sample course model is loaded|Sample model ready/);
   assert.match(questions, /body\.success === false/);
   assert.match(founding, /authConfigured/);
   assert.match(soft, /authConfigured/);

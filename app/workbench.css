@@ -477,12 +477,64 @@ body.is-kelus-space .site-space-label {
 }
 
 .kelus-space-stage .material-ingest.is-embedded {
-  margin-top: 4px;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
 }
 
 .kelus-space-stage .material-ingest.is-embedded .material-ingest-title h2 {
-  font-size: 1.15rem;
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 440;
+  letter-spacing: -0.025em;
+  margin: 0 0 12px;
+}
+
+.kelus-space-stage .material-ingest.is-embedded .material-role-field > p {
+  max-width: 42ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.9rem;
+}
+
+.kelus-space-stage .material-shelf > header {
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.kelus-space-stage .material-shelf > header h2 {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-weight: 440;
   letter-spacing: -0.02em;
+}
+
+.kelus-space-stage .material-shelf > header > span {
+  color: var(--color-steel, #5c6570);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.kelus-space-stage .material-shelf-empty p {
+  max-width: 42ch;
+  color: var(--color-steel, #5c6570);
+}
+
+.kelus-space-stage .material-honesty {
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+  background: transparent;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  box-shadow: none;
+}
+
+.kelus-space-stage .material-honesty p:last-child {
+  max-width: 48ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
