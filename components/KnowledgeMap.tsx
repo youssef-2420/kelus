@@ -110,10 +110,12 @@ export function KnowledgeMap({
     <section className="section topic-map" aria-labelledby={heading ? "map-heading" : undefined} aria-label={heading ? undefined : "Topic map"}>
       {heading ? <h2 id="map-heading">{heading}</h2> : null}
       <div className="map">
-        <div className="map-head">
-          <span>{courseName}</span>
-          <span>Evidence by topic</span>
-        </div>
+        {heading ? (
+          <div className="map-head">
+            <span>{courseName}</span>
+            <span>Evidence by topic</span>
+          </div>
+        ) : null}
 
         {nodes.length ? (
           <div className="topic-map-graph" aria-hidden={onSelect ? undefined : true}>
