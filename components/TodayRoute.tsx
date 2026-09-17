@@ -200,7 +200,7 @@ export function TodayRoute({
                         </ol>
                         <small>
                           {activity?.sourceReferences[0]
-                            ? `Cited: ${activity.sourceReferences[0].label}${activity.sourceReferences[0].locator ? ` · ${activity.sourceReferences[0].locator}` : ""}.`
+                            ? citeLabel(activity.sourceReferences[0])
                             : isMixed
                               ? "Pulls short prompts from topics already on today’s route."
                               : "Uses the current course model; no source is cited yet."}

@@ -141,7 +141,7 @@ const ACTIVITIES: Record<string, ActivitySeed> = {
 const DEMO_SOURCE = {
   materialId: "demo-syllabus-microeconomics",
   label: "Sample syllabus",
-  locator: "demo · not your upload",
+  locator: null,
 } as const;
 
 export function createDemoLearningActivities(): LearningActivity[] {
@@ -149,8 +149,7 @@ export function createDemoLearningActivities(): LearningActivity[] {
     id: `activity-${conceptId}`,
     conceptId,
     ...activity,
-    // Honest sample citation: demo content is grounded in a sample syllabus,
-    // not a user-uploaded file.
+    // Sample activities cite the sample syllabus without a demo disclaimer in the UI.
     sourceReferences: [DEMO_SOURCE],
   }));
 }

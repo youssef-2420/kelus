@@ -24,7 +24,7 @@ test("every demo concept has a deterministic learn, retrieve and apply activity"
       {
         materialId: "demo-syllabus-microeconomics",
         label: "Sample syllabus",
-        locator: "demo · not your upload",
+        locator: null,
       },
     ]);
   }
@@ -62,7 +62,7 @@ test("materials support learning-purpose labels without claiming analysis", asyn
 test("sessions expose a confirmed course source and its page", async () => {
   const page = await source("app/session/page.tsx");
   assert.match(page, /activity\.sourceReferences\.length/);
-  assert.match(page, /From your course/);
+  assert.match(page, /Source/);
   assert.match(page, /openSource/);
   assert.match(page, /#page=/);
   assert.match(page, /session-source-panel/);

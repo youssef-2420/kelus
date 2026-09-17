@@ -380,12 +380,16 @@ function SessionBody() {
                 <ul>{activity.learn.keyPoints.map((point) => <li key={point}>{point}</li>)}</ul>
                 {activity.sourceReferences.length ? (
                   <div className="session-sources" aria-label="Course sources">
-                    <span>From your course</span>
-                    {activity.sourceReferences.map((reference) => (
+                    <span>Source</span>
+                    {activity.sourceReferences.map((reference) => {
+                      const locator = reference.locator?.trim();
+                      const showLocator = locator && !/not your upload|demo/i.test(locator);
+                      return (
                       <button key={`${reference.materialId}-${reference.locator}`} type="button" disabled={openingSource} onClick={() => void openSource(reference.materialId, reference.locator)}>
-                        {reference.label}{reference.locator ? ` · ${reference.locator}` : ""} <span aria-hidden="true">↗</span>
+                        {reference.label}{showLocator ? ` · ${locator}` : ""} <span aria-hidden="true">↗</span>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : <p className="session-source-note">Sample course model</p>}
                 {openingSource ? <p role="status" className="session-source-note">Opening your source…</p> : null}
