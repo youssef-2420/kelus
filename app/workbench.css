@@ -892,35 +892,102 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 }
 
 body.is-booklet-system .study-wayfinding {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
   padding-top: 8px;
   margin-bottom: 4px;
 }
 
+body.is-booklet-system .study-page-mark {
+  margin: 0;
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 440;
+  letter-spacing: -0.02em;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-booklet-system .study-page-mark span {
+  margin-right: 0.55rem;
+  color: var(--color-steel, #5c6570);
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.92rem;
+}
+
 body.is-booklet-system .study-wayfinding .study-steps {
   gap: 0;
-  width: 100%;
-  max-width: 22rem;
-  margin-left: auto;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+  width: auto;
+  max-width: none;
+  margin-left: 0;
+  display: flex;
+  align-items: baseline;
+  border-top: 0;
 }
 
 body.is-booklet-system .study-wayfinding .study-steps li {
-  position: relative;
-  padding: 10px 8px 0 0;
-  font-size: 11px;
+  position: static;
+  padding: 0 0 0 12px;
+  margin: 0;
+  font-size: 0.72rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-steel, #5c6570);
-  border-top: 2px solid transparent;
-  margin-top: -1px;
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  border-top: 0;
+}
+
+body.is-booklet-system .study-wayfinding .study-steps li + li {
+  border-left: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  padding-left: 12px;
+  margin-left: 12px;
 }
 
 body.is-booklet-system .study-wayfinding .study-steps [aria-current="step"] {
   color: var(--color-kelus, #1f6b45);
-  border-top-color: var(--color-kelus, #1f6b45);
+  border-top-color: transparent;
   font-weight: 600;
+}
+
+/* Map: weakness readable on the graph */
+body.is-booklet-system .topic-map-node.is-weak circle,
+body.is-booklet-system .topic-map-node.is-not_learned circle {
+  fill: color-mix(in srgb, var(--booklet-kelus, #1f6b45) 18%, transparent);
+  stroke: var(--booklet-kelus, #1f6b45);
+  stroke-width: 0.55;
+}
+
+body.is-booklet-system .topic-map-node.is-fading circle {
+  fill: color-mix(in srgb, #b45309 14%, transparent);
+  stroke: #b45309;
+  stroke-width: 0.5;
+}
+
+body.is-booklet-system .topic-map-node.is-strong circle,
+body.is-booklet-system .topic-map-node.is-stable circle {
+  fill: transparent;
+  stroke: color-mix(in srgb, var(--booklet-ink, #12160f) 55%, transparent);
+}
+
+body.is-booklet-system .topic-map-node .topic-map-status {
+  fill: var(--booklet-mute, #5c6570);
+  font-size: 2.6px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+body.is-booklet-system .topic-map-node.is-weak .topic-map-status,
+body.is-booklet-system .topic-map-node.is-not_learned .topic-map-status {
+  fill: var(--booklet-kelus, #1f6b45);
+}
+
+body.is-booklet-system .topic-map-node.is-fading .topic-map-status {
+  fill: #b45309;
+}
+
+body.is-booklet-system .topic-map-svg[data-layout="sparse"] {
+  min-height: 18rem;
 }
 
 body.is-booklet-system .study-question textarea {

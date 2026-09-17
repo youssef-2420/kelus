@@ -50,7 +50,7 @@ function layoutNodes(concepts: Concept[]): MapNode[] {
   const cols = 2;
   const rows = Math.ceil(count / cols);
   const top = 8;
-  const rowPitch = 14;
+  const rowPitch = 16;
   return concepts.map((concept, index) => {
     const col = index % cols;
     const row = Math.floor(index / cols);
@@ -67,9 +67,9 @@ function layoutNodes(concepts: Concept[]): MapNode[] {
 }
 
 function mapViewBox(nodeCount: number) {
-  if (nodeCount <= 2) return "0 0 100 48";
+  if (nodeCount <= 2) return "0 0 100 56";
   const rows = Math.ceil(nodeCount / 2);
-  const height = Math.max(48, 8 + rows * 14 + 10);
+  const height = Math.max(56, 8 + rows * 16 + 12);
   return `0 0 100 ${height}`;
 }
 
@@ -129,15 +129,16 @@ export function KnowledgeMap({
               ))}
               {nodes.map((node) => {
                 const selected = selectedId === node.concept.id;
-                const radius = selected ? 2.8 : 2.2;
+                const status = deriveStatus(node.concept.mastery, node.concept.predictedRetention, node.concept.retrievalAttempts);
+                const radius = selected ? 2.8 : status === "weak" || status === "not_learned" ? 2.5 : 2.2;
                 const labelY = node.y + 5.2;
                 return (
                   <g
                     key={node.concept.id}
-                    className={`topic-map-node${selected ? " is-selected" : ""} is-label-below`}
+                    className={`topic-map-node is-${status}${selected ? " is-selected" : ""} is-label-below`}
                     role={onSelect ? "button" : undefined}
                     tabIndex={onSelect ? 0 : undefined}
-                    aria-label={onSelect ? node.concept.name : undefined}
+                    aria-label={onSelect ? `${node.concept.name}, ${statusLabel(status)}` : undefined}
                     onClick={onSelect ? () => onSelect(node.concept) : undefined}
                     onKeyDown={
                       onSelect
@@ -152,9 +153,12 @@ export function KnowledgeMap({
                     style={onSelect ? { cursor: "pointer" } : undefined}
                   >
                     <circle cx={node.x} cy={node.y} r={radius} />
-                    <title>{node.concept.name}</title>
+                    <title>{node.concept.name} — {statusLabel(status)}</title>
                     <text x={node.x} y={labelY} textAnchor="middle" dominantBaseline="hanging">
                       {shortLabel(node.concept.name)}
+                    </text>
+                    <text className="topic-map-status" x={node.x} y={labelY + 4.2} textAnchor="middle" dominantBaseline="hanging">
+                      {statusLabel(status)}
                     </text>
                   </g>
                 );

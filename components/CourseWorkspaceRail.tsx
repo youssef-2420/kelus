@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useSyncExternalStore } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
@@ -17,7 +16,6 @@ import {
  */
 export function CourseWorkspaceRail() {
   const { state } = useLearner();
-  const pathname = usePathname();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const course = state.snapshot.courses[0];
   const exam = state.snapshot.exams.find((item) => item.courseId === course?.id && item.isActive);
@@ -34,9 +32,9 @@ export function CourseWorkspaceRail() {
   const days = daysUntilExam(exam, state.nowIso);
 
   const phase = !materialsReady
-    ? { label: "Add materials", href: "/materials" as const }
+    ? { label: "Add materials", href: "/today" as const }
     : !concepts.length
-      ? { label: "Confirm topics", href: "/materials" as const }
+      ? { label: "Confirm topics", href: "/today" as const }
       : { label: "Quick check", href: "/today" as const };
 
   const chapters: Array<{
@@ -51,12 +49,12 @@ export function CourseWorkspaceRail() {
       label: "Exam",
       href: "/today",
       done: true,
-      current: !materialsReady && pathname.startsWith("/today"),
+      current: false,
     },
     {
       id: "materials",
       label: "Lessons",
-      href: "/materials",
+      href: "/today",
       done: concepts.length > 0,
       current: !concepts.length,
     },

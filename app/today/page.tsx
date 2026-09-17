@@ -66,7 +66,6 @@ function TodayBody() {
         onComplete={(input) => {
           try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
           completeSetup(input);
-          router.push("/materials");
         }}
         onUseDemo={loadDemo}
       />

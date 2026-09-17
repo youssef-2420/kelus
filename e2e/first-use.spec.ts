@@ -38,8 +38,8 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByLabel(/45/).check();
   await page.getByRole("button", { name: /Continue with my course/ }).click();
 
-  await expect(page).toHaveURL(/\/materials/);
-  await expect(page.getByRole("heading", { name: "Course material" })).toBeVisible();
+  await expect(page).toHaveURL(/\/today/);
+  await expect(page.getByRole("heading", { name: "Bring in one real source." })).toBeVisible();
   await page.locator('.material-drop input[type="file"]').setInputFiles({
     name: "cell-biology-lecture.pdf",
     mimeType: "application/pdf",

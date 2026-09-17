@@ -332,7 +332,19 @@ function SessionBody() {
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
       <nav className="study-wayfinding" aria-label="Revision steps">
-        <ol className="study-steps" aria-label="Revision steps">{(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>{step === "retrieve" ? "Recall" : step === "evaluate" ? "Check" : step[0].toUpperCase() + step.slice(1)}</li>)}</ol>
+        <p className="study-page-mark">
+          <span>{visibleStep} / 4</span>
+          {phase === "result" || phase === "reroute"
+            ? "Check"
+            : PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}
+        </p>
+        <ol className="study-steps" aria-label="Revision steps">
+          {(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => (
+            <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>
+              {step === "retrieve" ? "Recall" : step === "evaluate" ? "Check" : step[0].toUpperCase() + step.slice(1)}
+            </li>
+          ))}
+        </ol>
       </nav>
 
       <AnimatePresence mode="wait" initial={false}>
