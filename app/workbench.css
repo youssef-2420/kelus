@@ -1064,10 +1064,22 @@ body.is-booklet-system .answer-evaluation {
 }
 
 /* Session: paper pages, not app chrome */
+body.is-session-booklet.is-booklet-system {
+  background: #fff;
+}
+
 body.is-session-booklet.is-booklet-system .site-header.is-session {
   border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
   background: transparent;
   backdrop-filter: none;
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell,
+body.is-session-booklet.is-booklet-system .study-shell {
+  width: min(42rem, calc(100% - 48px));
+  max-width: 42rem;
+  background: transparent;
+  box-shadow: none;
 }
 
 body.is-session-booklet.is-booklet-system .site-header.is-session .site-footer-mark {
