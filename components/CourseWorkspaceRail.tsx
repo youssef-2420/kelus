@@ -32,10 +32,10 @@ export function CourseWorkspaceRail() {
   const days = daysUntilExam(exam, state.nowIso);
 
   const phase = !materialsReady
-    ? { label: "Add materials", href: "/today" as const }
+    ? { label: "Add sources", href: "/today" as const }
     : !concepts.length
       ? { label: "Confirm topics", href: "/today" as const }
-      : { label: "Quick check", href: "/today" as const };
+      : { label: "First estimate", href: "/today" as const };
 
   const chapters: Array<{
     id: string;
@@ -53,21 +53,21 @@ export function CourseWorkspaceRail() {
     },
     {
       id: "materials",
-      label: "Lessons",
+      label: "Sources",
       href: "/today",
       done: concepts.length > 0,
       current: !concepts.length,
     },
     {
       id: "check",
-      label: "Check",
+      label: "Estimate",
       href: "/today",
       done: state.diagnosisCompleted,
       current: concepts.length > 0 && !state.diagnosisCompleted,
     },
     {
       id: "today",
-      label: "Today",
+      label: "Route",
       href: "/today",
       done: false,
       current: false,

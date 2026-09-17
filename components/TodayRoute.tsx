@@ -116,7 +116,7 @@ export function TodayRoute({
 
       {remaining.length ? (
         <div className="today-queue-label">
-          <span>Then</span>
+          <span>Next stops</span>
           <small>{remaining.length}</small>
         </div>
       ) : null}
@@ -191,10 +191,10 @@ export function TodayRoute({
                             </>
                           ) : (
                             <>
-                              <li>Learn</li>
+                              <li>Read</li>
                               <li>Retrieve</li>
-                              <li>Apply</li>
-                              <li>Evaluate and reroute</li>
+                              <li>Use</li>
+                              <li>Mark and reroute</li>
                             </>
                           )}
                         </ol>

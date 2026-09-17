@@ -76,9 +76,9 @@ function TodayBody() {
     return (
       <AppShell>
         <div className="workbench-chapter" data-chapter="materials">
-          <p className="workbench-chapter-label">Chapter 2 · Materials</p>
+          <p className="workbench-chapter-label">Chapter 2 · Sources</p>
           <section className="materials-empty workbench-chapter-intro">
-            <p className="kicker">Materials</p>
+            <p className="kicker">Sources</p>
             <h1>Bring in one real source.</h1>
             <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
             <div className="materials-empty-actions">
@@ -97,7 +97,7 @@ function TodayBody() {
     return (
       <AppShell>
         <div className="workbench-chapter" data-chapter="check">
-          <p className="workbench-chapter-label">Chapter 3 · Quick check</p>
+          <p className="workbench-chapter-label">Chapter 3 · First estimate</p>
           <InitialDiagnosis snapshot={state.snapshot} onComplete={finishDiagnosis} embedded />
         </div>
       </AppShell>

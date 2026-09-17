@@ -46,7 +46,7 @@ test("course examples use ordinary keyboard-operable buttons", async ({ page }) 
 test("mobile Today keeps navigation compact and a single start action", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/today/?sample=1");
-  await expect(page.locator(".kelus-space-nav")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Revision sections" })).toBeVisible();
   const boxes = await page.locator(".kelus-space-nav button").evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().top));
   expect(Math.max(...boxes) - Math.min(...boxes)).toBeLessThan(2);
   await expect(page.locator(".kelus-space-start")).toBeHidden();

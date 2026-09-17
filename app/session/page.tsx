@@ -25,10 +25,10 @@ type SourcePanelState = {
 };
 
 const PHASE_LABEL: Record<"learn" | "retrieve" | "apply" | "evaluate", string> = {
-  learn: "Learn",
-  retrieve: "Recall",
-  apply: "Apply",
-  evaluate: "Check",
+  learn: "Read",
+  retrieve: "Retrieve",
+  apply: "Use",
+  evaluate: "Mark",
 };
 
 const STEP_INDEX = { learn: 1, retrieve: 2, apply: 3, evaluate: 4 } as const;
@@ -138,25 +138,25 @@ function SessionBody() {
           <p>Sessions open from Today’s route. Each block walks one topic through the same loop:</p>
           <ol className="session-empty-preview" aria-label="Revision loop preview">
             <li>
-              <strong>Learn</strong>
+              <strong>Read</strong>
               <span>Short explanation from your course</span>
             </li>
             <li>
               <strong>Retrieve</strong>
-              <span>Recall without looking</span>
+              <span>Write it without looking</span>
             </li>
             <li>
-              <strong>Apply</strong>
-              <span>Use it on a fresh prompt</span>
+              <strong>Use</strong>
+              <span>Try it on a fresh prompt</span>
             </li>
             <li>
-              <strong>Evaluate</strong>
-              <span>Check — then Kelus updates the route</span>
+              <strong>Mark</strong>
+              <span>Then Kelus updates the route</span>
             </li>
           </ol>
           <div className="materials-empty-actions">
             <button className="cta" type="button" onClick={() => router.replace("/today")}>
-              Go to Today <span aria-hidden="true">→</span>
+              Open today’s route <span aria-hidden="true">→</span>
             </button>
           </div>
         </section>
@@ -331,17 +331,17 @@ function SessionBody() {
         )}
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
-      <nav className="study-wayfinding" aria-label="Revision steps">
+      <nav className="study-wayfinding" aria-label="Revision pages">
         <p className="study-page-mark">
           <span>{visibleStep} / 4</span>
           {phase === "result" || phase === "reroute"
-            ? "Check"
+            ? "Mark"
             : PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}
         </p>
-        <ol className="study-steps" aria-label="Revision steps">
+        <ol className="study-steps" aria-label="Revision pages">
           {(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => (
             <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>
-              {step === "retrieve" ? "Recall" : step === "evaluate" ? "Check" : step[0].toUpperCase() + step.slice(1)}
+              {PHASE_LABEL[step]}
             </li>
           ))}
         </ol>

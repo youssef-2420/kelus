@@ -16,9 +16,9 @@ import { trackEvent } from "@/lib/analytics";
 export type SurfaceMode = "today" | "materials" | "map";
 
 const MODES: Array<{ id: SurfaceMode; label: string; hint: string }> = [
-  { id: "today", label: "Today", hint: "Today’s route" },
-  { id: "materials", label: "Materials", hint: "Sources" },
-  { id: "map", label: "Map", hint: "Topics" },
+  { id: "today", label: "Route", hint: "Today’s stops" },
+  { id: "materials", label: "Sources", hint: "PDFs & links" },
+  { id: "map", label: "Topics", hint: "By exam weight" },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };
@@ -218,8 +218,8 @@ export function RevisionSurface() {
               {mode === "today"
                 ? <>{route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
                 : mode === "materials"
-                  ? "Sources for this course."
-                  : "Topics by exam importance."}
+                  ? "PDFs and links for this exam."
+                  : "What matters versus what you know."}
             </p>
           </div>
         </header>

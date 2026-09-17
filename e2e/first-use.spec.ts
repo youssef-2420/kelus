@@ -64,13 +64,13 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
 
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Molecular Biology", exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Route", exact: true })).toBeVisible();
   await expect(page.getByText(/Molecular Biology/).first()).toBeVisible();
   for (const width of [320, 375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Map", exact: true }).click();
+  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Topics", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?\?section=map/);
   await page.getByLabel("Find a topic").fill("no such topic");
   await expect(page.getByText(/No topics match/)).toBeVisible();
@@ -87,7 +87,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.screenshot({ path: "/tmp/kelus-map-mobile.png", fullPage: true });
   await page.keyboard.press("Escape");
   await expect(topic).toBeFocused();
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true }).click();
+  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Route", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page).not.toHaveURL(/section=/);
   await page.locator(".today-evidence-disclosure > summary").click();
@@ -99,7 +99,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await start.click();
 
   await expect(page).toHaveURL(/\/session/);
-  await expect(page.getByRole("list", { name: "Revision steps" })).toBeVisible();
+  await expect(page.getByRole("list", { name: "Revision pages" })).toBeVisible();
   await page.locator(".session-sources button").first().click();
   await expect(page.getByRole("button", { name: "Close course source" })).toBeFocused();
   await expect(page.locator(".session-source-panel iframe")).toBeVisible();

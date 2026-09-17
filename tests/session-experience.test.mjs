@@ -81,10 +81,10 @@ test("today exposes confidence while reroutes explain the evidence that changed"
   assert.match(today, /From your answers/);
   assert.match(today, /Start here/);
   assert.match(today, /startLabel \?\? `Start \$\{firstName\}`|Start \{firstName\}/);
-  assert.match(today, /Learn/);
+  assert.match(today, /Read/);
   assert.match(today, /Retrieve/);
-  assert.match(today, /Apply/);
-  assert.match(today, /Evaluate/);
+  assert.match(today, /Use/);
+  assert.match(today, /Mark and reroute/);
   assert.match(`${page}\n${surface}`, /route\.availableMinutes\} minutes/);
   assert.doesNotMatch(`${page}\n${surface}`, /RouteKnowledgeMap/);
   assert.match(store, /answer on \$\{concept\.name\} changed its mastery estimate/);

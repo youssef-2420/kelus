@@ -59,11 +59,11 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
         <p className="setup-sequence" aria-label="Getting started">
           <span aria-current="step">1 Exam</span>
           <span aria-hidden="true">·</span>
-          <span>2 Lessons</span>
+          <span>2 Sources</span>
           <span aria-hidden="true">·</span>
-          <span>3 Quick check</span>
+          <span>3 First estimate</span>
           <span aria-hidden="true">·</span>
-          <span>4 Today</span>
+          <span>4 Route</span>
         </p>
         <fieldset disabled={submitting}>
           <legend>Tell Kelus what you are preparing for</legend>

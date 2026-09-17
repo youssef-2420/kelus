@@ -68,7 +68,7 @@ test("setup shows the real four-step path before the optional sample", async () 
   const setup = await source("components/FirstRunSetup.tsx");
   assert.match(setup, /aria-label="Getting started"/);
   assert.match(setup, /setup-sequence/);
-  assert.match(setup, /Exam[\s\S]*Lessons[\s\S]*Quick check[\s\S]*Today/);
+  assert.match(setup, /Exam[\s\S]*Sources[\s\S]*First estimate[\s\S]*Route/);
   assert.ok(setup.indexOf("Tell Kelus what you are preparing for") < setup.indexOf("Just looking?"));
   assert.doesNotMatch(setup, /destination-brand/);
   assert.doesNotMatch(setup, /setup-progress/);
@@ -102,7 +102,7 @@ test("the course workspace keeps destination and setup progress across product p
   assert.match(rail, /materialsReady/);
   assert.match(rail, /Sample course model ready/);
   assert.match(rail, /aria-current="step"/);
-  assert.match(rail, /Est\. readiness|Quick check|Today’s route|Add materials/);
+  assert.match(rail, /Est\. readiness|First estimate|Today’s stops|Add sources|Confirm topics/);
   assert.doesNotMatch(rail, /Learning loop|Rerouting|course-stage|course-masthead-nav/);
   assert.match(diagnosis, /<AppShell>/);
 });
