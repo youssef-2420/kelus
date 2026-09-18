@@ -1729,8 +1729,13 @@ body.is-paper-column .index-toc-row.is-start .index-toc-meta {
 }
 
 /* Booklet page — Today is the topic, not a title stack */
+body.is-booklet-page .today-route-execution.is-booklet-page {
+  border-top: 0;
+}
+
 body.is-booklet-page .today-lead-action.is-page {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 28px;
   padding: 48px 0 64px;
   border: 0;
@@ -1750,27 +1755,30 @@ body.is-booklet-page .today-page-folio {
 
 body.is-booklet-page .today-lead-action.is-page h1 {
   margin: 0;
-  max-width: 14ch;
+  max-width: 12ch;
   font-family: var(--font-ledger, Georgia, serif);
-  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-size: clamp(2.75rem, 7vw, 4.25rem);
   font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
   color: var(--color-ink, #111);
 }
 
 body.is-booklet-page .today-lead-action.is-page .today-start {
   justify-self: start;
-  margin-top: 8px;
+  margin-top: 4px;
+  min-height: 48px;
+  padding-inline: 22px;
 }
 
 body.is-booklet-page .workbench-focus.is-booklet-page {
-  padding-top: 8px;
+  padding-top: 12px;
 }
 
 body.is-booklet-page .kelus-paper-bar {
   padding-top: 16px;
   padding-bottom: 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
 }
 
 body.is-booklet-page .kelus-paper-course {
@@ -1810,7 +1818,7 @@ body.is-session-booklet .study-context.is-folio,
 
 .study-shell .study-progress,
 .study-shell .study-wayfinding {
-  display: none;
+  display: none !important;
 }
 
 body.is-product .site-header.is-space .site-space-label,
