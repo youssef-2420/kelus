@@ -1110,6 +1110,48 @@ body.is-session-booklet.is-booklet-system .study-context {
   align-items: baseline;
 }
 
+body.is-session-booklet.is-booklet-system .study-more {
+  position: relative;
+  margin: 0;
+}
+
+body.is-session-booklet.is-booklet-system .study-more > summary {
+  list-style: none;
+  cursor: pointer;
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 72%, transparent);
+  font-size: 0.8rem;
+  font-weight: 450;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+body.is-session-booklet.is-booklet-system .study-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+body.is-session-booklet.is-booklet-system .study-more > summary:hover,
+body.is-session-booklet.is-booklet-system .study-more > summary:focus-visible {
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-session-booklet.is-booklet-system .study-more[open] > summary {
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-session-booklet.is-booklet-system .study-more .study-discard,
+body.is-session-booklet.is-booklet-system .study-more .study-discard-trigger {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 2;
+  min-width: 11rem;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+}
+
 body.is-session-booklet.is-booklet-system .study-discard-trigger,
 body.is-session-booklet.is-booklet-system .study-discard .text-btn {
   color: color-mix(in srgb, var(--color-steel, #5c6570) 78%, transparent);

@@ -319,27 +319,30 @@ function SessionBody() {
             {index + 1} of {total}
           </small>
         </span>
-        {confirmDiscard ? (
-          <span className="today-reset-confirm study-discard" role="group" aria-label="Confirm discard block">
-            <span>Discard this block?</span>
-            <button type="button" className="text-btn" onClick={() => setConfirmDiscard(false)}>Keep</button>
-            <button
-              type="button"
-              className="text-btn is-danger"
-              onClick={() => {
-                trackEvent({ name: "session_abandoned" });
-                abandon(session.id);
-                router.push("/today");
-              }}
-            >
-              Discard
+        <details className="study-more" open={confirmDiscard || undefined}>
+          <summary aria-label="More session options">More</summary>
+          {confirmDiscard ? (
+            <span className="today-reset-confirm study-discard" role="group" aria-label="Confirm discard block">
+              <span>Discard this block?</span>
+              <button type="button" className="text-btn" onClick={() => setConfirmDiscard(false)}>Keep</button>
+              <button
+                type="button"
+                className="text-btn is-danger"
+                onClick={() => {
+                  trackEvent({ name: "session_abandoned" });
+                  abandon(session.id);
+                  router.push("/today");
+                }}
+              >
+                Discard
+              </button>
+            </span>
+          ) : (
+            <button type="button" className="text-btn study-discard-trigger" onClick={() => setConfirmDiscard(true)}>
+              Discard block
             </button>
-          </span>
-        ) : (
-          <button type="button" className="text-btn study-discard-trigger" onClick={() => setConfirmDiscard(true)}>
-            Discard
-          </button>
-        )}
+          )}
+        </details>
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
       <nav className="study-wayfinding" aria-label="Revision pages">
