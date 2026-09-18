@@ -16,9 +16,9 @@ import { trackEvent } from "@/lib/analytics";
 export type SurfaceMode = "today" | "materials" | "map";
 
 const MODES: Array<{ id: SurfaceMode; label: string; hint: string }> = [
-  { id: "today", label: "Route", hint: "Today’s stops" },
-  { id: "materials", label: "Sources", hint: "Exam binder" },
-  { id: "map", label: "Topics", hint: "Weak first" },
+  { id: "today", label: "Today", hint: "Your stops" },
+  { id: "materials", label: "Binder", hint: "Course pages" },
+  { id: "map", label: "Index", hint: "Weak first" },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };
@@ -131,27 +131,32 @@ export function RevisionSurface() {
     router.push(`/session?id=${openSession.id}`);
   }
 
-  const resetControl = confirmReset ? (
-    <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
-      <span>Erase this route?</span>
-      <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>
-        Cancel
-      </button>
-      <button
-        type="button"
-        className="text-btn is-danger"
-        onClick={() => {
-          setConfirmReset(false);
-          reset();
-        }}
-      >
-        Start over
-      </button>
-    </span>
-  ) : (
-    <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
-      Start over
-    </button>
+  const resetControl = (
+    <details className="kelus-space-rail-more" open={confirmReset || undefined}>
+      <summary>More</summary>
+      {confirmReset ? (
+        <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
+          <span>Erase this route?</span>
+          <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="text-btn is-danger"
+            onClick={() => {
+              setConfirmReset(false);
+              reset();
+            }}
+          >
+            Start over
+          </button>
+        </span>
+      ) : (
+        <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
+          Start over
+        </button>
+      )}
+    </details>
   );
 
   const panelTransition = reduceMotion
@@ -202,24 +207,23 @@ export function RevisionSurface() {
         <header className="kelus-space-top">
           <div className="kelus-space-identity">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.p
-                key={modeMeta.hint}
-                className="kicker"
+              <motion.h1
+                key={modeMeta.label}
+                id="today-title"
                 initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
                 transition={{ duration: reduceMotion ? 0.1 : kelusDuration.fast, ease: kelusEase }}
               >
-                {modeMeta.hint}
-              </motion.p>
+                {modeMeta.label}
+              </motion.h1>
             </AnimatePresence>
-            <h1 id="today-title">{course.name}</h1>
             <p className="kelus-space-lede">
               {mode === "today"
-                ? <>{route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
+                ? <>{course.name} · {route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
                 : mode === "materials"
-                  ? "Pages for this exam, ready to open."
-                  : "Weak topics and today’s start, at a glance."}
+                  ? `${course.name} — pages ready to open.`
+                  : `${course.name} — weak topics and today’s start.`}
             </p>
           </div>
         </header>

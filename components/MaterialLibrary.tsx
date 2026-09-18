@@ -697,7 +697,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
       <section className={`material-shelf${embedded ? " is-binder" : ""}`} aria-labelledby="source-shelf-title">
         <header>
           <div>
-            <p className="kicker">{embedded ? "Exam binder" : "Source shelf"}</p>
+            <p className="kicker">{embedded ? "In this binder" : "Source shelf"}</p>
             <h2 id="source-shelf-title">
               {courseMaterials.length
                 ? `${courseMaterials.length} ${embedded ? (courseMaterials.length === 1 ? "page" : "pages") : "saved"}`
@@ -708,7 +708,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
                     : "Nothing saved yet"}
             </h2>
           </div>
-          <span>{embedded ? "For this exam" : "This device"}</span>
+          <span>{embedded ? "This exam" : "This device"}</span>
         </header>
         {courseMaterials.length ? (
           <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} quiet={embedded} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>

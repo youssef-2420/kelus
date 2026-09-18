@@ -417,6 +417,44 @@ body.is-kelus-space .site-space-label {
   color: var(--color-steel, #5c6570);
 }
 
+.kelus-space-rail-more {
+  position: relative;
+  margin: 0;
+}
+
+.kelus-space-rail-more > summary {
+  list-style: none;
+  cursor: pointer;
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
+  font-size: 0.82rem;
+  font-weight: 450;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.kelus-space-rail-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+.kelus-space-rail-more > summary:hover,
+.kelus-space-rail-more > summary:focus-visible {
+  color: var(--color-steel, #5c6570);
+}
+
+.kelus-space-rail-more .today-reset-confirm,
+.kelus-space-rail-more > .text-btn {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  z-index: 2;
+  min-width: 11rem;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+}
+
 .kelus-space-stage {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
