@@ -2027,6 +2027,91 @@ body.is-session-booklet .session-learn h1 {
   line-height: 1.08;
 }
 
+/* Mark — the memorable page in the loop */
+body.is-session-booklet .study-feedback.is-mark-folio > h1 {
+  margin: 0;
+  max-width: 6ch;
+  font-size: clamp(2.75rem, 7vw, 4rem);
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+}
+
+body.is-session-booklet .study-mark-lede {
+  margin: 0 0 4px;
+  max-width: 32ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.is-session-booklet .study-mark-moment {
+  padding-top: 12px;
+}
+
+body.is-session-booklet .study-mark-kicker {
+  margin: 0;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.is-session-booklet .study-mark-moment > h1 {
+  margin: 4px 0 0;
+  max-width: 7ch;
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  letter-spacing: -0.05em;
+  line-height: 0.96;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-session-booklet .study-mark-delta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 14px;
+  margin: 8px 0 0;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: clamp(1.65rem, 4.5vw, 2.35rem);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-session-booklet .study-mark-from {
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%, transparent);
+}
+
+body.is-session-booklet .study-mark-arrow {
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  font-size: 0.72em;
+}
+
+body.is-session-booklet .study-mark-to {
+  color: var(--color-kelus, #1f6b45);
+}
+
+body.is-session-booklet .study-mark-whisper {
+  margin: 4px 0 8px;
+  max-width: 34ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+body.is-session-booklet .study-ratings .is-primary {
+  border-radius: 2px;
+  background: var(--color-kelus, #1f6b45);
+  color: #fff;
+}
+
+body.is-session-booklet .study-ratings .is-primary:active {
+  transform: scale(0.97);
+}
+
 body.is-session-booklet .study-question.is-page .cta,
 body.is-session-booklet .reroute-view.is-page .cta,
 body.is-session-booklet .session-learn .cta {

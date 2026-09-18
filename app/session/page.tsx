@@ -371,16 +371,84 @@ function SessionBody() {
             <button type="button" className="cta" onClick={continueAfterReroute}>Continue <span aria-hidden="true">→</span></button>
           </motion.section>
         ) : phase === "result" ? (
-          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-result`} className="study-question is-page" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            <p className="study-count sr-only" aria-live="polite">Done</p>
-            <h1>Estimate updated.</h1>
-            <p>
-              {percent(masteryBefore)} → {percent(concept.mastery)}. Next up is chosen from what’s left.
-            </p>
-            <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
+          <motion.section
+            ref={focusStep}
+            tabIndex={-1}
+            key={`${concept.id}-result`}
+            className="study-question is-page study-mark-moment"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.985, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
+          >
+            <p className="study-count sr-only" aria-live="polite">Marked</p>
+            <motion.p
+              className="study-mark-kicker"
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0.1 : 0.35, delay: reduceMotion ? 0 : 0.04, ease: kelusEase }}
+            >
+              Mark
+            </motion.p>
+            <motion.h1
+              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.55, delay: 0.06 }}
+            >
+              Marked.
+            </motion.h1>
+            <motion.p
+              className="study-mark-delta"
+              aria-live="polite"
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5, delay: 0.12 }}
+            >
+              <span className="study-mark-from">{percent(masteryBefore)}</span>
+              <span className="study-mark-arrow" aria-hidden="true">→</span>
+              <span className="study-mark-to">{percent(concept.mastery)}</span>
+            </motion.p>
+            <motion.p
+              className="study-mark-whisper"
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.18, ease: kelusEase }}
+            >
+              {concept.name} stays on the route. Next is chosen from what’s left.
+            </motion.p>
+            <motion.button
+              type="button"
+              className="cta"
+              onClick={advance}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              transition={{ type: "spring", bounce: 0, duration: 0.28 }}
+            >
+              Continue <span aria-hidden="true">→</span>
+            </motion.button>
           </motion.section>
         ) : (
-          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question is-page" initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.45 }}>
+          <motion.section
+            ref={focusStep}
+            tabIndex={-1}
+            key={`${concept.id}-${phase}`}
+            className={`study-question is-page${phase === "evaluate" ? " is-mark-page" : ""}`}
+            initial={
+              reduceMotion
+                ? { opacity: 0 }
+                : phase === "evaluate"
+                  ? { opacity: 0, x: 28 }
+                  : { opacity: 0, y: 12 }
+            }
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            exit={
+              reduceMotion
+                ? { opacity: 0 }
+                : phase === "evaluate"
+                  ? { opacity: 0, x: -16 }
+                  : { opacity: 0, y: -8 }
+            }
+            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.45 }}
+          >
             <p className="study-count sr-only" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
             {phase === "learn" ? (
@@ -447,8 +515,9 @@ function SessionBody() {
             ) : null}
 
             {phase === "evaluate" ? (
-              <div className="study-feedback is-page">
-                <h1>Compare.</h1>
+              <div className="study-feedback is-page is-mark-folio">
+                <h1>Mark.</h1>
+                <p className="study-mark-lede">Set your answers beside the model, then record what stuck.</p>
                 <div className="answer-pages" aria-label="Compare your answers">
                   <section>
                     <span>Your retrieval</span>
@@ -482,9 +551,25 @@ function SessionBody() {
                     ) : null}
                     <small>Compared with the source · not a grade</small>
                     <div className="study-ratings" role="group" aria-label="Record answer evidence">
-                      <button type="button" className="is-primary" onClick={() => grade(evaluation.outcome)}>Use this result</button>
-                      {evaluation.outcome === "success" ? <button type="button" className="is-outline" onClick={() => grade("partial")}>I needed more help</button> : null}
-                      {evaluation.outcome !== "failure" ? <button type="button" className="is-ghost" onClick={() => grade("failure")}>I did not understand it</button> : null}
+                      <motion.button
+                        type="button"
+                        className="is-primary"
+                        onClick={() => grade(evaluation.outcome)}
+                        whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                        transition={{ type: "spring", bounce: 0, duration: 0.28 }}
+                      >
+                        Mark this
+                      </motion.button>
+                      {evaluation.outcome === "success" ? (
+                        <button type="button" className="is-outline" onClick={() => grade("partial")}>
+                          I needed more help
+                        </button>
+                      ) : null}
+                      {evaluation.outcome !== "failure" ? (
+                        <button type="button" className="is-ghost" onClick={() => grade("failure")}>
+                          I did not understand it
+                        </button>
+                      ) : null}
                     </div>
                   </div>
                 ) : null}

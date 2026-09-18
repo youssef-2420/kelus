@@ -124,7 +124,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
   await page.getByRole("button", { name: /Check my thinking/ }).click();
   await page.getByRole("button", { name: "Use this result" }).click();
-  await expect(page.getByText("Estimate updated")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Marked." })).toBeVisible();
   await page.getByRole("button", { name: /Continue/ }).click();
   await expect(page.getByRole("heading", { name: /Route (updated|checked)/ })).toBeVisible();
   await expect(page.locator(".reroute-lines")).toHaveCount(0);
