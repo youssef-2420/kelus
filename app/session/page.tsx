@@ -431,21 +431,21 @@ function SessionBody() {
             ref={focusStep}
             tabIndex={-1}
             key={`${concept.id}-${phase}`}
-            className={`study-question is-page${phase === "evaluate" ? " is-mark-page" : ""}`}
+            className="study-question is-page"
             initial={
               reduceMotion
                 ? { opacity: 0 }
-                : phase === "evaluate"
-                  ? { opacity: 0, x: 28 }
-                  : { opacity: 0, y: 12 }
+                : phase === "learn" || phase === "retrieve" || phase === "apply"
+                  ? { opacity: 0, y: 12 }
+                  : { opacity: 0, x: 28 }
             }
             animate={{ opacity: 1, x: 0, y: 0 }}
             exit={
               reduceMotion
                 ? { opacity: 0 }
-                : phase === "evaluate"
-                  ? { opacity: 0, x: -16 }
-                  : { opacity: 0, y: -8 }
+                : phase === "learn" || phase === "retrieve" || phase === "apply"
+                  ? { opacity: 0, y: -8 }
+                  : { opacity: 0, x: -16 }
             }
             transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.45 }}
           >
