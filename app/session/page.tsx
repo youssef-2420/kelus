@@ -174,9 +174,11 @@ function SessionBody() {
   const activePrompt = prompt;
   const activeActivity = activity;
   const folioPhase =
-    phase === "result" || phase === "reroute"
+    phase === "result"
       ? "Mark"
-      : PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"];
+      : phase === "reroute"
+        ? "Route"
+        : PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"];
 
   function checkAnswers(event: SyntheticEvent) {
     responseTimeMs.current = Math.max(0, Math.round(event.timeStamp - startedAt.current));
@@ -354,21 +356,79 @@ function SessionBody() {
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
-          <motion.section ref={focusStep} tabIndex={-1} key="reroute" className="reroute-view is-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} aria-live="polite">
-            <h1>{routeOrderChanged ? "Route updated." : "Route checked."}</h1>
-            <p>
+          <motion.section
+            ref={focusStep}
+            tabIndex={-1}
+            key="reroute"
+            className="reroute-view is-page study-reroute-moment"
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.985, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
+            aria-live="polite"
+          >
+            <motion.p
+              className="study-mark-kicker"
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0.1 : 0.35, delay: reduceMotion ? 0 : 0.04, ease: kelusEase }}
+            >
+              Route
+            </motion.p>
+            <motion.h1
+              initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.55, delay: 0.06 }}
+            >
+              {routeOrderChanged ? "Updated." : "Kept."}
+            </motion.h1>
+            <motion.p
+              className="study-reroute-lede"
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5, delay: 0.1 }}
+            >
               {routeOrderChanged
                 ? `${routeChange?.movedConceptId ? `${state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "A concept"} moved forward. ` : ""}${routeChange?.explanation ?? "Your latest answer changed the best order for the remaining time."}`
                 : `Your ${lastOutcome === "failure" ? "not-yet" : "partial"} answer updated the estimate. The remaining order still has the highest expected value, so Kelus kept it.`}
-            </p>
-            <p className="reroute-whisper" aria-label="How this answer affected the route">
+            </motion.p>
+            {routeOrderChanged && routeChange?.movedConceptId ? (
+              <motion.p
+                className="study-reroute-moved"
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.14, ease: kelusEase }}
+              >
+                Next up{" "}
+                <strong>
+                  {state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "a concept"}
+                </strong>
+              </motion.p>
+            ) : null}
+            <motion.p
+              className="reroute-whisper"
+              aria-label="How this answer affected the route"
+              initial={reduceMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.16, ease: kelusEase }}
+            >
+              <span className="study-mark-from">{percent(masteryBefore)}</span>
+              <span className="study-mark-arrow" aria-hidden="true"> → </span>
+              <span className="study-mark-to">{percent(activeConcept.mastery)}</span>
+              <span className="study-reroute-sep"> · </span>
               {evaluation?.label ?? (lastOutcome === "failure" ? "Not enough evidence yet" : "Partial evidence")}
-              {" · "}
-              {percent(masteryBefore)} → {percent(activeConcept.mastery)}
-              {" · "}
+              <span className="study-reroute-sep"> · </span>
               {routeOrderChanged ? "Order changed" : "Order kept"}
-            </p>
-            <button type="button" className="cta" onClick={continueAfterReroute}>Continue <span aria-hidden="true">→</span></button>
+            </motion.p>
+            <motion.button
+              type="button"
+              className="cta"
+              onClick={continueAfterReroute}
+              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+              transition={{ type: "spring", bounce: 0, duration: 0.28 }}
+            >
+              Continue <span aria-hidden="true">→</span>
+            </motion.button>
           </motion.section>
         ) : phase === "result" ? (
           <motion.section

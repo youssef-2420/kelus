@@ -2125,6 +2125,73 @@ body.is-session-booklet .session-learn .cta:active {
   transform: scale(0.97);
 }
 
+/* Reroute — same settle language as Marked / Done */
+body.is-session-booklet .study-reroute-moment {
+  padding-top: 12px;
+}
+
+body.is-session-booklet .study-reroute-moment > h1 {
+  margin: 4px 0 0;
+  max-width: 8ch;
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  letter-spacing: -0.05em;
+  line-height: 0.96;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-session-booklet .study-reroute-lede {
+  margin: 4px 0 0;
+  max-width: 36ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.is-session-booklet .study-reroute-moved {
+  margin: 4px 0 0;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-session-booklet .study-reroute-moved strong {
+  color: var(--color-kelus, #1f6b45);
+  font-weight: 500;
+}
+
+body.is-session-booklet .study-reroute-moment .reroute-whisper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 2px;
+  margin: 4px 0 8px;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: clamp(1.15rem, 3vw, 1.45rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.35;
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-from {
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%, transparent);
+}
+
+body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to {
+  color: var(--color-kelus, #1f6b45);
+}
+
+body.is-session-booklet .study-reroute-sep {
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  font-family: var(--font-sans, system-ui, sans-serif);
+  font-size: 0.85em;
+  font-weight: 450;
+  letter-spacing: 0;
+}
+
 @media (prefers-reduced-transparency: reduce) {
   body.is-paper-column .kelus-space.is-paper,
   body.is-session-booklet {

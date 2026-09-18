@@ -126,7 +126,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: "Mark this" }).click();
   await expect(page.getByRole("heading", { name: "Marked." })).toBeVisible();
   await page.getByRole("button", { name: /Continue/ }).click();
-  await expect(page.getByRole("heading", { name: /Route (updated|checked)/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Updated|Kept)\.$/ })).toBeVisible();
   await expect(page.locator(".reroute-lines")).toHaveCount(0);
   await expect(page.locator(".reroute-cause")).toHaveCount(0);
 });
