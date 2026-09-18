@@ -41,12 +41,14 @@ test("the session executes learn, retrieve, apply and evaluate before updating t
   assert.ok(order.every((position) => position >= 0));
   assert.ok(order.every((position, index) => index === 0 || position > order[index - 1]));
   assert.match(page, /Hint/);
-  assert.match(page, /Explain this/);
-  assert.match(page, /Show an example/);
+  assert.match(page, />Explain</);
+  assert.match(page, />Example</);
+  assert.match(page, /session-help-page/);
   assert.match(page, /submit\(\{/);
   assert.match(page, /evaluateLearningResponse/);
   assert.doesNotMatch(page, />I can use it</);
   assert.match(page, /setPhase\("reroute"\)/);
+  assert.doesNotMatch(page, /answer-comparison|reroute-lines|mastery-reward/);
 });
 
 test("materials support learning-purpose labels without claiming analysis", async () => {

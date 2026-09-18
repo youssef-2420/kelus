@@ -80,9 +80,10 @@ test("setup shows the real four-step path before the optional sample", async () 
 test("session makes the evidence-to-route change explicit", async () => {
   const session = await source("app/session/page.tsx");
   assert.match(session, /aria-label="How this answer affected the route"/);
-  assert.match(session, /Your answer/);
-  assert.match(session, /Estimate/);
-  assert.match(session, /Next route/);
+  assert.match(session, /reroute-whisper/);
+  assert.doesNotMatch(session, /reroute-lines|reroute-cause|mastery-reward|answer-comparison/);
+  assert.match(session, /answer-pages/);
+  assert.match(session, /session-help-page/);
 });
 
 test("how it works content never depends on viewport-triggered visibility", async () => {

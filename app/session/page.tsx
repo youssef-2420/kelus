@@ -354,40 +354,33 @@ function SessionBody() {
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
-          <motion.section ref={focusStep} tabIndex={-1} key="reroute" className="reroute-view" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} aria-live="polite">
-            <p className="kicker">Next</p>
+          <motion.section ref={focusStep} tabIndex={-1} key="reroute" className="reroute-view is-page" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} aria-live="polite">
             <h1>{routeOrderChanged ? "Route updated." : "Route checked."}</h1>
             <p>
               {routeOrderChanged
                 ? `${routeChange?.movedConceptId ? `${state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "A concept"} moved forward. ` : ""}${routeChange?.explanation ?? "Your latest answer changed the best order for the remaining time."}`
-                : `Your ${lastOutcome === "failure" ? "not-yet" : "partial"} answer changed the learner estimate. The remaining order still has the highest expected value, so Kelus kept it.`}
+                : `Your ${lastOutcome === "failure" ? "not-yet" : "partial"} answer updated the estimate. The remaining order still has the highest expected value, so Kelus kept it.`}
             </p>
-            <div className="reroute-cause" aria-label="How this answer affected the route">
-              <div><span>Your answer</span><strong>{evaluation?.label ?? (lastOutcome === "failure" ? "Not enough evidence yet" : "Partial evidence")}</strong></div>
-              <i aria-hidden="true">→</i>
-              <div><span>Estimate</span><strong>{percent(masteryBefore)} → {percent(activeConcept.mastery)}</strong></div>
-              <i aria-hidden="true">→</i>
-              <div><span>Next route</span><strong>{routeOrderChanged ? "Order changed" : "Order kept"}</strong></div>
-            </div>
-            <div className="reroute-lines" aria-label="Route before and after">
-              <div><span>Previous</span>{previousNames.map((name, position) => <motion.b key={name} layout>{position + 1}. {name}</motion.b>)}</div>
-              <svg viewBox="0 0 80 180" aria-hidden="true"><motion.path d="M40 5 C 6 56 72 96 40 175" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: reduceMotion ? 0.1 : 0.85 }} /></svg>
-              <div><span>Now</span>{nextNames.map((name, position) => <motion.b key={name} layout>{position + 1}. {name}</motion.b>)}</div>
-            </div>
-            <button type="button" className="cta" onClick={continueAfterReroute}>Continue route <span aria-hidden="true">→</span></button>
+            <p className="reroute-whisper" aria-label="How this answer affected the route">
+              {evaluation?.label ?? (lastOutcome === "failure" ? "Not enough evidence yet" : "Partial evidence")}
+              {" · "}
+              {percent(masteryBefore)} → {percent(activeConcept.mastery)}
+              {" · "}
+              {routeOrderChanged ? "Order changed" : "Order kept"}
+            </p>
+            <button type="button" className="cta" onClick={continueAfterReroute}>Continue <span aria-hidden="true">→</span></button>
           </motion.section>
         ) : phase === "result" ? (
-          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-result`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-result`} className="study-question is-page" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
             <p className="study-count sr-only" aria-live="polite">Done</p>
-            <p className="kicker">Estimate updated</p>
-            <div className="mastery-reward">
-              <div><span>{percent(masteryBefore)}</span><i aria-hidden="true">→</i><motion.strong initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>{percent(concept.mastery)}</motion.strong></div>
-              <p>Your answer updated the estimate. Next up is chosen from what’s left.</p>
-              <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
-            </div>
+            <h1>Estimate updated.</h1>
+            <p>
+              {percent(masteryBefore)} → {percent(concept.mastery)}. Next up is chosen from what’s left.
+            </p>
+            <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
           </motion.section>
         ) : (
-          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
+          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question is-page" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
             <p className="study-count sr-only" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
             {phase === "learn" ? (
@@ -419,17 +412,23 @@ function SessionBody() {
                 <h1>{activity.retrieve.prompt}</h1>
                 <label htmlFor="retrieve-answer">Write from memory before checking the explanation.</label>
                 <textarea id="retrieve-answer" autoFocus value={retrieveAnswer} onChange={(event) => setRetrieveAnswer(event.target.value)} placeholder="Explain it in your own words…" />
-                <div className="session-help">
-                  <span>Need help?</span>
-                  <div>
-                    <button type="button" aria-pressed={helpMode === "hint"} onClick={() => setHelpMode(helpMode === "hint" ? null : "hint")}>Hint</button>
-                    <button type="button" aria-pressed={helpMode === "explain"} onClick={() => setHelpMode(helpMode === "explain" ? null : "explain")}>Explain this</button>
-                    <button type="button" aria-pressed={helpMode === "example"} onClick={() => setHelpMode(helpMode === "example" ? null : "example")}>Show an example</button>
+                <details
+                  className="session-help-page"
+                  open={helpMode ? true : undefined}
+                  onToggle={(event) => {
+                    if (!(event.target as HTMLDetailsElement).open) setHelpMode(null);
+                  }}
+                >
+                  <summary>Need a hint?</summary>
+                  <div className="session-help-choices" role="group" aria-label="Help options">
+                    <button type="button" className={helpMode === "hint" ? "is-active" : undefined} onClick={() => setHelpMode(helpMode === "hint" ? null : "hint")}>Hint</button>
+                    <button type="button" className={helpMode === "explain" ? "is-active" : undefined} onClick={() => setHelpMode(helpMode === "explain" ? null : "explain")}>Explain</button>
+                    <button type="button" className={helpMode === "example" ? "is-active" : undefined} onClick={() => setHelpMode(helpMode === "example" ? null : "example")}>Example</button>
                   </div>
                   <AnimatePresence mode="wait">{helpCopy ? <motion.p key={helpMode} initial={{ opacity: 0, y: reduceMotion ? 0 : -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{helpCopy}</motion.p> : null}</AnimatePresence>
-                </div>
+                </details>
                 <button type="button" className="cta" disabled={!retrieveAnswer.trim()} onClick={() => { setHelpMode(null); setPhase("apply"); }}>Continue <span aria-hidden="true">→</span></button>
-                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("learn"); }}>Back to explanation</button>
+                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("learn"); }}>Back</button>
               </>
             ) : null}
 
@@ -438,24 +437,38 @@ function SessionBody() {
                 <h1>{activity.apply.prompt}</h1>
                 <label htmlFor="application-answer">Use the idea in a different situation.</label>
                 <textarea id="application-answer" autoFocus value={applicationAnswer} onChange={(event) => setApplicationAnswer(event.target.value)} placeholder="Work through the new case…" />
-                <div className="session-apply-hint"><button type="button" onClick={() => setHelpMode(helpMode === "hint" ? null : "hint")} aria-expanded={helpMode === "hint"}>Need a hint?</button>{helpMode === "hint" ? <p>{activity.apply.hint}</p> : null}</div>
+                <details className="session-help-page" open={helpMode === "hint" || undefined}>
+                  <summary>Need a hint?</summary>
+                  <p>{activity.apply.hint}</p>
+                </details>
                 <button type="button" className="cta" disabled={!applicationAnswer.trim()} onClick={checkAnswers}>Check my thinking <span aria-hidden="true">→</span></button>
-                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("retrieve"); }}>Edit recall answer</button>
+                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("retrieve"); }}>Back</button>
               </>
             ) : null}
 
             {phase === "evaluate" ? (
-              <div className="study-feedback">
-                <h1>Compare the reasoning.</h1>
-                <div className="answer-comparison">
-                  <section><span>Your retrieval</span><p>{retrieveAnswer}</p></section>
-                  <section><span>Key idea</span><p>{activity.retrieve.modelAnswer}</p></section>
-                  <section><span>Your application</span><p>{applicationAnswer}</p></section>
-                  <section><span>A sound application</span><p>{activity.apply.modelAnswer}</p></section>
+              <div className="study-feedback is-page">
+                <h1>Compare.</h1>
+                <div className="answer-pages" aria-label="Compare your answers">
+                  <section>
+                    <span>Your retrieval</span>
+                    <p>{retrieveAnswer}</p>
+                  </section>
+                  <section>
+                    <span>Key idea</span>
+                    <p>{activity.retrieve.modelAnswer}</p>
+                  </section>
+                  <section>
+                    <span>Your application</span>
+                    <p>{applicationAnswer}</p>
+                  </section>
+                  <section>
+                    <span>A sound application</span>
+                    <p>{activity.apply.modelAnswer}</p>
+                  </section>
                 </div>
                 {evaluation ? (
-                  <div className={`answer-evaluation is-${evaluation.outcome}`} role="status">
-                    <p className="kicker">Answer check</p>
+                  <div className={`answer-evaluation is-page is-${evaluation.outcome}`} role="status">
                     <h2>{evaluation.label}</h2>
                     <p>{evaluation.explanation}</p>
                     {evaluation.criteria.length ? (

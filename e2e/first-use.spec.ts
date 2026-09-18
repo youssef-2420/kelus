@@ -112,9 +112,9 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: /Retrieve it/ }).click();
   await page.getByLabel(/Write from memory/).fill("I cannot yet explain the mechanism from memory.");
   await page.getByRole("button", { name: /Continue/ }).click();
-  await page.getByRole("button", { name: "Edit recall answer" }).click();
+  await page.getByRole("button", { name: "Back", exact: true }).click();
   await expect(page.getByLabel(/Write from memory/)).toHaveValue("I cannot yet explain the mechanism from memory.");
-  await page.getByRole("button", { name: "Back to explanation" }).click();
+  await page.getByRole("button", { name: "Back", exact: true }).click();
   await page.getByRole("button", { name: /Retrieve it/ }).click();
   await expect(page.getByLabel(/Write from memory/)).toHaveValue("I cannot yet explain the mechanism from memory.");
   await page.getByRole("button", { name: /Continue/ }).click();
@@ -127,4 +127,6 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page.getByText("Estimate updated")).toBeVisible();
   await page.getByRole("button", { name: /Continue/ }).click();
   await expect(page.getByRole("heading", { name: /Route (updated|checked)/ })).toBeVisible();
+  await expect(page.locator(".reroute-lines")).toHaveCount(0);
+  await expect(page.locator(".reroute-cause")).toHaveCount(0);
 });
