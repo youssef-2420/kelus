@@ -62,7 +62,19 @@ function sourceHost(value: string | null) {
   }
 }
 
-function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMaterial; onAnalyze: (item: CourseMaterial) => void; userId?: string; syncState?: "syncing" | "synced" | "retrying" }) {
+function MaterialRow({
+  item,
+  onAnalyze,
+  userId,
+  syncState,
+  quiet = false,
+}: {
+  item: CourseMaterial;
+  onAnalyze: (item: CourseMaterial) => void;
+  userId?: string;
+  syncState?: "syncing" | "synced" | "retrying";
+  quiet?: boolean;
+}) {
   const [busy, setBusy] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [downloadError, setDownloadError] = useState<string | null>(null);
@@ -92,41 +104,82 @@ function MaterialRow({ item, onAnalyze, userId, syncState }: { item: CourseMater
 
   const statusLabel =
     item.processingStatus === "failed"
-      ? "Failed"
+      ? "Couldn’t read"
       : item.processingStatus === "processing"
         ? "Reading…"
-        : item.processingStatus === "ready"
-          ? "Ready"
-          : null;
+        : quiet
+          ? null
+          : item.processingStatus === "ready"
+            ? "Ready"
+            : null;
+
+  const syncLabel = !userId
+    ? quiet
+      ? null
+      : "Saved on this device"
+    : syncState === "syncing"
+      ? "Saving across devices…"
+      : syncState === "retrying"
+        ? "Saved here · cloud retry queued"
+        : quiet
+          ? null
+          : "Saved across devices";
+
+  const host = item.storage === "url" ? sourceHost(item.sourceUrl) : null;
+  const metaBits = item.storage === "local"
+    ? [quiet ? materialRoleLabel(item.role) : null, item.fileName, formatBytes(item.sizeBytes)].filter(Boolean)
+    : [quiet ? materialRoleLabel(item.role) : null, quiet ? `Link · ${host}` : `Bookmark · ${host}`].filter(Boolean);
 
   return (
-    <li className={`material-row${item.processingStatus === "failed" ? " is-failed" : ""}`}>
-      <span className="material-kind">{materialRoleLabel(item.role)}</span>
+    <li className={`material-row${item.processingStatus === "failed" ? " is-failed" : ""}${quiet ? " is-quiet" : ""}`}>
+      {quiet ? null : <span className="material-kind">{materialRoleLabel(item.role)}</span>}
       <span className="material-name">
         <strong>{item.title}</strong>
-        <small>
-          {item.storage === "local"
-            ? [item.fileName, formatBytes(item.sizeBytes)].filter(Boolean).join(" · ")
-            : `Bookmark · ${sourceHost(item.sourceUrl)}`}
-        </small>
+        {metaBits.length ? <small>{metaBits.join(" · ")}</small> : null}
         {statusLabel ? <small className={`material-status-badge is-${item.processingStatus}`}>{statusLabel}</small> : null}
-        {userId ? <small className={`material-sync-label is-${syncState ?? "synced"}`}>{syncState === "syncing" ? "Saving across devices…" : syncState === "retrying" ? "Saved here · cloud retry queued" : "Saved across devices"}</small> : <small className="material-sync-label">Saved on this device</small>}
+        {syncLabel ? <small className={`material-sync-label is-${syncState ?? "synced"}`}>{syncLabel}</small> : null}
         {downloadError ? <small className="material-download-error" role="alert">{downloadError}</small> : null}
       </span>
       <span className="material-actions">
-        {item.storage === "local" ? <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>{item.processingStatus === "processing" ? "Reading…" : item.processingStatus === "failed" ? "Retry concepts" : item.processingStatus === "ready" ? "Review concepts" : "Build concepts"}</button> : null}
+        {item.storage === "local" ? (
+          <button type="button" onClick={() => onAnalyze(item)} disabled={busy || item.processingStatus === "processing"}>
+            {item.processingStatus === "processing"
+              ? "Reading…"
+              : item.processingStatus === "failed"
+                ? "Retry"
+                : item.processingStatus === "ready"
+                  ? quiet
+                    ? "Topics"
+                    : "Review concepts"
+                  : quiet
+                    ? "Find topics"
+                    : "Build concepts"}
+          </button>
+        ) : null}
         {item.storage === "url" ? (
-          item.sourceUrl ? <a href={item.sourceUrl} target="_blank" rel="noreferrer">Open bookmark</a> : null
+          item.sourceUrl ? (
+            <a href={item.sourceUrl} target="_blank" rel="noreferrer">
+              {quiet ? "Open" : "Open bookmark"}
+            </a>
+          ) : null
         ) : (
-          <button type="button" onClick={() => void downloadPdf()} disabled={busy}>{busy ? "Preparing…" : "Download"}</button>
+          <button type="button" onClick={() => void downloadPdf()} disabled={busy}>
+            {busy ? "Preparing…" : quiet ? "PDF" : "Download"}
+          </button>
         )}
         {confirmRemove ? (
           <span className="material-remove-confirm" role="group" aria-label={`Confirm remove ${item.title}`}>
-            <button type="button" className="text-btn" onClick={() => setConfirmRemove(false)} disabled={busy}>Cancel</button>
-            <button type="button" className="text-btn is-danger" onClick={() => void remove()} disabled={busy}>Remove</button>
+            <button type="button" className="text-btn" onClick={() => setConfirmRemove(false)} disabled={busy}>
+              Cancel
+            </button>
+            <button type="button" className="text-btn is-danger" onClick={() => void remove()} disabled={busy}>
+              Remove
+            </button>
           </span>
         ) : (
-          <button type="button" onClick={() => setConfirmRemove(true)} disabled={busy}>Remove</button>
+          <button type="button" onClick={() => setConfirmRemove(true)} disabled={busy}>
+            Remove
+          </button>
         )}
       </span>
     </li>
@@ -658,7 +711,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
           <span>{embedded ? "For this exam" : "This device"}</span>
         </header>
         {courseMaterials.length ? (
-          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
+          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} quiet={embedded} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
         ) : concepts.length ? (
           <div className="material-shelf-empty">
             <p>Sample model is ready. Add your own syllabus when you want Kelus grounded in your files.</p>

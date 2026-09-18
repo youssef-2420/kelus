@@ -80,7 +80,7 @@ function SessionBody() {
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
   const [openingSource, setOpeningSource] = useState(false);
   const sourceRequest = useRef(0);
-  const [confirmExit, setConfirmExit] = useState(false);
+  const [confirmDiscard, setConfirmDiscard] = useState(false);
   const sourceCloseRef = useRef<HTMLButtonElement>(null);
   const sourceOpenerRef = useRef<HTMLElement | null>(null);
   const startedAt = useRef(0);
@@ -319,18 +319,26 @@ function SessionBody() {
             {index + 1} of {total}
           </small>
         </span>
-        {confirmExit ? (
-          <span className="today-reset-confirm" role="group" aria-label="Confirm exit session">
-            <span>Leave this session?</span>
-            <button type="button" className="text-btn" onClick={() => setConfirmExit(false)}>Stay</button>
-            <button type="button" className="text-btn is-danger" onClick={() => {
-              trackEvent({ name: "session_abandoned" });
-              abandon(session.id);
-              router.push("/today");
-            }}>Exit</button>
+        {confirmDiscard ? (
+          <span className="today-reset-confirm study-discard" role="group" aria-label="Confirm discard block">
+            <span>Discard this block?</span>
+            <button type="button" className="text-btn" onClick={() => setConfirmDiscard(false)}>Keep</button>
+            <button
+              type="button"
+              className="text-btn is-danger"
+              onClick={() => {
+                trackEvent({ name: "session_abandoned" });
+                abandon(session.id);
+                router.push("/today");
+              }}
+            >
+              Discard
+            </button>
           </span>
         ) : (
-          <button type="button" className="text-btn study-leave" onClick={() => setConfirmExit(true)}>Leave</button>
+          <button type="button" className="text-btn study-discard-trigger" onClick={() => setConfirmDiscard(true)}>
+            Discard
+          </button>
         )}
       </div>
       <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>

@@ -1110,10 +1110,16 @@ body.is-session-booklet.is-booklet-system .study-context {
   align-items: baseline;
 }
 
-body.is-session-booklet.is-booklet-system .study-leave,
-body.is-session-booklet.is-booklet-system .study-context .text-btn {
+body.is-session-booklet.is-booklet-system .study-discard-trigger,
+body.is-session-booklet.is-booklet-system .study-discard .text-btn {
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 78%, transparent);
+  font-size: 0.8rem;
+  font-weight: 450;
+}
+
+body.is-session-booklet.is-booklet-system .study-discard-trigger:hover,
+body.is-session-booklet.is-booklet-system .study-discard-trigger:focus-visible {
   color: var(--color-steel, #5c6570);
-  font-size: 0.85rem;
 }
 
 body.is-session-booklet.is-booklet-system .study-progress {
@@ -1228,6 +1234,67 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 
 .kelus-space-stage .material-shelf.is-binder > header h2 {
   font-size: clamp(1.35rem, 2.2vw, 1.7rem);
+}
+
+.kelus-space-stage .material-shelf.is-binder ul {
+  border-top-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 20px;
+  min-height: 64px;
+  padding: 14px 0;
+  border-bottom-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-name strong {
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  white-space: normal;
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-name small {
+  margin-top: 4px;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
+  white-space: normal;
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-status-badge {
+  display: inline;
+  margin-top: 6px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-status-badge.is-failed {
+  color: #7a2430;
+  background: transparent;
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-actions {
+  gap: 14px;
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-actions a,
+.kelus-space-stage .material-shelf.is-binder .material-actions button {
+  font-weight: 500;
+  color: var(--color-steel, #5c6570);
+}
+
+.kelus-space-stage .material-shelf.is-binder .material-actions a:hover,
+.kelus-space-stage .material-shelf.is-binder .material-actions button:hover {
+  color: var(--color-kelus, #1f6b45);
+  text-decoration: none;
 }
 
 .kelus-space-stage .material-binder-note {

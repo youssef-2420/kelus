@@ -71,7 +71,7 @@ export function SiteHeader() {
         )}
 
         {inSession ? (
-          <Link href="/today" className="site-session-return">
+          <Link href="/today" className="site-session-return" title="Return to Today — your place is kept">
             Close
           </Link>
         ) : auth.loading ? (
