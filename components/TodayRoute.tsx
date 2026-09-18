@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
+import { kelusEase } from "@/components/motion";
 
 function citeWhisper(source: { label: string; locator?: string | null } | undefined) {
   if (!source) return null;
@@ -11,9 +12,11 @@ function citeWhisper(source: { label: string; locator?: string | null } | undefi
   return `${source.label} · ${locator}`;
 }
 
+const pressSpring = { type: "spring", bounce: 0, duration: 0.28 } as const;
+
 /**
  * Today is one page: the next topic is the title.
- * No Next eyebrow, no planner, no evidence dashboard.
+ * Presence comes from type, paper, and interruptible motion — not chrome.
  */
 export function TodayRoute({
   route,
@@ -56,21 +59,47 @@ export function TodayRoute({
   const whisper = citeWhisper(firstSource);
 
   return (
-    <div className="today-route-execution is-one-next is-booklet-page">
+    <div className="today-route-execution is-one-next is-booklet-page is-presence">
       <motion.article
-        className="today-lead-action is-page"
-        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        className="today-lead-action is-page is-presence"
+        initial={reduceMotion ? false : { opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: reduceMotion ? 0.1 : 0.36, ease: [0.22, 1, 0.36, 1] }}
+        transition={
+          reduceMotion
+            ? { duration: 0.12 }
+            : { type: "spring", bounce: 0, duration: 0.5 }
+        }
       >
-        <p className="today-page-folio">
+        <motion.p
+          className="today-page-folio"
+          initial={reduceMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.06, ease: kelusEase }}
+        >
           <span>{first.minutes} min</span>
           {whisper ? <span>{whisper}</span> : null}
-        </p>
-        <h1 id="today-title">{firstName}</h1>
-        <button type="button" className="cta today-start" onClick={onStart}>
+        </motion.p>
+        <motion.h1
+          id="today-title"
+          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={
+            reduceMotion
+              ? { duration: 0.12 }
+              : { type: "spring", bounce: 0, duration: 0.55, delay: 0.04 }
+          }
+        >
+          {firstName}
+        </motion.h1>
+        <motion.button
+          type="button"
+          className="cta today-start"
+          onClick={onStart}
+          whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+          transition={pressSpring}
+        >
           {startLabel ?? `Start ${firstName}`} <span aria-hidden="true">→</span>
-        </button>
+        </motion.button>
       </motion.article>
     </div>
   );

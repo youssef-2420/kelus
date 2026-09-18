@@ -79,11 +79,15 @@ test("today is one booklet page — topic title and start only", async () => {
   const surface = await source("components/RevisionSurface.tsx");
   const store = await source("lib/demo-store.ts");
   assert.match(today, /is-booklet-page/);
+  assert.match(today, /is-presence/);
   assert.match(today, /id="today-title"/);
   assert.match(today, /today-page-folio/);
+  assert.match(today, /whileTap/);
   assert.match(today, /startLabel \?\? `Start \$\{firstName\}`|Start \{firstName\}/);
   assert.doesNotMatch(today, /Next stops|today-plan-list|Why this|confidenceLabel|From your course/);
   assert.match(surface, /is-booklet-page/);
+  assert.match(await source("app/workbench.css"), /--font-display|--font-source-serif/);
+  assert.match(await source("app/workbench.css"), /radial-gradient|box-shadow/);
   assert.match(surface, /mode !== "today"/);
   assert.doesNotMatch(`${page}\n${surface}`, /RouteKnowledgeMap/);
   assert.doesNotMatch(surface, /<MasteryEvidence/);

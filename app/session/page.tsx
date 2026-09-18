@@ -380,7 +380,7 @@ function SessionBody() {
             <button type="button" className="cta" onClick={advance}>Continue <span aria-hidden="true">→</span></button>
           </motion.section>
         ) : (
-          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question is-page" initial={{ opacity: 0, y: reduceMotion ? 0 : 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={{ duration: reduceMotion ? 0.1 : 0.24 }}>
+          <motion.section ref={focusStep} tabIndex={-1} key={`${concept.id}-${phase}`} className="study-question is-page" initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reduceMotion ? 0 : -8 }} transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.45 }}>
             <p className="study-count sr-only" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
             {phase === "learn" ? (

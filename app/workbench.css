@@ -1560,8 +1560,10 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 /* ── Paper column: no permanent rail ── */
 body.is-paper-column .kelus-space.is-paper {
   display: block;
-  min-height: calc(100vh - 64px);
-  background: #fff;
+  min-height: 100vh;
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, #fff 70%, #e8efe9), transparent 55%),
+    linear-gradient(180deg, #f3f1ec 0%, #ebe8e2 42%, #e7e4de 100%);
 }
 
 body.is-paper-column .kelus-paper-bar {
@@ -1573,7 +1575,7 @@ body.is-paper-column .kelus-paper-bar {
   width: min(42rem, calc(100% - 48px));
   margin: 0 auto;
   padding: 20px 0 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent);
 }
 
 body.is-paper-column .kelus-paper-bar-course {
@@ -1689,10 +1691,17 @@ body.is-paper-column .kelus-paper-more > .text-btn {
 
 body.is-paper-column .kelus-paper-page.kelus-space-stage {
   display: block;
-  width: min(42rem, calc(100% - 48px));
-  margin: 0 auto;
-  padding: 28px 0 64px;
-  background: transparent;
+  width: min(42rem, calc(100% - 40px));
+  margin: 0 auto 40px;
+  padding: 8px 28px 56px;
+  background:
+    linear-gradient(180deg, #fffcf7 0%, #fbf8f2 100%);
+  border: 1px solid color-mix(in srgb, #cfc9be 55%, transparent);
+  border-radius: 2px;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 80%, transparent) inset,
+    0 18px 48px color-mix(in srgb, #1a1f16 8%, transparent),
+    0 2px 6px color-mix(in srgb, #1a1f16 4%, transparent);
 }
 
 body.is-paper-column .kelus-paper-head.kelus-space-top {
@@ -1899,7 +1908,7 @@ body.is-booklet-page .today-lead-action.is-page {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 28px;
-  padding: 48px 0 64px;
+  padding: 40px 0 48px;
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -1910,51 +1919,152 @@ body.is-booklet-page .today-page-folio {
   flex-wrap: wrap;
   gap: 8px 16px;
   margin: 0;
-  font-size: 0.9rem;
-  letter-spacing: 0.01em;
-  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 92%, transparent);
 }
 
-body.is-booklet-page .today-lead-action.is-page h1 {
+body.is-booklet-page .today-lead-action.is-page h1,
+body.is-booklet-page .today-lead-action.is-page #today-title {
   margin: 0;
-  max-width: 12ch;
-  font-family: var(--font-ledger, Georgia, serif);
-  font-size: clamp(2.75rem, 7vw, 4.25rem);
+  max-width: 11ch;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: clamp(3rem, 8vw, 4.75rem);
   font-weight: 500;
-  letter-spacing: -0.04em;
-  line-height: 1.02;
-  color: var(--color-ink, #111);
+  font-optical-sizing: auto;
+  letter-spacing: -0.045em;
+  line-height: 0.98;
+  color: var(--color-ink, #12160f);
 }
 
 body.is-booklet-page .today-lead-action.is-page .today-start {
   justify-self: start;
-  margin-top: 4px;
-  min-height: 48px;
-  padding-inline: 22px;
+  margin-top: 8px;
+  min-height: 52px;
+  padding-inline: 24px;
+  border-radius: 2px;
+  background: var(--color-kelus, #1f6b45);
+  box-shadow: 0 1px 0 color-mix(in srgb, #fff 18%, transparent) inset;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transform-origin: center left;
+}
+
+body.is-booklet-page .today-lead-action.is-page .today-start:active {
+  transform: scale(0.97);
 }
 
 body.is-booklet-page .workbench-focus.is-booklet-page {
-  padding-top: 12px;
+  padding-top: 4px;
 }
 
 body.is-booklet-page .kelus-paper-bar {
-  padding-top: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
+  width: min(42rem, calc(100% - 40px));
+  padding: 18px 28px 12px;
+  margin: 20px auto 0;
+  border: 1px solid color-mix(in srgb, #cfc9be 55%, transparent);
+  border-bottom: 0;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(180deg, #fffcf7 0%, #fbf8f2 100%);
+  box-shadow: 0 1px 0 color-mix(in srgb, #fff 80%, transparent) inset;
+}
+
+body.is-booklet-page .kelus-paper-page.kelus-space-stage {
+  margin-top: 0;
+  border-top: 0;
+  border-radius: 0 0 2px 2px;
 }
 
 body.is-booklet-page .kelus-paper-course {
-  font-size: 0.95rem;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: 1rem;
   font-weight: 500;
+  letter-spacing: -0.02em;
 }
 
 body.is-booklet-page .kelus-paper-meta {
   font-size: 0.8rem;
 }
 
+body.is-booklet-page .kelus-paper-home {
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+}
+
 body.is-booklet-page .site-space-label,
 body.is-booklet-page .site-session-label {
   display: none;
+}
+
+/* Session as the same paper object */
+body.is-session-booklet {
+  background:
+    radial-gradient(120% 80% at 50% -10%, color-mix(in srgb, #fff 70%, #e8efe9), transparent 55%),
+    linear-gradient(180deg, #f3f1ec 0%, #ebe8e2 42%, #e7e4de 100%);
+}
+
+body.is-session-booklet main#main.study-shell,
+body.is-session-booklet .study-shell {
+  width: min(42rem, calc(100% - 40px));
+  margin: 28px auto 48px;
+  padding: 8px 28px 48px;
+  background: linear-gradient(180deg, #fffcf7 0%, #fbf8f2 100%);
+  border: 1px solid color-mix(in srgb, #cfc9be 55%, transparent);
+  border-radius: 2px;
+  box-shadow:
+    0 1px 0 color-mix(in srgb, #fff 80%, transparent) inset,
+    0 18px 48px color-mix(in srgb, #1a1f16 8%, transparent),
+    0 2px 6px color-mix(in srgb, #1a1f16 4%, transparent);
+}
+
+body.is-session-booklet .study-question.is-page h1,
+body.is-session-booklet .reroute-view.is-page h1,
+body.is-session-booklet .session-learn h1 {
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+body.is-session-booklet .study-question.is-page .cta,
+body.is-session-booklet .reroute-view.is-page .cta,
+body.is-session-booklet .session-learn .cta {
+  border-radius: 2px;
+  transform-origin: center left;
+}
+
+body.is-session-booklet .study-question.is-page .cta:active,
+body.is-session-booklet .reroute-view.is-page .cta:active,
+body.is-session-booklet .session-learn .cta:active {
+  transform: scale(0.97);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body.is-paper-column .kelus-space.is-paper,
+  body.is-session-booklet {
+    background: #f3f1ec;
+  }
+
+  body.is-paper-column .kelus-paper-page.kelus-space-stage,
+  body.is-booklet-page .kelus-paper-bar,
+  body.is-session-booklet .study-shell {
+    box-shadow: none;
+    background: #fff;
+  }
+}
+
+@media (max-width: 720px) {
+  body.is-booklet-page .kelus-paper-bar,
+  body.is-paper-column .kelus-paper-page.kelus-space-stage,
+  body.is-session-booklet .study-shell {
+    width: calc(100% - 24px);
+    padding-inline: 18px;
+  }
+
+  body.is-booklet-page .today-lead-action.is-page h1 {
+    font-size: clamp(2.5rem, 12vw, 3.4rem);
+  }
 }
 
 /* Session folio — quiet running head, not a cockpit */
