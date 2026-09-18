@@ -60,7 +60,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByLabel("Try without notes.").fill("Cell membranes regulate transport and selectively control what moves between a cell and its environment.");
   await page.getByRole("button", { name: "Compare answer" }).click();
   await expect(page.getByText("Kelus evidence check")).toBeVisible();
-  await page.getByRole("button", { name: "Use this result" }).click();
+  await page.getByRole("button", { name: "Mark this" }).click();
 
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true })).toBeVisible();
@@ -123,7 +123,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
   await page.getByRole("button", { name: /Check my thinking/ }).click();
-  await page.getByRole("button", { name: "Use this result" }).click();
+  await page.getByRole("button", { name: "Mark this" }).click();
   await expect(page.getByRole("heading", { name: "Marked." })).toBeVisible();
   await page.getByRole("button", { name: /Continue/ }).click();
   await expect(page.getByRole("heading", { name: /Route (updated|checked)/ })).toBeVisible();
