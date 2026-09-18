@@ -60,7 +60,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByLabel("Try without notes.").fill("Cell membranes regulate transport and selectively control what moves between a cell and its environment.");
   await page.getByRole("button", { name: "Compare answer" }).click();
   await expect(page.getByText("Kelus evidence check")).toBeVisible();
-  await page.getByRole("button", { name: "Mark this" }).click();
+  await page.getByRole("button", { name: "Use this result" }).click();
 
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true })).toBeVisible();
