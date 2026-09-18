@@ -1403,11 +1403,11 @@ body.is-paper-column .kelus-space.is-paper {
 }
 
 body.is-paper-column .kelus-paper-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  column-gap: 20px;
+  row-gap: 10px;
   width: min(42rem, calc(100% - 48px));
   margin: 0 auto;
   padding: 20px 0 14px;
@@ -1416,7 +1416,7 @@ body.is-paper-column .kelus-paper-bar {
 
 body.is-paper-column .kelus-paper-bar-course {
   min-width: 0;
-  flex: 1 1 10rem;
+  grid-column: 1;
 }
 
 body.is-paper-column .kelus-paper-course {
@@ -1434,18 +1434,26 @@ body.is-paper-column .kelus-paper-meta {
   color: var(--color-steel, #5c6570);
 }
 
-body.is-paper-column .kelus-paper-nav {
+body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
   align-items: baseline;
+  width: auto;
   gap: 0;
   margin: 0;
   padding: 0;
   border: 0;
+  border-radius: 0;
   background: transparent;
+  grid-column: 2;
 }
 
-body.is-paper-column .kelus-paper-nav button {
+body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
   min-height: 40px;
   padding: 0 12px;
   border: 0;
@@ -1455,15 +1463,17 @@ body.is-paper-column .kelus-paper-nav button {
   font-size: 0.95rem;
   font-weight: 450;
   letter-spacing: -0.01em;
+  text-align: center;
   box-shadow: none;
+  transform-origin: center;
 }
 
-body.is-paper-column .kelus-paper-nav button + button {
+body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button + button {
   border-left: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
 }
 
-body.is-paper-column .kelus-paper-nav button.is-active,
-body.is-paper-column .kelus-paper-nav button[aria-pressed="true"] {
+body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button.is-active,
+body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button[aria-pressed="true"] {
   color: var(--color-kelus, #1f6b45);
   font-weight: 600;
   background: transparent;
@@ -1471,13 +1481,15 @@ body.is-paper-column .kelus-paper-nav button[aria-pressed="true"] {
   outline: 0;
 }
 
-body.is-paper-column .kelus-paper-nav button:active {
+body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button:active {
   transform: scale(0.97);
 }
 
 body.is-paper-column .kelus-paper-more {
   position: relative;
   margin: 0;
+  grid-column: 3;
+  justify-self: end;
 }
 
 body.is-paper-column .kelus-paper-more > summary {
@@ -1560,10 +1572,21 @@ body.is-paper-column .kelus-paper-body {
   }
 
   body.is-paper-column .kelus-paper-bar {
+    grid-template-columns: minmax(0, 1fr) auto;
     padding-top: 16px;
   }
 
-  body.is-paper-column .kelus-paper-nav button {
+  body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+
+  body.is-paper-column .kelus-paper-more {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button {
     padding: 0 10px;
     font-size: 0.9rem;
   }
