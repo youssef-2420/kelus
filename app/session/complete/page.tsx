@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
 import { MasteryEvidence } from "@/components/MasteryEvidence";
@@ -15,6 +15,7 @@ import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/
 
 function CompleteBody() {
   const search = useSearchParams();
+  const reduceMotion = useReducedMotion();
   const { state } = useLearner();
   const [calendarNote, setCalendarNote] = useState("");
   const completionTracked = useRef<string | null>(null);
@@ -49,6 +50,11 @@ function CompleteBody() {
   const practisedCount = new Set(state.snapshot.events.filter((event) => event.sessionId === session?.id && event.kind === "retrieval").map((event) => event.conceptId)).size;
 
   useEffect(() => {
+    document.body.classList.add("is-session-booklet", "is-session-complete");
+    return () => document.body.classList.remove("is-session-booklet", "is-session-complete");
+  }, []);
+
+  useEffect(() => {
     if (!session || !summary || completionTracked.current === session.id) return;
     completionTracked.current = session.id;
     trackEvent({
@@ -72,62 +78,126 @@ function CompleteBody() {
     );
   }
 
-  if (!session || !summary) return (
-    <AppShell><section className="complete-hero"><p className="kicker">Revision session</p><h1>No completed session here yet.</h1><p>Finish a session to see what you practised and what needs another review.</p><Link href="/today" className="cta">Back to Today <span aria-hidden="true">→</span></Link></section></AppShell>
-  );
+  if (!session || !summary) {
+    return (
+      <main id="main" className="study-shell is-complete-page">
+        <section className="complete-hero is-empty">
+          <p className="study-mark-kicker">Session</p>
+          <h1>No completed session here yet.</h1>
+          <p>Finish a session to see what you practised and what needs another review.</p>
+          <Link href="/today" className="cta">
+            Back to Today <span aria-hidden="true">→</span>
+          </Link>
+        </section>
+      </main>
+    );
+  }
 
   return (
-    <AppShell>
-      <section className="complete-hero">
-        <p className="kicker">Today’s route complete</p>
-        <h1>You’ve done your revision for now.</h1>
-        <p>{practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}{course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.</p>
-      </section>
-      {summary ? (
-        <div className="complete-columns">
-          <section><p className="kicker">Strengthened</p>{summary.strengthenedIds.length ? summary.strengthenedIds.slice(0, 3).map((id) => <p key={id}>{name(id)}</p>) : <p>No clear movement yet</p>}</section>
-          <section><p className="kicker">Needs attention</p>{summary.stillWeakIds.length ? summary.stillWeakIds.slice(0, 3).map((id) => <p key={id}>{name(id)}</p>) : <p>No urgent gap</p>}</section>
-        </div>
-      ) : null}
-      <section className="complete-return" aria-labelledby="complete-return-title">
-        <p className="kicker">Come back tomorrow</p>
-        <h2 id="complete-return-title">
-          {nextStopName
-            ? <>Next suggested review: <strong>{nextStopName}</strong>.</>
-            : "Your route stays on this device — open Today when you come back."}
-        </h2>
-        <p>
-          {dueCount > 0
-            ? `${dueCount} concept${dueCount === 1 ? "" : "s"} already due for review as memory fades.`
-            : "Tomorrow’s route will shift as retention fades — no need to rebuild from scratch."}
+    <main id="main" className="study-shell is-complete-page">
+      <motion.section
+        className="complete-folio is-page"
+        initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.985, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
+      >
+        <p className="study-mark-kicker">Done</p>
+        <h1>Done.</h1>
+        <p className="complete-whisper">
+          {practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}
+          {course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.
         </p>
-        <div className="complete-return-actions">
-          <Link href="/today" className="cta">Back to Today <span aria-hidden="true">→</span></Link>
-          <button type="button" className="text-btn" onClick={addCalendar}>
-            Add tomorrow to calendar <span aria-hidden="true">→</span>
-          </button>
-        </div>
-        <p className="complete-return-note" role="status" aria-live="polite">{calendarNote || "\u00a0"}</p>
-      </section>
-      {nextRoute ? (
-        <details className="next-route">
-          <summary>Preview your next revision topics</summary>
-          <p className="kicker">Next route</p>
-          <h2>Kelus will recalculate as your memory changes.</h2>
-          <ol>{nextRoute.allocations.slice(0, 3).map((allocation, index) => <li key={allocation.conceptId}><span>{String(index + 1).padStart(2, "0")}</span><strong>{allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}</strong><b>{allocation.minutes} min</b></li>)}</ol>
+        {nextStopName ? (
+          <p className="complete-next">
+            Next <strong>{nextStopName}</strong>
+          </p>
+        ) : null}
+
+        <section className="complete-return" aria-labelledby="complete-return-title">
+          <p className="kicker">Come back tomorrow</p>
+          <h2 id="complete-return-title">
+            {nextStopName
+              ? <>Tomorrow opens on <strong>{nextStopName}</strong>.</>
+              : "Your route stays on this device — open Today when you come back."}
+          </h2>
+          <p>
+            {dueCount > 0
+              ? `${dueCount} concept${dueCount === 1 ? "" : "s"} already due for review as memory fades.`
+              : "Tomorrow’s route will shift as retention fades — no need to rebuild from scratch."}
+          </p>
+          <div className="complete-return-actions">
+            <Link href="/today" className="cta">
+              Back to Today <span aria-hidden="true">→</span>
+            </Link>
+            <button type="button" className="text-btn" onClick={addCalendar}>
+              Add tomorrow to calendar <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <p className="complete-return-note" role="status" aria-live="polite">
+            {calendarNote || "\u00a0"}
+          </p>
+        </section>
+
+        {summary ? (
+          <details className="complete-moved">
+            <summary>What moved</summary>
+            <div className="complete-columns">
+              <section>
+                <p className="kicker">Strengthened</p>
+                {summary.strengthenedIds.length
+                  ? summary.strengthenedIds.slice(0, 3).map((id) => <p key={id}>{name(id)}</p>)
+                  : <p>No clear movement yet</p>}
+              </section>
+              <section>
+                <p className="kicker">Needs attention</p>
+                {summary.stillWeakIds.length
+                  ? summary.stillWeakIds.slice(0, 3).map((id) => <p key={id}>{name(id)}</p>)
+                  : <p>No urgent gap</p>}
+              </section>
+            </div>
+          </details>
+        ) : null}
+
+        {nextRoute ? (
+          <details className="next-route">
+            <summary>Preview your next revision topics</summary>
+            <p className="kicker">Next route</p>
+            <h2>Kelus will recalculate as your memory changes.</h2>
+            <ol>
+              {nextRoute.allocations.slice(0, 3).map((allocation, index) => (
+                <li key={allocation.conceptId}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <strong>
+                    {allocation.conceptId === "mixed-retrieval" ? "Mixed Retrieval" : name(allocation.conceptId)}
+                  </strong>
+                  <b>{allocation.minutes} min</b>
+                </li>
+              ))}
+            </ol>
+          </details>
+        ) : null}
+
+        <details className="complete-evidence">
+          <summary>Evidence</summary>
+          <MasteryEvidence />
         </details>
-      ) : null}
-      <MasteryEvidence />
-      {completedSessions === 1 ? <details><summary>Optional support through exam day</summary><SoftUpgradePrompt moment="first_session" /></details> : null}
-      {completedSessions >= 2 ? (
-        <details className="complete-waitlist">
-          <summary>Get product updates</summary>
-          <p className="kicker">Stay in the loop</p>
-          <h2 id="complete-waitlist-title">Want a note when Kelus gets better for your course?</h2>
-          <WaitlistForm source="session_complete" compact />
-        </details>
-      ) : null}
-    </AppShell>
+
+        {completedSessions === 1 ? (
+          <details>
+            <summary>Optional support through exam day</summary>
+            <SoftUpgradePrompt moment="first_session" />
+          </details>
+        ) : null}
+        {completedSessions >= 2 ? (
+          <details className="complete-waitlist">
+            <summary>Get product updates</summary>
+            <p className="kicker">Stay in the loop</p>
+            <h2 id="complete-waitlist-title">Want a note when Kelus gets better for your course?</h2>
+            <WaitlistForm source="session_complete" compact />
+          </details>
+        ) : null}
+      </motion.section>
+    </main>
   );
 }
 
@@ -137,7 +207,9 @@ export default function SessionCompletePage() {
       <Suspense
         fallback={
           <SuspenseFallbackExit>
-            <AppShell><p>Updating your route…</p></AppShell>
+            <main id="main" className="study-shell is-complete-page">
+              <p>Updating your route…</p>
+            </main>
           </SuspenseFallbackExit>
         }
       >

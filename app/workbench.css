@@ -2188,4 +2188,168 @@ body .site-header.is-session {
   min-height: 52px;
 }
 
+/* Session complete — same paper object, not AppShell */
+body.is-session-complete .site-header.is-session {
+  display: none !important;
+}
+
+body.is-session-complete .study-shell.is-complete-page {
+  padding-top: 28px;
+  padding-bottom: 56px;
+}
+
+body.is-session-complete .complete-folio.is-page,
+body.is-session-complete .complete-hero.is-empty {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+
+body.is-session-complete .complete-folio > h1,
+body.is-session-complete .complete-hero.is-empty > h1 {
+  margin: 0;
+  max-width: 6ch;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: clamp(3rem, 8vw, 4.5rem);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: -0.05em;
+  line-height: 0.96;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-session-complete .complete-whisper {
+  margin: 0;
+  max-width: 34ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+body.is-session-complete .complete-next {
+  margin: 0;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: clamp(1.35rem, 3.5vw, 1.85rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-session-complete .complete-next strong {
+  color: var(--color-kelus, #1f6b45);
+  font-weight: 500;
+}
+
+body.is-session-complete .complete-return {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: 12px;
+  padding-top: 20px;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+}
+
+body.is-session-complete .complete-return .kicker {
+  margin: 0;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+body.is-session-complete .complete-return h2 {
+  margin: 0;
+  max-width: 28ch;
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: clamp(1.25rem, 3vw, 1.55rem);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+body.is-session-complete .complete-return > p {
+  margin: 0;
+  max-width: 36ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+body.is-session-complete .complete-return-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  margin-top: 4px;
+}
+
+body.is-session-complete .complete-return-actions .cta {
+  border-radius: 2px;
+  transform-origin: center left;
+}
+
+body.is-session-complete .complete-return-actions .cta:active {
+  transform: scale(0.97);
+}
+
+body.is-session-complete .complete-return-note {
+  margin: 0;
+  min-height: 1.2em;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.88rem;
+}
+
+body.is-session-complete .complete-moved,
+body.is-session-complete .next-route,
+body.is-session-complete .complete-evidence,
+body.is-session-complete .complete-waitlist,
+body.is-session-complete details {
+  width: 100%;
+  margin-top: 4px;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
+}
+
+body.is-session-complete details > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 0;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.92rem;
+}
+
+body.is-session-complete details > summary::-webkit-details-marker {
+  display: none;
+}
+
+body.is-session-complete details > summary:hover,
+body.is-session-complete details > summary:focus-visible {
+  color: var(--color-ink, #12160f);
+}
+
+body.is-session-complete .complete-columns {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 16px;
+}
+
+body.is-session-complete .complete-columns .kicker {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-session-complete .complete-columns p {
+  margin: 0 0 4px;
+}
+
+@media (max-width: 720px) {
+  body.is-session-complete .study-shell.is-complete-page {
+    padding-top: 20px;
+  }
+}
+
 
