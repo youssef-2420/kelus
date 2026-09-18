@@ -51,9 +51,7 @@ test("mobile Today keeps navigation compact and a single start action", async ({
   expect(Math.max(...boxes) - Math.min(...boxes)).toBeLessThan(2);
   await expect(page.locator(".kelus-space-start")).toBeHidden();
   await expect(page.getByRole("button", { name: /Start Elasticity/ })).toBeVisible();
-  const evidence = page.locator("details[aria-label='Practice evidence']");
-  await expect(evidence).toBeVisible();
-  await evidence.locator("summary").click();
-  await expect(page.getByText("Some topics have only one or two questions.", { exact: false })).toBeVisible();
+  await expect(page.locator("details[aria-label='Practice evidence']")).toHaveCount(0);
+  await expect(page.getByText("Next stops", { exact: true })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

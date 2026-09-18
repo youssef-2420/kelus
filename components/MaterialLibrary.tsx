@@ -519,25 +519,94 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
 
       {showUpgrade ? <SoftUpgradePrompt moment="third_material" /> : null}
 
-      <section className={`material-ingest${embedded ? " is-embedded" : ""}`} aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
-        <div className="material-ingest-title">
-          {embedded ? null : <p className="kicker">Add material</p>}
-          <h2 id="add-material-title">{embedded ? "Add to the binder" : "Bring the course into one place."}</h2>
-          {embedded ? (
-            <p className="material-ingest-lede">
-              Syllabus or lecture PDF — you confirm every topic before the route changes.
+      {embedded && showIngestForm(phase) ? (
+        <details
+          className="material-add-page"
+          open={busy || Boolean(hardError) || (!courseMaterials.length && !concepts.length) || undefined}
+        >
+          <summary>Add a page</summary>
+          <section className="material-ingest is-embedded" aria-labelledby="add-material-title">
+            <div className="material-ingest-title">
+              <h2 id="add-material-title">Syllabus or lecture PDF</h2>
+              <p className="material-ingest-lede">You confirm every topic before the route changes.</p>
+            </div>
+            <div className="sr-only">
+              <label htmlFor="material-role">This source is</label>
+              <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
+                {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+              </select>
+            </div>
+            <label
+              className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""} is-quiet`}
+              aria-busy={busy || undefined}
+              onDragEnter={() => dispatch({ type: "DRAG_ENTER" })}
+              onDragLeave={() => dispatch({ type: "DRAG_LEAVE" })}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={drop}
+            >
+              <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
+              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a PDF"}</strong>
+              <span>{busy && statusMessage ? statusMessage : "or drop one here · clear text works fastest"}</span>
+            </label>
+            {busy && workingStep ? (
+              <div className="material-work-status" role="status" aria-live="polite">
+                <ol className="material-work-steps" aria-label="PDF processing steps">
+                  {WORKING_STEPS.map((step) => {
+                    const currentIndex = WORKING_STEPS.indexOf(workingStep);
+                    const stepIndex = WORKING_STEPS.indexOf(step);
+                    const state = stepIndex < currentIndex ? "done" : stepIndex === currentIndex ? "current" : "todo";
+                    return (
+                      <li key={step} className={`is-${state}`} aria-current={state === "current" ? "step" : undefined}>
+                        {workingStepLabel[step]}
+                      </li>
+                    );
+                  })}
+                </ol>
+                <p>{statusMessage ?? defaultStepMessage(workingStep)}</p>
+                {ocrRunning ? (
+                  <button type="button" className="text-btn" onClick={cancelOcr}>Cancel OCR</button>
+                ) : null}
+              </div>
+            ) : null}
+            <details className="material-bookmarks"><summary>Save a video or web link instead</summary>
+            <form className="material-link-form" onSubmit={addLink}>
+              <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" disabled={busy} /></div>
+              <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" disabled={busy} /></div>
+              <button className="cta" type="submit" disabled={!url.trim() || busy}>Save bookmark</button>
+            </form>
+            <p className="material-link-hint">
+              Bookmarks stay on your shelf for quick open. They do not become concepts — upload a PDF for that.
             </p>
-          ) : null}
+            </details>
+            {errorKind === "ocr" ? (
+              <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
+                <p>
+                  OCR works best on clear English scans. Export a text PDF from your notes app, try a sharper scan, or
+                  continue with the sample course.
+                </p>
+                <div className="material-error-actions">
+                  <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
+                  <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
+                </div>
+              </div>
+            ) : null}
+            {errorKind === "generic" ? (
+              <div className="material-error-actions">
+                <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
+                <a className="text-btn" href="#source-shelf-title">Choose another file</a>
+              </div>
+            ) : null}
+          </section>
+        </details>
+      ) : null}
+
+      {!embedded ? (
+      <section className="material-ingest" aria-labelledby="add-material-title" hidden={!showIngestForm(phase)}>
+        <div className="material-ingest-title">
+          <p className="kicker">Add material</p>
+          <h2 id="add-material-title">Bring the course into one place.</h2>
         </div>
-        {embedded ? (
-          <div className="sr-only">
-            <label htmlFor="material-role">This source is</label>
-            <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
-              {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-            </select>
-          </div>
-        ) : (
-          <div className="material-role-field">
+        <div className="material-role-field">
             <label htmlFor="material-role">This source is</label>
             <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
               {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -546,9 +615,8 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
               Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device.
             </p>
           </div>
-        )}
         <label
-          className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}${embedded ? " is-quiet" : ""}`}
+          className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}`}
           aria-busy={busy || undefined}
           onDragEnter={() => dispatch({ type: "DRAG_ENTER" })}
           onDragLeave={() => dispatch({ type: "DRAG_LEAVE" })}
@@ -556,9 +624,9 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
           onDrop={drop}
         >
           <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
-          {embedded ? null : <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>}
-          <strong>{busy ? (statusMessage ?? "Working on your PDF…") : embedded ? "Choose a PDF" : "Drop a PDF here"}</strong>
-          <span>{busy && statusMessage ? statusMessage : embedded ? "or drop one here · clear text works fastest" : "or choose a file · up to 20 MB · clear text works fastest"}</span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
+          <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
+          <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · clear text works fastest"}</span>
         </label>
         {busy && workingStep ? (
           <div className="material-work-status" role="status" aria-live="polite">
@@ -610,6 +678,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
           </div>
         ) : null}
       </section>
+      ) : null}
 
       {hardError ? <p className="material-error" role="alert">{hardError}</p> : null}
       {softNotice && !hardError ? <p className="material-error is-soft" role="status">{softNotice}</p> : null}
@@ -633,7 +702,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
             <div className="material-ready-actions">
               <Link className="cta" href="/today">Continue: short check, then study <span aria-hidden="true">→</span></Link>
               <div className="material-ready-secondary">
-                <Link href="/map">Review the map</Link>
+                <Link href="/today?section=map">Review the index</Link>
                 <button type="button" onClick={() => dispatch({ type: "ADD_ANOTHER" })}>Add another source</button>
               </div>
             </div>
@@ -744,5 +813,5 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
       )}
       </>
   );
-  return embedded ? shelf : <AppShell>{shelf}</AppShell>;
+  return embedded ? <div className="material-binder-stack">{shelf}</div> : <AppShell>{shelf}</AppShell>;
 }

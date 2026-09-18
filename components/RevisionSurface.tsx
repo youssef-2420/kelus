@@ -8,7 +8,6 @@ import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useLearner } from "@/components/LearnerProvider";
-import { MasteryEvidence } from "@/components/MasteryEvidence";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
 import { trackEvent } from "@/lib/analytics";
@@ -209,10 +208,18 @@ export function RevisionSurface() {
           </AnimatePresence>
           <p className="kelus-paper-lede kelus-space-lede">
             {mode === "today"
-              ? <>{route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
+              ? (() => {
+                  const next = route.allocations[0];
+                  const nextName =
+                    concepts.find((item) => item.id === next?.conceptId)?.name ??
+                    (next ? "Mixed retrieval" : null);
+                  return next && nextName
+                    ? `${next.minutes} min · ${nextName}`
+                    : "One block when the route is ready.";
+                })()
               : mode === "materials"
-                ? "Pages for this exam, ready to open."
-                : "Weak topics and today’s start."}
+                ? "Pages for this exam."
+                : "Topics by exam weight."}
           </p>
           </div>
         </header>
@@ -228,9 +235,9 @@ export function RevisionSurface() {
             transition={panelTransition}
           >
             {mode === "today" ? (
-              <div className="workbench-focus is-ready" aria-labelledby="today-lead-heading">
+              <div className="workbench-focus is-ready is-one-next" aria-labelledby="today-lead-heading">
                 <h2 id="today-lead-heading" className="today-workbench-heading sr-only">
-                  Start here
+                  Next block
                 </h2>
                 <TodayRoute
                   route={route}
@@ -240,7 +247,6 @@ export function RevisionSurface() {
                   onStart={openSession ? resume : begin}
                   startLabel={openSession ? "Resume session" : undefined}
                 />
-                <MasteryEvidence />
               </div>
             ) : null}
             {mode === "materials" ? <MaterialLibrary embedded /> : null}

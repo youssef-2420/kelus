@@ -1597,3 +1597,140 @@ body.is-paper-column .kelus-paper-body {
     transform: none;
   }
 }
+
+/* One-next Today — no planner under the CTA */
+body.is-paper-column .today-route-execution.is-one-next {
+  max-width: none;
+}
+
+body.is-paper-column .workbench-focus.is-one-next {
+  padding-bottom: 2rem;
+}
+
+/* Index as paper TOC */
+body.is-paper-column .surface-map.is-toc {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body.is-paper-column .surface-map.is-toc.is-empty {
+  display: grid;
+  gap: 16px;
+  padding: 8px 0 32px;
+}
+
+body.is-paper-column .index-toc {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
+}
+
+body.is-paper-column .index-toc > li {
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
+}
+
+body.is-paper-column .index-toc-row {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: 12px;
+  align-items: baseline;
+  width: 100%;
+  min-height: 64px;
+  padding: 14px 2px;
+  color: inherit;
+  text-decoration: none;
+}
+
+body.is-paper-column .index-toc-row:active {
+  transform: scale(0.99);
+}
+
+body.is-paper-column .index-toc-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-paper-column .index-toc-name {
+  display: block;
+  font-family: var(--font-ledger, Georgia, serif);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+body.is-paper-column .index-toc-meta {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.88rem;
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-paper-column .index-toc-row.is-start .index-toc-name,
+body.is-paper-column .index-toc-row.is-start .index-toc-meta {
+  color: var(--color-kelus, #1f6b45);
+}
+
+/* Binder: shelf first, add tucked under */
+.material-binder-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+.material-binder-stack > .material-add-page {
+  order: 4;
+  margin: 8px 0 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+}
+
+.material-binder-stack > .material-error {
+  order: 2;
+}
+
+.material-binder-stack > .material-shelf {
+  order: 1;
+}
+
+.material-binder-stack > .material-ready,
+.material-binder-stack > .concept-confirmation {
+  order: 0;
+}
+
+.material-binder-stack > .material-binder-note {
+  order: 5;
+}
+
+.material-add-page > summary {
+  cursor: pointer;
+  list-style: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-steel, #5c6570);
+}
+
+.material-add-page > summary::-webkit-details-marker {
+  display: none;
+}
+
+.material-add-page > summary:active {
+  transform: scale(0.98);
+}
+
+.material-add-page[open] > summary {
+  color: var(--color-ink, #111);
+}
+
+.material-add-page .material-ingest.is-embedded {
+  margin-top: 0;
+  padding-top: 0;
+  border: 0;
+}
+

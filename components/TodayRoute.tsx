@@ -1,13 +1,10 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { useState } from "react";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
-import { conciseReason, REASON_COPY } from "@/lib/learning-copy";
-import { confidenceLabel, percent } from "@/lib/format";
-import { useLearner } from "@/components/LearnerProvider";
-import { topicEvidence } from "@/domain/mastery-evidence";
+import { conciseReason } from "@/lib/learning-copy";
+import { confidenceLabel } from "@/lib/format";
 
 function citeLabel(source: { label: string; locator?: string | null } | undefined) {
   if (!source) return "Uses the current course model; no source is cited yet.";
@@ -16,6 +13,10 @@ function citeLabel(source: { label: string; locator?: string | null } | undefine
   return `Cited: ${source.label} · ${locator}.`;
 }
 
+/**
+ * Today is one next block — start it, then leave.
+ * The rest of the route lives in Index, not as a planner under the CTA.
+ */
 export function TodayRoute({
   route,
   concepts,
@@ -31,20 +32,22 @@ export function TodayRoute({
   onStart: () => void;
   startLabel?: string;
 }) {
-  const [openId, setOpenId] = useState<string | null>(null);
   const reduceMotion = useReducedMotion();
-  const { state } = useLearner();
-  const [first, ...remaining] = route.allocations;
+  const [first] = route.allocations;
 
   if (!first) {
     return (
       <div className="today-route-empty materials-empty">
         <p className="kicker">Today</p>
         <h2>No study action is ready yet.</h2>
-        <p>Add course material or open the map so Kelus can build a route.</p>
+        <p>Add a page to the binder, or open the index so Kelus can pick a first block.</p>
         <div className="today-route-empty-actions">
-          <Link className="cta" href="/materials">Add course material <span aria-hidden="true">→</span></Link>
-          <Link className="text-btn" href="/map">Open map</Link>
+          <Link className="cta" href="/today?section=materials">
+            Open binder <span aria-hidden="true">→</span>
+          </Link>
+          <Link className="text-btn" href="/today?section=map">
+            Open index
+          </Link>
         </div>
       </div>
     );
@@ -57,18 +60,19 @@ export function TodayRoute({
     .filter((item) => item.conceptId === first.conceptId && (item.kind === "retrieval" || item.kind === "self_rating"))
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
   const firstName = firstConcept?.name ?? "Mixed Retrieval";
-  const learnerEvidence = latestEvidence?.kind === "retrieval"
-    ? latestEvidence.outcome === "success"
-      ? "Latest recall was strong"
-      : latestEvidence.outcome === "partial"
-        ? "Latest recall was partial"
-        : "Latest recall was not yet secure"
-    : latestEvidence?.selfRating
-      ? `Initial familiarity: ${latestEvidence.selfRating.replace("_", " ")}`
-      : "No answer evidence yet";
+  const learnerEvidence =
+    latestEvidence?.kind === "retrieval"
+      ? latestEvidence.outcome === "success"
+        ? "Latest recall was strong"
+        : latestEvidence.outcome === "partial"
+          ? "Latest recall was partial"
+          : "Latest recall was not yet secure"
+      : latestEvidence?.selfRating
+        ? `Initial familiarity: ${latestEvidence.selfRating.replace("_", " ")}`
+        : "No answer evidence yet";
 
   return (
-    <div className="today-route-execution">
+    <div className="today-route-execution is-one-next">
       <motion.article
         className="today-lead-action"
         initial={reduceMotion ? false : { opacity: 0, y: 6 }}
@@ -76,7 +80,7 @@ export function TodayRoute({
         transition={{ duration: reduceMotion ? 0.1 : 0.24 }}
       >
         <div className="today-lead-label">
-          <strong>Start here</strong>
+          <strong>Next</strong>
           <span className="today-lead-mins">{first.minutes} min</span>
         </div>
         <div className="today-lead-main">
@@ -95,7 +99,11 @@ export function TodayRoute({
             <dl className="today-lead-evidence" aria-label={`Why ${firstName} is first`}>
               <div>
                 <dt>From your course</dt>
-                <dd>{firstSource ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}` : "No source cited yet"}</dd>
+                <dd>
+                  {firstSource
+                    ? `${firstSource.label}${firstSource.locator ? ` · ${firstSource.locator}` : ""}`
+                    : "No source cited yet"}
+                </dd>
               </div>
               <div>
                 <dt>From your answers</dt>
@@ -113,107 +121,6 @@ export function TodayRoute({
           </details>
         </footer>
       </motion.article>
-
-      {remaining.length ? (
-        <div className="today-queue-label">
-          <span>Next stops</span>
-          <small>{remaining.length}</small>
-        </div>
-      ) : null}
-
-      <ol className="today-plan-list">
-        {remaining.map((allocation, index) => {
-          const concept = concepts.find((item) => item.id === allocation.conceptId);
-          const evidence = concept ? topicEvidence(concept, state.snapshot.prompts, events, state.nowIso) : null;
-          const activity = activities.find((item) => item.conceptId === allocation.conceptId);
-          const isMixed = !concept || allocation.conceptId === "mixed-retrieval";
-          const name = concept?.name ?? "Mixed Retrieval";
-          const open = openId === allocation.conceptId;
-          const panelId = `plan-${allocation.conceptId}`;
-
-          return (
-            <motion.li layout={!reduceMotion} key={allocation.conceptId}>
-              <button
-                type="button"
-                aria-expanded={open}
-                aria-controls={panelId}
-                aria-label={`${name}, ${allocation.minutes} minutes. Why this now?`}
-                onClick={() => setOpenId(open ? null : allocation.conceptId)}
-              >
-                <span className="plan-index">{String(index + 2).padStart(2, "0")}</span>
-                <span className="plan-topic">
-                  <strong>{name}</strong>
-                </span>
-                <span className="plan-time">
-                  <strong>{allocation.minutes}</strong>
-                  <small>min</small>
-                </span>
-              </button>
-              <AnimatePresence initial={false}>
-                {open ? (
-                  <motion.div
-                    id={panelId}
-                    className="plan-reasoning"
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: reduceMotion ? 0.1 : 0.22, bounce: 0 }}
-                  >
-                    <p className="plan-why">{conciseReason(allocation.reasons)}</p>
-                    {concept ? (
-                      <p>
-                        <span>{evidence?.mastery == null ? "Not enough evidence" : percent(evidence.mastery)}</span> mastery on reviewed questions
-                      </p>
-                    ) : (
-                      <p>
-                        <span>Mix</span> short retrieval across fading topics
-                      </p>
-                    )}
-                    <div>
-                      <p className="kicker">Why now?</p>
-                      <ul>
-                        {allocation.reasons.slice(0, 4).map((reason) => (
-                          <li key={reason}>{REASON_COPY[reason]}</li>
-                        ))}
-                        {isMixed && !allocation.reasons.length ? (
-                          <li>Keeps weak topics warm without opening a full new block.</li>
-                        ) : null}
-                      </ul>
-                      <div className="plan-execution">
-                        <p className="kicker">Inside these {allocation.minutes} minutes</p>
-                        <ol aria-label={`Learning sequence for ${name}`}>
-                          {isMixed ? (
-                            <>
-                              <li>Quick retrieve</li>
-                              <li>Compare</li>
-                              <li>Mark certainty</li>
-                              <li>Reroute</li>
-                            </>
-                          ) : (
-                            <>
-                              <li>Read</li>
-                              <li>Retrieve</li>
-                              <li>Use</li>
-                              <li>Mark and reroute</li>
-                            </>
-                          )}
-                        </ol>
-                        <small>
-                          {activity?.sourceReferences[0]
-                            ? citeLabel(activity.sourceReferences[0])
-                            : isMixed
-                              ? "Pulls short prompts from topics already on today’s route."
-                              : "Uses the current course model; no source is cited yet."}
-                        </small>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
-            </motion.li>
-          );
-        })}
-      </ol>
     </div>
   );
 }

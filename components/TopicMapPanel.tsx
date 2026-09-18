@@ -1,21 +1,25 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { kelusDuration, kelusEase } from "@/components/motion";
-import { useCallback, useState } from "react";
-import { ConceptInspector } from "@/components/ConceptInspector";
-import { KnowledgeMap } from "@/components/KnowledgeMap";
+import Link from "next/link";
 import { useLearner } from "@/components/LearnerProvider";
+import { ConceptTitleTransition } from "@/components/PageTransition";
 import { generateRoute } from "@/domain/routing-engine";
-import { courseMastery } from "@/domain/scheduler";
+import { topicEvidence } from "@/domain/mastery-evidence";
+import { percent } from "@/lib/format";
 
-/** Topic map body for the shared revision surface (no page chrome). */
+function statusLabel(mastery: number | null, attempts: number) {
+  if (attempts < 1 || mastery == null) return "Not started";
+  if (mastery >= 0.8) return "Secure";
+  if (mastery >= 0.55) return "Developing";
+  return "Needs work";
+}
+
+/**
+ * Index is a paper table of contents — weight-ordered topics, one start mark.
+ * No graph, search chrome, or live inspector panel.
+ */
 export function TopicMapPanel() {
   const { state } = useLearner();
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const closeInspector = useCallback(() => setSelectedId(null), []);
-  const reduceMotion = useReducedMotion();
   const course = state.snapshot.courses[0];
   if (!course) return <p>No active course.</p>;
 
@@ -25,77 +29,58 @@ export function TopicMapPanel() {
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
   const exam = state.snapshot.exams.find((item) => item.courseId === course.id && item.isActive);
   const startConceptId = exam
-    ? generateRoute({
+    ? (generateRoute({
         concepts,
         relationships: state.snapshot.relationships,
         events: state.snapshot.events,
         exam,
         nowIso: state.nowIso,
-      }).allocations.find((item) => item.conceptId !== "mixed-retrieval")?.conceptId ?? null
+      }).allocations.find((item) => item.conceptId !== "mixed-retrieval")?.conceptId ?? null)
     : null;
-  const selected = concepts.find((concept) => concept.id === selectedId) ?? null;
-  const filtered = concepts.filter((item) => item.name.toLowerCase().includes(query.trim().toLowerCase()));
+
+  if (!concepts.length) {
+    return (
+      <div className="surface-map is-toc is-empty">
+        <p>No topics yet. Add a page in the binder, then confirm what this exam covers.</p>
+        <Link className="cta" href="/today?section=materials">
+          Open binder <span aria-hidden="true">→</span>
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <div className="surface-map is-luxury">
-      <div className="map-tools">
-        <label htmlFor="topic-filter">
-          <span className="sr-only">Find a topic</span>
-          <input
-            id="topic-filter"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Find a topic"
-          />
-        </label>
-        <span role="status">
-          {filtered.length}/{concepts.length}
-        </span>
-      </div>
-      <div className={`map-workspace${selected ? " is-inspecting" : ""}`}>
-        <div>
-          <KnowledgeMap
-            heading={null}
-            courseName={course.name}
-            mastery={courseMastery(concepts)}
-            concepts={filtered}
-            relationships={state.snapshot.relationships}
-            selectedId={selectedId}
-            startConceptId={startConceptId}
-            onSelect={(concept) => setSelectedId(concept.id)}
-          />
-          {query.trim() && !filtered.length ? (
-            <div className="map-no-match">
-              <p>No topics match “{query}”. Your course is unchanged.</p>
-              <button type="button" className="text-btn" onClick={() => setQuery("")}>
-                Clear search
-              </button>
-            </div>
-          ) : null}
-        </div>
-        <AnimatePresence initial={false} mode="wait">
-          {selected ? (
-            <motion.div
-              key={selected.id}
-              className="concept-inspector-wrap"
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 12 }}
-              transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.moderate, ease: kelusEase }}
-            >
-              <ConceptInspector
-                concept={selected}
-                concepts={concepts}
-                relationships={state.snapshot.relationships}
-                events={state.snapshot.events}
-                nowIso={state.nowIso}
-                onClose={closeInspector}
-              />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </div>
+    <div className="surface-map is-toc">
+      <ol className="index-toc" aria-label="Topics by exam weight">
+        {concepts.map((concept, index) => {
+          const evidence = topicEvidence(concept, state.snapshot.prompts, state.snapshot.events, state.nowIso);
+          const isStart = startConceptId === concept.id;
+          const label = statusLabel(evidence.mastery, concept.retrievalAttempts);
+          return (
+            <li key={concept.id} className={isStart ? "is-start" : undefined}>
+              <Link
+                href={`/concepts/${encodeURIComponent(concept.id)}`}
+                className={`index-toc-row${isStart ? " is-start" : ""}`}
+                transitionTypes={["nav-forward"]}
+                prefetch={true}
+              >
+                <span className="index-toc-num" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="index-toc-main">
+                  <ConceptTitleTransition id={concept.id}>
+                    <strong className="index-toc-name">{concept.name}</strong>
+                  </ConceptTitleTransition>
+                  <span className="index-toc-meta">
+                    {isStart ? "Start here" : label}
+                    {evidence.mastery == null ? "" : ` · ${percent(evidence.mastery)}`}
+                  </span>
+                </span>
+              </Link>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }

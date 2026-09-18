@@ -71,7 +71,7 @@ test("sessions expose a confirmed course source and its page", async () => {
   assert.doesNotMatch(page, /window\.open\(`\$\{URL\.createObjectURL/);
 });
 
-test("today exposes confidence while reroutes explain the evidence that changed", async () => {
+test("today exposes confidence for the next block only", async () => {
   const today = await source("components/TodayRoute.tsx");
   const page = await source("app/today/page.tsx");
   const surface = await source("components/RevisionSurface.tsx");
@@ -79,14 +79,13 @@ test("today exposes confidence while reroutes explain the evidence that changed"
   assert.match(today, /confidenceLabel/);
   assert.match(today, /From your course/);
   assert.match(today, /From your answers/);
-  assert.match(today, /Start here/);
+  assert.match(today, />Next</);
+  assert.match(today, /is-one-next/);
   assert.match(today, /startLabel \?\? `Start \$\{firstName\}`|Start \{firstName\}/);
-  assert.match(today, /Read/);
-  assert.match(today, /Retrieve/);
-  assert.match(today, /Use/);
-  assert.match(today, /Mark and reroute/);
-  assert.match(`${page}\n${surface}`, /route\.availableMinutes\} minutes/);
+  assert.doesNotMatch(today, /Next stops|today-plan-list|Mark and reroute/);
+  assert.match(surface, /next\.minutes\} min/);
   assert.doesNotMatch(`${page}\n${surface}`, /RouteKnowledgeMap/);
+  assert.doesNotMatch(surface, /<MasteryEvidence/);
   assert.match(store, /answer on \$\{concept\.name\} changed its mastery estimate/);
   assert.match(store, /higher learning value for the remaining time/);
 });

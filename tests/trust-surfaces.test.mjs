@@ -169,9 +169,12 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(home, /Set my exam/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
   assert.match(how, /Try sample \(~1 min\)/);
-  assert.match(surface, /<MasteryEvidence/);
+  assert.doesNotMatch(surface, /<MasteryEvidence/);
+  assert.match(await source("app/session/complete/page.tsx"), /<MasteryEvidence/);
   assert.doesNotMatch(surface, /Est\. readiness/);
   assert.match(await source("components/MasteryEvidence.tsx"), /not a predicted grade|not a grade prediction/);
+  assert.match(await source("components/TodayRoute.tsx"), /is-one-next/);
+  assert.doesNotMatch(await source("components/TodayRoute.tsx"), /Next stops/);
   assert.match(today, /get\("sample"\) === "1"/);
   assert.match(today, /Try sample \(~1 min\)/);
 });
