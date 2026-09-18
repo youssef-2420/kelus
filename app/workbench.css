@@ -2196,6 +2196,91 @@ body.is-session-booklet .study-reroute-sep {
   letter-spacing: 0;
 }
 
+/* Retrieve / Use — write on the page, not in a form */
+body.is-session-booklet .session-work {
+  display: grid;
+  gap: 12px;
+  justify-items: start;
+  width: 100%;
+}
+
+body.is-session-booklet .session-work > h1 {
+  margin: 0;
+  max-width: 22ch;
+}
+
+body.is-session-booklet .session-work-lede {
+  margin: 0;
+  max-width: 36ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.98rem;
+  font-weight: 450;
+  line-height: 1.45;
+}
+
+body.is-session-booklet .session-work-field,
+body.is-session-booklet textarea.session-work-field {
+  width: 100%;
+  min-height: 11rem;
+  margin: 4px 0 0;
+  padding: 18px 0 20px;
+  border: 0;
+  border-radius: 0;
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  background:
+    repeating-linear-gradient(
+      transparent,
+      transparent 1.55rem,
+      color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent) 1.55rem,
+      color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent) calc(1.55rem + 1px)
+    );
+  background-origin: content-box;
+  box-shadow: none;
+  color: var(--color-ink, #12160f);
+  font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
+  font-size: 1.08rem;
+  font-weight: 440;
+  letter-spacing: -0.015em;
+  line-height: 1.55rem;
+  resize: vertical;
+}
+
+body.is-session-booklet .session-work-field:focus,
+body.is-session-booklet .session-work-field:focus-visible {
+  outline: none;
+  border-bottom-color: color-mix(in srgb, var(--color-kelus, #1f6b45) 55%, transparent);
+}
+
+body.is-session-booklet .session-work-field::placeholder {
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  font-weight: 400;
+}
+
+body.is-session-booklet .session-work .session-help-page {
+  width: 100%;
+  margin: 0;
+}
+
+body.is-session-booklet .session-work-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  margin-top: 4px;
+}
+
+body.is-session-booklet .session-work-actions .cta:disabled {
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body.is-session-booklet .session-work-field,
+  body.is-session-booklet textarea.session-work-field {
+    background: #fff;
+  }
+}
+
 @media (prefers-reduced-transparency: reduce) {
   body.is-paper-column .kelus-space.is-paper,
   body.is-session-booklet {

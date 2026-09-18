@@ -389,8 +389,10 @@ function SessionBody() {
               transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5, delay: 0.1 }}
             >
               {routeOrderChanged
-                ? `${routeChange?.movedConceptId ? `${state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "A concept"} moved forward. ` : ""}${routeChange?.explanation ?? "Your latest answer changed the best order for the remaining time."}`
-                : `Your ${lastOutcome === "failure" ? "not-yet" : "partial"} answer updated the estimate. The remaining order still has the highest expected value, so Kelus kept it.`}
+                ? `${routeChange?.movedConceptId ? `${state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "A topic"} moved earlier. ` : ""}${routeChange?.explanation ?? "Your answer changed what to practise next with the time you have."}`
+                : lastOutcome === "failure"
+                  ? "That answer was thin, so the estimate moved — but this order is still the best use of the time left."
+                  : "Part of it landed. The estimate moved, and this order is still the strongest path for what’s left."}
             </motion.p>
             {routeOrderChanged && routeChange?.movedConceptId ? (
               <motion.p
@@ -418,9 +420,9 @@ function SessionBody() {
                 {percent(activeConcept.mastery)}
               </span>
               <span className="study-reroute-sep"> · </span>
-              {evaluation?.label ?? (lastOutcome === "failure" ? "Not enough evidence yet" : "Partial evidence")}
+              {evaluation?.label ?? (lastOutcome === "failure" ? "Still shaky" : "Partly there")}
               <span className="study-reroute-sep"> · </span>
-              {routeOrderChanged ? "Order changed" : "Order kept"}
+              {routeOrderChanged ? "New order" : "Same order"}
             </motion.p>
             <motion.button
               type="button"
@@ -476,7 +478,7 @@ function SessionBody() {
               animate={{ opacity: 1 }}
               transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.18, ease: kelusEase }}
             >
-              {concept.name} stays on the route. Next is chosen from what’s left.
+              {concept.name} is noted. Next comes from what’s left.
             </motion.p>
             <motion.button
               type="button"
@@ -533,15 +535,34 @@ function SessionBody() {
                   </div>
                 ) : <p className="session-source-note">Sample course model</p>}
                 {openingSource ? <p role="status" className="session-source-note">Opening your source…</p> : null}
-                <button type="button" className="cta" onClick={() => { setPhase("retrieve"); startedAt.current = performance.now(); }}>Retrieve it <span aria-hidden="true">→</span></button>
+                <motion.button
+                  type="button"
+                  className="cta"
+                  onClick={() => { setPhase("retrieve"); startedAt.current = performance.now(); }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.97 }}
+                  transition={{ type: "spring", bounce: 0, duration: 0.28 }}
+                >
+                  Retrieve it <span aria-hidden="true">→</span>
+                </motion.button>
               </div>
             ) : null}
 
             {phase === "retrieve" ? (
-              <>
+              <div className="session-work is-retrieve">
+                <p className="study-mark-kicker">Retrieve</p>
                 <h1>{activity.retrieve.prompt}</h1>
-                <label htmlFor="retrieve-answer">Write from memory before checking the explanation.</label>
-                <textarea id="retrieve-answer" autoFocus value={retrieveAnswer} onChange={(event) => setRetrieveAnswer(event.target.value)} placeholder="Explain it in your own words…" />
+                <label className="session-work-lede" htmlFor="retrieve-answer">
+                  Close the page. Write it in your own words.
+                </label>
+                <textarea
+                  id="retrieve-answer"
+                  className="session-work-field"
+                  autoFocus
+                  value={retrieveAnswer}
+                  onChange={(event) => setRetrieveAnswer(event.target.value)}
+                  placeholder="From memory…"
+                  rows={6}
+                />
                 <details
                   className="session-help-page"
                   open={helpMode ? true : undefined}
@@ -557,23 +578,60 @@ function SessionBody() {
                   </div>
                   <AnimatePresence mode="wait">{helpCopy ? <motion.p key={helpMode} initial={{ opacity: 0, y: reduceMotion ? 0 : -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{helpCopy}</motion.p> : null}</AnimatePresence>
                 </details>
-                <button type="button" className="cta" disabled={!retrieveAnswer.trim()} onClick={() => { setHelpMode(null); setPhase("apply"); }}>Continue <span aria-hidden="true">→</span></button>
-                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("learn"); }}>Back</button>
-              </>
+                <div className="session-work-actions">
+                  <motion.button
+                    type="button"
+                    className="cta"
+                    disabled={!retrieveAnswer.trim()}
+                    onClick={() => { setHelpMode(null); setPhase("apply"); }}
+                    whileTap={reduceMotion || !retrieveAnswer.trim() ? undefined : { scale: 0.97 }}
+                    transition={{ type: "spring", bounce: 0, duration: 0.28 }}
+                  >
+                    Continue <span aria-hidden="true">→</span>
+                  </motion.button>
+                  <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("learn"); }}>
+                    Back
+                  </button>
+                </div>
+              </div>
             ) : null}
 
             {phase === "apply" ? (
-              <>
+              <div className="session-work is-apply">
+                <p className="study-mark-kicker">Use</p>
                 <h1>{activity.apply.prompt}</h1>
-                <label htmlFor="application-answer">Use the idea in a different situation.</label>
-                <textarea id="application-answer" autoFocus value={applicationAnswer} onChange={(event) => setApplicationAnswer(event.target.value)} placeholder="Work through the new case…" />
+                <label className="session-work-lede" htmlFor="application-answer">
+                  Same idea, new situation.
+                </label>
+                <textarea
+                  id="application-answer"
+                  className="session-work-field"
+                  autoFocus
+                  value={applicationAnswer}
+                  onChange={(event) => setApplicationAnswer(event.target.value)}
+                  placeholder="Work the new case…"
+                  rows={6}
+                />
                 <details className="session-help-page" open={helpMode === "hint" || undefined}>
                   <summary>Need a hint?</summary>
                   <p>{activity.apply.hint}</p>
                 </details>
-                <button type="button" className="cta" disabled={!applicationAnswer.trim()} onClick={checkAnswers}>Check my thinking <span aria-hidden="true">→</span></button>
-                <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("retrieve"); }}>Back</button>
-              </>
+                <div className="session-work-actions">
+                  <motion.button
+                    type="button"
+                    className="cta"
+                    disabled={!applicationAnswer.trim()}
+                    onClick={checkAnswers}
+                    whileTap={reduceMotion || !applicationAnswer.trim() ? undefined : { scale: 0.97 }}
+                    transition={{ type: "spring", bounce: 0, duration: 0.28 }}
+                  >
+                    Check my thinking <span aria-hidden="true">→</span>
+                  </motion.button>
+                  <button type="button" className="text-btn study-back" onClick={() => { setHelpMode(null); setPhase("retrieve"); }}>
+                    Back
+                  </button>
+                </div>
+              </div>
             ) : null}
 
             {phase === "evaluate" ? (

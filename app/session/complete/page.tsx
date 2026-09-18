@@ -117,13 +117,13 @@ function CompleteBody() {
           <p className="kicker">Come back tomorrow</p>
           <h2 id="complete-return-title">
             {nextStopName
-              ? <>Tomorrow opens on <strong>{nextStopName}</strong>.</>
+              ? <>When you return, start with <strong>{nextStopName}</strong>.</>
               : "Your route stays on this device — open Today when you come back."}
           </h2>
           <p>
             {dueCount > 0
-              ? `${dueCount} concept${dueCount === 1 ? "" : "s"} already due for review as memory fades.`
-              : "Tomorrow’s route will shift as retention fades — no need to rebuild from scratch."}
+              ? `${dueCount} topic${dueCount === 1 ? "" : "s"} already due as memory fades.`
+              : "The route will shift as retention fades — no need to rebuild from scratch."}
           </p>
           <div className="complete-return-actions">
             <Link href="/today" className="cta">
