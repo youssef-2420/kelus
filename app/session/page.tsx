@@ -31,8 +31,6 @@ const PHASE_LABEL: Record<"learn" | "retrieve" | "apply" | "evaluate", string> =
   evaluate: "Mark",
 };
 
-const STEP_INDEX = { learn: 1, retrieve: 2, apply: 3, evaluate: 4 } as const;
-
 function activityFallback(concept: Concept, promptText: string, modelAnswer: string): LearningActivity {
   return {
     id: `activity-${concept.id}`,
@@ -175,10 +173,10 @@ function SessionBody() {
   const activeConcept = concept;
   const activePrompt = prompt;
   const activeActivity = activity;
-  const routeMinutes = session.latestRoute.allocations.find((item) => item.conceptId === concept.id)?.minutes ?? concept.estimatedMinutes;
-  const visibleStep = phase === "result" || phase === "reroute" ? 4 : STEP_INDEX[phase];
-  const totalSteps = Math.max(total * 4, 1);
-  const completedSteps = Math.min(index * 4 + visibleStep, totalSteps);
+  const folioPhase =
+    phase === "result" || phase === "reroute"
+      ? "Mark"
+      : PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"];
 
   function checkAnswers(event: SyntheticEvent) {
     responseTimeMs.current = Math.max(0, Math.round(event.timeStamp - startedAt.current));
@@ -312,11 +310,10 @@ function SessionBody() {
 
   return (
     <main id="main" className={`study-shell${sourcePanel ? " is-source-open" : ""}`}>
-      <div className="study-context">
+      <div className="study-context is-folio">
         <span>
-          <b>{concept.name}</b>
           <small>
-            {index + 1} of {total}
+            {index + 1} of {total} · {folioPhase}
           </small>
         </span>
         <details className="study-more" open={confirmDiscard || undefined}>
@@ -344,22 +341,6 @@ function SessionBody() {
           )}
         </details>
       </div>
-      <div className="study-progress" role="progressbar" aria-label="Session progress" aria-valuenow={completedSteps} aria-valuemin={0} aria-valuemax={totalSteps} aria-valuetext={`Concept ${index + 1} of ${total}, step ${visibleStep} of 4`}><i style={{ transform: `scaleX(${completedSteps / totalSteps})` }} /></div>
-      <nav className="study-wayfinding" aria-label="Revision pages">
-        <p className="study-page-mark">
-          <span>{visibleStep} / 4</span>
-          {phase === "result" || phase === "reroute"
-            ? "Mark"
-            : PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}
-        </p>
-        <ol className="study-steps" aria-label="Revision pages">
-          {(["learn", "retrieve", "apply", "evaluate"] as const).map((step) => (
-            <li key={step} aria-current={visibleStep === STEP_INDEX[step] ? "step" : undefined}>
-              {PHASE_LABEL[step]}
-            </li>
-          ))}
-        </ol>
-      </nav>
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (

@@ -53,11 +53,7 @@ export function SiteHeader() {
           Kelus
         </Link>
 
-        {inSession ? (
-          <p className="site-session-label">Open pages</p>
-        ) : inProduct ? (
-          <p className="site-space-label">Course space</p>
-        ) : (
+        {inSession ? null : inProduct ? null : (
           <nav className="site-nav" aria-label="Primary navigation">
             {visibleLinks.map((link) => {
               const active = link.matches.some((prefix) => pathname.startsWith(prefix));

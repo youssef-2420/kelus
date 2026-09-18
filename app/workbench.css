@@ -1728,9 +1728,99 @@ body.is-paper-column .index-toc-row.is-start .index-toc-meta {
   color: var(--color-ink, #111);
 }
 
-.material-add-page .material-ingest.is-embedded {
-  margin-top: 0;
-  padding-top: 0;
+/* Booklet page — Today is the topic, not a title stack */
+body.is-booklet-page .today-lead-action.is-page {
+  display: grid;
+  gap: 28px;
+  padding: 48px 0 64px;
   border: 0;
+  background: transparent;
+  box-shadow: none;
 }
+
+body.is-booklet-page .today-page-folio {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-booklet-page .today-lead-action.is-page h1 {
+  margin: 0;
+  max-width: 14ch;
+  font-family: var(--font-ledger, Georgia, serif);
+  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  color: var(--color-ink, #111);
+}
+
+body.is-booklet-page .today-lead-action.is-page .today-start {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+body.is-booklet-page .workbench-focus.is-booklet-page {
+  padding-top: 8px;
+}
+
+body.is-booklet-page .kelus-paper-bar {
+  padding-top: 16px;
+  padding-bottom: 8px;
+}
+
+body.is-booklet-page .kelus-paper-course {
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+body.is-booklet-page .kelus-paper-meta {
+  font-size: 0.8rem;
+}
+
+body.is-booklet-page .site-space-label,
+body.is-booklet-page .site-session-label {
+  display: none;
+}
+
+/* Session folio — quiet running head, not a cockpit */
+body.is-session-booklet .study-context.is-folio,
+.study-shell .study-context.is-folio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  margin: 0 auto;
+  padding: 12px 0 8px;
+  border: 0;
+  text-transform: none;
+  letter-spacing: 0;
+  background: transparent;
+}
+
+.study-shell .study-context.is-folio small {
+  font-size: 0.88rem;
+  font-weight: 450;
+  color: var(--color-steel, #5c6570);
+}
+
+.study-shell .study-progress,
+.study-shell .study-wayfinding {
+  display: none;
+}
+
+body.is-product .site-header.is-space .site-space-label,
+body .site-header.is-session .site-session-label {
+  display: none;
+}
+
+body.is-kelus-space .site-header.is-product.is-space,
+body .site-header.is-session {
+  min-height: 52px;
+}
+
 

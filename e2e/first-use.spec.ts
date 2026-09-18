@@ -63,8 +63,9 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: "Use this result" }).click();
 
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Today", exact: true })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true })).toBeVisible();
+  await expect(page.locator("#today-title")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Today", exact: true })).toHaveCount(0);
   await expect(page.getByText(/Molecular Biology/).first()).toBeVisible();
   for (const width of [320, 375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
@@ -89,8 +90,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page).not.toHaveURL(/section=/);
-  await page.locator(".today-evidence-disclosure > summary").click();
-  await expect(page.getByText("From your course", { exact: true })).toBeVisible();
+  await expect(page.locator(".today-evidence-disclosure")).toHaveCount(0);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-today-mobile.png", fullPage: true });
   const start = page.locator("button.today-start");

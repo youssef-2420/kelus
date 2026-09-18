@@ -34,8 +34,8 @@ function hrefForMode(mode: SurfaceMode) {
 }
 
 /**
- * Kelus course space — one paper column.
- * Thin top strip for section switching; content is the page.
+ * Course space as a booklet page.
+ * Thin strip for section switching; Today’s topic is the page title.
  */
 export function RevisionSurface() {
   const router = useRouter();
@@ -56,8 +56,8 @@ export function RevisionSurface() {
   }, [mode]);
 
   useEffect(() => {
-    document.body.classList.add("is-kelus-space", "is-paper-column");
-    return () => document.body.classList.remove("is-kelus-space", "is-paper-column");
+    document.body.classList.add("is-kelus-space", "is-paper-column", "is-booklet-page");
+    return () => document.body.classList.remove("is-kelus-space", "is-paper-column", "is-booklet-page");
   }, []);
 
   useEffect(() => {
@@ -83,9 +83,8 @@ export function RevisionSurface() {
     return (
       <main id="main" className="kelus-space is-empty is-paper">
         <section className="materials-empty">
-          <p className="kicker">Today</p>
           <h1>Set your exam first.</h1>
-          <p>Kelus needs a course and exam date before it can build today’s route.</p>
+          <p>Kelus needs a course and exam date before it can open today’s page.</p>
           <button type="button" className="cta" onClick={() => reset()}>
             Start over
           </button>
@@ -140,7 +139,7 @@ export function RevisionSurface() {
         <div className="kelus-paper-bar-course">
           <p className="kelus-paper-course">{course.name}</p>
           <p className="kelus-paper-meta">
-            Exam in {days} day{days === 1 ? "" : "s"}
+            {days} day{days === 1 ? "" : "s"} to exam
           </p>
         </div>
 
@@ -192,37 +191,27 @@ export function RevisionSurface() {
       </header>
 
       <main id="main" className="kelus-paper-page kelus-space-stage">
-        <header className="kelus-paper-head kelus-space-top">
-          <div className="kelus-space-identity">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.h1
-              key={modeMeta.label}
-              id="today-title"
-              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
-              transition={{ duration: reduceMotion ? 0.1 : kelusDuration.fast, ease: kelusEase }}
-            >
-              {modeMeta.label}
-            </motion.h1>
-          </AnimatePresence>
-          <p className="kelus-paper-lede kelus-space-lede">
-            {mode === "today"
-              ? (() => {
-                  const next = route.allocations[0];
-                  const nextName =
-                    concepts.find((item) => item.id === next?.conceptId)?.name ??
-                    (next ? "Mixed retrieval" : null);
-                  return next && nextName
-                    ? `${next.minutes} min · ${nextName}`
-                    : "One block when the route is ready.";
-                })()
-              : mode === "materials"
-                ? "Pages for this exam."
-                : "Topics by exam weight."}
-          </p>
-          </div>
-        </header>
+        {mode !== "today" ? (
+          <header className="kelus-paper-head kelus-space-top is-section">
+            <div className="kelus-space-identity">
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.h1
+                  key={modeMeta.label}
+                  id="section-title"
+                  initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
+                  transition={{ duration: reduceMotion ? 0.1 : kelusDuration.fast, ease: kelusEase }}
+                >
+                  {modeMeta.label}
+                </motion.h1>
+              </AnimatePresence>
+              <p className="kelus-paper-lede kelus-space-lede">
+                {mode === "materials" ? "Pages for this exam." : "Topics by exam weight."}
+              </p>
+            </div>
+          </header>
+        ) : null}
 
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
@@ -235,17 +224,14 @@ export function RevisionSurface() {
             transition={panelTransition}
           >
             {mode === "today" ? (
-              <div className="workbench-focus is-ready is-one-next" aria-labelledby="today-lead-heading">
-                <h2 id="today-lead-heading" className="today-workbench-heading sr-only">
-                  Next block
-                </h2>
+              <div className="workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
                 <TodayRoute
                   route={route}
                   concepts={concepts}
                   activities={snapshot.learningActivities}
                   events={snapshot.events}
                   onStart={openSession ? resume : begin}
-                  startLabel={openSession ? "Resume session" : undefined}
+                  startLabel={openSession ? "Resume" : undefined}
                 />
               </div>
             ) : null}
