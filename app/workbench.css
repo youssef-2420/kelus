@@ -1394,3 +1394,183 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   font-size: 0.9rem;
 }
 
+
+/* ── Paper column: no permanent rail ── */
+body.is-paper-column .kelus-space.is-paper {
+  display: block;
+  min-height: calc(100vh - 64px);
+  background: #fff;
+}
+
+body.is-paper-column .kelus-paper-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px 24px;
+  width: min(42rem, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 20px 0 14px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
+}
+
+body.is-paper-column .kelus-paper-bar-course {
+  min-width: 0;
+  flex: 1 1 10rem;
+}
+
+body.is-paper-column .kelus-paper-course {
+  margin: 0;
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-ink, #12160f);
+}
+
+body.is-paper-column .kelus-paper-meta {
+  margin: 2px 0 0;
+  font-size: 0.82rem;
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-paper-column .kelus-paper-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+body.is-paper-column .kelus-paper-nav button {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 85%, transparent);
+  font-size: 0.95rem;
+  font-weight: 450;
+  letter-spacing: -0.01em;
+  box-shadow: none;
+}
+
+body.is-paper-column .kelus-paper-nav button + button {
+  border-left: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+}
+
+body.is-paper-column .kelus-paper-nav button.is-active,
+body.is-paper-column .kelus-paper-nav button[aria-pressed="true"] {
+  color: var(--color-kelus, #1f6b45);
+  font-weight: 600;
+  background: transparent;
+  box-shadow: none;
+  outline: 0;
+}
+
+body.is-paper-column .kelus-paper-nav button:active {
+  transform: scale(0.97);
+}
+
+body.is-paper-column .kelus-paper-more {
+  position: relative;
+  margin: 0;
+}
+
+body.is-paper-column .kelus-paper-more > summary {
+  list-style: none;
+  cursor: pointer;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
+  font-size: 0.85rem;
+  font-weight: 450;
+}
+
+body.is-paper-column .kelus-paper-more > summary::-webkit-details-marker {
+  display: none;
+}
+
+body.is-paper-column .kelus-paper-more > summary:hover,
+body.is-paper-column .kelus-paper-more > summary:focus-visible {
+  color: var(--color-steel, #5c6570);
+}
+
+body.is-paper-column .kelus-paper-more .today-reset-confirm,
+body.is-paper-column .kelus-paper-more > .text-btn {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 3;
+  min-width: 11rem;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+}
+
+body.is-paper-column .kelus-paper-page.kelus-space-stage {
+  display: block;
+  width: min(42rem, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 28px 0 64px;
+  background: transparent;
+}
+
+body.is-paper-column .kelus-paper-head.kelus-space-top {
+  display: block;
+  margin: 0 0 28px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
+}
+
+body.is-paper-column .kelus-paper-head .kelus-space-identity {
+  max-width: none;
+}
+
+body.is-paper-column .kelus-paper-head h1 {
+  margin: 0;
+  font-family: var(--font-source-serif), Literata, Georgia, serif;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 440;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+body.is-paper-column .kelus-paper-lede {
+  margin: 10px 0 0;
+  max-width: 42ch;
+  color: var(--color-steel, #5c6570);
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+body.is-paper-column .kelus-paper-body {
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  body.is-paper-column .kelus-paper-bar,
+  body.is-paper-column .kelus-paper-page.kelus-space-stage {
+    width: calc(100% - 32px);
+  }
+
+  body.is-paper-column .kelus-paper-bar {
+    padding-top: 16px;
+  }
+
+  body.is-paper-column .kelus-paper-nav button {
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.is-paper-column .kelus-paper-nav button:active {
+    transform: none;
+  }
+}

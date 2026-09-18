@@ -15,10 +15,10 @@ import { trackEvent } from "@/lib/analytics";
 
 export type SurfaceMode = "today" | "materials" | "map";
 
-const MODES: Array<{ id: SurfaceMode; label: string; hint: string }> = [
-  { id: "today", label: "Today", hint: "Your stops" },
-  { id: "materials", label: "Binder", hint: "Course pages" },
-  { id: "map", label: "Index", hint: "Weak first" },
+const MODES: Array<{ id: SurfaceMode; label: string }> = [
+  { id: "today", label: "Today" },
+  { id: "materials", label: "Binder" },
+  { id: "map", label: "Index" },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };
@@ -35,8 +35,8 @@ function hrefForMode(mode: SurfaceMode) {
 }
 
 /**
- * Kelus course space — one page for the whole product.
- * YouLearn-like spatial model (rail + stage), Kelus booklet craft.
+ * Kelus course space — one paper column.
+ * Thin top strip for section switching; content is the page.
  */
 export function RevisionSurface() {
   const router = useRouter();
@@ -57,8 +57,8 @@ export function RevisionSurface() {
   }, [mode]);
 
   useEffect(() => {
-    document.body.classList.add("is-kelus-space");
-    return () => document.body.classList.remove("is-kelus-space");
+    document.body.classList.add("is-kelus-space", "is-paper-column");
+    return () => document.body.classList.remove("is-kelus-space", "is-paper-column");
   }, []);
 
   useEffect(() => {
@@ -82,7 +82,7 @@ export function RevisionSurface() {
 
   if (!course || !exam) {
     return (
-      <main id="main" className="kelus-space is-empty">
+      <main id="main" className="kelus-space is-empty is-paper">
         <section className="materials-empty">
           <p className="kicker">Today</p>
           <h1>Set your exam first.</h1>
@@ -131,46 +131,21 @@ export function RevisionSurface() {
     router.push(`/session?id=${openSession.id}`);
   }
 
-  const resetControl = (
-    <details className="kelus-space-rail-more" open={confirmReset || undefined}>
-      <summary>More</summary>
-      {confirmReset ? (
-        <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
-          <span>Erase this route?</span>
-          <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>
-            Cancel
-          </button>
-          <button
-            type="button"
-            className="text-btn is-danger"
-            onClick={() => {
-              setConfirmReset(false);
-              reset();
-            }}
-          >
-            Start over
-          </button>
-        </span>
-      ) : (
-        <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
-          Start over
-        </button>
-      )}
-    </details>
-  );
-
   const panelTransition = reduceMotion
     ? { duration: 0.12, ease: kelusEase }
     : { type: "spring" as const, bounce: 0, duration: 0.4 };
 
   return (
-    <section className="kelus-space" aria-label="Revision workbench">
-      <aside className="kelus-space-rail" aria-label="Course space">
-        <div className="kelus-space-rail-brand">
-          <p className="kelus-space-rail-course">{course.name}</p>
+    <section className="kelus-space is-paper" aria-label="Revision workbench">
+      <header className="kelus-paper-bar">
+        <div className="kelus-paper-bar-course">
+          <p className="kelus-paper-course">{course.name}</p>
+          <p className="kelus-paper-meta">
+            Exam in {days} day{days === 1 ? "" : "s"}
+          </p>
         </div>
 
-        <nav className="kelus-space-nav revision-surface-modes" aria-label="Revision sections">
+        <nav className="kelus-paper-nav kelus-space-nav revision-surface-modes" aria-label="Revision sections">
           {MODES.map((item) => {
             const active = item.id === mode;
             return (
@@ -184,58 +159,72 @@ export function RevisionSurface() {
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={pressSpring}
               >
-                <span className="kelus-space-nav-label" aria-hidden="true">
-                  {item.label}
-                </span>
-                <span className="kelus-space-nav-hint" aria-hidden="true">
-                  {item.hint}
-                </span>
+                {item.label}
               </motion.button>
             );
           })}
         </nav>
 
-        <div className="kelus-space-rail-foot">
-          <p className="kelus-space-rail-meta">
-            Exam in {days} day{days === 1 ? "" : "s"}
-          </p>
-          {resetControl}
-        </div>
-      </aside>
-
-      <main id="main" className="kelus-space-stage">
-        <header className="kelus-space-top">
-          <div className="kelus-space-identity">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.h1
-                key={modeMeta.label}
-                id="today-title"
-                initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
-                transition={{ duration: reduceMotion ? 0.1 : kelusDuration.fast, ease: kelusEase }}
+        <details className="kelus-paper-more" open={confirmReset || undefined}>
+          <summary>More</summary>
+          {confirmReset ? (
+            <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
+              <span>Erase this route?</span>
+              <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="text-btn is-danger"
+                onClick={() => {
+                  setConfirmReset(false);
+                  reset();
+                }}
               >
-                {modeMeta.label}
-              </motion.h1>
-            </AnimatePresence>
-            <p className="kelus-space-lede">
-              {mode === "today"
-                ? <>{course.name} · {route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
-                : mode === "materials"
-                  ? `${course.name} — pages ready to open.`
-                  : `${course.name} — weak topics and today’s start.`}
-            </p>
+                Start over
+              </button>
+            </span>
+          ) : (
+            <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
+              Start over
+            </button>
+          )}
+        </details>
+      </header>
+
+      <main id="main" className="kelus-paper-page kelus-space-stage">
+        <header className="kelus-paper-head kelus-space-top">
+          <div className="kelus-space-identity">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.h1
+              key={modeMeta.label}
+              id="today-title"
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
+              transition={{ duration: reduceMotion ? 0.1 : kelusDuration.fast, ease: kelusEase }}
+            >
+              {modeMeta.label}
+            </motion.h1>
+          </AnimatePresence>
+          <p className="kelus-paper-lede kelus-space-lede">
+            {mode === "today"
+              ? <>{route.availableMinutes} minutes today<span className="today-brief-exam"> · target {exam.targetPercent}%.</span></>
+              : mode === "materials"
+                ? "Pages for this exam, ready to open."
+                : "Weak topics and today’s start."}
+          </p>
           </div>
         </header>
 
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
             key={mode}
-            className="kelus-space-panel revision-surface-panel"
+            className="kelus-paper-body kelus-space-panel revision-surface-panel"
             custom={direction}
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * 14 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: direction * -10 }}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
             transition={panelTransition}
           >
             {mode === "today" ? (
