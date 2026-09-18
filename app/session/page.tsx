@@ -414,7 +414,9 @@ function SessionBody() {
             >
               <span className="study-mark-from">{percent(masteryBefore)}</span>
               <span className="study-mark-arrow" aria-hidden="true"> → </span>
-              <span className="study-mark-to">{percent(activeConcept.mastery)}</span>
+              <span className={`study-mark-to${activeConcept.mastery < masteryBefore ? " is-down" : ""}`}>
+                {percent(activeConcept.mastery)}
+              </span>
               <span className="study-reroute-sep"> · </span>
               {evaluation?.label ?? (lastOutcome === "failure" ? "Not enough evidence yet" : "Partial evidence")}
               <span className="study-reroute-sep"> · </span>

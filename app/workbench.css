@@ -2184,6 +2184,10 @@ body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to {
   color: var(--color-kelus, #1f6b45);
 }
 
+body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to.is-down {
+  color: var(--color-ink, #12160f);
+}
+
 body.is-session-booklet .study-reroute-sep {
   color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
   font-family: var(--font-sans, system-ui, sans-serif);
