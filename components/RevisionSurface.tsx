@@ -2,11 +2,13 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { kelusDuration, kelusEase } from "@/components/motion";
+import { useAuth } from "@/components/AuthProvider";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
@@ -42,6 +44,7 @@ export function RevisionSurface() {
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion() === true;
   const { state, start, reset } = useLearner();
+  const auth = useAuth();
   const [confirmReset, setConfirmReset] = useState(false);
   const mode = modeFromSection(searchParams.get("section"));
   const [direction, setDirection] = useState(1);
@@ -137,6 +140,9 @@ export function RevisionSurface() {
     <section className="kelus-space is-paper" aria-label="Revision workbench">
       <header className="kelus-paper-bar">
         <div className="kelus-paper-bar-course">
+          <Link href="/" className="kelus-paper-home" aria-label="Kelus home">
+            Kelus
+          </Link>
           <p className="kelus-paper-course">{course.name}</p>
           <p className="kelus-paper-meta">
             {days} day{days === 1 ? "" : "s"} to exam
@@ -183,9 +189,20 @@ export function RevisionSurface() {
               </button>
             </span>
           ) : (
-            <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
-              Start over
-            </button>
+            <>
+              {auth.user ? (
+                <button type="button" className="text-btn" onClick={() => auth.signOut()}>
+                  Sign out
+                </button>
+              ) : auth.configured ? (
+                <button type="button" className="text-btn" onClick={auth.openDialog}>
+                  Sign in
+                </button>
+              ) : null}
+              <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
+                Start over
+              </button>
+            </>
           )}
         </details>
       </header>

@@ -285,6 +285,80 @@
   }
 }
 
+/* Shell collapse — course space has no site header; paper bar is the only chrome */
+body.is-kelus-space .site-header.is-product.is-space {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+body.is-kelus-space .kelus-space.is-paper {
+  min-height: 100vh;
+}
+
+body.is-kelus-space .kelus-paper-home {
+  display: inline-block;
+  margin: 0 0 2px;
+  color: var(--color-ink, #111);
+  font-family: var(--font-ledger, Georgia, serif);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+body.is-kelus-space .kelus-paper-home:active {
+  transform: scale(0.98);
+}
+
+body.is-kelus-space .kelus-paper-bar-course {
+  display: grid;
+  gap: 2px;
+}
+
+body.is-kelus-space .kelus-paper-more .text-btn + .text-btn {
+  display: block;
+}
+
+/* Session: Close only — no brand chrome fighting the page */
+body.is-session-booklet .site-header.is-session {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+  pointer-events: none;
+}
+
+.study-folio-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.study-shell .study-close {
+  min-height: 40px;
+  padding: 0 2px;
+  color: var(--color-steel, #5c6570);
+  font-size: 0.9rem;
+  font-weight: 450;
+}
+
+.study-shell .study-close:active {
+  transform: scale(0.97);
+}
+
 /* Kelus course space — YouLearn spatial model, booklet craft */
 body.is-kelus-space .site-header.is-space {
   border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);

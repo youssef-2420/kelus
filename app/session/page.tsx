@@ -316,30 +316,40 @@ function SessionBody() {
             {index + 1} of {total} · {folioPhase}
           </small>
         </span>
-        <details className="study-more" open={confirmDiscard || undefined}>
-          <summary aria-label="More session options">More</summary>
-          {confirmDiscard ? (
-            <span className="today-reset-confirm study-discard" role="group" aria-label="Confirm discard block">
-              <span>Discard this block?</span>
-              <button type="button" className="text-btn" onClick={() => setConfirmDiscard(false)}>Keep</button>
-              <button
-                type="button"
-                className="text-btn is-danger"
-                onClick={() => {
-                  trackEvent({ name: "session_abandoned" });
-                  abandon(session.id);
-                  router.push("/today");
-                }}
-              >
-                Discard
+        <div className="study-folio-actions">
+          <details className="study-more" open={confirmDiscard || undefined}>
+            <summary aria-label="More session options">More</summary>
+            {confirmDiscard ? (
+              <span className="today-reset-confirm study-discard" role="group" aria-label="Confirm discard block">
+                <span>Discard this block?</span>
+                <button type="button" className="text-btn" onClick={() => setConfirmDiscard(false)}>Keep</button>
+                <button
+                  type="button"
+                  className="text-btn is-danger"
+                  onClick={() => {
+                    trackEvent({ name: "session_abandoned" });
+                    abandon(session.id);
+                    router.push("/today");
+                  }}
+                >
+                  Discard
+                </button>
+              </span>
+            ) : (
+              <button type="button" className="text-btn study-discard-trigger" onClick={() => setConfirmDiscard(true)}>
+                Discard block
               </button>
-            </span>
-          ) : (
-            <button type="button" className="text-btn study-discard-trigger" onClick={() => setConfirmDiscard(true)}>
-              Discard block
-            </button>
-          )}
-        </details>
+            )}
+          </details>
+          <button
+            type="button"
+            className="text-btn study-close"
+            title="Return to Today — your place is kept"
+            onClick={() => router.push("/today")}
+          >
+            Close
+          </button>
+        </div>
       </div>
 
       <AnimatePresence mode="wait" initial={false}>

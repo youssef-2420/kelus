@@ -63,6 +63,7 @@ test("one persistent header owns navigation for every page", async () => {
   assert.match(header, /Close/);
   assert.doesNotMatch(header, /Open pages|Course space/);
   assert.match(header, /site-session-return/);
+  assert.match(await source("app/session/page.tsx"), /study-close/);
   assert.doesNotMatch(shell, /<header|<nav/);
 });
 

@@ -99,8 +99,10 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
 
   await expect(page).toHaveURL(/\/session/);
   await expect(page.locator(".study-context.is-folio")).toContainText(/of \d+ · Read/);
+  await expect(page.getByRole("button", { name: "Close", exact: true })).toBeVisible();
   await expect(page.getByRole("list", { name: "Revision pages" })).toHaveCount(0);
   await expect(page.locator(".study-progress")).toHaveCount(0);
+  await expect(page.locator(".site-header.is-session")).toBeHidden();
   await page.locator(".session-sources button").first().click();
   await expect(page.getByRole("button", { name: "Close course source" })).toBeFocused();
   await expect(page.locator(".session-source-panel iframe")).toBeVisible();
