@@ -29,7 +29,7 @@ export function KelusHero() {
         <p
           className={styles.lede}
         >
-          Recall from your notes. Check the answer. See what to study next.
+          Recall from your notes. Check the answer. Your answer changes what you study next.
         </p>
 
         <div

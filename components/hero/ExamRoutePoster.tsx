@@ -66,7 +66,7 @@ export function ExamRoutePoster() {
   return (
     <figure ref={scope} className={styles.script} data-drawing={hydrated && reduce ? "static" : phase}>
       <svg className={styles.art} viewBox="0 0 840 920" role="img" aria-labelledby="script-title script-description">
-        <title id="script-title">Marked script → Today’s route</title>
+        <title id="script-title">Marked script → what to study next</title>
         <desc id="script-description">An illustrative Microeconomics revision script. Supply and demand is checked. A correction to Elasticity marks it as Start here. The ink route continues to Market structures, Externalities, and Game theory.</desc>
         <g aria-hidden="true" transform="rotate(-5 420 445)">
           <path className={styles.paperEdge} d="M69 73 806 65 822 951 76 955Z M73 67 812 60 829 944" />

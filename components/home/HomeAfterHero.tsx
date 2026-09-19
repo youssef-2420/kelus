@@ -30,7 +30,7 @@ export function HomeAfterHero() {
           <div className="home-close-copy">
             <h2 id="home-close-title">Walk into the exam knowing what you worked on — and why.</h2>
             <p>
-              Try the sample on this device, or set your exam and build Today’s route from your own notes.
+              Try the sample on this device, or set your exam and build a study plan from your own notes.
             </p>
           </div>
           <div className="home-close-actions">
