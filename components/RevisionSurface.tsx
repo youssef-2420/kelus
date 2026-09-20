@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
@@ -13,13 +13,38 @@ import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
 import { trackEvent } from "@/lib/analytics";
+import {
+  subscribeMaterials,
+  getMaterialsSnapshot,
+  getServerMaterialsSnapshot,
+} from "@/lib/material-store";
 
 export type SurfaceMode = "today" | "materials" | "map";
 
-const MODES: Array<{ id: SurfaceMode; label: string }> = [
-  { id: "today", label: "Today" },
-  { id: "materials", label: "Binder" },
-  { id: "map", label: "Index" },
+const MODES: Array<{
+  id: SurfaceMode;
+  label: string;
+  description: string;
+  icon: React.ReactNode;
+}> = [
+  {
+    id: "today",
+    label: "Today",
+    description: "Your adaptive study route",
+    icon: <span aria-hidden="true">📅</span>
+  },
+  {
+    id: "materials",
+    label: "Binder",
+    description: "Your course materials",
+    icon: <span aria-hidden="true">📚</span>
+  },
+  {
+    id: "map",
+    label: "Index",
+    description: "Topic map and progress",
+    icon: <span aria-hidden="true">🗺️</span>
+  },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };
@@ -82,6 +107,13 @@ export function RevisionSurface() {
   const course = snapshot.courses[0];
   const exam = snapshot.exams.find((item) => item.courseId === course?.id && item.isActive);
 
+  // Subscribe to materials updates
+  const materials = useSyncExternalStore(
+    subscribeMaterials,
+    getMaterialsSnapshot,
+    getServerMaterialsSnapshot
+  );
+
   if (!course || !exam) {
     return (
       <main id="main" className="kelus-space is-empty is-paper">
@@ -136,6 +168,35 @@ export function RevisionSurface() {
     ? { duration: 0.12, ease: kelusEase }
     : { type: "spring" as const, bounce: 0, duration: 0.4 };
 
+  // Helper function to get section status
+  const getSectionStatus = (mode: SurfaceMode) => {
+    switch (mode) {
+      case "today":
+        if (!state.onboardingCompleted) return { text: "Setup needed", variant: "warning" };
+        if (!state.snapshot.concepts.length) return { text: "Add materials", variant: "info" };
+        if (!state.diagnosisCompleted) return { text: "Diagnosis pending", variant: "info" };
+        if (openSession) return { text: "In progress", variant: "success" };
+        return { text: "Ready to start", variant: "secondary" };
+
+      case "materials":
+        const courseMaterials = materials.filter((item) => item.courseId === course.id);
+        const materialCount = courseMaterials.length;
+        return materialCount > 0
+          ? { text: `${materialCount} source${materialCount === 1 ? "" : "s"}`, variant: "success" }
+          : { text: "No sources", variant: "info" };
+
+      case "map":
+        if (!concepts.length) return { text: "No topics", variant: "info" };
+        const weakCount = concepts.filter(c => c.mastery < 0.55).length;
+        return weakCount > 0
+          ? { text: `${weakCount} needs work`, variant: "warning" }
+          : { text: "All topics covered", variant: "success" };
+
+      default:
+        return { text: "", variant: "muted" };
+    }
+  };
+
   return (
     <section className="kelus-space is-paper" aria-label="Revision workbench">
       <header className="kelus-paper-bar">
@@ -149,21 +210,42 @@ export function RevisionSurface() {
           </p>
         </div>
 
-        <nav className="kelus-paper-nav kelus-space-nav revision-surface-modes" aria-label="Revision sections">
+        {/* Enhanced Navigation with status indicators */}
+        <nav
+          className="kelus-paper-nav kelus-space-nav revision-surface-modes"
+          aria-label="Revision sections"
+        >
           {MODES.map((item) => {
             const active = item.id === mode;
+            const status = getSectionStatus(item.id as SurfaceMode);
+
             return (
               <motion.button
                 key={item.id}
                 type="button"
-                className={active ? "is-active" : undefined}
+                className={`
+                  ${active ? "is-active" : ""}
+                  ${status.variant !== "muted" ? `has-status status-${status.variant}` : ""}
+                `}
                 aria-pressed={active}
-                aria-label={item.label}
+                aria-label={`${item.label}, ${status.text}`}
                 onClick={() => setMode(item.id)}
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={pressSpring}
               >
-                {item.label}
+                <div className="nav-button-content">
+                  <span className="nav-icon" aria-hidden="true">
+                    {item.icon}
+                  </span>
+                  <div className="nav-text">
+                    <span className="nav-label">{item.label}</span>
+                    {status.text && (
+                      <span className={`nav-status ${status.variant}`} aria-hidden="true">
+                        {status.text}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </motion.button>
             );
           })}
