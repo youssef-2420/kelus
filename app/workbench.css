@@ -375,7 +375,7 @@ body.is-session-booklet .site-header.is-session {
 .study-shell .session-help-choices button {
   min-height: 36px;
   padding: 0 12px;
-  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%), transparent);
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
   border-radius: 0;
   background: transparent;
   color: var(--color-steel, #5c6570);
@@ -419,7 +419,7 @@ body.is-session-booklet .site-header.is-session {
 .study-shell .answer-evaluation.is-page {
   margin-top: 8px;
   padding-top: 20px;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
 }
 
 .study-shell .answer-evaluation.is-page .kicker,
@@ -613,7 +613,7 @@ body.is-kelus-space .site-space-label {
   min-width: 11rem;
   padding: 10px 12px;
   background: #fff;
-  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%), transparent);
 }
 
@@ -632,7 +632,7 @@ body.is-kelus-space .site-space-label {
   justify-content: space-between;
   gap: 20px 28px;
   padding-bottom: 8px;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
 }
 
 .kelus-space-identity {
@@ -681,7 +681,7 @@ body.is-kelus-space .site-space-label {
   margin-top: 0;
   margin-bottom: 1.5rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
 }
 
 .kelus-space-stage .material-ingest.is-embedded .material-ingest-title h2 {
@@ -724,7 +724,7 @@ body.is-kelus-space .site-space-label {
 .kelus-space-stage .material-honesty {
   margin-top: 1.75rem;
   padding-top: 1rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
   background: transparent;
   border-left: 0;
   border-right: 0;
@@ -758,7 +758,7 @@ body.is-kelus-space .site-space-label {
     gap: 16px;
     padding: 16px 16px 12px;
     border-right: 0;
-    border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
   }
 
   .kelus-space-rail-course {
@@ -876,7 +876,7 @@ body.is-kelus-space .site-space-label {
 body.is-booklet-system .study-progress {
   height: 3px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--color-rule, #d9d4cc) 70%), transparent);
+  background: color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
 }
 
 body.is-booklet-system .study-progress i {
@@ -920,7 +920,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
   gap: 8px 20px;
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
 }
 
 .kelus-space-stage .today-lead-foot .today-lead-cite {
@@ -989,7 +989,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 }
 
 .kelus-space-stage .today-lead-action {
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
   padding-bottom: 22px;
 }
 
@@ -1026,7 +1026,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
   gap: 16px;
   margin: 0 0 10px;
   padding-bottom: 12px;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-tools label {
@@ -1079,7 +1079,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 .kelus-space-stage .surface-map.is-luxury .topic-map-graph {
   margin: 0 0 1rem;
   padding: 0.35rem 0 0.85rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
 }
 
 .kelus-space-stage .surface-map.is-luxury .topic-map-graph-note {
@@ -1135,12 +1135,12 @@ body.is-booklet-system .study-wayfinding .study-steps li {
   font-size: 0.72rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%), transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
   border-top: 0;
 }
 
 body.is-booklet-system .study-wayfinding .study-steps li + li {
-  border-left: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
+  border-left: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
   padding-left: 12px;
   margin-left: 12px;
 }
@@ -1167,7 +1167,7 @@ body.is-booklet-system .topic-map-node.is-fading circle {
 body.is-booklet-system .topic-map-node.is-strong circle,
 body.is-booklet-system .topic-map-node.is-stable circle {
   fill: transparent;
-  stroke: color-mix(in srgb, var(--booklet-ink, #12160f) 55%), transparent);
+  stroke: color-mix(in srgb, var(--booklet-ink, #12160f) 55%, transparent);
 }
 
 body.is-booklet-system .topic-map-node .topic-map-status {
@@ -1194,12 +1194,12 @@ body.is-booklet-system .study-question textarea {
   padding: 16px 18px;
   border-radius: 4px;
   background: #fff;
-  border-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 90%), transparent);
+  border-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
   font-size: 1.02rem;
 }
 
 body.is-booklet-system .session-learn ul {
-  border-top-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border-top-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
 }
 
 /* Session as paper, not a floating card */
@@ -1232,7 +1232,7 @@ body.is-booklet-system .study-question {
   background: transparent;
   border: 0;
   border-radius: 0;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 75%, transparent);
   box-shadow: none;
 }
 
@@ -1248,7 +1248,7 @@ body.is-booklet-system .session-explanation {
 
 body.is-booklet-system .answer-evaluation {
   border-radius: 4px;
-  border-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
   background: #fff;
 }
 
@@ -1264,7 +1264,7 @@ body.is-session-booklet.is-booklet-system {
 }
 
 body.is-session-booklet.is-booklet-system .site-header.is-session {
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
   background: transparent;
   backdrop-filter: none;
 }
@@ -1343,7 +1343,7 @@ body.is-session-booklet.is-booklet-system .study-more .study-discard-trigger {
   min-width: 11rem;
   padding: 10px 12px;
   background: #fff;
-  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%), transparent);
 }
 
@@ -1434,8 +1434,8 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   justify-items: start;
   padding: 18px 0;
   border: 0;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
   border-radius: 0;
   background: transparent;
   box-shadow: none;
@@ -1474,7 +1474,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 }
 
 .kelus-space-stage .material-shelf.is-binder ul {
-  border-top-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border-top-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
 }
 
 .kelus-space-stage .material-shelf.is-binder .material-row {
@@ -1482,7 +1482,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   gap: 12px 20px;
   min-height: 64px;
   padding: 14px 0;
-  border-bottom-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
+  border-bottom-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
 }
 
 .kelus-space-stage .material-shelf.is-binder .material-name strong {
@@ -1569,7 +1569,7 @@ body.is-paper-column .kelus-paper-bar {
   width: min(42rem, calc(100% - 48px));
   margin: 0 auto;
   padding: 20px 0 14px;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 55%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent);
 }
 
 body.is-paper-column .kelus-paper-bar-course {
@@ -1617,7 +1617,7 @@ body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes but
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 85%), transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 85%, transparent);
   font-size: 0.95rem;
   font-weight: 450;
   letter-spacing: -0.01em;
@@ -1627,7 +1627,7 @@ body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes but
 }
 
 body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button + button {
-  border-left: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
+  border-left: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
 }
 
 body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button.is-active,
@@ -1656,7 +1656,7 @@ body.is-paper-column .kelus-paper-more > summary {
   min-height: 40px;
   display: inline-flex;
   align-items: center;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 75%), transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
   font-size: 0.85rem;
   font-weight: 450;
 }
@@ -1679,7 +1679,7 @@ body.is-paper-column .kelus-paper-more > .text-btn {
   min-width: 11rem;
   padding: 10px 12px;
   background: #fff;
-  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%), transparent);
 }
 
@@ -1690,7 +1690,7 @@ body.is-paper-column .kelus-paper-page.kelus-space-stage {
   padding: 8px 28px 56px;
   background:
     linear-gradient(180deg, #fffcf7 0%, #fbf8f2 100%);
-  border: 1px solid color-mix(in srgb, #cfc9be 55%), transparent);
+  border: 1px solid color-mix(in srgb, #cfc9be 55%, transparent);
   border-radius: 2px;
   box-shadow:
     0 1px 0 color-mix(in srgb, #fff 80%, transparent) inset,
@@ -1702,7 +1702,7 @@ body.is-paper-column .kelus-paper-head.kelus-space-top {
   display: block;
   margin: 0 0 28px;
   padding: 0 0 18px;
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
 }
 
 body.is-paper-column .kelus-paper-head .kelus-space-identity {
@@ -1790,11 +1790,11 @@ body.is-paper-column .index-toc {
   list-size: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
 }
 
 body.is-paper-column .index-toc > li {
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%), transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
 }
 
 body.is-paper-column .index-toc-row {
@@ -1849,7 +1849,7 @@ body.is-paper-column .index-toc-row.is-start .index-toc-meta {
 .material-binder-stack > .material-add-page {
   order: 4;
   margin: 8px 0 0;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 80%, transparent);
 }
 
 .material-binder-stack > .material-error {
@@ -1957,7 +1957,7 @@ body.is-booklet-page .kelus-paper-bar {
   width: min(42rem, calc(100% - 40px));
   padding: 18px 28px 12px;
   margin: 20px auto 0;
-  border: 1px solid color-mix(in srgb, #cfc9be 55%), transparent);
+  border: 1px solid color-mix(in srgb, #cfc9be 55%, transparent);
   border-bottom: 0;
   border-radius: 2px 2px 0 0;
   background: linear-gradient(180deg, #fffcf7 0%, #fbf8f2 100%);
@@ -1998,7 +1998,7 @@ body.is-session-booklet .study-shell {
   margin: 28px auto 48px;
   padding: 8px 28px 48px;
   background: linear-gradient(180deg, #fffcf7 0%, #fbf8f2 100%);
-  border: 1px solid color-mix(in srgb, #cfc9be 55%), transparent);
+  border: 1px solid color-mix(in srgb, #cfc9be 55%, transparent);
   border-radius: 2px;
   box-shadow:
     0 1px 0 color-mix(in srgb, #fff 80%, transparent) inset,
@@ -2075,7 +2075,7 @@ body.is-session-booklet .study-mark-from {
 }
 
 body.is-session-booklet .study-mark-arrow {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%), transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
   font-size: 0.72em;
 }
 
@@ -2178,7 +2178,7 @@ body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to.is
 }
 
 body.is-session-booklet .study-reroute-sep {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%), transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
   font-family: var(--font-sans, system-ui, sans-serif);
   font-size: 0.85em;
   font-weight: 450;
@@ -2215,14 +2215,14 @@ body.is-session-booklet textarea.session-work-field {
   padding: 18px 0 20px;
   border: 0;
   border-radius: 0;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
-  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
   background:
     repeating-linear-gradient(
       transparent,
       transparent 1.55rem,
-      color-mix(in srgb, var(--color-rule, #d9d4cc) 55%), transparent) 1.55rem,
-      color-mix(in srgb, var(--color-rule, #d9d4cc) 55%), transparent) calc(1.55rem + 1px)
+      color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent) 1.55rem,
+      color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent) calc(1.55rem + 1px)
     );
   background-origin: content-box;
   box-shadow: none;
@@ -2238,11 +2238,11 @@ body.is-session-booklet textarea.session-work-field {
 body.is-session-booklet .session-work-field:focus,
 body.is-session-booklet .session-work-field:focus-visible {
   outline: none;
-  border-bottom-color: color-mix(in srgb, var(--color-kelus, #1f6b45) 55%), transparent);
+  border-bottom-color: color-mix(in srgb, var(--color-kelus, #1f6b45) 55%, transparent);
 }
 
 body.is-session-booklet .session-work-field::placeholder {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%), transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
   font-weight: 400;
 }
 
@@ -2393,7 +2393,7 @@ body.is-session-complete .complete-return {
   width: 100%;
   margin-top: 12px;
   padding-top: 20px;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
 }
 
 body.is-session-complete .complete-return .kicker {
@@ -2454,7 +2454,7 @@ body.is-session-complete .complete-waitlist,
 body.is-session-complete details {
   width: 100%;
   margin-top: 4px;
-  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%), transparent);
+  border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 70%, transparent);
 }
 
 body.is-session-complete details > summary {
