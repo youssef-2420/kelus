@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
 import { useLearner } from "@/components/LearnerProvider";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 import { generateRoute } from "@/domain/routing-engine";
 import { topicEvidence } from "@/domain/mastery-evidence";
 import { percent } from "@/lib/format";
+import { kelusEase } from "@/components/motion";
+import styles from "./TopicMapPanel.module.css";
 
+// We'll replace text status with visual progress indicators
+// Keeping this function for potential other uses or reference
 function statusLabel(mastery: number | null, attempts: number) {
   if (attempts < 1 || mastery == null) return "Not started";
   if (mastery >= 0.8) return "Secure";
@@ -55,7 +60,8 @@ export function TopicMapPanel() {
         {concepts.map((concept, index) => {
           const evidence = topicEvidence(concept, state.snapshot.prompts, state.snapshot.events, state.nowIso);
           const isStart = startConceptId === concept.id;
-          const label = statusLabel(evidence.mastery, concept.retrievalAttempts);
+          const masteryPercent = evidence.mastery ?? 0;
+
           return (
             <li key={concept.id} className={isStart ? "is-start" : undefined}>
               <Link
@@ -72,7 +78,74 @@ export function TopicMapPanel() {
                     <strong className="index-toc-name">{concept.name}</strong>
                   </ConceptTitleTransition>
                   <span className="index-toc-meta">
-                    {isStart ? "Start here" : label}
+                    {isStart ? (
+                      <>
+                        Start here
+                        {!useReducedMotion() && (
+                          <motion.div
+                            className={`${styles.progressRingContainer}`}
+                            whileInView={{ scale: [0.8, 1, 1] }}
+                            transition={{ duration: 0.6, ease: kelusEase }}
+                          >
+                            <motion.circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              strokeOpacity={0.2}
+                            />
+                            <motion.circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              strokeDasharray={`${masteryPercent * 62.83} 62.83`}
+                              strokeLinecap="round"
+                              strokeDashoffset="62.83"
+                              animate={{ strokeDashoffset: 0 }}
+                              transition={{ duration: 0.8, ease: kelusEase }}
+                            />
+                          </motion.div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <span className={`status-label ${masteryPercent >= 0.8 ? 'secure' : masteryPercent >= 0.55 ? 'developing' : 'needs-work'}`}>
+                          {masteryPercent >= 0.8 ? "Secure" : masteryPercent >= 0.55 ? "Developing" : "Needs work"}
+                        </span>
+                        {!useReducedMotion() && masteryPercent > 0 && (
+                          <motion.div
+                            className={`${styles.progressRingContainer}`}
+                            style={{ width: "20px", height: "20px", display: "inline-block", marginLeft: "6px" }}
+                            whileInView={{ scale: [0.8, 1, 1] }}
+                            transition={{ duration: 0.6, ease: kelusEase }}
+                          >
+                            <motion.circle
+                              cx="10"
+                              cy="10"
+                              r="8"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              strokeOpacity={0.2}
+                            />
+                            <motion.circle
+                              cx="10"
+                              cy="10"
+                              r="8"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              strokeDasharray={`${masteryPercent * 50.265} 50.265`}
+                              strokeDashoffset="50.265"
+                              strokeLinecap="round"
+                              animate={{ strokeDashoffset: 0 }}
+                              transition={{ duration: 0.8, ease: kelusEase }}
+                            />
+                          </motion.div>
+                        )}
+                      </>
+                    )}
                     {evidence.mastery == null ? "" : ` · ${percent(evidence.mastery)}`}
                   </span>
                 </span>

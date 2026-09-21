@@ -796,7 +796,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
                 Add first PDF <span aria-hidden="true">→</span>
               </a>
               <button type="button" className="text-btn" onClick={() => loadDemo()}>
-                Try sample (~1 min)
+                Try sample
               </button>
             </div>
           </div>

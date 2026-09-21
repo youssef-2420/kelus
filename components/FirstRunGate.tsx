@@ -41,7 +41,7 @@ export function FirstRunGate({
         </div>
         <p className="first-run-gate-aside">
           Just looking?{" "}
-          <Link href="/today?sample=1">Try sample (~1 min)</Link>
+          <Link href="/today?sample=1">Try sample</Link>
         </p>
       </div>
       <aside className="first-run-gate-preview is-booklet-sheet" aria-label="Preview">

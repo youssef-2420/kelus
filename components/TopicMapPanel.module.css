@@ -1,0 +1,29 @@
+.progress-ring-container {
+  display: inline-flex;
+  align-items: center;
+}
+
+.progress-ring-container circle {
+  transition: stroke-dashoffset 0.8s ease;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.status-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Color coding for status labels */
+.status-label.secure {
+  color: hsl(142, 76%, 36%); /* green */
+}
+
+.status-label.developing {
+  color: hsl(38, 92%, 50%); /* amber */
+}
+
+.status-label.needs-work {
+  color: hsl(0, 84%, 60%); /* red */
+}

@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { ExamRoutePoster } from "./ExamRoutePoster";
 import styles from "./MarkedScriptHero.module.css";
 
 const press = { type: "spring", bounce: 0, duration: 0.24 } as const;
@@ -42,17 +41,12 @@ export function KelusHero() {
           </motion.div>
           <motion.div tabIndex={-1} whileTap={reduce ? undefined : { scale: 0.98 }} transition={press}>
             <Link href="/today?sample=1" className={styles.secondary}>
-              Try sample (~1 min)
+              Try sample
             </Link>
           </motion.div>
         </div>
         <p className={styles.actionHint}>Set up with your own material, or try a prepared example.</p>
       </div>
-
-      <div className={styles.visual}>
-        <ExamRoutePoster />
-      </div>
-      <p className={styles.mobileCaption}>In this example, Elasticity needs another attempt — so it comes first.</p>
     </section>
   );
 }

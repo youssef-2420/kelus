@@ -349,7 +349,7 @@ body.is-session-booklet .site-header.is-session {
 
 .study-shell .session-help-page > summary {
   cursor: pointer;
-  list-style: none;
+  list-size: none;
   min-height: 40px;
   display: flex;
   align-items: center;
@@ -585,7 +585,7 @@ body.is-kelus-space .site-space-label {
 }
 
 .kelus-space-rail-more > summary {
-  list-style: none;
+  list-size: none;
   cursor: pointer;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
   font-size: 0.82rem;
@@ -614,7 +614,7 @@ body.is-kelus-space .site-space-label {
   padding: 10px 12px;
   background: #fff;
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%), transparent);
 }
 
 .kelus-space-stage {
@@ -661,6 +661,7 @@ body.is-kelus-space .site-space-label {
   font-size: 1rem;
   line-height: 1.55;
 }
+
 
 
 .kelus-space-panel {
@@ -1150,16 +1151,15 @@ body.is-booklet-system .study-wayfinding .study-steps [aria-current="step"] {
   font-weight: 600;
 }
 
-/* Map: weakness readable on the graph */
 body.is-booklet-system .topic-map-node.is-weak circle,
 body.is-booklet-system .topic-map-node.is-not_learned circle {
-  fill: color-mix(in srgb, var(--booklet-kelus, #1f6b45) 18%, transparent);
+  fill: color-mix(in srgb, var(--booklet-kelus, #1f6b45) 18%), transparent);
   stroke: var(--booklet-kelus, #1f6b45);
   stroke-width: 0.55;
 }
 
 body.is-booklet-system .topic-map-node.is-fading circle {
-  fill: color-mix(in srgb, #b45309 14%, transparent);
+  fill: color-mix(in srgb, #b45309 14%), transparent);
   stroke: #b45309;
   stroke-width: 0.5;
 }
@@ -1200,11 +1200,6 @@ body.is-booklet-system .study-question textarea {
 
 body.is-booklet-system .session-learn ul {
   border-top-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
-}
-
-body.is-booklet-system .session-sources > span {
-  letter-spacing: 0.08em;
-  font-size: 0.7rem;
 }
 
 /* Session as paper, not a floating card */
@@ -1248,7 +1243,7 @@ body.is-booklet-system .study-question :is(h1, h2) {
 
 body.is-booklet-system .session-explanation {
   max-width: 48ch;
-  color: color-mix(in srgb, var(--color-ink, #12160f) 82%, transparent);
+  color: color-mix(in srgb, var(--color-ink, #12160f) 82%), transparent);
 }
 
 body.is-booklet-system .answer-evaluation {
@@ -1316,9 +1311,9 @@ body.is-session-booklet.is-booklet-system .study-more {
 }
 
 body.is-session-booklet.is-booklet-system .study-more > summary {
-  list-style: none;
+  list-size: none;
   cursor: pointer;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 72%, transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 72%), transparent);
   font-size: 0.8rem;
   font-weight: 450;
   min-height: 32px;
@@ -1349,12 +1344,12 @@ body.is-session-booklet.is-booklet-system .study-more .study-discard-trigger {
   padding: 10px 12px;
   background: #fff;
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%), transparent);
 }
 
 body.is-session-booklet.is-booklet-system .study-discard-trigger,
 body.is-session-booklet.is-booklet-system .study-discard .text-btn {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 78%, transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 78%), transparent);
   font-size: 0.8rem;
   font-weight: 450;
 }
@@ -1371,7 +1366,7 @@ body.is-session-booklet.is-booklet-system .study-progress {
 
 /* Map: start-here + weight readable on the graph */
 body.is-booklet-system .topic-map-node.is-start circle {
-  fill: color-mix(in srgb, var(--booklet-kelus, #1f6b45) 28%, transparent);
+  fill: color-mix(in srgb, var(--booklet-kelus, #1f6b45) 28%), transparent);
   stroke: var(--booklet-kelus, #1f6b45);
   stroke-width: 0.7;
 }
@@ -1390,7 +1385,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-list-details > summary {
-  list-style: none;
+  list-size: none;
   cursor: pointer;
   padding: 10px 0;
   color: var(--color-steel, #5c6570);
@@ -1556,7 +1551,6 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   font-size: 0.9rem;
 }
 
-
 /* ── Paper column: no permanent rail ── */
 body.is-paper-column .kelus-space.is-paper {
   display: block;
@@ -1657,7 +1651,7 @@ body.is-paper-column .kelus-paper-more {
 }
 
 body.is-paper-column .kelus-paper-more > summary {
-  list-style: none;
+  list-size: none;
   cursor: pointer;
   min-height: 40px;
   display: inline-flex;
@@ -1686,7 +1680,7 @@ body.is-paper-column .kelus-paper-more > .text-btn {
   padding: 10px 12px;
   background: #fff;
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%), transparent);
 }
 
 body.is-paper-column .kelus-paper-page.kelus-space-stage {
@@ -1793,7 +1787,7 @@ body.is-paper-column .surface-map.is-toc.is-empty {
 }
 
 body.is-paper-column .index-toc {
-  list-style: none;
+  list-size: none;
   margin: 0;
   padding: 0;
   border-top: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
@@ -1877,7 +1871,7 @@ body.is-paper-column .index-toc-row.is-start .index-toc-meta {
 
 .material-add-page > summary {
   cursor: pointer;
-  list-style: none;
+  list-size: none;
   min-height: 44px;
   display: flex;
   align-items: center;
@@ -1921,7 +1915,7 @@ body.is-booklet-page .today-page-folio {
   margin: 0;
   font-size: 0.88rem;
   letter-spacing: 0.02em;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 92%, transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 92%), transparent);
 }
 
 body.is-booklet-page .today-lead-action.is-page h1,
@@ -1991,11 +1985,6 @@ body.is-booklet-page .kelus-paper-home {
   font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
 }
 
-body.is-booklet-page .site-space-label,
-body.is-booklet-page .site-session-label {
-  display: none;
-}
-
 /* Session as the same paper object */
 body.is-session-booklet {
   background:
@@ -2044,10 +2033,6 @@ body.is-session-booklet .study-mark-lede {
   line-height: 1.45;
 }
 
-body.is-session-booklet .study-mark-moment {
-  padding-top: 12px;
-}
-
 body.is-session-booklet .study-mark-kicker {
   margin: 0;
   color: var(--color-steel, #5c6570);
@@ -2055,6 +2040,10 @@ body.is-session-booklet .study-mark-kicker {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+body.is-session-booklet .study-mark-moment {
+  padding-top: 12px;
 }
 
 body.is-session-booklet .study-mark-moment > h1 {
@@ -2082,7 +2071,7 @@ body.is-session-booklet .study-mark-delta {
 }
 
 body.is-session-booklet .study-mark-from {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%, transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%), transparent);
 }
 
 body.is-session-booklet .study-mark-arrow {
@@ -2177,7 +2166,7 @@ body.is-session-booklet .study-reroute-moment .reroute-whisper {
 }
 
 body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-from {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%, transparent);
+  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%), transparent);
 }
 
 body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to {
@@ -2274,6 +2263,7 @@ body.is-session-booklet .session-work-actions .cta:disabled {
   opacity: 0.45;
 }
 
+/* Session: paper pages, not app chrome */
 @media (prefers-reduced-transparency: reduce) {
   body.is-session-booklet .session-work-field,
   body.is-session-booklet textarea.session-work-field {
@@ -2323,14 +2313,14 @@ body.is-session-booklet .study-context.is-folio,
   background: transparent;
 }
 
-.study-shell .study-context.is-folio small {
+body.is-session-booklet .study-context.is-folio small {
   font-size: 0.88rem;
   font-weight: 450;
   color: var(--color-steel, #5c6570);
 }
 
-.study-shell .study-progress,
-.study-shell .study-wayfinding {
+body.is-session-booklet .study-progress,
+body.is-session-booklet .study-wayfinding {
   display: none !important;
 }
 
@@ -2469,7 +2459,7 @@ body.is-session-complete details {
 
 body.is-session-complete details > summary {
   cursor: pointer;
-  list-style: none;
+  list-size: none;
   padding: 14px 0;
   color: var(--color-steel, #5c6570);
   font-size: 0.92rem;
@@ -2509,3 +2499,113 @@ body.is-session-complete .complete-columns p {
 }
 
 
+
+/* Enhanced navigation styles for RevisionSurface */
+
+/* Navigation button content layout */
+.nav-button-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Navigation icon styling */
+.nav-icon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Navigation text container */
+.nav-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Navigation label */
+.nav-label {
+  font-size: 0.92rem;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+/* Navigation status indicators */
+.nav-status {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Status variant colors */
+.status-success {
+  background: color-mix(in srgb, var(--color-kelus, #1f6b45) 15%, transparent);
+  color: var(--color-kelus, #1f6b45);
+}
+
+.status-warning {
+  background: color-mix(in srgb, var(--color-orange, #d97706) 15%, transparent);
+  color: var(--color-orange, #d97706);
+}
+
+.status-info {
+  background: color-mix(in srgb, var(--color-blue, #2563eb) 15%, transparent);
+  color: var(--color-blue, #2563eb);
+}
+
+.status-secondary {
+  background: color-mix(in srgb, var(--color-steel, #5c6570) 15%, transparent);
+  color: var(--color-steel, #5c6570);
+}
+
+.status-muted {
+  background: color-mix(in srgb, var(--color-steel, #5c6570) 10%, transparent);
+  color: var(--color-steel, #5c6570);
+  font-weight: 400;
+}
+
+/* Has-status modifier for active buttons with status */
+.has-status.is-active {
+  background: #fff !important;
+}
+
+.has-status.is-active .nav-label {
+  color: var(--color-ink, #111) !important;
+}
+
+.has-status.is-active .nav-status {
+  opacity: 0.9;
+}
+
+/* Hover states for buttons with status */
+.revision-surface-modes button.has-status:hover {
+  background: color-mix(in srgb, #fff 80%, transparent);
+}
+
+.revision-surface-modes button.has-status.is-active:hover {
+  background: #fff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 720px) {
+  .nav-button-content {
+    flex-wrap: wrap;
+  }
+
+  .nav-text {
+    min-width: 100%;
+  }
+
+  .nav-label {
+    font-size: 0.9rem;
+  }
+
+  .nav-status {
+    font-size: 0.7rem;
+    padding: 1px 4px;
+  }
+}

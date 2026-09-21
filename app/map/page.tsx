@@ -70,7 +70,7 @@ export default function MapPage() {
               <p className="first-run-gate-aside">
                 Just looking?{" "}
                 <button type="button" className="text-btn inline" onClick={() => loadDemo()}>
-                  Try sample (~1 min)
+                  Try sample
                 </button>
               </p>
             </div>

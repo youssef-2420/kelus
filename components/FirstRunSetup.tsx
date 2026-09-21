@@ -171,7 +171,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
             <p>Open a finished sample course and see a real revision route before adding your own lessons.</p>
           </div>
           <button type="button" className="text-btn setup-sample-cta" onClick={onUseDemo} disabled={submitting}>
-            Try sample (~1 min) <span aria-hidden="true">→</span>
+            Try sample <span aria-hidden="true">→</span>
           </button>
         </aside>
       </form>
