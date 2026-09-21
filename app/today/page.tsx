@@ -83,7 +83,7 @@ function TodayBody() {
             <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
             <div className="materials-empty-actions">
               <button type="button" className="cta" onClick={() => loadDemo()}>
-                Try sample (~1 min) <span aria-hidden="true">→</span>
+                Try sample <span aria-hidden="true">→</span>
               </button>
             </div>
           </section>

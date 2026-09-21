@@ -35,7 +35,7 @@ export function HomeAfterHero() {
           </div>
           <div className="home-close-actions">
             <Link href="/today?sample=1" className="cta">
-              Try sample (~1 min) <span aria-hidden="true">→</span>
+              Try sample <span aria-hidden="true">→</span>
             </Link>
             <Link href="/today" className="text-btn">
               Set my exam

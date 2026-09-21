@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import { deriveStatus } from "@/domain/learner-model";
+import { motion, useReducedMotion } from "motion/react";
 import type { Concept, ConceptRelationship } from "@/domain/types";
 import { percent, statusLabel } from "@/lib/format";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 import { useLearner } from "@/components/LearnerProvider";
 import { topicEvidence } from "@/domain/mastery-evidence";
+import { kelusEase } from "@/components/motion";
+import styles from "./KnowledgeMap.module.css";
 
 type MapNode = { concept: Concept; x: number; y: number; rank: number; labelBelow: boolean };
 
@@ -167,7 +170,29 @@ export function KnowledgeMap({
                     }
                     style={onSelect ? { cursor: "pointer" } : undefined}
                   >
-                    <circle cx={node.x} cy={node.y} r={radius} />
+                    {!useReducedMotion() && isStart && (
+                      <motion.circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={radius}
+                        whileInView={{ scale: [1, 1.2, 1] }}
+                        transition={{ duration: 1.5, ease: kelusEase, repeat: Infinity, repeatType: "reverse" }}
+                      />
+                    )}
+                    {!useReducedMotion() && !isStart && (
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={radius}
+                      />
+                    )}
+                    {useReducedMotion() && (
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={radius}
+                      />
+                    )}
                     <title>{node.concept.name} — {caption}</title>
                     <text x={node.x} y={labelY} textAnchor="middle" dominantBaseline="hanging">
                       {shortLabel(node.concept.name)}
@@ -211,23 +236,77 @@ export function KnowledgeMap({
                     >
                       <span>
                         {title}
-                        <span className="bar" aria-hidden="true">
-                          <i style={{ width: percent(evidence.mastery ?? 0) }} />
+                        <span className={`${styles.progressLabel} ${status === 'weak' || status === 'not_learned' || status === 'fading' ? 'needs-work' : status === 'strong' ? 'secure' : 'developing'}`}>
+                          {statusLabel(status)}
                         </span>
+                        {!useReducedMotion() && evidence.mastery !== null && (
+                          <motion.div
+                            className={`${styles.progressIndicator}`}
+                            whileInView={{ scale: [0.8, 1, 1] }}
+                            transition={{ duration: 0.6, ease: kelusEase }}
+                          >
+                            <motion.circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              strokeOpacity={0.2}
+                            />
+                            <motion.circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              strokeDasharray={`${(evidence.mastery ?? 0) * 62.83} 62.83`}
+                              strokeLinecap="round"
+                              strokeDashoffset="62.83"
+                              animate={{ strokeDashoffset: 0 }}
+                              transition={{ duration: 0.8, ease: kelusEase }}
+                            />
+                          </motion.div>
+                        )}
+                        <span className="pct" title="Mastery on reviewed questions">{evidence.mastery === null ? "—" : percent(evidence.mastery)}</span>
                       </span>
-                      <span className={`mark-status is-${status}`}>{isStart ? "Start here" : statusLabel(status)}</span>
-                      <span className="pct" title="Mastery on reviewed questions">{evidence.mastery === null ? "—" : percent(evidence.mastery)}</span>
                     </button>
                   ) : (
                     <Link href={`/concepts/${encodeURIComponent(concept.id)}`} className={`row${isStart ? " is-start" : ""}`} transitionTypes={["nav-forward"]} prefetch={true}>
                       <span>
                         {title}
-                        <span className="bar" aria-hidden="true">
-                          <i style={{ width: percent(evidence.mastery ?? 0) }} />
+                        <span className={`${styles.progressLabel} ${status === 'weak' || status === 'not_learned' || status === 'fading' ? 'needs-work' : status === 'strong' ? 'secure' : 'developing'}`}>
+                          {statusLabel(status)}
                         </span>
+                        {!useReducedMotion() && evidence.mastery !== null && (
+                          <motion.div
+                            className={`${styles.progressIndicator}`}
+                            whileInView={{ scale: [0.8, 1, 1] }}
+                            transition={{ duration: 0.6, ease: kelusEase }}
+                          >
+                            <motion.circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              strokeOpacity={0.2}
+                            />
+                            <motion.circle
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              strokeWidth="2"
+                              stroke="currentColor"
+                              strokeDasharray={`${(evidence.mastery ?? 0) * 62.83} 62.83`}
+                              strokeLinecap="round"
+                              strokeDashoffset="62.83"
+                              animate={{ strokeDashoffset: 0 }}
+                              transition={{ duration: 0.8, ease: kelusEase }}
+                            />
+                          </motion.div>
+                        )}
+                        <span className="pct" title="Mastery on reviewed questions">{evidence.mastery === null ? "—" : percent(evidence.mastery)}</span>
                       </span>
-                      <span className={`mark-status is-${status}`}>{isStart ? "Start here" : statusLabel(status)}</span>
-                      <span className="pct" title="Mastery on reviewed questions">{evidence.mastery === null ? "—" : percent(evidence.mastery)}</span>
                     </Link>
                   )}
                 </li>
