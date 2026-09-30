@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Kelus Open Folio logo">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+    <path d="M50 72c-9-7-20-10-34-8V24c14-2 25 1 34 9v39Z"/>
+    <path d="M50 72c9-7 20-10 34-8V24c-14-2-25 1-34 9v39Z"/>
+    <path d="M50 72v7c-10-6-23-8-38-6V32"/>
+    <path d="M50 79c10-6 23-8 38-6V32"/>
+  </g>
+</svg>

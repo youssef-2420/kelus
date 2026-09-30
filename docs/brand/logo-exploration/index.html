@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kelus — logo exploration</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, sans-serif; background: #f6f7f4; color: #12160f; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    button { font: inherit; }
+    main { width: min(1280px, calc(100% - 48px)); margin: auto; padding: 48px 0 90px; }
+    header { border-bottom: 1px solid #d5d9d0; padding-bottom: 48px; margin-bottom: 38px; }
+    .eyebrow { margin: 0 0 24px; color: #516058; font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { max-width: 900px; margin: 0; font-size: clamp(42px, 5vw, 76px); font-weight: 520; line-height: 1.02; letter-spacing: -.06em; }
+    .intro { max-width: 600px; margin: 22px 0 0; color: #4a5246; font-size: 16px; line-height: 1.6; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0 0 20px; }
+    .toolbar p { margin: 0; font-size: 13px; color: #4a5246; }
+    .swatches { display: flex; gap: 8px; }
+    .swatches button { width: 36px; height: 36px; border: 1px solid #bec8bd; border-radius: 50%; cursor: pointer; transition: transform .18s ease; }
+    .swatches button:active { transform: scale(.93); }
+    .swatches button:focus-visible { outline: 2px solid #1f6b45; outline-offset: 3px; }
+    .swatches button[aria-pressed="true"] { outline: 2px solid #1f6b45; outline-offset: 2px; }
+    .swatches .paper { background: #fff; }
+    .swatches .green { background: #173c2a; }
+    .swatches .ink { background: #12160f; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .card { overflow: hidden; border: 1px solid #d5d9d0; border-radius: 13px; background: #fff; transition: transform .24s cubic-bezier(.4,0,.2,1), border-color .24s ease; }
+    .card:hover { transform: translateY(-3px); border-color: #9aada0; }
+    .canvas { min-height: 248px; display: grid; place-items: center; background: #fff; color: #173c2a; transition: background-color .24s ease, color .24s ease; }
+    .canvas img { display: block; width: 128px; height: 128px; }
+    body[data-canvas="green"] .canvas { background: #173c2a; }
+    body[data-canvas="ink"] .canvas { background: #12160f; }
+    body[data-canvas="green"] .canvas img, body[data-canvas="ink"] .canvas img { filter: invert(1); }
+    .card-copy { padding: 21px 22px 24px; border-top: 1px solid #d5d9d0; }
+    .card-index { display: block; margin-bottom: 12px; font-size: 11px; letter-spacing: .14em; color: #637067; }
+    h2 { margin: 0 0 8px; font-size: 21px; font-weight: 600; letter-spacing: -.04em; }
+    .card-copy p { min-height: 65px; margin: 0; color: #4a5246; font-size: 13px; line-height: 1.55; }
+    .scale { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 16px; border-top: 1px solid #e5e8e2; }
+    .scale img { display: block; }
+    .scale span { margin-left: auto; color: #637067; font-size: 11px; }
+    .recommendation { display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: center; margin-top: 38px; border-top: 1px solid #d5d9d0; padding-top: 25px; }
+    .recommendation h2 { margin-bottom: 6px; }
+    .recommendation p { margin: 0; max-width: 740px; color: #4a5246; font-size: 14px; line-height: 1.6; }
+    .recommendation a { color: #1f6b45; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .application { margin-top: 45px; }
+    .application h2 { margin-bottom: 18px; }
+    .application-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .application-surface { display: flex; align-items: center; gap: 12px; min-height: 102px; padding: 25px; border: 1px solid #d5d9d0; border-radius: 12px; background: #fff; color: #12160f; }
+    .application-surface.dark { background: #173c2a; color: #fff; border-color: #173c2a; }
+    .application-surface img { width: 34px; height: 34px; }
+    .application-surface.dark img { filter: invert(1); }
+    .application-surface b { font-size: 30px; font-weight: 650; letter-spacing: -.065em; line-height: 1; }
+    .application-surface span { margin-left: auto; font-size: 11px; color: #637067; }
+    .application-surface.dark span { color: #b8c8bd; }
+    footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #d5d9d0; color: #637067; font-size: 12px; }
+    @media (max-width: 950px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 620px) { main { width: min(100% - 32px, 440px); padding-top: 30px; } header { padding-bottom: 32px; } .grid, .application-grid { grid-template-columns: 1fr; } .canvas { min-height: 210px; } .toolbar { align-items: flex-start; } .recommendation { grid-template-columns: 1fr; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
+  </style>
+</head>
+<body data-canvas="paper">
+  <main>
+    <header>
+      <p class="eyebrow">Kelus / brand study / 2026</p>
+      <h1>A mark for learning that comes back to you.</h1>
+      <p class="intro">Seven vector directions for Kelus, from literal revision cues to a compact monogram. Each is one-color, editable, and tested at favicon scale. The existing site identity stays unchanged until a direction is chosen.</p>
+    </header>
+    <div class="toolbar">
+      <p>Compare the marks on light and dark surfaces.</p>
+      <div class="swatches" role="group" aria-label="Preview background">
+        <button class="paper" type="button" aria-label="White background" aria-pressed="true" data-color="paper"></button>
+        <button class="green" type="button" aria-label="Kelus green background" aria-pressed="false" data-color="green"></button>
+        <button class="ink" type="button" aria-label="Ink background" aria-pressed="false" data-color="ink"></button>
+      </div>
+    </div>
+    <section class="grid" aria-label="Seven logo directions">
+      <article class="card"><div class="canvas"><img src="01-margin-k.svg" alt="Margin K mark" /></div><div class="card-copy"><span class="card-index">01 / MONOGRAM</span><h2>Margin K</h2><p>A compact, typographic K: the dependable option for a header, app icon, and printed course material.</p><div class="scale"><img src="01-margin-k.svg" width="16" height="16" alt="" /><img src="01-margin-k.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+      <article class="card"><div class="canvas"><img src="02-marked-page.svg" alt="Marked Page mark" /></div><div class="card-copy"><span class="card-index">02 / ANNOTATION</span><h2>Marked Page</h2><p>An exam sheet with a decisive correction. Clear product meaning, with more detail than a favicon ideally carries.</p><div class="scale"><img src="02-marked-page.svg" width="16" height="16" alt="" /><img src="02-marked-page.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+      <article class="card"><div class="canvas"><img src="03-open-folio.svg" alt="Open Folio mark" /></div><div class="card-copy"><span class="card-index">03 / MATERIALS</span><h2>Open Folio</h2><p>The source material at the start of every route. Familiar and calm, but less ownable than a custom monogram.</p><div class="scale"><img src="03-open-folio.svg" width="16" height="16" alt="" /><img src="03-open-folio.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+      <article class="card"><div class="canvas"><img src="04-recall-loop.svg" alt="Recall Loop mark" /></div><div class="card-copy"><span class="card-index">04 / REPETITION</span><h2>Recall Loop</h2><p>A return path around two memory lines. It communicates revision, though the arrow feels close to generic sync marks.</p><div class="scale"><img src="04-recall-loop.svg" width="16" height="16" alt="" /><img src="04-recall-loop.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+      <article class="card"><div class="canvas"><img src="05-route-k.svg" alt="Route K mark" /></div><div class="card-copy"><span class="card-index">05 / ROUTING</span><h2>Route K</h2><p>A K assembled from route stops: recognisable name and product intelligence in one symbol, with a technical edge.</p><div class="scale"><img src="05-route-k.svg" width="16" height="16" alt="" /><img src="05-route-k.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+      <article class="card"><div class="canvas"><img src="06-answer-line.svg" alt="Answer Line mark" /></div><div class="card-copy"><span class="card-index">06 / EVIDENCE</span><h2>Answer Line</h2><p>The moment a student checks their response. Friendly and concrete, but more of a feature icon than a brand mark.</p><div class="scale"><img src="06-answer-line.svg" width="16" height="16" alt="" /><img src="06-answer-line.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+      <article class="card"><div class="canvas"><img src="07-recall-k.svg" alt="Recall K mark" /></div><div class="card-copy"><span class="card-index">07 / HAND-INK</span><h2>Recall K</h2><p>A continuous return stroke gives the K a more human feel without losing the small-size silhouette.</p><div class="scale"><img src="07-recall-k.svg" width="16" height="16" alt="" /><img src="07-recall-k.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+    </section>
+    <section class="recommendation" aria-label="Design recommendation">
+      <div><span class="card-index">FIRST PICK</span><h2>01 — Margin K</h2><p>The existing wordmark already carries Kelus’s name. A restrained letterform will sit beside it without trying to explain the entire product at favicon scale. Route K is the exploratory second choice if you want the symbol to carry more of the product story.</p></div>
+      <a href="01-margin-k.svg" download>Download first pick SVG ↗</a>
+    </section>
+    <section class="application" aria-label="Recommended logo in context">
+      <span class="card-index">IN CONTEXT</span><h2>One mark, two surfaces</h2>
+      <div class="application-grid">
+        <div class="application-surface"><img src="01-margin-k.svg" alt="" /><b>kelus</b><span>paper header</span></div>
+        <div class="application-surface dark"><img src="01-margin-k.svg" alt="" /><b>kelus</b><span>course rail</span></div>
+      </div>
+    </section>
+    <footer>Kelus logo exploration · One-color SVG source · Existing live brand untouched</footer>
+  </main>
+  <script>
+    const buttons = document.querySelectorAll('[data-color]');
+    for (const button of buttons) button.addEventListener('click', () => {
+      document.body.dataset.canvas = button.dataset.color;
+      for (const item of buttons) item.setAttribute('aria-pressed', String(item === button));
+    });
+  </script>
+</body>
+</html>

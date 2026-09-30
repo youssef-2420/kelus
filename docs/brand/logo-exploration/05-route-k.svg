@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Kelus Route K logo">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="5">
+    <path d="M27 22v56M30 51h18l24-25M48 51l24 25"/>
+  </g>
+  <g fill="currentColor">
+    <circle cx="27" cy="22" r="6"/>
+    <circle cx="27" cy="78" r="6"/>
+    <circle cx="72" cy="26" r="6"/>
+    <circle cx="72" cy="76" r="6"/>
+  </g>
+</svg>
