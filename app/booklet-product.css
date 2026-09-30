@@ -244,23 +244,275 @@
   background: var(--color-paper-warmth, #ffffff);
 }
 
+.pricing-page.is-booklet-product {
+  background: #f4f2ef;
+}
+
 .pricing-page.is-booklet-product .pricing-plan {
-  border: 1px solid var(--booklet-rule, #d5d9d0);
-  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(107, 118, 132, 0.16);
+  border-radius: 26px;
+  background: rgba(248, 246, 243, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  padding: 1.35rem 1.25rem 1.1rem;
+  min-height: 610px;
+  justify-content: flex-start;
+}
+
+.pricing-page.is-booklet-product .pricing-plan.is-featured {
+  border-color: rgba(87, 101, 255, 0.38);
+  background: rgba(233, 239, 255, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(83, 98, 255, 0.18), 0 18px 32px -28px rgba(54, 64, 162, 0.45);
+  transform: translateY(-8px);
+}
+
+.pricing-page.is-booklet-product .pricing-plan.is-pro {
+  background: rgba(248, 246, 243, 0.9);
+}
+
+.pricing-page.is-booklet-product .pricing-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.pricing-page.is-booklet-product .pricing-header h1 {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(2.4rem, 3.8vw, 4.25rem);
+  letter-spacing: -0.065em;
+  line-height: 0.96;
+  font-weight: 700;
+  font-family: var(--font-ledger), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  color: #171a21;
+}
+
+.pricing-page.is-booklet-product .pricing-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  background: rgba(117, 124, 135, 0.08);
+  border: 1px solid rgba(117, 124, 135, 0.12);
+  border-radius: 999px;
+  padding: 0.3rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.pricing-page.is-booklet-product .pricing-toggle-option {
+  appearance: none;
+  border: 0;
   background: transparent;
-  box-shadow: none;
+  color: #4d5363;
+  border-radius: 999px;
+  padding: 0.8rem 1.05rem;
+  font-size: 0.96rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-.pricing-page.is-booklet-product .pricing-plan.is-founding {
-  border-color: var(--booklet-kelus, #1f6b45);
-  box-shadow: none;
-  background: #f7f8f5;
+.pricing-page.is-booklet-product .pricing-toggle-option.is-active {
+  background: rgba(255, 255, 255, 0.72);
+  color: #1d2431;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.8), 0 2px 10px rgba(53, 60, 75, 0.08);
 }
 
-.pricing-page.is-booklet-product .pricing-plan .cta {
-  border-radius: 4px;
-  background: #1f6b45;
-  border-color: #1f6b45;
+.pricing-page.is-booklet-product .pricing-toggle-option span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.36rem;
+  padding: 0.18rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(78, 92, 255, 0.1);
+  color: #5a69ff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.pricing-page.is-booklet-product .pricing-booklet {
+  padding-top: 2.2rem;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.pricing-page.is-booklet-product .pricing-booklet-stack {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.3rem;
+  align-items: stretch;
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.pricing-page.is-booklet-product .pricing-plan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-height: 1.8rem;
+}
+
+.pricing-page.is-booklet-product .pricing-plan-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #171a21;
+}
+
+.pricing-page.is-booklet-product .pricing-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.28rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: rgba(101, 171, 125, 0.12);
+  color: #2e9d6a;
+}
+
+.pricing-page.is-booklet-product .pricing-tag.is-green {
+  background: rgba(101, 171, 125, 0.12);
+  color: #2e9d6a;
+}
+
+.pricing-page.is-booklet-product .pricing-price-row {
+  display: flex;
+  align-items: flex-end;
+  margin-top: 0.9rem;
+}
+
+.pricing-page.is-booklet-product .pricing-price {
+  margin: 0;
+  font-size: clamp(2.7rem, 3.2vw, 4.05rem);
+  line-height: 0.96;
+  letter-spacing: -0.08em;
+  font-weight: 700;
+  color: #171a21;
+  font-family: var(--font-ledger), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+.pricing-page.is-booklet-product .pricing-price span {
+  font-size: 1.08rem;
+  letter-spacing: -0.04em;
+  color: #5d6878;
+  margin-left: 0.18rem;
+}
+
+.pricing-page.is-booklet-product .pricing-billed,
+.pricing-page.is-booklet-product .pricing-description {
+  margin: 0.85rem 0 0;
+  color: #5c6472;
+  font-size: 0.92rem;
+  line-height: 1.46;
+}
+
+.pricing-page.is-booklet-product .pricing-description.is-centered {
+  min-height: 3.2rem;
+}
+
+.pricing-page.is-booklet-product .pricing-features {
+  list-style: none;
+  margin: 1.15rem 0 1.15rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.66rem;
+  flex: 1;
+}
+
+.pricing-page.is-booklet-product .pricing-features li {
+  position: relative;
+  padding-left: 1.5rem;
+  color: #202631;
+  font-size: 0.98rem;
+  line-height: 1.38;
+}
+
+.pricing-page.is-booklet-product .pricing-features li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #212938;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.pricing-page.is-booklet-product .pricing-cta {
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.15rem;
+  border-radius: 999px;
+  padding: 0.82rem 1.25rem;
+  background: #232735;
+  border: 1px solid #232735;
+  color: #f5f7fb;
+  font-weight: 700;
+  box-shadow: 0 10px 20px -14px rgba(19, 23, 31, 0.45);
+}
+
+.pricing-page.is-booklet-product .pricing-cta.is-primary {
+  background: linear-gradient(180deg, #5167ff 0%, #455be8 100%);
+  border-color: #455be8;
+}
+
+.pricing-page.is-booklet-product .pricing-cta span {
+  font-size: 1.18rem;
+  line-height: 1;
+}
+
+.pricing-page.is-booklet-product .pricing-featured-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 0 auto 0.8rem;
+  background: linear-gradient(180deg, #4d5ef4 0%, #3d4fe8 100%);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 0.38rem 0.9rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+  text-transform: uppercase;
+  box-shadow: 0 10px 18px -14px rgba(52, 62, 220, 0.8);
+}
+
+.pricing-page.is-booklet-product .pricing-plan.is-free .pricing-price {
+  font-size: clamp(2.4rem, 2.6vw, 3.5rem);
+}
+
+@media (max-width: 1180px) {
+  .pricing-page.is-booklet-product .pricing-booklet {
+    max-width: 980px;
+  }
+
+  .pricing-page.is-booklet-product .pricing-booklet-stack {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .pricing-page.is-booklet-product .pricing-booklet-stack {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+
+  .pricing-page.is-booklet-product .pricing-plan {
+    min-height: unset;
+  }
+
+  .pricing-page.is-booklet-product .pricing-header h1 {
+    font-size: clamp(2rem, 10vw, 3.2rem);
+  }
 }
 
 /* ── Site-wide Booklet accent (header lives outside AppShell) ── */

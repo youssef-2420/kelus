@@ -9,7 +9,7 @@ test("marked script preserves copy, links, and narrow-screen layout", async ({ p
     const hero = page.locator('[data-hero="marked-script"]');
     await expect(hero.locator("h1")).toHaveText("Revise your lessons. Walk into the exam ready.");
     await expect(hero.getByRole("link", { name: "Set my exam" })).toHaveAttribute("href", /^\/today\/?$/);
-    await expect(hero.getByRole("link", { name: "Try sample (~1 min)" })).toHaveAttribute("href", /^\/today\/?\?sample=1$/);
+    await expect(hero.getByRole("link", { name: "Try sample (~1 min)" })).toHaveCount(0);
     await expect(hero.locator("svg text").filter({ hasText: /^Start here$/ })).toHaveCount(1);
     const start = await hero.locator("[data-start-note] text").boundingBox();
     expect(start).not.toBeNull();

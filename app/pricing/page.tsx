@@ -1,91 +1,119 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/SiteFooter";
-import { FoundingCta } from "@/components/FoundingCta";
 import { PricingViewTracker } from "@/components/PricingViewTracker";
-import { authConfigured } from "@/lib/auth-config";
-import { foundingPaymentConfigured } from "@/lib/founding";
 import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Try Kelus free. Exam Pass is $9.99 for launch support through one exam when checkout is live.",
+  description: "Choose the plan that fits your workflow.",
   alternates: { canonical: "/pricing" },
 };
 
 export default function PricingPage() {
-  const syncReady = authConfigured();
-  const paymentReady = foundingPaymentConfigured();
-
   return (
     <LateralPage>
-    <div data-marketing="editorial" className="legal-page pricing-page is-booklet-product is-booklet-pricing">
-    <main id="main">
-      <PricingViewTracker />
-      <section className="legal-panel pricing-booklet">
-        <p className="kicker">Pricing</p>
-        <h1>Prepare for one exam. Pay for one exam.</h1>
-        <p className="legal-lede">
-          Revision starts free on this device.
-          {syncReady
-            ? " Sign in anytime to sync that progress across browsers."
-            : " Account sync ships when enabled for your build."}
-          {paymentReady
-            ? " Exam Pass is a one-time $9.99 launch pass through exam day."
-            : " Exam Pass ($9.99) opens with checkout — reserve interest below if you want priority support later."}
-        </p>
-
-        <div className="pricing-booklet-stack pricing-grid" role="list">
-          <article className="pricing-offer is-free pricing-plan" role="listitem">
-            <div className="pricing-offer-head">
-              <p className="kicker">Free · available now</p>
-              <p className="pricing-price">$0</p>
+      <div data-marketing="editorial" className="legal-page pricing-page is-booklet-product is-booklet-pricing">
+        <main id="main">
+          <PricingViewTracker />
+          <section className="legal-panel pricing-booklet">
+            <div className="pricing-header">
+              <h1>Get more views, with less effort</h1>
+              <div className="pricing-toggle" aria-label="Billing period selector">
+                <button type="button" className="pricing-toggle-option is-active">Monthly</button>
+                <button type="button" className="pricing-toggle-option" aria-label="Annual billing">
+                  Annual <span>Save 50%</span>
+                </button>
+              </div>
             </div>
-            <h2>Try a revision session</h2>
-            <ul>
-              <li>Add your course and exam date</li>
-              <li>Get topics to revise from your answer evidence</li>
-              <li>Practise recall and application, then check your answers</li>
-              <li>No account required</li>
-              {syncReady ? <li>Optional free sign-in to sync across devices</li> : <li>Saved on this device</li>}
-            </ul>
-            <Link className="cta" href="/today">
-              Start revising <span aria-hidden="true">→</span>
-            </Link>
-          </article>
 
-          <article className={`pricing-offer is-pass pricing-plan is-founding${paymentReady ? "" : " is-upcoming"}`} role="listitem">
-            <div className="pricing-offer-head">
-              <p className="kicker">{paymentReady ? "Exam Pass" : "Exam Pass · coming soon"}</p>
-              <p className="pricing-price">
-                $9.99<span>/exam</span>
-              </p>
+            <div className="pricing-booklet-stack pricing-grid" role="list" aria-label="Pricing plans">
+              <article className="pricing-offer pricing-plan is-free" role="listitem">
+                <div className="pricing-plan-header">
+                  <p className="pricing-plan-name">Free</p>
+                </div>
+                <div className="pricing-price-row">
+                  <p className="pricing-price">$0<span>/mo</span></p>
+                </div>
+                <p className="pricing-description">Try it out for free, no commitments.</p>
+
+                <ul className="pricing-features">
+                  <li>10 video exports/mo</li>
+                  <li>Guided AI editing</li>
+                  <li>You approve most actions</li>
+                  <li>Captions</li>
+                  <li>Animated titles</li>
+                  <li>Automatic split-screen insertions</li>
+                  <li>Basic b-roll insertions</li>
+                  <li>5 motion graphic insertions/day</li>
+                </ul>
+
+                <Link className="cta pricing-cta" href="/today">
+                  <span aria-hidden="true">↗</span> Try it
+                </Link>
+              </article>
+
+              <article className="pricing-offer pricing-plan is-featured" role="listitem">
+                <div className="pricing-featured-badge">MOST POPULAR</div>
+                <div className="pricing-plan-header">
+                  <p className="pricing-plan-name">Creator</p>
+                  <span className="pricing-tag">Save 50%</span>
+                </div>
+                <div className="pricing-price-row">
+                  <p className="pricing-price">$12.50<span>/mo</span></p>
+                </div>
+                <p className="pricing-billed">$150 billed annually</p>
+                <p className="pricing-description is-centered">If you want to make videos and edit faster.</p>
+
+                <ul className="pricing-features">
+                  <li>30 video exports/mo</li>
+                  <li>Autonomous AI editing</li>
+                  <li>Agent makes smart decisions for you</li>
+                  <li>Captions</li>
+                  <li>Animated titles</li>
+                  <li>Auto split-screen insertions</li>
+                  <li>Auto B-roll insertions</li>
+                  <li>Unlimited motion graphics</li>
+                </ul>
+
+                <Link className="cta pricing-cta is-primary" href="/today">
+                  <span aria-hidden="true">↗</span> Get started
+                </Link>
+              </article>
+
+              <article className="pricing-offer pricing-plan is-pro" role="listitem">
+                <div className="pricing-plan-header">
+                  <p className="pricing-plan-name">Pro</p>
+                  <span className="pricing-tag is-green">Save 50%</span>
+                </div>
+                <div className="pricing-price-row">
+                  <p className="pricing-price">$30<span>/mo</span></p>
+                </div>
+                <p className="pricing-billed">$360 billed annually</p>
+                <p className="pricing-description is-centered">If you want to make daily videos with advanced insertions.</p>
+
+                <ul className="pricing-features">
+                  <li>150 video exports/mo</li>
+                  <li>Autonomous AI editing</li>
+                  <li>Agent makes smart decisions for you</li>
+                  <li>Context-aware captions</li>
+                  <li>Animated titles</li>
+                  <li>Auto split-screen insertions</li>
+                  <li>Auto B-roll insertions</li>
+                  <li>Unlimited motion graphics</li>
+                  <li>Access to advanced models</li>
+                  <li>Open your full edit in Pr &amp; DaVinci</li>
+                </ul>
+
+                <Link className="cta pricing-cta is-primary" href="/today">
+                  <span aria-hidden="true">↗</span> Get started
+                </Link>
+              </article>
             </div>
-            <h2>Support through exam day</h2>
-            <p className="pricing-offer-lede">
-              A one-time launch pass for students who want priority support through the exam date they set.
-            </p>
-            <ul>
-              <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
-              <li>Priority access to new study features while Exam Pass launches</li>
-              <li>Direct email support through the exam date you set</li>
-              <li>Funds improvements to revision and exam practice</li>
-            </ul>
-            <FoundingCta source="pricing" />
-          </article>
-        </div>
-
-        <p className="legal-inline-links">
-          Questions? <a href="mailto:hello@kelus.me">hello@kelus.me</a>
-          {" · "}
-          <Link href="/questions">Ask a question</Link>
-          {" · "}
-          <Link href="/privacy">Privacy</Link>
-        </p>
-      </section>
-    </main>
-      <SiteFooter compact />
-    </div>
-  </LateralPage>
+          </section>
+        </main>
+        <SiteFooter compact />
+      </div>
+    </LateralPage>
   );
 }
