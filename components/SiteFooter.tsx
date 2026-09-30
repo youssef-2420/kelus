@@ -24,7 +24,7 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
           ))}
         </nav>
       </div>
-      <p className="site-footer-note">Local-first exam prep · © {new Date().getFullYear()} Kelus</p>
+      <p className="site-footer-note">Exam prep · © {new Date().getFullYear()} Kelus</p>
     </footer>
   );
 }

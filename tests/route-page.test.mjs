@@ -26,7 +26,7 @@ test("homepage presents marked-script hero, one sample proof, and close", () => 
   assert.match(story, /poster-sample/);
   assert.match(story, /home-close|folio-close/);
   assert.doesNotMatch(story, /Try sample \(~1 min\)/);
-  assert.match(story, /Set my exam/);
+  assert.doesNotMatch(story, /Set my exam/);
   assert.doesNotMatch(story, /folio-chapter|TodayPlanIllustration|RerouteIllustration|MaterialShelfIllustration/);
   assert.doesNotMatch(story, /Honest methodology|folio-method/);
   assert.doesNotMatch(page, /KnowledgeRouteStory/);
