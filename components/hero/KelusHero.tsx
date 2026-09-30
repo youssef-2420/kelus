@@ -37,7 +37,7 @@ export function KelusHero() {
         >
           <motion.div tabIndex={-1} whileTap={reduce ? undefined : { scale: 0.97 }} transition={press}>
             <Link href="/today" className={styles.primary}>
-              Set my exam <span className="arrow" aria-hidden="true">→</span>
+              Set up <span className="arrow" aria-hidden="true">→</span>
             </Link>
           </motion.div>
         </div>

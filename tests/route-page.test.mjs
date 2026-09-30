@@ -13,7 +13,7 @@ test("homepage presents marked-script hero, one sample proof, and close", () => 
   assert.match(hero, /Revise your lessons/);
   assert.doesNotMatch(hero, /Try sample \(~1 min\)/);
   assert.doesNotMatch(hero, /today\?sample=1/);
-  assert.match(hero, /Set my exam/);
+  assert.match(hero, /Set up/);
   assert.match(hero, /ExamRoutePoster/);
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);

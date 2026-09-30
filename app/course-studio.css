@@ -1,9 +1,11 @@
 /* A course workspace: dark navigation, one course cover, and the real study tools. */
-body.is-course-studio {
+body.is-course-studio,
+body:has(.kelus-space.is-studio) {
   background: #171918;
 }
 
-body.is-course-studio .site-header.is-product.is-space {
+body.is-course-studio .site-header.is-product.is-space,
+body:has(.kelus-space.is-studio) .site-header.is-product.is-space {
   display: none;
 }
 
@@ -455,6 +457,266 @@ body.is-course-studio .studio-panel .material-add-page > summary {
   outline-offset: 3px;
 }
 
+/* Setup is part of the course, not a separate marketing-style form. */
+.is-course-studio .studio-onboarding-steps {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.is-course-studio .studio-onboarding-steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #aab2a8;
+  font-size: 0.91rem;
+}
+
+.is-course-studio .studio-onboarding-steps li > span {
+  width: 20px;
+  color: #9eaea0;
+  font-size: 0.77rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.is-course-studio .studio-onboarding-steps li.is-current {
+  border-color: #49564a;
+  background: #353b35;
+  color: #fff;
+}
+
+.is-course-studio .studio-onboarding-steps li.is-done > span {
+  color: #8bcea1;
+}
+
+.is-course-studio .studio-onboarding-content {
+  max-width: 760px;
+  color: #eff1eb;
+}
+
+body.is-booklet-system.is-course-studio .studio-onboarding .destination-page.is-booklet-product.is-marked-setup {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  color: #eff1eb;
+  background: transparent !important;
+}
+
+body.is-course-studio .studio-onboarding .destination-form {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body.is-course-studio .studio-onboarding .destination-form :is(.workbench-chapter-label, .setup-sequence) {
+  display: none;
+}
+
+body.is-course-studio .studio-onboarding .workbench-chapter > .workbench-chapter-label {
+  display: none;
+}
+
+body.is-booklet-system.is-course-studio .studio-onboarding .destination-page.is-booklet-product fieldset {
+  background: transparent !important;
+}
+
+body.is-course-studio .studio-onboarding .destination-page-title,
+body.is-course-studio .studio-onboarding :is(.destination-form legend, .workbench-chapter-intro h1, .diagnosis-page h1, .concept-confirmation h2),
+body.is-course-studio .studio-onboarding .material-binder-stack :is(h2, h3, strong, label) {
+  color: #f5f5ef;
+  font-family: var(--font-inter), "IBM Plex Sans", sans-serif;
+}
+
+body.is-course-studio .studio-onboarding :is(.destination-support, .setup-sequence, .workbench-chapter-intro p, .flow-context, .diagnosis-intro, .diagnosis-selection-reason) {
+  color: #b5beb2;
+}
+
+body.is-course-studio .studio-onboarding :is(.destination-form .kicker, .workbench-chapter-label, .diagnosis-page .kicker) {
+  color: #9caf9b;
+}
+
+body.is-course-studio .studio-onboarding :is(.setup-sequence, .workbench-chapter-label, .diagnosis-page .flow-context) {
+  border-color: #3c453d;
+}
+
+body.is-course-studio .studio-onboarding .setup-sequence [aria-current="step"] {
+  color: #f5f5ef;
+}
+
+body.is-course-studio .studio-onboarding .destination-form :is(label, legend, .target-input b) {
+  color: #e7ece5;
+}
+
+body.is-course-studio .studio-onboarding .destination-form input:not([type="radio"]):not([type="checkbox"]),
+body.is-course-studio .studio-onboarding :is(.material-binder-stack input, .material-binder-stack select, .material-binder-stack textarea, .diagnosis-page textarea) {
+  border: 1px solid #485549;
+  border-radius: 6px;
+  background: #242a25;
+  color: #f5f5ef;
+  box-shadow: none;
+  color-scheme: dark;
+}
+
+body.is-course-studio .studio-onboarding .destination-form input::placeholder,
+body.is-course-studio .studio-onboarding .diagnosis-page textarea::placeholder {
+  color: #a4afa2;
+}
+
+body.is-course-studio .studio-onboarding .time-choices {
+  gap: 8px;
+  border: 0;
+}
+
+body.is-course-studio .studio-onboarding .time-choices label {
+  border: 1px solid #475248;
+  border-radius: 6px;
+  background: #242a25 !important;
+  color: #e7ece5;
+}
+
+body.is-course-studio .studio-onboarding .time-choices label.is-selected {
+  border-color: #7bb28c;
+  background: #304238 !important;
+  color: #fff;
+}
+
+body.is-course-studio .studio-onboarding .time-choices label.is-selected :is(strong, span) {
+  color: #fff;
+}
+
+body.is-booklet-system.is-course-studio .studio-onboarding .destination-page.is-booklet-product .setup-sample {
+  border: 1px solid #475248;
+  border-radius: 6px;
+  background: #242a25 !important;
+  color: #e7ece5;
+  padding: 18px;
+}
+
+body.is-course-studio .studio-onboarding .setup-sample :is(p, .kicker) {
+  color: #b9c4b7;
+}
+
+body.is-course-studio .studio-onboarding .setup-sample-cta,
+body.is-course-studio .studio-onboarding .material-binder-stack :is(a, summary, .text-btn) {
+  color: #a8d5b4;
+}
+
+body.is-booklet-system.is-course-studio .studio-onboarding .is-marked-setup .text-btn.setup-sample-cta {
+  color: #a8d5b4 !important;
+}
+
+body.is-course-studio .studio-onboarding .workbench-chapter {
+  max-width: none;
+  padding: 0;
+}
+
+body.is-course-studio .studio-onboarding .workbench-chapter-intro {
+  margin: 0 0 24px;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+body.is-course-studio .studio-onboarding .workbench-chapter-intro h1 {
+  max-width: 18ch;
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+
+body.is-course-studio .studio-onboarding .material-binder-stack :is(.material-shelf, .material-ingest, .material-add-page, .material-honesty, .concept-confirmation) {
+  border-color: #3b423b;
+  background: transparent !important;
+  color: #e7ece5;
+}
+
+body.is-course-studio .studio-onboarding .material-binder-stack :is(p, small, span) {
+  color: #b5c2b3;
+}
+
+body.is-course-studio .studio-onboarding .material-binder-stack .material-drop {
+  border: 1px dashed #657566;
+  background: #222922;
+  color: #f0f2ec;
+}
+
+body.is-course-studio .studio-onboarding .material-binder-stack .material-drop strong,
+body.is-course-studio .studio-onboarding .material-binder-stack .material-shelf > header :is(.kicker, h2) {
+  color: #f5f5ef;
+}
+
+body.is-course-studio .studio-onboarding .material-ingest-title h2 {
+  color: #f5f5ef;
+  font-family: var(--font-inter), "IBM Plex Sans", sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+body.is-course-studio .studio-onboarding .material-ingest-lede {
+  color: #b5c2b3 !important;
+}
+
+body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stack .material-drop strong {
+  color: #f5f5ef !important;
+}
+
+body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stack .material-drop span {
+  color: #b5c2b3 !important;
+}
+
+body.is-course-studio .studio-onboarding .diagnosis-page.is-booklet-product {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent !important;
+  box-shadow: none;
+  color: #eff1eb;
+}
+
+body.is-course-studio .studio-onboarding .diagnosis-page :is(.diagnosis-panel, .diagnosis-check) {
+  width: 100%;
+  padding: 0;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none;
+  color: #eff1eb;
+}
+
+body.is-course-studio .studio-onboarding .diagnosis-list li {
+  border-color: #3b423b;
+  color: #f2f3ee;
+}
+
+body.is-course-studio .studio-onboarding .diagnosis-list button {
+  border-color: #526253;
+  background: #252c26;
+  color: #e3ebe1;
+}
+
+body.is-course-studio .studio-onboarding .diagnosis-list button.is-selected {
+  border-color: #80b68e;
+  background: #304238;
+  color: #fff;
+}
+
+body.is-course-studio .studio-onboarding .diagnosis-page :is(label, .diagnosis-feedback, .diagnosis-evaluation) {
+  color: #e7ece5;
+}
+
+body.is-course-studio .studio-onboarding .destination-actions {
+  position: static;
+  margin-top: 28px;
+  padding: 0;
+  background: transparent;
+}
+
 @media (max-width: 760px) {
   body.is-course-studio .kelus-space.is-studio {
     display: block;
@@ -476,6 +738,25 @@ body.is-course-studio .studio-panel .material-add-page > summary {
   .is-course-studio .studio-course,
   .is-course-studio .studio-navigation-label {
     display: none;
+  }
+
+  .is-course-studio .studio-onboarding-steps {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    margin-top: 4px;
+  }
+
+  .is-course-studio .studio-onboarding-steps li {
+    flex: 1 0 auto;
+    justify-content: center;
+    min-height: 44px;
+    padding-inline: 8px;
+    font-size: 0.82rem;
+  }
+
+  .is-course-studio .studio-onboarding-steps li > span {
+    width: auto;
   }
 
   .is-course-studio .studio-rail-bottom {

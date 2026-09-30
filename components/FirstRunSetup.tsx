@@ -48,7 +48,7 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
   }
 
   return (
-    <main id="main" className="destination-page is-booklet-product is-marked-setup">
+    <div className="destination-page is-booklet-product is-marked-setup">
       <form className="destination-form" onSubmit={submit} noValidate>
         <p className="kicker">Your exam</p>
         <h1 className="destination-page-title">Set your exam</h1>
@@ -175,6 +175,6 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
           </button>
         </aside>
       </form>
-    </main>
+    </div>
   );
 }

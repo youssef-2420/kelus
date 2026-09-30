@@ -13,7 +13,7 @@ test("editorial fonts stay on marketing headings and leave the app unchanged", a
   }
   await page.goto("/");
   await page.locator('#home-hero-title').waitFor();
-  await page.getByRole("link", { name: "Set my exam" }).first().click();
+  await page.getByRole("link", { name: "Set up" }).first().click();
   await expect(page.locator('[data-marketing]')).toHaveCount(0);
   await expect(page.locator('h1').first()).not.toHaveCSS("font-family", /Fraunces/i);
   await expect(page.locator('.site-header a').first()).toHaveCSS("font-family", /Plex/i);

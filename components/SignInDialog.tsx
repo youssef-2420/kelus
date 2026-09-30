@@ -1,6 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -19,6 +20,8 @@ function GoogleMark() {
 
 export function SignInDialog() {
   const auth = useAuth();
+  const pathname = usePathname();
+  const router = useRouter();
   const reduceMotion = useReducedMotion() === true;
   const titleId = useId();
   const dialogRef = useRef<HTMLElement>(null);
@@ -89,9 +92,11 @@ export function SignInDialog() {
     try {
       if (mode === "signin") {
         await auth.signIn(email, password);
+        if (!pathname.startsWith("/today") && !pathname.startsWith("/session")) router.push("/today");
       } else {
         const verificationRequired = await auth.signUp(name, email, password);
         if (verificationRequired) setMessage("Check your email to verify your Kelus account.");
+        else if (!pathname.startsWith("/today") && !pathname.startsWith("/session")) router.push("/today");
       }
     } catch (caught) {
       setIsError(true);

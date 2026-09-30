@@ -19,7 +19,7 @@ test("nine-path: sample-first hero, today auto-load, PDF fail UX, inbox docs", a
 
   assert.doesNotMatch(hero, /Try sample \(~1 min\)/);
   assert.doesNotMatch(hero, /href="\/today\?sample=1"/);
-  assert.match(hero, /Set my exam/);
+  assert.match(hero, /Set up/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
 

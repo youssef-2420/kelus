@@ -31,7 +31,8 @@ function biologyPdf() {
 
 test("real PDF becomes concepts, diagnosis evidence, and today's route", async ({ page }) => {
   await page.goto("/today");
-  await page.getByLabel("Course").fill("Molecular Biology");
+  await expect(page.locator(".studio-onboarding")).toBeVisible();
+  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Molecular Biology");
   await page.getByLabel("Exam").fill("Cell Biology Final");
   const examDate = new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10);
   await page.getByLabel("When is it?").fill(examDate);
@@ -39,6 +40,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: /Continue with my course/ }).click();
 
   await expect(page).toHaveURL(/\/today/);
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Sources");
   await expect(page.getByRole("heading", { name: "Bring in one real source." })).toBeVisible();
   await page.locator('.material-drop input[type="file"]').setInputFiles({
     name: "cell-biology-lecture.pdf",
@@ -51,6 +53,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: /Confirm topics/ }).click();
 
   await expect(page).toHaveURL(/\/today/);
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("First check");
   const groups = page.getByRole("group", { name: /Familiarity with/ });
   await expect(groups).toHaveCount(3);
   for (let index = 0; index < 3; index += 1) {

@@ -8,7 +8,7 @@ test("marked script preserves copy, links, and narrow-screen layout", async ({ p
     await page.goto("/");
     const hero = page.locator('[data-hero="marked-script"]');
     await expect(hero.locator("h1")).toHaveText("Revise your lessons. Walk into the exam ready.");
-    await expect(hero.getByRole("link", { name: "Set my exam" })).toHaveAttribute("href", /^\/today\/?$/);
+    await expect(hero.getByRole("link", { name: "Set up" })).toHaveAttribute("href", /^\/today\/?$/);
     await expect(hero.getByRole("link", { name: "Try sample (~1 min)" })).toHaveCount(0);
     await expect(hero.locator("svg text").filter({ hasText: /^Start here$/ })).toHaveCount(1);
     const start = await hero.locator("[data-start-note] text").boundingBox();
@@ -20,6 +20,15 @@ test("marked script preserves copy, links, and narrow-screen layout", async ({ p
   expect(errors).toEqual([]);
 });
 
+test("Set up opens the same course workspace shell used for revision", async ({ page }) => {
+  await page.goto("/");
+  await page.locator('[data-hero="marked-script"]').getByRole("link", { name: "Set up" }).click();
+  await expect(page).toHaveURL(/\/today\/?$/);
+  await expect(page.locator(".studio-rail")).toBeVisible();
+  await expect(page.locator(".studio-cover")).toBeVisible();
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
+});
+
 test("ink draws without blocking navigation, and finishes on its own", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
@@ -28,7 +37,7 @@ test("ink draws without blocking navigation, and finishes on its own", async ({ 
   await expect(hero.getByRole("button", { name: /Pause ink|Resume ink|Replay ink/ })).toHaveCount(0);
   const lastInk = hero.locator('[data-ink="3"]');
   expect(await lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.3);
-  await expect(hero.getByRole("link", { name: "Set my exam" })).toBeEnabled();
+  await expect(hero.getByRole("link", { name: "Set up" })).toBeEnabled();
   await expect(hero.locator('[data-ink="0"]')).toHaveCSS("stroke-dashoffset", "0px", { timeout: 15000 });
   await expect.poll(() => hero.locator("[data-start-wash]").evaluate(element => parseFloat(getComputedStyle(element).opacity))).toBeGreaterThan(.12);
   await expect(hero.locator("figure")).toHaveAttribute("data-drawing", "finished", { timeout: 20000 });

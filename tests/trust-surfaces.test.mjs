@@ -161,7 +161,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   ]);
   assert.doesNotMatch(hero, /Try sample \(~1 min\)/);
   assert.doesNotMatch(hero, /today\?sample=1/);
-  assert.match(hero, /Set my exam/);
+  assert.match(hero, /Set up/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
   assert.match(header, /Try sample/);
@@ -177,7 +177,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(await source("components/TodayRoute.tsx"), /whileTap/);
   assert.doesNotMatch(await source("components/TodayRoute.tsx"), /Next stops|Why this/);
   assert.match(today, /get\("sample"\) === "1"/);
-  assert.match(today, /Try sample \(~1 min\)/);
+  assert.match(await source("components/FirstRunSetup.tsx"), /Try sample \(~1 min\)/);
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {

@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AppShell } from "@/components/AppShell";
+import { CourseStudioOnboarding } from "@/components/CourseStudioOnboarding";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
@@ -62,45 +62,42 @@ function TodayBody() {
 
   if (!state.onboardingCompleted) {
     return (
-      <FirstRunSetup
-        onComplete={(input) => {
-          try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
-          completeSetup(input);
-        }}
-        onUseDemo={loadDemo}
-      />
+      <CourseStudioOnboarding stage="exam">
+        <FirstRunSetup
+          onComplete={(input) => {
+            try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
+            completeSetup(input);
+          }}
+          onUseDemo={loadDemo}
+        />
+      </CourseStudioOnboarding>
     );
   }
 
   if (!state.snapshot.concepts.length) {
     return (
-      <AppShell>
+      <CourseStudioOnboarding stage="sources" courseName={state.snapshot.courses[0]?.name}>
         <div className="workbench-chapter" data-chapter="materials">
           <p className="workbench-chapter-label">Chapter 2 · Sources</p>
           <section className="materials-empty workbench-chapter-intro">
             <p className="kicker">Sources</p>
             <h1>Bring in one real source.</h1>
             <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
-            <div className="materials-empty-actions">
-              <button type="button" className="cta" onClick={() => loadDemo()}>
-                Try sample (~1 min) <span aria-hidden="true">→</span>
-              </button>
-            </div>
           </section>
           <MaterialLibrary embedded />
         </div>
-      </AppShell>
+      </CourseStudioOnboarding>
     );
   }
 
   if (!state.diagnosisCompleted) {
     return (
-      <AppShell>
+      <CourseStudioOnboarding stage="check" courseName={state.snapshot.courses[0]?.name}>
         <div className="workbench-chapter" data-chapter="check">
           <p className="workbench-chapter-label">Chapter 3 · First estimate</p>
           <InitialDiagnosis snapshot={state.snapshot} onComplete={finishDiagnosis} embedded />
         </div>
-      </AppShell>
+      </CourseStudioOnboarding>
     );
   }
 

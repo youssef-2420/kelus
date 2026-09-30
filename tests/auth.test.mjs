@@ -17,9 +17,10 @@ test("the shared header uses the real authentication provider", async () => {
 });
 
 test("Supabase sessions persist and auth supports password, signup and Google", async () => {
-  const [client, provider] = await Promise.all([
+  const [client, provider, dialog] = await Promise.all([
     source("lib/supabase-client.ts"),
     source("components/AuthProvider.tsx"),
+    source("components/SignInDialog.tsx"),
   ]);
   assert.match(client, /persistSession: true/);
   assert.match(client, /autoRefreshToken: true/);
@@ -27,6 +28,7 @@ test("Supabase sessions persist and auth supports password, signup and Google", 
   assert.match(provider, /signInWithPassword/);
   assert.match(provider, /auth\.signUp/);
   assert.match(provider, /provider: "google"/);
+  assert.match(dialog, /router\.push\("\/today"\)/);
 });
 
 test("production injects only public Supabase credentials into the static build", async () => {
