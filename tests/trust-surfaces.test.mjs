@@ -166,7 +166,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.doesNotMatch(hero, /hero-window-controls/);
   assert.match(header, /Try sample/);
   assert.doesNotMatch(home, /Try sample \(~1 min\)/);
-  assert.doesNotMatch(home, /Set my exam/);
+  assert.match(home, /Set my exam/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
   assert.match(how, /Try sample \(~1 min\)/);
   assert.doesNotMatch(surface, /<MasteryEvidence/);

@@ -28,7 +28,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
   assert.match(founding, /authConfigured/);
   assert.match(soft, /authConfigured/);
   assert.doesNotMatch(home, /Try sample \(~1 min\)/);
-  assert.doesNotMatch(home, /Set my exam/);
+  assert.match(home, /Set my exam/);
   assert.doesNotMatch(home, /folio-chapter|Honest methodology/);
   assert.match(footer, /\/pricing/);
   assert.doesNotMatch(home, /Sign in to sync across devices, or get Exam Pass/);

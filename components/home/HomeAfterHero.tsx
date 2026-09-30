@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { BookletRevisionBoard } from "@/components/hero/BookletRevisionBoard";
 import { Reveal } from "@/components/motion";
 
@@ -31,6 +32,11 @@ export function HomeAfterHero() {
             <p>
               Set your exam and build a study plan from your own notes.
             </p>
+          </div>
+          <div className="home-close-actions">
+            <Link href="/today" className="text-btn">
+              Set my exam
+            </Link>
           </div>
         </Reveal>
       </section>
