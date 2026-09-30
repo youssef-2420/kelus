@@ -159,13 +159,13 @@ test("primary CTA language and readiness stay consistent", async () => {
     source("components/RevisionSurface.tsx"),
     source("components/HowItWorks.tsx"),
   ]);
-  assert.match(hero, /Try sample \(~1 min\)/);
-  assert.match(hero, /today\?sample=1/);
+  assert.doesNotMatch(hero, /Try sample \(~1 min\)/);
+  assert.doesNotMatch(hero, /today\?sample=1/);
   assert.match(hero, /Set my exam/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
   assert.match(header, /Try sample/);
-  assert.match(home, /Try sample \(~1 min\)/);
+  assert.doesNotMatch(home, /Try sample \(~1 min\)/);
   assert.match(home, /Set my exam/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
   assert.match(how, /Try sample \(~1 min\)/);

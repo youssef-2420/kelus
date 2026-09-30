@@ -11,8 +11,8 @@ test("homepage presents marked-script hero, one sample proof, and close", () => 
   assert.match(page, /HomeAfterHero/);
   assert.match(hero, /is-folio|is-poster/);
   assert.match(hero, /Revise your lessons/);
-  assert.match(hero, /Try sample \(~1 min\)/);
-  assert.match(hero, /today\?sample=1/);
+  assert.doesNotMatch(hero, /Try sample \(~1 min\)/);
+  assert.doesNotMatch(hero, /today\?sample=1/);
   assert.match(hero, /Set my exam/);
   assert.match(hero, /ExamRoutePoster/);
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
@@ -25,7 +25,7 @@ test("homepage presents marked-script hero, one sample proof, and close", () => 
   assert.match(story, /BookletRevisionBoard/);
   assert.match(story, /poster-sample/);
   assert.match(story, /home-close|folio-close/);
-  assert.match(story, /Try sample \(~1 min\)/);
+  assert.doesNotMatch(story, /Try sample \(~1 min\)/);
   assert.match(story, /Set my exam/);
   assert.doesNotMatch(story, /folio-chapter|TodayPlanIllustration|RerouteIllustration|MaterialShelfIllustration/);
   assert.doesNotMatch(story, /Honest methodology|folio-method/);

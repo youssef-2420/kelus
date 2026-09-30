@@ -40,13 +40,8 @@ export function KelusHero() {
               Set my exam <span className="arrow" aria-hidden="true">→</span>
             </Link>
           </motion.div>
-          <motion.div tabIndex={-1} whileTap={reduce ? undefined : { scale: 0.98 }} transition={press}>
-            <Link href="/today?sample=1" className={styles.secondary}>
-              Try sample (~1 min)
-            </Link>
-          </motion.div>
         </div>
-        <p className={styles.actionHint}>Set up with your own material, or try a prepared example.</p>
+        <p className={styles.actionHint}>Set up with your own course material.</p>
       </div>
 
       <div className={styles.visual}>
