@@ -155,6 +155,13 @@ test("core product nav is visible without sign-in or onboarding", async () => {
   assert.doesNotMatch(header, /href: "\/map".*always: false/s);
 });
 
+test("signed-in header stays focused on the core product", async () => {
+  const header = await source("components/SiteHeader.tsx");
+  assert.match(header, /auth\.user[\s\S]*PRODUCT_HREFS\.has\(link\.href\)/);
+  assert.doesNotMatch(header, /auth\.user[\s\S]*link\.href === "\/route"/);
+  assert.doesNotMatch(header, /auth\.user[\s\S]*link\.href === "\/pricing"/);
+});
+
 test("pricing free CTA keeps readable contrast against legal link styles", async () => {
   const css = await source("app/globals.css");
   assert.match(css, /legal-panel a:not\(\.cta\)/);

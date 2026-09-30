@@ -41,7 +41,11 @@ export function SiteHeader() {
   const displayName = auth.user?.user_metadata.full_name?.split(" ")[0] || auth.user?.email?.split("@")[0];
   // YouLearn model: header is brand + utilities only. Today/Materials/Map never appear here —
   // the course space rail owns those sections after diagnosis; first-run uses the chapter rail.
-  const visibleLinks = inProduct || inSession ? [] : links.filter((link) => !PRODUCT_HREFS.has(link.href));
+  const visibleLinks = inProduct || inSession
+    ? []
+    : auth.user
+      ? links.filter((link) => PRODUCT_HREFS.has(link.href))
+      : links.filter((link) => !PRODUCT_HREFS.has(link.href));
 
   return (
     <header
