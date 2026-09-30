@@ -194,9 +194,9 @@ test("pricing conversion loop is linked from product surfaces", async () => {
     source(".env.example"),
     source("components/FoundingCta.tsx"),
   ]);
-  assert.match(pricing, /Exam Pass/);
-  assert.match(pricing, /\$9\.99/);
-  assert.match(pricing, /Pay for one exam/);
+  assert.match(pricing, /Kelus Plus/);
+  assert.match(pricing, /\$4\.99/);
+  assert.match(pricing, /\/month/);
   assert.match(pricing, /FoundingCta|WaitlistForm/);
   assert.match(pricing, /Optional free sign-in to sync across devices/);
   assert.match(pricing, /Priority access to new study features/);
@@ -206,7 +206,7 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(await source("app/page.tsx"), /<\/main>\s*<SiteFooter/);
   assert.match(header, /\/pricing/);
   assert.match(soft, /soft_paywall_shown/);
-  assert.match(soft, /exam date/i);
+  assert.match(soft, /\$4\.99\/month/i);
   assert.match(soft, /Sign in/);
   assert.doesNotMatch(soft, /planned \$9/);
   assert.doesNotMatch(soft, /unlocks more materials/i);
@@ -218,8 +218,8 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(complete, /completedSessions >= 2/);
   assert.match(auth, /Sync your course PDFs and revision progress across devices/);
   assert.doesNotMatch(auth, /future cross-device sync/);
-  assert.match(envExample, /NEXT_PUBLIC_EXAM_PASS_PAYMENT_LINK/);
-  assert.doesNotMatch(envExample, /NEXT_PUBLIC_STRIPE_PAYMENT_LINK/);
+  assert.match(envExample, /NEXT_PUBLIC_MONTHLY_PAYMENT_LINK/);
+  assert.doesNotMatch(envExample, /NEXT_PUBLIC_EXAM_PASS_PAYMENT_LINK/);
   assert.match(founding, /Sync across devices is included with\s+free sign-in|Sync across devices is already available/s);
 });
 

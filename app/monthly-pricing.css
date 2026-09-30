@@ -1,0 +1,154 @@
+/* Pricing uses a two-column decision: free study, or one monthly support plan. */
+body.is-booklet-system .pricing-page.is-monthly-pricing {
+  width: min(1100px, calc(100% - 48px));
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-booklet {
+  max-width: 1100px;
+  padding-block: clamp(42px, 6vw, 88px);
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing h1 {
+  max-width: 15ch;
+  margin: 12px 0 18px;
+  font-size: clamp(2.7rem, 5vw, 4.6rem);
+  line-height: 1.07;
+  letter-spacing: -0.05em;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .legal-lede {
+  max-width: 58ch;
+  color: #4a5246;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  margin: 52px 0 34px;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 500px;
+  padding: clamp(24px, 3vw, 38px);
+  border: 1px solid #d5d9d0;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: none;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer.is-pass {
+  border-color: #8bb49a;
+  background: #f7fbf8;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-head {
+  display: block;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-head .kicker {
+  margin: 0 0 22px;
+  color: #1f6b45;
+  font-size: 1rem;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  text-transform: none;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-price {
+  margin: 0;
+  font-family: var(--font-marketing-sans), Inter, Arial, sans-serif;
+  font-size: clamp(2.8rem, 4vw, 3.8rem);
+  font-weight: 650;
+  letter-spacing: -0.055em;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-price span {
+  margin-left: 4px;
+  color: #4a5246;
+  font-size: 1rem;
+  font-weight: 450;
+  letter-spacing: 0;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer h2 {
+  font-family: var(--font-marketing-sans), Inter, Arial, sans-serif !important;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-lede {
+  min-height: 3rem;
+  color: #4a5246;
+  font-size: 0.93rem;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer ul {
+  display: grid;
+  gap: 11px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.94rem;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer li {
+  position: relative;
+  padding-left: 24px;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #1f6b45;
+  font-weight: 700;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer > .cta,
+body.is-booklet-system .pricing-page.is-monthly-pricing .founding-cta {
+  margin-top: auto;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer .cta {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 0;
+  padding-inline: 18px;
+  border-radius: 7px;
+  font-weight: 600;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .founding-cta {
+  display: grid;
+  gap: 12px;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .founding-cta-note {
+  margin: 0;
+  color: #566055;
+  font-size: 0.83rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 760px) {
+  body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 34px;
+  }
+
+  body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer {
+    min-height: 0;
+  }
+
+  body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-lede {
+    min-height: 0;
+  }
+}

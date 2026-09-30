@@ -18,11 +18,11 @@ const COPY: Record<
 > = {
   first_session: {
     title: "Take this route to exam day",
-    body: "Your first route is free. Exam Pass ($9.99) will add priority support through the exam date you set when checkout opens.",
+    body: "Your first route is free. Kelus Plus ($4.99/month) adds priority support when subscriptions open.",
   },
   third_material: {
     title: "Keep this course together",
-    body: "Exam Pass ($9.99) is for priority support through one exam. Checkout isn’t live yet — free revision stays available now.",
+    body: "Kelus Plus ($4.99/month) adds priority support. Subscriptions aren’t live yet — free revision stays available now.",
   },
 };
 
@@ -64,20 +64,20 @@ export function SoftUpgradePrompt({ moment }: SoftUpgradePromptProps) {
   }
 
   return (
-    <aside className="soft-upgrade" aria-label="Exam Pass offer">
+    <aside className="soft-upgrade" aria-label="Kelus Plus offer">
       <div className="soft-upgrade-copy">
-        <p className="soft-upgrade-kicker">Exam Pass</p>
+        <p className="soft-upgrade-kicker">Kelus Plus</p>
         <h2>{copy.title}</h2>
         <p>{body}</p>
       </div>
       <div className="soft-upgrade-actions">
         {paymentReady ? (
           <a className="cta" href={foundingPaymentLink()} target="_blank" rel="noopener noreferrer">
-            Get Exam Pass · $9.99
+            Get Kelus Plus · $4.99/month
           </a>
         ) : (
           <Link href="/pricing/" className="text-btn">
-            Exam Pass coming soon
+            Kelus Plus coming soon
           </Link>
         )}
         <button type="button" className="ghost" onClick={dismiss}>

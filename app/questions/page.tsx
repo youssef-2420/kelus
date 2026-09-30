@@ -7,7 +7,7 @@ import { QuestionsInboxStatus } from "@/components/QuestionsInboxStatus";
 
 export const metadata: Metadata = {
   title: "Ask a question — Kelus",
-  description: "Send a question about Kelus, today’s route, materials, or Exam Pass. We’ll reply by email.",
+  description: "Send a question about Kelus, today’s route, materials, or Kelus Plus. We’ll reply by email.",
   alternates: { canonical: "/questions" },
 };
 
@@ -18,7 +18,7 @@ export default function QuestionsPage() {
         <p className="kicker">Questions</p>
         <h1>Ask us anything about Kelus.</h1>
         <p className="legal-lede">
-          Stuck on Materials, Map, Today, or Exam Pass? Send a question here. It goes to{" "}
+          Stuck on Materials, Map, Today, or Kelus Plus? Send a question here. It goes to{" "}
           <a href="mailto:hello@kelus.me">hello@kelus.me</a> and we reply by email — not a public forum.
         </p>
         <QuestionsInboxStatus />

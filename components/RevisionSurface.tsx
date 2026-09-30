@@ -59,8 +59,8 @@ export function RevisionSurface() {
   }, [mode]);
 
   useEffect(() => {
-    document.body.classList.add("is-kelus-space", "is-paper-column", "is-booklet-page");
-    return () => document.body.classList.remove("is-kelus-space", "is-paper-column", "is-booklet-page");
+    document.body.classList.add("is-kelus-space", "is-booklet-page", "is-course-studio");
+    return () => document.body.classList.remove("is-kelus-space", "is-booklet-page", "is-course-studio");
   }, []);
 
   useEffect(() => {
@@ -137,19 +137,16 @@ export function RevisionSurface() {
     : { type: "spring" as const, bounce: 0, duration: 0.4 };
 
   return (
-    <section className="kelus-space is-paper" aria-label="Revision workbench">
-      <header className="kelus-paper-bar">
-        <div className="kelus-paper-bar-course">
-          <Link href="/" className="kelus-paper-home" aria-label="Kelus home">
-            Kelus
-          </Link>
-          <p className="kelus-paper-course">{course.name}</p>
-          <p className="kelus-paper-meta">
-            {days} day{days === 1 ? "" : "s"} to exam
-          </p>
+    <section className="kelus-space is-studio" aria-label="Revision workbench">
+      <aside className="studio-rail" aria-label="Course workspace">
+        <Link href="/" className="studio-brand" aria-label="Kelus home">kelus<span aria-hidden="true">↗</span></Link>
+        <div className="studio-course">
+          <span className="studio-rail-label">Your course</span>
+          <strong title={course.name}>{course.name}</strong>
+          <span>{days} day{days === 1 ? "" : "s"} until exam</span>
         </div>
-
-        <nav className="kelus-paper-nav kelus-space-nav revision-surface-modes" aria-label="Revision sections">
+        <p className="studio-rail-label studio-navigation-label">Study space</p>
+        <nav className="studio-nav revision-surface-modes" aria-label="Revision sections">
           {MODES.map((item) => {
             const active = item.id === mode;
             return (
@@ -163,14 +160,21 @@ export function RevisionSurface() {
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={pressSpring}
               >
+                <span className="studio-nav-icon" aria-hidden="true">{item.id === "today" ? "◷" : item.id === "materials" ? "▤" : "⌗"}</span>
                 {item.label}
               </motion.button>
             );
           })}
         </nav>
-
-        <details className="kelus-paper-more" open={confirmReset || undefined}>
-          <summary>More</summary>
+        <div className="studio-rail-bottom">
+          <Link href="/" className="studio-home-link">← Back to Kelus</Link>
+          {auth.user ? (
+            <button type="button" className="studio-account-action" onClick={() => auth.signOut()}>Sign out</button>
+          ) : auth.configured ? (
+            <button type="button" className="studio-account-action" onClick={auth.openDialog}>Sign in to sync</button>
+          ) : null}
+        <details className="studio-more" open={confirmReset || undefined}>
+          <summary>Course options</summary>
           {confirmReset ? (
             <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
               <span>Erase this route?</span>
@@ -189,27 +193,27 @@ export function RevisionSurface() {
               </button>
             </span>
           ) : (
-            <>
-              {auth.user ? (
-                <button type="button" className="text-btn" onClick={() => auth.signOut()}>
-                  Sign out
-                </button>
-              ) : auth.configured ? (
-                <button type="button" className="text-btn" onClick={auth.openDialog}>
-                  Sign in
-                </button>
-              ) : null}
-              <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>
-                Start over
-              </button>
-            </>
+            <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>Start over</button>
           )}
         </details>
-      </header>
+        </div>
+      </aside>
 
-      <main id="main" className="kelus-paper-page kelus-space-stage">
+      <div className="studio-main">
+        <header className="studio-topbar">
+          <span className="studio-topbar-course" title={course.name}>{course.name}</span>
+          <span className="studio-topbar-status">Private course</span>
+        </header>
+        <div className="studio-cover" role="img" aria-label="Open study book on a desk" />
+
+      <main id="main" className="studio-page kelus-space-stage">
+        <header className="studio-page-heading">
+          <span className="studio-eyebrow">Course workspace</span>
+          <p className="studio-page-course">{course.name}</p>
+          <p className="studio-page-description">Your sources, topics, and next revision session in one place.</p>
+        </header>
         {mode !== "today" ? (
-          <header className="kelus-paper-head kelus-space-top is-section">
+          <header className="studio-section-head kelus-paper-head kelus-space-top is-section">
             <div className="kelus-space-identity">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.h1
@@ -224,7 +228,7 @@ export function RevisionSurface() {
                 </motion.h1>
               </AnimatePresence>
               <p className="kelus-paper-lede kelus-space-lede">
-                {mode === "materials" ? "Pages for this exam." : "Topics by exam weight."}
+                {mode === "materials" ? "The sources behind your revision." : "Your topics, ordered by exam value."}
               </p>
             </div>
           </header>
@@ -233,7 +237,7 @@ export function RevisionSurface() {
         <AnimatePresence mode="wait" initial={false} custom={direction}>
           <motion.div
             key={mode}
-            className="kelus-paper-body kelus-space-panel revision-surface-panel"
+            className="studio-panel kelus-paper-body kelus-space-panel revision-surface-panel"
             custom={direction}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -257,6 +261,7 @@ export function RevisionSurface() {
           </motion.div>
         </AnimatePresence>
       </main>
+      </div>
     </section>
   );
 }

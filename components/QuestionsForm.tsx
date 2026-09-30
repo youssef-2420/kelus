@@ -133,7 +133,7 @@ export function QuestionsForm({ source = "questions" }: { source?: string }) {
             setQuestion(event.target.value);
             clearFeedback();
           }}
-          placeholder="Ask about today’s route, materials, Exam Pass, or anything unclear…"
+          placeholder="Ask about today’s route, materials, Kelus Plus, or anything unclear…"
           disabled={status === "saving"}
           maxLength={2000}
         />

@@ -34,6 +34,7 @@ fonts in this marketing-only pass; do not repoint global editorial/UI tokens.
 ## Product constraints
 
 - First-run Materials/Map gates preview the feature; they do not dump students into blank dead-ends.
-- Pricing is a single booklet stack (free, then Exam Pass) — not twin SaaS cards.
+- Pricing shows Free and Kelus Plus side by side on desktop, stacked on mobile. Plus is a $4.99 monthly subscription; annual and per-exam plans are not offered.
+- After a course is ready, the course workspace uses a dark study surface with a compact rail, a book cover, and the existing Today / Binder / Index tools. First-run setup and focused sessions keep their own layouts.
 - The topic map shows relationships when confirmed; the ranked list remains the selectable surface.
 - Homepage header does not duplicate the hero sample CTA.

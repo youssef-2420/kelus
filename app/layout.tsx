@@ -12,6 +12,8 @@ import "./exam-booklet.css";
 import "./workbench.css";
 import "./marketing-typography.css";
 import "./view-transitions.css";
+import "./course-studio.css";
+import "./monthly-pricing.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";

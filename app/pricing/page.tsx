@@ -9,7 +9,7 @@ import { LateralPage } from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
-  description: "Try Kelus free. Exam Pass is $9.99 for launch support through one exam when checkout is live.",
+  description: "Start revising free. Kelus Plus is $4.99 per month when subscription checkout opens.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -19,29 +19,27 @@ export default function PricingPage() {
 
   return (
     <LateralPage>
-    <div data-marketing="editorial" className="legal-page pricing-page is-booklet-product is-booklet-pricing">
+    <div data-marketing="editorial" className="legal-page pricing-page is-booklet-product is-booklet-pricing is-monthly-pricing">
     <main id="main">
       <PricingViewTracker />
       <section className="legal-panel pricing-booklet">
         <p className="kicker">Pricing</p>
-        <h1>Prepare for one exam. Pay for one exam.</h1>
+        <h1>Revision that fits your month.</h1>
         <p className="legal-lede">
-          Revision starts free on this device.
+          Start with Kelus for free. Move to Plus for $4.99 a month when subscriptions open.
           {syncReady
             ? " Sign in anytime to sync that progress across browsers."
-            : " Account sync ships when enabled for your build."}
-          {paymentReady
-            ? " Exam Pass is a one-time $9.99 launch pass through exam day."
-            : " Exam Pass ($9.99) opens with checkout — reserve interest below if you want priority support later."}
+            : " Your progress stays on this device."}
         </p>
 
         <div className="pricing-booklet-stack pricing-grid" role="list">
           <article className="pricing-offer is-free pricing-plan" role="listitem">
             <div className="pricing-offer-head">
-              <p className="kicker">Free · available now</p>
-              <p className="pricing-price">$0</p>
+              <p className="kicker">Free</p>
+              <p className="pricing-price">$0<span>/month</span></p>
             </div>
-            <h2>Try a revision session</h2>
+            <h2>Start revising</h2>
+            <p className="pricing-offer-lede">Everything you need to see how Kelus works with your course.</p>
             <ul>
               <li>Add your course and exam date</li>
               <li>Get topics to revise from your answer evidence</li>
@@ -56,20 +54,20 @@ export default function PricingPage() {
 
           <article className={`pricing-offer is-pass pricing-plan is-founding${paymentReady ? "" : " is-upcoming"}`} role="listitem">
             <div className="pricing-offer-head">
-              <p className="kicker">{paymentReady ? "Exam Pass" : "Exam Pass · coming soon"}</p>
+              <p className="kicker">Kelus Plus {paymentReady ? "" : "· coming soon"}</p>
               <p className="pricing-price">
-                $9.99<span>/exam</span>
+                $4.99<span>/month</span>
               </p>
             </div>
-            <h2>Support through exam day</h2>
+            <h2>More support as you study</h2>
             <p className="pricing-offer-lede">
-              A one-time launch pass for students who want priority support through the exam date they set.
+              A monthly subscription for students who want priority support while they revise.
             </p>
             <ul>
               <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
-              <li>Priority access to new study features while Exam Pass launches</li>
-              <li>Direct email support through the exam date you set</li>
-              <li>Funds improvements to revision and exam practice</li>
+              <li>Priority access to new study features</li>
+              <li>Direct email support while subscribed</li>
+              <li>Monthly billing; no annual commitment</li>
             </ul>
             <FoundingCta source="pricing" />
           </article>

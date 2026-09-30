@@ -18,7 +18,7 @@ export default function WaitlistPage() {
         <h1>Use Kelus now. Get a note when it gets better for your course.</h1>
         <p className="legal-lede">
           Revision sessions work today on this device. Sign in free anytime to sync across browsers. Join the list only if
-          you want a quiet update when Exam Pass checkout or more courses land — not a marketing drip.
+          you want a quiet update when Kelus Plus checkout or more courses land — not a marketing drip.
         </p>
         <WaitlistForm source="waitlist_page" />
         <WaitlistExport />

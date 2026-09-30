@@ -20,12 +20,12 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
           href={paymentLink}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={() => trackEvent({ name: "exam_pass_checkout_clicked", source })}
+          onClick={() => trackEvent({ name: "subscription_checkout_clicked", source })}
         >
-          Get Exam Pass · $9.99 <span aria-hidden="true">→</span>
+          Get Kelus Plus · $4.99/month <span aria-hidden="true">→</span>
         </a>
         <p className="founding-cta-note">
-          One exam, one payment. Priority support follows the exam date you set.
+          Monthly subscription. Your free revision and account sync are still available without Plus.
           {syncReady ? " Sync across devices is included with free sign-in." : " Study stays on this device until account sync is enabled."}
         </p>
       </div>
@@ -37,15 +37,15 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
       <p className="founding-cta-status">Checkout isn’t live yet</p>
       <p className="founding-cta-note">
         {waitlistReady
-          ? "Reserve the $9.99 Exam Pass for when payments open. Free revision stays available now."
-          : "Email hello@kelus.me to reserve the $9.99 Exam Pass. Free revision stays available now."}
+          ? "Get a quiet update when $4.99/month subscriptions open. Free revision stays available now."
+          : "Email hello@kelus.me for an update when $4.99/month subscriptions open. Free revision stays available now."}
         {syncReady
           ? " Sync across devices is already available with free sign-in."
           : " Routes stay on this device for now."}
       </p>
       {waitlistReady ? <WaitlistForm source={source} compact /> : (
-        <a className="text-btn" href="mailto:hello@kelus.me?subject=Exam%20Pass%20interest">
-          Email about Exam Pass <span aria-hidden="true">→</span>
+        <a className="text-btn" href="mailto:hello@kelus.me?subject=Kelus%20Plus%20subscription">
+          Ask about Kelus Plus <span aria-hidden="true">→</span>
         </a>
       )}
     </div>
