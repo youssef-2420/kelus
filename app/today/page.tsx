@@ -7,6 +7,7 @@ import { FirstRunSetup } from "@/components/FirstRunSetup";
 import { InitialDiagnosis } from "@/components/InitialDiagnosis";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { RevisionSurface } from "@/components/RevisionSurface";
+import { SiteFooter } from "@/components/SiteFooter";
 import { useLearner } from "@/components/LearnerProvider";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
@@ -125,6 +126,7 @@ export default function TodayPage() {
           <TodayBody />
         </SuspenseReveal>
       </Suspense>
+      <SiteFooter compact />
     </LateralPage>
   );
 }
