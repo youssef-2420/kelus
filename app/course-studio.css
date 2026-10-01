@@ -115,6 +115,7 @@ body.is-course-studio .kelus-space.is-studio {
 .is-course-studio .studio-nav.revision-surface-modes button {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
   gap: 12px;
   width: 100%;
   min-height: 46px;
@@ -907,9 +908,11 @@ body.is-course-studio .studio-onboarding .destination-actions {
   .is-course-studio .studio-nav.revision-surface-modes button {
     width: auto;
     flex: 1;
-    justify-content: center;
+    justify-content: flex-start;
     min-height: 44px;
-    padding-inline: 6px;
+    padding-inline: 8px;
+    gap: 6px;
+    font-size: 0.8rem;
   }
 
   .is-course-studio .studio-topbar {

@@ -37,11 +37,8 @@ export function FoundingCta({ source = "pricing" }: { source?: string }) {
       <p className="founding-cta-status">Checkout isn’t live yet</p>
       <p className="founding-cta-note">
         {waitlistReady
-          ? "Get a quiet update when $4.99/month subscriptions open. Free revision stays available now."
-          : "Email hello@kelus.me for an update when $4.99/month subscriptions open. Free revision stays available now."}
-        {syncReady
-          ? " Sync across devices is already available with free sign-in."
-          : " Routes stay on this device for now."}
+          ? "Join the list for one launch update. Free revision stays available."
+          : "Ask us when Plus opens. Free revision stays available."}
       </p>
       {waitlistReady ? <WaitlistForm source={source} compact /> : (
         <a className="text-btn" href="mailto:hello@kelus.me?subject=Kelus%20Plus%20subscription">

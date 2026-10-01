@@ -47,7 +47,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
   if (!concept) {
     return (
       <DirectionalPage>
-        <AppShell><div className={styles.page}><h1 className={styles.title}>Topic not found.</h1><p className={styles.lede}>It may have been removed from your course.</p><Link href="/map" className="text-btn">Back to Index</Link></div></AppShell>
+        <AppShell><div className={styles.page}><h1 className={styles.title}>Topic not found.</h1><p className={styles.lede}>It may have been removed from your course.</p><Link href="/map" className="text-btn">Back to topics</Link></div></AppShell>
       </DirectionalPage>
     );
   }
@@ -65,7 +65,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
 
   return (
     <DirectionalPage>
-      <AppShell action={<nav className={styles.actions} aria-label="Topic navigation"><Link href="/map" transitionTypes={["nav-back"]}>← Index</Link><Link href="/today">Today</Link></nav>}>
+      <AppShell action={<nav className={styles.actions} aria-label="Topic navigation"><Link href="/map" transitionTypes={["nav-back"]}>← Topics</Link><Link href="/today">Study plan</Link></nav>}>
         <div className={styles.page}>
           <header className={styles.header}>
             <p className={styles.eyebrow}>{courseName} · Topic</p>
