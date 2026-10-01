@@ -34,11 +34,22 @@ function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapsh
 
 export function advanceNowIfNeeded(state: DemoState, nowMs = Date.now()): { state: DemoState; changed: boolean } {
   const stored = Date.parse(state.nowIso);
-  if (!Number.isFinite(stored) || nowMs - stored < CLOCK_STALE_MS) {
-    return { state: { ...state, snapshot: refreshCaches(state.snapshot, state.nowIso) }, changed: false };
-  }
-  const nowIso = new Date(nowMs).toISOString();
-  return { state: { ...state, nowIso, snapshot: refreshCaches(state.snapshot, nowIso) }, changed: true };
+  const clockMoved = Number.isFinite(stored) && nowMs - stored >= CLOCK_STALE_MS;
+  const nowIso = clockMoved ? new Date(nowMs).toISOString() : state.nowIso;
+  // Only the bundled sample is a rolling exam. Never move a student's own date.
+  const demoExpired = state.snapshot.exams.some((exam) =>
+    exam.id === "exam-microeconomics-final" && exam.courseId === "course-microeconomics"
+    && Date.parse(exam.examDate) <= nowMs,
+  );
+  const snapshot = demoExpired ? {
+    ...state.snapshot,
+    exams: state.snapshot.exams.map((exam) =>
+      exam.id === "exam-microeconomics-final" && exam.courseId === "course-microeconomics"
+        ? { ...exam, examDate: new Date(nowMs + 9 * 86_400_000).toISOString() }
+        : exam,
+    ),
+  } : state.snapshot;
+  return { state: { ...state, nowIso, snapshot: refreshCaches(snapshot, nowIso) }, changed: clockMoved || demoExpired };
 }
 
 export function markSessionCompleted(atIso = new Date().toISOString()) {

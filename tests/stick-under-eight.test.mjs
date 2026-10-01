@@ -17,6 +17,25 @@ test("wall clock advances stale learner nowIso on return visits", () => {
   assert.notEqual(state.snapshot.concepts[0].predictedRetention, loaded.snapshot.concepts[0].predictedRetention);
 });
 
+test("expired bundled sample gets a fresh exam date without erasing practice", () => {
+  const loaded = loadAminaDemo(Date.parse("2026-09-05T12:00:00.000Z"));
+  const eventCount = loaded.snapshot.events.length;
+  const returned = Date.parse("2026-10-01T12:00:00.000Z");
+  const { state, changed } = advanceNowIfNeeded(loaded, returned);
+  assert.equal(changed, true);
+  assert.equal(Date.parse(state.snapshot.exams[0].examDate), returned + 9 * 86_400_000);
+  assert.equal(state.snapshot.events.length, eventCount);
+});
+
+test("a real exam date is never moved by the sample refresh", () => {
+  const loaded = loadAminaDemo(Date.parse("2026-09-05T12:00:00.000Z"));
+  const realExam = { ...loaded.snapshot.exams[0], id: "exam-own-course", courseId: "course-own" };
+  const state = { ...loaded, snapshot: { ...loaded.snapshot, exams: [realExam] } };
+  const returned = Date.parse("2026-10-01T12:00:00.000Z");
+  const refreshed = advanceNowIfNeeded(state, returned);
+  assert.equal(refreshed.state.snapshot.exams[0].examDate, realExam.examDate);
+});
+
 test("completing a session marks return-visit signal", () => {
   const loaded = loadAminaDemo(Date.parse("2026-09-05T12:00:00.000Z"));
   const { state: started, session } = startSession(loaded, loaded.snapshot.courses[0].id, loaded.snapshot.exams[0].id);

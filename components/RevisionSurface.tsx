@@ -106,6 +106,7 @@ export function RevisionSurface() {
     nowIso,
   });
   const days = daysUntilExam(exam, nowIso);
+  const isSampleCourse = course.id === "course-microeconomics" && exam.id === "exam-microeconomics-final";
   const courseId = course.id;
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
@@ -145,7 +146,7 @@ export function RevisionSurface() {
           <span aria-hidden="true">↗</span>
         </Link>
         <div className="studio-course">
-          <span className="studio-rail-label">Your course</span>
+          <span className="studio-rail-label">{isSampleCourse ? "Sample course" : "Your course"}</span>
           <strong title={course.name}>{course.name}</strong>
           <span>{days} day{days === 1 ? "" : "s"} until exam</span>
         </div>
@@ -206,7 +207,7 @@ export function RevisionSurface() {
       <div className="studio-main">
         <header className="studio-topbar">
           <span className="studio-topbar-course" title={course.name}>{course.name}</span>
-          <span className="studio-topbar-status">Private course</span>
+          <span className="studio-topbar-status">{isSampleCourse ? "Sample course" : "Private course"}</span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
         {mode !== "today" ? (
