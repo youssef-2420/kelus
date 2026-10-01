@@ -3801,9 +3801,17 @@ h3,
 
 .site-header .site-footer-mark {
   flex: 0 0 auto;
+  width: 48px;
+  min-height: 48px;
+  justify-content: center;
   margin-right: auto;
   font-size: 24px;
   transition: color var(--dur-product-micro) var(--ease-enter), transform var(--dur-product-micro) var(--ease-enter);
+}
+
+.site-header .site-footer-mark .kelus-logo-mark {
+  width: 40px;
+  height: 40px;
 }
 
 .site-header .site-footer-mark:active { transform: scale(0.97); }

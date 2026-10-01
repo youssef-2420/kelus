@@ -52,7 +52,6 @@ export function SiteHeader() {
       <div className="site-header-inner">
         <Link href="/" className="mark site-footer-mark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           <KelusLogoMark />
-          <span>Kelus</span>
         </Link>
 
         {inSession ? null : inProduct ? null : (
