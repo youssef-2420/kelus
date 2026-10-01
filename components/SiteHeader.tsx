@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useEffect, useRef } from "react";
 
 const links: Array<{
@@ -50,7 +51,8 @@ export function SiteHeader() {
     >
       <div className="site-header-inner">
         <Link href="/" className="mark site-footer-mark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
-          Kelus
+          <KelusLogoMark />
+          <span>Kelus</span>
         </Link>
 
         {inSession ? null : inProduct ? null : (

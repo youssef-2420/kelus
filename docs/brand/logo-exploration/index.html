@@ -27,11 +27,12 @@
     .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     .card { overflow: hidden; border: 1px solid #d5d9d0; border-radius: 13px; background: #fff; transition: transform .24s cubic-bezier(.4,0,.2,1), border-color .24s ease; }
     .card:hover { transform: translateY(-3px); border-color: #9aada0; }
+    .card.is-selected { border-color: #1f6b45; }
     .canvas { min-height: 248px; display: grid; place-items: center; background: #fff; color: #173c2a; transition: background-color .24s ease, color .24s ease; }
     .canvas img { display: block; width: 128px; height: 128px; }
     body[data-canvas="green"] .canvas { background: #173c2a; }
     body[data-canvas="ink"] .canvas { background: #12160f; }
-    body[data-canvas="green"] .canvas img, body[data-canvas="ink"] .canvas img { filter: invert(1); }
+    body[data-canvas="green"] .canvas img, body[data-canvas="ink"] .canvas img { filter: grayscale(1) brightness(0) invert(1); }
     .card-copy { padding: 21px 22px 24px; border-top: 1px solid #d5d9d0; }
     .card-index { display: block; margin-bottom: 12px; font-size: 11px; letter-spacing: .14em; color: #637067; }
     h2 { margin: 0 0 8px; font-size: 21px; font-weight: 600; letter-spacing: -.04em; }
@@ -49,7 +50,7 @@
     .application-surface { display: flex; align-items: center; gap: 12px; min-height: 102px; padding: 25px; border: 1px solid #d5d9d0; border-radius: 12px; background: #fff; color: #12160f; }
     .application-surface.dark { background: #173c2a; color: #fff; border-color: #173c2a; }
     .application-surface img { width: 34px; height: 34px; }
-    .application-surface.dark img { filter: invert(1); }
+    .application-surface.dark img { filter: grayscale(1) brightness(0) invert(1); }
     .application-surface b { font-size: 30px; font-weight: 650; letter-spacing: -.065em; line-height: 1; }
     .application-surface span { margin-left: auto; font-size: 11px; color: #637067; }
     .application-surface.dark span { color: #b8c8bd; }
@@ -64,7 +65,7 @@
     <header>
       <p class="eyebrow">Kelus / brand study / 2026</p>
       <h1>A mark for learning that comes back to you.</h1>
-      <p class="intro">Seven vector directions for Kelus, from literal revision cues to a compact monogram. Each is one-color, editable, and tested at favicon scale. The existing site identity stays unchanged until a direction is chosen.</p>
+      <p class="intro">Seven vector directions for Kelus, from literal revision cues to a compact monogram. Recall K is the selected mark, now used beside the wordmark and as the site icon.</p>
     </header>
     <div class="toolbar">
       <p>Compare the marks on light and dark surfaces.</p>
@@ -81,20 +82,20 @@
       <article class="card"><div class="canvas"><img src="04-recall-loop.svg" alt="Recall Loop mark" /></div><div class="card-copy"><span class="card-index">04 / REPETITION</span><h2>Recall Loop</h2><p>A return path around two memory lines. It communicates revision, though the arrow feels close to generic sync marks.</p><div class="scale"><img src="04-recall-loop.svg" width="16" height="16" alt="" /><img src="04-recall-loop.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
       <article class="card"><div class="canvas"><img src="05-route-k.svg" alt="Route K mark" /></div><div class="card-copy"><span class="card-index">05 / ROUTING</span><h2>Route K</h2><p>A K assembled from route stops: recognisable name and product intelligence in one symbol, with a technical edge.</p><div class="scale"><img src="05-route-k.svg" width="16" height="16" alt="" /><img src="05-route-k.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
       <article class="card"><div class="canvas"><img src="06-answer-line.svg" alt="Answer Line mark" /></div><div class="card-copy"><span class="card-index">06 / EVIDENCE</span><h2>Answer Line</h2><p>The moment a student checks their response. Friendly and concrete, but more of a feature icon than a brand mark.</p><div class="scale"><img src="06-answer-line.svg" width="16" height="16" alt="" /><img src="06-answer-line.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
-      <article class="card"><div class="canvas"><img src="07-recall-k.svg" alt="Recall K mark" /></div><div class="card-copy"><span class="card-index">07 / HAND-INK</span><h2>Recall K</h2><p>A continuous return stroke gives the K a more human feel without losing the small-size silhouette.</p><div class="scale"><img src="07-recall-k.svg" width="16" height="16" alt="" /><img src="07-recall-k.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
+      <article class="card is-selected"><div class="canvas"><img src="07-recall-k.svg" alt="Recall K mark" /></div><div class="card-copy"><span class="card-index">07 / SELECTED</span><h2>Recall K</h2><p>A continuous return stroke gives the K a more human feel without losing the small-size silhouette.</p><div class="scale"><img src="07-recall-k.svg" width="16" height="16" alt="" /><img src="07-recall-k.svg" width="32" height="32" alt="" /><span>16 / 32 px</span></div></div></article>
     </section>
     <section class="recommendation" aria-label="Design recommendation">
-      <div><span class="card-index">FIRST PICK</span><h2>01 — Margin K</h2><p>The existing wordmark already carries Kelus’s name. A restrained letterform will sit beside it without trying to explain the entire product at favicon scale. Route K is the exploratory second choice if you want the symbol to carry more of the product story.</p></div>
-      <a href="01-margin-k.svg" download>Download first pick SVG ↗</a>
+      <div><span class="card-index">SELECTED MARK</span><h2>07 — Recall K</h2><p>The handwritten-feeling return stroke ties the mark to Kelus’s revision loop. It now sits beside the existing wordmark across paper and dark product surfaces, and replaces the old text-only favicon.</p></div>
+      <a href="07-recall-k.svg" download>Download Recall K SVG ↗</a>
     </section>
     <section class="application" aria-label="Recommended logo in context">
       <span class="card-index">IN CONTEXT</span><h2>One mark, two surfaces</h2>
       <div class="application-grid">
-        <div class="application-surface"><img src="01-margin-k.svg" alt="" /><b>kelus</b><span>paper header</span></div>
-        <div class="application-surface dark"><img src="01-margin-k.svg" alt="" /><b>kelus</b><span>course rail</span></div>
+        <div class="application-surface"><img src="07-recall-k.svg" alt="" /><b>kelus</b><span>paper header</span></div>
+        <div class="application-surface dark"><img src="07-recall-k.svg" alt="" /><b>kelus</b><span>course rail</span></div>
       </div>
     </section>
-    <footer>Kelus logo exploration · One-color SVG source · Existing live brand untouched</footer>
+    <footer>Kelus logo exploration · Recall K selected · One-color SVG source</footer>
   </main>
   <script>
     const buttons = document.querySelectorAll('[data-color]');

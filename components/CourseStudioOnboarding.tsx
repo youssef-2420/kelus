@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
 
 type Stage = "exam" | "sources" | "check";
 
@@ -33,7 +34,10 @@ export function CourseStudioOnboarding({ stage, courseName, children }: {
   return (
     <section className="kelus-space is-studio studio-onboarding" aria-label="Set up your course">
       <aside className="studio-rail" aria-label="Course workspace">
-        <Link href="/" className="studio-brand" aria-label="Kelus home">kelus<span aria-hidden="true">↗</span></Link>
+        <Link href="/" className="studio-brand" aria-label="Kelus home">
+          <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
+          <span aria-hidden="true">↗</span>
+        </Link>
         <div className="studio-course">
           <span className="studio-rail-label">Your course</span>
           <strong title={courseName || "New course"}>{courseName || "New course"}</strong>

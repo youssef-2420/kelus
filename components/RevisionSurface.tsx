@@ -9,6 +9,7 @@ import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
@@ -139,7 +140,10 @@ export function RevisionSurface() {
   return (
     <section className="kelus-space is-studio" aria-label="Revision workbench">
       <aside className="studio-rail" aria-label="Course workspace">
-        <Link href="/" className="studio-brand" aria-label="Kelus home">kelus<span aria-hidden="true">↗</span></Link>
+        <Link href="/" className="studio-brand" aria-label="Kelus home">
+          <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
+          <span aria-hidden="true">↗</span>
+        </Link>
         <div className="studio-course">
           <span className="studio-rail-label">Your course</span>
           <strong title={course.name}>{course.name}</strong>

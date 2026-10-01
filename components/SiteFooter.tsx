@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
 
 const links = [
   { href: "/route", label: "How it works" },
@@ -14,7 +15,8 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
     <footer className={compact ? "site-footer is-compact" : "site-footer"}>
       <div className="site-footer-inner">
         <Link href="/" className="mark site-footer-mark">
-          Kelus
+          <KelusLogoMark />
+          <span>Kelus</span>
         </Link>
         <nav className="site-footer-nav" aria-label="Footer">
           {links.map((link) => (

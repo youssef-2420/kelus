@@ -6183,6 +6183,7 @@ h3,
 .site-footer-mark {
   display: inline-flex;
   align-items: center;
+  gap: 7px;
   min-height: 44px;
   font-family: var(--font-ledger);
   font-size: 20px;
@@ -6191,6 +6192,14 @@ h3,
   letter-spacing: -0.045em;
   text-decoration: none;
   color: #111;
+}
+
+.site-footer-mark .kelus-logo-mark {
+  display: block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+  color: var(--color-kelus, #1f6b45);
 }
 
 .site-footer-nav {
