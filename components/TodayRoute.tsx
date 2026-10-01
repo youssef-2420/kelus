@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
 import { kelusEase } from "@/components/motion";
+import { describeRouteChoice } from "@/lib/today-reason";
 
 function citeWhisper(source: { label: string; locator?: string | null } | undefined) {
   if (!source) return null;
@@ -57,6 +58,11 @@ export function TodayRoute({
   const firstSource = firstActivity?.sourceReferences[0];
   const firstName = firstConcept?.name ?? "Mixed Retrieval";
   const whisper = citeWhisper(firstSource);
+  const decision = describeRouteChoice(first, firstConcept);
+  const nextStops = route.allocations.slice(1, 4).map((allocation) => ({
+    ...allocation,
+    name: concepts.find((concept) => concept.id === allocation.conceptId)?.name ?? "Mixed recall",
+  }));
 
   return (
     <div className="today-route-execution is-one-next is-booklet-page is-presence">
@@ -76,7 +82,7 @@ export function TodayRoute({
           animate={{ opacity: 1 }}
           transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.06, ease: kelusEase }}
         >
-          <span>{first.minutes} min</span>
+          <span>Today · {first.minutes} min</span>
           {whisper ? <span>{whisper}</span> : null}
         </motion.p>
         <motion.h1
@@ -91,6 +97,10 @@ export function TodayRoute({
         >
           {firstName}
         </motion.h1>
+        <div className="today-decision" aria-label="Why this topic is first">
+          <p className="today-decision-label">Why now</p>
+          {decision.map((line) => <p key={line}>{line}</p>)}
+        </div>
         <motion.button
           type="button"
           className="cta today-start"
@@ -98,9 +108,25 @@ export function TodayRoute({
           whileTap={reduceMotion ? undefined : { scale: 0.97 }}
           transition={pressSpring}
         >
-          {startLabel ?? `Start ${firstName}`} <span aria-hidden="true">→</span>
+          {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
         </motion.button>
+        <p className="today-session-preview">Read · Retrieve · Use · Mark</p>
       </motion.article>
+      {nextStops.length ? (
+        <aside className="today-next" aria-label="Planned next topics">
+          <p className="today-next-label">After this</p>
+          <ol>
+            {nextStops.map((stop, index) => (
+              <li key={`${stop.conceptId}-${index}`}>
+                <span aria-hidden="true">{String(index + 2).padStart(2, "0")}</span>
+                <strong>{stop.name}</strong>
+                <span>{stop.minutes} min</span>
+              </li>
+            ))}
+          </ol>
+          <p className="today-next-note">Your answer can change what comes next.</p>
+        </aside>
+      ) : null}
     </div>
   );
 }

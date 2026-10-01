@@ -111,7 +111,7 @@ test("the course workspace keeps destination and setup progress across product p
   assert.match(diagnosis, /<AppShell>/);
 });
 
-test("the index is a paper TOC; concept pages stay shareable", async () => {
+test("the index is a paper TOC; uploaded concepts have a static-exportable detail route", async () => {
   const [map, knowledgeMap, inspector, legacy, detail, panel] = await Promise.all([
     source("app/map/page.tsx"),
     source("components/KnowledgeMap.tsx"),
@@ -127,9 +127,10 @@ test("the index is a paper TOC; concept pages stay shareable", async () => {
   assert.match(knowledgeMap, /onSelect/);
   assert.match(knowledgeMap, /aria-pressed/);
   assert.match(inspector, /Open full learning history/);
-  assert.match(inspector, /\/concepts\/\$\{encodeURIComponent\(concept\.id\)\}/);
-  assert.match(legacy, /router\.replace\(id \? `\/concepts\//);
-  assert.doesNotMatch(detail, /\/concept\?id=/);
+  assert.match(inspector, /\/concept\?id=\$\{encodeURIComponent\(concept\.id\)\}/);
+  assert.match(panel, /\/concept\?id=\$\{encodeURIComponent\(concept\.id\)\}/);
+  assert.match(legacy, /<ConceptDetail \/>/);
+  assert.match(detail, /\/concept\?id=/);
 });
 
 test("ledger design keeps the mobile homepage in one column", async () => {

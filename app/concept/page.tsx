@@ -1,21 +1,19 @@
-"use client";
-
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect } from "react";
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import { AppShell } from "@/components/AppShell";
+import { ConceptDetail } from "@/app/concepts/[id]/ConceptDetail";
 
-function LegacyConceptRedirect() {
-  const router = useRouter();
-  const search = useSearchParams();
-  const id = search.get("id");
+export const metadata: Metadata = {
+  title: "Concept — Kelus",
+  robots: { index: false, follow: false },
+};
 
-  useEffect(() => {
-    router.replace(id ? `/concepts/${encodeURIComponent(id)}` : "/map");
-  }, [id, router]);
-
-  return <AppShell><p>Opening the knowledge map…</p></AppShell>;
-}
-
+// Uploaded concepts get device-created IDs, so their detail page must not
+// depend on a build-time list of dynamic routes in the static export.
 export default function ConceptQueryPage() {
-  return <Suspense fallback={<AppShell><p>Opening the knowledge map…</p></AppShell>}><LegacyConceptRedirect /></Suspense>;
+  return (
+    <Suspense fallback={<AppShell><p>Opening concept…</p></AppShell>}>
+      <ConceptDetail />
+    </Suspense>
+  );
 }

@@ -83,7 +83,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   const topic = page.locator(".index-toc-row").filter({ hasText: "Osmosis" }).first();
   await expect(topic).toBeVisible();
   await topic.click();
-  await expect(page).toHaveURL(/\/concepts\//);
+  await expect(page).toHaveURL(/\/concept\/?\?id=c-source-/);
   await page.setViewportSize({ width: 375, height: 812 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.goBack();
