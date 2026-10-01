@@ -26,11 +26,11 @@ test("Set up and sample revision open the course workspace without a cover image
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page.locator(".studio-rail")).toBeVisible();
   await expect(page.locator(".studio-cover")).toHaveCount(0);
-  await expect(page.locator(".studio-page-heading")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Set your exam" })).toBeVisible();
   await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
   await page.goto("/today/?sample=1");
   await expect(page.locator(".studio-cover")).toHaveCount(0);
-  await expect(page.locator(".studio-page-heading")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
 });
 
 test("ink draws without blocking navigation, and finishes on its own", async ({ page }) => {

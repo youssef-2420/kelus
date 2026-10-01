@@ -209,14 +209,10 @@ export function RevisionSurface() {
           <span className="studio-topbar-status">Private course</span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
-        <header className="studio-page-heading">
-          <span className="studio-eyebrow">Course workspace</span>
-          <p className="studio-page-course">{course.name}</p>
-          <p className="studio-page-description">Your sources, topics, and next revision session in one place.</p>
-        </header>
         {mode !== "today" ? (
           <header className="studio-section-head kelus-paper-head kelus-space-top is-section">
             <div className="kelus-space-identity">
+              <p className="studio-section-course">{course.name}</p>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.h1
                   key={modeMeta.label}
@@ -254,7 +250,7 @@ export function RevisionSurface() {
                   activities={snapshot.learningActivities}
                   events={snapshot.events}
                   onStart={openSession ? resume : begin}
-                  startLabel={openSession ? "Resume" : undefined}
+                  startLabel={openSession ? "Resume session" : undefined}
                 />
               </div>
             ) : null}

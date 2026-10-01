@@ -91,6 +91,11 @@
   --input-line: var(--color-frost);
   --mint-soft: var(--color-periwinkle-wash);
 
+  /* Course workspace: quiet contrast without a second brand palette. */
+  --studio-ink: #f3f2ed;
+  --studio-muted: #b8c3b7;
+  --studio-hairline: #3b423b;
+
   --color-terrain: var(--color-deep-violet);
   --color-terrain-deep: var(--color-midnight-ink);
   --color-terrain-paper: var(--paper);

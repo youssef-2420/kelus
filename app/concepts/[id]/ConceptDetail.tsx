@@ -5,8 +5,31 @@ import { useParams, useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { deriveStatus } from "@/domain/learner-model";
-import { daysAgoLabel, formatDay, percent, statusLabel } from "@/lib/format";
+import { confidenceLabel, daysAgoLabel, formatDay, percent } from "@/lib/format";
 import { ConceptTitleTransition, DirectionalPage } from "@/components/PageTransition";
+import styles from "./ConceptDetail.module.css";
+
+const signalLabel = {
+  not_learned: "Not reviewed yet",
+  weak: "Needs another pass",
+  fading: "Recall is fading",
+  stable: "Holding up",
+  strong: "Holding up well",
+} as const;
+
+const outcomeLabel = {
+  success: "recalled",
+  partial: "partly recalled",
+  failure: "needs another pass",
+} as const;
+
+const eventLabel = {
+  seed_rating: "Starting estimate",
+  self_rating: "Self-check",
+  retrieval: "Recall check",
+  hint_used: "Hint used",
+  answer_revealed: "Answer revealed",
+} as const;
 
 export function ConceptDetail({ conceptId }: { conceptId?: string }) {
   const params = useParams<{ id?: string }>();
@@ -24,11 +47,12 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
   if (!concept) {
     return (
       <DirectionalPage>
-        <AppShell><p>Concept not found.</p></AppShell>
+        <AppShell><div className={styles.page}><h1 className={styles.title}>Topic not found.</h1><p className={styles.lede}>It may have been removed from your course.</p><Link href="/map" className="text-btn">Back to Index</Link></div></AppShell>
       </DirectionalPage>
     );
   }
   const status = deriveStatus(concept.mastery, concept.predictedRetention, concept.retrievalAttempts);
+  const courseName = state.snapshot.courses.find((course) => course.id === concept.courseId)?.name ?? "Your course";
   const events = state.snapshot.events.filter((event) => event.conceptId === concept.id).slice().reverse();
   const related = state.snapshot.relationships
     .filter((rel) => rel.fromId === concept.id || rel.toId === concept.id)
@@ -41,38 +65,48 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
 
   return (
     <DirectionalPage>
-      <AppShell action={<><Link href="/map" className="text-btn" transitionTypes={["nav-back"]}>Map</Link><Link href="/today" className="text-btn">Today</Link></>}>
-        <p className={`mark-status is-${status}`}>{statusLabel(status)}</p>
-        <ConceptTitleTransition id={concept.id}>
-          <h1 className="page-title">{concept.name}</h1>
-        </ConceptTitleTransition>
-        <section className="detail">
-          <dl>
-            <div><dt>Mastery</dt><dd>{percent(concept.mastery)}</dd></div>
-            <div><dt>Predicted retention</dt><dd>{percent(concept.predictedRetention)}</dd></div>
-            <div><dt>Confidence</dt><dd>{percent(concept.confidence)}</dd></div>
-            <div><dt>Last reviewed</dt><dd>{daysAgoLabel(concept.lastReviewedAt, state.nowIso)}</dd></div>
-            <div><dt>Next review</dt><dd>{concept.nextReviewAt ? formatDay(concept.nextReviewAt) : "Now"}</dd></div>
-            <div><dt>Retrievals</dt><dd>{concept.retrievalAttempts}</dd></div>
-          </dl>
-        </section>
-        <section className="section">
-          <h2>Learning history</h2>
-          <ol className="history">
-            {events.map((event) => (
-              <li key={event.id}>
-                <span>{event.kind === "seed_rating" ? "Initial rating" : "Retrieval"} · {event.outcome}</span>
-                <span className="quiet">{percent(event.masteryAfter)}</span>
-              </li>
-            ))}
-          </ol>
-        </section>
-        <section className="section related">
-          <h2>Related concepts</h2>
-          {related.length ? related.map((item) => item && (
-            <Link key={item.other.id} href={`/concepts/${encodeURIComponent(item.other.id)}`} transitionTypes={["nav-forward"]} prefetch={true}>{item.other.name} · {item.kind}</Link>
-          )) : <p className="quiet">No linked concepts yet.</p>}
-        </section>
+      <AppShell action={<nav className={styles.actions} aria-label="Topic navigation"><Link href="/map" transitionTypes={["nav-back"]}>← Index</Link><Link href="/today">Today</Link></nav>}>
+        <div className={styles.page}>
+          <header className={styles.header}>
+            <p className={styles.eyebrow}>{courseName} · Topic</p>
+            <ConceptTitleTransition id={concept.id}>
+              <h1 className={styles.title}>{concept.name}</h1>
+            </ConceptTitleTransition>
+            <p className={styles.lede}>The route uses your recall history to decide when to revisit this topic.</p>
+          </header>
+          <section className={styles.signal} aria-label="Current practice signal">
+            <div>
+              <p className={styles.eyebrow}>Current signal</p>
+              <h2>{signalLabel[status]}</h2>
+              <p>{concept.retrievalAttempts === 0 ? "No recall checks yet." : `Based on ${concept.retrievalAttempts} recall check${concept.retrievalAttempts === 1 ? "" : "s"}.`}</p>
+            </div>
+            <dl>
+              <div><dt>Mastery estimate</dt><dd>{percent(concept.mastery)}</dd></div>
+              <div><dt>Evidence</dt><dd>{confidenceLabel(concept.confidence)}</dd></div>
+              <div><dt>Last checked</dt><dd>{daysAgoLabel(concept.lastReviewedAt, state.nowIso)}</dd></div>
+              <div><dt>Next review</dt><dd>{concept.nextReviewAt ? formatDay(concept.nextReviewAt) : "Now"}</dd></div>
+            </dl>
+          </section>
+          <section className={styles.section}>
+            <h2>Learning history</h2>
+            {events.length ? <ol className={styles.list}>
+              {events.map((event) => (
+                <li key={event.id}>
+                  <span>{eventLabel[event.kind]}{event.outcome ? ` · ${outcomeLabel[event.outcome]}` : ""}</span>
+                  <span>{formatDay(event.createdAt)}</span>
+                </li>
+              ))}
+            </ol> : <p className={styles.empty}>Your practice will appear here after the first check.</p>}
+          </section>
+          <section className={styles.section}>
+            <h2>Connected topics</h2>
+            {related.length ? <ul className={styles.list}>
+              {related.map((item) => item && (
+                <li key={item.other.id}><Link href={`/concept?id=${encodeURIComponent(item.other.id)}`} transitionTypes={["nav-forward"]} prefetch={true}>{item.other.name} <span>↗</span></Link></li>
+              ))}
+            </ul> : <p className={styles.empty}>No confirmed topic links yet.</p>}
+          </section>
+        </div>
       </AppShell>
     </DirectionalPage>
   );

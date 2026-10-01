@@ -1,3 +1,4 @@
+/* Hallmark · modern-minimal Workbench · design.md · green/ink · P5 H4 E4 S5 R5 V4. */
 /* A course workspace: dark navigation and the real study tools. */
 body.is-course-studio,
 body:has(.kelus-space.is-studio) {
@@ -290,6 +291,13 @@ body.is-course-studio .kelus-space.is-studio {
   border-bottom: 1px solid #383f38;
 }
 
+.is-course-studio .studio-section-course {
+  margin: 0 0 8px;
+  color: var(--studio-muted);
+  font-size: 0.84rem;
+  overflow-wrap: anywhere;
+}
+
 .is-course-studio .studio-section-head h1 {
   color: #f3f2ed;
   font-family: var(--font-inter), "IBM Plex Sans", sans-serif;
@@ -304,9 +312,9 @@ body.is-course-studio .kelus-space.is-studio {
   font-size: 0.91rem;
 }
 
-.is-course-studio .today-route-execution.is-booklet-page,
-.is-course-studio .today-lead-action.is-page,
-.is-course-studio .workbench-focus.is-booklet-page {
+body.is-course-studio .today-route-execution.is-booklet-page,
+body.is-course-studio .today-lead-action.is-page,
+body.is-course-studio .workbench-focus.is-booklet-page {
   max-width: none;
   margin: 0;
   padding: 0;
@@ -315,15 +323,97 @@ body.is-course-studio .kelus-space.is-studio {
   box-shadow: none;
 }
 
-.is-course-studio .today-lead-action.is-page {
+body.is-course-studio .today-lead-action.is-page {
   display: grid;
-  gap: 19px;
+  gap: 20px;
   padding-top: 14px;
+}
+
+body.is-course-studio .today-route-execution.is-booklet-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.8fr);
+  gap: clamp(36px, 6vw, 80px);
+  align-items: start;
+  padding-top: clamp(36px, 6vh, 72px);
+}
+
+.is-course-studio .today-decision {
+  max-width: 48ch;
+  margin: 4px 0 8px;
+  padding-left: 16px;
+  border-left: 2px solid var(--color-kelus);
+}
+
+.is-course-studio .today-decision-label,
+.is-course-studio .today-next-label {
+  margin: 0 0 12px;
+  color: var(--studio-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.is-course-studio .today-decision p:not(.today-decision-label) {
+  margin: 0 0 7px;
+  color: var(--studio-muted);
+  font-size: 0.94rem;
+  line-height: 1.55;
+}
+
+.is-course-studio .today-session-preview {
+  margin: -7px 0 0;
+  color: var(--studio-muted);
+  font-size: 0.81rem;
+  letter-spacing: 0.025em;
+}
+
+.is-course-studio .today-next {
+  margin-top: 12px;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--studio-hairline);
+}
+
+.is-course-studio .today-next ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.is-course-studio .today-next li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: baseline;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--studio-hairline);
+  font-size: 0.9rem;
+}
+
+.is-course-studio .today-next li span {
+  color: var(--studio-muted);
+  font-size: 0.79rem;
+}
+
+.is-course-studio .today-next li strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--studio-ink);
+  font-weight: 500;
+}
+
+.is-course-studio .today-next-note {
+  max-width: 30ch;
+  margin: 20px 0 0;
+  color: var(--studio-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 body.is-course-studio .studio-panel .today-page-folio {
   color: #b8c3b7;
   font-size: 0.86rem;
+  overflow-wrap: anywhere;
 }
 
 body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
@@ -334,6 +424,7 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
   font-weight: 650;
   letter-spacing: -0.045em;
   line-height: 1.07;
+  overflow-wrap: anywhere;
 }
 
 .is-course-studio .today-lead-action.is-page .today-start {
@@ -727,7 +818,24 @@ body.is-course-studio .studio-onboarding .destination-actions {
   background: transparent;
 }
 
+@media (max-width: 1040px) {
+  body.is-course-studio .today-route-execution.is-booklet-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+
+  .is-course-studio .today-next {
+    max-width: 680px;
+  }
+}
+
 @media (max-width: 760px) {
+  body.is-course-studio .today-route-execution.is-booklet-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    padding-top: 12px;
+  }
+
   body.is-course-studio .kelus-space.is-studio {
     display: block;
   }

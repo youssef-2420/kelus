@@ -219,7 +219,7 @@ export function KnowledgeMap({
                       <span className="pct" title="Mastery on reviewed questions">{evidence.mastery === null ? "—" : percent(evidence.mastery)}</span>
                     </button>
                   ) : (
-                    <Link href={`/concepts/${encodeURIComponent(concept.id)}`} className={`row${isStart ? " is-start" : ""}`} transitionTypes={["nav-forward"]} prefetch={true}>
+                    <Link href={`/concept?id=${encodeURIComponent(concept.id)}`} className={`row${isStart ? " is-start" : ""}`} transitionTypes={["nav-forward"]} prefetch={true}>
                       <span>
                         {title}
                         <span className="bar" aria-hidden="true">

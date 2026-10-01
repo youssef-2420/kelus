@@ -50,7 +50,7 @@ test("mobile Today keeps navigation compact and a single start action", async ({
   const boxes = await page.locator(".kelus-space-nav button").evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect().top));
   expect(Math.max(...boxes) - Math.min(...boxes)).toBeLessThan(2);
   await expect(page.locator(".kelus-space-start")).toBeHidden();
-  await expect(page.getByRole("button", { name: /Start Elasticity/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Start this topic/ })).toBeVisible();
   await expect(page.locator("#today-title")).toHaveText(/Elasticity/);
   await expect(page.getByRole("heading", { name: "Today", exact: true })).toHaveCount(0);
   await expect(page.locator("details[aria-label='Practice evidence']")).toHaveCount(0);

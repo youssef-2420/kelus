@@ -70,3 +70,19 @@ test("the learning story stays continuous at every supported mobile width", asyn
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
 });
+
+test("a student can follow Today into the index and open a topic", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/today/?sample=1");
+  await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
+  await expect(page.getByLabel("Why this topic is first")).toContainText("earlier answers");
+  await expect(page.getByRole("button", { name: /Start this topic/ })).toBeVisible();
+
+  await page.getByRole("button", { name: "Index" }).click();
+  await expect(page.getByRole("heading", { name: "Index" })).toBeVisible();
+  await page.locator(".index-toc a").first().click();
+  await expect(page).toHaveURL(/\/concept\/?\?id=c-elasticity/);
+  await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Needs another pass" })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Topic navigation" }).getByRole("link", { name: /Index/ })).toBeVisible();
+});

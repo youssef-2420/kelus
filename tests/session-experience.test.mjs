@@ -73,7 +73,7 @@ test("sessions expose a confirmed course source and its page", async () => {
   assert.doesNotMatch(page, /window\.open\(`\$\{URL\.createObjectURL/);
 });
 
-test("today is one booklet page — topic title and start only", async () => {
+test("today leads with one topic and shows evidence and next stops as secondary", async () => {
   const today = await source("components/TodayRoute.tsx");
   const page = await source("app/today/page.tsx");
   const surface = await source("components/RevisionSurface.tsx");
@@ -83,8 +83,10 @@ test("today is one booklet page — topic title and start only", async () => {
   assert.match(today, /id="today-title"/);
   assert.match(today, /today-page-folio/);
   assert.match(today, /whileTap/);
-  assert.match(today, /startLabel \?\? `Start \$\{firstName\}`|Start \{firstName\}/);
-  assert.doesNotMatch(today, /Next stops|today-plan-list|Why this|confidenceLabel|From your course/);
+  assert.match(today, /startLabel \?\? "Start this topic"/);
+  assert.match(today, /today-decision/);
+  assert.match(today, /today-next/);
+  assert.doesNotMatch(today, /today-plan-list|confidenceLabel|From your course/);
   assert.match(surface, /is-booklet-page/);
   assert.match(await source("app/workbench.css"), /--font-display|--font-source-serif/);
   assert.match(await source("app/workbench.css"), /radial-gradient|box-shadow/);

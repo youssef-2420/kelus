@@ -9,5 +9,5 @@ test("Today is one booklet page — topic title, no planner chrome", async ({ pa
   await expect(page.locator("details[aria-label='Practice evidence']")).toHaveCount(0);
   await expect(page.locator(".today-plan-list")).toHaveCount(0);
   await expect(page.locator(".today-evidence-disclosure")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: /Start Elasticity/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Start this topic/ })).toBeVisible();
 });

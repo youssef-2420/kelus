@@ -59,7 +59,7 @@ export function TopicMapPanel() {
           return (
             <li key={concept.id} className={isStart ? "is-start" : undefined}>
               <Link
-                href={`/concepts/${encodeURIComponent(concept.id)}`}
+                href={`/concept?id=${encodeURIComponent(concept.id)}`}
                 className={`index-toc-row${isStart ? " is-start" : ""}`}
                 transitionTypes={["nav-forward"]}
                 prefetch={true}
