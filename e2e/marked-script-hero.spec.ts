@@ -20,13 +20,17 @@ test("marked script preserves copy, links, and narrow-screen layout", async ({ p
   expect(errors).toEqual([]);
 });
 
-test("Set up opens the same course workspace shell used for revision", async ({ page }) => {
+test("Set up and sample revision open the course workspace without a cover image", async ({ page }) => {
   await page.goto("/");
   await page.locator('[data-hero="marked-script"]').getByRole("link", { name: "Set up" }).click();
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page.locator(".studio-rail")).toBeVisible();
-  await expect(page.locator(".studio-cover")).toBeVisible();
+  await expect(page.locator(".studio-cover")).toHaveCount(0);
+  await expect(page.locator(".studio-page-heading")).toBeVisible();
   await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
+  await page.goto("/today/?sample=1");
+  await expect(page.locator(".studio-cover")).toHaveCount(0);
+  await expect(page.locator(".studio-page-heading")).toBeVisible();
 });
 
 test("ink draws without blocking navigation, and finishes on its own", async ({ page }) => {

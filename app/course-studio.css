@@ -1,4 +1,4 @@
-/* A course workspace: dark navigation, one course cover, and the real study tools. */
+/* A course workspace: dark navigation and the real study tools. */
 body.is-course-studio,
 body:has(.kelus-space.is-studio) {
   background: #171918;
@@ -246,16 +246,10 @@ body.is-course-studio .kelus-space.is-studio {
   font-size: 0.8rem;
 }
 
-.is-course-studio .studio-cover {
-  height: clamp(164px, 21vw, 270px);
-  border-bottom: 1px solid #3a3e38;
-  background: #302922 url("/workspace/course-book.jpg") center 49% / cover no-repeat;
-}
-
 .is-course-studio .studio-page.kelus-space-stage {
   display: block;
   width: min(100%, 1080px);
-  min-height: calc(100dvh - 326px);
+  min-height: calc(100dvh - 56px);
   margin: 0 auto;
   padding: clamp(32px, 5vw, 64px) clamp(24px, 5vw, 64px) 80px;
   background: transparent;
@@ -814,12 +808,8 @@ body.is-course-studio .studio-onboarding .destination-actions {
     display: none;
   }
 
-  .is-course-studio .studio-cover {
-    height: 158px;
-    background-position: 62% center;
-  }
-
   .is-course-studio .studio-page.kelus-space-stage {
+    min-height: 0;
     padding: 30px 20px 72px;
   }
 

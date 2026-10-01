@@ -208,9 +208,7 @@ export function RevisionSurface() {
           <span className="studio-topbar-course" title={course.name}>{course.name}</span>
           <span className="studio-topbar-status">Private course</span>
         </header>
-        <div className="studio-cover" role="img" aria-label="Open study book on a desk" />
-
-      <main id="main" className="studio-page kelus-space-stage">
+        <main id="main" className="studio-page kelus-space-stage">
         <header className="studio-page-heading">
           <span className="studio-eyebrow">Course workspace</span>
           <p className="studio-page-course">{course.name}</p>
@@ -264,7 +262,7 @@ export function RevisionSurface() {
             {mode === "map" ? <TopicMapPanel /> : null}
           </motion.div>
         </AnimatePresence>
-      </main>
+        </main>
       </div>
     </section>
   );

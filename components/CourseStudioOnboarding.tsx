@@ -65,7 +65,6 @@ export function CourseStudioOnboarding({ stage, courseName, children }: {
           <span className="studio-topbar-course">{courseName || "New course"}</span>
           <span className="studio-topbar-status">Private course</span>
         </header>
-        <div className="studio-cover" role="img" aria-label="Open study book on a desk" />
         <main id="main" className="studio-page kelus-space-stage">
           <header className="studio-page-heading">
             <span className="studio-eyebrow">Course workspace</span>
