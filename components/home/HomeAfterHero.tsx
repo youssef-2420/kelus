@@ -1,29 +1,35 @@
 "use client";
 
+import Link from "next/link";
 import { BookletRevisionBoard } from "@/components/hero/BookletRevisionBoard";
 import { RevisionReturn, StudyMoment } from "@/components/home/HomeVisualChapters";
 import { RevisionLoopVisuals } from "@/components/home/RevisionLoopVisuals";
 import { Reveal } from "@/components/motion";
 
-/** A visual route from studying, to a live sample, to the next attempt. */
+/** Let visitors try the revision loop before explaining it. */
 export function HomeAfterHero() {
   return (
     <>
-      <RevisionLoopVisuals />
-      <StudyMoment />
       <section id="try" className="poster-sample" aria-labelledby="poster-sample-title">
         <Reveal className="poster-sample-intro">
           <p className="kicker">Interactive sample</p>
-          <h2 id="poster-sample-title">Answer, then watch the route move.</h2>
+          <h2 id="poster-sample-title">Your answer changes what comes next.</h2>
           <p>
-            Reveal a check. Mark how it went. The order updates — on paper, in about a minute.
-            This sample is not saved.
+            Reveal the answer, then mark how it went. Watch the next topic move into place.
+            This page preview is not saved.
           </p>
         </Reveal>
         <Reveal delay={0.08}>
           <BookletRevisionBoard />
         </Reveal>
+        <Reveal className="poster-sample-next">
+          <p>Ready to do a full study pass?</p>
+          <Link href="/today?sample=1">Open the sample course <span aria-hidden="true">→</span></Link>
+        </Reveal>
       </section>
+
+      <RevisionLoopVisuals />
+      <StudyMoment />
 
       <RevisionReturn />
 

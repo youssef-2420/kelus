@@ -53,8 +53,8 @@ export function StudyMoment() {
         </Reveal>
         <Reveal className={styles.studyCopy}>
           <h2 id="study-moment-title">The studying happens here.</h2>
-          <p>The note, the question, your answer, and the next step stay in one place. Open the sample below and try a pass for yourself.</p>
-          <a href="#try" className={styles.textLink}>Try the sample <span aria-hidden="true">↗</span></a>
+          <p>The note, the question, your answer, and the next step stay in one place. Try the sample above, then continue into the study space.</p>
+          <a href="#try" className={styles.textLink}>Back to the sample <span aria-hidden="true">↗</span></a>
         </Reveal>
       </div>
     </section>

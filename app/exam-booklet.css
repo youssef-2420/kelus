@@ -200,6 +200,27 @@ body.is-booklet-system .poster-sample-intro p {
   line-height: 1.5;
 }
 
+body.is-booklet-system .poster-sample-next {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 980px;
+  margin: 22px auto 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--booklet-rule);
+  font-family: var(--font-sans);
+}
+
+body.is-booklet-system .poster-sample-next p { margin: 0; color: var(--booklet-mute); }
+body.is-booklet-system .poster-sample-next a { color: var(--booklet-kelus); font-weight: 600; text-decoration-thickness: 1px; text-underline-offset: 4px; }
+body.is-booklet-system .poster-sample-next a:focus-visible { outline: 2px solid var(--booklet-kelus); outline-offset: 4px; }
+
+@media (max-width: 640px) {
+  body.is-booklet-system .poster-sample-next { display: block; }
+  body.is-booklet-system .poster-sample-next a { display: inline-block; margin-top: 10px; min-height: 44px; padding-top: 9px; }
+}
+
 /* ── Chapters: essay sections, not feature cards ── */
 body.is-booklet-system .folio-story {
   background: var(--booklet-paper);

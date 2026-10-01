@@ -33,6 +33,19 @@ test("Set up and sample revision open the course workspace without a cover image
   await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
 });
 
+test("the first section lets visitors try a pass and continue into a current sample course", async ({ page }) => {
+  await page.goto("/");
+  // The hands-on proof follows the marked-script hero, before explanatory chapters.
+  await expect(page.locator("main > section").nth(1)).toHaveAttribute("id", "try");
+  const sample = page.locator("#try");
+  await sample.getByRole("button", { name: "Reveal answer" }).click();
+  await sample.getByRole("button", { name: "I remembered" }).click();
+  await expect(sample.getByText("Supply & Demand", { exact: true })).toBeVisible();
+  await sample.getByRole("link", { name: "Open the sample course" }).click();
+  await expect(page.getByText("Sample course", { exact: true }).first()).toBeVisible();
+  await expect(page.locator(".studio-course")).not.toContainText("0 days until exam");
+});
+
 test("ink draws without blocking navigation, and finishes on its own", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
