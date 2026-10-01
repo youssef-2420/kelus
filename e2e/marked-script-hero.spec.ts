@@ -40,7 +40,7 @@ test("ink draws without blocking navigation, and finishes on its own", async ({ 
   await expect(hero.locator("figure")).toHaveAttribute("data-drawing", "drawing");
   await expect(hero.getByRole("button", { name: /Pause ink|Resume ink|Replay ink/ })).toHaveCount(0);
   const lastInk = hero.locator('[data-ink="3"]');
-  expect(await lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.3);
+  await expect.poll(() => lastInk.evaluate(element => parseFloat(getComputedStyle(element).strokeDashoffset))).toBeGreaterThan(.3);
   await expect(hero.getByRole("link", { name: "Set up" })).toBeEnabled();
   await expect(hero.locator('[data-ink="0"]')).toHaveCSS("stroke-dashoffset", "0px", { timeout: 15000 });
   await expect.poll(() => hero.locator("[data-start-wash]").evaluate(element => parseFloat(getComputedStyle(element).opacity))).toBeGreaterThan(.12);
