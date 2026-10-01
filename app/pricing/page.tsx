@@ -6,6 +6,7 @@ import { PricingViewTracker } from "@/components/PricingViewTracker";
 import { authConfigured } from "@/lib/auth-config";
 import { foundingPaymentConfigured } from "@/lib/founding";
 import { LateralPage } from "@/components/PageTransition";
+import { PricingPlanMotion } from "@/components/PricingPlanMotion";
 
 export const metadata: Metadata = {
   title: "Pricing — Kelus",
@@ -33,42 +34,42 @@ export default function PricingPage() {
         </p>
 
         <div className="pricing-booklet-stack pricing-grid" role="list">
-          <article className="pricing-offer is-free pricing-plan" role="listitem">
-            <div className="pricing-offer-head">
-              <p className="kicker">Free</p>
-              <p className="pricing-price">$0<span>/month</span></p>
-            </div>
-            <h2>Start revising</h2>
-            <p className="pricing-offer-lede">Revise from your own course, free.</p>
-            <ul>
-              <li>Add a course and exam date</li>
-              <li>Follow a plan shaped by your answers</li>
-              <li>Recall, apply, and check your work</li>
-              <li>No account required</li>
-              {syncReady ? <li>Optional free sign-in to sync across devices</li> : <li>Saved on this device</li>}
-            </ul>
-            <Link className="cta" href="/today">
-              Start revising <span aria-hidden="true">→</span>
-            </Link>
-          </article>
+          <PricingPlanMotion>
+            <article className="pricing-offer is-free pricing-plan">
+              <div className="pricing-offer-head">
+                <h2 className="kicker">Free</h2>
+                <p className="pricing-price">$0<span>/month</span></p>
+              </div>
+              <ul>
+                <li>Add a course and exam date</li>
+                <li>Follow a plan shaped by your answers</li>
+                <li>Recall, apply, and check your work</li>
+                <li>No account required</li>
+                {syncReady ? <li>Optional free sign-in to sync across devices</li> : <li>Saved on this device</li>}
+              </ul>
+              <Link className="cta" href="/today">
+                Start revising <span aria-hidden="true">→</span>
+              </Link>
+            </article>
+          </PricingPlanMotion>
 
-          <article className={`pricing-offer is-pass pricing-plan is-founding${paymentReady ? "" : " is-upcoming"}`} role="listitem">
-            <div className="pricing-offer-head">
-              <p className="kicker">Kelus Plus {paymentReady ? "" : "· coming soon"}</p>
-              <p className="pricing-price">
-                $4.99<span>/month</span>
-              </p>
-            </div>
-            <h2>More support as you study</h2>
-            <p className="pricing-offer-lede">Extra support while you study.</p>
-            <ul>
-              <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
-              <li>Priority access to new study features</li>
-              <li>Email support while subscribed</li>
-              <li>Monthly billing; no annual commitment</li>
-            </ul>
-            <FoundingCta source="pricing" />
-          </article>
+          <PricingPlanMotion>
+            <article className={`pricing-offer is-pass pricing-plan is-founding${paymentReady ? "" : " is-upcoming"}`}>
+              <div className="pricing-offer-head">
+                <h2 className="kicker">Kelus Plus {paymentReady ? "" : "· coming soon"}</h2>
+                <p className="pricing-price">
+                  $4.99<span>/month</span>
+                </p>
+              </div>
+              <ul>
+                <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
+                <li>Priority access to new study features</li>
+                <li>Email support while subscribed</li>
+                <li>Monthly billing; no annual commitment</li>
+              </ul>
+              <FoundingCta source="pricing" />
+            </article>
+          </PricingPlanMotion>
         </div>
 
         <p className="legal-inline-links">
