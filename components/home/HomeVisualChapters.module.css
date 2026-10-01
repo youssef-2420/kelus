@@ -1,0 +1,137 @@
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R5 V5
+ * Macrostructure: two full-width illustrated chapters around the interactive sample.
+ * Theme: studied-DNA (Figma reference), translated into existing Kelus booklet tokens.
+ */
+.studySection,
+.returnSection { overflow: clip; }
+
+.studySection {
+  background: var(--color-loop-student-paper);
+  border-top: 1px solid var(--color-frost);
+  border-bottom: 1px solid var(--color-frost);
+}
+
+.studyInner,
+.returnInner {
+  max-width: 82.5rem;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+}
+
+.studyArt {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: clamp(24rem, 42vw, 38rem);
+  overflow: hidden;
+}
+
+.studentImage {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 47rem);
+  height: auto;
+  max-height: 38rem;
+  object-fit: contain;
+  object-position: left bottom;
+  margin-left: -2rem;
+}
+
+.studyOrbit {
+  position: absolute;
+  width: min(31rem, 80%);
+  aspect-ratio: 1;
+  border: 1px solid var(--color-loop-student-line);
+  border-radius: 50%;
+  left: 8%;
+  top: 5%;
+}
+
+.studyOrbit::after {
+  content: "";
+  position: absolute;
+  inset: 14%;
+  border: 1px solid var(--color-loop-student-line);
+  border-radius: 50%;
+}
+
+.studyCopy { padding: 4rem clamp(2rem, 6vw, 7rem) 4rem 2rem; }
+.studyCopy h2,
+.returnCopy h2 {
+  margin: 0 0 1.25rem;
+  color: var(--ink);
+  font-size: clamp(2.25rem, 4.3vw, 4.5rem);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.studyCopy p,
+.returnCopy p {
+  color: var(--color-slate);
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  line-height: 1.55;
+  max-width: 36ch;
+  margin: 0 0 1.5rem;
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-kelus);
+  font: 600 0.95rem/1.2 var(--font-marketing-sans);
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  padding: 0.7rem 0;
+  min-height: 44px;
+  white-space: nowrap;
+  transition: opacity var(--dur-fast) var(--ease-standard);
+}
+.textLink:hover { opacity: 0.75; }
+.textLink:active { transform: scale(0.97); }
+.textLink:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 4px; }
+
+.returnSection {
+  background: var(--color-loop-return-paper);
+  border-block: 1px solid var(--color-frost);
+}
+.returnInner { grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr); }
+.returnCopy { padding: clamp(4rem, 7vw, 7rem) 1rem clamp(4rem, 7vw, 7rem) clamp(1.5rem, 5vw, 5rem); }
+.returnCopy h2 { max-width: 12ch; }
+.returnCopy .exampleNote { color: var(--color-slate); font-size: 0.85rem; margin-bottom: 0; }
+.returnArt { padding: 1.5rem 1.5rem 0; }
+.returnDrawing { display: block; width: 100%; height: auto; }
+
+.whitePaper { fill: var(--color-pure-white); stroke: var(--color-frost); stroke-width: 1.5; }
+.yellowPaper { fill: var(--color-loop-lemon); stroke: var(--color-loop-lemon-edge); stroke-width: 1.5; }
+.paperRule { fill: none; stroke: var(--color-frost); stroke-width: 1.2; }
+.paperLabel { fill: var(--color-slate); font: 600 10px var(--font-marketing-sans); letter-spacing: 1.2px; }
+.paperTitle { fill: var(--ink); font-size: 33px; font-weight: 500; font-family: var(--font-marketing-heading) !important; }
+.paperBody { fill: var(--ink); font: 15px var(--font-marketing-sans); }
+.thinkingLine { fill: none; stroke: var(--color-slate); stroke-width: 1.5; stroke-linecap: round; opacity: 0.8; }
+.coralMark,.coralRoute { fill: none; stroke: var(--color-loop-coral); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.greenRule { fill: none; stroke: var(--color-kelus); stroke-width: 1.3; opacity: 0.4; }
+.greenUnderline { fill: none; stroke: var(--color-kelus); stroke-width: 7; stroke-linecap: round; opacity: 0.24; }
+.guide { fill: none; stroke: var(--color-slate); stroke-width: 1.6; stroke-dasharray: 4 9; opacity: 0.7; }
+.arrow { fill: none; stroke: var(--color-slate); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.coralDot { fill: var(--color-loop-coral); }
+.greenDot { fill: var(--color-kelus); }
+
+@media (max-width: 760px) {
+  .studyInner,
+  .returnInner { grid-template-columns: minmax(0, 1fr); }
+  .studyArt { min-height: 0; order: 2; padding-top: 1rem; }
+  .studentImage { margin-left: -1.5rem; max-height: 28rem; }
+  .studyCopy { order: 1; padding: 4rem 1rem 1.5rem; }
+  .studyCopy h2,.returnCopy h2 { font-size: clamp(2.2rem, 8vw, 3.7rem); }
+  .returnCopy { padding: 4rem 1rem 1rem; }
+  .returnArt { padding: 0 0.5rem 1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .textLink { transition: none; }
+  .textLink:active { transform: none; }
+}
