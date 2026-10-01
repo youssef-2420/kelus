@@ -1,6 +1,7 @@
 "use client";
 
 import { BookletRevisionBoard } from "@/components/hero/BookletRevisionBoard";
+import { RevisionLoopVisuals } from "@/components/home/RevisionLoopVisuals";
 import { Reveal } from "@/components/motion";
 
 /**
@@ -10,6 +11,7 @@ import { Reveal } from "@/components/motion";
 export function HomeAfterHero() {
   return (
     <>
+      <RevisionLoopVisuals />
       <section id="try" className="poster-sample" aria-labelledby="poster-sample-title">
         <Reveal className="poster-sample-intro">
           <p className="kicker">Interactive sample</p>

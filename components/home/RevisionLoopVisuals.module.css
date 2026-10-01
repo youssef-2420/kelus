@@ -1,0 +1,131 @@
+/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V4
+ * studied-DNA: layered paper illustration; Kelus booklet palette, not a Figma pixel copy.
+ */
+.section {
+  border-top: 1px solid var(--color-frost);
+  background: var(--paper);
+  color: var(--ink);
+  padding: clamp(4rem, 8vw, 7rem) max(1.5rem, calc((100vw - 76rem) / 2)) clamp(3rem, 6vw, 5rem);
+}
+
+.intro {
+  max-width: 42rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.intro h2 {
+  margin: 0 0 0.75rem;
+  color: var(--ink);
+  font-size: clamp(2rem, 3.7vw, 3.25rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+}
+
+.intro p {
+  margin: 0;
+  color: var(--color-slate);
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  line-height: 1.5;
+}
+
+.spread {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--color-frost);
+  border-bottom: 1px solid var(--color-frost);
+}
+
+.stage {
+  min-width: 0;
+  padding: 0 0 1.75rem;
+}
+
+.stage + .stage { border-left: 1px solid var(--color-frost); }
+
+.art {
+  height: clamp(14rem, 20vw, 19rem);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.source .art { background: var(--color-loop-source); }
+.recall .art { background: var(--color-loop-recall); }
+.route .art { background: var(--color-loop-route); }
+
+.drawing {
+  display: block;
+  width: min(100%, 24rem);
+  height: auto;
+  max-height: 100%;
+}
+
+.caption {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 1.4rem 1.25rem 0;
+}
+
+.number,
+.miniLabel,
+.routeNumber {
+  fill: var(--color-slate);
+  font-family: var(--font-marketing-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+}
+
+.number { flex: none; color: var(--color-slate); }
+.caption h3 {
+  margin: 0 0 0.35rem;
+  font-size: clamp(1.075rem, 1.4vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.caption p {
+  max-width: 24ch;
+  margin: 0;
+  color: var(--color-slate);
+  font-size: 0.925rem;
+  line-height: 1.45;
+}
+.disclaimer {
+  margin: 1.25rem 0 0;
+  color: var(--color-slate);
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.sheet { fill: var(--color-pure-white); stroke: var(--color-frost); stroke-width: 1.2; }
+.rule { fill: none; stroke: var(--color-frost); stroke-width: 1; }
+.looseLine { fill: none; stroke: var(--color-kelus); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 3 6; opacity: 0.7; }
+.sheetTitle { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 20px; }
+.inkLine { fill: none; stroke: var(--color-slate); stroke-width: 2; opacity: 0.55; stroke-linecap: round; }
+.sourceUnderline { fill: none; stroke: var(--color-kelus); stroke-width: 7; opacity: 0.22; stroke-linecap: round; }
+.note { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 17px; font-style: italic; }
+.graph { fill: none; stroke: var(--color-slate); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.graphDot { fill: var(--color-kelus); }
+.prompt { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 19px; }
+.answer { fill: var(--ink); font-family: var(--font-marketing-sans); font-size: 13px; }
+.correction { fill: none; stroke: var(--color-loop-correction); stroke-width: 5; stroke-linecap: round; opacity: 0.75; }
+.check { fill: none; stroke: var(--color-kelus); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.routeLine { fill: none; stroke: var(--color-kelus); stroke-width: 1.5; opacity: 0.5; }
+.routeDot { fill: var(--color-kelus); }
+.routeDotQuiet { fill: var(--color-pure-white); stroke: var(--color-slate); stroke-width: 1.5; }
+.routeTitle { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 22px; }
+.routeTitleQuiet { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 17px; }
+.routeReason { fill: var(--color-slate); font-family: var(--font-marketing-sans); font-size: 12px; }
+.routeUnderline { fill: none; stroke: var(--color-kelus); stroke-width: 5; opacity: 0.22; stroke-linecap: round; }
+
+@media (max-width: 760px) {
+  .section { padding-inline: 1rem; }
+  .spread { grid-template-columns: minmax(0, 1fr); }
+  .stage { padding-bottom: 1.5rem; }
+  .stage + .stage { border-left: 0; border-top: 1px solid var(--color-frost); }
+  .art { height: clamp(14rem, 65vw, 20rem); }
+  .caption { padding: 1.25rem 0.25rem 0; }
+  .caption p { max-width: 36ch; }
+}

@@ -15,6 +15,11 @@
   --color-lavender-border: #d5d9d0;
   --color-lilac-border: #e2e6df;
   --color-periwinkle-wash: #e8f1eb;
+  /* Illustration-only washes: action and navigation remain Kelus green. */
+  --color-loop-source: oklch(0.92 0.03 210);
+  --color-loop-recall: oklch(0.93 0.045 75);
+  --color-loop-route: oklch(0.92 0.03 150);
+  --color-loop-correction: oklch(0.68 0.12 35);
   --color-deep-violet: #173f3b;
   --color-amethyst-edge: #1f6b45;
 
