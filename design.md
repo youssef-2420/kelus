@@ -7,6 +7,7 @@ Kelus is paper, ink, and one pass-mark green. Marketing and product share the sa
 - Canvas: cool green-cast paper (`#eef1ec`), not cream and not pure white chrome.
 - Ink: deep booklet ink (`#12160f`).
 - Accent: one Kelus green (`#1f6b45`) for actions, focus, and route signals. No indigo. No Notion blue.
+- Homepage illustrations may use quiet blue, warm ochre, and green paper washes to distinguish material, recall, and rerouting. They are not UI accents: interactive controls and route signals remain Kelus green.
 - Secondary text: mute green-gray (`#4a5246` / `#5a6358`) for body support and captions — both ≥4.5:1 on paper.
 - Typography: Literata (optical sizes) for display and reading; IBM Plex Sans (via `--font-inter`) for UI. Wordmark stays Plex.
 - Geometry: ~4px radii. Avoid SaaS twin cards, blue glows, soft multi-shadow stacks, and ALL CAPS kickers.
