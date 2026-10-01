@@ -39,11 +39,11 @@ export default function PricingPage() {
               <p className="pricing-price">$0<span>/month</span></p>
             </div>
             <h2>Start revising</h2>
-            <p className="pricing-offer-lede">Everything you need to see how Kelus works with your course.</p>
+            <p className="pricing-offer-lede">Revise from your own course, free.</p>
             <ul>
-              <li>Add your course and exam date</li>
-              <li>Get topics to revise from your answer evidence</li>
-              <li>Practise recall and application, then check your answers</li>
+              <li>Add a course and exam date</li>
+              <li>Follow a plan shaped by your answers</li>
+              <li>Recall, apply, and check your work</li>
               <li>No account required</li>
               {syncReady ? <li>Optional free sign-in to sync across devices</li> : <li>Saved on this device</li>}
             </ul>
@@ -60,13 +60,11 @@ export default function PricingPage() {
               </p>
             </div>
             <h2>More support as you study</h2>
-            <p className="pricing-offer-lede">
-              A monthly subscription for students who want priority support while they revise.
-            </p>
+            <p className="pricing-offer-lede">Extra support while you study.</p>
             <ul>
               <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
               <li>Priority access to new study features</li>
-              <li>Direct email support while subscribed</li>
+              <li>Email support while subscribed</li>
               <li>Monthly billing; no annual commitment</li>
             </ul>
             <FoundingCta source="pricing" />

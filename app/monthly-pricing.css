@@ -1,11 +1,11 @@
 /* Pricing uses a two-column decision: free study, or one monthly support plan. */
 body.is-booklet-system .pricing-page.is-monthly-pricing {
-  width: min(1100px, calc(100% - 48px));
+  width: min(940px, calc(100% - 48px));
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-booklet {
-  max-width: 1100px;
-  padding-block: clamp(42px, 6vw, 88px);
+  max-width: 940px;
+  padding-block: clamp(36px, 5vw, 64px);
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing h1 {
@@ -24,20 +24,27 @@ body.is-booklet-system .pricing-page.is-monthly-pricing .legal-lede {
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 22px;
-  margin: 52px 0 34px;
+  gap: 16px;
+  margin: 36px 0 28px;
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  min-height: 500px;
-  padding: clamp(24px, 3vw, 38px);
+  gap: 12px;
+  min-height: 0;
+  padding: clamp(20px, 2.3vw, 28px);
   border: 1px solid #d5d9d0;
   border-radius: 12px;
   background: #fff;
   box-shadow: none;
+  text-align: left;
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), border-color 180ms ease;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer:has(.cta:active),
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer:has(.text-btn:active) {
+  transform: scale(0.992);
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer.is-pass {
@@ -50,7 +57,7 @@ body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-head {
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-head .kicker {
-  margin: 0 0 22px;
+  margin: 0 0 10px;
   color: #1f6b45;
   font-size: 1rem;
   font-weight: 650;
@@ -61,7 +68,7 @@ body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-head .kic
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-price {
   margin: 0;
   font-family: var(--font-marketing-sans), Inter, Arial, sans-serif;
-  font-size: clamp(2.8rem, 4vw, 3.8rem);
+  font-size: clamp(2.5rem, 3.5vw, 3.3rem);
   font-weight: 650;
   letter-spacing: -0.055em;
 }
@@ -82,15 +89,15 @@ body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer h2 {
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer-lede {
-  min-height: 3rem;
+  min-height: 0;
   color: #4a5246;
   font-size: 0.93rem;
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer ul {
   display: grid;
-  gap: 11px;
-  margin: 8px 0 0;
+  gap: 7px;
+  margin: 4px 0 0;
   padding: 0;
   list-style: none;
   font-size: 0.94rem;
@@ -116,13 +123,29 @@ body.is-booklet-system .pricing-page.is-monthly-pricing .founding-cta {
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer .cta {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: center;
   width: 100%;
-  min-height: 50px;
+  min-height: 44px;
   margin-top: 0;
   padding-inline: 18px;
   border-radius: 7px;
   font-weight: 600;
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer .cta span {
+  margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer {
+    transition: none;
+  }
+
+  body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer:has(.cta:active),
+  body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer:has(.text-btn:active) {
+    transform: none;
+  }
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .founding-cta {

@@ -18,9 +18,9 @@ import { trackEvent } from "@/lib/analytics";
 export type SurfaceMode = "today" | "materials" | "map";
 
 const MODES: Array<{ id: SurfaceMode; label: string }> = [
-  { id: "today", label: "Today" },
-  { id: "materials", label: "Binder" },
-  { id: "map", label: "Index" },
+  { id: "today", label: "Study plan" },
+  { id: "materials", label: "Materials" },
+  { id: "map", label: "Topics" },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };

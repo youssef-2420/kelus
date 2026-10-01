@@ -66,7 +66,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: "Use this result" }).click();
 
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan", exact: true })).toBeVisible();
   await expect(page.locator("#today-title")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Today", exact: true })).toHaveCount(0);
   await expect(page.getByText(/Molecular Biology/).first()).toBeVisible();
@@ -74,7 +74,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Index", exact: true }).click();
+  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Topics", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?\?section=map/);
   await expect(page.getByRole("list", { name: "Topics by exam weight" })).toBeVisible();
   await expect(page.locator(".index-toc > li").first()).toBeVisible();
@@ -90,7 +90,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page).toHaveURL(/section=map/);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-map-mobile.png", fullPage: true });
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Today", exact: true }).click();
+  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page).not.toHaveURL(/section=/);
   await expect(page.locator(".today-evidence-disclosure")).toHaveCount(0);
