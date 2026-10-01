@@ -809,7 +809,7 @@ body.is-booklet-system .site-header .site-footer-mark,
 body.is-booklet-system .site-footer .site-footer-mark {
   font-family: var(--font-ledger), var(--font-booklet), "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: -0.045em;
   line-height: 1;
   color: #111;
@@ -2329,4 +2329,3 @@ body.is-booklet-system .today-evidence-disclosure > summary span {
 body.is-booklet-system .kelus-space-top {
   border-bottom-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent);
 }
-
