@@ -16,6 +16,8 @@ body:has([data-marketing="editorial"]) .site-header :where(*) {
   #home-hero-title,
   #poster-sample-title,
   #revision-loop-title,
+  #study-moment-title,
+  #revision-return-title,
   #home-close-title,
   #how-title,
   .how-principle h2,

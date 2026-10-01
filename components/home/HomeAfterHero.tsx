@@ -1,17 +1,16 @@
 "use client";
 
 import { BookletRevisionBoard } from "@/components/hero/BookletRevisionBoard";
+import { RevisionReturn, StudyMoment } from "@/components/home/HomeVisualChapters";
 import { RevisionLoopVisuals } from "@/components/home/RevisionLoopVisuals";
 import { Reveal } from "@/components/motion";
 
-/**
- * Below the fold: one live proof of the loop, then close.
- * Feature chapters and method grids belong in How it works — not the homepage.
- */
+/** A visual route from studying, to a live sample, to the next attempt. */
 export function HomeAfterHero() {
   return (
     <>
       <RevisionLoopVisuals />
+      <StudyMoment />
       <section id="try" className="poster-sample" aria-labelledby="poster-sample-title">
         <Reveal className="poster-sample-intro">
           <p className="kicker">Interactive sample</p>
@@ -25,6 +24,8 @@ export function HomeAfterHero() {
           <BookletRevisionBoard />
         </Reveal>
       </section>
+
+      <RevisionReturn />
 
       <section className="home-close folio-close" aria-labelledby="home-close-title">
         <Reveal className="home-close-inner is-cluster">
