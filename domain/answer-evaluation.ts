@@ -85,14 +85,15 @@ export function evaluateLearningResponse(input: {
   const score = Number(Math.max(0, lexicalScore + criterionRatio * 0.2 - (contradiction ? 0.45 : 0)).toFixed(3));
   const reasoningMet = criteria.find((criterion) => criterion.id === "reasoning")?.met ?? matchedApply >= 0.2;
   const sourceMet = criteria.find((criterion) => criterion.id === "source-idea")?.met ?? matchedRetrieve >= 0.34;
+  const missing = criteria.find((criterion) => !criterion.met);
 
   if (!contradiction && retrieveWords >= 5 && applicationWords >= 5 && sourceMet && reasoningMet && score >= 0.34) {
-    return { outcome: "success", score, label: "Strong evidence", explanation: "The response preserves the source idea, explains the required reasoning, and applies it without a detected contradiction.", matchedRetrieve, matchedApply, criteria, contradiction };
+    return { outcome: "success", score, label: "Strong evidence", explanation: "The answer includes the source idea and a reasoned application. Compare it with the passage above: matching terms cannot verify every nuance.", matchedRetrieve, matchedApply, criteria, contradiction };
   }
   if (!contradiction && retrieveWords >= 3 && applicationWords >= 3 && (sourceMet || reasoningMet || score >= 0.16)) {
-    return { outcome: "partial", score, label: "Partial evidence", explanation: "Some required reasoning is present, but at least one source-backed criterion is still missing.", matchedRetrieve, matchedApply, criteria, contradiction };
+    return { outcome: "partial", score, label: "Partial evidence", explanation: missing ? `Some of the idea is here. Try again with: ${missing.label.toLocaleLowerCase()}.` : "Some of the idea is here. Compare your reasoning with the source before moving on.", matchedRetrieve, matchedApply, criteria, contradiction };
   }
-  return { outcome: "failure", score, label: "Not enough evidence yet", explanation: contradiction ? "The response uses relevant terms but appears to reverse or negate the source relationship." : "The responses do not yet satisfy enough of the source-backed assessment criteria to raise mastery.", matchedRetrieve, matchedApply, criteria, contradiction };
+  return { outcome: "failure", score, label: "Not enough evidence yet", explanation: contradiction ? "This may reverse or negate the relationship in the source. Recheck the original passage before trying again." : missing ? `The answer does not yet show enough of the source idea. Start with: ${missing.label.toLocaleLowerCase()}.` : "The answer does not yet show enough of the source idea. Recheck the passage and try again.", matchedRetrieve, matchedApply, criteria, contradiction };
 }
 
 export function evaluateDiagnosisResponse(input: { answer: string; modelAnswer: string; assessment?: LearningActivity["assessment"] }): AnswerEvaluation {

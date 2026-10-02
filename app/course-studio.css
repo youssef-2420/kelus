@@ -369,6 +369,14 @@ body.is-course-studio .today-route-execution.is-booklet-page {
   letter-spacing: 0.025em;
 }
 
+.is-course-studio .today-return-note {
+  max-width: 48ch;
+  margin: 2px 0 20px;
+  color: var(--studio-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .is-course-studio .today-next {
   margin-top: 12px;
   padding: 20px 0 0;

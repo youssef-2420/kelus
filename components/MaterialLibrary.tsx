@@ -19,7 +19,7 @@ import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 function focusPhaseHeading(node: HTMLHeadingElement | null) {
   node?.focus();
 }
-import { buildConfirmedMaterialModel, proposeConceptsFromMetadata, proposeConceptsFromPages } from "@/domain/material-intelligence";
+import { buildConfirmedMaterialModel, isSourceBackedProposal, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
   addPdfMaterial,
@@ -282,21 +282,14 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         }
       }
 
-      proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
+      proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages }).filter(isSourceBackedProposal);
       if (proposals.length < 3) {
         mergeProposals(proposeConceptsFromPages({
           materialId: material.id,
           sourceLabel: material.title,
           pages,
           mode: "relaxed",
-        }));
-      }
-      if (proposals.length < 3) {
-        mergeProposals(proposeConceptsFromMetadata({
-          materialId: material.id,
-          sourceLabel: material.title,
-          fileName: material.fileName,
-        }));
+        }).filter(isSourceBackedProposal));
       }
 
       async function runOcr(reason: string) {
@@ -335,21 +328,14 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
           step: "building",
           message: usedOcr ? "Building concepts from scanned text…" : defaultStepMessage("building"),
         });
-        proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages });
+        proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages }).filter(isSourceBackedProposal);
         if (proposals.length < 3) {
           mergeProposals(proposeConceptsFromPages({
             materialId: material.id,
             sourceLabel: material.title,
             pages,
             mode: "relaxed",
-          }));
-        }
-        if (proposals.length < 3) {
-          mergeProposals(proposeConceptsFromMetadata({
-            materialId: material.id,
-            sourceLabel: material.title,
-            fileName: material.fileName,
-          }));
+          }).filter(isSourceBackedProposal));
         }
       } else {
         dispatch({ type: "WORK_STEP", step: "building", message: defaultStepMessage("building") });
@@ -360,7 +346,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         const fail = new Error(
           emptyScan
             ? "Kelus still could not recover usable English text from this scan. Try a clearer export, or use the sample course to see the loop."
-            : "Kelus could not find clear concept headings in this PDF. Try a syllabus or lecture deck with selectable text.",
+            : "Kelus found no topics with a readable supporting passage. Try lecture notes with selectable text or a clearer scan; it will not invent a lesson from the filename.",
         );
         if (emptyScan) (fail as Error & { kind?: string }).kind = "ocr";
         throw fail;

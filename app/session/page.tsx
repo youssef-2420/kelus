@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import { evaluateLearningResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
+import { resumeSessionIndex } from "@/domain/session-engine";
 import type { Concept, LearningActivity, RetrievalOutcome } from "@/domain/types";
 import { percent } from "@/lib/format";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
@@ -65,7 +66,10 @@ function SessionBody() {
   const auth = useAuth();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const session = state.snapshot.sessions.find((item) => item.id === sessionId);
-  const [index, setIndex] = useState(0);
+  const [position, setPosition] = useState<{ sessionId: string; index: number } | null>(null);
+  const index = position && session && position.sessionId === session.id
+    ? position.index
+    : session ? resumeSessionIndex(session, state.snapshot.events) : 0;
   const [retrieveAnswer, setRetrieveAnswer] = useState("");
   const [applicationAnswer, setApplicationAnswer] = useState("");
   const [phase, setPhase] = useState<Phase>("learn");
@@ -195,6 +199,8 @@ function SessionBody() {
   }
 
   function grade(outcome: RetrievalOutcome) {
+    // Hold the current page while the recorded event moves the resumable index forward.
+    setPosition({ sessionId: activeSessionId, index });
     setMasteryBefore(activeConcept.mastery);
     setLastOutcome(outcome);
     setRouteBeforeIds(activeSession.latestRoute.allocations.map((item) => String(item.conceptId)));
@@ -212,7 +218,7 @@ function SessionBody() {
   }
 
   function resetForNextConcept() {
-    setIndex((value) => value + 1);
+    setPosition({ sessionId: activeSessionId, index: index + 1 });
     setRetrieveAnswer("");
     setApplicationAnswer("");
     setEvaluation(null);
@@ -478,8 +484,15 @@ function SessionBody() {
               animate={{ opacity: 1 }}
               transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.18, ease: kelusEase }}
             >
-              {concept.name} is noted. Next comes from what’s left.
+              {concept.name} is noted. {lastOutcome === "failure" ? "This topic needs another pass." : lastOutcome === "partial" ? "Part of the idea landed; more practice is useful." : "This answer adds stronger evidence."}
             </motion.p>
+            <p className="study-reroute-lede" role="status">
+              {routeOrderChanged ? "The remaining order changed. " : "The remaining order stayed the same. "}
+              {session.plannedConceptIds[index + 1]
+                ? `Next: ${state.snapshot.concepts.find((item) => item.id === session.plannedConceptIds[index + 1])?.name ?? "another topic"}.`
+                : "You have reached the end of this block."}
+              {lastOutcome !== "success" ? " Kelus will use this answer when it plans your next route." : ""}
+            </p>
             <motion.button
               type="button"
               className="cta"

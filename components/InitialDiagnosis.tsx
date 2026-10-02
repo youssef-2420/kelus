@@ -56,6 +56,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
   const concept = concepts.find((item) => item.id === activeId);
   const prompt = snapshot.prompts.find((item) => item.conceptId === concept?.id);
   const activity = snapshot.learningActivities.find((item) => item.conceptId === concept?.id);
+  const source = activity?.sourceReferences[0];
   const allRated = areAllRated(ratings, ratedConcepts.map((item) => item.id));
   const selectionReason = phase.status === "answering" || phase.status === "revealed" ? phase.reason : "";
   const answer = phase.status === "answering" || phase.status === "revealed" ? phase.answer : "";
@@ -197,6 +198,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
         <motion.section key={`check-${concept.id}-${phase.status}`} className="diagnosis-check" {...phaseMotion}>
           <p className="kicker">Recall check {retrievals.length + 1} of {DIAGNOSIS_RETRIEVAL_LIMIT}</p>
           <h1>{prompt.promptText}</h1>
+          {source ? <p className="diagnosis-selection-reason">From {source.label}{source.locator ? ` · ${source.locator}` : ""}</p> : null}
           <p className="diagnosis-selection-reason">{selectionReason}</p>
           {phase.status === "answering" ? (
             <>

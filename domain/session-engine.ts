@@ -6,6 +6,15 @@ export function masteryAfterEvidence(concept: Concept, outcome: RetrievalOutcome
   return applyRetrievalMastery(concept.mastery, outcome, concept.difficulty, concept.successfulRetrievals);
 }
 
+/** Resume at the first topic without recorded retrieval evidence, not at page one. */
+export function resumeSessionIndex(session: StudySession, events: LearningEvent[]) {
+  const completed = new Set(events
+    .filter((event) => event.sessionId === session.id && event.kind === "retrieval")
+    .map((event) => event.conceptId));
+  const index = session.plannedConceptIds.findIndex((id) => !completed.has(id));
+  return index < 0 ? session.plannedConceptIds.length : index;
+}
+
 export function recalculateSessionRoute(input: {
   snapshot: LearnerSnapshot;
   session: StudySession;
