@@ -24,6 +24,9 @@ export function TodayRoute({
   concepts,
   activities,
   events,
+  examTarget,
+  targetPercent,
+  daysToExam,
   onStart,
   startLabel,
   isSampleCourse = false,
@@ -32,6 +35,9 @@ export function TodayRoute({
   concepts: Concept[];
   activities: LearningActivity[];
   events: LearningEvent[];
+  examTarget: string;
+  targetPercent: number;
+  daysToExam: number;
   onStart: () => void;
   startLabel?: string;
   isSampleCourse?: boolean;
@@ -93,6 +99,7 @@ export function TodayRoute({
         >
           <span>Today’s route · {routeMinutes} min total</span>
         </motion.p>
+        <p className="today-exam-context">{examTarget} · {daysToExam} day{daysToExam === 1 ? "" : "s"} left · Your target {targetPercent}%</p>
         <motion.h1
           id="today-title"
           initial={reduceMotion ? false : { opacity: 0, y: 10 }}

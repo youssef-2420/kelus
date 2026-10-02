@@ -50,6 +50,8 @@ export function RevisionSurface() {
   const auth = useAuth();
   const [confirmReset, setConfirmReset] = useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
+  const [incomingSource, setIncomingSource] = useState<File | null>(null);
+  const sourcePickerRef = useRef<HTMLInputElement>(null);
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const mode = modeFromSection(searchParams.get("section"));
   const [direction, setDirection] = useState(1);
@@ -186,7 +188,21 @@ export function RevisionSurface() {
               <span aria-hidden="true">{material.storage === "local" ? "▤" : "↗"}</span><span className="core-source-name">{material.title}</span>
             </button>
           )) : <p className="core-rail-empty">Add a PDF to keep it beside your plan.</p>}
-          <button type="button" className="core-add-source" onClick={() => setMode("materials")}>＋ Add source</button>
+          <input
+            ref={sourcePickerRef}
+            className="sr-only"
+            type="file"
+            accept="application/pdf,.pdf"
+            aria-label="Choose a course PDF"
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              event.target.value = "";
+              if (!file) return;
+              setIncomingSource(file);
+              setMode("materials");
+            }}
+          />
+          <button type="button" className="core-add-source" onClick={() => sourcePickerRef.current?.click()}>＋ Add source</button>
         </div>
         <div className="studio-rail-bottom">
           <Link href="/" className="studio-home-link">← Back to Kelus</Link>
@@ -224,7 +240,7 @@ export function RevisionSurface() {
       <div className="studio-main">
         <header className="studio-topbar">
           <span className="studio-topbar-course" title={course.name}>{course.name}</span>
-          <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : "Your course"}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{days} day{days === 1 ? "" : "s"} to exam</span></span>
+          <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{days} day{days === 1 ? "" : "s"} to exam</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
         {mode !== "today" ? (
@@ -268,6 +284,9 @@ export function RevisionSurface() {
                     concepts={concepts}
                     activities={snapshot.learningActivities}
                     events={snapshot.events}
+                    examTarget={exam.target}
+                    targetPercent={exam.targetPercent}
+                    daysToExam={days}
                     isSampleCourse={isSampleCourse}
                     onStart={openSession ? resume : begin}
                     startLabel={openSession ? "Resume session" : undefined}
@@ -275,7 +294,7 @@ export function RevisionSurface() {
                 </div>
               </div>
             ) : null}
-            {mode === "materials" ? <div className="core-workspace-grid is-materials"><CourseSourceReader key={selectedMaterial?.id ?? "none"} material={selectedMaterial} /><div className="core-workspace-action"><MaterialLibrary embedded /></div></div> : null}
+            {mode === "materials" ? <div className="core-workspace-grid is-materials"><CourseSourceReader key={selectedMaterial?.id ?? "none"} material={selectedMaterial} /><div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
           </motion.div>
         </AnimatePresence>
