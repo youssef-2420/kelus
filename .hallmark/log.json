@@ -2,6 +2,14 @@
   {
     "date": "2026-10-02",
     "scope": "app",
+    "brief": "Unify focused study sessions with the course workspace and homepage learning colors",
+    "macrostructure": "Workbench",
+    "theme": "Kelus booklet (design.md)",
+    "enrichment": "none; source, recall, and route colors carry state"
+  },
+  {
+    "date": "2026-10-02",
+    "scope": "app",
     "brief": "Unify course setup, Study plan, Materials, and Topics with the Kelus paper identity",
     "macrostructure": "Workbench",
     "theme": "Kelus booklet (design.md)",

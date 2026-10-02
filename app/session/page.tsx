@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type SyntheticEvent } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import { evaluateLearningResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
@@ -12,6 +13,7 @@ import { percent } from "@/lib/format";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
@@ -177,13 +179,6 @@ function SessionBody() {
   const activeConcept = concept;
   const activePrompt = prompt;
   const activeActivity = activity;
-  const folioPhase =
-    phase === "result"
-      ? "Mark"
-      : phase === "reroute"
-        ? "Route"
-        : PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"];
-
   function checkAnswers(event: SyntheticEvent) {
     responseTimeMs.current = Math.max(0, Math.round(event.timeStamp - startedAt.current));
     const nextEvaluation = evaluateLearningResponse({
@@ -317,12 +312,11 @@ function SessionBody() {
   }
 
   return (
-    <main id="main" className={`study-shell${sourcePanel ? " is-source-open" : ""}`}>
+    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}`}>
       <div className="study-context is-folio">
-        <span>
-          <small>
-            {index + 1} of {total} · {folioPhase}
-          </small>
+        <span className="study-context-title">
+          <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
+          <small>Topic {index + 1} of {total} · {concept.name}</small>
         </span>
         <div className="study-folio-actions">
           <details className="study-more" open={confirmDiscard || undefined}>
@@ -359,6 +353,12 @@ function SessionBody() {
           </button>
         </div>
       </div>
+      <ol className="study-phase-track" aria-label="Study steps">
+        {(["learn", "retrieve", "apply", "evaluate"] as const).map((step, stepIndex) => {
+          const currentIndex = phase === "result" || phase === "reroute" ? 3 : (["learn", "retrieve", "apply", "evaluate"] as const).indexOf(phase);
+          return <li key={step} className={stepIndex < currentIndex ? "is-done" : stepIndex === currentIndex ? "is-current" : undefined} aria-current={stepIndex === currentIndex ? "step" : undefined}><span aria-hidden="true">{String(stepIndex + 1).padStart(2, "0")}</span>{PHASE_LABEL[step]}</li>;
+        })}
+      </ol>
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (
