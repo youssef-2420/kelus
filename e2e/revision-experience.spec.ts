@@ -86,3 +86,27 @@ test("a student can follow the study plan into topics and open one", async ({ pa
   await expect(page.getByRole("heading", { name: "Needs another pass" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Topic navigation" }).getByRole("link", { name: /Topics/ })).toBeVisible();
 });
+
+test("the course workspace stays legible across its sections and returns home", async ({ page }) => {
+  await page.goto("/today/?sample=1");
+  await expect(page.locator("#today-title")).toHaveText("Elasticity");
+  await expect(page.locator(".studio-main")).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(page.locator(".studio-topbar-course")).toHaveText("Microeconomics");
+
+  const sections = page.getByRole("navigation", { name: "Revision sections" });
+  await sections.getByRole("button", { name: "Materials" }).click();
+  await expect(page.getByRole("heading", { name: "Materials" })).toBeVisible();
+  await expect(page.locator(".material-shelf h2")).toHaveCSS("color", "rgb(18, 22, 15)");
+  await sections.getByRole("button", { name: "Topics" }).click();
+  await expect(page.getByRole("heading", { name: "Topics" })).toBeVisible();
+  await expect(page.locator(".index-toc-row").first()).toContainText("Start here");
+
+  for (const width of [320, 375, 414, 768]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await expect(sections.getByRole("button", { name: "Study plan" })).toBeVisible();
+  }
+
+  await page.getByRole("link", { name: "Kelus home" }).click();
+  await expect(page).toHaveURL(/\/$/);
+});

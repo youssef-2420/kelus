@@ -38,11 +38,6 @@ export function CourseStudioOnboarding({ stage, courseName, children }: {
           <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
           <span aria-hidden="true">↗</span>
         </Link>
-        <div className="studio-course">
-          <span className="studio-rail-label">Your course</span>
-          <strong title={courseName || "New course"}>{courseName || "New course"}</strong>
-          <span>{stage === "exam" ? "Getting started" : "Setting up your route"}</span>
-        </div>
         <p className="studio-rail-label studio-navigation-label">Getting started</p>
         <ol className="studio-onboarding-steps" aria-label="Setup progress">
           {STAGES.map((item, index) => (
@@ -63,14 +58,9 @@ export function CourseStudioOnboarding({ stage, courseName, children }: {
       <div className="studio-main">
         <header className="studio-topbar">
           <span className="studio-topbar-course">{courseName || "New course"}</span>
-          <span className="studio-topbar-status">Private course</span>
+          <span className="studio-topbar-status">Step {currentIndex + 1} of {STAGES.length}</span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
-          <header className="studio-page-heading">
-            <span className="studio-eyebrow">Course workspace</span>
-            <p className="studio-page-course">{courseName || "New course"}</p>
-            <p className="studio-page-description">{stage === "exam" ? "Set your exam, then bring in the lessons you want to revise." : "Your sources, topics, and next revision session in one place."}</p>
-          </header>
           <div className="studio-onboarding-content">{children}</div>
         </main>
       </div>
