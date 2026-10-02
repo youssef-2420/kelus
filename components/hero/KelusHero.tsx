@@ -41,7 +41,6 @@ export function KelusHero() {
             </Link>
           </motion.div>
         </div>
-        <p className={styles.actionHint}>Set up with your own course material.</p>
       </div>
 
       <div className={styles.visual}>

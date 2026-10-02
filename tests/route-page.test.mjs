@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-test("homepage presents marked-script hero, one sample proof, and close", () => {
+test("homepage presents marked-script hero and one sample proof without a repeated close", () => {
   const page = readFileSync("app/page.tsx", "utf8");
   const hero = readFileSync("components/hero/KelusHero.tsx", "utf8");
   const story = readFileSync("components/home/HomeAfterHero.tsx", "utf8");
@@ -14,6 +14,7 @@ test("homepage presents marked-script hero, one sample proof, and close", () => 
   assert.doesNotMatch(hero, /Try sample \(~1 min\)/);
   assert.doesNotMatch(hero, /today\?sample=1/);
   assert.match(hero, /Set up/);
+  assert.doesNotMatch(hero, /Set up with your own course material/);
   assert.match(hero, /ExamRoutePoster/);
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);
@@ -24,7 +25,7 @@ test("homepage presents marked-script hero, one sample proof, and close", () => 
   assert.doesNotMatch(story, /HeroProductDemo/);
   assert.match(story, /BookletRevisionBoard/);
   assert.match(story, /poster-sample/);
-  assert.match(story, /home-close|folio-close/);
+  assert.doesNotMatch(story, /home-close|folio-close|Walk into the exam knowing/);
   assert.doesNotMatch(story, /Try sample \(~1 min\)/);
   assert.doesNotMatch(story, /Set my exam/);
   assert.doesNotMatch(story, /folio-chapter|TodayPlanIllustration|RerouteIllustration|MaterialShelfIllustration/);

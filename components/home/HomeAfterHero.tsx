@@ -33,17 +33,6 @@ export function HomeAfterHero() {
 
       <RevisionReturn />
 
-      <section className="home-close folio-close" aria-labelledby="home-close-title">
-        <Reveal className="home-close-inner is-cluster">
-          <div className="home-close-copy">
-            <h2 id="home-close-title">Walk into the exam knowing what you worked on — and why.</h2>
-            <p>
-              Set your exam and build a study plan from your own notes.
-            </p>
-          </div>
-        </Reveal>
-      </section>
-
     </>
   );
 }
