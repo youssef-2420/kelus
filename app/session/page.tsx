@@ -14,6 +14,7 @@ import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } 
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
+import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
@@ -83,6 +84,7 @@ function SessionBody() {
   const [seenRouteChanges, setSeenRouteChanges] = useState(0);
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
   const [openingSource, setOpeningSource] = useState(false);
+  const [sourceRevealed, setSourceRevealed] = useState(false);
   const sourceRequest = useRef(0);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
   const sourceCloseRef = useRef<HTMLButtonElement>(null);
@@ -220,6 +222,7 @@ function SessionBody() {
     setLastOutcome(null);
     setRouteBeforeIds([]);
     setHelpMode(null);
+    setSourceRevealed(false);
     setPhase("learn");
     startedAt.current = 0;
     responseTimeMs.current = 0;
@@ -259,6 +262,12 @@ function SessionBody() {
   const nextNames = session.latestRoute.allocations.map((allocation) => state.snapshot.concepts.find((item) => item.id === allocation.conceptId)?.name).filter(Boolean);
   const routeOrderChanged = previousNames.join("|") !== nextNames.join("|");
   const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : helpMode === "example" ? activity.retrieve.example : null;
+  const currentSource = activity.sourceReferences[0];
+  const currentMaterial = materials.find((item) => item.id === currentSource?.materialId)
+    ?? materials.find((item) => item.courseId === concept.courseId && item.storage === "local")
+    ?? null;
+  const sourcePage = Number(currentSource?.locator?.match(/\d+/)?.[0] ?? 1);
+  const recallWithoutLooking = (["retrieve", "apply"] as Phase[]).includes(phase) && !sourceRevealed;
 
   async function openSource(materialId: string, locator: string | null) {
     sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -352,6 +361,19 @@ function SessionBody() {
             Close
           </button>
         </div>
+      </div>
+      <aside className="session-workspace-rail" aria-label="Course workspace">
+        <p>YOUR COURSE</p>
+        <strong>{state.snapshot.courses.find((item) => item.id === concept.courseId)?.name ?? "Course"}</strong>
+        <nav aria-label="Workspace sections">
+          <Link href="/today">Study plan</Link>
+          <Link href="/today?section=materials">Materials</Link>
+          <Link href="/today?section=map">Topics</Link>
+        </nav>
+        <div className="session-rail-topic"><span>NOW STUDYING</span><b>{concept.name}</b><small>{index + 1} of {total} topics</small></div>
+      </aside>
+      <div className="session-workspace-source">
+        <CourseSourceReader key={`${currentMaterial?.id ?? "none"}-${sourcePage}`} material={currentMaterial} initialPage={sourcePage} concealed={recallWithoutLooking} onShowSource={() => setSourceRevealed(true)} />
       </div>
       <ol className="study-phase-track" aria-label="Study steps">
         {(["learn", "retrieve", "apply", "evaluate"] as const).map((step, stepIndex) => {

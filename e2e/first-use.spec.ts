@@ -80,6 +80,8 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan", exact: true })).toBeVisible();
   await expect(page.locator("#today-title")).toBeVisible();
+  await expect(page.locator(".core-source-reader canvas")).toBeVisible();
+  await page.screenshot({ path: "/tmp/kelus-core-source-desktop.png", fullPage: true });
   await expect(page.getByRole("heading", { name: "Today", exact: true })).toHaveCount(0);
   await expect(page.getByText(/Molecular Biology/).first()).toBeVisible();
   for (const width of [320, 375, 768, 1280]) {
@@ -128,6 +130,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: /Retrieve it/ }).click();
   await expect(page.getByRole("list", { name: "Study steps" }).locator('[aria-current="step"]')).toContainText("Retrieve");
+  await expect(page.getByText("Source closed for recall")).toBeVisible();
   await page.getByLabel(/Close the page\. Write it in your own words/).fill("I cannot yet explain the mechanism from memory.");
   await page.getByRole("button", { name: /Continue/ }).click();
   await page.getByRole("button", { name: "Back", exact: true }).click();

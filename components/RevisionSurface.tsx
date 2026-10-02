@@ -3,8 +3,9 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
+import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { TodayRoute } from "@/components/TodayRoute";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { kelusDuration, kelusEase } from "@/components/motion";
@@ -14,6 +15,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
 import { trackEvent } from "@/lib/analytics";
+import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 
 export type SurfaceMode = "today" | "materials" | "map";
 
@@ -47,6 +49,8 @@ export function RevisionSurface() {
   const { state, start, reset } = useLearner();
   const auth = useAuth();
   const [confirmReset, setConfirmReset] = useState(false);
+  const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
+  const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const mode = modeFromSection(searchParams.get("section"));
   const [direction, setDirection] = useState(1);
   const previousMode = useRef(mode);
@@ -111,6 +115,15 @@ export function RevisionSurface() {
   const examId = exam.id;
   const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
   const modeMeta = MODES.find((item) => item.id === mode)!;
+  const courseMaterials = materials.filter((item) => item.courseId === courseId);
+  const firstConceptId = route.allocations[0]?.conceptId;
+  const firstReference = snapshot.learningActivities.find((item) => item.conceptId === firstConceptId)?.sourceReferences[0];
+  const preferredMaterial = courseMaterials.find((item) => item.id === firstReference?.materialId);
+  const selectedMaterial = (mode === "today" ? preferredMaterial : courseMaterials.find((item) => item.id === selectedMaterialId))
+    ?? courseMaterials.find((item) => item.storage === "local")
+    ?? courseMaterials[0]
+    ?? null;
+  const referencedPage = Number(firstReference?.locator?.match(/\d+/)?.[0] ?? 1);
 
   function setMode(next: SurfaceMode) {
     if (next === mode) return;
@@ -166,6 +179,15 @@ export function RevisionSurface() {
             );
           })}
         </nav>
+        <div className="core-rail-sources">
+          <p className="studio-rail-label">Course sources <span>{courseMaterials.length}</span></p>
+          {courseMaterials.length ? courseMaterials.slice(0, 6).map((material) => (
+            <button key={material.id} type="button" className={selectedMaterial?.id === material.id ? "is-selected" : undefined} onClick={() => { setSelectedMaterialId(material.id); setMode("materials"); }} title={material.title}>
+              <span aria-hidden="true">{material.storage === "local" ? "▤" : "↗"}</span><span className="core-source-name">{material.title}</span>
+            </button>
+          )) : <p className="core-rail-empty">Add a PDF to keep it beside your plan.</p>}
+          <button type="button" className="core-add-source" onClick={() => setMode("materials")}>＋ Add source</button>
+        </div>
         <div className="studio-rail-bottom">
           <Link href="/" className="studio-home-link">← Back to Kelus</Link>
           {auth.user ? (
@@ -238,19 +260,22 @@ export function RevisionSurface() {
             transition={panelTransition}
           >
             {mode === "today" ? (
-              <div className="workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
-                <TodayRoute
-                  route={route}
-                  concepts={concepts}
-                  activities={snapshot.learningActivities}
-                  events={snapshot.events}
-                  isSampleCourse={isSampleCourse}
-                  onStart={openSession ? resume : begin}
-                  startLabel={openSession ? "Resume session" : undefined}
-                />
+              <div className="core-workspace-grid" aria-label="Your source and today's route">
+                <CourseSourceReader key={`${selectedMaterial?.id ?? "none"}-${selectedMaterial?.id === preferredMaterial?.id ? referencedPage : 1}`} material={selectedMaterial} initialPage={selectedMaterial?.id === preferredMaterial?.id ? referencedPage : 1} />
+                <div className="core-workspace-action workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
+                  <TodayRoute
+                    route={route}
+                    concepts={concepts}
+                    activities={snapshot.learningActivities}
+                    events={snapshot.events}
+                    isSampleCourse={isSampleCourse}
+                    onStart={openSession ? resume : begin}
+                    startLabel={openSession ? "Resume session" : undefined}
+                  />
+                </div>
               </div>
             ) : null}
-            {mode === "materials" ? <MaterialLibrary embedded /> : null}
+            {mode === "materials" ? <div className="core-workspace-grid is-materials"><CourseSourceReader key={selectedMaterial?.id ?? "none"} material={selectedMaterial} /><div className="core-workspace-action"><MaterialLibrary embedded /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
           </motion.div>
         </AnimatePresence>

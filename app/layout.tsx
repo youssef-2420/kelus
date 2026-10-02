@@ -17,6 +17,7 @@ import "./course-studio-light.css";
 import "./material-first.css";
 import "./study-session.css";
 import "./monthly-pricing.css";
+import "./core-workspace.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";
