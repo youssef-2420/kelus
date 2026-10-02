@@ -22,7 +22,7 @@ export function KelusHero() {
 
         <div className={styles.actions}>
           <Link href="/today" className={styles.primary}>
-            Set up <span aria-hidden="true">→</span>
+            Set up <span className={styles.primaryArrow} aria-hidden="true">→</span>
           </Link>
         </div>
       </div>

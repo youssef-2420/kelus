@@ -54,6 +54,8 @@ test("hero is readable immediately and does not hold navigation for an animation
   await expect(hero.locator("figure")).toContainText("Close substitutes make demand");
   await expect(hero.locator("figure")).toContainText("Try to recall");
   await expect(hero.locator("[data-ink]")).toHaveCount(0);
+  await expect(hero.locator("[data-cue]")).toHaveCount(3);
+  await expect(hero.getByRole("link", { name: "Set up" })).toHaveCSS("border-radius", "999px");
   await expect(hero.getByRole("link", { name: "Set up" })).toBeEnabled();
 });
 
@@ -61,10 +63,15 @@ test("reduced motion presents the same finished sheet without hydration errors",
   await page.emulateMedia({ reducedMotion: "reduce" });
   const errors: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
+  page.on("console", message => {
+    if (message.type() === "error" && message.text().includes("hydrated")) errors.push(message.text());
+  });
   await page.goto("/");
   const hero = page.locator('[data-hero="marked-script"]');
   await expect(hero.locator("figure")).toContainText("Elasticity moves to the top of the route");
   await expect(hero.locator("button")).toHaveCount(0);
   await expect(hero.locator("[data-ink]")).toHaveCount(0);
+  await expect(hero.locator('[data-cue="source"]')).toHaveCSS("transform", "none");
+  await expect(hero.locator('[data-cue="recall"]')).toHaveCSS("transform", "none");
   expect(errors).toEqual([]);
 });
