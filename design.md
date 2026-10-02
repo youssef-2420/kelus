@@ -27,6 +27,7 @@ Existing type sizes and weights remain. The revision app retains its current
 fonts in this marketing-only pass; do not repoint global editorial/UI tokens.
 
 - Primary actions are Kelus green fills with white labels.
+- The homepage hero's single primary action may use a soft capsule with immediate press feedback; product controls keep the booklet's compact geometry.
 - Secondary actions are text buttons with instant press scale (`0.97`).
 - Links use Kelus green and a restrained directional arrow.
 - Touch targets: minimum 44×44px for header, nav, auth, and footer controls.
