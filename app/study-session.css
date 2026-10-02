@@ -1,0 +1,343 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Workbench · design-system: design.md · designed-as-app */
+/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V4 */
+/* Audience: students mid-revision. Use: one focused answer. Tone: calm, expressive through meaning. */
+body.is-session-booklet.is-booklet-system {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+body.is-session-booklet.is-booklet-system .site-header.is-session {
+  background: var(--color-pure-white);
+  border-bottom: 1px solid var(--line);
+  box-shadow: none;
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] {
+  --study-step-ink: var(--color-hero-orange);
+  --study-step-wash: var(--color-hero-orange-wash);
+  display: block;
+  width: min(960px, calc(100% - 48px));
+  max-width: 960px;
+  min-height: calc(100dvh - 120px);
+  margin: clamp(20px, 4vw, 52px) auto 64px;
+  padding: 0 clamp(24px, 5vw, 72px) clamp(48px, 7vw, 96px);
+  background: var(--color-pure-white);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ledger);
+  box-shadow: none;
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase="retrieve"] {
+  --study-step-ink: var(--color-hero-purple);
+  --study-step-wash: var(--color-hero-purple-wash);
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase="apply"] {
+  --study-step-ink: var(--color-hero-orange);
+  --study-step-wash: var(--color-study-apply-wash);
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase="evaluate"],
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase="result"],
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase="reroute"] {
+  --study-step-ink: var(--color-kelus);
+  --study-step-wash: var(--color-periwinkle-wash);
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-open {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.92fr);
+  column-gap: var(--spacing-32);
+  width: min(1240px, calc(100% - 48px));
+  max-width: 1240px;
+}
+
+body.is-session-booklet.is-booklet-system main.study-shell.is-source-open > :is(.study-context, .study-phase-track) {
+  grid-column: 1 / -1;
+}
+
+body.is-session-booklet.is-booklet-system main.study-shell.is-source-open > .session-source-panel {
+  grid-column: 2;
+  grid-row: 3;
+  align-self: start;
+}
+
+body.is-session-booklet.is-booklet-system .study-context.is-folio {
+  min-height: 92px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.study-context-title {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.study-brand {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 34px;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+}
+
+.study-brand svg { width: 20px; height: 20px; }
+.study-brand:hover { color: var(--color-kelus); }
+.study-brand:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 2px; }
+
+body.is-session-booklet.is-booklet-system .study-context-title small {
+  color: var(--color-smoke);
+  font-size: 0.75rem;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+body.is-session-booklet.is-booklet-system .study-more > summary,
+body.is-session-booklet.is-booklet-system .study-close {
+  color: var(--color-slate);
+  font-size: 0.85rem;
+}
+
+.study-phase-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-8);
+  margin: 0;
+  padding: var(--spacing-24) 0;
+  list-style: none;
+}
+
+.study-phase-track li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 10px;
+  border-top: 2px solid var(--line);
+  color: var(--color-smoke);
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.study-phase-track li span {
+  color: inherit;
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.study-phase-track li.is-current {
+  border-top-color: var(--study-step-ink);
+  background: var(--study-step-wash);
+  color: var(--study-step-ink);
+  font-weight: 600;
+}
+
+.study-phase-track li.is-done {
+  border-top-color: var(--color-kelus);
+  color: var(--color-kelus);
+}
+
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .study-question.is-page,
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .reroute-view.is-page {
+  min-height: 480px;
+  margin: 0;
+  padding: clamp(28px, 5vw, 56px) 0 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.is-session-booklet.is-booklet-system .session-work {
+  gap: var(--spacing-16);
+}
+
+body.is-session-booklet.is-booklet-system .study-mark-kicker {
+  color: var(--study-step-ink);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+body.is-session-booklet.is-booklet-system .study-question.is-page h1,
+body.is-session-booklet.is-booklet-system .reroute-view.is-page h1,
+body.is-session-booklet.is-booklet-system .session-learn h1 {
+  max-width: 30ch;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1.13;
+  overflow-wrap: anywhere;
+}
+
+body.is-session-booklet.is-booklet-system .session-work-lede,
+body.is-session-booklet.is-booklet-system .study-mark-lede {
+  color: var(--color-slate);
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  line-height: 1.5;
+}
+
+body.is-session-booklet.is-booklet-system .session-work-field,
+body.is-session-booklet.is-booklet-system textarea.session-work-field {
+  min-height: 192px;
+  margin: var(--spacing-8) 0 0;
+  padding: var(--spacing-16) var(--spacing-24);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-ledger);
+  background: var(--study-step-wash);
+  box-shadow: none;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.55;
+}
+
+body.is-session-booklet.is-booklet-system .session-work-field:focus-visible {
+  border-color: var(--study-step-ink);
+  outline: 2px solid var(--study-step-ink);
+  outline-offset: 2px;
+}
+
+body.is-session-booklet.is-booklet-system .session-work-field::placeholder {
+  color: var(--color-slate);
+  opacity: 0.8;
+}
+
+body.is-session-booklet.is-booklet-system .session-work .session-help-page {
+  padding-block: var(--spacing-8);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+body.is-session-booklet.is-booklet-system .session-work .session-help-page > summary {
+  min-height: 44px;
+  color: var(--study-step-ink);
+  font-weight: 600;
+}
+
+body.is-session-booklet.is-booklet-system .session-work-actions {
+  width: 100%;
+  margin-top: var(--spacing-16);
+}
+
+body.is-session-booklet.is-booklet-system .session-work-actions .cta {
+  width: auto;
+  flex: 0 0 auto;
+  justify-content: center;
+}
+
+body.is-session-booklet.is-booklet-system .session-work-actions .study-back {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  flex: 0 0 auto;
+  min-height: 48px;
+  margin: 0;
+}
+
+body.is-session-booklet.is-booklet-system .study-question.is-page .cta,
+body.is-session-booklet.is-booklet-system .reroute-view.is-page .cta,
+body.is-session-booklet.is-booklet-system .session-learn .cta {
+  min-height: 48px;
+  border-radius: var(--radius-ledger);
+  background: var(--color-kelus);
+  color: var(--color-pure-white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .study-question.is-page .session-work-actions .cta:disabled {
+  background: var(--color-frost) !important;
+  color: var(--color-slate) !important;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+body.is-session-booklet.is-booklet-system .study-question.is-page .cta:not(:disabled):hover,
+body.is-session-booklet.is-booklet-system .reroute-view.is-page .cta:hover,
+body.is-session-booklet.is-booklet-system .session-learn .cta:hover {
+  background: var(--color-kelus-hover);
+}
+
+body.is-session-booklet.is-booklet-system .answer-pages section:nth-child(odd) {
+  background: var(--color-hero-purple-wash);
+}
+
+body.is-session-booklet.is-booklet-system .answer-pages section:nth-child(even) {
+  background: var(--color-hero-orange-wash);
+}
+
+body.is-session-booklet.is-booklet-system .session-sources,
+body.is-session-booklet.is-booklet-system .session-source-panel {
+  border-color: var(--line);
+}
+
+body.is-session-booklet.is-booklet-system .session-sources button {
+  color: var(--color-hero-orange);
+}
+
+body.is-session-booklet.is-booklet-system .study-question :is(button, summary):focus-visible,
+body.is-session-booklet.is-booklet-system .study-context :is(button, summary):focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 3px;
+}
+
+@media (max-width: 720px) {
+  body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] {
+    width: 100%;
+    min-height: calc(100dvh - 64px);
+    margin: 0;
+    padding: 0 var(--spacing-24) var(--spacing-64);
+    border: 0;
+  }
+
+  body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-open {
+    display: block;
+    width: 100%;
+    max-width: none;
+  }
+
+  .study-phase-track li {
+    justify-content: center;
+    padding-inline: 4px;
+    font-size: 0.72rem;
+  }
+
+  .study-phase-track li span { display: none; }
+}
+
+@media (max-width: 375px) {
+  body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] {
+    padding-inline: var(--spacing-16);
+  }
+
+  .study-phase-track { gap: 4px; }
+  .study-phase-track li { font-size: 0.68rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.is-session-booklet.is-booklet-system main.study-shell[data-phase] :is(button, summary, textarea) {
+    transition-duration: 0.01ms;
+  }
+}

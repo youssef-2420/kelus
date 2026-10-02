@@ -102,7 +102,9 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await start.click();
 
   await expect(page).toHaveURL(/\/session/);
-  await expect(page.locator(".study-context.is-folio")).toContainText(/of \d+ · Read/);
+  await expect(page.locator(".study-context.is-folio")).toContainText(/Topic 1 of \d+/);
+  await expect(page.getByRole("list", { name: "Study steps" }).locator("li")).toHaveCount(4);
+  await expect(page.getByRole("list", { name: "Study steps" }).locator('[aria-current="step"]')).toContainText("Read");
   await expect(page.getByRole("button", { name: "Close", exact: true })).toBeVisible();
   await expect(page.getByRole("list", { name: "Revision pages" })).toHaveCount(0);
   await expect(page.locator(".study-progress")).toHaveCount(0);
@@ -114,6 +116,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.keyboard.press("Escape");
   await page.getByRole("button", { name: /Retrieve it/ }).click();
+  await expect(page.getByRole("list", { name: "Study steps" }).locator('[aria-current="step"]')).toContainText("Retrieve");
   await page.getByLabel(/Close the page\. Write it in your own words/).fill("I cannot yet explain the mechanism from memory.");
   await page.getByRole("button", { name: /Continue/ }).click();
   await page.getByRole("button", { name: "Back", exact: true }).click();

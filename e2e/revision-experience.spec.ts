@@ -96,9 +96,11 @@ test("the course workspace stays legible across its sections and returns home", 
   const sections = page.getByRole("navigation", { name: "Revision sections" });
   await sections.getByRole("button", { name: "Materials" }).click();
   await expect(page.getByRole("heading", { name: "Materials" })).toBeVisible();
+  await expect(sections.getByRole("button", { name: "Materials" })).toHaveCSS("color", "rgb(165, 82, 31)");
   await expect(page.locator(".material-shelf h2")).toHaveCSS("color", "rgb(18, 22, 15)");
   await sections.getByRole("button", { name: "Topics" }).click();
   await expect(page.getByRole("heading", { name: "Topics" })).toBeVisible();
+  await expect(sections.getByRole("button", { name: "Topics" })).toHaveCSS("color", "rgb(120, 89, 160)");
   await expect(page.locator(".index-toc-row").first()).toContainText("Start here");
 
   for (const width of [320, 375, 414, 768]) {

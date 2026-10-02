@@ -153,6 +153,7 @@ export function RevisionSurface() {
               <motion.button
                 key={item.id}
                 type="button"
+                data-mode={item.id}
                 className={active ? "is-active" : undefined}
                 aria-pressed={active}
                 aria-label={item.label}

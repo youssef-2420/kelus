@@ -7,7 +7,7 @@ Kelus is paper, ink, and one pass-mark green. Marketing and product share the sa
 - Canvas: cool green-cast paper (`#eef1ec`), not cream and not pure white chrome.
 - Ink: deep booklet ink (`#12160f`).
 - Accent: one Kelus green (`#1f6b45`) for actions, focus, and route signals. No indigo. No Notion blue.
-- Marketing illustrations on the homepage and `/route` may use muted orange for source highlights and muted purple for recall, with green reserved for the route and primary action. These are explanatory visual cues, not new app UI accents.
+- The homepage and core product share a restrained learning vocabulary: muted orange identifies source material and application, muted purple identifies recall, and green identifies the route, feedback, and primary action. Use color for meaning, not decorative fill.
 - Secondary text: mute green-gray (`#4a5246` / `#5a6358`) for body support and captions — both ≥4.5:1 on paper.
 - Typography: Literata (optical sizes) for display and reading; IBM Plex Sans (via `--font-inter`) for UI. Wordmark stays Plex.
 - Geometry: ~4px radii. Avoid SaaS twin cards, blue glows, soft multi-shadow stacks, and ALL CAPS kickers.
@@ -37,6 +37,6 @@ fonts in this marketing-only pass; do not repoint global editorial/UI tokens.
 
 - First-run Materials/Map gates preview the feature; they do not dump students into blank dead-ends.
 - Pricing shows Free and Kelus Plus side by side on desktop, stacked on mobile. Plus is a $4.99 monthly subscription; annual and per-exam plans are not offered.
-- After a course is ready, the course workspace uses the same light paper-and-ink system as the marketing site: a quiet compact rail, a single course context line, and Study plan / Materials / Topics. The study plan leads with one recommendation and its evidence; next topics remain secondary. First-run setup shares this shell, while focused sessions retain a distraction-free reading layout.
+- After a course is ready, the course workspace uses the same light paper-and-ink system as the marketing site: a quiet compact rail, a single course context line, and Study plan / Materials / Topics. The study plan leads with one recommendation and its evidence; next topics remain secondary. First-run setup shares this shell. Focused sessions retain distraction-free reading, but must show the same course context, learning-step sequence, and source/recall/route colors rather than reverting to a separate faux notebook.
 - The topic map shows relationships when confirmed; the ranked list remains the selectable surface.
 - Homepage header does not duplicate the hero sample CTA.

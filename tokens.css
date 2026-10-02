@@ -15,11 +15,12 @@
   --color-lavender-border: #d5d9d0;
   --color-lilac-border: #e2e6df;
   --color-periwinkle-wash: #e8f1eb;
-  /* Homepage study-sheet cues only; app actions remain green. */
+  /* One shared learning vocabulary: sources = orange, recall = purple, route/actions = green. */
   --color-hero-orange: #a5521f;
   --color-hero-orange-wash: #fcebdc;
   --color-hero-purple: #7859a0;
   --color-hero-purple-wash: #f2edf8;
+  --color-study-apply-wash: #fff4e7;
   --shadow-hero-sheet: 0 6px 24px rgb(18 22 15 / 5%);
   /* Illustration-only washes: action and navigation remain Kelus green. */
   --color-loop-source: oklch(0.92 0.03 210);

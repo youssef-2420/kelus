@@ -82,6 +82,27 @@ body.is-course-studio .kelus-space.is-studio {
   box-shadow: inset 2px 0 0 var(--color-kelus);
 }
 
+/* The same learning colors used by the homepage and focused session. */
+.is-course-studio .studio-nav.revision-surface-modes button[data-mode="materials"][aria-pressed="true"] {
+  background: var(--color-hero-orange-wash);
+  color: var(--color-hero-orange);
+  box-shadow: inset 2px 0 0 var(--color-hero-orange);
+}
+
+.is-course-studio .studio-nav.revision-surface-modes button[data-mode="map"][aria-pressed="true"] {
+  background: var(--color-hero-purple-wash);
+  color: var(--color-hero-purple);
+  box-shadow: inset 2px 0 0 var(--color-hero-purple);
+}
+
+.is-course-studio .studio-page:has(.material-binder-stack) .studio-section-head h1 {
+  color: var(--color-hero-orange);
+}
+
+.is-course-studio .studio-page:has(.surface-map) .studio-section-head h1 {
+  color: var(--color-hero-purple);
+}
+
 .is-course-studio .studio-nav.revision-surface-modes button:active,
 .is-course-studio .studio-home-link:active,
 .is-course-studio .studio-account-action:active {
@@ -306,6 +327,10 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
   font-weight: 600;
 }
 
+.is-course-studio .index-toc-row.is-start {
+  background: var(--color-periwinkle-wash);
+}
+
 .is-course-studio .material-binder-stack,
 .is-course-studio .material-binder-stack :is(h2, h3, strong, label) {
   color: var(--studio-ink);
@@ -356,6 +381,12 @@ body.is-course-studio .studio-panel .material-ingest.is-embedded .material-drop.
   border-color: var(--line);
   background: var(--studio-rail-paper);
   color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-panel .material-ingest.is-embedded .material-drop.is-quiet:hover,
+body.is-course-studio .studio-panel .material-ingest.is-embedded .material-drop.is-quiet:focus-within {
+  border-color: var(--color-hero-orange);
+  background: var(--color-hero-orange-wash);
 }
 
 .is-course-studio :is(a, button, summary, input, textarea, select):focus-visible {
