@@ -67,12 +67,13 @@ test("one persistent header owns navigation for every page", async () => {
   assert.doesNotMatch(shell, /<header|<nav/);
 });
 
-test("setup shows the real four-step path before the optional sample", async () => {
+test("setup shows the real four-step path without a sample detour", async () => {
   const setup = await source("components/FirstRunSetup.tsx");
   assert.match(setup, /aria-label="Getting started"/);
   assert.match(setup, /setup-sequence/);
   assert.match(setup, /Exam[\s\S]*Sources[\s\S]*First estimate[\s\S]*Route/);
-  assert.ok(setup.indexOf("Tell Kelus what you are preparing for") < setup.indexOf("Just looking?"));
+  assert.match(setup, /Continue with my course/);
+  assert.doesNotMatch(setup, /Just looking\?|Try sample/);
   assert.doesNotMatch(setup, /destination-brand/);
   assert.doesNotMatch(setup, /setup-progress/);
 });
@@ -104,7 +105,7 @@ test("the course workspace keeps destination and setup progress across product p
   assert.match(rail, /Current course/);
   assert.match(rail, /course-masthead/);
   assert.match(rail, /materialsReady/);
-  assert.match(rail, /Sample course model ready/);
+  assert.match(rail, /Add a source to build your course model/);
   assert.match(rail, /aria-current="step"/);
   assert.match(rail, /Est\. readiness|First estimate|Today’s stops|Add sources|Confirm topics/);
   assert.doesNotMatch(rail, /Learning loop|Rerouting|course-stage|course-masthead-nav/);

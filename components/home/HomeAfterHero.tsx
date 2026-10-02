@@ -24,7 +24,7 @@ export function HomeAfterHero() {
         </Reveal>
         <Reveal className="poster-sample-next">
           <p>Ready to do a full study pass?</p>
-          <Link href="/today?sample=1">Open the sample course <span aria-hidden="true">→</span></Link>
+          <Link href="/today">Set up my course <span aria-hidden="true">→</span></Link>
         </Reveal>
       </section>
 

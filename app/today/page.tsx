@@ -55,7 +55,7 @@ function TodayBody() {
       <main id="main" className="destination-page">
         <p className="destination-brand">Kelus</p>
         <h1 className="destination-page-title">Loading sample…</h1>
-        <p>Opening a finished course model so you can see Today in about a minute.</p>
+        <p>Opening the course preview.</p>
       </main>
     );
   }
@@ -68,7 +68,6 @@ function TodayBody() {
             try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
             completeSetup(input);
           }}
-          onUseDemo={loadDemo}
         />
       </CourseStudioOnboarding>
     );

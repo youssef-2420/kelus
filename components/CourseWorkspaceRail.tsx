@@ -103,7 +103,7 @@ export function CourseWorkspaceRail() {
           {phase.label}
         </Link>
         {!materialsReady && concepts.length === 0 ? (
-          <span className="course-masthead-hint">Sample course model ready when you try the sample</span>
+          <span className="course-masthead-hint">Add a source to build your course model</span>
         ) : null}
       </p>
     </aside>

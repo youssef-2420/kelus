@@ -76,7 +76,7 @@ export function HowItWorks() {
         <h1 id="how-title">Your lessons become <br />a better revision habit.</h1>
         <div className={styles.heroBottom}>
           <p>Bring your course. Recall what you know. Let each answer shape what you practise next.</p>
-          <Link className={styles.primaryAction} href="/today?sample=1">Try sample (~1 min)<span aria-hidden="true">↗</span></Link>
+          <Link className={styles.primaryAction} href="/today">Set up my course<span aria-hidden="true">↗</span></Link>
         </div>
         <div className={styles.exampleSwitcher}>
           <span>See it with</span>
@@ -110,8 +110,8 @@ export function HowItWorks() {
         <p>Kelus uses your course material, exam date, and practice answers to choose what to revisit. Readiness is an estimate from that evidence, not a promise about your exam result.</p>
       </section>
       <footer className={styles.final}>
-        <p>Ready to try one lesson?</p>
-        <Link className={styles.primaryAction} href="/today?sample=1">Try sample (~1 min)<span aria-hidden="true">↗</span></Link>
+        <p>Ready to revise your own lessons?</p>
+        <Link className={styles.primaryAction} href="/today">Set up my course<span aria-hidden="true">↗</span></Link>
       </footer>
     </div>
   );

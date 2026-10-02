@@ -15,7 +15,7 @@ const MAP_PREVIEW_TOPICS = ["Supply & Demand", "Elasticity", "Fiscal Policy"] as
 
 export default function MapPage() {
   const router = useRouter();
-  const { state, useDemo: loadDemo } = useLearner();
+  const { state } = useLearner();
   const reduceMotion = useReducedMotion();
   const course = state.snapshot.courses[0];
   const concepts = course ? state.snapshot.concepts.filter((concept) => concept.courseId === course.id) : [];
@@ -67,12 +67,6 @@ export default function MapPage() {
                   Add course material <span aria-hidden="true">→</span>
                 </Link>
               </div>
-              <p className="first-run-gate-aside">
-                Just looking?{" "}
-                <button type="button" className="text-btn inline" onClick={() => loadDemo()}>
-                  Try sample (~1 min)
-                </button>
-              </p>
             </div>
             <div className="first-run-gate-preview">
               <p className="first-run-gate-preview-label">What the topic map looks like</p>
