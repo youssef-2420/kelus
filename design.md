@@ -37,6 +37,6 @@ fonts in this marketing-only pass; do not repoint global editorial/UI tokens.
 
 - First-run Materials/Map gates preview the feature; they do not dump students into blank dead-ends.
 - Pricing shows Free and Kelus Plus side by side on desktop, stacked on mobile. Plus is a $4.99 monthly subscription; annual and per-exam plans are not offered.
-- After a course is ready, the course workspace uses a dark study surface with a compact rail: Study plan / Materials / Topics. The study plan leads with one recommendation and its evidence; the next topics remain secondary. First-run setup and focused sessions keep their own layouts.
+- After a course is ready, the course workspace uses the same light paper-and-ink system as the marketing site: a quiet compact rail, a single course context line, and Study plan / Materials / Topics. The study plan leads with one recommendation and its evidence; next topics remain secondary. First-run setup shares this shell, while focused sessions retain a distraction-free reading layout.
 - The topic map shows relationships when confirmed; the ranked list remains the selectable surface.
 - Homepage header does not duplicate the hero sample CTA.

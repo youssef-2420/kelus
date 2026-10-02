@@ -71,10 +71,10 @@ export function TopicMapPanel() {
                   <ConceptTitleTransition id={concept.id}>
                     <strong className="index-toc-name">{concept.name}</strong>
                   </ConceptTitleTransition>
-                  <span className="index-toc-meta">
-                    {isStart ? "Start here" : label}
-                    {evidence.mastery == null ? "" : ` · ${percent(evidence.mastery)}`}
-                  </span>
+                </span>
+                <span className="index-toc-meta">
+                  {isStart ? "Start here" : label}
+                  {evidence.mastery == null ? "" : ` · ${percent(evidence.mastery)}`}
                 </span>
               </Link>
             </li>

@@ -145,12 +145,7 @@ export function RevisionSurface() {
           <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
           <span aria-hidden="true">↗</span>
         </Link>
-        <div className="studio-course">
-          <span className="studio-rail-label">{isSampleCourse ? "Sample course" : "Your course"}</span>
-          <strong title={course.name}>{course.name}</strong>
-          <span>{days} day{days === 1 ? "" : "s"} until exam</span>
-        </div>
-        <p className="studio-rail-label studio-navigation-label">Study space</p>
+        <p className="studio-rail-label studio-navigation-label">Your workspace</p>
         <nav className="studio-nav revision-surface-modes" aria-label="Revision sections">
           {MODES.map((item) => {
             const active = item.id === mode;
@@ -165,7 +160,6 @@ export function RevisionSurface() {
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={pressSpring}
               >
-                <span className="studio-nav-icon" aria-hidden="true">{item.id === "today" ? "◷" : item.id === "materials" ? "▤" : "⌗"}</span>
                 {item.label}
               </motion.button>
             );
@@ -207,13 +201,12 @@ export function RevisionSurface() {
       <div className="studio-main">
         <header className="studio-topbar">
           <span className="studio-topbar-course" title={course.name}>{course.name}</span>
-          <span className="studio-topbar-status">{isSampleCourse ? "Sample course" : "Private course"}</span>
+          <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : "Your course"}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{days} day{days === 1 ? "" : "s"} to exam</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
         {mode !== "today" ? (
           <header className="studio-section-head kelus-paper-head kelus-space-top is-section">
             <div className="kelus-space-identity">
-              <p className="studio-section-course">{course.name}</p>
               <AnimatePresence mode="wait" initial={false}>
                 <motion.h1
                   key={modeMeta.label}

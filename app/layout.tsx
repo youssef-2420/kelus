@@ -13,6 +13,7 @@ import "./workbench.css";
 import "./marketing-typography.css";
 import "./view-transitions.css";
 import "./course-studio.css";
+import "./course-studio-light.css";
 import "./monthly-pricing.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";

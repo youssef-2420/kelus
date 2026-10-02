@@ -1,0 +1,605 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Workbench · design-system: design.md · designed-as-app */
+/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V4 · contrast: pass · mobile: pass */
+/* A single paper workspace for setup, the study plan, sources, and topics. */
+body.is-course-studio,
+body:has(.kelus-space.is-studio) {
+  --studio-paper: var(--paper);
+  --studio-sheet: var(--color-pure-white);
+  --studio-rail-paper: var(--color-mist);
+  --studio-ink: var(--ink);
+  --studio-muted: var(--color-slate);
+  --studio-hairline: var(--line);
+  --studio-danger: #a63d31;
+  background: var(--studio-paper);
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .kelus-space.is-studio {
+  grid-template-columns: 218px minmax(0, 1fr);
+  background: var(--studio-sheet);
+  color: var(--studio-ink);
+  font-family: var(--font-sans);
+}
+
+.is-course-studio .studio-rail {
+  padding: var(--spacing-24) var(--spacing-16) var(--spacing-16);
+  background: var(--studio-rail-paper);
+  border-color: var(--studio-hairline);
+}
+
+.is-course-studio .studio-brand,
+.is-course-studio .studio-brand-identity {
+  color: var(--studio-ink);
+}
+
+.is-course-studio .studio-brand {
+  padding-inline: var(--spacing-8);
+  font-size: 1.42rem;
+}
+
+.is-course-studio .studio-brand > span:last-child {
+  color: var(--studio-muted);
+}
+
+.is-course-studio .studio-rail-label,
+.is-course-studio .studio-navigation-label {
+  color: var(--studio-muted);
+}
+
+.is-course-studio .studio-navigation-label {
+  margin: var(--spacing-48) var(--spacing-16) var(--spacing-16);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.is-course-studio .studio-nav.revision-surface-modes {
+  gap: var(--spacing-8);
+}
+
+.is-course-studio .studio-nav.revision-surface-modes button,
+.is-course-studio .studio-onboarding-steps li {
+  min-height: 44px;
+  padding: 10px var(--spacing-16);
+  border-radius: var(--radius-ledger);
+  color: var(--studio-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
+}
+
+.is-course-studio .studio-nav.revision-surface-modes button:hover,
+.is-course-studio .studio-onboarding-steps li.is-current {
+  background: var(--color-periwinkle-wash);
+  color: var(--studio-ink);
+}
+
+.is-course-studio .studio-nav.revision-surface-modes button[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--color-periwinkle-wash);
+  color: var(--color-kelus);
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--color-kelus);
+}
+
+.is-course-studio .studio-nav.revision-surface-modes button:active,
+.is-course-studio .studio-home-link:active,
+.is-course-studio .studio-account-action:active {
+  transform: scale(0.97);
+}
+
+.is-course-studio .studio-rail-bottom {
+  border-color: var(--studio-hairline);
+}
+
+.is-course-studio .studio-home-link,
+.is-course-studio .studio-account-action,
+.is-course-studio .studio-more > summary {
+  color: var(--studio-muted);
+}
+
+.is-course-studio .studio-home-link:hover,
+.is-course-studio .studio-account-action:hover,
+.is-course-studio .studio-more > summary:hover {
+  background: var(--color-periwinkle-wash);
+  color: var(--studio-ink);
+}
+
+.is-course-studio .studio-more > .text-btn,
+.is-course-studio .studio-more > .today-reset-confirm {
+  border-color: var(--studio-hairline);
+  background: var(--studio-sheet);
+  color: var(--studio-ink);
+  box-shadow: none;
+}
+
+.is-course-studio .studio-more .today-reset-confirm button {
+  color: var(--studio-ink);
+}
+
+.is-course-studio .studio-more .today-reset-confirm .is-danger {
+  color: var(--studio-danger);
+}
+
+.is-course-studio .studio-main {
+  background: var(--studio-sheet);
+}
+
+.is-course-studio .studio-topbar {
+  min-height: 64px;
+  padding-inline: clamp(28px, 4.5vw, 76px);
+  border-color: var(--studio-hairline);
+  background: var(--studio-sheet);
+  color: var(--studio-ink);
+}
+
+.is-course-studio .studio-topbar-course {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.is-course-studio .studio-topbar-status {
+  color: var(--studio-muted);
+  font-size: 0.79rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.is-course-studio .studio-topbar-divider {
+  padding-inline: 4px;
+  color: var(--line);
+}
+
+.is-course-studio .studio-page.kelus-space-stage {
+  width: min(100%, 1160px);
+  min-height: calc(100dvh - 64px);
+  padding: clamp(52px, 7vw, 104px) clamp(28px, 6vw, 88px) var(--spacing-96);
+  background: var(--studio-sheet);
+  color: var(--studio-ink);
+}
+
+.is-course-studio .studio-section-head.kelus-space-top {
+  margin-bottom: var(--spacing-48);
+  padding-bottom: var(--spacing-32);
+  border-color: var(--studio-hairline);
+}
+
+.is-course-studio .studio-section-head h1 {
+  color: var(--studio-ink);
+  font-size: clamp(2.15rem, 4vw, 3.25rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1.1;
+}
+
+.is-course-studio .studio-section-head .kelus-space-lede {
+  margin-top: var(--spacing-16);
+  color: var(--studio-muted);
+  font-size: 1rem;
+}
+
+body.is-course-studio .today-route-execution.is-booklet-page {
+  grid-template-columns: minmax(0, 1.45fr) minmax(230px, 0.72fr);
+  gap: clamp(48px, 7vw, 96px);
+  padding-top: 0;
+}
+
+body.is-course-studio .studio-panel .today-page-folio {
+  color: var(--studio-muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
+  max-width: 16ch;
+  margin-top: var(--spacing-16);
+  color: var(--studio-ink);
+  font-size: clamp(3.1rem, 6vw, 5.8rem);
+  font-weight: 600;
+  letter-spacing: -0.07em;
+  line-height: 1.04;
+}
+
+.is-course-studio .today-first-duration {
+  margin-top: var(--spacing-16);
+  color: var(--studio-muted);
+  font-size: 0.95rem;
+}
+
+.is-course-studio .today-decision {
+  max-width: 53ch;
+  margin-top: var(--spacing-48);
+  padding-top: var(--spacing-24);
+}
+
+.is-course-studio .today-decision-label,
+.is-course-studio .today-next-label {
+  margin-bottom: var(--spacing-16);
+  color: var(--studio-ink);
+  font-size: 0.77rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.is-course-studio .today-decision p:not(.today-decision-label) {
+  color: var(--studio-muted);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.is-course-studio .today-source-reference,
+.is-course-studio .today-return-note,
+.is-course-studio .today-session-preview {
+  color: var(--studio-muted);
+}
+
+.is-course-studio .today-source-reference {
+  margin-top: var(--spacing-16);
+}
+
+.is-course-studio .today-lead-action.is-page .today-start {
+  min-height: 52px;
+  margin-top: var(--spacing-32);
+  padding-inline: var(--spacing-24);
+  border-radius: var(--radius-ledger);
+  background: var(--color-kelus);
+  color: var(--color-pure-white);
+  font-weight: 600;
+}
+
+.is-course-studio .today-lead-action.is-page .today-start:hover {
+  background: var(--color-kelus-hover);
+}
+
+.is-course-studio .today-next {
+  padding-top: var(--spacing-24);
+}
+
+.is-course-studio .today-next li {
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  min-height: 64px;
+  gap: var(--spacing-8);
+}
+
+.is-course-studio .today-next li strong {
+  color: var(--studio-ink);
+}
+
+.is-course-studio .today-next li span,
+.is-course-studio .today-next-note {
+  color: var(--studio-muted);
+}
+
+.is-course-studio .surface-map.is-toc {
+  color: var(--studio-ink);
+}
+
+.is-course-studio .index-toc,
+.is-course-studio .index-toc > li {
+  border-color: var(--studio-hairline);
+}
+
+.is-course-studio .index-toc-row {
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  min-height: 76px;
+  gap: var(--spacing-16);
+  padding-inline: var(--spacing-8);
+  color: var(--studio-ink);
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+
+.is-course-studio .index-toc-row:hover {
+  background: var(--studio-rail-paper);
+}
+
+.is-course-studio .index-toc-name {
+  color: var(--studio-ink);
+  font-weight: 600;
+}
+
+.is-course-studio .index-toc-num,
+.is-course-studio .index-toc-meta {
+  color: var(--studio-muted);
+}
+
+.is-course-studio .index-toc-row.is-start .index-toc-meta {
+  color: var(--color-kelus);
+  font-weight: 600;
+}
+
+.is-course-studio .material-binder-stack,
+.is-course-studio .material-binder-stack :is(h2, h3, strong, label) {
+  color: var(--studio-ink);
+}
+
+.is-course-studio .material-binder-stack :is(.material-shelf, .material-ingest, .material-add-page, .material-honesty) {
+  border-color: var(--studio-hairline);
+  background: transparent;
+  color: var(--studio-ink);
+}
+
+.is-course-studio .material-binder-stack :is(input, select, textarea) {
+  border-color: var(--studio-hairline);
+  background: var(--studio-sheet);
+  color: var(--studio-ink);
+}
+
+.is-course-studio .material-binder-stack :is(p, small, summary),
+body.is-course-studio .studio-panel .material-shelf.is-binder > header :is(.kicker, span),
+body.is-course-studio .studio-panel .material-shelf.is-binder .material-name small,
+body.is-course-studio .studio-panel .material-ingest.is-embedded .material-drop.is-quiet span,
+body.is-course-studio .studio-panel .material-ingest.is-embedded .material-ingest-lede,
+body.is-course-studio .studio-panel .material-bookmarks > summary,
+body.is-course-studio .studio-panel .material-add-page > summary {
+  color: var(--studio-muted);
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder > header :is(h2, #source-shelf-title),
+body.is-course-studio .studio-panel .material-shelf.is-binder .material-name strong {
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder > header h2,
+body.is-course-studio .studio-panel .material-shelf.is-binder .material-name strong {
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+.is-course-studio .material-binder-stack .material-row {
+  border-color: var(--studio-hairline);
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder .material-actions :is(a, button) {
+  color: var(--color-kelus);
+}
+
+body.is-course-studio .studio-panel .material-ingest.is-embedded .material-drop.is-quiet {
+  border-color: var(--line);
+  background: var(--studio-rail-paper);
+  color: var(--studio-ink);
+}
+
+.is-course-studio :is(a, button, summary, input, textarea, select):focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 3px;
+}
+
+/* First-run keeps the same workspace language without becoming a dashboard. */
+.is-course-studio .studio-onboarding-steps li {
+  background: transparent;
+}
+
+.is-course-studio .studio-onboarding-steps li > span,
+.is-course-studio .studio-onboarding-steps li.is-done > span {
+  color: var(--studio-muted);
+}
+
+.is-course-studio .studio-onboarding-steps li.is-current {
+  border-color: transparent;
+  box-shadow: inset 2px 0 0 var(--color-kelus);
+  color: var(--color-kelus);
+  font-weight: 600;
+}
+
+.is-course-studio .studio-onboarding-content,
+body.is-booklet-system.is-course-studio .studio-onboarding .destination-page.is-booklet-product.is-marked-setup,
+body.is-course-studio .studio-onboarding .diagnosis-page.is-booklet-product,
+body.is-course-studio .studio-onboarding .diagnosis-page :is(.diagnosis-panel, .diagnosis-check) {
+  color: var(--studio-ink);
+}
+
+.is-course-studio .studio-page-heading {
+  margin-bottom: var(--spacing-48);
+}
+
+.is-course-studio .studio-eyebrow,
+body.is-course-studio .studio-onboarding :is(.destination-form .kicker, .workbench-chapter-label, .diagnosis-page .kicker) {
+  color: var(--color-kelus);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.is-course-studio .studio-page-description,
+body.is-course-studio .studio-onboarding :is(.destination-support, .workbench-chapter-intro p, .flow-context, .diagnosis-intro, .diagnosis-selection-reason) {
+  color: var(--studio-muted);
+}
+
+body.is-course-studio .studio-onboarding .destination-page-title,
+body.is-course-studio .studio-onboarding :is(.destination-form legend, .workbench-chapter-intro h1, .diagnosis-page h1, .concept-confirmation h2),
+body.is-course-studio .studio-onboarding .material-binder-stack :is(h2, h3, strong, label),
+body.is-course-studio .studio-onboarding .destination-form :is(label, legend, .target-input b),
+body.is-course-studio .studio-onboarding .diagnosis-page :is(label, .diagnosis-feedback, .diagnosis-evaluation) {
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-onboarding :is(.setup-sequence, .workbench-chapter-label, .diagnosis-page .flow-context),
+body.is-course-studio .studio-onboarding .diagnosis-list li {
+  border-color: var(--studio-hairline);
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-onboarding .destination-form input:not([type="radio"]):not([type="checkbox"]),
+body.is-course-studio .studio-onboarding :is(.material-binder-stack input, .material-binder-stack select, .material-binder-stack textarea, .diagnosis-page textarea) {
+  border-color: var(--studio-hairline);
+  background: var(--studio-sheet);
+  color: var(--studio-ink);
+  color-scheme: light;
+}
+
+body.is-course-studio .studio-onboarding .destination-form input::placeholder,
+body.is-course-studio .studio-onboarding .diagnosis-page textarea::placeholder {
+  color: var(--studio-muted);
+}
+
+body.is-course-studio .studio-onboarding .time-choices label,
+body.is-booklet-system.is-course-studio .studio-onboarding .destination-page.is-booklet-product .setup-sample {
+  border-color: var(--studio-hairline);
+  background: var(--studio-rail-paper) !important;
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-onboarding .time-choices label.is-selected,
+body.is-course-studio .studio-onboarding .diagnosis-list button.is-selected {
+  border-color: var(--color-kelus);
+  background: var(--color-periwinkle-wash) !important;
+  color: var(--color-kelus);
+}
+
+body.is-course-studio .studio-onboarding .time-choices label.is-selected :is(strong, span),
+body.is-course-studio .studio-onboarding .setup-sample :is(p, .kicker),
+body.is-course-studio .studio-onboarding .material-binder-stack :is(p, small, span) {
+  color: var(--studio-muted);
+}
+
+body.is-course-studio .studio-onboarding .diagnosis-list button {
+  border-color: var(--studio-hairline);
+  background: var(--studio-sheet);
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-onboarding .material-binder-stack :is(.material-shelf, .material-ingest, .material-add-page, .material-honesty, .concept-confirmation) {
+  border-color: var(--studio-hairline);
+  background: transparent !important;
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-onboarding .material-binder-stack .material-drop {
+  border-color: var(--studio-hairline);
+  background: var(--studio-rail-paper);
+  color: var(--studio-ink);
+}
+
+body.is-course-studio .studio-onboarding .material-binder-stack .material-drop strong,
+body.is-course-studio .studio-onboarding .material-binder-stack .material-shelf > header :is(.kicker, h2),
+body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stack .material-drop strong,
+body.is-course-studio .studio-onboarding .material-ingest-title h2 {
+  color: var(--studio-ink) !important;
+}
+
+body.is-course-studio .studio-onboarding .material-ingest-lede,
+body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stack .material-drop span {
+  color: var(--studio-muted) !important;
+}
+
+@media (max-width: 1040px) {
+  body.is-course-studio .today-route-execution.is-booklet-page {
+    gap: var(--spacing-64);
+  }
+}
+
+@media (max-width: 760px) {
+  body.is-course-studio .kelus-space.is-studio {
+    display: block;
+  }
+
+  .is-course-studio .studio-rail {
+    padding: var(--spacing-8) var(--spacing-16);
+    border-color: var(--studio-hairline);
+  }
+
+  .is-course-studio .studio-brand {
+    width: auto;
+    min-height: 44px;
+  }
+
+  .is-course-studio .studio-navigation-label {
+    display: none;
+  }
+
+  .is-course-studio .studio-rail-bottom {
+    margin-top: 0;
+  }
+
+  .is-course-studio .studio-nav.revision-surface-modes {
+    margin-top: var(--spacing-8);
+    gap: var(--spacing-8);
+  }
+
+  .is-course-studio .studio-nav.revision-surface-modes button {
+    justify-content: center;
+    padding-inline: var(--spacing-8);
+    white-space: nowrap;
+  }
+
+  .is-course-studio .studio-onboarding-steps {
+    overflow-x: auto;
+  }
+
+  .is-course-studio .studio-onboarding-steps li {
+    white-space: nowrap;
+  }
+
+  .is-course-studio .studio-home-link {
+    display: none;
+  }
+
+  .is-course-studio .studio-topbar {
+    display: flex;
+    min-height: 48px;
+    padding-inline: var(--spacing-24);
+  }
+
+  .is-course-studio .studio-topbar-status {
+    font-size: 0.74rem;
+  }
+
+  .is-course-studio .studio-topbar-kind,
+  .is-course-studio .studio-topbar-divider {
+    display: none;
+  }
+
+  .is-course-studio .studio-page.kelus-space-stage {
+    min-height: calc(100dvh - 48px);
+    padding: var(--spacing-48) var(--spacing-24) var(--spacing-80);
+  }
+
+  body.is-course-studio .today-route-execution.is-booklet-page {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-64);
+    padding-top: 0;
+  }
+
+  body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
+    font-size: clamp(2.75rem, 12vw, 4rem);
+  }
+
+  .is-course-studio .today-decision {
+    margin-top: var(--spacing-40);
+  }
+
+  .is-course-studio .today-next {
+    max-width: none;
+  }
+}
+
+@media (max-width: 430px) {
+  .is-course-studio .studio-page.kelus-space-stage {
+    padding-inline: var(--spacing-16);
+  }
+
+  .is-course-studio .studio-topbar {
+    padding-inline: var(--spacing-16);
+  }
+
+  .is-course-studio .index-toc-row {
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: var(--spacing-8);
+  }
+
+  .is-course-studio .index-toc-meta {
+    grid-column: 2;
+    margin-top: -var(--spacing-16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .is-course-studio .studio-nav.revision-surface-modes button,
+  .is-course-studio .index-toc-row {
+    transition: none;
+  }
+
+  .is-course-studio .studio-nav.revision-surface-modes button:active,
+  .is-course-studio .studio-home-link:active,
+  .is-course-studio .studio-account-action:active {
+    transform: none;
+  }
+}

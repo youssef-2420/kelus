@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-10-02",
+    "scope": "app",
+    "brief": "Unify course setup, Study plan, Materials, and Topics with the Kelus paper identity",
+    "macrostructure": "Workbench",
+    "theme": "Kelus booklet (design.md)",
+    "enrichment": "none; app function carries the page"
+  },
+  {
     "date": "2026-09-05",
     "scope": "V1 homepage product story",
     "brief": "Demonstrate the focused plan, evidence-driven reroute, and honest materials workflow",
