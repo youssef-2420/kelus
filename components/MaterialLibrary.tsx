@@ -197,7 +197,7 @@ function MaterialRow({
   );
 }
 
-export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {}) {
+export function MaterialLibrary({ embedded = false, incomingFile = null, onIncomingFileHandled }: { embedded?: boolean; incomingFile?: File | null; onIncomingFileHandled?: () => void } = {}) {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const router = useRouter();
@@ -438,6 +438,16 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
     }
   }
 
+  const handleIncomingFile = useEffectEvent((file: File) => {
+    onIncomingFileHandled?.();
+    void savePdf(file);
+  });
+  useEffect(() => {
+    if (!incomingFile) return;
+    const frame = requestAnimationFrame(() => handleIncomingFile(incomingFile));
+    return () => cancelAnimationFrame(frame);
+  }, [incomingFile]);
+
   const resumeFirstAnalysis = useEffectEvent((material: CourseMaterial) => { void analyzePdf(material); });
   useEffect(() => {
     if (!embedded || concepts.length || phase.status !== "idle") return;
@@ -549,7 +559,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
               <h2 id="add-material-title">Syllabus or lecture PDF</h2>
               <p className="material-ingest-lede">You confirm every topic before the route changes.</p>
             </div>
-            <div className="sr-only">
+            <div className="material-role-field">
               <label htmlFor="material-role">This source is</label>
               <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
                 {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -565,8 +575,9 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
             >
               <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
               <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a PDF"}</strong>
-              <span>{busy && statusMessage ? statusMessage : "or drop one here · clear text works fastest"}</span>
+              <span>{busy && statusMessage ? statusMessage : "or drop one here · up to 20 MB · clear text works fastest"}</span>
             </label>
+            <p className="material-ingest-hint">Text PDFs work best. Kelus can read clear English scans on this device; you review every proposed topic before it changes your route.</p>
             {busy && workingStep ? (
               <div className="material-work-status" role="status" aria-live="polite">
                 <ol className="material-work-steps" aria-label="PDF processing steps">

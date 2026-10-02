@@ -49,6 +49,33 @@ test("first PDF survives a refresh before topics are confirmed", async ({ page }
   await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("First check");
 });
 
+test("Add source opens the file picker and reads the chosen PDF", async ({ page }) => {
+  await page.goto("/today?sample=1");
+  const workspace = page.locator(".kelus-space.is-studio");
+  await expect(workspace).toBeVisible();
+  const fileChooser = page.waitForEvent("filechooser");
+  await page.getByRole("button", { name: "Add source" }).click();
+  await (await fileChooser).setFiles({
+    name: "cell-biology-lecture.pdf",
+    mimeType: "application/pdf",
+    buffer: biologyPdf(),
+  });
+  await expect(page).toHaveURL(/section=materials/);
+  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+  await expect(page.getByText("Cell Membranes").first()).toBeVisible();
+});
+
+test("course workspace fills the viewport without a blank footer band", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/today?sample=1");
+  const workspace = page.locator(".kelus-space.is-studio");
+  await expect(workspace).toBeVisible();
+  expect(await workspace.evaluate((element) => element.getBoundingClientRect().bottom)).toBeGreaterThanOrEqual(899);
+  await expect(page.getByText(/Your target 85%/)).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
 test("real PDF becomes concepts, diagnosis evidence, and today's route", async ({ page }) => {
   await page.goto("/today");
   await expect(page.locator(".studio-onboarding")).toBeVisible();
