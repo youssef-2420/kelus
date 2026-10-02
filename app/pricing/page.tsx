@@ -25,11 +25,11 @@ export default function PricingPage() {
       <PricingViewTracker />
       <section className="legal-panel pricing-booklet">
         <p className="kicker">Pricing</p>
-        <h1>Revision that fits your month.</h1>
+        <h1>Start revising. Stay in control.</h1>
         <p className="legal-lede">
-          Start with Kelus for free. Move to Plus for $4.99 a month when subscriptions open.
+          Your course, study plan, and practice are free. Kelus Plus will be $4.99 a month when subscriptions open.
           {syncReady
-            ? " Sign in anytime to sync that progress across browsers."
+            ? " A free account can sync your progress across devices."
             : " Your progress stays on this device."}
         </p>
 
@@ -37,9 +37,10 @@ export default function PricingPage() {
           <PricingPlanMotion>
             <article className="pricing-offer is-free pricing-plan">
               <div className="pricing-offer-head">
-                <h2 className="kicker">Free</h2>
+                <div className="pricing-plan-name"><h2 className="kicker">Free</h2><span className="pricing-availability">Available now</span></div>
                 <p className="pricing-price">$0<span>/month</span></p>
               </div>
+              <p className="pricing-offer-lede">Everything you need to start a real revision session.</p>
               <ul>
                 <li>Add a course and exam date</li>
                 <li>Follow a plan shaped by your answers</li>
@@ -56,11 +57,12 @@ export default function PricingPage() {
           <PricingPlanMotion>
             <article className={`pricing-offer is-pass pricing-plan is-founding${paymentReady ? "" : " is-upcoming"}`}>
               <div className="pricing-offer-head">
-                <h2 className="kicker">Kelus Plus {paymentReady ? "" : "· coming soon"}</h2>
+                <div className="pricing-plan-name"><h2 className="kicker">Kelus Plus</h2><span className="pricing-availability">{paymentReady ? "Available now" : "Coming soon"}</span></div>
                 <p className="pricing-price">
                   $4.99<span>/month</span>
                 </p>
               </div>
+              <p className="pricing-offer-lede">For students who want more support as Kelus grows.</p>
               <ul>
                 <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
                 <li>Priority access to new study features</li>

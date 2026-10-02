@@ -326,23 +326,23 @@ body.is-course-studio .workbench-focus.is-booklet-page {
 
 body.is-course-studio .today-lead-action.is-page {
   display: grid;
-  gap: 20px;
-  padding-top: 14px;
+  gap: 0;
+  padding-top: 0;
 }
 
 body.is-course-studio .today-route-execution.is-booklet-page {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.8fr);
-  gap: clamp(36px, 6vw, 80px);
+  gap: clamp(40px, 6vw, 72px);
   align-items: start;
-  padding-top: clamp(36px, 6vh, 72px);
+  padding-top: clamp(16px, 3vw, 36px);
 }
 
 .is-course-studio .today-decision {
   max-width: 48ch;
-  margin: 4px 0 8px;
-  padding-left: 16px;
-  border-left: 2px solid var(--color-kelus);
+  margin: 30px 0 0;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--studio-hairline);
 }
 
 .is-course-studio .today-decision-label,
@@ -363,10 +363,26 @@ body.is-course-studio .today-route-execution.is-booklet-page {
 }
 
 .is-course-studio .today-session-preview {
-  margin: -7px 0 0;
+  max-width: 48ch;
+  margin: 12px 0 0;
   color: var(--studio-muted);
   font-size: 0.81rem;
-  letter-spacing: 0.025em;
+  line-height: 1.5;
+}
+
+.is-course-studio .today-first-duration {
+  margin: 10px 0 0;
+  color: #d0d9cd;
+  font-size: 0.9rem;
+}
+
+.is-course-studio .today-source-reference {
+  max-width: 48ch;
+  margin: 12px 0 0;
+  color: var(--studio-muted);
+  font-size: 0.81rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .is-course-studio .today-return-note {
@@ -378,8 +394,8 @@ body.is-course-studio .today-route-execution.is-booklet-page {
 }
 
 .is-course-studio .today-next {
-  margin-top: 12px;
-  padding: 20px 0 0;
+  margin-top: 0;
+  padding: 14px 0 0;
   border-top: 1px solid var(--studio-hairline);
 }
 
@@ -426,20 +442,21 @@ body.is-course-studio .studio-panel .today-page-folio {
 }
 
 body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
-  max-width: 18ch;
+  max-width: 22ch;
+  margin-top: 14px;
   color: #f7f7f2;
   font-family: var(--font-inter), "IBM Plex Sans", sans-serif;
-  font-size: clamp(2.15rem, 4.5vw, 3.8rem);
+  font-size: clamp(2.15rem, 4vw, 3.35rem);
   font-weight: 650;
   letter-spacing: -0.045em;
-  line-height: 1.07;
+  line-height: 1.1;
   overflow-wrap: anywhere;
 }
 
 .is-course-studio .today-lead-action.is-page .today-start {
   justify-self: start;
   min-height: 48px;
-  margin-top: 6px;
+  margin-top: 30px;
   padding-inline: 22px;
   border-radius: 6px;
   background: #1f6b45;
