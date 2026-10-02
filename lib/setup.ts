@@ -9,6 +9,8 @@ export type SetupInput = {
   availableMinutes: number;
 };
 
+export const CURRENT_COURSE_ID = "course-current";
+
 export function createLearnerSnapshot(input: SetupInput, nowMs = Date.now()): LearnerSnapshot {
   const courseName = input.courseName.trim();
   const examName = input.examName.trim();
@@ -27,7 +29,7 @@ export function createLearnerSnapshot(input: SetupInput, nowMs = Date.now()): Le
 
   const snapshot = createDemoSnapshot(nowMs);
   const now = new Date(nowMs).toISOString();
-  const courseId = "course-current";
+  const courseId = CURRENT_COURSE_ID;
   return {
     ...snapshot,
     profile: { ...snapshot.profile, displayName: "Student", createdAt: now },

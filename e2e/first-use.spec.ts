@@ -29,6 +29,26 @@ function biologyPdf() {
   return Buffer.from(pdf);
 }
 
+test("first PDF survives a refresh before topics are confirmed", async ({ page }) => {
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({
+    name: "cell-biology-lecture.pdf",
+    mimeType: "application/pdf",
+    buffer: biologyPdf(),
+  });
+  await page.getByRole("button", { name: /Continue to exam details/ }).click();
+  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Molecular Biology");
+  await page.getByLabel("Exam").fill("Cell Biology Final");
+  await page.getByLabel("When is it?").fill(new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10));
+  await page.getByRole("button", { name: /Read my PDF/ }).click();
+  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+  await expect(page.getByText("Cell Membranes").first()).toBeVisible();
+  await page.getByRole("button", { name: /Confirm topics/ }).click();
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("First check");
+});
+
 test("real PDF becomes concepts, diagnosis evidence, and today's route", async ({ page }) => {
   await page.goto("/today");
   await expect(page.locator(".studio-onboarding")).toBeVisible();
@@ -158,4 +178,11 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: "Resume session" }).click();
   await expect(page).toHaveURL(/\/session/);
   await expect(page.locator(".study-context.is-folio")).toContainText("2 of 3");
+  await page.goto("/today?section=materials");
+  await page.getByRole("button", { name: "Remove", exact: true }).click();
+  const confirmation = page.getByRole("group", { name: /Confirm remove cell biology lecture/ });
+  await expect(confirmation).toContainText("linked topics from your route");
+  await confirmation.getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("heading", { name: "Check the topics from your PDF." })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Start today’s route" })).toHaveCount(0);
 });

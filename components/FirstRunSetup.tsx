@@ -10,7 +10,7 @@ const TIMES = [15, 30, 45, 60] as const;
 type FieldKey = "courseName" | "examName" | "examDate" | "targetPercent" | "form";
 
 export function FirstRunSetup({ onComplete, onStageChange }: {
-  onComplete: (input: SetupInput, file: File) => void;
+  onComplete: (input: SetupInput, file: File) => Promise<void>;
   onStageChange: (stage: "upload" | "exam") => void;
 }) {
   const [draft, setDraft] = useState<SetupInput>({ courseName: "", examName: "", examDate: "", targetPercent: 85, availableMinutes: 45 });
@@ -56,7 +56,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
     setErrorField(null);
   }
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     setError("");
     setErrorField(null);
@@ -73,7 +73,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
     }
     setSubmitting(true);
     try {
-      onComplete(draft, file);
+      await onComplete(draft, file);
       trackEvent({ name: "setup_completed", available_minutes: draft.availableMinutes });
     } catch (caught) {
       fail("form", caught instanceof Error ? caught.message : "Kelus could not set up your exam yet.");

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { createDemoSnapshot } from "../data/demo-seed.ts";
-import { demoStateStorageKey, initialDemoState, stateForAuthenticatedUser } from "../lib/demo-store.ts";
+import { chooseLocalStateForSignIn, demoStateStorageKey, initialDemoState, stateForAuthenticatedUser } from "../lib/demo-store.ts";
 import { materialFileStorageKey, materialMetadataStorageKey } from "../lib/material-store.ts";
 
 test("claiming a guest learner state replaces every ownership field", () => {
@@ -13,6 +13,14 @@ test("claiming a guest learner state replaces every ownership field", () => {
   assert.ok(claimed.snapshot.exams.every((item) => item.userId === "auth-user-1"));
   assert.ok(claimed.snapshot.concepts.every((item) => item.userId === "auth-user-1"));
   assert.ok(claimed.snapshot.events.every((item) => item.userId === "auth-user-1"));
+});
+
+test("first sign-in carries the guest course, but an existing account keeps its own course", () => {
+  const guest = { ...initialDemoState(), onboardingCompleted: true };
+  const account = { ...initialDemoState(), onboardingCompleted: true, nowIso: "2026-10-01T00:00:00.000Z" };
+  assert.deepEqual(chooseLocalStateForSignIn(null, guest, initialDemoState()), { state: guest, claimGuest: true });
+  assert.deepEqual(chooseLocalStateForSignIn(account, guest, initialDemoState()), { state: account, claimGuest: false });
+  assert.equal(chooseLocalStateForSignIn(null, null, account).claimGuest, false);
 });
 
 test("learner state migration enables RLS and scopes every policy to auth uid", async () => {
