@@ -11,13 +11,14 @@ import { useLearner } from "@/components/LearnerProvider";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 import styles from "./loading.module.css";
+import { addPdfMaterial } from "@/lib/material-store";
+import { CURRENT_COURSE_ID } from "@/lib/setup";
 
 function TodayBody() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { state, completeSetup, completeDiagnosis, useDemo: loadDemo } = useLearner();
   const sampleHandled = useRef(false);
-  const [pendingFirstFile, setPendingFirstFile] = useState<File | null>(null);
   const [setupStage, setSetupStage] = useState<"upload" | "exam">("upload");
   const wantsSample = searchParams.get("sample") === "1";
   const sampleBooting = wantsSample && !state.onboardingCompleted;
@@ -67,9 +68,10 @@ function TodayBody() {
       <CourseStudioOnboarding stage={setupStage}>
         <FirstRunSetup
           onStageChange={setSetupStage}
-          onComplete={(input, file) => {
+          onComplete={async (input, file) => {
             try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
-            setPendingFirstFile(file);
+            const role = /syllabus|outline/i.test(file.name) ? "syllabus" : /slides|lecture/i.test(file.name) ? "lecture_slides" : "notes";
+            await addPdfMaterial({ courseId: CURRENT_COURSE_ID, file, role });
             completeSetup(input);
           }}
         />
@@ -84,10 +86,10 @@ function TodayBody() {
           <p className="workbench-chapter-label">Confirm your topics</p>
           <section className="materials-empty workbench-chapter-intro">
             <p className="kicker">From your PDF</p>
-            <h1>{pendingFirstFile ? "Check the topics from your PDF." : "Add your course PDF."}</h1>
-            <p>{pendingFirstFile ? "Kelus reads the pages you chose. Keep only the topics you actually need to revise." : "Choose a syllabus, lecture, or notes PDF, then confirm the topics Kelus should use."}</p>
+            <h1>Check the topics from your PDF.</h1>
+            <p>Kelus reads the pages you chose. Keep only the topics you actually need to revise.</p>
           </section>
-          <MaterialLibrary embedded initialFile={pendingFirstFile} />
+          <MaterialLibrary embedded />
         </div>
       </CourseStudioOnboarding>
     );

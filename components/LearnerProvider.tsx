@@ -10,9 +10,12 @@ import {
   confirmMaterialConcepts,
   getDemoSnapshot,
   getServerDemoSnapshot,
+  readStoredDemoState,
   clearStoredDemoState,
+  chooseLocalStateForSignIn,
   getDemoStateOwner,
   recordRetrieval,
+  removeMaterialLearning,
   loadAminaDemo,
   resetDemoState,
   replaceDemoState,
@@ -52,6 +55,7 @@ type Store = {
   }) => void;
   useDemo: () => void;
   confirmConcepts: (proposals: ProposedConcept[], pages?: ExtractedMaterialPage[]) => void;
+  removeMaterialSource: (materialId: string) => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -65,15 +69,18 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
   const syncedUser = useRef<string | null>(null);
   const lastWritten = useRef("");
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [materialClaim, setMaterialClaim] = useState<{ userId: string; claimGuest: boolean } | null>(null);
 
   useEffect(() => {
     let active = true;
     const userId = activeUserId;
     const previousOwner = getDemoStateOwner();
+    const guestBeforeSwitch = previousOwner === null ? readStoredDemoState(null) : null;
     setDemoStateOwner(userId);
     if (!userId) {
       syncedUser.current = null;
       lastWritten.current = "";
+      queueMicrotask(() => { if (active) setMaterialClaim(null); });
       return () => { active = false; };
     }
     syncedUser.current = null;
@@ -84,14 +91,16 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
         const claimed = stateForAuthenticatedUser(remote, userId);
         replaceDemoState(claimed);
         lastWritten.current = JSON.stringify(claimed);
+        setMaterialClaim({ userId, claimGuest: false });
       } else {
-        // Only an anonymous scope may be claimed. A previous account's local
-        // state is never re-keyed into a different account.
-        const localState = getDemoSnapshot();
-        const claimed = stateForAuthenticatedUser(previousOwner === null ? localState : getDemoSnapshot(), userId);
+        // Capture the guest before switching scopes. The account's own local
+        // state wins over a guest route; another account is never re-keyed.
+        const local = chooseLocalStateForSignIn(readStoredDemoState(userId), guestBeforeSwitch, getDemoSnapshot());
+        const claimed = stateForAuthenticatedUser(local.state, userId);
         replaceDemoState(claimed);
         lastWritten.current = JSON.stringify(claimed);
-        if (previousOwner === null) clearStoredDemoState(null);
+        if (local.claimGuest) clearStoredDemoState(null);
+        setMaterialClaim({ userId, claimGuest: local.claimGuest });
         void writeLearnerState(userId, claimed).catch(() => setSyncMessage("Saved on this device. Cloud sync will retry."));
       }
       syncedUser.current = userId;
@@ -99,6 +108,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     }).catch(() => {
       if (!active) return;
       syncedUser.current = userId;
+      setMaterialClaim({ userId, claimGuest: false });
       setSyncMessage("Saved on this device. Cloud sync is unavailable.");
     });
     return () => { active = false; };
@@ -131,13 +141,12 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       setMaterialOwner(null);
       return () => { active = false; };
     }
+    if (materialClaim?.userId !== userId) return () => { active = false; };
 
     void (async () => {
       try {
-        // Always check the isolated guest scope. It may contain materials added
-        // before sign-in, while the learner scope effect may already have
-        // switched its owner by the time this effect runs.
-        await claimGuestMaterials(userId);
+        if (materialClaim.claimGuest) await claimGuestMaterials(userId);
+        else setMaterialOwner(userId);
         if (!active) return;
         await initializeMaterialSync(userId);
         if (active) initialized = true;
@@ -169,7 +178,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       unsubscribe();
       window.removeEventListener("online", retryPending);
     };
-  }, [activeUserId]);
+  }, [activeUserId, materialClaim]);
   const store = useMemo<Store>(() => ({
     state,
     start(courseId, examId) {
@@ -200,6 +209,9 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     },
     confirmConcepts(proposals, pages) {
       confirmMaterialConcepts(state, proposals, pages);
+    },
+    removeMaterialSource(materialId) {
+      removeMaterialLearning(state, materialId);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;

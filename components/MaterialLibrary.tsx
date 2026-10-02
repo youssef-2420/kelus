@@ -65,12 +65,16 @@ function sourceHost(value: string | null) {
 function MaterialRow({
   item,
   onAnalyze,
+  onRemoved,
+  linkedTopics,
   userId,
   syncState,
   quiet = false,
 }: {
   item: CourseMaterial;
   onAnalyze: (item: CourseMaterial) => void;
+  onRemoved: (item: CourseMaterial) => void;
+  linkedTopics: number;
   userId?: string;
   syncState?: "syncing" | "synced" | "retrying";
   quiet?: boolean;
@@ -98,8 +102,14 @@ function MaterialRow({
 
   async function remove() {
     setBusy(true);
-    await removeMaterial(item.id);
-    if (userId) await removeRemoteMaterial(userId, item.id).catch(() => undefined);
+    try {
+      await removeMaterial(item.id);
+      onRemoved(item);
+      if (userId) await removeRemoteMaterial(userId, item.id).catch(() => undefined);
+    } catch {
+      setDownloadError("This source could not be removed. Try again.");
+      setBusy(false);
+    }
   }
 
   const statusLabel =
@@ -169,6 +179,7 @@ function MaterialRow({
         )}
         {confirmRemove ? (
           <span className="material-remove-confirm" role="group" aria-label={`Confirm remove ${item.title}`}>
+            {linkedTopics ? <span>Removing this source also removes {linkedTopics} linked topic{linkedTopics === 1 ? "" : "s"} from your route.</span> : null}
             <button type="button" className="text-btn" onClick={() => setConfirmRemove(false)} disabled={busy}>
               Cancel
             </button>
@@ -186,15 +197,15 @@ function MaterialRow({
   );
 }
 
-export function MaterialLibrary({ embedded = false, initialFile = null }: { embedded?: boolean; initialFile?: File | null } = {}) {
+export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {}) {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const router = useRouter();
-  const { state, confirmConcepts } = useLearner();
+  const { state, confirmConcepts, removeMaterialSource } = useLearner();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
-  const [role, setRole] = useState<MaterialRole>(() => initialFile && /syllabus|outline/i.test(initialFile.name) ? "syllabus" : initialFile && /slides|lecture/i.test(initialFile.name) ? "lecture_slides" : "notes");
+  const [role, setRole] = useState<MaterialRole>("notes");
   const [ingest, setIngest] = useState<IngestState>(INITIAL_INGEST_STATE);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [draftNames, setDraftNames] = useState<Record<string, string>>({});
@@ -202,7 +213,7 @@ export function MaterialLibrary({ embedded = false, initialFile = null }: { embe
   const [syncStates, setSyncStates] = useState<Record<string, "syncing" | "synced" | "retrying">>({});
   const fileRef = useRef<HTMLInputElement>(null);
   const ocrAbortRef = useRef<AbortController | null>(null);
-  const firstUploadStarted = useRef(false);
+  const resumedMaterialId = useRef<string | null>(null);
   const previewObjectUrl = useRef<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewPage, setPreviewPage] = useState(1);
@@ -427,12 +438,14 @@ export function MaterialLibrary({ embedded = false, initialFile = null }: { embe
     }
   }
 
-  const startFirstUpload = useEffectEvent((file: File) => { void savePdf(file); });
+  const resumeFirstAnalysis = useEffectEvent((material: CourseMaterial) => { void analyzePdf(material); });
   useEffect(() => {
-    if (!course || !initialFile || firstUploadStarted.current) return;
-    firstUploadStarted.current = true;
-    startFirstUpload(initialFile);
-  }, [course, initialFile]);
+    if (!embedded || concepts.length || phase.status !== "idle") return;
+    const pending = courseMaterials.find((item) => item.storage === "local" && item.processingStatus !== "failed");
+    if (!pending || resumedMaterialId.current === pending.id) return;
+    resumedMaterialId.current = pending.id;
+    resumeFirstAnalysis(pending);
+  }, [embedded, concepts.length, phase.status, courseMaterials]);
 
   if (!state.onboardingCompleted || !course) {
     const gate = (
@@ -793,7 +806,7 @@ export function MaterialLibrary({ embedded = false, initialFile = null }: { embe
           <span>{embedded ? "This exam" : "This device"}</span>
         </header>
         {courseMaterials.length ? (
-          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} quiet={embedded} onAnalyze={(material) => void analyzePdf(material)} />)}</ul>
+          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} quiet={embedded} onAnalyze={(material) => void analyzePdf(material)} onRemoved={(material) => removeMaterialSource(material.id)} linkedTopics={state.snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === item.id)).length} />)}</ul>
         ) : concepts.length ? (
           <div className="material-shelf-empty">
             <p>Sample model is ready. Add your own syllabus when you want Kelus grounded in your files.</p>

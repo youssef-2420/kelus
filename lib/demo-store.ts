@@ -108,6 +108,13 @@ export function stateForAuthenticatedUser(state: DemoState, userId: string): Dem
   };
 }
 
+/** Keep an existing account's route; claim a guest route only for a new account. */
+export function chooseLocalStateForSignIn(account: DemoState | null, guest: DemoState | null, fallback: DemoState) {
+  if (account) return { state: account, claimGuest: false };
+  if (guest?.onboardingCompleted) return { state: guest, claimGuest: true };
+  return { state: fallback, claimGuest: false };
+}
+
 export function replaceDemoState(value: unknown) {
   if (!validStoredState(value)) throw new Error("The saved learner state is not compatible with this version of Kelus.");
   const { state } = advanceNowIfNeeded(value);
@@ -208,10 +215,9 @@ export function completeOnboarding(input: SetupInput, nowMs = Date.now()) {
     onboardingCompleted: true,
     diagnosisCompleted: false,
   };
+  // The first PDF is committed to IndexedDB before this state becomes visible.
+  // Clearing materials here would race with that write and strand the course.
   persistDemoState(state);
-  if (typeof window !== "undefined") {
-    void import("./material-store").then(({ clearMaterials }) => clearMaterials());
-  }
   return state;
 }
 
@@ -308,6 +314,31 @@ export function confirmMaterialConcepts(
     ],
   }, state.nowIso);
   const next = { ...state, snapshot, diagnosisCompleted: state.diagnosisCompleted && existingConcepts.length > 0 };
+  persistDemoState(next);
+  return next;
+}
+
+/** A removed source cannot continue to supply questions or route stops. */
+export function removeMaterialLearning(state: DemoState, materialId: string) {
+  const removedIds = new Set(state.snapshot.learningActivities
+    .filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === materialId))
+    .map((activity) => activity.conceptId));
+  if (!removedIds.size) return state;
+  const snapshot: LearnerSnapshot = refreshCaches({
+    ...state.snapshot,
+    concepts: state.snapshot.concepts.filter((concept) => !removedIds.has(concept.id)),
+    prompts: state.snapshot.prompts.filter((prompt) => !removedIds.has(prompt.conceptId)),
+    learningActivities: state.snapshot.learningActivities.filter((activity) => !removedIds.has(activity.conceptId)),
+    relationships: state.snapshot.relationships.filter((relationship) => !removedIds.has(relationship.fromId) && !removedIds.has(relationship.toId)),
+    sessions: state.snapshot.sessions.map((session) =>
+      session.status === "in_progress" && session.plannedConceptIds.some((id) => removedIds.has(id))
+        ? { ...session, status: "abandoned" as const, endedAt: state.nowIso }
+        : session,
+    ),
+    // Keep practice events as history. Reconfirming a topic from a surviving
+    // source can recover its evidence without pretending the removed PDF exists.
+  }, state.nowIso);
+  const next = { ...state, snapshot, diagnosisCompleted: state.diagnosisCompleted && snapshot.concepts.length > 0 };
   persistDemoState(next);
   return next;
 }
