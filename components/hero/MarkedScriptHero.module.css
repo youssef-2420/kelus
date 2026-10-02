@@ -32,7 +32,6 @@
   min-width: 0;
 }
 .secondLine { display: block; margin-top: .12em; color: var(--mute); font-weight: 430; }
-.hero .actionHint { margin: 12px 0 0; max-width: 34ch; font-size: 13px; line-height: 1.5; color: var(--mute); }
 .mobileCaption { display: none; }
 .hero .lede { max-width: 30ch; margin: 28px 0 0; font-family: var(--font-source-serif), Georgia, serif; font-size: 17px; line-height: 1.65; letter-spacing: -.02em; color: var(--mute); }
 .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 20px; margin-top: 36px; }
