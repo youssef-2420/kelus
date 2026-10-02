@@ -60,8 +60,8 @@ test("the learning story stays continuous at every supported mobile width", asyn
   for (const width of [320, 375, 414, 768]) {
     await page.setViewportSize({ width, height: 812 });
     await page.goto("/route");
-    const stages = page.locator(".how-loop > ol > li");
-    await expect(stages).toHaveCount(6);
+    const stages = page.getByRole("region", { name: "The Kelus revision loop" }).locator("ol > li");
+    await expect(stages).toHaveCount(3);
     for (const stage of await stages.all()) {
       await stage.scrollIntoViewIfNeeded();
       await expect(stage).toBeVisible();

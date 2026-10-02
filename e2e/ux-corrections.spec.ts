@@ -35,7 +35,7 @@ test("sample route explains its actual outcome and total", async ({ page }) => {
 
 test("course examples use ordinary keyboard-operable buttons", async ({ page }) => {
   await page.goto("/route/");
-  const group = page.getByRole("group", { name: "Example course", exact: true });
+  const group = page.getByRole("group", { name: "Choose an example course", exact: true });
   const history = group.getByRole("button", { name: "History", exact: true });
   await history.focus();
   await page.keyboard.press("Enter");
