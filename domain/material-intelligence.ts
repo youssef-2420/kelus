@@ -94,6 +94,18 @@ function centralClaim(name: string, excerpt: string) {
   return (named ?? defined ?? sentences[0]).slice(0, 260);
 }
 
+function recallQuestion(name: string, claim: string, fallback: string) {
+  const verb = claim.match(new RegExp(`^${escapeRegExp(name)}\\s+(is|are|means|measures?|regulates?|depends on|moves?|converts?|calculates?|requires?)\\b`, "i"))?.[1]?.toLocaleLowerCase();
+  if (!verb) return fallback;
+  if (verb === "is" || verb === "are") return `What ${verb} ${name}, according to your notes?`;
+  if (verb === "means") return `What does ${name} mean, according to your notes?`;
+  const singular = /(?:s|es)$/.test(verb) && verb !== "is";
+  const auxiliary = singular ? "does" : "do";
+  const base = singular ? verb.slice(0, -1) : verb;
+  if (verb === "depends on") return `What does ${name} depend on, according to your notes?`;
+  return `What ${auxiliary} ${name} ${base}, according to your notes?`;
+}
+
 type SubjectMode = "biology" | "computer_science" | "history" | "law" | "mathematics" | "general";
 
 function subjectModeFor(name: string, excerpt: string): SubjectMode {
@@ -238,7 +250,7 @@ function buildActivity(concept: Concept, proposal: ProposedConcept): LearningAct
       ],
     },
     retrieve: {
-      prompt: language.retrievePrompt,
+      prompt: recallQuestion(concept.name, claim, language.retrievePrompt),
       hint: `Return to ${proposal.locator}. Start from the relationship or definition, not a list of facts.`,
       explanation: claim,
       example: `Restate the source claim about ${concept.name} in one sentence, then add one detail from ${proposal.locator}.`,
@@ -422,6 +434,16 @@ export function proposeConceptsFromMetadata(input: {
   return proposals;
 }
 
+/** A filename or outline can suggest a topic, but cannot support a lesson or answer key. */
+export function isSourceBackedProposal(proposal: ProposedConcept) {
+  const excerpt = proposal.sourceExcerpt.trim();
+  return /^Page [1-9]\d*$/i.test(proposal.locator)
+    && excerpt.length >= 30
+    && excerpt.split(/\s+/).length >= 5
+    && excerpt.toLocaleLowerCase() !== proposal.name.trim().toLocaleLowerCase()
+    && !/^Suggested from the file title/i.test(excerpt);
+}
+
 export function buildConfirmedMaterialModel(input: {
   proposals: ProposedConcept[];
   courseId: string;
@@ -429,6 +451,9 @@ export function buildConfirmedMaterialModel(input: {
   nowIso: string;
   pages?: ExtractedMaterialPage[];
 }) {
+  if (!input.proposals.length || input.proposals.some((proposal) => !isSourceBackedProposal(proposal))) {
+    throw new Error("A confirmed topic needs a readable passage from a PDF page. Try a clearer source before building its lesson.");
+  }
   const corpus = [
     ...(input.pages ?? []).map((page) => page.text),
     ...input.proposals.map((proposal) => `${proposal.name}\n${proposal.sourceExcerpt}`),
@@ -478,7 +503,7 @@ export function buildConfirmedMaterialModel(input: {
     return {
       id: `p-${concept.id}`,
       conceptId: concept.id,
-      promptText: `Explain the central claim about ${concept.name} from the course source.`,
+      promptText: recallQuestion(concept.name, centralClaim(concept.name, proposal.sourceExcerpt), `From memory, explain the central claim about ${concept.name} from ${proposal.locator}.`),
       modelAnswer: centralClaim(concept.name, proposal.sourceExcerpt),
     };
   });

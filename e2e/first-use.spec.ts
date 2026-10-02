@@ -60,6 +60,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
     await groups.nth(index).getByRole("button", { name: "Weak" }).click();
   }
   await page.getByRole("button", { name: /Continue to recall check/ }).click();
+  await expect(page.getByText(/From .*cell biology lecture.*Page 1/i)).toBeVisible();
   await page.getByLabel("Try without notes.").fill("Cell membranes regulate transport and selectively control what moves between a cell and its environment.");
   await page.getByRole("button", { name: "Compare answer" }).click();
   await expect(page.getByText("Kelus evidence check")).toBeVisible();
@@ -128,8 +129,16 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: /Check my thinking/ }).click();
   await page.getByRole("button", { name: "Mark this" }).click();
   await expect(page.getByRole("heading", { name: "Marked." })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /remaining order/ })).toBeVisible();
   await page.getByRole("button", { name: /Continue/ }).click();
   await expect(page.getByRole("heading", { name: /^(Updated|Kept)\.$/ })).toBeVisible();
   await expect(page.locator(".reroute-lines")).toHaveCount(0);
   await expect(page.locator(".reroute-cause")).toHaveCount(0);
+  await page.getByRole("button", { name: "Close", exact: true }).click();
+  await expect(page).toHaveURL(/\/today/);
+  await expect(page.getByText(/Last answer ·/)).toBeVisible();
+  await page.reload();
+  await page.getByRole("button", { name: "Resume session" }).click();
+  await expect(page).toHaveURL(/\/session/);
+  await expect(page.locator(".study-context.is-folio")).toContainText("2 of 3");
 });

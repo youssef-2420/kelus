@@ -250,6 +250,7 @@ export function RevisionSurface() {
                   concepts={concepts}
                   activities={snapshot.learningActivities}
                   events={snapshot.events}
+                  isSampleCourse={isSampleCourse}
                   onStart={openSession ? resume : begin}
                   startLabel={openSession ? "Resume session" : undefined}
                 />

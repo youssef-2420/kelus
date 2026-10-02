@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { isPdfFile, materialTitle, parseMaterialUrl } from "../domain/materials.ts";
-import { buildConfirmedMaterialModel, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
+import { buildConfirmedMaterialModel, isSourceBackedProposal, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
 
 test("material links are classified without inventing source data", () => {
   assert.equal(parseMaterialUrl("https://www.youtube.com/watch?v=abc").kind, "video");
@@ -57,7 +57,7 @@ test("confirmed material concepts become the existing learning model", () => {
   assert.equal(model.learningActivities.length, 2);
   assert.equal(model.relationships.length, 0, "PDF order must not fabricate prerequisites");
   assert.deepEqual(model.learningActivities[0].sourceReferences, [{ materialId: "material-1", label: "Lecture 4", locator: "Page 3" }]);
-  assert.match(model.learningActivities[0].retrieve.prompt, /central claim/i);
+  assert.match(model.learningActivities[0].retrieve.prompt, /what does elasticity measure/i);
   assert.notEqual(model.concepts[0].examImportance, model.concepts[1].examImportance);
 });
 
@@ -126,6 +126,22 @@ test("filename metadata can seed concepts when PDF text is empty", async () => {
   assert.ok(proposals.length >= 1);
   assert.equal(proposals[0].locator, "From filename");
   assert.match(proposals.map((item) => item.name).join(" "), /Organic|Chemistry|Midterm/i);
+  assert.equal(isSourceBackedProposal(proposals[0]), false);
+  assert.throws(() => buildConfirmedMaterialModel({
+    proposals,
+    courseId: "course-1",
+    userId: "user-1",
+    nowIso: "2026-09-05T12:00:00.000Z",
+  }), /readable passage from a PDF page/);
+});
+
+test("an outline heading alone cannot become a source-backed lesson", () => {
+  const proposals = proposeConceptsFromPages({
+    materialId: "outline",
+    sourceLabel: "Syllabus",
+    pages: [{ pageNumber: 0, text: "Elasticity\nMarket Structures" }],
+  });
+  assert.ok(proposals.every((proposal) => !isSourceBackedProposal(proposal)));
 });
 
 test("empty PDF text is classified so the UI can explain scans", async () => {

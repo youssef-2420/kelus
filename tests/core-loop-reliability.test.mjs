@@ -38,6 +38,21 @@ test("answer evaluation is deterministic and cannot be promoted by self-rating",
   }));
 });
 
+test("feedback names the missing source-backed criterion instead of generic encouragement", () => {
+  const evaluation = evaluateLearningResponse({
+    retrieveAnswer: "Water moves across the membrane.",
+    applicationAnswer: "It changes when the environment changes.",
+    retrieveModelAnswer: "Osmosis moves water across a selectively permeable membrane.",
+    applicationModelAnswer: "Water moves along a concentration gradient.",
+    assessment: { mode: "biology", criteria: [
+      { id: "source-idea", label: "Names the membrane", terms: ["membrane"], minimumMatches: 1, appliesTo: "retrieve" },
+      { id: "reasoning", label: "Explains the concentration gradient", terms: ["gradient"], minimumMatches: 1, appliesTo: "apply" },
+    ] },
+  });
+  assert.equal(evaluation.outcome, "partial");
+  assert.match(evaluation.explanation, /concentration gradient/i);
+});
+
 const subjectCases = [
   ["Biology", "Cellular Respiration", "Cellular respiration converts glucose into ATP through linked metabolic reactions.", /predict what changes|mechanism/i],
   ["Computer science", "Binary Search", "The binary search algorithm halves a sorted array until the target is found.", /input grows|required condition/i],

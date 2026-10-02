@@ -280,17 +280,34 @@ export function confirmMaterialConcepts(
     nowIso: state.nowIso,
     pages,
   });
-  const previousIds = new Set(state.snapshot.concepts.filter((concept) => concept.courseId === course.id).map((concept) => concept.id));
-  const snapshot: LearnerSnapshot = {
+  const existingConcepts = state.snapshot.concepts.filter((concept) => concept.courseId === course.id);
+  const oldConceptById = new Map(existingConcepts.map((concept) => [concept.id, concept]));
+  const oldActivityById = new Map(state.snapshot.learningActivities.map((activity) => [activity.conceptId, activity]));
+  const newConceptIds = new Set(model.concepts.map((concept) => concept.id));
+  const newPromptIds = new Set(model.prompts.map((prompt) => prompt.conceptId));
+  const newActivityIds = new Set(model.learningActivities.map((activity) => activity.conceptId));
+  const newRelationshipIds = new Set(model.relationships.map((relationship) => relationship.id));
+  const snapshot: LearnerSnapshot = refreshCaches({
     ...state.snapshot,
-    concepts: [...state.snapshot.concepts.filter((concept) => concept.courseId !== course.id), ...model.concepts],
-    relationships: [...state.snapshot.relationships.filter((relationship) => !previousIds.has(relationship.fromId) && !previousIds.has(relationship.toId)), ...model.relationships],
-    prompts: [...state.snapshot.prompts.filter((prompt) => !previousIds.has(prompt.conceptId)), ...model.prompts],
-    learningActivities: [...state.snapshot.learningActivities.filter((activity) => !previousIds.has(activity.conceptId)), ...model.learningActivities],
-    events: state.snapshot.events.filter((event) => !previousIds.has(event.conceptId)),
-    sessions: state.snapshot.sessions.filter((session) => session.courseId !== course.id),
-  };
-  const next = { ...state, snapshot, diagnosisCompleted: false };
+    concepts: [
+      ...state.snapshot.concepts.filter((concept) => !newConceptIds.has(concept.id)),
+      ...model.concepts.map((concept) => {
+        const previous = oldConceptById.get(concept.id);
+        return previous ? { ...previous, examImportance: concept.examImportance, difficulty: concept.difficulty } : concept;
+      }),
+    ],
+    relationships: [...state.snapshot.relationships.filter((relationship) => !newRelationshipIds.has(relationship.id)), ...model.relationships],
+    prompts: [...state.snapshot.prompts.filter((prompt) => !newPromptIds.has(prompt.conceptId)), ...model.prompts],
+    learningActivities: [
+      ...state.snapshot.learningActivities.filter((activity) => !newActivityIds.has(activity.conceptId)),
+      ...model.learningActivities.map((activity) => {
+        const previous = oldActivityById.get(activity.conceptId);
+        const references = [...(previous?.sourceReferences ?? []), ...activity.sourceReferences];
+        return { ...activity, sourceReferences: references.filter((reference, index) => references.findIndex((item) => item.materialId === reference.materialId && item.locator === reference.locator) === index) };
+      }),
+    ],
+  }, state.nowIso);
+  const next = { ...state, snapshot, diagnosisCompleted: state.diagnosisCompleted && existingConcepts.length > 0 };
   persistDemoState(next);
   return next;
 }

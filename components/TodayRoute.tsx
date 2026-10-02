@@ -23,8 +23,10 @@ export function TodayRoute({
   route,
   concepts,
   activities,
+  events,
   onStart,
   startLabel,
+  isSampleCourse = false,
 }: {
   route: RoutePlan;
   concepts: Concept[];
@@ -32,6 +34,7 @@ export function TodayRoute({
   events: LearningEvent[];
   onStart: () => void;
   startLabel?: string;
+  isSampleCourse?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
   const [first] = route.allocations;
@@ -59,6 +62,11 @@ export function TodayRoute({
   const firstName = firstConcept?.name ?? "Mixed Retrieval";
   const whisper = citeWhisper(firstSource);
   const decision = describeRouteChoice(first, firstConcept);
+  const lastPractice = isSampleCourse ? null : [...events]
+    .filter((event) => event.kind === "retrieval" && concepts.some((item) => item.id === event.conceptId))
+    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
+  const lastTopic = concepts.find((item) => item.id === lastPractice?.conceptId)?.name;
+  const lastResult = lastPractice?.outcome === "failure" ? "Needs another attempt" : lastPractice?.outcome === "partial" ? "Getting there" : lastPractice?.outcome === "success" ? "Strong evidence" : "Evidence recorded";
   const nextStops = route.allocations.slice(1, 4).map((allocation) => ({
     ...allocation,
     name: concepts.find((concept) => concept.id === allocation.conceptId)?.name ?? "Mixed recall",
@@ -101,6 +109,7 @@ export function TodayRoute({
           <p className="today-decision-label">Why now</p>
           {decision.map((line) => <p key={line}>{line}</p>)}
         </div>
+        {lastPractice && lastTopic ? <p className="today-return-note">Last answer · {lastTopic} · {lastResult}. Your route includes that evidence.</p> : null}
         <motion.button
           type="button"
           className="cta today-start"
