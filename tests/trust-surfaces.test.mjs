@@ -140,13 +140,12 @@ test("ready-to-today path stays short and does not overpromise stop 1", async ()
   assert.match(ui, /slice\(0, 3\)/);
   assert.match(ui, /DIAGNOSIS_RETRIEVAL_LIMIT/);
   assert.match(materials, /Continue:\ short\ check,\ then\ study/);
-  assert.match(materials, /Try sample \(~1 min\)|Try the sample course/);
+  assert.doesNotMatch(materials, /Try sample|Try the sample course/);
   assert.match(materials, /SoftUpgradePrompt/);
   assert.match(materials, /proposeConceptsFromMetadata|mode:\s*"relaxed"/);
   assert.match(complete, /WaitlistForm|SoftUpgradePrompt/);
   assert.match(header, /auth\.configured/);
-  assert.match(setup, /Try sample \(~1 min\)/);
-  assert.match(setup, /text-btn setup-sample-cta/);
+  assert.doesNotMatch(setup, /Try sample|setup-sample-cta/);
   assert.match(await source("app/route/page.tsx"), /<\/main>\s*<SiteFooter/);
 });
 
@@ -164,11 +163,11 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(hero, /Set up/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
-  assert.match(header, /Try sample/);
+  assert.doesNotMatch(header, /Try sample/);
   assert.doesNotMatch(home, /Try sample \(~1 min\)/);
   assert.doesNotMatch(home, /Set my exam/);
   assert.doesNotMatch(home, /Make today’s plan|Start with my course|Build today’s plan/);
-  assert.match(how, /Try sample \(~1 min\)/);
+  assert.doesNotMatch(how, /Try sample|today\?sample=1/);
   assert.doesNotMatch(surface, /<MasteryEvidence/);
   assert.match(await source("app/session/complete/page.tsx"), /<MasteryEvidence/);
   assert.doesNotMatch(surface, /Est\. readiness/);
@@ -178,7 +177,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(await source("components/TodayRoute.tsx"), /today-decision/);
   assert.match(await source("components/TodayRoute.tsx"), /today-next/);
   assert.match(today, /get\("sample"\) === "1"/);
-  assert.match(await source("components/FirstRunSetup.tsx"), /Try sample \(~1 min\)/);
+  assert.doesNotMatch(await source("components/FirstRunSetup.tsx"), /Try sample|setup-sample-cta/);
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {

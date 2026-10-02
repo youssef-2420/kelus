@@ -28,9 +28,6 @@ export function SiteHeader() {
   const inSession = pathname.startsWith("/session");
   const inProduct = ["/today", "/materials", "/map", "/concept"].some((path) => pathname.startsWith(path));
   const onHome = pathname === "/";
-  const onHow = pathname.startsWith("/route");
-  const onPricing = pathname.startsWith("/pricing") || pathname.startsWith("/waitlist");
-  const showHeaderSample = !inProduct && !onHome && !onHow && !onPricing;
   const accountMenu = useRef<HTMLDetailsElement>(null);
   useEffect(() => {
     const close = (event: PointerEvent) => {
@@ -103,11 +100,6 @@ export function SiteHeader() {
           </details>
         ) : (
           <div className="site-header-cluster">
-            {showHeaderSample && (
-              <Link href="/today?sample=1" className="site-header-action">
-                Try sample <span aria-hidden="true">→</span>
-              </Link>
-            )}
             {auth.configured ? (
               <button type="button" className="site-auth-button" onClick={auth.openDialog} aria-haspopup="dialog" aria-expanded={auth.dialogOpen}>
                 <svg viewBox="0 0 24 24" aria-hidden="true">

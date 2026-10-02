@@ -190,7 +190,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const router = useRouter();
-  const { state, confirmConcepts, useDemo: loadDemo } = useLearner();
+  const { state, confirmConcepts } = useLearner();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -317,8 +317,8 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         if (ocrResult.ocrPages === 0 && quality.density === "empty") {
           const ocrError = new Error(
             ocrResult.timedOut
-              ? "Scan reading hit the time limit before usable English text appeared. Export a text PDF, try a clearer scan, or continue with the sample course."
-              : "On-device OCR finished without usable English text. Export a text PDF, try a clearer English scan, or continue with the sample course.",
+              ? "Scan reading hit the time limit before usable English text appeared. Export a text PDF or try a clearer scan."
+              : "On-device OCR finished without usable English text. Export a text PDF or try a clearer English scan.",
           );
           (ocrError as Error & { kind?: string }).kind = "ocr";
           throw ocrError;
@@ -345,7 +345,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         const emptyScan = attemptedOcr && quality.density === "empty";
         const fail = new Error(
           emptyScan
-            ? "Kelus still could not recover usable English text from this scan. Try a clearer export, or use the sample course to see the loop."
+            ? "Kelus still could not recover usable English text from this scan. Try a clearer export or another course PDF."
             : "Kelus found no topics with a readable supporting passage. Try lecture notes with selectable text or a clearer scan; it will not invent a lesson from the filename.",
         );
         if (emptyScan) (fail as Error & { kind?: string }).kind = "ocr";
@@ -372,7 +372,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         dispatch({
           type: "FAIL",
           kind: "ocr",
-          message: "OCR cancelled. You can retry this file, export a text PDF, or try the sample course.",
+          message: "OCR cancelled. You can retry this file or export a text PDF.",
         });
       } else {
         const kind = caught instanceof Error && (caught as Error & { kind?: string }).kind === "ocr" ? "ocr" : "generic";
@@ -567,18 +567,15 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
             {errorKind === "ocr" ? (
               <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
                 <p>
-                  OCR works best on clear English scans. Export a text PDF from your notes app, try a sharper scan, or
-                  continue with the sample course.
+                  OCR works best on clear English scans. Export a text PDF from your notes app or try a sharper scan.
                 </p>
                 <div className="material-error-actions">
-                  <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
                   <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
                 </div>
               </div>
             ) : null}
             {errorKind === "generic" ? (
               <div className="material-error-actions">
-                <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
                 <a className="text-btn" href="#source-shelf-title">Choose another file</a>
               </div>
             ) : null}
@@ -648,18 +645,15 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
         {errorKind === "ocr" ? (
           <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
             <p>
-              OCR works best on clear English scans. Export a text PDF from your notes app, try a sharper scan, or
-              continue with the sample course.
+              OCR works best on clear English scans. Export a text PDF from your notes app or try a sharper scan.
             </p>
             <div className="material-error-actions">
-              <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
               <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
             </div>
           </div>
         ) : null}
         {errorKind === "generic" ? (
           <div className="material-error-actions">
-            <button type="button" className="text-btn" onClick={() => loadDemo()}>Try the sample course</button>
             <a className="text-btn" href="#source-shelf-title">Choose another file</a>
           </div>
         ) : null}
@@ -781,9 +775,6 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
               <a className="cta" href="#add-material-title">
                 Add first PDF <span aria-hidden="true">→</span>
               </a>
-              <button type="button" className="text-btn" onClick={() => loadDemo()}>
-                Try sample (~1 min)
-              </button>
             </div>
           </div>
         )}

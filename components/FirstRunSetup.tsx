@@ -8,7 +8,7 @@ const TIMES = [15, 30, 45, 60] as const;
 
 type FieldKey = "courseName" | "examName" | "examDate" | "targetPercent" | "form";
 
-export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: SetupInput) => void; onUseDemo: () => void }) {
+export function FirstRunSetup({ onComplete }: { onComplete: (input: SetupInput) => void }) {
   const [draft, setDraft] = useState<SetupInput>({ courseName: "", examName: "", examDate: "", targetPercent: 85, availableMinutes: 45 });
   const [error, setError] = useState("");
   const [errorField, setErrorField] = useState<FieldKey | null>(null);
@@ -165,15 +165,6 @@ export function FirstRunSetup({ onComplete, onUseDemo }: { onComplete: (input: S
             {submitting ? "Setting up…" : "Continue with my course"} <span aria-hidden="true">→</span>
           </button>
         </div>
-        <aside className="setup-sample" aria-label="Fastest way to try Kelus">
-          <div>
-            <p className="kicker">Just looking?</p>
-            <p>Open a finished sample course and see a real revision route before adding your own lessons.</p>
-          </div>
-          <button type="button" className="text-btn setup-sample-cta" onClick={onUseDemo} disabled={submitting}>
-            Try sample (~1 min) <span aria-hidden="true">→</span>
-          </button>
-        </aside>
       </form>
     </div>
   );

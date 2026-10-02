@@ -22,7 +22,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
     source("app/map/page.tsx"),
   ]);
 
-  assert.match(rail, /Sample course model ready|materialsReady/);
+  assert.match(rail, /Add a source to build your course model|materialsReady/);
   assert.match(materials, /Sample model is ready|Sample course model is loaded|Sample model ready/);
   assert.match(questions, /body\.success === false/);
   assert.match(founding, /authConfigured/);
@@ -35,7 +35,7 @@ test("nine blockers: sample rail, session abandon, questions honesty, trust gati
   assert.match(pricing, /authConfigured/);
   assert.match(sessionPage, /abandon\(session\.id\)/);
   assert.match(`${today}\n${surface}`, /Resume session|openSession/);
-  assert.match(map, /Try sample \(~1 min\)|Try a sample course/);
+  assert.doesNotMatch(map, /Try sample|Try a sample course/);
 });
 
 test("abandoning a session clears in_progress without counting as complete", () => {
