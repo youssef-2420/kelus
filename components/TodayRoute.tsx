@@ -61,6 +61,7 @@ export function TodayRoute({
   const firstSource = firstActivity?.sourceReferences[0];
   const firstName = firstConcept?.name ?? "Mixed Retrieval";
   const whisper = citeWhisper(firstSource);
+  const routeMinutes = route.allocations.reduce((total, allocation) => total + allocation.minutes, 0);
   const decision = describeRouteChoice(first, firstConcept);
   const lastPractice = isSampleCourse ? null : [...events]
     .filter((event) => event.kind === "retrieval" && concepts.some((item) => item.id === event.conceptId))
@@ -90,8 +91,7 @@ export function TodayRoute({
           animate={{ opacity: 1 }}
           transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.06, ease: kelusEase }}
         >
-          <span>Today · {first.minutes} min</span>
-          {whisper ? <span>{whisper}</span> : null}
+          <span>Today’s route · {routeMinutes} min total</span>
         </motion.p>
         <motion.h1
           id="today-title"
@@ -105,10 +105,12 @@ export function TodayRoute({
         >
           {firstName}
         </motion.h1>
+        <p className="today-first-duration">First block · {first.minutes} min</p>
         <div className="today-decision" aria-label="Why this topic is first">
           <p className="today-decision-label">Why now</p>
           {decision.map((line) => <p key={line}>{line}</p>)}
         </div>
+        {whisper ? <p className="today-source-reference">Source · {whisper}</p> : null}
         {lastPractice && lastTopic ? <p className="today-return-note">Last answer · {lastTopic} · {lastResult}. Your route includes that evidence.</p> : null}
         <motion.button
           type="button"
@@ -119,7 +121,7 @@ export function TodayRoute({
         >
           {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
         </motion.button>
-        <p className="today-session-preview">Read · Retrieve · Use · Mark</p>
+        <p className="today-session-preview">Read the source, recall the idea, use it, then check your answer.</p>
       </motion.article>
       {nextStops.length ? (
         <aside className="today-next" aria-label="Planned next topics">
