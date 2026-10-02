@@ -58,14 +58,15 @@ test("route explainer lives on its own page", () => {
   assert.match(story, /Your answer changes the route/);
   assert.match(story, /<h1 id="how-title"/);
   assert.doesNotMatch(story, /BlurText/);
-  assert.match(story, /MaterialToMapIllustration/);
-  assert.match(story, /TodayRouteIllustration/);
-  assert.match(story, /RerouteIllustration/);
+  assert.match(story, /SourceVisual/);
+  assert.match(story, /RecallVisual/);
+  assert.match(story, /RerouteVisual/);
+  assert.match(story, /data-tone=\{tone\}/);
   assert.match(examples, /Economics|Microeconomics/);
   assert.match(examples, /Computer science/);
   assert.match(examples, /History/);
   assert.match(story, /Choose an example course/);
-  assert.match(story, /Not a grade prediction/);
+  assert.match(story, /Not a predicted grade/);
 });
 
 test("how-it-works illustrations explain causality without raster assets", () => {

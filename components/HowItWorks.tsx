@@ -2,74 +2,67 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { kelusDuration, kelusEase } from "@/components/motion";
 import { useState } from "react";
-import { MaterialToMapIllustration, RerouteIllustration, TodayRouteIllustration } from "@/components/how/HowIllustrations";
+import { kelusDuration, kelusEase } from "@/components/motion";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
+import styles from "./how/HowItWorks.module.css";
+
+function SourceVisual({ example }: { example: LearningExample }) {
+  return (
+    <figure className={`${styles.visual} ${styles.sourceVisual}`} aria-label={`A course document proposes ${example.concepts.join(", ")} as revision topics for the student to confirm.`}>
+      <div className={styles.sourceSheet} aria-hidden="true">
+        <span className={styles.sheetTop}>01 / YOUR MATERIAL</span>
+        <strong>{example.course}</strong>
+        <span className={styles.sheetLine} /><span className={styles.sheetLine} /><span className={styles.sheetLineShort} />
+        <span className={styles.sourceMark}>kept with the topic</span>
+      </div>
+      <span className={styles.sourceArrow} aria-hidden="true">→</span>
+      <div className={styles.topicExtract} aria-hidden="true">
+        <span className={styles.visualLabel}>Proposed topics</span>
+        {example.concepts.map((concept, index) => <div key={concept}><span>0{index + 1}</span><strong>{concept}</strong></div>)}
+        <small>Review before Kelus builds the route</small>
+      </div>
+    </figure>
+  );
+}
+
+function RecallVisual({ example }: { example: LearningExample }) {
+  return (
+    <figure className={`${styles.visual} ${styles.recallVisual}`} aria-label={`A recall question about ${example.concepts[1]} leads into a short revision route.`}>
+      <div className={styles.recallPaper} aria-hidden="true">
+        <span className={styles.visualLabel}>A question from your lesson</span>
+        <strong>{example.question}</strong>
+        <span className={styles.answerRule} /><span className={styles.answerRuleShort} />
+        <span className={styles.recallAnnotation}>Answer from memory, then check.</span>
+      </div>
+      <div className={styles.routePreview} aria-hidden="true">
+        <span className={styles.visualLabel}>Today’s route</span>
+        <span><b>01</b>{example.route[0].name}<em>{example.route[0].minutes} min</em></span>
+        <span><b>02</b>{example.route[1].name}<em>{example.route[1].minutes} min</em></span>
+      </div>
+    </figure>
+  );
+}
+
+function RerouteVisual({ example }: { example: LearningExample }) {
+  return (
+    <figure className={`${styles.visual} ${styles.rerouteVisual}`} aria-label={`After an uncertain answer, ${example.moved} is moved forward for more practice in the next route.`}>
+      <div className={styles.answerEvidence} aria-hidden="true"><span className={styles.visualLabel}>Answer checked</span><strong>Needs another attempt</strong><p>One answer adds evidence. It does not decide everything.</p></div>
+      <div className={styles.routeChange} aria-hidden="true">
+        <span className={styles.visualLabel}>Next route</span>
+        <div><span>01</span><strong>{example.concepts[1]}</strong></div>
+        <div className={styles.movedTopic}><span>02</span><strong>{example.moved}</strong><em>moved forward ↑</em></div>
+        <div><span>03</span><strong>{example.concepts[2]}</strong></div>
+      </div>
+    </figure>
+  );
+}
 
 const stages = [
-  {
-    number: "01",
-    label: "Add the lessons you want to revise",
-    body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus keeps the source attached to the concepts you confirm.",
-    visual: "materials",
-  },
-  {
-    number: "02",
-    label: "Confirm your revision topics",
-    body: "Review the topics proposed from your PDF. The topic map keeps them together with their source references.",
-    visual: "map",
-  },
-  {
-    number: "03",
-    label: "Show what you know",
-    body: "A short confidence and recall check gives Kelus its first evidence. It is a starting estimate, not a grade prediction.",
-    visual: "diagnosis",
-  },
-  {
-    number: "04",
-    label: "Start today’s revision",
-    body: "Kelus suggests topics to practise using your recall checks, topic priorities, exam date, and available time.",
-    visual: "today",
-  },
-  {
-    number: "05",
-    label: "Review, recall, and apply",
-    body: "Review an explanation, answer from memory, and try an application question. Check your reasoning against the source before continuing.",
-    visual: "session",
-  },
-  {
-    number: "06",
-    label: "Your answer changes the route",
-    body: "Your answer results change what Kelus suggests next. Revisit weaker topics and keep practising through the days before your exam.",
-    visual: "reroute",
-  },
+  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source" },
+  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall" },
+  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route" },
 ] as const;
-
-function StageVisual({ type, reduceMotion, example }: { type: (typeof stages)[number]["visual"]; reduceMotion: boolean; example: LearningExample }) {
-  if (type === "materials") return <MaterialToMapIllustration reduceMotion={reduceMotion} concepts={example.concepts} />;
-  if (type === "map") return (
-    <div className="how-map-fragment" aria-label="Example concept relationship">
-      <span>{example.concepts[0]}</span><i aria-hidden="true">→</i><strong>{example.concepts[1]}</strong><i aria-hidden="true">→</i><span>{example.concepts[2]}</span>
-    </div>
-  );
-  if (type === "diagnosis") return (
-    <div className="how-diagnosis-fragment" aria-label="Example confidence check">
-      <p>How well can you explain {example.concepts[1]}?</p>
-      <div><span>Not yet</span><strong>Somewhat</strong><span>Confident</span></div>
-      <small>Next: one short recall question</small>
-    </div>
-  );
-  if (type === "today") return <TodayRouteIllustration reduceMotion={reduceMotion} concepts={example.concepts} />;
-  if (type === "session") return (
-    <div className="how-session-fragment" aria-label="Example learning session">
-      <div><span>01 / 04</span><small>Retrieve</small></div>
-      <p>{example.question}</p>
-      <span className="how-answer-line">Write your explanation…</span>
-    </div>
-  );
-  return <RerouteIllustration reduceMotion={reduceMotion} concepts={example.concepts} moved={example.moved} />;
-}
 
 export function HowItWorks() {
   const reduceMotion = useReducedMotion() === true;
@@ -77,52 +70,48 @@ export function HowItWorks() {
   const example = LEARNING_EXAMPLES[exampleIndex];
 
   return (
-    <div className="how-page is-booklet-product">
-      <section className="how-hero" aria-labelledby="how-title">
-        <p className="kicker">How Kelus works</p>
-        <h1 id="how-title" className="how-title">Your lessons. A regular revision habit.</h1>
-        <div className="how-hero-foot">
-          <p>Bring what you’ve studied. Recall it, practise using it, and review the parts that need another attempt before your exam.</p>
-          <Link className="cta" href="/today?sample=1">Try sample (~1 min) <span aria-hidden="true">→</span></Link>
+    <div className={styles.page}>
+      <section className={styles.hero} aria-labelledby="how-title">
+        <p className={styles.eyebrow}>How Kelus works</p>
+        <h1 id="how-title">Your lessons become <br />a better revision habit.</h1>
+        <div className={styles.heroBottom}>
+          <p>Bring your course. Recall what you know. Let each answer shape what you practise next.</p>
+          <Link className={styles.primaryAction} href="/today?sample=1">Try sample (~1 min)<span aria-hidden="true">↗</span></Link>
         </div>
-        <div className="how-example-switcher" aria-label="Choose an example course">
-          <span>See the loop with</span>
-          <div role="group" aria-label="Example course">
+        <div className={styles.exampleSwitcher}>
+          <span>See it with</span>
+          <div role="group" aria-label="Choose an example course">
             {LEARNING_EXAMPLES.map((item, index) => <button key={item.id} type="button" aria-pressed={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>)}
           </div>
         </div>
       </section>
-
-      <section className="how-loop" aria-label="The Kelus learning loop">
-        <header><span>The loop</span><p>Add your lessons once. Return for revision and practice until the exam.</p></header>
+      <section className={styles.story} aria-label="The Kelus revision loop">
         <ol>
-          {stages.map((stage) => (
-            <li key={stage.number}>
-              <span className="how-stage-number">{stage.number}</span>
-              <div className="how-stage-copy"><h2>{stage.label}</h2><p>{stage.body}</p></div>
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div key={`${example.id}-${stage.visual}`} className="how-stage-visual" initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}>
-                  <StageVisual type={stage.visual} reduceMotion={reduceMotion} example={example} />
+          {stages.map(({ number, cue, title, body, detail, Visual, tone }) => (
+            <li key={number} className={styles.chapter} data-tone={tone}>
+              <div className={styles.chapterText}>
+                <span className={styles.chapterLabel}><span>{number}</span>{cue}</span>
+                <h2>{title}</h2>
+                <p>{body}</p>
+                <span className={styles.chapterDetail}>{detail}</span>
+              </div>
+              <AnimatePresence initial={false} mode="sync">
+                <motion.div key={`${example.id}-${number}`} className={styles.visualWrap} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={reduceMotion ? undefined : { opacity: 0 }} transition={{ duration: reduceMotion ? 0 : kelusDuration.normal, ease: kelusEase }}>
+                  <Visual example={example} />
                 </motion.div>
               </AnimatePresence>
             </li>
           ))}
         </ol>
       </section>
-
-      <section className="how-principle">
-        <p className="kicker">The principle</p>
-        <h2>One purpose: help you revise for your exam.</h2>
-        <dl>
-          <div><dt>Practice from your lessons</dt><dd>Review course ideas, answer from memory, and apply them.</dd></div>
-          <div><dt>Not a grade prediction</dt><dd>Readiness is an estimate built from the evidence you provide.</dd></div>
-          <div><dt>Revision that adapts</dt><dd>Your answers and the time available shape the next practice session.</dd></div>
-        </dl>
+      <section className={styles.principle} aria-labelledby="how-principle-title">
+        <p className={styles.eyebrow}>What Kelus does—and doesn’t do</p>
+        <h2 id="how-principle-title">A route to practise.<br />Not a predicted grade.</h2>
+        <p>Kelus uses your course material, exam date, and practice answers to choose what to revisit. Readiness is an estimate from that evidence, not a promise about your exam result.</p>
       </section>
-
-      <footer className="how-final">
-        <p>Bring one lesson. Start practising for your exam.</p>
-        <Link className="cta" href="/today?sample=1">Try sample (~1 min) <span aria-hidden="true">→</span></Link>
+      <footer className={styles.final}>
+        <p>Ready to try one lesson?</p>
+        <Link className={styles.primaryAction} href="/today?sample=1">Try sample (~1 min)<span aria-hidden="true">↗</span></Link>
       </footer>
     </div>
   );

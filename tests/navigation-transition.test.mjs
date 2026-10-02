@@ -90,7 +90,7 @@ test("how it works content never depends on viewport-triggered visibility", asyn
   const how = await source("components/HowItWorks.tsx");
   assert.doesNotMatch(how, /whileInView|viewport:\s*\{/);
   assert.doesNotMatch(how, /BlurText/);
-  assert.match(how, /<li key=\{stage\.number\}>/);
+  assert.match(how, /<li key=\{number\}/);
 });
 
 test("the course workspace keeps destination and setup progress across product pages", async () => {
