@@ -21,7 +21,7 @@ export function FirstRunGate({
   title,
   body,
   ctaHref = "/today",
-  ctaLabel = "Set my exam",
+  ctaLabel = "Add my course PDF",
   preview = "materials",
 }: FirstRunGateProps) {
   const reduceMotion = useReducedMotion() === true;

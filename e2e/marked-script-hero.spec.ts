@@ -27,8 +27,8 @@ test("Set up and sample revision open the course workspace without a cover image
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page.locator(".studio-rail")).toBeVisible();
   await expect(page.locator(".studio-cover")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Set your exam" })).toBeVisible();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
+  await expect(page.getByRole("heading", { name: "Add a course PDF." })).toBeVisible();
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Add PDF");
   await page.goto("/today/?sample=1");
   await expect(page.locator(".studio-cover")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
@@ -44,7 +44,7 @@ test("the first section lets visitors try a pass then set up their own course", 
   await expect(sample.getByText("Supply & Demand", { exact: true })).toBeVisible();
   await sample.getByRole("link", { name: "Set up my course" }).click();
   await expect(page).toHaveURL(/\/today\/?$/);
-  await expect(page.getByRole("heading", { name: "Set your exam" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Add a course PDF." })).toBeVisible();
 });
 
 test("hero is readable immediately and does not hold navigation for an animation", async ({ page }) => {

@@ -42,8 +42,8 @@ export default function MapPage() {
         <AppShell>
           <FirstRunGate
             kicker="Topic map"
-            title="Set my exam first."
-            body="The map is where confirmed topics live — importance, what you know, and links when sources show prerequisites. Materials holds the PDFs; this page holds the graph."
+            title="Add your course PDF first."
+            body="Kelus proposes topics from your material. After you confirm them, the topic map shows what you know and links that your sources support."
             preview="map"
           />
         </AppShell>

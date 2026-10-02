@@ -14,6 +14,7 @@ import "./marketing-typography.css";
 import "./view-transitions.css";
 import "./course-studio.css";
 import "./course-studio-light.css";
+import "./material-first.css";
 import "./study-session.css";
 import "./monthly-pricing.css";
 import { LearnerProvider } from "@/components/LearnerProvider";

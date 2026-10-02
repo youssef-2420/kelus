@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CourseStudioOnboarding } from "@/components/CourseStudioOnboarding";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
@@ -17,6 +17,8 @@ function TodayBody() {
   const searchParams = useSearchParams();
   const { state, completeSetup, completeDiagnosis, useDemo: loadDemo } = useLearner();
   const sampleHandled = useRef(false);
+  const [pendingFirstFile, setPendingFirstFile] = useState<File | null>(null);
+  const [setupStage, setSetupStage] = useState<"upload" | "exam">("upload");
   const wantsSample = searchParams.get("sample") === "1";
   const sampleBooting = wantsSample && !state.onboardingCompleted;
 
@@ -62,10 +64,12 @@ function TodayBody() {
 
   if (!state.onboardingCompleted) {
     return (
-      <CourseStudioOnboarding stage="exam">
+      <CourseStudioOnboarding stage={setupStage}>
         <FirstRunSetup
-          onComplete={(input) => {
+          onStageChange={setSetupStage}
+          onComplete={(input, file) => {
             try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
+            setPendingFirstFile(file);
             completeSetup(input);
           }}
         />
@@ -75,15 +79,15 @@ function TodayBody() {
 
   if (!state.snapshot.concepts.length) {
     return (
-      <CourseStudioOnboarding stage="sources" courseName={state.snapshot.courses[0]?.name}>
+      <CourseStudioOnboarding stage="confirm" courseName={state.snapshot.courses[0]?.name}>
         <div className="workbench-chapter" data-chapter="materials">
-          <p className="workbench-chapter-label">Chapter 2 · Sources</p>
+          <p className="workbench-chapter-label">Confirm your topics</p>
           <section className="materials-empty workbench-chapter-intro">
-            <p className="kicker">Sources</p>
-            <h1>Bring in one real source.</h1>
-            <p>Add a syllabus or lecture PDF, then confirm the concepts Kelus should route through.</p>
+            <p className="kicker">From your PDF</p>
+            <h1>{pendingFirstFile ? "Check the topics from your PDF." : "Add your course PDF."}</h1>
+            <p>{pendingFirstFile ? "Kelus reads the pages you chose. Keep only the topics you actually need to revise." : "Choose a syllabus, lecture, or notes PDF, then confirm the topics Kelus should use."}</p>
           </section>
-          <MaterialLibrary embedded />
+          <MaterialLibrary embedded initialFile={pendingFirstFile} />
         </div>
       </CourseStudioOnboarding>
     );

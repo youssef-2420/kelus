@@ -5,13 +5,14 @@ import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 
-type Stage = "exam" | "sources" | "check";
+type Stage = "upload" | "exam" | "confirm" | "check";
 
 const STAGES = [
+  { id: "upload", label: "Add PDF" },
   { id: "exam", label: "Exam" },
-  { id: "sources", label: "Sources" },
+  { id: "confirm", label: "Confirm topics" },
   { id: "check", label: "First check" },
-  { id: "route", label: "Today" },
+  { id: "route", label: "Study plan" },
 ] as const;
 
 export function CourseStudioOnboarding({ stage, courseName, children }: {
@@ -32,7 +33,7 @@ export function CourseStudioOnboarding({ stage, courseName, children }: {
   }, [stage]);
 
   return (
-    <section className="kelus-space is-studio studio-onboarding" aria-label="Set up your course">
+    <section className="kelus-space is-studio studio-onboarding" data-stage={stage} aria-label="Set up your course">
       <aside className="studio-rail" aria-label="Course workspace">
         <Link href="/" className="studio-brand" aria-label="Kelus home">
           <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>

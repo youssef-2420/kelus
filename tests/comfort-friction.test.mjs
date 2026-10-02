@@ -21,7 +21,7 @@ test("tomorrow study ICS is a valid one-event calendar file", () => {
   assert.match(ics, /kelus\.me\/today/);
 });
 
-test("comfort friction: one-step setup, skip recall, faster PDF, calendar, mailto", async () => {
+test("comfort friction: source-first setup, skip recall, faster PDF, calendar, mailto", async () => {
   const [setup, diagnosis, materials, pdf, complete, form, questions] = await Promise.all([
     source("components/FirstRunSetup.tsx"),
     source("components/InitialDiagnosis.tsx"),
@@ -33,7 +33,8 @@ test("comfort friction: one-step setup, skip recall, faster PDF, calendar, mailt
   ]);
   assert.doesNotMatch(setup, /step === 1|Step<\/span>/);
   assert.match(setup, /Tell Kelus what you are preparing for/);
-  assert.match(setup, /Continue with my course/);
+  assert.match(setup, /Continue to exam details/);
+  assert.match(setup, /Read my PDF/);
   assert.match(diagnosis, /Skip recall/);
   assert.match(materials, /maxContentPages:\s*16/);
   assert.match(materials, /stopAfterRecoveredPages:\s*4/);

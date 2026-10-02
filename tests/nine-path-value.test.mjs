@@ -29,7 +29,7 @@ test("nine-path: sample-first hero, today auto-load, PDF fail UX, inbox docs", a
   assert.match(analytics, /sample_loaded/);
 
   assert.doesNotMatch(setup, /Try sample|setup-sample-cta/);
-  assert.match(setup, /Continue with my course/);
+  assert.match(setup, /Continue to exam details/);
   assert.doesNotMatch(map, /Try sample|today\?sample=1/);
 
   assert.match(pdf, /signal\?: AbortSignal/);

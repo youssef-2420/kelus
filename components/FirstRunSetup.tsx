@@ -1,15 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
 import type { SetupInput } from "@/lib/setup";
 import { trackEvent } from "@/lib/analytics";
+import { isPdfFile } from "@/domain/materials";
 
 const TIMES = [15, 30, 45, 60] as const;
 
 type FieldKey = "courseName" | "examName" | "examDate" | "targetPercent" | "form";
 
-export function FirstRunSetup({ onComplete }: { onComplete: (input: SetupInput) => void }) {
+export function FirstRunSetup({ onComplete, onStageChange }: {
+  onComplete: (input: SetupInput, file: File) => void;
+  onStageChange: (stage: "upload" | "exam") => void;
+}) {
   const [draft, setDraft] = useState<SetupInput>({ courseName: "", examName: "", examDate: "", targetPercent: 85, availableMinutes: 45 });
+  const [stage, setStage] = useState<"upload" | "exam">("upload");
+  const [file, setFile] = useState<File | null>(null);
+  const [dragging, setDragging] = useState(false);
   const [error, setError] = useState("");
   const [errorField, setErrorField] = useState<FieldKey | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -27,10 +34,37 @@ export function FirstRunSetup({ onComplete }: { onComplete: (input: SetupInput) 
     setError(message);
   }
 
+  function chooseFile(next: File | undefined) {
+    setDragging(false);
+    if (!next) return;
+    if (!isPdfFile(next)) return fail("form", "Choose a PDF, not another file type.");
+    if (next.size > 20 * 1024 * 1024) return fail("form", "This PDF is over 20 MB. Choose a smaller export or split it first.");
+    setFile(next);
+    setError("");
+    setErrorField(null);
+  }
+
+  function dropFile(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    chooseFile(event.dataTransfer.files[0]);
+  }
+
+  function changeStage(next: "upload" | "exam") {
+    setStage(next);
+    onStageChange(next);
+    setError("");
+    setErrorField(null);
+  }
+
   function submit(event: FormEvent) {
     event.preventDefault();
     setError("");
     setErrorField(null);
+    if (!file) return fail("form", "Choose a syllabus, lecture, or notes PDF to begin.");
+    if (stage === "upload") {
+      changeStage("exam");
+      return;
+    }
     if (!draft.courseName.trim()) return fail("courseName", "Tell Kelus which course you are studying.");
     if (!draft.examName.trim()) return fail("examName", "Tell Kelus what you are working toward.");
     if (!draft.examDate) return fail("examDate", "Choose the date of your exam.");
@@ -39,7 +73,7 @@ export function FirstRunSetup({ onComplete }: { onComplete: (input: SetupInput) 
     }
     setSubmitting(true);
     try {
-      onComplete(draft);
+      onComplete(draft, file);
       trackEvent({ name: "setup_completed", available_minutes: draft.availableMinutes });
     } catch (caught) {
       fail("form", caught instanceof Error ? caught.message : "Kelus could not set up your exam yet.");
@@ -48,23 +82,33 @@ export function FirstRunSetup({ onComplete }: { onComplete: (input: SetupInput) 
   }
 
   return (
-    <div className="destination-page is-booklet-product is-marked-setup">
+    <div className="destination-page is-booklet-product is-marked-setup is-material-first">
       <form className="destination-form" onSubmit={submit} noValidate>
-        <p className="kicker">Your exam</p>
+        {stage === "upload" ? (
+          <>
+            <p className="kicker">First, your material</p>
+            <h1 className="destination-page-title">Add a course PDF.</h1>
+            <p className="destination-support">Start with a syllabus, lecture slides, or notes. Kelus will suggest topics from the pages; you decide what belongs in your exam.</p>
+            <label
+              className={`setup-first-upload${dragging ? " is-dragging" : ""}${file ? " has-file" : ""}`}
+              onDragEnter={() => setDragging(true)}
+              onDragLeave={() => setDragging(false)}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={dropFile}
+            >
+              <input type="file" accept="application/pdf,.pdf" onChange={(event) => chooseFile(event.target.files?.[0])} aria-describedby="setup-file-help" />
+              <span className="setup-upload-mark" aria-hidden="true">↑</span>
+              <strong>{file ? file.name : "Choose a PDF"}</strong>
+              <span>{file ? `${(file.size / 1_000_000).toFixed(1)} MB · Choose another file if needed` : "or drop it here"}</span>
+            </label>
+            <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB. Selectable text works best; Kelus can try reading clear English scans. Videos and web links can be saved later, but don’t create topics.</p>
+          </>
+        ) : (
+          <>
+        <p className="kicker">Next, your exam</p>
         <h1 className="destination-page-title">Set your exam</h1>
-        <p className="destination-support">
-          Name the course and exam date. Next, add lessons and practice what you remember.
-        </p>
-        <p className="workbench-chapter-label">Chapter 1 · Exam</p>
-        <p className="setup-sequence" aria-label="Getting started">
-          <span aria-current="step">1 Exam</span>
-          <span aria-hidden="true">·</span>
-          <span>2 Sources</span>
-          <span aria-hidden="true">·</span>
-          <span>3 First estimate</span>
-          <span aria-hidden="true">·</span>
-          <span>4 Route</span>
-        </p>
+        <p className="destination-support">Your PDF is selected. Add the exam date so Kelus can prioritize the topics you confirm.</p>
+        <div className="setup-selected-file"><span>PDF selected</span><strong>{file?.name}</strong><button type="button" className="text-btn" onClick={() => changeStage("upload")}>Change</button></div>
         <fieldset disabled={submitting}>
           <legend>Tell Kelus what you are preparing for</legend>
           <div className="destination-course-fields">
@@ -158,11 +202,13 @@ export function FirstRunSetup({ onComplete }: { onComplete: (input: SetupInput) 
           </div>
           <p id="course-support" className="destination-support">Use the names you use at school. Your PDF supplies the topics next.</p>
         </fieldset>
+          </>
+        )}
         <p id="setup-error" className="setup-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error || "\u00a0"}</p>
         <div className="destination-actions">
-          <span className="destination-actions-spacer" />
+          {stage === "exam" ? <button type="button" className="text-btn setup-back" onClick={() => changeStage("upload")}>Back to PDF</button> : <span className="destination-actions-spacer" />}
           <button className="cta" type="submit" disabled={submitting}>
-            {submitting ? "Setting up…" : "Continue with my course"} <span aria-hidden="true">→</span>
+            {submitting ? "Setting up…" : stage === "upload" ? "Continue to exam details" : "Read my PDF"} <span aria-hidden="true">→</span>
           </button>
         </div>
       </form>

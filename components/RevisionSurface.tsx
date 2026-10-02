@@ -87,7 +87,7 @@ export function RevisionSurface() {
     return (
       <main id="main" className="kelus-space is-empty is-paper">
         <section className="materials-empty">
-          <h1>Set your exam first.</h1>
+          <h1>Add your course PDF first.</h1>
           <p>Kelus needs a course and exam date before it can open today’s page.</p>
           <button type="button" className="cta" onClick={() => reset()}>
             Start over
