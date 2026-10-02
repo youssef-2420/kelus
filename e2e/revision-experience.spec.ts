@@ -13,7 +13,8 @@ test("notebook preview is keyboard-operable and setup fits mobile", async ({ pag
   await expect(board.locator("#board-answer")).toBeHidden();
   await expect(board.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
   await page.goto("/today");
-  await expect(page.getByRole("textbox", { name: "Course", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Add a course PDF." })).toBeVisible();
+  await expect(page.locator('.setup-first-upload input[type="file"]')).toHaveCount(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

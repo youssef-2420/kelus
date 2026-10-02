@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
+import { useEffect, useEffectEvent, useRef, useState, useSyncExternalStore, type DragEvent, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
 import { useAuth } from "@/components/AuthProvider";
 import { FirstRunGate } from "@/components/FirstRunGate";
@@ -186,7 +186,7 @@ function MaterialRow({
   );
 }
 
-export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {}) {
+export function MaterialLibrary({ embedded = false, initialFile = null }: { embedded?: boolean; initialFile?: File | null } = {}) {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const router = useRouter();
@@ -194,7 +194,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
-  const [role, setRole] = useState<MaterialRole>("notes");
+  const [role, setRole] = useState<MaterialRole>(() => initialFile && /syllabus|outline/i.test(initialFile.name) ? "syllabus" : initialFile && /slides|lecture/i.test(initialFile.name) ? "lecture_slides" : "notes");
   const [ingest, setIngest] = useState<IngestState>(INITIAL_INGEST_STATE);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [draftNames, setDraftNames] = useState<Record<string, string>>({});
@@ -202,7 +202,15 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
   const [syncStates, setSyncStates] = useState<Record<string, "syncing" | "synced" | "retrying">>({});
   const fileRef = useRef<HTMLInputElement>(null);
   const ocrAbortRef = useRef<AbortController | null>(null);
+  const firstUploadStarted = useRef(false);
+  const previewObjectUrl = useRef<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewPage, setPreviewPage] = useState(1);
   const course = state.snapshot.courses[0];
+
+  useEffect(() => () => {
+    if (previewObjectUrl.current) URL.revokeObjectURL(previewObjectUrl.current);
+  }, []);
 
   const dispatch = (event: Parameters<typeof reduceIngest>[1]) => {
     setIngest((current) => reduceIngest(current, event));
@@ -235,20 +243,8 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
     return () => cancelAnimationFrame(frame);
   }, [phase]);
 
-  if (!state.onboardingCompleted || !course) {
-    const gate = (
-        <FirstRunGate
-          kicker="Course material"
-          title="Set my exam first."
-          body="Materials is your source shelf — syllabus and lecture PDFs stay with the exam. Confirmed pages become topics on the map next."
-          preview="materials"
-        />
-    );
-    return embedded ? gate : <AppShell>{gate}</AppShell>;
-  }
-
-  const courseMaterials = materials.filter((item) => item.courseId === course.id);
-  const concepts = state.snapshot.concepts.filter((item) => item.courseId === course.id);
+  const courseMaterials = materials.filter((item) => item.courseId === course?.id);
+  const concepts = state.snapshot.concepts.filter((item) => item.courseId === course?.id);
 
   function cancelOcr() {
     ocrAbortRef.current?.abort();
@@ -266,6 +262,11 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
       const stored = file ?? await readMaterialPdf(material.id, auth.user?.id);
       if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
       const pdfFile = stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" });
+      if (previewObjectUrl.current) URL.revokeObjectURL(previewObjectUrl.current);
+      const nextPreviewUrl = URL.createObjectURL(pdfFile);
+      previewObjectUrl.current = nextPreviewUrl;
+      setPreviewUrl(nextPreviewUrl);
+      setPreviewPage(1);
       dispatch({ type: "WORK_STEP", step: "extracting", message: defaultStepMessage("extracting") });
       let pages = await extractPdfPages(pdfFile, { maxContentPages: 16 });
       let quality = assessPdfTextQuality(pages);
@@ -388,7 +389,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
   }
 
   async function savePdf(file: File | undefined) {
-    if (!file) return;
+    if (!file || !course) return;
     trackEvent({ name: "material_upload_started", role });
     if (file.size > 20 * 1024 * 1024) {
       dispatch({
@@ -424,6 +425,25 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
     } finally {
       if (fileRef.current) fileRef.current.value = "";
     }
+  }
+
+  const startFirstUpload = useEffectEvent((file: File) => { void savePdf(file); });
+  useEffect(() => {
+    if (!course || !initialFile || firstUploadStarted.current) return;
+    firstUploadStarted.current = true;
+    startFirstUpload(initialFile);
+  }, [course, initialFile]);
+
+  if (!state.onboardingCompleted || !course) {
+    const gate = (
+      <FirstRunGate
+        kicker="Course material"
+        title="Add a course PDF first."
+        body="Choose a syllabus, lecture, or notes PDF to give Kelus the topics you want to revise. Then set your exam and confirm the proposed topics."
+        preview="materials"
+      />
+    );
+    return embedded ? gate : <AppShell>{gate}</AppShell>;
   }
 
   function drop(event: DragEvent<HTMLLabelElement>) {
@@ -707,9 +727,21 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
                   : null}
               </p>
             </header>
+            <div className="material-review-workspace">
+            <aside className="material-source-preview" aria-label="Original course PDF">
+              <div className="material-source-preview-head">
+                <div><span>YOUR SOURCE</span><strong>{analysis.material.fileName ?? analysis.material.title}</strong></div>
+                {previewUrl ? <a href={`${previewUrl}#page=${previewPage}`} target="_blank" rel="noreferrer">Open PDF ↗</a> : null}
+              </div>
+              <div className="material-source-page" aria-label={`Extracted text from page ${previewPage}`}>
+                <span>Page {previewPage} · text Kelus read</span>
+                <p>{analysis.pages.find((page) => page.pageNumber === previewPage)?.text.slice(0, 2200) || "No readable text on this page. Open the original PDF to inspect it."}</p>
+              </div>
+              <p>Select a topic to check its source page. Open PDF shows the original layout.</p>
+            </aside>
             <ol className="concept-proposal-list">
               {analysis.proposals.map((proposal, index) => (
-                <li key={proposal.id} className={selectedIds.has(proposal.id) ? "is-selected" : undefined}>
+                <li key={proposal.id} className={selectedIds.has(proposal.id) ? "is-selected" : undefined} onFocusCapture={() => setPreviewPage(Number(proposal.locator.match(/\d+/)?.[0] ?? 1))} onMouseEnter={() => setPreviewPage(Number(proposal.locator.match(/\d+/)?.[0] ?? 1))}>
                   <div className="proposal-row">
                     <input
                       id={`proposal-${proposal.id}`}
@@ -733,6 +765,7 @@ export function MaterialLibrary({ embedded = false }: { embedded?: boolean } = {
                 </li>
               ))}
             </ol>
+            </div>
             <div className="concept-confirmation-actions">
               <button type="button" className="cta" disabled={!selectedIds.size} onClick={buildMap}>Confirm topics <span aria-hidden="true">→</span></button>
               <div className="concept-confirmation-secondary">

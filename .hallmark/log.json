@@ -1,6 +1,14 @@
 [
   {
     "date": "2026-10-02",
+    "scope": "first-use course workspace",
+    "brief": "Start with a PDF and let students confirm proposed topics with the original document visible",
+    "macrostructure": "source → exam → source-backed review → check → study plan",
+    "theme": "Kelus booklet (design.md)",
+    "enrichment": "document-and-topics review desk, no generic AI feature grid"
+  },
+  {
+    "date": "2026-10-02",
     "scope": "app",
     "brief": "Unify focused study sessions with the course workspace and homepage learning colors",
     "macrostructure": "Workbench",

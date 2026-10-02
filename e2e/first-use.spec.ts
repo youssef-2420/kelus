@@ -32,22 +32,33 @@ function biologyPdf() {
 test("real PDF becomes concepts, diagnosis evidence, and today's route", async ({ page }) => {
   await page.goto("/today");
   await expect(page.locator(".studio-onboarding")).toBeVisible();
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Add PDF");
+  await expect(page.getByRole("heading", { name: "Add a course PDF." })).toBeVisible();
+  await page.screenshot({ path: "/tmp/kelus-pdf-first-desktop.png", fullPage: true });
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({
+    name: "cell-biology-lecture.pdf",
+    mimeType: "application/pdf",
+    buffer: biologyPdf(),
+  });
+  await page.getByRole("button", { name: /Continue to exam details/ }).click();
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
   await page.getByRole("textbox", { name: "Course", exact: true }).fill("Molecular Biology");
   await page.getByLabel("Exam").fill("Cell Biology Final");
   const examDate = new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10);
   await page.getByLabel("When is it?").fill(examDate);
   await page.getByLabel(/45/).check();
-  await page.getByRole("button", { name: /Continue with my course/ }).click();
+  await page.getByRole("button", { name: /Read my PDF/ }).click();
 
   await expect(page).toHaveURL(/\/today/);
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Sources");
-  await expect(page.getByRole("heading", { name: "Bring in one real source." })).toBeVisible();
-  await page.locator('.material-drop input[type="file"]').setInputFiles({
-    name: "cell-biology-lecture.pdf",
-    mimeType: "application/pdf",
-    buffer: biologyPdf(),
-  });
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Confirm topics");
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+  await expect(page.getByRole("complementary", { name: "Original course PDF" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Open PDF/ })).toBeVisible();
+  await page.screenshot({ path: "/tmp/kelus-source-review-desktop.png", fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: "/tmp/kelus-source-review-mobile.png", fullPage: true });
+  await page.setViewportSize({ width: 1280, height: 900 });
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeFocused();
   await expect(page.locator(".material-ingest")).toBeHidden();
   await page.getByRole("button", { name: /Confirm topics/ }).click();

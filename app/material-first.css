@@ -1,0 +1,169 @@
+/* Hallmark · genre: modern-minimal · macrostructure: Workbench · design-system: design.md · designed-as-app */
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4 */
+/* Source first: one usable PDF action before any exam form fields. */
+.is-course-studio .studio-onboarding[data-stage="upload"] .studio-onboarding-steps li.is-current,
+.is-course-studio .studio-onboarding[data-stage="confirm"] .studio-onboarding-steps li.is-current {
+  box-shadow: inset 2px 0 0 var(--color-hero-orange);
+  background: var(--color-hero-orange-wash);
+  color: var(--color-hero-orange);
+}
+
+body.is-course-studio .studio-onboarding .destination-page.is-material-first .destination-form {
+  max-width: 680px;
+}
+
+body.is-course-studio .studio-onboarding .destination-page.is-material-first .destination-form > .kicker {
+  color: var(--color-hero-orange);
+}
+
+.is-material-first .destination-page-title {
+  max-width: 16ch;
+}
+
+.is-material-first .destination-form > .destination-support {
+  max-width: 54ch;
+  margin-block: var(--spacing-16) var(--spacing-40);
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.is-material-first .setup-first-upload {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: var(--spacing-8);
+  min-height: 210px;
+  padding: var(--spacing-32);
+  border: 1px dashed var(--color-hero-orange);
+  border-radius: var(--radius-ledger);
+  background: var(--color-hero-orange-wash);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-standard);
+}
+
+.is-material-first .setup-first-upload:hover,
+.is-material-first .setup-first-upload.is-dragging {
+  border-style: solid;
+}
+
+.is-material-first .setup-first-upload:active { transform: scale(0.99); }
+.is-material-first .setup-first-upload:focus-within { outline: 2px solid var(--color-kelus); outline-offset: 3px; }
+
+body.is-course-studio .studio-onboarding .destination-form .setup-first-upload input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.is-material-first .setup-upload-mark {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-hero-orange);
+  border-radius: var(--radius-ledger);
+  color: var(--color-hero-orange);
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.is-material-first .setup-first-upload strong {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.is-material-first .setup-first-upload > span:last-child {
+  color: var(--color-slate);
+  font-size: 0.9rem;
+}
+
+.is-material-first .setup-file-help {
+  max-width: 62ch;
+  margin: var(--spacing-16) 0 var(--spacing-24);
+  color: var(--color-slate);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.is-material-first .setup-selected-file {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-16);
+  min-height: 60px;
+  margin-bottom: var(--spacing-32);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-left: 2px solid var(--color-hero-orange);
+  background: var(--color-hero-orange-wash);
+  font-size: 0.85rem;
+}
+
+.is-material-first .setup-selected-file span { flex: 0 0 auto; color: var(--color-hero-orange); }
+.is-material-first .setup-selected-file strong { min-width: 0; overflow-wrap: anywhere; }
+.is-material-first .setup-selected-file button { margin-left: auto; color: var(--color-hero-orange); }
+.is-material-first .setup-back { min-height: 44px; }
+
+/* A source-backed review desk: the original page remains visible while the
+   student accepts or edits Kelus's proposed revision topics. */
+.material-review-workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.92fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--spacing-24);
+}
+
+.material-review-workspace > * { min-width: 0; }
+
+.material-source-preview {
+  overflow: hidden;
+  border: 1px solid var(--booklet-rule);
+  border-radius: var(--radius-ledger);
+  background: var(--booklet-paper);
+}
+
+.material-source-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-16);
+  padding: var(--spacing-12) var(--spacing-16);
+  border-bottom: 1px solid var(--booklet-rule);
+}
+
+.material-source-preview-head > div { display: grid; min-width: 0; gap: 2px; }
+.material-source-preview-head span { color: var(--color-hero-orange); font-size: 0.68rem; font-weight: 650; letter-spacing: 0.08em; }
+.material-source-preview-head strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem; }
+.material-source-preview-head a { flex: 0 0 auto; color: var(--booklet-kelus) !important; font-size: 0.82rem; font-weight: 600; }
+.material-source-page { min-height: 320px; max-height: min(58vh, 580px); overflow: auto; padding: var(--spacing-24); background: var(--booklet-paper); }
+.material-source-page > span { display: block; margin-bottom: var(--spacing-16); color: var(--color-hero-orange); font-size: 0.75rem; font-weight: 600; }
+.material-source-page > p { margin: 0; color: var(--booklet-ink) !important; font-size: 0.9rem; line-height: 1.65; white-space: pre-wrap; overflow-wrap: anywhere; }
+.material-source-preview > p { margin: 0; padding: var(--spacing-12) var(--spacing-16); border-top: 1px solid var(--booklet-rule); color: var(--color-slate); font-size: 0.8rem; }
+
+@media (max-width: 900px) {
+  .material-review-workspace { grid-template-columns: minmax(0, 1fr); }
+  .material-source-page { min-height: 160px; max-height: 240px; }
+}
+
+@media (max-width: 600px) {
+  .is-material-first .setup-first-upload { min-height: 190px; padding: var(--spacing-24); }
+  .is-material-first .setup-selected-file { flex-wrap: wrap; }
+  .is-material-first .setup-selected-file strong { flex-basis: 100%; order: 2; }
+  .is-material-first .setup-selected-file button { order: 1; }
+  .material-source-page { max-height: 180px; padding: var(--spacing-16); }
+  .material-source-preview > p { display: none; }
+}
+
+body.is-course-studio .studio-onboarding .concept-confirmation { padding-block: var(--spacing-24); }
+body.is-course-studio .studio-onboarding .concept-confirmation h2 { font-size: clamp(1.5rem, 2.5vw, 2.1rem); line-height: 1.18; }
+body.is-course-studio .studio-onboarding .concept-confirmation > header { margin-bottom: var(--spacing-24); }
+body.is-course-studio .studio-onboarding .concept-confirmation-actions { position: static; margin-top: var(--spacing-24); }
+body.is-course-studio .studio-onboarding[data-stage="confirm"] .material-binder-stack:has(.concept-confirmation) :is(.material-shelf, .material-binder-note) { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-material-first .setup-first-upload { transition: none; }
+  .is-material-first .setup-first-upload:active { transform: none; }
+}

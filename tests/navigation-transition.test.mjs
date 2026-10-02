@@ -67,12 +67,12 @@ test("one persistent header owns navigation for every page", async () => {
   assert.doesNotMatch(shell, /<header|<nav/);
 });
 
-test("setup shows the real four-step path without a sample detour", async () => {
-  const setup = await source("components/FirstRunSetup.tsx");
-  assert.match(setup, /aria-label="Getting started"/);
-  assert.match(setup, /setup-sequence/);
-  assert.match(setup, /Exam[\s\S]*Sources[\s\S]*First estimate[\s\S]*Route/);
-  assert.match(setup, /Continue with my course/);
+test("setup starts with a PDF and shows the full route to study", async () => {
+  const [setup, onboarding] = await Promise.all([source("components/FirstRunSetup.tsx"), source("components/CourseStudioOnboarding.tsx")]);
+  assert.match(onboarding, /Add PDF[\s\S]*Exam[\s\S]*Confirm topics[\s\S]*First check[\s\S]*Study plan/);
+  assert.match(setup, /Add a course PDF/);
+  assert.match(setup, /Continue to exam details/);
+  assert.match(setup, /Read my PDF/);
   assert.doesNotMatch(setup, /Just looking\?|Try sample/);
   assert.doesNotMatch(setup, /destination-brand/);
   assert.doesNotMatch(setup, /setup-progress/);
