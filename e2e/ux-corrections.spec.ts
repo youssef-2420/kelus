@@ -17,8 +17,8 @@ test("sample route explains its actual outcome and total", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await expect(page.getByText("Interactive sample", { exact: true })).toBeVisible();
-  const diagram = page.getByRole("img", { name: /Marked script/ });
-  await expect(diagram.locator(":scope > g")).toHaveAttribute("aria-hidden", "true");
+  const diagram = page.getByRole("img", { name: /Illustrative Microeconomics study sheet/ });
+  await expect(diagram.locator(":scope > div")).toHaveAttribute("aria-hidden", "true");
   const reveal = page.getByRole("button", { name: "Reveal answer" });
   await expect(page.locator("#board-answer")).toHaveCount(1);
   await expect(page.locator("#board-answer")).toBeHidden();
