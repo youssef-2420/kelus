@@ -46,8 +46,20 @@ body.is-course-studio .studio-section-head .kelus-space-lede { margin-top: 3px; 
 
 .core-workspace-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(350px, 0.9fr); min-height: calc(100dvh - 54px); background: var(--color-pure-white); }
 .core-workspace-grid.is-materials { min-height: calc(100dvh - 124px); }
+.core-workspace-grid.is-source-missing { display: block; }
 .core-workspace-action { min-width: 0; max-height: calc(100dvh - 54px); overflow: auto; border-left: 1px solid var(--line); background: var(--color-pure-white); }
 .core-workspace-grid.is-materials .core-workspace-action { max-height: calc(100dvh - 124px); padding: 24px; }
+.core-workspace-grid.is-source-missing .core-workspace-action { max-height: none; min-height: calc(100dvh - 54px); overflow: visible; border-left: 0; }
+.core-workspace-grid.is-materials.is-source-missing .core-workspace-action { min-height: calc(100dvh - 124px); }
+.core-workspace-grid.is-source-missing .core-workspace-action > :is(.today-route-execution, .material-binder-stack) { width: min(100%, 920px); margin-inline: auto; }
+.core-source-inline { width: min(100% - 44px, 832px); margin: 24px auto 0; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; color: var(--color-slate); font-size: .84rem; line-height: 1.45; }
+.core-source-inline a { color: var(--color-kelus); font-weight: 600; text-underline-offset: 3px; }
+body.is-course-studio .material-binder-stack.is-source-first > .material-add-page { order: -1; margin: 0 0 28px; border-top: 0; border-bottom: 1px solid var(--line); }
+body.is-course-studio .material-ingest.is-embedded .material-role-field { grid-template-columns: minmax(0, 1fr) minmax(180px, 280px); }
+body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-quiet { margin-top: 20px; padding: 24px; border: 1px dashed var(--line); border-radius: 8px; background: var(--core-rail-paper); cursor: pointer; }
+body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-quiet:hover,
+body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-quiet:focus-within { border-color: var(--color-kelus); background: var(--core-selected-paper); }
+body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-quiet strong { font-family: var(--font-sans); font-size: 1rem; font-weight: 600; letter-spacing: -.02em; }
 body.is-course-studio .core-workspace-action .today-exam-context { margin: 8px 0 0; color: var(--color-slate); font-size: .78rem; line-height: 1.4; }
 body.is-course-studio .core-workspace-action .today-route-execution.is-booklet-page { display: block; padding: 30px clamp(22px, 3vw, 48px); }
 body.is-course-studio .core-workspace-action .today-lead-action.is-page { margin: 0; padding: 0; }
@@ -91,6 +103,12 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-s
   width: 100%; max-width: none; min-height: 100dvh;
   margin: 0; padding: 0; border: 0; border-radius: 0; background: var(--color-pure-white);
 }
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase].is-source-missing > .study-phase-track,
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing > :is(.study-question.is-page, .reroute-view.is-page) { grid-column: 2; }
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing > :is(.study-question.is-page, .reroute-view.is-page) { width: min(100%, 880px); margin-inline: auto; border-left: 0; }
 body.is-session-booklet.is-booklet-system .study-context.is-folio { grid-column: 1 / -1; grid-row: 1; min-height: 56px; padding: 7px 22px; }
 .session-workspace-rail { grid-column: 1; grid-row: 2 / span 2; display: flex; flex-direction: column; padding: 28px 16px; border-right: 1px solid var(--line); background: var(--core-rail-paper); }
 .session-workspace-rail > p, .session-rail-topic span { margin: 0 0 7px; color: var(--color-slate); font-size: .69rem; font-weight: 700; letter-spacing: .07em; }
@@ -125,12 +143,16 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .sessio
   .core-workspace-action { max-height: none; overflow: visible; border-left: 0; border-top: 1px solid var(--line); }
   .core-source-stage { max-height: 420px; min-height: 300px; }
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase], body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-open { grid-template-columns: 170px minmax(0, 1fr); grid-template-rows: 56px 420px auto 1fr; }
+  body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing { grid-template-columns: 170px minmax(0, 1fr); grid-template-rows: 56px auto minmax(0, 1fr); }
+  body.is-session-booklet.is-booklet-system main.study-shell[data-phase].is-source-missing > .study-phase-track { grid-row: 2; }
+  body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing > :is(.study-question.is-page, .reroute-view.is-page) { grid-row: 3; }
   .session-workspace-rail { grid-row: 2 / span 3; }
   .session-workspace-source { grid-column: 2; grid-row: 2; }
   body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-phase-track { grid-column: 2; grid-row: 3; }
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] > :is(.study-question.is-page, .reroute-view.is-page) { grid-column: 2; grid-row: 4; max-height: none; }
 }
 @media (max-width: 650px) {
+  body.is-course-studio .material-ingest.is-embedded .material-role-field { grid-template-columns: minmax(0, 1fr); }
   body.is-course-studio .kelus-space.is-studio { display: block; }
   body.is-course-studio .studio-rail { position: static; height: auto; max-height: none; padding: 10px 14px; }
   body.is-course-studio .studio-navigation-label, .core-rail-sources, body.is-course-studio .studio-rail-bottom { display: none; }
@@ -144,6 +166,7 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .sessio
   .core-workspace-grid .core-source-state p { margin: 7px 0 10px; font-size: .85rem; }
   .core-workspace-grid.is-materials .core-workspace-action { padding: 16px; }
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase], body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-open { display: flex; flex-direction: column; }
+  body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing { display: flex; flex-direction: column; }
   .session-workspace-rail { display: none; }
   .session-workspace-source { height: 320px; flex: none; }
   .session-workspace-source .core-source-stage { max-height: 260px; min-height: 260px; }

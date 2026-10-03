@@ -125,6 +125,7 @@ export function RevisionSurface() {
     ?? courseMaterials.find((item) => item.storage === "local")
     ?? courseMaterials[0]
     ?? null;
+  const hasReadableSource = selectedMaterial?.storage === "local" && !selectedMaterial.id.startsWith("material-demo-");
   const referencedPage = Number(firstReference?.locator?.match(/\d+/)?.[0] ?? 1);
 
   function setMode(next: SurfaceMode) {
@@ -276,9 +277,10 @@ export function RevisionSurface() {
             transition={panelTransition}
           >
             {mode === "today" ? (
-              <div className="core-workspace-grid" aria-label="Your source and today's route">
-                <CourseSourceReader key={`${selectedMaterial?.id ?? "none"}-${selectedMaterial?.id === preferredMaterial?.id ? referencedPage : 1}`} material={selectedMaterial} initialPage={selectedMaterial?.id === preferredMaterial?.id ? referencedPage : 1} />
+              <div className={`core-workspace-grid${hasReadableSource ? "" : " is-source-missing"}`} aria-label="Today's route">
+                {hasReadableSource ? <CourseSourceReader key={`${selectedMaterial.id}-${selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1}`} material={selectedMaterial} initialPage={selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1} /> : null}
                 <div className="core-workspace-action workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
+                  {!hasReadableSource ? <p className="core-source-inline">This plan has no original PDF beside it. <Link href="/today?section=materials">Add your course PDF</Link> to study from your own pages.</p> : null}
                   <TodayRoute
                     route={route}
                     concepts={concepts}
@@ -294,7 +296,7 @@ export function RevisionSurface() {
                 </div>
               </div>
             ) : null}
-            {mode === "materials" ? <div className="core-workspace-grid is-materials"><CourseSourceReader key={selectedMaterial?.id ?? "none"} material={selectedMaterial} /><div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} /></div></div> : null}
+            {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
           </motion.div>
         </AnimatePresence>
