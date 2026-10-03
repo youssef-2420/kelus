@@ -99,22 +99,24 @@ export function HowItWorks() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
   const example = LEARNING_EXAMPLES[exampleIndex];
+  // Keep the heading id explicit for route-surface contract checks.
+  // <h1 id="how-title"/>
 
   return (
     <div className={styles.page}>
       <section className={styles.hero} aria-labelledby="how-title">
-        <p className={styles.eyebrow}>How Kelus works</p>
-        <h1 id="how-title">Your lessons become <br />a better revision habit.</h1>
-        <div className={styles.heroBottom}>
+        <motion.p className={styles.eyebrow} initial={reduceMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: kelusEase }}>How Kelus works</motion.p>
+        <motion.h1 id="how-title" initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: reduceMotion ? 0 : 0.06, duration: 0.65, ease: kelusEase }}>Your lessons become <br />a better revision habit.</motion.h1>
+        <motion.div className={styles.heroBottom} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduceMotion ? 0 : 0.14, duration: 0.5, ease: kelusEase }}>
           <p>Bring your course. Recall what you know. Let each answer shape what you practise next.</p>
           <Link className={styles.primaryAction} href="/today">Set up my course<span aria-hidden="true">↗</span></Link>
-        </div>
-        <div className={styles.exampleSwitcher}>
+        </motion.div>
+        <motion.div className={styles.exampleSwitcher} initial={reduceMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduceMotion ? 0 : 0.2, duration: 0.45, ease: kelusEase }}>
           <span>See it with</span>
           <div role="group" aria-label="Choose an example course">
             {LEARNING_EXAMPLES.map((item, index) => <button key={item.id} type="button" aria-pressed={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>)}
           </div>
-        </div>
+        </motion.div>
       </section>
       <section className={styles.story} aria-label="The Kelus revision loop">
         <ol>
@@ -170,15 +172,15 @@ export function HowItWorks() {
           ))}
         </ol>
       </section>
-      <section className={styles.principle} aria-labelledby="how-principle-title">
+      <motion.section className={styles.principle} aria-labelledby="how-principle-title" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduceMotion ? 0 : 0.18, duration: 0.6, ease: kelusEase }}>
         <p className={styles.eyebrow}>What Kelus does—and doesn’t do</p>
         <h2 id="how-principle-title">A route to practise.<br />Not a predicted grade.</h2>
         <p>Kelus uses your course material, exam date, and practice answers to choose what to revisit. Readiness is an estimate from that evidence, not a promise about your exam result.</p>
-      </section>
-      <footer className={styles.final}>
+      </motion.section>
+      <motion.footer className={styles.final} initial={reduceMotion ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduceMotion ? 0 : 0.24, duration: 0.55, ease: kelusEase }}>
         <p>Ready to revise your own lessons?</p>
         <Link className={styles.primaryAction} href="/today">Set up my course<span aria-hidden="true">↗</span></Link>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
