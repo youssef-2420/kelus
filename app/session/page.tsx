@@ -19,7 +19,7 @@ import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
 type Phase = "learn" | "retrieve" | "apply" | "evaluate" | "result" | "reroute";
-type HelpMode = "hint" | "explain" | "example" | null;
+type HelpMode = "hint" | "explain" | null;
 type SourcePanelState = {
   title: string;
   locator: string | null;
@@ -261,7 +261,7 @@ function SessionBody() {
   const previousNames = (routeBeforeIds.length ? routeBeforeIds : session.initialRoute.allocations.map((allocation) => String(allocation.conceptId))).map((id) => state.snapshot.concepts.find((item) => item.id === id)?.name).filter(Boolean);
   const nextNames = session.latestRoute.allocations.map((allocation) => state.snapshot.concepts.find((item) => item.id === allocation.conceptId)?.name).filter(Boolean);
   const routeOrderChanged = previousNames.join("|") !== nextNames.join("|");
-  const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : helpMode === "example" ? activity.retrieve.example : null;
+  const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : null;
   const currentSource = activity.sourceReferences[0];
   const currentMaterial = materials.find((item) => item.id === currentSource?.materialId)
     ?? materials.find((item) => item.courseId === concept.courseId && item.storage === "local")
@@ -568,7 +568,7 @@ function SessionBody() {
                       );
                     })}
                   </div>
-                ) : <p className="session-source-note">Sample course model</p>}
+                ) : null}
                 {openingSource ? <p role="status" className="session-source-note">Opening your source…</p> : null}
                 <motion.button
                   type="button"
@@ -609,7 +609,6 @@ function SessionBody() {
                   <div className="session-help-choices" role="group" aria-label="Help options">
                     <button type="button" className={helpMode === "hint" ? "is-active" : undefined} onClick={() => setHelpMode(helpMode === "hint" ? null : "hint")}>Hint</button>
                     <button type="button" className={helpMode === "explain" ? "is-active" : undefined} onClick={() => setHelpMode(helpMode === "explain" ? null : "explain")}>Explain</button>
-                    <button type="button" className={helpMode === "example" ? "is-active" : undefined} onClick={() => setHelpMode(helpMode === "example" ? null : "example")}>Example</button>
                   </div>
                   <AnimatePresence mode="wait">{helpCopy ? <motion.p key={helpMode} initial={{ opacity: 0, y: reduceMotion ? 0 : -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.18 }}>{helpCopy}</motion.p> : null}</AnimatePresence>
                 </details>

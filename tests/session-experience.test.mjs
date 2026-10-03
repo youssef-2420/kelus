@@ -42,7 +42,7 @@ test("the session executes learn, retrieve, apply and evaluate before updating t
   assert.ok(order.every((position, index) => index === 0 || position > order[index - 1]));
   assert.match(page, /Hint/);
   assert.match(page, />Explain</);
-  assert.match(page, />Example</);
+  assert.doesNotMatch(page, />Example</);
   assert.match(page, /session-help-page/);
   assert.match(page, /submit\(\{/);
   assert.match(page, /evaluateLearningResponse/);
@@ -70,6 +70,7 @@ test("sessions expose a confirmed course source and its page", async () => {
   assert.match(page, /session-source-panel/);
   assert.match(page, /<iframe/);
   assert.match(page, /Add the PDF again/);
+  assert.doesNotMatch(page, /Sample course model/);
   assert.doesNotMatch(page, /window\.open\(`\$\{URL\.createObjectURL/);
 });
 
