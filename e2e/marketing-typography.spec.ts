@@ -1,5 +1,15 @@
 import { test, expect } from "@playwright/test";
 
+test("How it works uses the shared Kelus canvas on desktop and mobile", async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    await page.goto("/route/");
+    const canvas = page.locator('main > div[class*="HowItWorks-module"]');
+    await expect(canvas).toHaveCSS("background-color", "rgb(255, 255, 255)");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+});
+
 test("editorial fonts stay on marketing headings and leave the app unchanged", async ({ page }) => {
   for (const [path, heading] of [["/", "#home-hero-title"], ["/route/", "#how-title"], ["/pricing/", ".pricing-page h1"]]) {
     await page.goto(path);
