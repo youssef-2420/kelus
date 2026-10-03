@@ -515,16 +515,29 @@ body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stac
   body.is-course-studio .today-route-execution.is-booklet-page {
     gap: var(--spacing-64);
   }
+
+  body.is-course-studio .studio-onboarding .material-review-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.is-course-studio .studio-onboarding .material-source-page {
+    min-height: 180px;
+    max-height: 300px;
+  }
 }
 
-@media (max-width: 760px) {
+@media (max-width: 900px) {
   body.is-course-studio .kelus-space.is-studio {
     display: block;
   }
 
   .is-course-studio .studio-rail {
+    position: relative;
+    height: auto;
     padding: var(--spacing-8) var(--spacing-16);
     border-color: var(--studio-hairline);
+    border-right: 0;
+    border-bottom: 1px solid var(--studio-hairline);
   }
 
   .is-course-studio .studio-brand {
@@ -552,14 +565,26 @@ body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stac
   }
 
   .is-course-studio .studio-onboarding-steps {
+    display: flex;
+    gap: var(--spacing-8);
     overflow-x: auto;
+    margin-top: var(--spacing-8);
+    padding-bottom: 2px;
+    scrollbar-width: none;
   }
 
+  .is-course-studio .studio-onboarding-steps::-webkit-scrollbar { display: none; }
+
   .is-course-studio .studio-onboarding-steps li {
+    flex: 0 0 auto;
     white-space: nowrap;
   }
 
   .is-course-studio .studio-home-link {
+    display: none;
+  }
+
+  .is-course-studio .studio-rail-bottom {
     display: none;
   }
 
@@ -581,6 +606,20 @@ body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stac
   .is-course-studio .studio-page.kelus-space-stage {
     min-height: calc(100dvh - 48px);
     padding: var(--spacing-48) var(--spacing-24) var(--spacing-80);
+  }
+
+  .is-course-studio .studio-onboarding .studio-topbar {
+    display: none;
+  }
+
+  .is-course-studio .studio-onboarding .studio-page.kelus-space-stage {
+    min-height: 0;
+    padding: var(--spacing-32) var(--spacing-24) var(--spacing-64);
+  }
+
+  .is-course-studio .studio-onboarding-content {
+    width: min(100%, 680px);
+    margin-inline: auto;
   }
 
   body.is-course-studio .today-route-execution.is-booklet-page {
