@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Brain, FileText, Route } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
@@ -59,9 +60,9 @@ function RerouteVisual({ example }: { example: LearningExample }) {
 }
 
 const stages = [
-  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source" },
-  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall" },
-  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route" },
+  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source", Icon: FileText },
+  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall", Icon: Brain },
+  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route", Icon: Route },
 ] as const;
 
 export function HowItWorks() {
@@ -87,9 +88,10 @@ export function HowItWorks() {
       </section>
       <section className={styles.story} aria-label="The Kelus revision loop">
         <ol>
-          {stages.map(({ number, cue, title, body, detail, Visual, tone }) => (
+          {stages.map(({ number, cue, title, body, detail, Visual, tone, Icon }) => (
             <li key={number} className={styles.chapter} data-tone={tone}>
               <div className={styles.chapterText}>
+                <div className={styles.chapterIcon} aria-hidden="true"><Icon size={30} strokeWidth={1.8} /></div>
                 <span className={styles.chapterLabel}><span>{number}</span>{cue}</span>
                 <h2>{title}</h2>
                 <p>{body}</p>
