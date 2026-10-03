@@ -247,6 +247,18 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
   line-height: 1.55;
 }
 
+.is-course-studio .today-decision-payoff {
+  margin-top: var(--spacing-20);
+  padding: var(--spacing-16);
+  border: 1px solid var(--studio-hairline);
+  border-left: 2px solid var(--color-kelus);
+  background: var(--studio-rail-paper);
+}
+
+.is-course-studio .today-decision-payoff strong {
+  color: var(--color-kelus);
+}
+
 .is-course-studio .today-source-reference,
 .is-course-studio .today-return-note,
 .is-course-studio .today-session-preview {
@@ -272,7 +284,10 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
 }
 
 .is-course-studio .today-next {
-  padding-top: var(--spacing-24);
+  max-width: 360px;
+  padding: var(--spacing-24);
+  border: 1px solid var(--studio-hairline);
+  background: var(--studio-rail-paper);
 }
 
 .is-course-studio .today-next li {
@@ -416,6 +431,29 @@ body.is-booklet-system.is-course-studio .studio-onboarding .destination-page.is-
 body.is-course-studio .studio-onboarding .diagnosis-page.is-booklet-product,
 body.is-course-studio .studio-onboarding .diagnosis-page :is(.diagnosis-panel, .diagnosis-check) {
   color: var(--studio-ink);
+}
+
+.is-course-studio .studio-onboarding .setup-payoff {
+  gap: var(--spacing-8);
+  margin-block: var(--spacing-24) var(--spacing-32);
+}
+
+.is-course-studio .studio-onboarding .setup-payoff li {
+  min-height: 92px;
+  padding: var(--spacing-16);
+  border-color: var(--studio-hairline);
+  border-top: 2px solid var(--color-hero-orange);
+  background: var(--studio-rail-paper);
+}
+
+.is-course-studio .studio-onboarding .setup-payoff strong {
+  color: var(--studio-ink);
+  font-size: 0.84rem;
+}
+
+.is-course-studio .studio-onboarding .setup-payoff span {
+  color: var(--studio-muted);
+  font-size: 0.78rem;
 }
 
 .is-course-studio .studio-page-heading {
