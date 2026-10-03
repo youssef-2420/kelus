@@ -5772,6 +5772,12 @@ h3,
 .session-value-proof span { color: var(--color-product-secondary); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .session-value-proof strong { font-size: var(--text-body-sm); font-weight: 600; line-height: 1.45; }
 .session-source-return { margin: 0 0 var(--spacing-24); }
+.complete-usefulness { margin-top: var(--spacing-32); padding-top: var(--spacing-24); border-top: 1px solid var(--color-product-border); }
+.complete-usefulness h2 { max-width: 28ch; margin: 8px 0 var(--spacing-16); font-size: clamp(24px, 4vw, 34px); line-height: 1.12; }
+.complete-usefulness-actions { display: flex; flex-wrap: wrap; gap: var(--spacing-8); }
+.complete-usefulness-actions button { min-height: 40px; padding: 8px 16px; color: var(--color-midnight-ink); background: transparent; border: 1px solid var(--color-product-border); border-radius: 999px; font: inherit; cursor: pointer; }
+.complete-usefulness-actions button:hover { border-color: var(--color-indigo-ink); }
+.complete-usefulness-thanks { color: var(--color-product-secondary); }
 
 @media (max-width: 720px) {
   .site-header.is-session .site-header-inner { flex-wrap: nowrap; padding-top: 0; }

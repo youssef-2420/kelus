@@ -18,6 +18,7 @@ function CompleteBody() {
   const reduceMotion = useReducedMotion();
   const { state } = useLearner();
   const [calendarNote, setCalendarNote] = useState("");
+  const [usefulness, setUsefulness] = useState<boolean | null>(null);
   const completionTracked = useRef<string | null>(null);
   const requestedId = search.get("id");
   const session = requestedId
@@ -136,6 +137,21 @@ function CompleteBody() {
           <p className="complete-return-note" role="status" aria-live="polite">
             {calendarNote || "\u00a0"}
           </p>
+        </section>
+
+        <section className="complete-usefulness" aria-labelledby="complete-usefulness-title">
+          <p className="kicker">One quick check</p>
+          <h2 id="complete-usefulness-title">Did this help you decide what to study next?</h2>
+          {usefulness === null ? (
+            <div className="complete-usefulness-actions" role="group" aria-label="Rate study usefulness">
+              <button type="button" onClick={() => { setUsefulness(true); trackEvent({ name: "session_usefulness_rated", helpful: true }); }}>Yes</button>
+              <button type="button" onClick={() => { setUsefulness(false); trackEvent({ name: "session_usefulness_rated", helpful: false }); }}>Not yet</button>
+            </div>
+          ) : (
+            <p className="complete-usefulness-thanks" role="status" aria-live="polite">
+              {usefulness ? "Good. Kelus will keep using the evidence that helped you choose." : "Thanks. The next route should make the decision clearer."}
+            </p>
+          )}
         </section>
 
         {summary ? (

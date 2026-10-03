@@ -51,8 +51,6 @@ export function CourseStudioOnboarding({ stage, courseName, children }: {
           <Link href="/" className="studio-home-link">← Back to Kelus</Link>
           {auth.user ? (
             <button type="button" className="studio-account-action" onClick={() => auth.signOut()}>Sign out</button>
-          ) : auth.configured ? (
-            <button type="button" className="studio-account-action" onClick={auth.openDialog}>Sign in to sync</button>
           ) : null}
         </div>
       </aside>
