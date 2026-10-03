@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
 import { kelusEase } from "@/components/motion";
-import { describeRouteChoice } from "@/lib/today-reason";
+import { describeRouteChoice, describeRoutePayoff } from "@/lib/today-reason";
 import { trackEvent } from "@/lib/analytics";
 
 function citeWhisper(source: { label: string; locator?: string | null } | undefined) {
@@ -92,6 +92,7 @@ export function TodayRoute({
     ...allocation,
     name: concepts.find((concept) => concept.id === allocation.conceptId)?.name ?? "Mixed recall",
   }));
+  const payoff = describeRoutePayoff(first, nextStops[0]?.name);
   return (
     <div className="today-route-execution is-one-next is-booklet-page is-presence">
       <motion.article
@@ -129,6 +130,7 @@ export function TodayRoute({
         <div className="today-decision" aria-label="Why this topic is first">
           <p className="today-decision-label">Why now</p>
           {decision.map((line) => <p key={line}>{line}</p>)}
+          <p className="today-decision-payoff"><strong>What this unlocks</strong>{payoff}</p>
         </div>
         {whisper ? <p className="today-source-reference">Source · {whisper}</p> : null}
         {lastPractice && lastTopic ? <p className="today-return-note">Last answer · {lastTopic} · {lastResult}. Your route includes that evidence.</p> : null}
