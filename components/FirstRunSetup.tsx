@@ -89,6 +89,11 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
             <p className="kicker">First, your material</p>
             <h1 className="destination-page-title">Add a course PDF.</h1>
             <p className="destination-support">Start with a syllabus, lecture slides, or notes. Kelus will suggest topics from the pages; you decide what belongs in your exam.</p>
+            <ul className="setup-payoff" aria-label="What Kelus will create">
+              <li><strong>Topic cards</strong><span>Turn the pages into a focused exam map.</span></li>
+              <li><strong>Weak spots</strong><span>Find what needs your attention first.</span></li>
+              <li><strong>Today’s route</strong><span>Get one useful study action to start.</span></li>
+            </ul>
             <label
               className={`setup-first-upload${dragging ? " is-dragging" : ""}${file ? " has-file" : ""}`}
               onDragEnter={() => setDragging(true)}
@@ -102,6 +107,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
               <span>{file ? `${(file.size / 1_000_000).toFixed(1)} MB · Choose another file if needed` : "or drop it here"}</span>
             </label>
             <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB. Selectable text works best; Kelus can try reading clear English scans. Videos and web links can be saved later, but don’t create topics.</p>
+            {file ? <p className="setup-file-ready" role="status" aria-live="polite"><strong>Ready to read</strong><span>{file.name} · {(file.size / 1_000_000).toFixed(1)} MB</span></p> : null}
           </>
         ) : (
           <>
