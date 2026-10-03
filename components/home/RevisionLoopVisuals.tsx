@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useSyncExternalStore } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { Reveal } from "@/components/motion";
 import styles from "./RevisionLoopVisuals.module.css";
@@ -101,7 +101,10 @@ const stages = [
 function RevisionStep({ stage }: { stage: (typeof stages)[number] }) {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.45 });
-  const reducedMotion = useReducedMotion() === true;
+  const prefersReducedMotion = useReducedMotion() === true;
+  // Keep the server and first client render identical; apply the media preference after hydration.
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const reducedMotion = hydrated && prefersReducedMotion;
   const active = reducedMotion || inView;
   const { number, title, description, className, Illustration } = stage;
 
