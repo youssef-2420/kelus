@@ -9,7 +9,6 @@ import { useLearner } from "@/components/LearnerProvider";
 import { evaluateLearningResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
 import { resumeSessionIndex } from "@/domain/session-engine";
 import type { Concept, LearningActivity, RetrievalOutcome } from "@/domain/types";
-import { percent } from "@/lib/format";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
@@ -77,11 +76,9 @@ function SessionBody() {
   const [applicationAnswer, setApplicationAnswer] = useState("");
   const [phase, setPhase] = useState<Phase>("learn");
   const [helpMode, setHelpMode] = useState<HelpMode>(null);
-  const [masteryBefore, setMasteryBefore] = useState(0);
   const [evaluation, setEvaluation] = useState<AnswerEvaluation | null>(null);
   const [lastOutcome, setLastOutcome] = useState<RetrievalOutcome | null>(null);
   const [routeBeforeIds, setRouteBeforeIds] = useState<string[]>([]);
-  const [seenRouteChanges, setSeenRouteChanges] = useState(0);
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
   const [openingSource, setOpeningSource] = useState(false);
   const [sourceRevealed, setSourceRevealed] = useState(false);
@@ -198,7 +195,6 @@ function SessionBody() {
   function grade(outcome: RetrievalOutcome) {
     // Hold the current page while the recorded event moves the resumable index forward.
     setPosition({ sessionId: activeSessionId, index });
-    setMasteryBefore(activeConcept.mastery);
     setLastOutcome(outcome);
     setRouteBeforeIds(activeSession.latestRoute.allocations.map((item) => String(item.conceptId)));
     submit({
@@ -228,9 +224,19 @@ function SessionBody() {
     responseTimeMs.current = 0;
   }
 
+  function retryCurrentConcept() {
+    setRetrieveAnswer("");
+    setApplicationAnswer("");
+    setEvaluation(null);
+    setHelpMode(null);
+    setSourceRevealed(false);
+    setPhase("retrieve");
+    startedAt.current = performance.now();
+  }
+
   function advance() {
     const updatedSession = state.snapshot.sessions.find((item) => item.id === activeSessionId);
-    if (lastOutcome !== "success" || (updatedSession && updatedSession.routeChanges.length > seenRouteChanges)) {
+    if (routeOrderChanged) {
       if (lastOutcome === "partial" || lastOutcome === "failure") {
         const previous = routeBeforeIds.length
           ? routeBeforeIds
@@ -238,7 +244,6 @@ function SessionBody() {
         const next = updatedSession?.latestRoute.allocations.map((allocation) => String(allocation.conceptId)) ?? [];
         trackEvent({ name: "route_recalculated", changed: previous.join("|") !== next.join("|"), outcome: lastOutcome });
       }
-      setSeenRouteChanges(updatedSession?.routeChanges.length ?? seenRouteChanges);
       setPhase("reroute");
       return;
     }
@@ -257,10 +262,12 @@ function SessionBody() {
     resetForNextConcept();
   }
 
-  const routeChange = session.routeChanges.at(-1);
-  const previousNames = (routeBeforeIds.length ? routeBeforeIds : session.initialRoute.allocations.map((allocation) => String(allocation.conceptId))).map((id) => state.snapshot.concepts.find((item) => item.id === id)?.name).filter(Boolean);
-  const nextNames = session.latestRoute.allocations.map((allocation) => state.snapshot.concepts.find((item) => item.id === allocation.conceptId)?.name).filter(Boolean);
-  const routeOrderChanged = previousNames.join("|") !== nextNames.join("|");
+  const completedIds = new Set(state.snapshot.events.filter((event) => event.sessionId === session.id && event.kind === "retrieval").map((event) => event.conceptId));
+  const previousRemaining = routeBeforeIds.filter((id) => id !== "mixed-retrieval" && !completedIds.has(id) && session.plannedConceptIds.includes(id));
+  const nextRemaining = session.plannedConceptIds.filter((id) => !completedIds.has(id));
+  const routeOrderChanged = routeBeforeIds.length > 0 && previousRemaining.join("|") !== nextRemaining.join("|");
+  const nextConceptName = state.snapshot.concepts.find((item) => item.id === session.plannedConceptIds[index + 1])?.name;
+  const checkCount = state.snapshot.events.filter((event) => event.conceptId === concept.id && event.kind === "retrieval").length;
   const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : null;
   const currentSource = activity.sourceReferences[0];
   const currentMaterial = materials.find((item) => item.id === currentSource?.materialId)
@@ -416,13 +423,9 @@ function SessionBody() {
               animate={{ opacity: 1, y: 0 }}
               transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5, delay: 0.1 }}
             >
-              {routeOrderChanged
-                ? `${routeChange?.movedConceptId ? `${state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "A topic"} moved earlier. ` : ""}${routeChange?.explanation ?? "Your answer changed what to practise next with the time you have."}`
-                : lastOutcome === "failure"
-                  ? "That answer was thin, so the estimate moved — but this order is still the best use of the time left."
-                  : "Part of it landed. The estimate moved, and this order is still the strongest path for what’s left."}
+              {`Your answer changed the order of the remaining topics. ${nextConceptName ? `${nextConceptName} is next.` : "You have reached the end of this block."}`}
             </motion.p>
-            {routeOrderChanged && routeChange?.movedConceptId ? (
+            {nextConceptName ? (
               <motion.p
                 className="study-reroute-moved"
                 initial={reduceMotion ? false : { opacity: 0 }}
@@ -431,27 +434,11 @@ function SessionBody() {
               >
                 Next up{" "}
                 <strong>
-                  {state.snapshot.concepts.find((item) => item.id === routeChange.movedConceptId)?.name ?? "a concept"}
+                  {nextConceptName}
                 </strong>
               </motion.p>
             ) : null}
-            <motion.p
-              className="reroute-whisper"
-              aria-label="How this answer affected the route"
-              initial={reduceMotion ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.16, ease: kelusEase }}
-            >
-              <span className="study-mark-from">{percent(masteryBefore)}</span>
-              <span className="study-mark-arrow" aria-hidden="true"> → </span>
-              <span className={`study-mark-to${activeConcept.mastery < masteryBefore ? " is-down" : ""}`}>
-                {percent(activeConcept.mastery)}
-              </span>
-              <span className="study-reroute-sep"> · </span>
-              {evaluation?.label ?? (lastOutcome === "failure" ? "Still shaky" : "Partly there")}
-              <span className="study-reroute-sep"> · </span>
-              {routeOrderChanged ? "New order" : "Same order"}
-            </motion.p>
+            <p className="reroute-whisper" aria-label="How this answer affected the route">{evaluation?.label ?? "New evidence"} · New order</p>
             <motion.button
               type="button"
               className="cta"
@@ -487,18 +474,16 @@ function SessionBody() {
               animate={{ opacity: 1, y: 0 }}
               transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.55, delay: 0.06 }}
             >
-              Marked.
+              {lastOutcome === "success" ? "Solid pass." : lastOutcome === "partial" ? "Partly there." : "Needs another attempt."}
             </motion.h1>
             <motion.p
-              className="study-mark-delta"
+              className="study-mark-summary"
               aria-live="polite"
               initial={reduceMotion ? false : { opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5, delay: 0.12 }}
             >
-              <span className="study-mark-from">{percent(masteryBefore)}</span>
-              <span className="study-mark-arrow" aria-hidden="true">→</span>
-              <span className="study-mark-to">{percent(concept.mastery)}</span>
+              {concept.name} · {checkCount === 1 ? "first check" : `${checkCount} checks`}
             </motion.p>
             <motion.p
               className="study-mark-whisper"
@@ -506,30 +491,21 @@ function SessionBody() {
               animate={{ opacity: 1 }}
               transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.18, ease: kelusEase }}
             >
-              {concept.name} is noted. {lastOutcome === "failure" ? "This topic needs another pass." : lastOutcome === "partial" ? "Part of the idea landed; more practice is useful." : "This answer adds stronger evidence."}
+              {lastOutcome === "success" ? "You used the idea in your own words." : `Return to the source idea: ${activity.retrieve.modelAnswer}`}
             </motion.p>
             <p className="study-reroute-lede" role="status">
-              {routeOrderChanged ? "The remaining order changed. " : "The remaining order stayed the same. "}
-              {session.plannedConceptIds[index + 1]
-                ? `Next: ${state.snapshot.concepts.find((item) => item.id === session.plannedConceptIds[index + 1])?.name ?? "another topic"}.`
-                : "You have reached the end of this block."}
-              {lastOutcome !== "success" ? " Kelus will use this answer when it plans your next route." : ""}
+              {routeOrderChanged ? "The remaining topic order changed. " : "The remaining topic order is unchanged. "}
+              {nextConceptName ? `${nextConceptName} is next.` : "This is the last topic in this block."}
             </p>
             <div className="session-value-proof" aria-label="What changed in this session">
               <div>
-                <span>Evidence added</span>
+                <span>This check</span>
                 <strong>{evaluation?.label ?? (lastOutcome === "failure" ? "Needs another pass" : "Partial evidence")}</strong>
               </div>
               <div>
-                <span>What to do next</span>
-                <strong>{lastOutcome === "success" ? "Keep the idea available without the page." : `Revisit ${concept.name} before moving on.`}</strong>
+                <span>Your next choice</span>
+                <strong>{lastOutcome === "success" ? `Continue${nextConceptName ? ` to ${nextConceptName}` : " to your summary"}.` : `Try ${concept.name} again now, or continue${nextConceptName ? ` to ${nextConceptName}` : " to your summary"}.`}</strong>
               </div>
-              {evaluation?.criteria.length ? (
-                <div>
-                  <span>Still to show</span>
-                  <strong>{evaluation.criteria.filter((criterion) => !criterion.met).map((criterion) => criterion.label).join(" · ") || "All source-backed criteria met"}</strong>
-                </div>
-              ) : null}
             </div>
             {currentSource && currentMaterial ? (
               <button
@@ -540,15 +516,10 @@ function SessionBody() {
                 Review the source behind this topic <span aria-hidden="true">↗</span>
               </button>
             ) : null}
-            <motion.button
-              type="button"
-              className="cta"
-              onClick={advance}
-              whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-              transition={{ type: "spring", bounce: 0, duration: 0.28 }}
-            >
-              Continue <span aria-hidden="true">→</span>
-            </motion.button>
+            <div className="study-result-actions">
+              {lastOutcome !== "success" ? <motion.button type="button" className="cta" onClick={retryCurrentConcept} whileTap={reduceMotion ? undefined : { scale: 0.97 }} transition={{ type: "spring", bounce: 0, duration: 0.28 }}>Try again <span aria-hidden="true">↻</span></motion.button> : null}
+              <button type="button" className={lastOutcome === "success" ? "cta" : "text-btn"} onClick={advance}>{nextConceptName ? `Continue to ${nextConceptName}` : "Finish block"} <span aria-hidden="true">→</span></button>
+            </div>
           </motion.section>
         ) : (
           <motion.section
@@ -697,6 +668,7 @@ function SessionBody() {
               <div className="study-feedback is-page is-mark-folio">
                 <h1>Mark.</h1>
                 <p className="study-mark-lede">Set your answers beside the model, then record what stuck.</p>
+                {currentSource && currentMaterial ? <button type="button" className="text-btn session-source-compare" onClick={() => void openSource(currentSource.materialId, currentSource.locator)}>View original page · {currentSource.locator ?? "source"} <span aria-hidden="true">↗</span></button> : null}
                 <div className="answer-pages" aria-label="Compare your answers">
                   <section>
                     <span>Your retrieval</span>

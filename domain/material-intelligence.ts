@@ -171,6 +171,20 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
   }
 }
 
+/** Only pose a counterfactual when the page names a condition we can actually change. */
+function sourceBackedApplication(name: string, claim: string, locator: string) {
+  const dependency = claim.match(new RegExp(`^${escapeRegExp(name)}\\s+(?:depends on|requires)\\s+(.+?)(?:\\s+and\\s+|[.;]|$)`, "i"));
+  const condition = dependency?.[1]?.trim();
+  if (condition && condition.length <= 90) {
+    return {
+      prompt: `Your notes say ${name} depends on ${condition}. If ${condition} were missing, which conclusion from the notes could you no longer assume? Explain what ${locator} supports and what remains uncertain.`,
+      hint: `Start with the stated dependency: ${name} depends on ${condition}. Do not invent an exact outcome the source does not give.`,
+      modelAnswer: `The source states: ${claim} Without ${condition}, that stated relationship cannot simply be assumed. The source alone does not establish the exact new outcome.`,
+    };
+  }
+  return null;
+}
+
 const RUBRIC_STOPWORDS = new Set(["answer", "application", "claim", "course", "idea", "identifies", "new", "result", "sound", "source", "source-backed", "uses"]);
 
 function rubricTerms(value: string) {
@@ -237,6 +251,7 @@ function scoreDifficulty(excerpt: string) {
 function buildActivity(concept: Concept, proposal: ProposedConcept): LearningActivity {
   const claim = centralClaim(concept.name, proposal.sourceExcerpt);
   const language = activityLanguage(subjectModeFor(concept.name, proposal.sourceExcerpt), concept.name, claim);
+  const application = sourceBackedApplication(concept.name, claim, proposal.locator);
   return {
     id: `activity-${concept.id}`,
     conceptId: concept.id,
@@ -257,9 +272,9 @@ function buildActivity(concept: Concept, proposal: ProposedConcept): LearningAct
       modelAnswer: claim,
     },
     apply: {
-      prompt: language.applyPrompt,
-      hint: language.applyHint,
-      modelAnswer: language.applyAnswer,
+      prompt: application?.prompt ?? `${language.applyPrompt} Use ${proposal.locator}: “${claim}” Do not claim a specific outcome the page does not establish.`,
+      hint: application?.hint ?? language.applyHint,
+      modelAnswer: application?.modelAnswer ?? language.applyAnswer,
     },
     assessment: assessmentFor(subjectModeFor(concept.name, proposal.sourceExcerpt), concept.name, claim),
     sourceReferences: [{ materialId: proposal.materialId, label: proposal.sourceLabel, locator: proposal.locator }],
