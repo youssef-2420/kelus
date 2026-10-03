@@ -515,6 +515,31 @@ function SessionBody() {
                 : "You have reached the end of this block."}
               {lastOutcome !== "success" ? " Kelus will use this answer when it plans your next route." : ""}
             </p>
+            <div className="session-value-proof" aria-label="What changed in this session">
+              <div>
+                <span>Evidence added</span>
+                <strong>{evaluation?.label ?? (lastOutcome === "failure" ? "Needs another pass" : "Partial evidence")}</strong>
+              </div>
+              <div>
+                <span>What to do next</span>
+                <strong>{lastOutcome === "success" ? "Keep the idea available without the page." : `Revisit ${concept.name} before moving on.`}</strong>
+              </div>
+              {evaluation?.criteria.length ? (
+                <div>
+                  <span>Still to show</span>
+                  <strong>{evaluation.criteria.filter((criterion) => !criterion.met).map((criterion) => criterion.label).join(" · ") || "All source-backed criteria met"}</strong>
+                </div>
+              ) : null}
+            </div>
+            {currentSource && currentMaterial ? (
+              <button
+                type="button"
+                className="text-btn session-source-return"
+                onClick={() => void openSource(currentSource.materialId, currentSource.locator)}
+              >
+                Review the source behind this topic <span aria-hidden="true">↗</span>
+              </button>
+            ) : null}
             <motion.button
               type="button"
               className="cta"

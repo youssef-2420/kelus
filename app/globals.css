@@ -5761,6 +5761,11 @@ h3,
 .reroute-cause strong { font-size: var(--text-body-sm); font-weight: 500; }
 .reroute-cause > i { color: var(--color-indigo-ink); font-style: normal; }
 .reroute-view .reroute-lines { margin-top: var(--spacing-24); }
+.session-value-proof { display: grid; gap: var(--spacing-12); max-width: 620px; margin: var(--spacing-24) 0; padding: var(--spacing-16); border: 1px solid var(--color-product-border); background: color-mix(in srgb, var(--color-product-paper) 86%, var(--color-product-frost)); }
+.session-value-proof > div { display: grid; gap: 4px; }
+.session-value-proof span { color: var(--color-product-secondary); font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.session-value-proof strong { font-size: var(--text-body-sm); font-weight: 600; line-height: 1.45; }
+.session-source-return { margin: 0 0 var(--spacing-24); }
 
 @media (max-width: 720px) {
   .site-header.is-session .site-header-inner { flex-wrap: nowrap; padding-top: 0; }
