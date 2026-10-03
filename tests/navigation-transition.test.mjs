@@ -87,6 +87,14 @@ test("session makes the evidence-to-route change explicit", async () => {
   assert.match(session, /session-help-page/);
 });
 
+test("Today measures return visits without changing the study decision", async () => {
+  const today = await source("components/TodayRoute.tsx");
+  const analytics = await source("lib/analytics.ts");
+  assert.match(today, /today_opened/);
+  assert.match(today, /Continue from your last answer/);
+  assert.match(analytics, /today_opened/);
+});
+
 test("how it works content never depends on viewport-triggered visibility", async () => {
   const how = await source("components/HowItWorks.tsx");
   assert.doesNotMatch(how, /whileInView|viewport:\s*\{/);
