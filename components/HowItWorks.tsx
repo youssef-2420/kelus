@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Brain, FileText, Route } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
@@ -59,10 +58,41 @@ function RerouteVisual({ example }: { example: LearningExample }) {
   );
 }
 
+function SourceIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M11 9.5h19a3 3 0 0 1 3 3v22a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3v-22a3 3 0 0 1 3-3Z" stroke="currentColor" strokeWidth="2.4" />
+      <path d="M15 16h14M15 21h10M15 26h8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+      <path d="m30 29 5 5m0 0 5-5m-5 5V22" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function RecallIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M24 11c-6.6-5-15 1.5-12.2 8.8C5.3 23.1 9.7 35 18 34.5c2.4 5.2 9.6 5.2 12 0 8.3.5 12.7-11.4 6.2-14.7C39 12.5 30.6 6 24 11Z" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" />
+      <path d="M24 12v22M18.5 17.5c2.6 0 4.2 1.5 5.5 3.5M29.5 17.5c-2.6 0-4.2 1.5-5.5 3.5M18.5 27c2.6 0 4.2-1.5 5.5-3.5M29.5 27c-2.6 0-4.2-1.5-5.5-3.5" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function RouteIcon() {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M9 34c8-16 12-18 19-18h10" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeDasharray="1 5" />
+      <circle cx="9" cy="34" r="4" stroke="currentColor" strokeWidth="2.4" />
+      <circle cx="28" cy="16" r="4" stroke="currentColor" strokeWidth="2.4" />
+      <path d="m34 10 5 6-5 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M28 30c3.3 0 6 2.7 6 6H22c0-3.3 2.7-6 6-6Z" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 const stages = [
-  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source", Icon: FileText },
-  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall", Icon: Brain },
-  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route", Icon: Route },
+  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source", Icon: SourceIcon },
+  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall", Icon: RecallIcon },
+  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route", Icon: RouteIcon },
 ] as const;
 
 export function HowItWorks() {
@@ -91,7 +121,7 @@ export function HowItWorks() {
           {stages.map(({ number, cue, title, body, detail, Visual, tone, Icon }) => (
             <li key={number} className={styles.chapter} data-tone={tone}>
               <div className={styles.chapterText}>
-                <div className={styles.chapterIcon} aria-hidden="true"><Icon size={30} strokeWidth={1.8} /></div>
+                <div className={styles.chapterIcon} aria-hidden="true"><Icon /></div>
                 <span className={styles.chapterLabel}><span>{number}</span>{cue}</span>
                 <h2>{title}</h2>
                 <p>{body}</p>
