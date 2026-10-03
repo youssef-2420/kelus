@@ -144,6 +144,15 @@ body.is-course-studio .studio-onboarding .destination-form .setup-first-upload i
 .material-source-preview > p { margin: 0; padding: var(--spacing-12) var(--spacing-16); border-top: 1px solid var(--booklet-rule); color: var(--color-slate); font-size: 0.8rem; }
 
 @media (max-width: 900px) {
+  .is-material-first .setup-payoff {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .is-material-first .setup-first-upload {
+    min-height: 180px;
+    padding: var(--spacing-24);
+  }
+
   .material-review-workspace { grid-template-columns: minmax(0, 1fr); }
   .material-source-page { min-height: 160px; max-height: 240px; }
 }
