@@ -61,6 +61,16 @@ test("confirmed material concepts become the existing learning model", () => {
   assert.notEqual(model.concepts[0].examImportance, model.concepts[1].examImportance);
 });
 
+test("an explicit source dependency produces a bounded, page-specific application", () => {
+  const pages = [{ pageNumber: 1, text: "Osmosis\nOsmosis depends on cell membranes and moves water across a selectively permeable membrane." }];
+  const proposals = proposeConceptsFromPages({ materialId: "biology-1", sourceLabel: "Biology lecture", pages });
+  const model = buildConfirmedMaterialModel({ proposals, courseId: "biology", userId: "student", nowIso: "2026-10-03T12:00:00.000Z", pages });
+  const activity = model.learningActivities[0];
+  assert.match(activity.apply.prompt, /depends on cell membranes/i);
+  assert.match(activity.apply.prompt, /Page 1 supports and what remains uncertain/i);
+  assert.match(activity.apply.modelAnswer, /does not establish the exact new outcome/i);
+});
+
 test("explicit prerequisite language creates one directed relationship", () => {
   const pages = [
     {

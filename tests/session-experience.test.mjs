@@ -48,7 +48,12 @@ test("the session executes learn, retrieve, apply and evaluate before updating t
   assert.match(page, /evaluateLearningResponse/);
   assert.doesNotMatch(page, />I can use it</);
   assert.match(page, /setPhase\("reroute"\)/);
-  assert.match(page, /Evidence added/);
+  assert.match(page, /This check/);
+  assert.match(page, /Try again/);
+  assert.match(page, /Continue to \$\{nextConceptName\}/);
+  assert.match(page, /remaining topic order is unchanged/);
+  assert.doesNotMatch(page, /Revisit \$\{concept\.name\} before moving on/);
+  assert.doesNotMatch(page, /percent\(masteryBefore\)/);
   assert.match(page, /Review the source behind this topic/);
   assert.doesNotMatch(page, /answer-comparison|reroute-lines|mastery-reward/);
 });

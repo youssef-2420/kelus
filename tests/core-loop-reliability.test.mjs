@@ -68,6 +68,8 @@ for (const [subject, name, explanation, expectedPrompt] of subjectCases) {
     const model = buildConfirmedMaterialModel({ proposals, courseId: "course-1", userId: "user-1", nowIso, pages });
     assert.equal(model.concepts[0].name, name);
     assert.match(model.learningActivities[0].apply.prompt, expectedPrompt);
+    assert.match(model.learningActivities[0].apply.prompt, new RegExp(name.split(" ")[0], "i"));
+    assert.match(model.learningActivities[0].apply.prompt, /Do not claim a specific outcome the page does not establish/);
     assert.match(model.learningActivities[0].learn.explanation, new RegExp(name.split(" ")[0], "i"));
     assert.deepEqual(model.learningActivities[0].sourceReferences[0], {
       materialId: `material-${subject}`,

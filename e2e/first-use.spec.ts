@@ -207,10 +207,24 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
   await page.getByRole("button", { name: /Check my thinking/ }).click();
   await page.getByRole("button", { name: "Mark this" }).click();
-  await expect(page.getByRole("heading", { name: "Marked." })).toBeVisible();
-  await expect(page.getByRole("status").filter({ hasText: /remaining order/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Needs another attempt." })).toBeVisible();
+  await expect(page.getByText(/first check/)).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /remaining topic order/ })).toBeVisible();
+  for (const width of [320, 375, 414]) {
+    await page.setViewportSize({ width, height: 844 });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  }
+  await page.screenshot({ path: "/tmp/kelus-result-mobile.png", fullPage: true });
+  await page.getByRole("button", { name: /Try again/ }).click();
+  await expect(page.getByLabel(/Close the page\. Write it in your own words/)).toHaveValue("");
+  await page.getByLabel(/Close the page\. Write it in your own words/).fill("I still cannot explain it.");
   await page.getByRole("button", { name: /Continue/ }).click();
-  await expect(page.getByRole("heading", { name: /^(Updated|Kept)\.$/ })).toBeVisible();
+  await page.getByLabel(/Same idea, new situation/).fill("I need to review the source first.");
+  await page.getByRole("button", { name: /Check my thinking/ }).click();
+  await page.getByRole("button", { name: "Mark this" }).click();
+  await expect(page.getByText(/2 checks/)).toBeVisible();
+  await page.getByRole("button", { name: /Continue to/ }).click();
+  await expect(page.getByRole("heading", { name: /^(Updated\.|Trace|Make|Build)/ })).toBeVisible();
   await expect(page.locator(".reroute-lines")).toHaveCount(0);
   await expect(page.locator(".reroute-cause")).toHaveCount(0);
   await page.getByRole("button", { name: "Close", exact: true }).click();

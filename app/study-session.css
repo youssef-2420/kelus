@@ -288,6 +288,75 @@ body.is-session-booklet.is-booklet-system .answer-pages section:nth-child(even) 
   background: var(--color-hero-orange-wash);
 }
 
+/* Keep the decision, evidence and next action together after a mark. */
+body.is-session-booklet.is-booklet-system .study-mark-moment > h1 {
+  max-width: 15ch;
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  line-height: 1.06;
+}
+
+body.is-session-booklet.is-booklet-system .study-mark-summary {
+  margin: 0;
+  color: var(--color-slate);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+body.is-session-booklet.is-booklet-system .study-mark-moment .session-value-proof {
+  width: min(100%, 620px);
+  margin-block: var(--spacing-8);
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: transparent;
+  gap: 0;
+}
+
+body.is-session-booklet.is-booklet-system .session-value-proof > div {
+  grid-template-columns: minmax(112px, 0.34fr) minmax(0, 1fr);
+  gap: var(--spacing-16);
+  padding: var(--spacing-16) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+body.is-session-booklet.is-booklet-system .session-value-proof span {
+  color: var(--color-slate);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body.is-session-booklet.is-booklet-system .session-value-proof strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+body.is-session-booklet.is-booklet-system .study-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-16);
+  margin-top: var(--spacing-16);
+}
+
+body.is-session-booklet.is-booklet-system .study-result-actions .text-btn {
+  min-height: 48px;
+  color: var(--color-kelus);
+  font-weight: 600;
+}
+
+body.is-session-booklet.is-booklet-system .study-result-actions button span {
+  margin-left: 0.4em;
+}
+
+body.is-session-booklet.is-booklet-system .session-source-compare {
+  margin: 0;
+  min-height: 44px;
+  color: var(--color-hero-orange);
+  font-weight: 600;
+}
+
 body.is-session-booklet.is-booklet-system .session-sources,
 body.is-session-booklet.is-booklet-system .session-source-panel {
   border-color: var(--line);
@@ -304,6 +373,12 @@ body.is-session-booklet.is-booklet-system .study-context :is(button, summary):fo
 }
 
 @media (max-width: 720px) {
+  body.is-session-booklet.is-booklet-system main.study-shell[data-phase="evaluate"] .session-workspace-source,
+  body.is-session-booklet.is-booklet-system main.study-shell[data-phase="result"] .session-workspace-source,
+  body.is-session-booklet.is-booklet-system main.study-shell[data-phase="reroute"] .session-workspace-source {
+    display: none;
+  }
+
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] {
     width: 100%;
     min-height: calc(100dvh - 64px);
@@ -334,6 +409,7 @@ body.is-session-booklet.is-booklet-system .study-context :is(button, summary):fo
 
   .study-phase-track { gap: 4px; }
   .study-phase-track li { font-size: 0.68rem; }
+  body.is-session-booklet.is-booklet-system .session-value-proof > div { grid-template-columns: 1fr; gap: 4px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
