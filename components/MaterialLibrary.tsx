@@ -556,10 +556,15 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           <summary>Add a page</summary>
           <section className="material-ingest is-embedded" aria-labelledby="add-material-title">
             <div className="material-ingest-title">
-              <h2 id="add-material-title">Syllabus or lecture PDF</h2>
-              <p className="material-ingest-lede">You confirm every topic before the route changes.</p>
+              <h2 id="add-material-title">Add your course source</h2>
+              <p className="material-ingest-lede">Kelus reads the pages, suggests topics, and waits for your confirmation before changing your route.</p>
             </div>
             <div className="material-role-field">
+            <ol className="material-next-steps" aria-label="What happens next">
+              <li><strong>Read</strong><span>Your pages stay with this exam.</span></li>
+              <li><strong>Review</strong><span>You choose the topics that matter.</span></li>
+              <li><strong>Route</strong><span>Your Today plan follows what you confirm.</span></li>
+            </ol>
               <label htmlFor="material-role">This source is</label>
               <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
                 {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -574,8 +579,8 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
               onDrop={drop}
             >
               <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
-              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a PDF"}</strong>
-              <span>{busy && statusMessage ? statusMessage : "or drop one here · up to 20 MB · clear text works fastest"}</span>
+              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a course PDF"}</strong>
+              <span>{busy && statusMessage ? statusMessage : "or drop one here · text-based PDFs work fastest"}</span>
             </label>
             <p className="material-ingest-hint">Text PDFs work best. Kelus can read clear English scans on this device; you review every proposed topic before it changes your route.</p>
             {busy && workingStep ? (
@@ -604,9 +609,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
               <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" disabled={busy} /></div>
               <button className="cta" type="submit" disabled={!url.trim() || busy}>Save bookmark</button>
             </form>
-            <p className="material-link-hint">
-              Bookmarks stay on your shelf for quick open. They do not become concepts — upload a PDF for that.
-            </p>
+            <p className="material-link-hint">Bookmarks stay on your shelf for quick open. Upload a PDF when you want Kelus to propose topics.</p>
             </details>
             {errorKind === "ocr" ? (
               <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">

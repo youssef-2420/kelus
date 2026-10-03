@@ -5664,6 +5664,39 @@ h3,
 .destination-form .setup-sample .kicker { color: var(--color-smoke); }
 .destination-form .setup-sample-cta { color: var(--color-indigo-ink); font-weight: 600; }
 
+.material-next-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-12);
+  margin: var(--spacing-20) 0;
+  padding: 0;
+  list-style: none;
+}
+
+.material-next-steps li {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: var(--spacing-12);
+  background: var(--color-product-paper);
+  border: 1px solid var(--color-frost);
+}
+
+.material-next-steps strong {
+  color: var(--color-product-ink);
+  font-size: 13px;
+}
+
+.material-next-steps span {
+  color: var(--color-steel);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+@media (max-width: 640px) {
+  .material-next-steps { grid-template-columns: 1fr; }
+}
+
 .site-header.is-session .site-header-inner { min-height: 64px; }
 .site-session-label {
   margin: 0 auto;
