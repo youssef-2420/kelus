@@ -52,6 +52,7 @@ function CompleteBody() {
   const strengthenedNames = summary?.strengthenedIds.slice(0, 2).map(name) ?? [];
   const weakNames = summary?.stillWeakIds.slice(0, 2).map(name) ?? [];
   const nextAllocation = nextRoute?.allocations[0];
+  const nextMinutes = nextAllocation?.minutes ?? null;
   const nextReason = nextAllocation?.reasons.includes("PREREQUISITE_GAP")
     ? "It unlocks another topic."
     : nextAllocation?.reasons.includes("REVIEW_DUE") || nextAllocation?.reasons.includes("RETENTION_FADING")
@@ -146,13 +147,13 @@ function CompleteBody() {
             <div>
               <span>After</span>
               <strong>{nextStopName ? `${nextStopName} is first next` : "Your route has fresh evidence"}</strong>
-              <p>{nextReason}</p>
+              <p>{nextMinutes ? `A focused ${nextMinutes}-minute pass. ${nextReason}` : nextReason}</p>
             </div>
           </div>
         </section>
         {nextStopName ? (
           <p className="complete-next">
-            Next <strong>{nextStopName}</strong><span>{nextReason}</span>
+            Next <strong>{nextStopName}</strong><span>{nextMinutes ? `${nextMinutes} minutes · ` : ""}{nextReason}</span>
           </p>
         ) : null}
 

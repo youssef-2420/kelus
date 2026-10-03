@@ -199,7 +199,7 @@ test("pricing conversion loop is linked from product surfaces", async () => {
   assert.match(pricing, /\/month/);
   assert.match(pricing, /FoundingCta|WaitlistForm/);
   assert.match(pricing, /Optional free sign-in to sync across devices/);
-  assert.match(pricing, /Priority access to new study features/);
+  assert.match(pricing, /More course space and richer answer feedback/);
   assert.doesNotMatch(pricing, /Cross-device course and learning-state sync/);
   assert.match(footer, /\/pricing/);
   assert.match(sitemap, /\/pricing\//);
@@ -228,8 +228,7 @@ test("materials stay honest about PDF OCR limits and bookmark-only links", async
     source("components/MaterialLibrary.tsx"),
     source("app/map/page.tsx"),
   ]);
-  assert.match(materials, /Clear, text-based PDFs work fastest/);
-  assert.match(materials, /first 8 (weak )?pages|first 12 pages/);
+  assert.match(materials, /Digital PDFs with selectable text work fastest/);
   assert.match(materials, /Bookmarks stay on your shelf/);
   assert.match(materials, /Save bookmark/);
   assert.match(materials, /Bookmark ·/);
