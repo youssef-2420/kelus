@@ -17,6 +17,51 @@ body.is-course-studio .studio-onboarding .setup-stage-content {
   gap: 0;
 }
 
+body.is-course-studio .studio-onboarding .setup-stage-content .destination-support {
+  margin-block: var(--spacing-12) var(--spacing-24);
+}
+
+body.is-course-studio .studio-onboarding .setup-stage-content fieldset {
+  display: grid;
+  gap: 0;
+  margin: var(--spacing-24) 0 0;
+  padding: 0;
+  border: 0;
+}
+
+body.is-course-studio .studio-onboarding .setup-stage-content fieldset legend {
+  margin-bottom: var(--spacing-16);
+  font-size: 1.05rem;
+}
+
+body.is-course-studio .studio-onboarding .setup-section {
+  padding-block: var(--spacing-20);
+  border-top: 1px solid var(--studio-hairline);
+}
+
+body.is-course-studio .studio-onboarding .setup-source-section {
+  padding-top: var(--spacing-16);
+}
+
+body.is-course-studio .studio-onboarding .setup-exam-section {
+  display: grid;
+  gap: var(--spacing-24);
+}
+
+body.is-course-studio .studio-onboarding .setup-rhythm-section .destination-support {
+  margin: 0 0 var(--spacing-12);
+}
+
+body.is-course-studio .studio-onboarding .setup-rhythm-section .destination-support:last-child {
+  max-width: 42ch;
+  margin: var(--spacing-12) 0 0;
+  font-size: 0.82rem;
+}
+
+body.is-course-studio .studio-onboarding .setup-section .setup-selected-file {
+  margin: 0;
+}
+
 body.is-course-studio .studio-onboarding .destination-page.is-material-first .destination-form > .kicker {
   color: var(--color-hero-orange);
 }
