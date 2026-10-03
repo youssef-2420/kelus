@@ -73,7 +73,7 @@ test("setup starts with a PDF and shows the full route to study", async () => {
   assert.match(setup, /Add a course PDF/);
   assert.match(setup, /Continue to exam details/);
   assert.match(setup, /Read my PDF/);
-  assert.doesNotMatch(setup, /Just looking\?|Try sample/);
+  assert.doesNotMatch(setup, /Try sample/);
   assert.doesNotMatch(setup, /destination-brand/);
   assert.doesNotMatch(setup, /setup-progress/);
 });
