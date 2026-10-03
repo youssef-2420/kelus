@@ -1,6 +1,3 @@
-/* Hallmark · pre-emit critique: P5 H4 E4 S5 R5 V4
- * studied-DNA: layered paper illustration; Kelus booklet palette, not a Figma pixel copy.
- */
 .section {
   border-top: 1px solid var(--color-frost);
   background: var(--paper);
@@ -30,21 +27,26 @@
 }
 
 .spread {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
   border-top: 1px solid var(--color-frost);
   border-bottom: 1px solid var(--color-frost);
 }
 
 .stage {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 6rem);
   min-width: 0;
-  padding: 0 0 1.75rem;
+  padding: clamp(2rem, 4vw, 3rem) 0;
 }
 
-.stage + .stage { border-left: 1px solid var(--color-frost); }
+.stage + .stage { border-top: 1px solid var(--color-frost); }
+.stage:nth-child(even) { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
+.stage:nth-child(even) .art { grid-column: 1; grid-row: 1; }
+.stage:nth-child(even) .caption { grid-column: 2; grid-row: 1; }
 
 .art {
-  height: clamp(14rem, 20vw, 19rem);
+  min-height: clamp(18rem, 32vw, 25rem);
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -56,16 +58,14 @@
 
 .drawing {
   display: block;
-  width: min(100%, 24rem);
+  width: min(100%, 34rem);
   height: auto;
   max-height: 100%;
 }
 
 .caption {
-  display: flex;
-  align-items: baseline;
-  gap: 1rem;
-  padding: 1.4rem 1.25rem 0;
+  max-width: 27rem;
+  padding: 0 clamp(0rem, 2vw, 1.5rem);
 }
 
 .number,
@@ -77,20 +77,27 @@
   letter-spacing: 0.06em;
 }
 
-.number { flex: none; color: var(--color-slate); }
-.caption h3 {
-  margin: 0 0 0.35rem;
-  font-size: clamp(1.075rem, 1.4vw, 1.25rem);
+.number {
+  display: block;
+  color: var(--color-kelus);
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
+  letter-spacing: 0.08em;
+  margin-bottom: 1.25rem;
+}
+.caption h3 {
+  margin: 0 0 0.65rem;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
 }
 .caption p {
-  max-width: 24ch;
+  max-width: 30ch;
   margin: 0;
   color: var(--color-slate);
-  font-size: 0.925rem;
-  line-height: 1.45;
+  font-size: clamp(1rem, 1.4vw, 1.125rem);
+  line-height: 1.5;
 }
 .disclaimer {
   margin: 1.25rem 0 0;
@@ -122,10 +129,14 @@
 
 @media (max-width: 760px) {
   .section { padding-inline: 1rem; }
-  .spread { grid-template-columns: minmax(0, 1fr); }
-  .stage { padding-bottom: 1.5rem; }
-  .stage + .stage { border-left: 0; border-top: 1px solid var(--color-frost); }
-  .art { height: clamp(14rem, 65vw, 20rem); }
-  .caption { padding: 1.25rem 0.25rem 0; }
+  .stage,
+  .stage:nth-child(even) { grid-template-columns: minmax(0, 1fr); gap: 0; padding: 1.5rem 0 2rem; }
+  .stage .art,
+  .stage:nth-child(even) .art { grid-column: 1; grid-row: 1; }
+  .stage .caption,
+  .stage:nth-child(even) .caption { grid-column: 1; grid-row: 2; }
+  .art { min-height: 0; aspect-ratio: 1.5; }
+  .caption { padding: 1.5rem 0.25rem 0; }
+  .number { margin-bottom: 0.75rem; }
   .caption p { max-width: 36ch; }
 }
