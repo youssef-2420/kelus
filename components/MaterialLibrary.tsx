@@ -790,7 +790,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
                         aria-label={`Concept name from ${proposal.locator}`}
                       />
                       <small>{analysis.material.title} · {proposal.locator}</small>
-                      <span className="proposal-source-excerpt">“{proposal.sourceExcerpt}”</span>
+                      <span className="proposal-source-excerpt">“{proposal.sourceExcerpt.slice(0, 260)}{proposal.sourceExcerpt.length > 260 ? "…" : ""}”</span>
                     </span>
                   </div>
                 </li>
