@@ -2313,7 +2313,7 @@ button, input, textarea { font: inherit; }
   .destination-pair { grid-template-columns: minmax(0, 1fr); gap: var(--space-product-xl); }
   .time-choices { grid-template-columns: 1fr 1fr; }.time-choices label:nth-child(2) { border-right: 0; }.time-choices label:nth-child(-n+2) { border-bottom: 1px solid var(--color-product-border); }
   .destination-actions { align-items: stretch; flex-direction: column-reverse; }.destination-actions .cta { width: 100%; min-width: 0; max-width: 100%; }
-  body.is-booklet-system .is-marked-setup .destination-actions { margin-inline: 0; padding-inline: 0; }
+  body.is-booklet-system .is-marked-setup .destination-actions { margin-inline: 0 !important; padding-inline: 0 !important; }
   .diagnosis-list li { grid-template-columns: minmax(0, 1fr); padding: 15px 0; }.diagnosis-list li > div { display: grid; grid-template-columns: 1fr 1fr; }.diagnosis-list button { border-color: var(--color-product-border); }
   .diagnosis-continue { float: none; width: 100%; }
   .destination-route { display: none; }
