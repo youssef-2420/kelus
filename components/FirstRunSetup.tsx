@@ -211,15 +211,6 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
             {submitting ? "Setting up…" : stage === "upload" ? "Continue to exam details" : "Read my PDF"} <span aria-hidden="true">→</span>
           </button>
         </div>
-        <aside className="setup-sample" aria-label="Fastest way to try Kelus">
-          <div>
-            <p className="kicker">See the payoff first</p>
-            <p>Open a finished sample course to see how Kelus turns confirmed topics into a revision route.</p>
-          </div>
-          <button type="button" className="text-btn setup-sample-cta" onClick={onUseDemo} disabled={submitting}>
-            Try sample (~1 min) <span aria-hidden="true">→</span>
-          </button>
-        </aside>
       </form>
     </div>
   );
