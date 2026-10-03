@@ -444,6 +444,10 @@ export function isSourceBackedProposal(proposal: ProposedConcept) {
     && !/^Suggested from the file title/i.test(excerpt);
 }
 
+export function proposalConfidence(proposal: ProposedConcept): "high" | "review" {
+  return isSourceBackedProposal(proposal) ? "high" : "review";
+}
+
 export function buildConfirmedMaterialModel(input: {
   proposals: ProposedConcept[];
   courseId: string;

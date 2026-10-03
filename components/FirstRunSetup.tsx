@@ -107,6 +107,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
               <span>{file ? `${(file.size / 1_000_000).toFixed(1)} MB · Choose another file if needed` : "or drop it here"}</span>
             </label>
             <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB. Selectable text works best; Kelus can try reading clear English scans. Videos and web links can be saved later, but don’t create topics.</p>
+            <p className="setup-privacy-note">Your course stays on this device unless you choose free sign-in to sync it across devices. You review every proposed topic before it changes your route.</p>
             {file ? <p className="setup-file-ready" role="status" aria-live="polite"><strong>Ready to read</strong><span>{file.name} · {(file.size / 1_000_000).toFixed(1)} MB</span></p> : null}
           </>
         ) : (

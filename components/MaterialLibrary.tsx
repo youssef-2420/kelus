@@ -19,7 +19,7 @@ import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 function focusPhaseHeading(node: HTMLHeadingElement | null) {
   node?.focus();
 }
-import { buildConfirmedMaterialModel, isSourceBackedProposal, proposeConceptsFromPages } from "@/domain/material-intelligence";
+import { buildConfirmedMaterialModel, isSourceBackedProposal, proposalConfidence, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
   addPdfMaterial,
@@ -494,6 +494,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
     setSelectedIds((current) => {
       const next = new Set(current);
       if (next.has(id)) next.delete(id); else next.add(id);
+      trackEvent({ name: "concept_review_updated", action: next.has(id) ? "selected" : "removed" });
       return next;
     });
   }
@@ -790,6 +791,11 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
                         aria-label={`Concept name from ${proposal.locator}`}
                       />
                       <small>{analysis.material.title} · {proposal.locator}</small>
+                      <small className={`proposal-confidence is-${proposalConfidence(proposal)}`}>
+                        {proposalConfidence(proposal) === "high"
+                          ? "High confidence · grounded in page text"
+                          : "Review carefully · inferred from limited source text"}
+                      </small>
                       <span className="proposal-source-excerpt">“{proposal.sourceExcerpt.slice(0, 260)}{proposal.sourceExcerpt.length > 260 ? "…" : ""}”</span>
                     </span>
                   </div>

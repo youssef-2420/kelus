@@ -62,11 +62,12 @@ export default function PricingPage() {
                   $4.99<span>/month</span>
                 </p>
               </div>
-              <p className="pricing-offer-lede">For students who want more support as Kelus grows.</p>
+              <p className="pricing-offer-lede">For students who want deeper feedback and more room for their courses.</p>
               <ul>
                 <li>Everything in Free{syncReady ? ", including optional sign-in sync" : ""}</li>
-                <li>Priority access to new study features</li>
-                <li>Email support while subscribed</li>
+                <li>More course space and richer answer feedback</li>
+                <li>Priority access to new revision features</li>
+                <li>Direct email support while subscribed</li>
                 <li>Monthly billing; no annual commitment</li>
               </ul>
               <FoundingCta source="pricing" />
