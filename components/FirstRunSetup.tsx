@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import type { SetupInput } from "@/lib/setup";
 import { trackEvent } from "@/lib/analytics";
 import { isPdfFile } from "@/domain/materials";
@@ -22,6 +23,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
   const [submitting, setSubmitting] = useState(false);
   const [minimumDate] = useState(() => new Date(Date.now() + 86_400_000).toISOString().slice(0, 10));
   const setupTracked = useRef(false);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (setupTracked.current) return;
@@ -85,14 +87,31 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
     <div className="destination-page is-booklet-product is-marked-setup is-material-first">
       <form className="destination-form" onSubmit={submit} noValidate>
         {stage === "upload" ? (
-          <>
+          <motion.div
+            key="upload-stage"
+            className="setup-stage-content"
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.42 }}
+          >
             <p className="kicker">First, your material</p>
             <h1 className="destination-page-title">Add a course PDF.</h1>
             <p className="destination-support">Start with a syllabus, lecture slides, or notes. Kelus will suggest topics from the pages; you decide what belongs in your exam.</p>
             <ul className="setup-payoff" aria-label="What Kelus will create">
-              <li><strong>Topic cards</strong><span>Turn the pages into a focused exam map.</span></li>
-              <li><strong>Weak spots</strong><span>Find what needs your attention first.</span></li>
-              <li><strong>Today’s route</strong><span>Get one useful study action to start.</span></li>
+              {[
+                ["Topic cards", "Turn the pages into a focused exam map."],
+                ["Weak spots", "Find what needs your attention first."],
+                ["Today’s route", "Get one useful study action to start."],
+              ].map(([title, detail], index) => (
+                <motion.li
+                  key={title}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={reduceMotion ? { duration: 0.1 } : { type: "spring", bounce: 0, duration: 0.36, delay: 0.08 + index * 0.05 }}
+                >
+                  <strong>{title}</strong><span>{detail}</span>
+                </motion.li>
+              ))}
             </ul>
             <label
               className={`setup-first-upload${dragging ? " is-dragging" : ""}${file ? " has-file" : ""}`}
@@ -109,9 +128,15 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
             <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB. Digital PDFs with selectable text work best. Videos and web links can be saved later, but don’t create topics.</p>
             <p className="setup-privacy-note">Your course stays on this device unless you choose free sign-in to sync it across devices. You review every proposed topic before it changes your route.</p>
             {file ? <p className="setup-file-ready" role="status" aria-live="polite"><strong>Ready to read</strong><span>{file.name} · {(file.size / 1_000_000).toFixed(1)} MB</span></p> : null}
-          </>
+          </motion.div>
         ) : (
-          <>
+          <motion.div
+            key="exam-stage"
+            className="setup-stage-content"
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.42 }}
+          >
         <p className="kicker">Next, your exam</p>
         <h1 className="destination-page-title">Set your exam</h1>
         <p className="destination-support">Your PDF is selected. Add the exam date so Kelus can prioritize the topics you confirm.</p>
@@ -209,7 +234,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
           </div>
           <p id="course-support" className="destination-support">Use the names you use at school. Your PDF supplies the topics next.</p>
         </fieldset>
-          </>
+          </motion.div>
         )}
         <p id="setup-error" className="setup-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error || "\u00a0"}</p>
         <div className="destination-actions">
