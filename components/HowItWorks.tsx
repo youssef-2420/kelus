@@ -121,14 +121,48 @@ export function HowItWorks() {
           {stages.map(({ number, cue, title, body, detail, Visual, tone, Icon }) => (
             <li key={number} className={styles.chapter} data-tone={tone}>
               <div className={styles.chapterText}>
-                <div className={styles.chapterIcon} aria-hidden="true"><Icon /></div>
-                <span className={styles.chapterLabel}><span>{number}</span>{cue}</span>
-                <h2>{title}</h2>
-                <p>{body}</p>
-                <span className={styles.chapterDetail}>{detail}</span>
+                <motion.div
+                  className={styles.chapterIcon}
+                  aria-hidden="true"
+                  initial={reduceMotion ? false : { opacity: 0, scale: 0.82, y: 8 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.08, duration: 0.45, ease: kelusEase }}
+                >
+                  <Icon />
+                </motion.div>
+                <motion.span
+                  className={styles.chapterLabel}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.14, duration: 0.4, ease: kelusEase }}
+                >
+                  <span>{number}</span>{cue}
+                </motion.span>
+                <motion.h2
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.2, duration: 0.48, ease: kelusEase }}
+                >
+                  {title}
+                </motion.h2>
+                <motion.p
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.26, duration: 0.48, ease: kelusEase }}
+                >
+                  {body}
+                </motion.p>
+                <motion.span
+                  className={styles.chapterDetail}
+                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: reduceMotion ? 0 : 0.32, duration: 0.42, ease: kelusEase }}
+                >
+                  {detail}
+                </motion.span>
               </div>
               <AnimatePresence initial={false} mode="sync">
-                <motion.div key={`${example.id}-${number}`} className={styles.visualWrap} initial={reduceMotion ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={reduceMotion ? undefined : { opacity: 0 }} transition={{ duration: reduceMotion ? 0 : kelusDuration.normal, ease: kelusEase }}>
+                <motion.div key={`${example.id}-${number}`} className={styles.visualWrap} initial={reduceMotion ? false : { opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={reduceMotion ? undefined : { opacity: 0, y: -8 }} transition={{ duration: reduceMotion ? 0 : kelusDuration.normal, ease: kelusEase }}>
                   <Visual example={example} />
                 </motion.div>
               </AnimatePresence>
