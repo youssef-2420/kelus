@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 function biologyPdf() {
   const text = [
@@ -28,6 +28,53 @@ function biologyPdf() {
   pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`;
   return Buffer.from(pdf);
 }
+
+async function expectNoOverlap(page: Page, first: string, second: string) {
+  const firstBox = await page.locator(first).boundingBox();
+  const secondBox = await page.locator(second).boundingBox();
+  expect(firstBox).not.toBeNull();
+  expect(secondBox).not.toBeNull();
+  if (!firstBox || !secondBox) return;
+  const overlaps = firstBox.x < secondBox.x + secondBox.width
+    && firstBox.x + firstBox.width > secondBox.x
+    && firstBox.y < secondBox.y + secondBox.height
+    && firstBox.y + firstBox.height > secondBox.y;
+  expect(overlaps, `${first} overlaps ${second}`).toBe(false);
+}
+
+async function expectNoHorizontalOverflow(page: Page) {
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+}
+
+test("first-use hierarchy stays readable from upload through exam details", async ({ page }) => {
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 768, height: 900 },
+    { width: 1280, height: 900 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/today");
+    await expect(page.locator(".studio-onboarding")).toBeVisible();
+    await expect(page.locator(".setup-first-upload")).toBeVisible();
+    await expect(page.locator(".setup-payoff li")).toHaveCount(3);
+    await expectNoOverlap(page, ".studio-onboarding-steps", ".destination-page-title");
+    await expectNoHorizontalOverflow(page);
+  }
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({
+    name: "cell-biology-lecture.pdf",
+    mimeType: "application/pdf",
+    buffer: biologyPdf(),
+  });
+  await page.getByRole("button", { name: /Continue to exam details/ }).click();
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
+  await expect(page.getByRole("heading", { name: "Set your exam" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Read my PDF/ })).toBeVisible();
+  await expectNoOverlap(page, ".studio-onboarding-steps", ".destination-page-title");
+  await expectNoHorizontalOverflow(page);
+});
 
 test("first PDF survives a refresh before topics are confirmed", async ({ page }) => {
   await page.goto("/today");
