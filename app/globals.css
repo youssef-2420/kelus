@@ -4634,6 +4634,11 @@ h3,
   color: var(--color-steel);
   line-height: 1.55;
 }
+.concept-review-selection {
+  margin: var(--spacing-16) 0;
+  color: var(--color-steel);
+  font-size: var(--text-body-sm);
+}
 
 .concept-proposal-list {
   margin: 0;
@@ -4677,6 +4682,7 @@ h3,
 .concept-proposal-list label > span:last-child { min-width: 0; display: grid; gap: 3px; }
 .concept-proposal-list strong { color: var(--color-midnight-ink); font-weight: 600; }
 .concept-proposal-list small { color: var(--color-steel); overflow-wrap: anywhere; }
+.proposal-source-excerpt { color: var(--color-steel); font-size: var(--text-caption); line-height: 1.45; overflow-wrap: anywhere; }
 
 .proposal-name-input {
   box-sizing: border-box;
