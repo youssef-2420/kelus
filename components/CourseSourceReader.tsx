@@ -107,7 +107,7 @@ export function CourseSourceReader({ material, initialPage = 1, concealed = fals
         ) : !material ? (
           <div className="core-source-state"><span aria-hidden="true">↗</span><strong>Your course, beside your route.</strong><p>Add a PDF and Kelus will keep the original page within reach while you revise.</p><Link href="/today?section=materials">Add a source →</Link></div>
         ) : material.id.startsWith("material-demo-") ? (
-          <div className="core-source-state"><span aria-hidden="true">↗</span><strong>Sample course, no uploaded PDF.</strong><p>This example shows how the route works. Add your own course PDF to read the original pages beside it.</p><Link href="/today?section=materials">Add your PDF →</Link></div>
+          <div className="core-source-state"><strong>Course source unavailable</strong><p>Add your course PDF to read the original pages beside your route.</p><Link href="/today?section=materials">Add a source →</Link></div>
         ) : material.storage === "url" ? (
           <div className="core-source-state"><span aria-hidden="true">↗</span><strong>{material.title}</strong><p>This source was saved as a link. Open the original in a new tab.</p>{material.sourceUrl ? <a href={material.sourceUrl} target="_blank" rel="noreferrer">Open source ↗</a> : null}</div>
         ) : (

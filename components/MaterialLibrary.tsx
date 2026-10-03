@@ -754,6 +754,9 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
                   : null}
               </p>
             </header>
+            <p className="concept-review-selection" role="status" aria-live="polite">
+              {selectedIds.size} selected · Select a topic to inspect the exact text Kelus used.
+            </p>
             <div className="material-review-workspace">
             <aside className="material-source-preview" aria-label="Original course PDF">
               <div className="material-source-preview-head">
@@ -787,6 +790,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
                         aria-label={`Concept name from ${proposal.locator}`}
                       />
                       <small>{analysis.material.title} · {proposal.locator}</small>
+                      <span className="proposal-source-excerpt">“{proposal.sourceExcerpt}”</span>
                     </span>
                   </div>
                 </li>
