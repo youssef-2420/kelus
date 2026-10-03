@@ -273,6 +273,7 @@ function SessionBody() {
   const currentMaterial = materials.find((item) => item.id === currentSource?.materialId)
     ?? materials.find((item) => item.courseId === concept.courseId && item.storage === "local")
     ?? null;
+  const hasReadableSource = currentMaterial?.storage === "local" && !currentMaterial.id.startsWith("material-demo-");
   const sourcePage = Number(currentSource?.locator?.match(/\d+/)?.[0] ?? 1);
   const recallWithoutLooking = (["retrieve", "apply"] as Phase[]).includes(phase) && !sourceRevealed;
 
@@ -328,7 +329,7 @@ function SessionBody() {
   }
 
   return (
-    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}`}>
+    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}`}>
       <div className="study-context is-folio">
         <span className="study-context-title">
           <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
@@ -379,9 +380,9 @@ function SessionBody() {
         </nav>
         <div className="session-rail-topic"><span>NOW STUDYING</span><b>{concept.name}</b><small>{index + 1} of {total} topics</small></div>
       </aside>
-      <div className="session-workspace-source">
-        <CourseSourceReader key={`${currentMaterial?.id ?? "none"}-${sourcePage}`} material={currentMaterial} initialPage={sourcePage} concealed={recallWithoutLooking} onShowSource={() => setSourceRevealed(true)} />
-      </div>
+      {hasReadableSource ? <div className="session-workspace-source">
+        <CourseSourceReader key={`${currentMaterial.id}-${sourcePage}`} material={currentMaterial} initialPage={sourcePage} concealed={recallWithoutLooking} onShowSource={() => setSourceRevealed(true)} />
+      </div> : null}
       <ol className="study-phase-track" aria-label="Study steps">
         {(["learn", "retrieve", "apply", "evaluate"] as const).map((step, stepIndex) => {
           const currentIndex = phase === "result" || phase === "reroute" ? 3 : (["learn", "retrieve", "apply", "evaluate"] as const).indexOf(phase);

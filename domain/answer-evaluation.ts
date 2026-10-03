@@ -46,8 +46,16 @@ function coverage(answer: string, expected: string) {
 }
 
 function contradictionDetected(answer: string, expected: string) {
-  const negation = /\b(?:not|never|no|cannot|doesn't|does not)\b/i;
-  return coverage(answer, expected) >= 0.25 && negation.test(answer) && !negation.test(expected);
+  // A free-floating "not" is not evidence of a reversed claim: "not immediately"
+  // can be the correct explanation of a delayed effect. Only flag an explicit
+  // negation of a relation the reference actually asserts.
+  if (coverage(answer, expected) < 0.25) return false;
+  const relation = /\b(?:do\s+not|does\s+not|did\s+not|doesn't|don't|didn't|never)\s+(lower|reduce|increase|raise|cause|require)s?\b/gi;
+  for (const match of answer.matchAll(relation)) {
+    const predicate = normalizeToken(match[1].toLowerCase());
+    if (evidenceTokens(expected).includes(predicate)) return true;
+  }
+  return false;
 }
 
 export type AnswerCriterionResult = { id: string; label: string; met: boolean; evidence: string[] };
@@ -74,7 +82,8 @@ export function evaluateLearningResponse(input: {
   const applicationWords = evidenceTokens(input.applicationAnswer).length;
   const matchedRetrieve = coverage(input.retrieveAnswer, input.retrieveModelAnswer);
   const matchedApply = coverage(input.applicationAnswer, input.applicationModelAnswer);
-  const contradiction = contradictionDetected(`${input.retrieveAnswer} ${input.applicationAnswer}`, `${input.retrieveModelAnswer} ${input.applicationModelAnswer}`);
+  const contradiction = contradictionDetected(input.retrieveAnswer, input.retrieveModelAnswer)
+    || contradictionDetected(input.applicationAnswer, input.applicationModelAnswer);
   const criteria = (input.assessment?.criteria ?? []).map((criterion) => {
     const answer = criterion.appliesTo === "retrieve" ? input.retrieveAnswer : criterion.appliesTo === "apply" ? input.applicationAnswer : `${input.retrieveAnswer} ${input.applicationAnswer}`;
     const evidence = matchedTerms(answer, criterion.terms);

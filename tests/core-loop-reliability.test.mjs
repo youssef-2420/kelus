@@ -115,6 +115,17 @@ test("structured evaluation accepts a valid paraphrase and rejects a contradicto
   assert.equal(contradiction.contradiction, true);
 });
 
+test("a delayed effect is not mistaken for a contradiction because it says not immediately", () => {
+  const evaluation = evaluateLearningResponse({
+    retrieveAnswer: "A higher interest rate makes borrowing more expensive, so households and firms spend less. That lowers aggregate demand and eases price pressure, usually after a delay.",
+    applicationAnswer: "People and firms do not immediately refinance or change spending. Existing contracts and budgets delay the response, so lower demand reaches prices only after a lag.",
+    retrieveModelAnswer: "It raises borrowing costs, restrains demand and investment, and can reduce upward pressure on prices.",
+    applicationModelAnswer: "Loans, contracts, and spending plans adjust gradually, so tighter financial conditions pass through to demand and prices with a lag.",
+  });
+  assert.equal(evaluation.contradiction, false);
+  assert.notEqual(evaluation.outcome, "failure");
+});
+
 test("one student journey reaches a source-backed route and updates it from evaluated evidence", () => {
   const base = createLearnerSnapshot({
     courseName: "Molecular Biology",

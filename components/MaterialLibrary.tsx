@@ -256,6 +256,8 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
 
   const courseMaterials = materials.filter((item) => item.courseId === course?.id);
   const concepts = state.snapshot.concepts.filter((item) => item.courseId === course?.id);
+  const hasCoursePdf = courseMaterials.some((item) => item.storage === "local" && !item.id.startsWith("material-demo-"));
+  const sourceFirst = embedded && !hasCoursePdf && !analysis && !readySummary;
 
   function cancelOcr() {
     ocrAbortRef.current?.abort();
@@ -552,20 +554,15 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       {embedded && showIngestForm(phase) ? (
         <details
           className="material-add-page"
-          open={busy || Boolean(hardError) || (!courseMaterials.length && !concepts.length) || undefined}
+          open={busy || Boolean(hardError) || sourceFirst || undefined}
         >
-          <summary>Add a page</summary>
+          <summary>Add a course PDF</summary>
           <section className="material-ingest is-embedded" aria-labelledby="add-material-title">
             <div className="material-ingest-title">
               <h2 id="add-material-title">Add your course source</h2>
               <p className="material-ingest-lede">Kelus reads the pages, suggests topics, and waits for your confirmation before changing your route.</p>
             </div>
             <div className="material-role-field">
-            <ol className="material-next-steps" aria-label="What happens next">
-              <li><strong>Read</strong><span>Your pages stay with this exam.</span></li>
-              <li><strong>Review</strong><span>You choose the topics that matter.</span></li>
-              <li><strong>Route</strong><span>Your Today plan follows what you confirm.</span></li>
-            </ol>
               <label htmlFor="material-role">This source is</label>
               <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
                 {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
@@ -856,5 +853,5 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       )}
       </>
   );
-  return embedded ? <div className="material-binder-stack">{shelf}</div> : <AppShell>{shelf}</AppShell>;
+  return embedded ? <div className={`material-binder-stack${sourceFirst ? " is-source-first" : ""}`}>{shelf}</div> : <AppShell>{shelf}</AppShell>;
 }

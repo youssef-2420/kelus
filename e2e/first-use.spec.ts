@@ -91,6 +91,29 @@ test("course workspace fills the viewport without a blank footer band", async ({
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+test("sample course without an original PDF gives the route room and makes upload the first material action", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/today?sample=1");
+  await expect(page.locator(".core-workspace-grid.is-source-missing")).toBeVisible();
+  await expect(page.locator(".core-source-reader")).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Add your course PDF" })).toBeVisible();
+  await page.screenshot({ path: "/tmp/kelus-sample-route-without-pdf.png", fullPage: true });
+  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Materials" }).click();
+  await expect(page.locator(".material-binder-stack.is-source-first")).toBeVisible();
+  await expect(page.locator(".material-add-page[open] input[type='file']")).toBeVisible();
+  expect(await page.locator(".material-add-page").evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(360);
+  await page.screenshot({ path: "/tmp/kelus-upload-first-desktop.png", fullPage: true });
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expect(page.locator(".material-add-page[open] input[type='file']")).toBeVisible();
+  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan" }).click();
+  await page.locator("button.today-start").click();
+  await expect(page.locator("main.study-shell.is-source-missing")).toBeVisible();
+  await expect(page.locator(".session-workspace-source")).toHaveCount(0);
+  await expect(page.locator(".study-question")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+});
+
 test("real PDF becomes concepts, diagnosis evidence, and today's route", async ({ page }) => {
   await page.goto("/today");
   await expect(page.locator(".studio-onboarding")).toBeVisible();
