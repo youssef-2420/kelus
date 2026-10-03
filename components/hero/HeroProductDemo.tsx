@@ -12,11 +12,15 @@ const dur = kelusDuration;
 export function HeroProductDemo() {
   const reduceMotion = useReducedMotion() === true;
   const [exampleIndex, setExampleIndex] = useState(0);
-  const [showBefore, setShowBefore] = useState(false);
+  const [routeOutcome, setRouteOutcome] = useState<"again" | "remembered" | null>(null);
   const [answerOpen, setAnswerOpen] = useState(false);
   const [practiceResult, setPracticeResult] = useState<"again" | "remembered" | null>(null);
   const example = LEARNING_EXAMPLES[exampleIndex];
-  const route = showBefore ? [...example.route.slice(1), example.route[0]] : example.route;
+  const route = routeOutcome === "remembered"
+    ? [...example.route.slice(1), example.route[0]]
+    : routeOutcome === "again"
+      ? [{ ...example.route[0], reason: "Needs another attempt" }, ...example.route.slice(1)]
+      : example.route;
 
   return (
     <div
@@ -45,7 +49,7 @@ export function HeroProductDemo() {
                   aria-pressed={index === exampleIndex}
                   onClick={() => {
                     setExampleIndex(index);
-                    setShowBefore(false);
+                    setRouteOutcome(null);
                     setAnswerOpen(false);
                     setPracticeResult(null);
                   }}
@@ -104,7 +108,7 @@ export function HeroProductDemo() {
                           aria-pressed={practiceResult === "again"}
                           onClick={() => {
                             setPracticeResult("again");
-                            setShowBefore(false);
+                            setRouteOutcome("again");
                           }}
                         >
                           Practise again
@@ -114,7 +118,7 @@ export function HeroProductDemo() {
                           aria-pressed={practiceResult === "remembered"}
                           onClick={() => {
                             setPracticeResult("remembered");
-                            setShowBefore(true);
+                            setRouteOutcome("remembered");
                           }}
                         >
                           I remembered it
@@ -142,7 +146,7 @@ export function HeroProductDemo() {
                     <motion.li
                       key={item.name}
                       layout={reduceMotion ? false : "position"}
-                      className={!showBefore && index === 0 ? "is-recommended" : undefined}
+                      className={index === 0 ? "is-recommended" : undefined}
                       initial={reduceMotion ? false : { opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{
@@ -166,13 +170,15 @@ export function HeroProductDemo() {
                 <span aria-hidden="true">↳</span>
                 {practiceResult === "remembered"
                   ? "A stronger answer can make room to practise another topic."
+                  : practiceResult === "again"
+                    ? "This topic stays first because it needs another attempt."
                   : example.signal}
               </p>
               <motion.button
                 type="button"
                 className="hero-demo-replay"
                 onClick={() => {
-                  setShowBefore(false);
+                  setRouteOutcome(null);
                   setAnswerOpen(false);
                   setPracticeResult(null);
                 }}

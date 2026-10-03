@@ -52,6 +52,7 @@ function CompleteBody() {
   const strengthenedNames = summary?.strengthenedIds.slice(0, 2).map(name) ?? [];
   const weakNames = summary?.stillWeakIds.slice(0, 2).map(name) ?? [];
   const nextAllocation = nextRoute?.allocations[0];
+  const nextMinutes = nextAllocation?.minutes ?? null;
   const nextReason = nextAllocation?.reasons.includes("PREREQUISITE_GAP")
     ? "It unlocks another topic."
     : nextAllocation?.reasons.includes("REVIEW_DUE") || nextAllocation?.reasons.includes("RETENTION_FADING")
@@ -76,6 +77,7 @@ function CompleteBody() {
   }, [session, summary]);
 
   function addCalendar() {
+    trackEvent({ name: "next_route_opened", source: "calendar" });
     const ok = downloadTomorrowStudyIcs({
       courseName: course?.name ?? "Study",
       minutes,
@@ -133,9 +135,25 @@ function CompleteBody() {
               : "Your next route is based on what you could retrieve, not only what you completed."}
           </p>
         </section>
+        <section className="complete-before-after" aria-labelledby="complete-before-after-title">
+          <p className="kicker">The useful change</p>
+          <h2 id="complete-before-after-title">You turned uncertainty into a next move.</h2>
+          <div className="complete-before-after-grid">
+            <div>
+              <span>Before</span>
+              <strong>{weakNames.length ? `${weakNames.join(" and ")} needed evidence` : "Your route had less evidence"}</strong>
+              <p>Kelus did not know which part needed another pass.</p>
+            </div>
+            <div>
+              <span>After</span>
+              <strong>{nextStopName ? `${nextStopName} is first next` : "Your route has fresh evidence"}</strong>
+              <p>{nextMinutes ? `A focused ${nextMinutes}-minute pass. ${nextReason}` : nextReason}</p>
+            </div>
+          </div>
+        </section>
         {nextStopName ? (
           <p className="complete-next">
-            Next <strong>{nextStopName}</strong><span>{nextReason}</span>
+            Next <strong>{nextStopName}</strong><span>{nextMinutes ? `${nextMinutes} minutes · ` : ""}{nextReason}</span>
           </p>
         ) : null}
 
@@ -152,7 +170,7 @@ function CompleteBody() {
               : "The route will shift as retention fades — no need to rebuild from scratch."}
           </p>
           <div className="complete-return-actions">
-            <Link href="/today" className="cta">
+            <Link href="/today" className="cta" onClick={() => trackEvent({ name: "next_route_opened", source: "completion" })}>
               Back to Today <span aria-hidden="true">→</span>
             </Link>
             <button type="button" className="text-btn" onClick={addCalendar}>

@@ -48,3 +48,24 @@ test("abandoning a session clears in_progress without counting as complete", () 
   const again = startSession(abandoned, abandoned.snapshot.courses[0].id, abandoned.snapshot.exams[0].id);
   assert.equal(again.state.snapshot.sessions.filter((item) => item.status === "in_progress").length, 1);
 });
+
+test("trust surfaces show a real demo outcome and student-facing support copy", async () => {
+  const [demo, questions, status, materials, complete, setup] = await Promise.all([
+    source("components/hero/HeroProductDemo.tsx"),
+    source("app/questions/page.tsx"),
+    source("components/QuestionsInboxStatus.tsx"),
+    source("components/MaterialLibrary.tsx"),
+    source("app/session/complete/page.tsx"),
+    source("components/FirstRunSetup.tsx"),
+  ]);
+
+  assert.match(demo, /setRouteOutcome\("again"\)/);
+  assert.match(demo, /setRouteOutcome\("remembered"\)/);
+  assert.doesNotMatch(status, /Inbox proof/);
+  assert.match(status, /Questions are answered by email/);
+  assert.match(materials, /proposalConfidence/);
+  assert.match(complete, /The useful change/);
+  assert.match(complete, /Before/);
+  assert.match(complete, /After/);
+  assert.match(setup, /Your course stays on this device/);
+});

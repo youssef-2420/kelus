@@ -19,7 +19,7 @@ import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 function focusPhaseHeading(node: HTMLHeadingElement | null) {
   node?.focus();
 }
-import { buildConfirmedMaterialModel, isSourceBackedProposal, proposeConceptsFromPages } from "@/domain/material-intelligence";
+import { buildConfirmedMaterialModel, isSourceBackedProposal, proposalConfidence, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
   addPdfMaterial,
@@ -494,6 +494,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
     setSelectedIds((current) => {
       const next = new Set(current);
       if (next.has(id)) next.delete(id); else next.add(id);
+      trackEvent({ name: "concept_review_updated", action: next.has(id) ? "selected" : "removed" });
       return next;
     });
   }
@@ -582,7 +583,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
               <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a course PDF"}</strong>
               <span>{busy && statusMessage ? statusMessage : "or drop one here · text-based PDFs work fastest"}</span>
             </label>
-            <p className="material-ingest-hint">Text PDFs work best. Kelus can read clear English scans on this device; you review every proposed topic before it changes your route.</p>
+            <p className="material-ingest-hint">Digital PDFs with selectable text work best. Kelus reads the page text, and you review every proposed topic before it changes your route.</p>
             {busy && workingStep ? (
               <div className="material-work-status" role="status" aria-live="polite">
                 <ol className="material-work-steps" aria-label="PDF processing steps">
@@ -613,9 +614,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
             </details>
             {errorKind === "ocr" ? (
               <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
-                <p>
-                  OCR works best on clear English scans. Export a text PDF from your notes app or try a sharper scan.
-                </p>
+                <p>Kelus needs selectable page text for a reliable topic map. Export a digital PDF from your notes app and try again.</p>
                 <div className="material-error-actions">
                   <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
                 </div>
@@ -642,7 +641,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
               {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
             </select>
             <p>
-              Clear, text-based PDFs work fastest. Kelus can also read many scanned English pages. You review every suggested topic before it changes your revision route. For scans, Kelus checks up to the first 8 pages on this device.
+              Digital PDFs with selectable text work fastest. You review every suggested topic before it changes your revision route.
             </p>
           </div>
         <label
@@ -691,9 +690,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         </details>
         {errorKind === "ocr" ? (
           <div className="material-error-rescue" role="group" aria-label="Ways to continue after OCR">
-            <p>
-              OCR works best on clear English scans. Export a text PDF from your notes app or try a sharper scan.
-            </p>
+            <p>Kelus needs selectable page text for a reliable topic map. Export a digital PDF from your notes app and try again.</p>
             <div className="material-error-actions">
               <a className="text-btn" href="#source-shelf-title">Retry with another file</a>
             </div>
@@ -790,6 +787,11 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
                         aria-label={`Concept name from ${proposal.locator}`}
                       />
                       <small>{analysis.material.title} · {proposal.locator}</small>
+                      <small className={`proposal-confidence is-${proposalConfidence(proposal)}`}>
+                        {proposalConfidence(proposal) === "high"
+                          ? "High confidence · grounded in page text"
+                          : "Review carefully · inferred from limited source text"}
+                      </small>
                       <span className="proposal-source-excerpt">“{proposal.sourceExcerpt.slice(0, 260)}{proposal.sourceExcerpt.length > 260 ? "…" : ""}”</span>
                     </span>
                   </div>

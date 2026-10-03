@@ -27,3 +27,24 @@ export function describeRouteChoice(allocation: RouteAllocation, concept?: Conce
 
   return lines.length ? lines.slice(0, 2) : ["Selected from your current course and study history."];
 }
+
+/** A student-facing payoff for the next focused block, without promising grades. */
+export function describeRoutePayoff(
+  allocation: RouteAllocation,
+  nextTopic?: string,
+): string {
+  const reasons = new Set(allocation.reasons);
+  if (reasons.has("PREREQUISITE_GAP") && nextTopic) {
+    return `A focused pass here should make ${nextTopic} easier to retrieve next.`;
+  }
+  if (reasons.has("HIGH_EXAM_VALUE")) {
+    return "A focused pass gives you stronger evidence on a high-value exam topic.";
+  }
+  if (reasons.has("REVIEW_DUE") || reasons.has("RETENTION_FADING")) {
+    return "A short recall now helps keep this idea available before it fades.";
+  }
+  if (reasons.has("LOW_MASTERY") || reasons.has("LOW_CONFIDENCE_ESTIMATE")) {
+    return "One focused pass can turn an uncertain answer into a clearer next decision.";
+  }
+  return "This block gives Kelus better evidence about what you can use from memory.";
+}

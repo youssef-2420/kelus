@@ -36,6 +36,7 @@ test("first PDF survives a refresh before topics are confirmed", async ({ page }
     mimeType: "application/pdf",
     buffer: biologyPdf(),
   });
+
   await page.getByRole("button", { name: /Continue to exam details/ }).click();
   await page.getByRole("textbox", { name: "Course", exact: true }).fill("Molecular Biology");
   await page.getByLabel("Exam").fill("Cell Biology Final");
@@ -47,6 +48,20 @@ test("first PDF survives a refresh before topics are confirmed", async ({ page }
   await expect(page.getByText("Cell Membranes").first()).toBeVisible();
   await page.getByRole("button", { name: /Confirm topics/ }).click();
   await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("First check");
+});
+
+test("homepage sample makes both route outcomes visible", async ({ page }) => {
+  await page.goto("/");
+  const demo = page.locator(".booklet-board");
+  await demo.getByRole("button", { name: "Reveal answer" }).click();
+  await demo.getByRole("button", { name: "I was shaky" }).click();
+  await expect(demo.locator(".booklet-flow-route li").first()).toContainText("Elasticity");
+  await expect(demo.locator(".notebook-signal")).toContainText("stays first");
+  await demo.getByRole("button", { name: "Hide answer" }).click();
+  await demo.getByRole("button", { name: "Reveal answer" }).click();
+  await demo.getByRole("button", { name: "I remembered" }).click();
+  await expect(demo.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
+  await expect(demo.locator(".notebook-signal")).toContainText("comes next");
 });
 
 test("Add source opens the file picker and reads the chosen PDF", async ({ page }) => {

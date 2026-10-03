@@ -48,6 +48,8 @@ test("the session executes learn, retrieve, apply and evaluate before updating t
   assert.match(page, /evaluateLearningResponse/);
   assert.doesNotMatch(page, />I can use it</);
   assert.match(page, /setPhase\("reroute"\)/);
+  assert.match(page, /Evidence added/);
+  assert.match(page, /Review the source behind this topic/);
   assert.doesNotMatch(page, /answer-comparison|reroute-lines|mastery-reward/);
 });
 
@@ -59,6 +61,7 @@ test("materials support learning-purpose labels without claiming analysis", asyn
   assert.match(library, /review every\s+suggested topic/);
   assert.match(library, /Confirm topics|Build my topic map|Build my Knowledge Map/);
   assert.match(library, /proposeConceptsFromPages/);
+  assert.match(library, /Digital PDFs with selectable text work best/);
 });
 
 test("sessions expose a confirmed course source and its page", async () => {

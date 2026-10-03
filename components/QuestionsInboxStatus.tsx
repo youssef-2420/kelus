@@ -23,8 +23,8 @@ export function QuestionsInboxStatus() {
   if (!stamp) {
     return (
       <p className="questions-inbox-status" role="status">
-        Inbox proof: no remote delivery recorded on this device yet. Until then, email{" "}
-        <a href="mailto:hello@kelus.me">hello@kelus.me</a> for a guaranteed reply.
+        Questions are answered by email. Send in browser to keep a local backup, or email{" "}
+        <a href="mailto:hello@kelus.me">hello@kelus.me</a> directly.
       </p>
     );
   }
@@ -36,7 +36,7 @@ export function QuestionsInboxStatus() {
   }).format(new Date(stamp));
   return (
     <p className="questions-inbox-status is-proven" role="status">
-      Inbox proof: last remote delivery from this browser · {label}
+      Your question was sent by email from this browser · {label}
     </p>
   );
 }

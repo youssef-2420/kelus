@@ -1,10 +1,12 @@
 "use client";
 
 import { motion, useReducedMotion } from "motion/react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
 import { kelusEase } from "@/components/motion";
-import { describeRouteChoice } from "@/lib/today-reason";
+import { describeRouteChoice, describeRoutePayoff } from "@/lib/today-reason";
+import { trackEvent } from "@/lib/analytics";
 
 function citeWhisper(source: { label: string; locator?: string | null } | undefined) {
   if (!source) return null;
@@ -44,6 +46,18 @@ export function TodayRoute({
 }) {
   const reduceMotion = useReducedMotion();
   const [first] = route.allocations;
+  const openedRef = useRef(false);
+  const hasPriorEvidence = !isSampleCourse && events.some((event) => event.kind === "retrieval");
+
+  useEffect(() => {
+    if (isSampleCourse || openedRef.current) return;
+    openedRef.current = true;
+    trackEvent({
+      name: "today_opened",
+      returning: hasPriorEvidence,
+      has_next_route: route.allocations.length > 1,
+    });
+  }, [hasPriorEvidence, isSampleCourse, route.allocations.length]);
 
   if (!first) {
     return (
@@ -78,7 +92,7 @@ export function TodayRoute({
     ...allocation,
     name: concepts.find((concept) => concept.id === allocation.conceptId)?.name ?? "Mixed recall",
   }));
-
+  const payoff = describeRoutePayoff(first, nextStops[0]?.name);
   return (
     <div className="today-route-execution is-one-next is-booklet-page is-presence">
       <motion.article
@@ -116,6 +130,7 @@ export function TodayRoute({
         <div className="today-decision" aria-label="Why this topic is first">
           <p className="today-decision-label">Why now</p>
           {decision.map((line) => <p key={line}>{line}</p>)}
+          <p className="today-decision-payoff"><strong>What this unlocks</strong>{payoff}</p>
         </div>
         {whisper ? <p className="today-source-reference">Source · {whisper}</p> : null}
         {lastPractice && lastTopic ? <p className="today-return-note">Last answer · {lastTopic} · {lastResult}. Your route includes that evidence.</p> : null}
@@ -128,7 +143,9 @@ export function TodayRoute({
         >
           {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
         </motion.button>
-        <p className="today-session-preview">Read the source, recall the idea, use it, then check your answer.</p>
+        <p className="today-session-preview">
+          {lastPractice ? "Continue from your last answer — read, recall, use, then check your thinking." : "Read the source, recall the idea, use it, then check your answer."}
+        </p>
       </motion.article>
       {nextStops.length ? (
         <aside className="today-next" aria-label="Planned next topics">
