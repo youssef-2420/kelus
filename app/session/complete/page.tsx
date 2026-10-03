@@ -49,6 +49,16 @@ function CompleteBody() {
   }).length;
   const minutes = session?.plannedMinutes || exam?.availableMinutes || 45;
   const practisedCount = new Set(state.snapshot.events.filter((event) => event.sessionId === session?.id && event.kind === "retrieval").map((event) => event.conceptId)).size;
+  const strengthenedNames = summary?.strengthenedIds.slice(0, 2).map(name) ?? [];
+  const weakNames = summary?.stillWeakIds.slice(0, 2).map(name) ?? [];
+  const nextAllocation = nextRoute?.allocations[0];
+  const nextReason = nextAllocation?.reasons.includes("PREREQUISITE_GAP")
+    ? "It unlocks another topic."
+    : nextAllocation?.reasons.includes("REVIEW_DUE") || nextAllocation?.reasons.includes("RETENTION_FADING")
+      ? "It is the next memory at risk."
+      : nextAllocation?.reasons.includes("HIGH_EXAM_VALUE")
+        ? "It carries high exam value."
+        : "It offers the strongest next learning gain.";
 
   useEffect(() => {
     document.body.classList.add("is-session-booklet", "is-session-complete");
@@ -108,9 +118,24 @@ function CompleteBody() {
           {practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}
           {course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.
         </p>
+        <section className="complete-change" aria-labelledby="complete-change-title">
+          <p className="kicker">What changed</p>
+          <h2 id="complete-change-title">
+            {strengthenedNames.length
+              ? <>You strengthened <strong>{strengthenedNames.join(" & ")}</strong>.</>
+              : weakNames.length
+                ? <>You found the next gap: <strong>{weakNames.join(" & ")}</strong>.</>
+                : "You added fresh evidence to your route."}
+          </h2>
+          <p>
+            {weakNames.length
+              ? `Keep ${weakNames.join(" and ")} in your next pass instead of guessing what to revise.`
+              : "Your next route is based on what you could retrieve, not only what you completed."}
+          </p>
+        </section>
         {nextStopName ? (
           <p className="complete-next">
-            Next <strong>{nextStopName}</strong>
+            Next <strong>{nextStopName}</strong><span>{nextReason}</span>
           </p>
         ) : null}
 
@@ -179,6 +204,7 @@ function CompleteBody() {
             <summary>Preview your next revision topics</summary>
             <p className="kicker">Next route</p>
             <h2>Kelus will recalculate as your memory changes.</h2>
+            {nextStopName ? <p className="next-route-reason">Start with <strong>{nextStopName}</strong> next time. {nextReason}</p> : null}
             <ol>
               {nextRoute.allocations.slice(0, 3).map((allocation, index) => (
                 <li key={allocation.conceptId}>

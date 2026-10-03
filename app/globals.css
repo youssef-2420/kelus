@@ -5778,6 +5778,12 @@ h3,
 .complete-usefulness-actions button { min-height: 40px; padding: 8px 16px; color: var(--color-midnight-ink); background: transparent; border: 1px solid var(--color-product-border); border-radius: 999px; font: inherit; cursor: pointer; }
 .complete-usefulness-actions button:hover { border-color: var(--color-indigo-ink); }
 .complete-usefulness-thanks { color: var(--color-product-secondary); }
+.complete-change { max-width: 620px; margin: var(--spacing-24) 0; padding: var(--spacing-16); border: 1px solid var(--color-product-border); background: color-mix(in srgb, var(--color-product-paper) 86%, var(--color-product-frost)); }
+.complete-change h2 { max-width: 28ch; margin: 8px 0; font-size: clamp(26px, 4vw, 38px); line-height: 1.12; text-wrap: balance; }
+.complete-change p:last-child { max-width: 54ch; margin: 0; color: var(--color-product-secondary); line-height: 1.55; }
+.complete-next { display: grid; gap: 4px; }
+.complete-next span { color: var(--color-product-secondary); font-size: var(--text-body-sm); }
+.next-route-reason { color: var(--color-product-secondary); }
 
 @media (max-width: 720px) {
   .site-header.is-session .site-header-inner { flex-wrap: nowrap; padding-top: 0; }
