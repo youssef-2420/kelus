@@ -1,14 +1,12 @@
-/* Hallmark · pre-emit critique: P5 H4 E5 S5 R5 V5
- * Macrostructure: two full-width illustrated chapters around the interactive sample.
- * Theme: studied-DNA (Figma reference), translated into existing Kelus booklet tokens.
+/* One photographic revision interlude and one illustrated return chapter.
+ * Figma's spare frame/counter pacing is translated into the Kelus booklet palette.
  */
 .studySection,
 .returnSection { overflow: clip; }
 
 .studySection {
-  background: var(--color-loop-student-paper);
-  border-top: 1px solid var(--color-frost);
-  border-bottom: 1px solid var(--color-frost);
+  background: var(--ink);
+  color: var(--color-pure-white);
 }
 
 .studyInner,
@@ -22,40 +20,33 @@
 
 .studyArt {
   position: relative;
-  display: grid;
-  align-items: end;
-  min-height: clamp(24rem, 42vw, 38rem);
+  min-height: clamp(34rem, 52vw, 46rem);
   overflow: hidden;
+  isolation: isolate;
 }
 
-.studentImage {
-  position: relative;
-  z-index: 1;
-  width: min(100%, 47rem);
-  height: auto;
-  max-height: 38rem;
-  object-fit: contain;
-  object-position: left bottom;
-  margin-left: -2rem;
-}
-
-.studyOrbit {
+.sceneImageWrap {
   position: absolute;
-  width: min(31rem, 80%);
-  aspect-ratio: 1;
-  border: 1px solid var(--color-loop-student-line);
-  border-radius: 50%;
-  left: 8%;
-  top: 5%;
+  inset: 0;
 }
 
-.studyOrbit::after {
-  content: "";
-  position: absolute;
-  inset: 14%;
-  border: 1px solid var(--color-loop-student-line);
-  border-radius: 50%;
+.sceneImage {
+  object-fit: cover;
+  object-position: center 47%;
 }
+
+.sceneEyebrow,
+.sceneNumber {
+  position: absolute;
+  z-index: 2;
+  color: var(--color-pure-white);
+  font: 500 0.75rem/1.3 var(--font-marketing-sans);
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 5px var(--ink);
+}
+
+.sceneEyebrow { top: 1.75rem; left: clamp(1.5rem, 4vw, 4rem); }
+.sceneNumber { bottom: 1.75rem; right: clamp(1.5rem, 4vw, 4rem); font-variant-numeric: tabular-nums; }
 
 .studyCopy { padding: 4rem clamp(2rem, 6vw, 7rem) 4rem 2rem; }
 .studyCopy h2,
@@ -78,6 +69,41 @@
   max-width: 36ch;
   margin: 0 0 1.5rem;
 }
+
+.studyCopy h2 { color: var(--color-pure-white); }
+.studyCopy > p { color: var(--color-frost); }
+
+.sceneControls {
+  max-width: 26rem;
+  margin: 2.5rem 0 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-pure-white) 30%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.sceneControls .sceneLabel {
+  margin: 0;
+  color: var(--color-pure-white);
+  font: 500 0.875rem/1.4 var(--font-marketing-sans);
+}
+.sceneButtons { display: flex; gap: 0.35rem; }
+.sceneButtons button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-pure-white) 50%, transparent);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--color-pure-white);
+  font: 500 1.2rem/1 var(--font-marketing-sans);
+  cursor: pointer;
+  transition: background-color 0.18s ease, transform 0.18s ease;
+}
+.sceneButtons button:hover { background: color-mix(in srgb, var(--color-pure-white) 14%, transparent); }
+.sceneButtons button:active { transform: scale(0.97); }
+.sceneButtons button:focus-visible { outline: 2px solid var(--color-pure-white); outline-offset: 3px; }
+.studyCopy .textLink { color: var(--color-pure-white); }
 
 .textLink {
   display: inline-flex;
@@ -124,9 +150,8 @@
 @media (max-width: 760px) {
   .studyInner,
   .returnInner { grid-template-columns: minmax(0, 1fr); }
-  .studyArt { min-height: 0; order: 2; padding-top: 1rem; }
-  .studentImage { margin-left: -1.5rem; max-height: 28rem; }
-  .studyCopy { order: 1; padding: 4rem 1rem 1.5rem; }
+  .studyArt { min-height: clamp(24rem, 110vw, 34rem); }
+  .studyCopy { padding: 3rem 1rem 3.5rem; }
   .studyCopy h2,.returnCopy h2 { font-size: clamp(2.2rem, 8vw, 3.7rem); }
   .returnCopy { padding: 4rem 1rem 1rem; }
   .returnArt { padding: 0 0.5rem 1rem; }
@@ -135,4 +160,6 @@
 @media (prefers-reduced-motion: reduce) {
   .textLink { transition: none; }
   .textLink:active { transform: none; }
+  .sceneButtons button { transition: none; }
+  .sceneButtons button:active { transform: none; }
 }

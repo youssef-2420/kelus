@@ -1,9 +1,29 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Reveal } from "@/components/motion";
 import styles from "./HomeVisualChapters.module.css";
+
+const revisionScenes = [
+  {
+    src: "/revision-scenes/notes.webp",
+    alt: "A student reviewing printed lecture notes at a desk",
+    label: "Begin with your notes",
+  },
+  {
+    src: "/revision-scenes/recall.webp",
+    alt: "A student writing an answer from memory with the notes set aside",
+    label: "Try it from memory",
+  },
+  {
+    src: "/revision-scenes/check.webp",
+    alt: "A student checking a handwritten answer and marking what needs another pass",
+    label: "Check what needs work",
+  },
+] as const;
 
 function ReturnIllustration() {
   return (
@@ -38,23 +58,51 @@ function ReturnIllustration() {
 }
 
 export function StudyMoment() {
+  const [sceneIndex, setSceneIndex] = useState(0);
+  const reducedMotion = useReducedMotion() === true;
+  const scene = revisionScenes[sceneIndex];
+
+  function moveScene(direction: number) {
+    setSceneIndex((current) => (current + direction + revisionScenes.length) % revisionScenes.length);
+  }
+
   return (
     <section className={styles.studySection} aria-labelledby="study-moment-title">
       <div className={styles.studyInner}>
-        <Reveal className={styles.studyArt}>
-          <span className={styles.studyOrbit} aria-hidden="true" />
-          <Image
-            src="/hero/student.webp"
-            alt="Illustration of a student writing in an open notebook"
-            width={1200}
-            height={1050}
-            sizes="(max-width: 760px) 100vw, 52vw"
-            className={styles.studentImage}
-          />
-        </Reveal>
+        <div className={styles.studyArt}>
+          <span className={styles.sceneEyebrow}>A revision session</span>
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={scene.src}
+              className={styles.sceneImageWrap}
+              initial={reducedMotion ? false : { opacity: 0, x: 14 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={reducedMotion ? undefined : { opacity: 0, x: -14 }}
+              transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Image
+                src={scene.src}
+                alt={scene.alt}
+                fill
+                sizes="(max-width: 760px) 100vw, 52vw"
+                className={styles.sceneImage}
+              />
+            </motion.div>
+          </AnimatePresence>
+          <span className={styles.sceneNumber} aria-hidden="true">
+            {String(sceneIndex + 1).padStart(2, "0")} / {String(revisionScenes.length).padStart(2, "0")}
+          </span>
+        </div>
         <Reveal className={styles.studyCopy}>
           <h2 id="study-moment-title">The studying happens here.</h2>
           <p>The note, the question, your answer, and the next step stay in one place. Bring your own lessons into the study space.</p>
+          <div className={styles.sceneControls}>
+            <p className={styles.sceneLabel} aria-live="polite">{scene.label}</p>
+            <div className={styles.sceneButtons}>
+              <button type="button" onClick={() => moveScene(-1)} aria-label="Previous revision photo">←</button>
+              <button type="button" onClick={() => moveScene(1)} aria-label="Next revision photo">→</button>
+            </div>
+          </div>
           <Link href="/today" className={styles.textLink}>Set up my course <span aria-hidden="true">↗</span></Link>
         </Reveal>
       </div>
