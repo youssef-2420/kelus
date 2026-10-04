@@ -154,6 +154,23 @@ test("course workspace fills the viewport without a blank footer band", async ({
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
+test("workspace sidebar can be hidden and a source can be removed from it", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/today?sample=1");
+  await expect(page.getByRole("complementary", { name: "Course workspace" })).toBeVisible();
+  await page.getByRole("button", { name: "Hide workspace sidebar" }).click();
+  await expect(page.getByRole("complementary", { name: "Course workspace" })).toHaveCount(0);
+  await expect(page.locator(".kelus-space.is-studio.is-rail-hidden")).toBeVisible();
+  await page.getByRole("button", { name: "Show workspace sidebar" }).click();
+  await expect(page.getByRole("complementary", { name: "Course workspace" })).toBeVisible();
+  await page.getByRole("button", { name: "Remove Built-in Microeconomics example" }).click();
+  await expect(page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" })).toContainText("linked topic");
+  await page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" }).getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("button", { name: "Remove Built-in Microeconomics example" })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Check the topics from your PDF." })).toBeVisible();
+  await expect(page.locator(".material-row")).toHaveCount(0);
+});
+
 test("sample course without an original PDF gives the route room and makes upload the first material action", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/today?sample=1");

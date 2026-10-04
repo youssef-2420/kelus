@@ -12,6 +12,7 @@ body.is-course-studio .kelus-space.is-studio {
   grid-template-columns: 246px minmax(0, 1fr);
   min-height: 100dvh;
 }
+body.is-course-studio .kelus-space.is-studio.is-rail-hidden { grid-template-columns: minmax(0, 1fr); }
 
 body.is-course-studio .studio-rail {
   position: sticky;
@@ -79,14 +80,29 @@ body.is-course-studio .studio-onboarding .setup-payoff span { line-height: 1.4; 
 
 .core-rail-sources { margin-top: 34px; }
 .core-rail-sources > p:first-child { display: flex; justify-content: space-between; margin: 0 10px 8px; font-size: 0.74rem; font-weight: 600; color: var(--color-slate); }
-.core-rail-sources > button { display: flex; align-items: center; width: 100%; min-height: 40px; gap: 9px; padding: 8px 11px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font: inherit; font-size: 0.82rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
-.core-rail-sources > button span[aria-hidden] { flex: 0 0 auto; color: var(--color-hero-orange); font-size: 1rem; }
+.core-rail-sources > button, .core-source-open { display: flex; align-items: center; width: 100%; min-height: 40px; gap: 9px; padding: 8px 11px; border: 0; border-radius: 8px; background: transparent; color: var(--ink); font: inherit; font-size: 0.82rem; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.core-rail-sources > button span[aria-hidden], .core-source-open span[aria-hidden] { flex: 0 0 auto; color: var(--color-hero-orange); font-size: 1rem; }
 .core-rail-sources .core-source-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.core-rail-sources > button:hover, .core-rail-sources > button.is-selected { background: var(--core-selected-paper); }
-.core-rail-sources > button:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 1px; }
-.core-rail-sources > button:active { transform: scale(.97); }
+.core-rail-sources > button:hover, .core-rail-sources > button.is-selected, .core-source-open:hover, .core-source-open.is-selected { background: var(--core-selected-paper); }
+.core-rail-sources button:focus-visible, .studio-rail-toggle:focus-visible, .studio-rail-reopen:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 1px; }
+.core-rail-sources > button:active, .core-source-open:active { transform: scale(.97); }
 .core-rail-sources .core-rail-empty { margin: 8px 10px; color: var(--color-slate); font-size: 0.8rem; line-height: 1.4; }
 .core-rail-sources > button.core-add-source { margin-top: 8px; color: var(--color-kelus); font-weight: 600; }
+.core-source-item { display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; }
+.core-source-item .core-source-open { min-width: 0; }
+.core-source-remove { width: 40px; height: 44px; border: 0; border-radius: 6px; background: transparent; color: var(--color-slate); font: inherit; font-size: 1.1rem; cursor: pointer; }
+.core-source-remove:hover { color: #9c3b28; background: #fbede8; }
+.core-source-confirm { grid-column: 1 / -1; padding: 9px 10px 12px; border-bottom: 1px solid var(--line); }
+.core-source-confirm p { margin: 0 0 8px; color: var(--ink); font-size: .75rem; line-height: 1.4; }
+.core-source-confirm button { margin-right: 12px; border: 0; background: transparent; color: var(--color-slate); font: inherit; font-size: .76rem; font-weight: 600; cursor: pointer; }
+.core-source-confirm button.is-danger { color: #9c3b28; }
+.core-source-confirm button:disabled { opacity: .5; cursor: wait; }
+.core-source-error { margin: 8px 10px; color: #9c3b28; font-size: .76rem; line-height: 1.4; }
+.studio-rail-toggle, .studio-rail-reopen { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--color-slate); font: inherit; font-size: .76rem; cursor: pointer; }
+.studio-rail-toggle { margin: 12px 0 0; }
+.studio-rail-toggle:hover, .studio-rail-reopen:hover { background: var(--core-selected-paper); color: var(--ink); }
+.studio-topbar-leading { display: inline-flex; align-items: center; min-width: 0; gap: 14px; }
+.studio-rail-reopen { flex: none; }
 
 body.is-course-studio .studio-topbar { min-height: 54px; padding-inline: 24px; }
 body.is-course-studio .studio-page.kelus-space-stage { width: 100%; max-width: none; min-height: calc(100dvh - 54px); padding: 0; }

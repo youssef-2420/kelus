@@ -44,7 +44,6 @@ function RecallIllustration({ active, instant }: IllustrationProps) {
       <path d="M59 141h243M59 171h243M59 201h243" className={styles.rule} />
       <motion.text x="59" y="163" className={styles.answer} initial={false} animate={{ opacity: active ? 1 : 0, y: active ? 0 : 5 }} transition={timing(instant)}>People can choose another option.</motion.text>
       <motion.path d="M68 181c54 7 112 5 150-1" className={styles.correction} initial={false} animate={{ opacity: active ? 0.75 : 0, scaleX: active ? 1 : 0 }} style={{ transformOrigin: "68px 181px" }} transition={timing(instant, active ? 0.22 : 0)} />
-      <motion.path d="m241 151 10 8 19-23" className={styles.check} initial={false} animate={{ opacity: active ? 1 : 0, scale: active ? 1 : 0.8 }} style={{ transformOrigin: "251px 151px" }} transition={timing(instant, active ? 0.38 : 0)} />
       <path d="M288 16c16 11 26 25 27 43" className={styles.looseLine} />
     </svg>
   );

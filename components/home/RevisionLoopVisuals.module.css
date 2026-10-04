@@ -110,7 +110,6 @@
 .prompt { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 19px; }
 .answer { fill: var(--ink); font-family: var(--font-marketing-sans); font-size: 13px; }
 .correction { fill: none; stroke: var(--color-loop-correction); stroke-width: 5; stroke-linecap: round; opacity: 0.75; }
-.check { fill: none; stroke: var(--color-kelus); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .routeLine { fill: none; stroke: var(--color-kelus); stroke-width: 1.5; opacity: 0.5; }
 .routeDot { fill: var(--color-kelus); }
 .routeDotQuiet { fill: var(--color-pure-white); stroke: var(--color-slate); stroke-width: 1.5; }

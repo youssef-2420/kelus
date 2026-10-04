@@ -15,7 +15,8 @@ import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
 import { generateRoute } from "@/domain/routing-engine";
 import { trackEvent } from "@/lib/analytics";
-import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
+import { getMaterialsSnapshot, getServerMaterialsSnapshot, removeMaterial, subscribeMaterials } from "@/lib/material-store";
+import { removeRemoteMaterial } from "@/lib/material-sync";
 
 export type SurfaceMode = "today" | "materials" | "map";
 
@@ -46,11 +47,15 @@ export function RevisionSurface() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion() === true;
-  const { state, start, reset } = useLearner();
+  const { state, start, reset, removeMaterialSource } = useLearner();
   const auth = useAuth();
   const [confirmReset, setConfirmReset] = useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
   const [incomingSource, setIncomingSource] = useState<File | null>(null);
+  const [railHidden, setRailHidden] = useState(false);
+  const [confirmSourceId, setConfirmSourceId] = useState<string | null>(null);
+  const [removingSourceId, setRemovingSourceId] = useState<string | null>(null);
+  const [sourceError, setSourceError] = useState<string | null>(null);
   const sourcePickerRef = useRef<HTMLInputElement>(null);
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const mode = modeFromSection(searchParams.get("section"));
@@ -150,17 +155,34 @@ export function RevisionSurface() {
     router.push(`/session?id=${openSession.id}`);
   }
 
+  async function deleteSource(materialId: string) {
+    setRemovingSourceId(materialId);
+    setSourceError(null);
+    try {
+      await removeMaterial(materialId);
+      removeMaterialSource(materialId);
+      if (selectedMaterialId === materialId) setSelectedMaterialId(null);
+      setConfirmSourceId(null);
+      if (auth.user) await removeRemoteMaterial(auth.user.id, materialId).catch(() => undefined);
+    } catch {
+      setSourceError("This source could not be removed. Try again.");
+    } finally {
+      setRemovingSourceId(null);
+    }
+  }
+
   const panelTransition = reduceMotion
     ? { duration: 0.12, ease: kelusEase }
     : { type: "spring" as const, bounce: 0, duration: 0.4 };
 
   return (
-    <section className="kelus-space is-studio" aria-label="Revision workbench">
-      <aside className="studio-rail" aria-label="Course workspace">
+    <section className={`kelus-space is-studio${railHidden ? " is-rail-hidden" : ""}`} aria-label="Revision workbench">
+      {!railHidden ? <aside className="studio-rail" aria-label="Course workspace">
         <Link href="/" className="studio-brand" aria-label="Kelus home">
           <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
           <span aria-hidden="true">↗</span>
         </Link>
+        <button type="button" className="studio-rail-toggle" onClick={() => setRailHidden(true)} aria-label="Hide workspace sidebar">Hide sidebar <span aria-hidden="true">←</span></button>
         <p className="studio-rail-label studio-navigation-label">Your workspace</p>
         <nav className="studio-nav revision-surface-modes" aria-label="Revision sections">
           {MODES.map((item) => {
@@ -184,11 +206,22 @@ export function RevisionSurface() {
         </nav>
         <div className="core-rail-sources">
           <p className="studio-rail-label">Course sources <span>{courseMaterials.length}</span></p>
-          {courseMaterials.length ? courseMaterials.slice(0, 6).map((material) => (
-            <button key={material.id} type="button" className={selectedMaterial?.id === material.id ? "is-selected" : undefined} onClick={() => { setSelectedMaterialId(material.id); setMode("materials"); }} title={material.id.startsWith("material-demo-") ? "Built-in Microeconomics example" : material.title}>
-              <span aria-hidden="true">{material.id.startsWith("material-demo-") ? "◇" : material.storage === "local" ? "▤" : "↗"}</span><span className="core-source-name">{material.id.startsWith("material-demo-") ? "Built-in Microeconomics example" : material.title}</span>
-            </button>
-          )) : <p className="core-rail-empty">Add a PDF to keep it beside your plan.</p>}
+          {courseMaterials.length ? courseMaterials.map((material) => {
+            const title = material.id.startsWith("material-demo-") ? "Built-in Microeconomics example" : material.title;
+            const linkedTopics = snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === material.id)).length;
+            return <div key={material.id} className="core-source-item">
+              <button type="button" className={`core-source-open${selectedMaterial?.id === material.id ? " is-selected" : ""}`} onClick={() => { setSelectedMaterialId(material.id); setMode("materials"); }} title={title}>
+                <span aria-hidden="true">{material.id.startsWith("material-demo-") ? "◇" : material.storage === "local" ? "▤" : "↗"}</span><span className="core-source-name">{title}</span>
+              </button>
+              <button type="button" className="core-source-remove" aria-label={`Remove ${title}`} title={`Remove ${title}`} onClick={() => { setSourceError(null); setConfirmSourceId(material.id); }}>×</button>
+              {confirmSourceId === material.id ? <div className="core-source-confirm" role="group" aria-label={`Confirm remove ${title}`}>
+                <p>Remove {title}?{linkedTopics ? ` This also removes ${linkedTopics} linked topic${linkedTopics === 1 ? "" : "s"} from your route.` : ""}{courseMaterials.length === 1 && linkedTopics ? " You may need another PDF to continue studying." : ""}</p>
+                <button type="button" onClick={() => setConfirmSourceId(null)} disabled={removingSourceId === material.id}>Cancel</button>
+                <button type="button" className="is-danger" onClick={() => void deleteSource(material.id)} disabled={removingSourceId === material.id}>{removingSourceId === material.id ? "Removing…" : "Remove"}</button>
+              </div> : null}
+            </div>;
+          }) : <p className="core-rail-empty">Add a PDF to keep it beside your plan.</p>}
+          {sourceError ? <p className="core-source-error" role="alert">{sourceError}</p> : null}
           <input
             ref={sourcePickerRef}
             className="sr-only"
@@ -236,11 +269,11 @@ export function RevisionSurface() {
           )}
         </details>
         </div>
-      </aside>
+      </aside> : null}
 
       <div className="studio-main">
         <header className="studio-topbar">
-          <span className="studio-topbar-course" title={course.name}>{course.name}</span>
+          <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={() => setRailHidden(false)} aria-label="Show workspace sidebar">→ <span>Show sidebar</span></button> : null}<span className="studio-topbar-course" title={course.name}>{course.name}</span></span>
           <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{days} day{days === 1 ? "" : "s"} to exam</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
