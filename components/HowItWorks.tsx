@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useRef, useState } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
+import { RecallIllustration, RouteIllustration, SourceIllustration } from "@/components/home/RevisionObjects";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
 import styles from "./how/HowItWorks.module.css";
 
@@ -11,104 +12,46 @@ type VisualProps = { example: LearningExample; visible: boolean; reduceMotion: b
 
 function SourceVisual({ example, visible, reduceMotion }: VisualProps) {
   return (
-    <figure className={`${styles.visual} ${styles.sourceVisual}`} aria-label={`A course document proposes ${example.concepts.join(", ")} as revision topics for the student to confirm.`}>
-      <motion.div className={styles.sourceSheet} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, x: -20, rotate: -7 }} animate={visible ? { opacity: 1, x: 0, rotate: -3 } : undefined} transition={{ duration: .62, ease: kelusEase }}>
-        <span className={styles.sheetTop}>01 / YOUR MATERIAL</span>
-        <strong>{example.course}</strong>
-        <span className={styles.sheetLine} /><span className={styles.sheetLine} /><span className={styles.sheetLineShort} />
-        <span className={styles.sourceMark}>kept with the topic</span>
-      </motion.div>
-      <motion.span className={styles.sourceArrow} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, scale: .7 }} animate={visible ? { opacity: 1, scale: 1 } : undefined} transition={{ delay: reduceMotion ? 0 : .18, duration: .42, ease: kelusEase }}>→</motion.span>
-      <motion.div className={styles.topicExtract} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, x: 18 }} animate={visible ? { opacity: 1, x: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .28, duration: .55, ease: kelusEase }}>
-        <span className={styles.visualLabel}>Proposed topics</span>
-        {example.concepts.map((concept, index) => <div key={concept}><span>0{index + 1}</span><strong>{concept}</strong></div>)}
-        <small>Review before Kelus builds the route</small>
-      </motion.div>
+    <figure className={`${styles.visual} ${styles.sourceVisual}`}>
+      <div className={styles.art}><SourceIllustration example={example} active={reduceMotion || visible} instant={reduceMotion} /></div>
+      <figcaption className={styles.visualCaption}><span>From your material</span><strong>{example.course}</strong><small>Kelus proposes {example.concepts.join(", ")}. You confirm the topics.</small></figcaption>
     </figure>
   );
 }
 
 function RecallVisual({ example, visible, reduceMotion }: VisualProps) {
   return (
-    <figure className={`${styles.visual} ${styles.recallVisual}`} aria-label={`A recall question about ${example.concepts[1]} leads into a short revision route.`}>
-      <motion.div className={styles.recallPaper} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, y: 18, rotate: -2 }} animate={visible ? { opacity: 1, y: 0, rotate: 0 } : undefined} transition={{ duration: .62, ease: kelusEase }}>
-        <span className={styles.visualLabel}>A question from your lesson</span>
-        <strong>{example.question}</strong>
-        <span className={styles.answerRule} /><span className={styles.answerRuleShort} />
-        <span className={styles.recallAnnotation}>Answer from memory, then check.</span>
-      </motion.div>
-      <motion.div className={styles.routePreview} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, x: 18 }} animate={visible ? { opacity: 1, x: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .25, duration: .55, ease: kelusEase }}>
-        <span className={styles.visualLabel}>Today’s route</span>
-        <span><b>01</b>{example.route[0].name}<em>{example.route[0].minutes} min</em></span>
-        <span><b>02</b>{example.route[1].name}<em>{example.route[1].minutes} min</em></span>
-      </motion.div>
+    <figure className={`${styles.visual} ${styles.recallVisual}`}>
+      <div className={styles.art}><RecallIllustration example={example} active={reduceMotion || visible} instant={reduceMotion} /></div>
+      <figcaption className={styles.visualCaption}><span>From memory</span><strong>{example.question}</strong><small>Answer before you look back at the notes.</small></figcaption>
     </figure>
   );
 }
 
 function RerouteVisual({ example, visible, reduceMotion }: VisualProps) {
   return (
-    <figure className={`${styles.visual} ${styles.rerouteVisual}`} aria-label={`After an uncertain answer, ${example.moved} is moved forward for more practice in the next route.`}>
-      <motion.div className={styles.answerEvidence} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, x: -18 }} animate={visible ? { opacity: 1, x: 0 } : undefined} transition={{ duration: .55, ease: kelusEase }}><span className={styles.visualLabel}>Answer checked</span><strong>Needs another attempt</strong><p>One answer adds evidence. It does not decide everything.</p></motion.div>
-      <motion.div className={styles.routeChange} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, x: 18 }} animate={visible ? { opacity: 1, x: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .2, duration: .58, ease: kelusEase }}>
-        <span className={styles.visualLabel}>Next route</span>
-        <div><span>01</span><strong>{example.concepts[1]}</strong></div>
-        <div className={styles.movedTopic}><span>02</span><strong>{example.moved}</strong><em>moved forward ↑</em></div>
-        <div><span>03</span><strong>{example.concepts[2]}</strong></div>
-      </motion.div>
+    <figure className={`${styles.visual} ${styles.rerouteVisual}`}>
+      <div className={styles.art}><RouteIllustration example={example} active={reduceMotion || visible} instant={reduceMotion} /></div>
+      <figcaption className={styles.visualCaption}><span>After that answer</span><strong>First to review: {example.route[0].name}.</strong><small>{example.moved} moves forward for more practice.</small></figcaption>
     </figure>
   );
 }
 
-function SourceIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <path d="M11 9.5h19a3 3 0 0 1 3 3v22a3 3 0 0 1-3 3H11a3 3 0 0 1-3-3v-22a3 3 0 0 1 3-3Z" stroke="currentColor" strokeWidth="2.4" />
-      <path d="M15 16h14M15 21h10M15 26h8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-      <path d="m30 29 5 5m0 0 5-5m-5 5V22" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function RecallIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <path d="M24 11c-6.6-5-15 1.5-12.2 8.8C5.3 23.1 9.7 35 18 34.5c2.4 5.2 9.6 5.2 12 0 8.3.5 12.7-11.4 6.2-14.7C39 12.5 30.6 6 24 11Z" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" />
-      <path d="M24 12v22M18.5 17.5c2.6 0 4.2 1.5 5.5 3.5M29.5 17.5c-2.6 0-4.2 1.5-5.5 3.5M18.5 27c2.6 0 4.2-1.5 5.5-3.5M29.5 27c-2.6 0-4.2-1.5-5.5-3.5" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
-    </svg>
-  );
-}
-
-function RouteIcon() {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <path d="M9 34c8-16 12-18 19-18h10" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeDasharray="1 5" />
-      <circle cx="9" cy="34" r="4" stroke="currentColor" strokeWidth="2.4" />
-      <circle cx="28" cy="16" r="4" stroke="currentColor" strokeWidth="2.4" />
-      <path d="m34 10 5 6-5 6" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M28 30c3.3 0 6 2.7 6 6H22c0-3.3 2.7-6 6-6Z" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 const stages = [
-  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source", Icon: SourceIcon },
-  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall", Icon: RecallIcon },
-  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route", Icon: RouteIcon },
+  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source" },
+  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall" },
+  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route" },
 ] as const;
 
 function Chapter({ stage, example, reduceMotion }: { stage: (typeof stages)[number]; example: LearningExample; reduceMotion: boolean }) {
   const chapterRef = useRef<HTMLLIElement>(null);
   const visible = useInView(chapterRef, { once: true, margin: "-12% 0px -12%" });
-  const { number, cue, title, body, detail, Visual, tone, Icon } = stage;
+  const { number, cue, title, body, detail, Visual, tone } = stage;
   // <li key={number} /> remains the chapter identity contract for the route test.
 
   return (
     <motion.li ref={chapterRef} className={styles.chapter} data-tone={tone}>
       <div className={styles.chapterText}>
-        <motion.div className={styles.chapterIcon} aria-hidden="true" initial={reduceMotion ? false : { opacity: 0, scale: .82, y: 8 }} animate={visible ? { opacity: 1, scale: 1, y: 0 } : undefined} transition={{ duration: .45, ease: kelusEase }}>
-          <Icon />
-        </motion.div>
         <motion.span className={styles.chapterLabel} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .08, duration: .4, ease: kelusEase }}>
           <span>{number}</span>{cue}
         </motion.span>
@@ -158,8 +101,10 @@ export function HowItWorks() {
         </ol>
       </section>
       <motion.section ref={principleRef} className={styles.principle} aria-labelledby="how-principle-title" initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={principleVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.6, ease: kelusEase }}>
-        <p className={styles.eyebrow}>What Kelus does—and doesn’t do</p>
-        <h2 id="how-principle-title">A route to practise.<br />Not a predicted grade.</h2>
+        <div className={styles.principleHeading}>
+          <p className={styles.eyebrow}>What Kelus does—and doesn’t do</p>
+          <h2 id="how-principle-title">A route to practise.<br />Not a predicted grade.</h2>
+        </div>
         <p>Kelus uses your course material, exam date, and practice answers to choose what to revisit. Readiness is an estimate from that evidence, not a promise about your exam result.</p>
       </motion.section>
       <motion.footer ref={finalRef} className={styles.final} initial={reduceMotion ? false : { opacity: 0, y: 14 }} animate={finalVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.55, ease: kelusEase }}>
