@@ -22,6 +22,7 @@ export function SourceIllustration({ active, instant }: IllustrationProps) {
         <text x="163" y="118" className={styles.artLabel}>LECTURE 06 / MICROECONOMICS</text>
         <path className={styles.darkRule} d="M164 151h144M164 176h99" />
         <motion.path
+          data-ink-reveal="source"
           className={styles.sourceMark}
           d="M159 220c38-4 83-3 127-1s68-1 85-3"
           initial={false}
@@ -60,6 +61,7 @@ export function RecallIllustration({ active, instant }: IllustrationProps) {
         <text x="182" y="171" className={styles.artQuestion}>Why do substitutes</text>
         <text x="182" y="194" className={styles.artQuestion}>change demand?</text>
         <motion.path
+          data-ink-reveal="recall"
           className={styles.recallMark}
           d="M185 232c61-7 115-8 174-4"
           initial={false}
@@ -108,6 +110,7 @@ export function RouteIllustration({ active, instant }: IllustrationProps) {
         <text x="179" y="308" className={styles.artNumber}>03</text>
         <text x="229" y="306" className={styles.artRouteQuiet}>Market structures</text>
         <motion.path
+          data-ink-reveal="route"
           className={styles.routeMark}
           d="M226 178c39 4 88 2 130-2"
           initial={false}
