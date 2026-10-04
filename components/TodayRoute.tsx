@@ -111,7 +111,8 @@ export function TodayRoute({
           animate={{ opacity: 1 }}
           transition={{ duration: reduceMotion ? 0.1 : 0.4, delay: reduceMotion ? 0 : 0.06, ease: kelusEase }}
         >
-          <span>Today’s route · {routeMinutes} min total</span>
+          <span>Today</span>
+          <span>{route.allocations.length} topic{route.allocations.length === 1 ? "" : "s"} · {routeMinutes} min</span>
         </motion.p>
         <p className="today-exam-context">{examTarget} · {daysToExam} day{daysToExam === 1 ? "" : "s"} left · Your target {targetPercent}%</p>
         <motion.h1
@@ -133,7 +134,7 @@ export function TodayRoute({
           <p className="today-decision-payoff"><strong>What this unlocks</strong>{payoff}</p>
         </div>
         {whisper ? <p className="today-source-reference">Source · {whisper}</p> : null}
-        {lastPractice && lastTopic ? <p className="today-return-note">Last answer · {lastTopic} · {lastResult}. Your route includes that evidence.</p> : null}
+        {lastPractice && lastTopic ? <p className="today-return-note">Last answer: {lastTopic} · {lastResult}.</p> : null}
         <motion.button
           type="button"
           className="cta today-start"
@@ -143,9 +144,6 @@ export function TodayRoute({
         >
           {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
         </motion.button>
-        <p className="today-session-preview">
-          {lastPractice ? "Continue from your last answer — read, recall, use, then check your thinking." : "Read the source, recall the idea, use it, then check your answer."}
-        </p>
       </motion.article>
       {nextStops.length ? (
         <aside className="today-next" aria-label="Planned next topics">
