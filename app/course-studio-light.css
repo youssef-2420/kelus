@@ -200,21 +200,24 @@ body.is-course-studio .kelus-space.is-studio {
 
 body.is-course-studio .today-route-execution.is-booklet-page {
   grid-template-columns: minmax(0, 1.45fr) minmax(230px, 0.72fr);
-  gap: clamp(48px, 7vw, 96px);
-  padding-top: 0;
+  gap: clamp(28px, 5vw, 64px);
+  padding-top: 4px;
 }
 
 body.is-course-studio .studio-panel .today-page-folio {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-16);
   color: var(--studio-muted);
   font-size: 0.82rem;
   font-weight: 500;
 }
 
 body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
-  max-width: 16ch;
-  margin-top: var(--spacing-16);
+  max-width: 20ch;
+  margin-top: var(--spacing-12);
   color: var(--studio-ink);
-  font-size: clamp(3.1rem, 6vw, 5.8rem);
+  font-size: clamp(2.5rem, 4.5vw, 4.2rem);
   font-weight: 600;
   letter-spacing: -0.07em;
   line-height: 1.04;
@@ -228,8 +231,8 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
 
 .is-course-studio .today-decision {
   max-width: 53ch;
-  margin-top: var(--spacing-48);
-  padding-top: var(--spacing-24);
+  margin-top: var(--spacing-32);
+  padding-top: var(--spacing-16);
 }
 
 .is-course-studio .today-decision-label,
@@ -243,13 +246,13 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
 
 .is-course-studio .today-decision p:not(.today-decision-label) {
   color: var(--studio-muted);
-  font-size: 1rem;
-  line-height: 1.55;
+  font-size: 0.94rem;
+  line-height: 1.45;
 }
 
 .is-course-studio .today-decision-payoff {
-  margin-top: var(--spacing-20);
-  padding: var(--spacing-16);
+  margin-top: var(--spacing-16);
+  padding: var(--spacing-12) var(--spacing-16);
   border: 1px solid var(--studio-hairline);
   border-left: 2px solid var(--color-kelus);
   background: var(--studio-rail-paper);
@@ -271,7 +274,7 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
 
 .is-course-studio .today-lead-action.is-page .today-start {
   min-height: 52px;
-  margin-top: var(--spacing-32);
+  margin-top: var(--spacing-24);
   padding-inline: var(--spacing-24);
   border-radius: var(--radius-ledger);
   background: var(--color-kelus);
