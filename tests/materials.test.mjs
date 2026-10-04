@@ -30,9 +30,22 @@ test("PDF pages produce reviewable concepts with exact page references", () => {
       { pageNumber: 2, text: "2. Elasticity\nElasticity measures responsiveness to a change in price." },
     ],
   });
+
   assert.deepEqual(proposals.map((item) => item.name), ["Supply and Demand", "Elasticity"]);
   assert.deepEqual(proposals.map((item) => item.locator), ["Page 1", "Page 2"]);
   assert.match(proposals[1].sourceExcerpt, /responsiveness/);
+});
+
+test("repeated PDF header text is collapsed before it becomes a topic", () => {
+  const proposals = proposeConceptsFromPages({
+    materialId: "header-repeat",
+    sourceLabel: "Course notes",
+    pages: [{
+      pageNumber: 1,
+      text: "Course Material Youssef Course Material Youssef\nA useful definition explains the topic clearly.",
+    }],
+  });
+  assert.equal(proposals[0]?.name, "Course Material Youssef");
 });
 
 test("confirmed material concepts become the existing learning model", () => {
