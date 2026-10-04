@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { RecallIllustration, RouteIllustration, SourceIllustration } from "@/components/home/RevisionObjects";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
@@ -29,10 +29,26 @@ function RecallVisual({ example, visible, reduceMotion }: VisualProps) {
 }
 
 function RerouteVisual({ example, visible, reduceMotion }: VisualProps) {
+  const [playing, setPlaying] = useState(true);
+  const replayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => {
+    if (replayTimer.current !== null) clearTimeout(replayTimer.current);
+  }, []);
+
+  function replayChange() {
+    if (replayTimer.current !== null) clearTimeout(replayTimer.current);
+    setPlaying(false);
+    replayTimer.current = setTimeout(() => setPlaying(true), 360);
+  }
   return (
     <figure className={`${styles.visual} ${styles.rerouteVisual}`}>
-      <div className={styles.art}><RouteIllustration example={example} active={reduceMotion || visible} instant={reduceMotion} /></div>
-      <figcaption className={styles.visualCaption}><span>After that answer</span><strong>First to review: {example.route[0].name}.</strong><small>{example.moved} moves forward for more practice.</small></figcaption>
+      <div className={styles.art}><RouteIllustration example={example} active={reduceMotion || (visible && playing)} instant={reduceMotion} showReorder /></div>
+      <figcaption className={styles.visualCaption}>
+        <span>After that answer</span>
+        <strong>First to review: {example.route[0].name}.</strong>
+        <small>{example.route[0].name} moves ahead of {example.route[1].name} for another attempt.</small>
+        {!reduceMotion && <button className={styles.replayAction} type="button" onClick={replayChange} aria-label="Replay how the study route changes">Replay the change <span aria-hidden="true">↺</span></button>}
+      </figcaption>
     </figure>
   );
 }

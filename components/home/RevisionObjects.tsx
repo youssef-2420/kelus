@@ -4,7 +4,7 @@ import { motion } from "motion/react";
 import type { LearningExample } from "@/data/learning-examples";
 import styles from "./RevisionLoopVisuals.module.css";
 
-type IllustrationProps = { active: boolean; instant: boolean; example?: LearningExample };
+type IllustrationProps = { active: boolean; instant: boolean; example?: LearningExample; showReorder?: boolean };
 
 const inkMotion = (instant: boolean, delay = 0) =>
   instant ? { duration: 0 } : { duration: 0.36, ease: [0.22, 1, 0.36, 1] as const, delay };
@@ -90,7 +90,9 @@ export function RecallIllustration({ active, instant, example }: IllustrationPro
   );
 }
 
-export function RouteIllustration({ active, instant, example }: IllustrationProps) {
+export function RouteIllustration({ active, instant, example, showReorder = false }: IllustrationProps) {
+  const reordered = instant || active;
+  const rowMotion = instant ? { duration: 0 } : { duration: active ? 0.58 : 0.28, delay: active ? 0.72 : 0, ease: [0.22, 1, 0.36, 1] as const };
   return (
     <svg viewBox="0 0 640 430" className={styles.drawing} aria-hidden="true" focusable="false">
       <path className={styles.ground} d="M67 366c163 8 361 7 504-3" />
@@ -103,28 +105,43 @@ export function RouteIllustration({ active, instant, example }: IllustrationProp
         <text x="177" y="111" className={styles.artLabel}>TODAY / AFTER YOUR ANSWER</text>
         <path className={styles.lightRule} d="M177 128h294M177 201h294M177 269h294" />
         <text x="179" y="171" className={styles.artNumber}>01</text>
-        <text x="229" y="170" className={styles.artRouteTitle}>{example?.route[0].name ?? "Elasticity"}</text>
-        <text x="229" y="190" className={styles.artDetail}>Try again while it is fresh</text>
         <text x="179" y="241" className={styles.artNumber}>02</text>
-        <text x="229" y="239" className={styles.artRouteQuiet}>{example?.moved ?? "Supply & demand"}</text>
-        <text x="229" y="258" className={styles.artDetail}>Review next</text>
+        {showReorder ? (
+          <>
+            <motion.g data-route-row="previous" initial={instant ? false : { y: 0 }} animate={{ y: reordered ? 69 : 0 }} transition={rowMotion}>
+              <text x="229" y="170" className={styles.artRouteQuiet}>{example?.route[1].name ?? "Supply & demand"}</text>
+              <text x="229" y="190" className={styles.artDetail}>Review next</text>
+            </motion.g>
+            <motion.g data-route-row="promoted" initial={instant ? false : { y: 0 }} animate={{ y: reordered ? -69 : 0 }} transition={rowMotion}>
+              <text x="229" y="239" className={styles.artRouteTitle}>{example?.route[0].name ?? "Elasticity"}</text>
+              <text x="229" y="258" className={styles.artDetail}>Try again while it is fresh</text>
+            </motion.g>
+          </>
+        ) : (
+          <>
+            <text x="229" y="170" className={styles.artRouteTitle}>{example?.route[0].name ?? "Elasticity"}</text>
+            <text x="229" y="190" className={styles.artDetail}>Try again while it is fresh</text>
+            <text x="229" y="239" className={styles.artRouteQuiet}>{example?.moved ?? "Supply & demand"}</text>
+            <text x="229" y="258" className={styles.artDetail}>Review next</text>
+          </>
+        )}
         <text x="179" y="308" className={styles.artNumber}>03</text>
         <text x="229" y="306" className={styles.artRouteQuiet}>{example?.concepts[2] ?? "Market structures"}</text>
         <motion.path
           data-ink-reveal="route"
           className={styles.routeMark}
           d="M226 178c39 4 88 2 130-2"
-          initial={false}
+          initial={showReorder && !instant ? { opacity: 0, scaleX: 0.5 } : false}
           animate={{ opacity: active ? 1 : 0, scaleX: active ? 1 : 0.5 }}
           style={{ transformOrigin: "226px 178px" }}
-          transition={inkMotion(instant, 0.2)}
+          transition={inkMotion(instant, showReorder ? (active ? 1.25 : 0) : 0.2)}
         />
         <motion.path
           className={styles.routeArrow}
           d="M452 254c35-15 39-50 26-78m-1 14 1-15 11 10"
-          initial={false}
+          initial={showReorder && !instant ? { opacity: 0, y: 9 } : false}
           animate={{ opacity: active ? 1 : 0, y: active ? 0 : 9 }}
-          transition={inkMotion(instant, 0.3)}
+          transition={inkMotion(instant, showReorder ? (active ? 1.2 : 0) : 0.3)}
         />
       </g>
       <path className={styles.sketch} d="m508 342 16 2m-6 8 15 8" />
