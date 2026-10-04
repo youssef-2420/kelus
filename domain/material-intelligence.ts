@@ -20,12 +20,20 @@ const PREREQ_SIGNAL =
 const RELATED_SIGNAL = /\b(?:related to|closely related|see also|compared with|in contrast to|versus|vs\.?)\b/i;
 
 function cleanCandidate(value: string) {
-  return value
+  const cleaned = value
     .replace(NUMBER_PREFIX, "")
     .replace(HEADING_PREFIX, "")
     .replace(/\s+/g, " ")
     .replace(/^[\s:;,.\-–—]+|[\s:;,.\-–—]+$/g, "")
     .trim();
+  const words = cleaned.split(/\s+/);
+  if (words.length >= 2 && words.length % 2 === 0) {
+    const midpoint = words.length / 2;
+    const left = words.slice(0, midpoint).join(" ").toLocaleLowerCase();
+    const right = words.slice(midpoint).join(" ").toLocaleLowerCase();
+    if (left === right) return words.slice(0, midpoint).join(" ");
+  }
+  return cleaned;
 }
 
 function looksLikeConcept(value: string) {
