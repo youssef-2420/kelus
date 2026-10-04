@@ -57,10 +57,14 @@ test("first-use hierarchy stays readable from upload through exam details", asyn
     await expect(page.locator(".studio-onboarding")).toBeVisible();
     await expect(page.locator(".setup-first-upload")).toBeVisible();
     await expect(page.locator(".setup-payoff li")).toHaveCount(3);
-    expect(await page.locator(".setup-first-upload").evaluate((element) =>
-      Boolean(element.compareDocumentPosition(document.querySelector(".setup-payoff")) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
-    expect(await page.locator(".destination-actions").evaluate((element) =>
-      Boolean(element.compareDocumentPosition(document.querySelector(".setup-payoff")) & Node.DOCUMENT_POSITION_FOLLOWING))).toBe(true);
+    expect(await page.locator(".setup-first-upload").evaluate((element) => {
+      const payoff = document.querySelector(".setup-payoff");
+      return payoff !== null && Boolean(element.compareDocumentPosition(payoff) & Node.DOCUMENT_POSITION_FOLLOWING);
+    })).toBe(true);
+    expect(await page.locator(".destination-actions").evaluate((element) => {
+      const payoff = document.querySelector(".setup-payoff");
+      return payoff !== null && Boolean(element.compareDocumentPosition(payoff) & Node.DOCUMENT_POSITION_FOLLOWING);
+    })).toBe(true);
     await expectNoOverlap(page, ".studio-onboarding-steps", ".destination-page-title");
     await expectNoHorizontalOverflow(page);
   }
