@@ -62,10 +62,12 @@
 .returnCopy h2 {
   margin: 0 0 1.25rem;
   color: var(--ink);
+  font-family: var(--font-marketing-heading), Georgia, serif;
+  font-optical-sizing: auto;
   font-size: clamp(2.25rem, 4.3vw, 4.5rem);
   line-height: 1.08;
-  letter-spacing: -0.045em;
-  font-weight: 500;
+  letter-spacing: -0.052em;
+  font-weight: 480;
   overflow-wrap: anywhere;
 }
 .studyCopy p,
@@ -101,7 +103,6 @@
 .returnInner { grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr); }
 .returnCopy { padding: clamp(4rem, 7vw, 7rem) 1rem clamp(4rem, 7vw, 7rem) clamp(1.5rem, 5vw, 5rem); }
 .returnCopy h2 { max-width: 12ch; }
-.returnCopy .exampleNote { color: var(--color-slate); font-size: 0.85rem; margin-bottom: 0; }
 .returnArt { padding: 1.5rem 1.5rem 0; }
 .returnDrawing { display: block; width: 100%; height: auto; }
 

@@ -69,7 +69,6 @@ export function RevisionReturn() {
         <Reveal className={styles.returnCopy}>
           <h2 id="revision-return-title">One answer doesn’t end the story.</h2>
           <p>When recall is shaky, Kelus keeps the topic in view. Your next route reflects what needs another pass.</p>
-          <p className={styles.exampleNote}>Illustrative route change, not a predicted grade.</p>
         </Reveal>
         <Reveal className={styles.returnArt}>
           <ReturnIllustration />

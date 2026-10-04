@@ -14,16 +14,19 @@
   margin: 0 0 0.75rem;
   color: var(--ink);
   font-size: clamp(2rem, 3.7vw, 3.25rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.1;
+  font-family: var(--font-marketing-heading), Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 480;
+  letter-spacing: -0.052em;
+  line-height: 1.08;
 }
 
 .intro p {
   margin: 0;
   color: var(--color-slate);
+  font-family: var(--font-marketing-sans), Arial, sans-serif;
   font-size: clamp(1rem, 1.4vw, 1.125rem);
-  line-height: 1.5;
+  line-height: 1.58;
 }
 
 .spread {
@@ -37,6 +40,7 @@
   align-items: center;
   gap: clamp(2rem, 6vw, 6rem);
   min-width: 0;
+  overflow: clip;
   padding: clamp(2rem, 4vw, 3rem) 0;
 }
 
@@ -68,7 +72,6 @@
   padding: 0 clamp(0rem, 2vw, 1.5rem);
 }
 
-.number,
 .miniLabel,
 .routeNumber {
   fill: var(--color-slate);
@@ -77,33 +80,22 @@
   letter-spacing: 0.06em;
 }
 
-.number {
-  display: block;
-  color: var(--color-kelus);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  margin-bottom: 1.25rem;
-}
 .caption h3 {
   margin: 0 0 0.65rem;
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.12;
+  font-family: var(--font-marketing-heading), Georgia, serif;
+  font-optical-sizing: auto;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  font-weight: 480;
+  letter-spacing: -0.052em;
+  line-height: 1.08;
 }
 .caption p {
   max-width: 30ch;
   margin: 0;
   color: var(--color-slate);
+  font-family: var(--font-marketing-sans), Arial, sans-serif;
   font-size: clamp(1rem, 1.4vw, 1.125rem);
-  line-height: 1.5;
-}
-.disclaimer {
-  margin: 1.25rem 0 0;
-  color: var(--color-slate);
-  font-size: 0.8rem;
-  line-height: 1.45;
+  line-height: 1.58;
 }
 
 .sheet { fill: var(--color-pure-white); stroke: var(--color-frost); stroke-width: 1.2; }
@@ -137,6 +129,5 @@
   .stage:nth-child(even) .caption { grid-column: 1; grid-row: 2; }
   .art { min-height: 0; aspect-ratio: 1.5; }
   .caption { padding: 1.5rem 0.25rem 0; }
-  .number { margin-bottom: 0.75rem; }
   .caption p { max-width: 36ch; }
 }

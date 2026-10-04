@@ -107,19 +107,28 @@ function RevisionStep({ stage }: { stage: (typeof stages)[number] }) {
   const reducedMotion = hydrated && prefersReducedMotion;
   const active = reducedMotion || inView;
   const { number, title, description, className, Illustration } = stage;
+  const entranceX = number === "02" ? -56 : 56;
 
   return (
     <article ref={ref} className={`${styles.stage} ${className}`} data-revision-step={number}>
       <div className={styles.caption}>
-        <span className={styles.number}>{number} / 03</span>
         <div>
           <h3>{title}</h3>
           <p>{description}</p>
         </div>
       </div>
-      <div className={styles.art}>
+      <motion.div
+        className={styles.art}
+        initial={false}
+        animate={{
+          opacity: active ? 1 : 0,
+          x: active ? 0 : entranceX,
+          scale: active ? 1 : 0.94,
+        }}
+        transition={reducedMotion ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.6 }}
+      >
         <Illustration active={active} instant={reducedMotion} />
-      </div>
+      </motion.div>
     </article>
   );
 }
@@ -134,7 +143,6 @@ export function RevisionLoopVisuals() {
       <div className={styles.spread}>
         {stages.map((stage) => <RevisionStep key={stage.number} stage={stage} />)}
       </div>
-      <p className={styles.disclaimer}>Illustrative Microeconomics example. Your route uses your own material and answers.</p>
     </section>
   );
 }

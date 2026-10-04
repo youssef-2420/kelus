@@ -66,7 +66,6 @@ export function ExamRoutePoster() {
           >↗</motion.span></strong>
         </div>
       </motion.div>
-      <figcaption className={styles.caption}>An illustrative example. Your route responds to your own material and answers.</figcaption>
     </figure>
   );
 }

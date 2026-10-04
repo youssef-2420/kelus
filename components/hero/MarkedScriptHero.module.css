@@ -187,7 +187,6 @@
 .nextLabel { color: var(--hero-muted); font-weight: 400; }
 .nextStep strong { color: var(--hero-green); font-family: var(--font-marketing-sans), Arial, sans-serif; font-size: 15px; font-weight: 600; }
 .routeArrow { display: inline-block; margin-left: 4px; }
-.caption { margin: 0; padding: 13px 24px 18px; color: var(--hero-muted); font-family: var(--font-marketing-sans), Arial, sans-serif; font-size: 12px; text-align: center; }
 
 @media (max-width: 640px) {
   .copy { padding-top: 64px; }
@@ -203,7 +202,6 @@
   .answerLines { gap: 13px; margin-top: 18px; }
   .nextStep { display: block; margin-top: 30px; }
   .nextStep strong { display: block; margin-top: 6px; line-height: 1.4; }
-  .caption { max-width: 36ch; margin-inline: auto; line-height: 1.45; }
 }
 
 @media (prefers-reduced-motion: reduce) {
