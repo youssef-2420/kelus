@@ -1,3 +1,4 @@
+/* Hallmark · component-scope: illustrated revision sequence · tone: Kelus booklet · studied-DNA: Figma ink objects · contrast: pass */
 .section {
   border-top: 1px solid var(--color-frost);
   background: var(--paper);
@@ -72,14 +73,6 @@
   padding: 0 clamp(0rem, 2vw, 1.5rem);
 }
 
-.miniLabel,
-.routeNumber {
-  fill: var(--color-slate);
-  font-family: var(--font-marketing-sans);
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-}
-
 .caption h3 {
   margin: 0 0 0.65rem;
   font-family: var(--font-marketing-heading), Georgia, serif;
@@ -98,25 +91,32 @@
   line-height: 1.58;
 }
 
-.sheet { fill: var(--color-pure-white); stroke: var(--color-frost); stroke-width: 1.2; }
-.rule { fill: none; stroke: var(--color-frost); stroke-width: 1; }
-.looseLine { fill: none; stroke: var(--color-kelus); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 3 6; opacity: 0.7; }
-.sheetTitle { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 20px; }
-.inkLine { fill: none; stroke: var(--color-slate); stroke-width: 2; opacity: 0.55; stroke-linecap: round; }
-.sourceUnderline { fill: none; stroke: var(--color-kelus); stroke-width: 7; opacity: 0.22; stroke-linecap: round; }
-.note { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 17px; font-style: italic; }
-.graph { fill: none; stroke: var(--color-slate); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-.graphDot { fill: var(--color-kelus); }
-.prompt { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 19px; }
-.answer { fill: var(--ink); font-family: var(--font-marketing-sans); font-size: 13px; }
-.correction { fill: none; stroke: var(--color-loop-correction); stroke-width: 5; stroke-linecap: round; opacity: 0.75; }
-.routeLine { fill: none; stroke: var(--color-kelus); stroke-width: 1.5; opacity: 0.5; }
-.routeDot { fill: var(--color-kelus); }
-.routeDotQuiet { fill: var(--color-pure-white); stroke: var(--color-slate); stroke-width: 1.5; }
-.routeTitle { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 22px; }
-.routeTitleQuiet { fill: var(--ink); font-family: var(--font-marketing-heading) !important; font-size: 17px; }
-.routeReason { fill: var(--color-slate); font-family: var(--font-marketing-sans); font-size: 12px; }
-.routeUnderline { fill: none; stroke: var(--color-kelus); stroke-width: 5; opacity: 0.22; stroke-linecap: round; }
+.ground { fill: none; stroke: var(--color-slate); stroke-width: 1.3; opacity: 0.45; stroke-linecap: round; }
+.sketch { fill: none; stroke: var(--ink); stroke-width: 1.6; opacity: 0.75; stroke-linecap: round; }
+.backSheet { fill: var(--color-loop-student-paper); stroke: var(--ink); stroke-width: 1.5; stroke-linejoin: round; }
+.paper { fill: var(--color-pure-white); stroke: var(--ink); stroke-width: 1.8; stroke-linejoin: round; }
+.paperFold { fill: none; stroke: var(--ink); stroke-width: 1.2; }
+.notePaper { fill: var(--color-loop-source); stroke: var(--ink); stroke-width: 1.5; }
+.lightRule { fill: none; stroke: var(--color-frost); stroke-width: 1.3; stroke-linecap: round; }
+.darkRule { fill: none; stroke: var(--ink); stroke-width: 1.8; opacity: 0.7; stroke-linecap: round; }
+.marginNote { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.sourceMark { fill: none; stroke: var(--color-loop-coral); stroke-width: 6; opacity: 0.68; stroke-linecap: round; }
+.clip { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.artLabel { fill: var(--color-slate); font: 600 11px var(--font-marketing-sans); letter-spacing: 1.1px; }
+.artQuestion { fill: var(--ink); font: 500 22px var(--font-marketing-heading), Georgia, serif; }
+.recallMark { fill: none; stroke: var(--color-loop-correction); stroke-width: 5; opacity: 0.52; stroke-linecap: round; }
+.pencilWriting { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+.pencilBody { fill: var(--color-loop-lemon); stroke: var(--ink); stroke-width: 1.6; }
+.pencilTip { fill: var(--color-loop-student-paper); stroke: var(--ink); stroke-width: 1.6; stroke-linejoin: round; }
+.pencilLine { fill: none; stroke: var(--ink); stroke-width: 1.1; }
+.pencilEraser { fill: var(--color-loop-recall); stroke: var(--ink); stroke-width: 1.6; }
+.notebookSpine,.notebookRing { fill: none; stroke: var(--ink); stroke-width: 1.5; stroke-linecap: round; }
+.artNumber { fill: var(--color-slate); font: 600 13px var(--font-marketing-sans); }
+.artRouteTitle { fill: var(--ink); font: 500 27px var(--font-marketing-heading), Georgia, serif; }
+.artRouteQuiet { fill: var(--ink); font: 500 22px var(--font-marketing-heading), Georgia, serif; }
+.artDetail { fill: var(--color-slate); font: 13px var(--font-marketing-sans); }
+.routeMark { fill: none; stroke: var(--color-kelus); stroke-width: 5; stroke-linecap: round; opacity: 0.7; }
+.routeArrow { fill: none; stroke: var(--color-kelus); stroke-width: 2.3; stroke-linecap: round; stroke-linejoin: round; }
 
 @media (max-width: 760px) {
   .section { padding-inline: 1rem; }

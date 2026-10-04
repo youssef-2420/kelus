@@ -1,5 +1,13 @@
 [
   {
+    "date": "2026-10-04",
+    "scope": "homepage illustration sequence",
+    "brief": "Turn the supplied Figma line-drawing reference into three original Kelus study objects",
+    "macrostructure": "source object → recall object → route object",
+    "theme": "Kelus booklet (design.md)",
+    "enrichment": "three authored SVG scenes with restrained source, recall, and route accents"
+  },
+  {
     "date": "2026-10-02",
     "scope": "first-use course workspace",
     "brief": "Start with a PDF and let students confirm proposed topics with the original document visible",
