@@ -1,12 +1,14 @@
-/* One photographic revision interlude and one illustrated return chapter.
- * Figma's spare frame/counter pacing is translated into the Kelus booklet palette.
+/* Hallmark · pre-emit critique: P5 H4 E5 S5 R5 V4
+ * One animated paper handoff and one illustrated return chapter.
+ * Figma's orbit/row motion is translated into Kelus's source/recall/route vocabulary.
  */
 .studySection,
 .returnSection { overflow: clip; }
 
 .studySection {
-  background: var(--ink);
-  color: var(--color-pure-white);
+  background: var(--color-loop-student-paper);
+  color: var(--ink);
+  border-block: 1px solid var(--color-loop-student-line);
 }
 
 .studyInner,
@@ -20,33 +22,99 @@
 
 .studyArt {
   position: relative;
-  min-height: clamp(34rem, 52vw, 46rem);
+  min-height: clamp(30rem, 46vw, 40rem);
   overflow: hidden;
   isolation: isolate;
 }
 
-.sceneImageWrap {
+.orbitGuide {
+  position: absolute;
+  width: min(85%, 38rem);
+  aspect-ratio: 1.45;
+  border: 1px solid var(--color-loop-student-line);
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) rotate(-12deg);
+  opacity: 0.7;
+}
+
+.paperAnchor {
   position: absolute;
   inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
 }
 
-.sceneImage {
-  object-fit: cover;
-  object-position: center 47%;
+.orbitPaper {
+  width: min(50%, 22rem);
+  min-width: 16rem;
+  transform-origin: center;
 }
 
-.sceneEyebrow,
-.sceneNumber {
-  position: absolute;
-  z-index: 2;
-  color: var(--color-pure-white);
-  font: 500 0.75rem/1.3 var(--font-marketing-sans);
-  letter-spacing: 0.02em;
-  text-shadow: 0 1px 5px var(--ink);
+.paper {
+  display: flex;
+  flex-direction: column;
+  height: 21rem;
+  padding: 1.5rem 1.5rem 1.25rem;
+  background: var(--color-pure-white);
+  border: 1px solid var(--color-frost);
+  border-radius: 3px;
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--ink) 9%, transparent);
 }
-
-.sceneEyebrow { top: 1.75rem; left: clamp(1.5rem, 4vw, 4rem); }
-.sceneNumber { bottom: 1.75rem; right: clamp(1.5rem, 4vw, 4rem); font-variant-numeric: tabular-nums; }
+.paperTop {
+  padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--color-frost);
+  color: var(--color-slate);
+  font: 600 0.63rem/1.3 var(--font-marketing-sans);
+  letter-spacing: 0.08em;
+}
+.paper strong {
+  margin: 1.2rem 0 1.45rem;
+  font: 500 clamp(1.4rem, 2vw, 1.8rem)/1.2 var(--font-marketing-heading);
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+.paperRule,
+.paperRuleShort {
+  display: block;
+  height: 1px;
+  margin: 0.38rem 0;
+  background: var(--color-frost);
+}
+.paperRuleShort { width: 65%; }
+.sourcePaper { border-top: 3px solid var(--color-hero-orange); }
+.sourceUnderline {
+  align-self: start;
+  margin: 0.65rem 0 0.25rem;
+  color: var(--color-hero-orange);
+  border-bottom: 3px solid var(--color-hero-orange-wash);
+  font: 500 1.2rem/1.2 var(--font-marketing-heading);
+}
+.recallPaper { border-top: 3px solid var(--color-hero-purple); }
+.recallAnswer { font: 500 0.88rem/1.5 var(--font-marketing-sans); color: var(--color-slate); }
+.recallUnderline {
+  display: block;
+  width: 72%;
+  height: 5px;
+  margin: 0.55rem 0 0.85rem;
+  background: var(--color-hero-purple-wash);
+  border-radius: 50%;
+}
+.routePaper { border-top: 3px solid var(--color-kelus); }
+.routePaper strong { margin-bottom: 0.95rem; }
+.routeRow {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.4rem;
+  align-items: baseline;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--color-frost);
+  font: 500 1rem/1.3 var(--font-marketing-sans);
+}
+.routeRow span:first-child { color: var(--color-kelus); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+.routeNote { margin: -0.25rem 0 0.75rem 2.4rem; color: var(--color-slate); font: 400 0.75rem/1.4 var(--font-marketing-sans); }
 
 .studyCopy { padding: 4rem clamp(2rem, 6vw, 7rem) 4rem 2rem; }
 .studyCopy h2,
@@ -70,14 +138,14 @@
   margin: 0 0 1.5rem;
 }
 
-.studyCopy h2 { color: var(--color-pure-white); }
-.studyCopy > p { color: var(--color-frost); }
+.studyCopy h2 { color: var(--ink); }
+.studyCopy > p { color: var(--color-slate); }
 
 .sceneControls {
-  max-width: 26rem;
-  margin: 2.5rem 0 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-pure-white) 30%, transparent);
+  position: absolute;
+  bottom: 1rem;
+  inset-inline: 2rem;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -85,25 +153,24 @@
 }
 .sceneControls .sceneLabel {
   margin: 0;
-  color: var(--color-pure-white);
+  color: var(--color-slate);
   font: 500 0.875rem/1.4 var(--font-marketing-sans);
 }
-.sceneButtons { display: flex; gap: 0.35rem; }
-.sceneButtons button {
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid color-mix(in srgb, var(--color-pure-white) 50%, transparent);
-  border-radius: 50%;
+.replayButton {
+  min-height: 2.75rem;
+  border: 0;
   background: transparent;
-  color: var(--color-pure-white);
-  font: 500 1.2rem/1 var(--font-marketing-sans);
+  color: var(--color-kelus);
+  font: 600 0.875rem/1 var(--font-marketing-sans);
   cursor: pointer;
-  transition: background-color 0.18s ease, transform 0.18s ease;
+  white-space: nowrap;
 }
-.sceneButtons button:hover { background: color-mix(in srgb, var(--color-pure-white) 14%, transparent); }
-.sceneButtons button:active { transform: scale(0.97); }
-.sceneButtons button:focus-visible { outline: 2px solid var(--color-pure-white); outline-offset: 3px; }
-.studyCopy .textLink { color: var(--color-pure-white); }
+.replayButton:hover { text-decoration: underline; text-underline-offset: 0.25em; }
+.replayButton:active { transform: scale(0.97); }
+.replayButton:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 3px; }
+.replayButton:disabled { opacity: 0.5; cursor: default; text-decoration: none; }
+.replayButton:disabled:active { transform: none; }
+.studyCopy .textLink { color: var(--color-kelus); }
 
 .textLink {
   display: inline-flex;
@@ -150,8 +217,12 @@
 @media (max-width: 760px) {
   .studyInner,
   .returnInner { grid-template-columns: minmax(0, 1fr); }
-  .studyArt { min-height: clamp(24rem, 110vw, 34rem); }
+  .studyArt { min-height: clamp(23rem, 110vw, 31rem); }
+  .orbitPaper { width: min(70%, 19rem); min-width: 12rem; }
+  .paper { height: 18rem; padding: 1rem; }
+  .paper strong { font-size: 1.35rem; }
   .studyCopy { padding: 3rem 1rem 3.5rem; }
+  .sceneControls { inset-inline: 1rem; }
   .studyCopy h2,.returnCopy h2 { font-size: clamp(2.2rem, 8vw, 3.7rem); }
   .returnCopy { padding: 4rem 1rem 1rem; }
   .returnArt { padding: 0 0.5rem 1rem; }
@@ -160,6 +231,5 @@
 @media (prefers-reduced-motion: reduce) {
   .textLink { transition: none; }
   .textLink:active { transform: none; }
-  .sceneButtons button { transition: none; }
-  .sceneButtons button:active { transform: none; }
+  .replayButton:active { transform: none; }
 }

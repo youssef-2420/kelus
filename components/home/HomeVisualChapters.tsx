@@ -1,29 +1,53 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { Reveal } from "@/components/motion";
 import styles from "./HomeVisualChapters.module.css";
 
-const revisionScenes = [
-  {
-    src: "/revision-scenes/notes.webp",
-    alt: "A student reviewing printed lecture notes at a desk",
-    label: "Begin with your notes",
-  },
-  {
-    src: "/revision-scenes/recall.webp",
-    alt: "A student writing an answer from memory with the notes set aside",
-    label: "Try it from memory",
-  },
-  {
-    src: "/revision-scenes/check.webp",
-    alt: "A student checking a handwritten answer and marking what needs another pass",
-    label: "Check what needs work",
-  },
+function subscribeVisibility(onChange: () => void) {
+  document.addEventListener("visibilitychange", onChange);
+  return () => document.removeEventListener("visibilitychange", onChange);
+}
+
+const orbitSlots = [
+  { x: "0%", y: -14, rotate: 0, scale: 1, opacity: 1 },
+  { x: "72%", y: 28, rotate: 8, scale: 0.78, opacity: 0.68 },
+  { x: "-72%", y: 28, rotate: -8, scale: 0.78, opacity: 0.68 },
 ] as const;
+
+function RevisionPaper({ kind }: { kind: "source" | "recall" | "route" }) {
+  if (kind === "source") return (
+    <div className={`${styles.paper} ${styles.sourcePaper}`}>
+      <span className={styles.paperTop}>LECTURE NOTES · MICROECONOMICS</span>
+      <strong>Demand &amp;<br />substitutes</strong>
+      <span className={styles.paperRule} />
+      <span className={styles.paperRuleShort} />
+      <span className={styles.sourceUnderline}>close substitutes</span>
+      <span className={styles.paperRule} />
+    </div>
+  );
+  if (kind === "recall") return (
+    <div className={`${styles.paper} ${styles.recallPaper}`}>
+      <span className={styles.paperTop}>WITHOUT LOOKING</span>
+      <strong>Why do substitutes<br />change demand?</strong>
+      <span className={styles.paperRule} />
+      <span className={styles.recallAnswer}>People can choose another option.</span>
+      <span className={styles.recallUnderline} />
+      <span className={styles.paperRuleShort} />
+    </div>
+  );
+  return (
+    <div className={`${styles.paper} ${styles.routePaper}`}>
+      <span className={styles.paperTop}>TODAY · AFTER THAT ANSWER</span>
+      <strong>Next pass</strong>
+      <span className={styles.routeRow}><span>01</span><span>Elasticity</span></span>
+      <span className={styles.routeNote}>Needs another attempt</span>
+      <span className={styles.routeRow}><span>02</span><span>Supply &amp; demand</span></span>
+    </div>
+  );
+}
 
 function ReturnIllustration() {
   return (
@@ -58,51 +82,52 @@ function ReturnIllustration() {
 }
 
 export function StudyMoment() {
-  const [sceneIndex, setSceneIndex] = useState(0);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const inView = useInView(stageRef, { amount: 0.35 });
   const reducedMotion = useReducedMotion() === true;
-  const scene = revisionScenes[sceneIndex];
+  const pageVisible = useSyncExternalStore(subscribeVisibility, () => !document.hidden, () => true);
+  const [phase, setPhase] = useState(0);
+  const shownPhase = reducedMotion ? 2 : phase;
 
-  function moveScene(direction: number) {
-    setSceneIndex((current) => (current + direction + revisionScenes.length) % revisionScenes.length);
-  }
+  useEffect(() => {
+    if (!inView || !pageVisible || reducedMotion || phase >= 2) return;
+    const timer = window.setTimeout(() => setPhase((current) => current + 1), phase === 0 ? 950 : 1500);
+    return () => window.clearTimeout(timer);
+  }, [inView, pageVisible, phase, reducedMotion]);
 
   return (
     <section className={styles.studySection} aria-labelledby="study-moment-title">
       <div className={styles.studyInner}>
-        <div className={styles.studyArt}>
-          <span className={styles.sceneEyebrow}>A revision session</span>
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={scene.src}
-              className={styles.sceneImageWrap}
-              initial={reducedMotion ? false : { opacity: 0, x: 14 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={reducedMotion ? undefined : { opacity: 0, x: -14 }}
-              transition={{ duration: reducedMotion ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <Image
-                src={scene.src}
-                alt={scene.alt}
-                fill
-                sizes="(max-width: 760px) 100vw, 52vw"
-                className={styles.sceneImage}
-              />
-            </motion.div>
-          </AnimatePresence>
-          <span className={styles.sceneNumber} aria-hidden="true">
-            {String(sceneIndex + 1).padStart(2, "0")} / {String(revisionScenes.length).padStart(2, "0")}
-          </span>
+        <div ref={stageRef} className={styles.studyArt} data-study-loop data-phase={shownPhase}>
+          <p className="sr-only">Animated study papers show a lecture note becoming a recall answer, then a revised next pass.</p>
+          <div className={styles.orbitGuide} aria-hidden="true" />
+          {(["source", "recall", "route"] as const).map((kind, index) => {
+            const slot = (index - shownPhase + 3) % 3;
+            return (
+              <div className={styles.paperAnchor} key={kind} aria-hidden="true">
+                <motion.div
+                  className={styles.orbitPaper}
+                  data-paper={kind}
+                  initial={false}
+                  animate={orbitSlots[slot]}
+                  transition={reducedMotion ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.7 }}
+                  style={{ zIndex: slot === 0 ? 2 : 1 }}
+                >
+                  <RevisionPaper kind={kind} />
+                </motion.div>
+              </div>
+            );
+          })}
+          <div className={styles.sceneControls}>
+            <span className={styles.sceneLabel}>A study pass, in motion</span>
+            {!reducedMotion && <button className={styles.replayButton} type="button" aria-label="Replay study animation" onClick={() => setPhase(0)} disabled={phase < 2}>
+              Replay <span aria-hidden="true">↺</span>
+            </button>}
+          </div>
         </div>
         <Reveal className={styles.studyCopy}>
           <h2 id="study-moment-title">The studying happens here.</h2>
-          <p>The note, the question, your answer, and the next step stay in one place. Bring your own lessons into the study space.</p>
-          <div className={styles.sceneControls}>
-            <p className={styles.sceneLabel} aria-live="polite">{scene.label}</p>
-            <div className={styles.sceneButtons}>
-              <button type="button" onClick={() => moveScene(-1)} aria-label="Previous revision photo">←</button>
-              <button type="button" onClick={() => moveScene(1)} aria-label="Next revision photo">→</button>
-            </div>
-          </div>
+          <p>Your own notes stay close while you answer, check, and decide what deserves another pass. One focused session, not more tabs to manage.</p>
           <Link href="/today" className={styles.textLink}>Set up my course <span aria-hidden="true">↗</span></Link>
         </Reveal>
       </div>
