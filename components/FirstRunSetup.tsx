@@ -96,23 +96,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
           >
             <p className="kicker">First, your material</p>
             <h1 className="destination-page-title">Add a course PDF.</h1>
-            <p className="destination-support">Start with a syllabus, lecture slides, or notes. Kelus will suggest topics from the pages; you decide what belongs in your exam.</p>
-            <ul className="setup-payoff" aria-label="What Kelus will create">
-              {[
-                ["Topic cards", "Turn the pages into a focused exam map."],
-                ["Weak spots", "Find what needs your attention first."],
-                ["Today’s route", "Get one useful study action to start."],
-              ].map(([title, detail], index) => (
-                <motion.li
-                  key={title}
-                  initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={reduceMotion ? { duration: 0.1 } : { type: "spring", bounce: 0, duration: 0.36, delay: 0.08 + index * 0.05 }}
-                >
-                  <strong>{title}</strong><span>{detail}</span>
-                </motion.li>
-              ))}
-            </ul>
+            <p className="destination-support">Upload a syllabus, lecture slides, or notes. You’ll review the topics Kelus finds before they shape your plan.</p>
             <label
               className={`setup-first-upload${dragging ? " is-dragging" : ""}${file ? " has-file" : ""}`}
               onDragEnter={() => setDragging(true)}
@@ -126,8 +110,8 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
               <span>{file ? `${(file.size / 1_000_000).toFixed(1)} MB · Choose another file if needed` : "or drop it here"}</span>
             </label>
             <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB. Digital PDFs with selectable text work best. Videos and web links can be saved later, but don’t create topics.</p>
-            <p className="setup-privacy-note">Your course stays on this device unless you choose free sign-in to sync it across devices. You review every proposed topic before it changes your route.</p>
             {file ? <p className="setup-file-ready" role="status" aria-live="polite"><strong>Ready to read</strong><span>{file.name} · {(file.size / 1_000_000).toFixed(1)} MB</span></p> : null}
+            <p className="setup-privacy-note">Your course stays on this device unless you choose free sign-in to sync it across devices. You review every proposed topic before it changes your route.</p>
           </motion.div>
         ) : (
           <motion.div
@@ -242,13 +226,24 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
         </fieldset>
           </motion.div>
         )}
-        <p id="setup-error" className="setup-error" {...(error ? { role: "alert" } : { "aria-live": "polite" })}>{error || "\u00a0"}</p>
+        {error ? <p id="setup-error" className="setup-error" role="alert">{error}</p> : null}
         <div className="destination-actions">
           {stage === "exam" ? <button type="button" className="text-btn setup-back" onClick={() => changeStage("upload")}>Back to PDF</button> : <span className="destination-actions-spacer" />}
           <button className="cta" type="submit" disabled={submitting}>
             {submitting ? "Setting up…" : stage === "upload" ? "Continue to exam details" : "Read my PDF"} <span aria-hidden="true">→</span>
           </button>
         </div>
+        {stage === "upload" ? (
+          <ul className="setup-payoff" aria-label="What happens after upload">
+            {[
+              ["Topics", "Review what Kelus found in your pages."],
+              ["First check", "Show what you can already recall."],
+              ["Study plan", "Start with the topic that needs you most."],
+            ].map(([title, detail]) => (
+              <li key={title}><strong>{title}</strong><span>{detail}</span></li>
+            ))}
+          </ul>
+        ) : null}
       </form>
     </div>
   );
