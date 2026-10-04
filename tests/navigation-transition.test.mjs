@@ -91,7 +91,7 @@ test("Today measures return visits without changing the study decision", async (
   const today = await source("components/TodayRoute.tsx");
   const analytics = await source("lib/analytics.ts");
   assert.match(today, /today_opened/);
-  assert.match(today, /Continue from your last answer/);
+  assert.match(today, /Last answer:/);
   assert.match(analytics, /today_opened/);
 });
 
