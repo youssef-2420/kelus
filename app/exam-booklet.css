@@ -733,6 +733,14 @@ body.is-booklet-system .is-notebook.is-elevated .paper-source p em {
   font-weight: 500;
 }
 
+body.is-booklet-system .is-notebook.is-elevated .paper-substitutes {
+  display: block;
+  width: min(100%, 280px);
+  height: auto;
+  justify-self: center;
+  color: var(--booklet-ink);
+}
+
 body.is-booklet-system .is-notebook.is-elevated .booklet-board-steps li.is-active {
   color: var(--booklet-ink);
   font-weight: 600;

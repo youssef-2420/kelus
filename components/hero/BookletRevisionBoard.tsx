@@ -14,8 +14,8 @@ type RouteItem = {
 };
 
 const BASE_ROUTE: RouteItem[] = [
-  { name: "Elasticity", minutes: 18, reason: "Needs another attempt", recommended: true },
-  { name: "Supply & Demand", minutes: 15, reason: "High exam value", recommended: false },
+  { name: "Supply & Demand", minutes: 18, reason: "Start with the foundation", recommended: true },
+  { name: "Elasticity", minutes: 15, reason: "Check your recall next", recommended: false },
   { name: "Market Structures", minutes: 12, reason: "Builds on both", recommended: false },
 ];
 
@@ -23,7 +23,7 @@ const press = kelusMotion.press;
 const spring = { type: "spring" as const, bounce: 0, duration: 0.45 };
 
 /**
- * Open notebook sheet — ruled paper, binder holes, ink diagram.
+ * Open notebook sheet — source excerpt, recall, then a route that visibly changes.
  * Interactive sample: recall → check → route reacts to the answer.
  */
 export function BookletRevisionBoard() {
@@ -49,17 +49,17 @@ export function BookletRevisionBoard() {
   function markShaky() {
     setPhase("route");
     setRoute([
-      { name: "Elasticity", minutes: 18, reason: "Needs another attempt", recommended: true },
-      { name: "Supply & Demand", minutes: 15, reason: "High exam value", recommended: false },
+      { name: "Elasticity", minutes: 20, reason: "Needs another attempt", recommended: true },
+      { name: "Supply & Demand", minutes: 13, reason: "Review after Elasticity", recommended: false },
       { name: "Market Structures", minutes: 12, reason: "Builds on both", recommended: false },
     ]);
-    setSignal("Elasticity stays first for another attempt.");
+    setSignal("Elasticity moves from second to first for another attempt.");
   }
 
   function markRemembered() {
     setPhase("route");
     setRoute([
-      { name: "Supply & Demand", minutes: 15, reason: "High exam value", recommended: true },
+      { name: "Supply & Demand", minutes: 15, reason: "Start with the foundation", recommended: true },
       { name: "Market Structures", minutes: 12, reason: "Builds on both", recommended: false },
       { name: "Elasticity", minutes: 12, reason: "Reviewed just now", recommended: false },
     ]);
@@ -85,27 +85,21 @@ export function BookletRevisionBoard() {
         <div className="booklet-board-main">
           <div className="paper-source">
             <div className="paper-source-copy">
-              <span className="paper-step">From your notes</span>
+              <span className="paper-step">From the lecture · Elasticity</span>
               <p>
-                Small notes.
-                <br />
-                <em>Stronger recall.</em>
+                When the price rises, buyers can <em>choose a close substitute.</em>
               </p>
             </div>
             <svg
-              className="paper-membrane"
+              className="paper-substitutes"
               viewBox="0 0 280 140"
-              role="img"
-              aria-label="Ink diagram: a flatter demand curve when substitutes make quantity more price-sensitive"
+              aria-hidden="true"
             >
-              <path d="M24 28h232v84H24z" fill="#f7f8f5" stroke="#12160f" strokeWidth="1.4" />
-              <path d="M48 100V44" fill="none" stroke="#12160f" strokeWidth="1.4" strokeLinecap="round" />
-              <path d="M48 100h168" fill="none" stroke="#12160f" strokeWidth="1.4" strokeLinecap="round" />
-              <path d="M60 52l140 40" fill="none" stroke="#8a8f84" strokeWidth="1.6" strokeLinecap="round" />
-              <path d="M60 60l140 20" fill="none" stroke="#1f6b45" strokeWidth="2.2" strokeLinecap="round" />
-              <text x="52" y="40" fill="#4a5246" fontSize="9" fontFamily="ui-sans-serif, system-ui, sans-serif">P</text>
-              <text x="214" y="112" fill="#4a5246" fontSize="9" fontFamily="ui-sans-serif, system-ui, sans-serif">Q</text>
-              <text x="150" y="58" fill="#1f6b45" fontSize="9" fontFamily="ui-sans-serif, system-ui, sans-serif">more elastic</text>
+              <path d="M30 28h72v84H30zM178 28h72v84h-72z" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M42 46h47M42 55h35M42 91h47M190 46h47M190 55h35M190 91h47" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              <path d="M49 77h34M197 77h34" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              <path d="M113 62c18-20 38-20 54-4m-10-11 11 11-13 5" fill="none" stroke="#1f6b45" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M167 82c-18 20-38 20-54 4m10 11-11-11 13-5" fill="none" stroke="#4a5246" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
 

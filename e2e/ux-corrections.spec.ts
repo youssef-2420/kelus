@@ -29,7 +29,7 @@ test("sample route explains its actual outcome and total", async ({ page }) => {
   await page.getByRole("button", { name: "Hide answer" }).click();
   await page.getByRole("button", { name: "Reveal answer" }).click();
   await page.getByRole("button", { name: "I was shaky" }).click();
-  await expect(page.getByRole("status").filter({ hasText: "Elasticity stays first" })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "Elasticity moves from second to first" })).toBeVisible();
   await expect(page.locator(".booklet-flow-route-title")).toContainText("45 min");
 });
 

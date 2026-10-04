@@ -116,10 +116,11 @@ test("first PDF survives a refresh before topics are confirmed", async ({ page }
 test("homepage sample makes both route outcomes visible", async ({ page }) => {
   await page.goto("/");
   const demo = page.locator(".booklet-board");
+  await expect(demo.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
   await demo.getByRole("button", { name: "Reveal answer" }).click();
   await demo.getByRole("button", { name: "I was shaky" }).click();
   await expect(demo.locator(".booklet-flow-route li").first()).toContainText("Elasticity");
-  await expect(demo.locator(".notebook-signal")).toContainText("stays first");
+  await expect(demo.locator(".notebook-signal")).toContainText("moves from second to first");
   await demo.getByRole("button", { name: "Hide answer" }).click();
   await demo.getByRole("button", { name: "Reveal answer" }).click();
   await demo.getByRole("button", { name: "I remembered" }).click();

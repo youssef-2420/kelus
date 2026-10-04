@@ -46,7 +46,7 @@ test("hero recall preview reveals, reorders, resets, and works on a narrow scree
   await board.getByRole("button", { name: "Hide answer" }).click();
   await expect(board.locator("#board-answer")).toBeHidden();
   await expect(board.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
-  await expect(board.locator(".booklet-flow-route li").first()).toContainText("Elasticity");
+  await expect(board.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
