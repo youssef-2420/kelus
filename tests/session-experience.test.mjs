@@ -22,8 +22,8 @@ test("every demo concept has a deterministic learn, retrieve and apply activity"
     assert.ok(activity.apply.modelAnswer.length > 10);
     assert.deepEqual(activity.sourceReferences, [
       {
-        materialId: "demo-syllabus-microeconomics",
-        label: "Sample syllabus",
+        materialId: "material-demo-microeconomics",
+        label: "Built-in example",
         locator: null,
       },
     ]);
@@ -51,7 +51,8 @@ test("the session executes learn, retrieve, apply and evaluate before updating t
   assert.match(page, /This check/);
   assert.match(page, /Try again/);
   assert.match(page, /Continue to \$\{nextConceptName\}/);
-  assert.match(page, /remaining topic order is unchanged/);
+  assert.match(page, /remaining route is unchanged/);
+  assert.match(page, /time plan changed/);
   assert.doesNotMatch(page, /Revisit \$\{concept\.name\} before moving on/);
   assert.doesNotMatch(page, /percent\(masteryBefore\)/);
   assert.match(page, /Review the source behind this topic/);

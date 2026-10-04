@@ -126,6 +126,16 @@ test("a delayed effect is not mistaken for a contradiction because it says not i
   assert.notEqual(evaluation.outcome, "failure");
 });
 
+test("a coherent economics paraphrase is not downgraded for different wording", () => {
+  const result = evaluateLearningResponse({
+    retrieveAnswer: "Higher rates make borrowing more expensive, so households and firms spend and invest less. Aggregate demand falls and inflation pressure eases, usually after a lag.",
+    applicationAnswer: "Households and companies may have existing fixed-rate loans and contracts. New borrowing costs filter into spending decisions gradually; lower demand then affects prices with another delay.",
+    retrieveModelAnswer: "It raises borrowing costs, restrains demand and investment, and can reduce upward pressure on prices.",
+    applicationModelAnswer: "Loans, contracts, and spending plans adjust gradually, so tighter financial conditions pass through to demand and prices with a lag.",
+  });
+  assert.equal(result.outcome, "success");
+});
+
 test("one student journey reaches a source-backed route and updates it from evaluated evidence", () => {
   const base = createLearnerSnapshot({
     courseName: "Molecular Biology",

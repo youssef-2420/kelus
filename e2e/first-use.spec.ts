@@ -67,6 +67,14 @@ test("first-use hierarchy stays readable from upload through exam details", asyn
     })).toBe(true);
     await expectNoOverlap(page, ".studio-onboarding-steps", ".destination-page-title");
     await expectNoHorizontalOverflow(page);
+    if (viewport.width === 768) {
+      const rail = await page.locator(".studio-rail").boundingBox();
+      const setup = await page.locator(".setup-first-upload").boundingBox();
+      expect(rail).not.toBeNull();
+      expect(setup).not.toBeNull();
+      expect(rail!.height).toBeLessThan(viewport.height / 2);
+      expect(setup!.y).toBeLessThan(viewport.height);
+    }
   }
 
   await page.setViewportSize({ width: 390, height: 844 });
@@ -155,6 +163,9 @@ test("sample course without an original PDF gives the route room and makes uploa
   await page.screenshot({ path: "/tmp/kelus-sample-route-without-pdf.png", fullPage: true });
   await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Materials" }).click();
   await expect(page.locator(".material-binder-stack.is-source-first")).toBeVisible();
+  await expect(page.locator(".material-row strong").getByText("Built-in Microeconomics example")).toBeVisible();
+  await expect(page.getByText("Built-in example · no original PDF")).toBeVisible();
+  await expect(page.locator('.material-row a[href="https://kelus.me/route"]')).toHaveCount(0);
   await expect(page.locator(".material-add-page[open] input[type='file']")).toBeVisible();
   expect(await page.locator(".material-add-page").evaluate((element) => element.getBoundingClientRect().top)).toBeLessThan(360);
   await page.screenshot({ path: "/tmp/kelus-upload-first-desktop.png", fullPage: true });
@@ -279,7 +290,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: /Retrieve it/ }).click();
   await expect(page.getByLabel(/Close the page\. Write it in your own words/)).toHaveValue("I cannot yet explain the mechanism from memory.");
   await page.getByRole("button", { name: /Continue/ }).click();
-  await page.getByLabel(/Same idea, new situation/).fill("I cannot apply this relationship to the new situation yet.");
+  await page.getByLabel(/Use the idea to explain this question/).fill("I cannot apply this relationship to the new situation yet.");
   await expect(page.locator(".study-question")).toHaveCSS("opacity", "1");
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
@@ -287,7 +298,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: "Mark this" }).click();
   await expect(page.getByRole("heading", { name: "Needs another attempt." })).toBeVisible();
   await expect(page.getByText(/first check/)).toBeVisible();
-  await expect(page.getByRole("status").filter({ hasText: /remaining topic order/ })).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /(topic order stayed|remaining topic order|remaining route)/ })).toBeVisible();
   for (const width of [320, 375, 414]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -297,7 +308,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page.getByLabel(/Close the page\. Write it in your own words/)).toHaveValue("");
   await page.getByLabel(/Close the page\. Write it in your own words/).fill("I still cannot explain it.");
   await page.getByRole("button", { name: /Continue/ }).click();
-  await page.getByLabel(/Same idea, new situation/).fill("I need to review the source first.");
+  await page.getByLabel(/Use the idea to explain this question/).fill("I need to review the source first.");
   await page.getByRole("button", { name: /Check my thinking/ }).click();
   await page.getByRole("button", { name: "Mark this" }).click();
   await expect(page.getByText(/2 checks/)).toBeVisible();

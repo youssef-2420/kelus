@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
 import { deriveStatus } from "@/domain/learner-model";
+import { topicEvidence } from "@/domain/mastery-evidence";
 import { confidenceLabel, daysAgoLabel, formatDay, percent } from "@/lib/format";
 import { ConceptTitleTransition, DirectionalPage } from "@/components/PageTransition";
 import styles from "./ConceptDetail.module.css";
@@ -52,6 +53,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
     );
   }
   const status = deriveStatus(concept.mastery, concept.predictedRetention, concept.retrievalAttempts);
+  const evidence = topicEvidence(concept, state.snapshot.prompts, state.snapshot.events, state.nowIso);
   const courseName = state.snapshot.courses.find((course) => course.id === concept.courseId)?.name ?? "Your course";
   const events = state.snapshot.events.filter((event) => event.conceptId === concept.id).slice().reverse();
   const related = state.snapshot.relationships
@@ -81,7 +83,8 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
               <p>{concept.retrievalAttempts === 0 ? "No recall checks yet." : `Based on ${concept.retrievalAttempts} recall check${concept.retrievalAttempts === 1 ? "" : "s"}.`}</p>
             </div>
             <dl>
-              <div><dt>Mastery estimate</dt><dd>{percent(concept.mastery)}</dd></div>
+              <div><dt>Practice mastery</dt><dd>{evidence.mastery === null ? "Not yet measured" : percent(evidence.mastery)}</dd></div>
+              <div><dt>Question coverage</dt><dd>{evidence.availableQuestions ? percent(evidence.coverage) : "No questions yet"}</dd></div>
               <div><dt>Evidence</dt><dd>{confidenceLabel(concept.confidence)}</dd></div>
               <div><dt>Last checked</dt><dd>{daysAgoLabel(concept.lastReviewedAt, state.nowIso)}</dd></div>
               <div><dt>Next review</dt><dd>{concept.nextReviewAt ? formatDay(concept.nextReviewAt) : "Now"}</dd></div>

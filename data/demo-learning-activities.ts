@@ -139,8 +139,8 @@ const ACTIVITIES: Record<string, ActivitySeed> = {
 };
 
 const DEMO_SOURCE = {
-  materialId: "demo-syllabus-microeconomics",
-  label: "Sample syllabus",
+  materialId: "material-demo-microeconomics",
+  label: "Built-in example",
   locator: null,
 } as const;
 
@@ -149,7 +149,7 @@ export function createDemoLearningActivities(): LearningActivity[] {
     id: `activity-${conceptId}`,
     conceptId,
     ...activity,
-    // Sample activities cite the sample syllabus without a demo disclaimer in the UI.
+    // The example has no original document; keep the reference explicit.
     sourceReferences: [DEMO_SOURCE],
   }));
 }

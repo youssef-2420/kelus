@@ -14,6 +14,11 @@ const CANONICAL_TERMS: Record<string, string> = {
   occurs: "happen", happens: "happen",
   liable: "liability", responsible: "liability",
   computation: "calculate", computes: "calculate", calculated: "calculate",
+  // Small, explicit paraphrase groups. They do not infer meaning from arbitrary prose.
+  expensive: "cost", expense: "cost", costs: "cost",
+  investing: "invest", investment: "invest", investments: "invest",
+  restrains: "reduce", restrained: "reduce", fall: "reduce", falls: "reduce", ease: "reduce", eases: "reduce",
+  higher: "increase",
 };
 
 function stem(token: string) {

@@ -8,7 +8,7 @@ import { Suspense, useCallback, useEffect, useMemo, useRef, useState, useSyncExt
 import { useLearner } from "@/components/LearnerProvider";
 import { evaluateLearningResponse, type AnswerEvaluation } from "@/domain/answer-evaluation";
 import { resumeSessionIndex } from "@/domain/session-engine";
-import type { Concept, LearningActivity, RetrievalOutcome } from "@/domain/types";
+import type { Concept, LearningActivity, RetrievalOutcome, RouteAllocation } from "@/domain/types";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
@@ -24,7 +24,7 @@ type SourcePanelState = {
   locator: string | null;
   kind: "pdf" | "link" | "unavailable";
   href: string | null;
-  reason?: "missing" | "read_failed";
+  reason?: "missing" | "read_failed" | "built_in";
 };
 
 const PHASE_LABEL: Record<"learn" | "retrieve" | "apply" | "evaluate", string> = {
@@ -79,6 +79,7 @@ function SessionBody() {
   const [evaluation, setEvaluation] = useState<AnswerEvaluation | null>(null);
   const [lastOutcome, setLastOutcome] = useState<RetrievalOutcome | null>(null);
   const [routeBeforeIds, setRouteBeforeIds] = useState<string[]>([]);
+  const [routeBeforeAllocations, setRouteBeforeAllocations] = useState<RouteAllocation[]>([]);
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
   const [openingSource, setOpeningSource] = useState(false);
   const [sourceRevealed, setSourceRevealed] = useState(false);
@@ -197,6 +198,7 @@ function SessionBody() {
     setPosition({ sessionId: activeSessionId, index });
     setLastOutcome(outcome);
     setRouteBeforeIds(activeSession.latestRoute.allocations.map((item) => String(item.conceptId)));
+    setRouteBeforeAllocations(activeSession.latestRoute.allocations);
     submit({
       conceptId: activeConcept.id,
       sessionId: activeSessionId,
@@ -217,6 +219,7 @@ function SessionBody() {
     setEvaluation(null);
     setLastOutcome(null);
     setRouteBeforeIds([]);
+    setRouteBeforeAllocations([]);
     setHelpMode(null);
     setSourceRevealed(false);
     setPhase("learn");
@@ -236,13 +239,13 @@ function SessionBody() {
 
   function advance() {
     const updatedSession = state.snapshot.sessions.find((item) => item.id === activeSessionId);
-    if (routeOrderChanged) {
+    if (routeChanged) {
       if (lastOutcome === "partial" || lastOutcome === "failure") {
         const previous = routeBeforeIds.length
           ? routeBeforeIds
           : activeSession.initialRoute.allocations.map((allocation) => String(allocation.conceptId));
         const next = updatedSession?.latestRoute.allocations.map((allocation) => String(allocation.conceptId)) ?? [];
-        trackEvent({ name: "route_recalculated", changed: previous.join("|") !== next.join("|"), outcome: lastOutcome });
+        trackEvent({ name: "route_recalculated", changed: routeChanged || previous.join("|") !== next.join("|"), outcome: lastOutcome });
       }
       setPhase("reroute");
       return;
@@ -266,11 +269,21 @@ function SessionBody() {
   const previousRemaining = routeBeforeIds.filter((id) => id !== "mixed-retrieval" && !completedIds.has(id) && session.plannedConceptIds.includes(id));
   const nextRemaining = session.plannedConceptIds.filter((id) => !completedIds.has(id));
   const routeOrderChanged = routeBeforeIds.length > 0 && previousRemaining.join("|") !== nextRemaining.join("|");
+  const previousMinutes = new Map(routeBeforeAllocations.map((allocation) => [allocation.conceptId, allocation.minutes]));
+  const minuteChanges = session.latestRoute.allocations
+    .filter((allocation) => allocation.conceptId !== "mixed-retrieval" && nextRemaining.includes(allocation.conceptId) && previousMinutes.has(allocation.conceptId) && previousMinutes.get(allocation.conceptId) !== allocation.minutes)
+    .map((allocation) => ({
+      name: state.snapshot.concepts.find((item) => item.id === allocation.conceptId)?.name ?? "Topic",
+      before: previousMinutes.get(allocation.conceptId)!,
+      after: allocation.minutes,
+    }));
+  const routeChanged = routeOrderChanged || minuteChanges.length > 0;
   const nextConceptName = state.snapshot.concepts.find((item) => item.id === session.plannedConceptIds[index + 1])?.name;
   const checkCount = state.snapshot.events.filter((event) => event.conceptId === concept.id && event.kind === "retrieval").length;
   const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : null;
   const currentSource = activity.sourceReferences[0];
   const currentMaterial = materials.find((item) => item.id === currentSource?.materialId)
+    ?? (currentSource?.materialId === "demo-syllabus-microeconomics" ? materials.find((item) => item.id === "material-demo-microeconomics") : null)
     ?? materials.find((item) => item.courseId === concept.courseId && item.storage === "local")
     ?? null;
   const hasReadableSource = currentMaterial?.storage === "local" && !currentMaterial.id.startsWith("material-demo-");
@@ -279,13 +292,18 @@ function SessionBody() {
 
   async function openSource(materialId: string, locator: string | null) {
     sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const material = materials.find((item) => item.id === materialId);
+    const material = materials.find((item) => item.id === materialId)
+      ?? (materialId === "demo-syllabus-microeconomics" ? materials.find((item) => item.id === "material-demo-microeconomics") : null);
     if (sourceObjectUrl.current) {
       URL.revokeObjectURL(sourceObjectUrl.current);
       sourceObjectUrl.current = null;
     }
     if (!material) {
       setSourcePanel({ title: "Course source", locator, kind: "unavailable", href: null, reason: "missing" });
+      return;
+    }
+    if (material.id.startsWith("material-demo-")) {
+      setSourcePanel({ title: material.title, locator, kind: "unavailable", href: null, reason: "built_in" });
       return;
     }
     if (material.storage === "url" && material.sourceUrl) {
@@ -416,7 +434,7 @@ function SessionBody() {
               animate={{ opacity: 1, y: 0 }}
               transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.55, delay: 0.06 }}
             >
-              {routeOrderChanged ? "Updated." : "Kept."}
+              Updated.
             </motion.h1>
             <motion.p
               className="study-reroute-lede"
@@ -424,7 +442,7 @@ function SessionBody() {
               animate={{ opacity: 1, y: 0 }}
               transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5, delay: 0.1 }}
             >
-              {`Your answer changed the order of the remaining topics. ${nextConceptName ? `${nextConceptName} is next.` : "You have reached the end of this block."}`}
+              {routeOrderChanged ? "The remaining topic order changed." : "The topic order stayed; the time plan changed."} {nextConceptName ? `${nextConceptName} is next.` : "You have reached the end of this block."}
             </motion.p>
             {nextConceptName ? (
               <motion.p
@@ -439,7 +457,8 @@ function SessionBody() {
                 </strong>
               </motion.p>
             ) : null}
-            <p className="reroute-whisper" aria-label="How this answer affected the route">{evaluation?.label ?? "New evidence"} · New order</p>
+            {minuteChanges.length ? <p className="reroute-whisper" aria-label="Changed study time">{minuteChanges.slice(0, 2).map((change) => `${change.name}: ${change.before} → ${change.after} min`).join(" · ")}</p> : null}
+            <p className="reroute-whisper" aria-label="How this answer affected the route">{evaluation?.label ?? "New evidence"} · {routeOrderChanged ? "Order updated" : "Time updated"}</p>
             <motion.button
               type="button"
               className="cta"
@@ -495,7 +514,7 @@ function SessionBody() {
               {lastOutcome === "success" ? "You used the idea in your own words." : `Return to the source idea: ${activity.retrieve.modelAnswer}`}
             </motion.p>
             <p className="study-reroute-lede" role="status">
-              {routeOrderChanged ? "The remaining topic order changed. " : "The remaining topic order is unchanged. "}
+              {routeOrderChanged ? "The remaining topic order changed. " : minuteChanges.length ? "The topic order stayed, but the time plan changed. " : "The remaining route is unchanged. "}
               {nextConceptName ? `${nextConceptName} is next.` : "This is the last topic in this block."}
             </p>
             <div className="session-value-proof" aria-label="What changed in this session">
@@ -507,6 +526,7 @@ function SessionBody() {
                 <span>Your next choice</span>
                 <strong>{lastOutcome === "success" ? `Continue${nextConceptName ? ` to ${nextConceptName}` : " to your summary"}.` : `Try ${concept.name} again now, or continue${nextConceptName ? ` to ${nextConceptName}` : " to your summary"}.`}</strong>
               </div>
+              {minuteChanges.length ? <div><span>Time adjusted</span><strong>{minuteChanges.slice(0, 2).map((change) => `${change.name} ${change.before} → ${change.after} min`).join(" · ")}</strong></div> : null}
             </div>
             {currentSource && currentMaterial ? (
               <button
@@ -632,7 +652,7 @@ function SessionBody() {
                 <p className="study-mark-kicker">Use</p>
                 <h1>{activity.apply.prompt}</h1>
                 <label className="session-work-lede" htmlFor="application-answer">
-                  Same idea, new situation.
+                  Use the idea to explain this question.
                 </label>
                 <textarea
                   id="application-answer"
@@ -744,7 +764,7 @@ function SessionBody() {
             transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.moderate, ease: kelusEase }}
           >
             <header>
-              <div><span>From your course</span><strong>{sourcePanel.title}</strong>{sourcePanel.locator ? <small>{sourcePanel.locator}</small> : null}</div>
+              <div><span>{sourcePanel.reason === "built_in" ? "Built-in example" : "From your course"}</span><strong>{sourcePanel.title}</strong>{sourcePanel.locator && sourcePanel.reason !== "built_in" ? <small>{sourcePanel.locator}</small> : null}</div>
               <button ref={sourceCloseRef} type="button" onClick={closeSource} aria-label="Close course source">Close</button>
             </header>
             {sourcePanel.kind === "pdf" && sourcePanel.href ? <iframe title={`${sourcePanel.title} ${sourcePanel.locator ?? ""}`} src={sourcePanel.href} /> : null}
@@ -757,11 +777,13 @@ function SessionBody() {
             {sourcePanel.kind === "unavailable" ? (
               <div className="session-source-link">
                 <p>
-                  {sourcePanel.reason === "read_failed"
+                  {sourcePanel.reason === "built_in"
+                    ? "This is a practice example, not a document you uploaded. Add your own PDF in Materials to study with page references."
+                    : sourcePanel.reason === "read_failed"
                     ? "Kelus could not open this PDF just now. Your session stays here — add the file again from Materials, then reopen the source."
                     : "The reference is part of your learning activity, but the original file is not available on this device."}
                 </p>
-                <button type="button" onClick={() => router.push("/materials")}>Add the PDF again <span aria-hidden="true">→</span></button>
+                <button type="button" onClick={() => router.push("/materials")}>{sourcePanel.reason === "built_in" ? "Add your own material" : "Add the PDF again"} <span aria-hidden="true">→</span></button>
               </div>
             ) : null}
           </motion.aside>

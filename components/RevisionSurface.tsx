@@ -185,8 +185,8 @@ export function RevisionSurface() {
         <div className="core-rail-sources">
           <p className="studio-rail-label">Course sources <span>{courseMaterials.length}</span></p>
           {courseMaterials.length ? courseMaterials.slice(0, 6).map((material) => (
-            <button key={material.id} type="button" className={selectedMaterial?.id === material.id ? "is-selected" : undefined} onClick={() => { setSelectedMaterialId(material.id); setMode("materials"); }} title={material.title}>
-              <span aria-hidden="true">{material.storage === "local" ? "▤" : "↗"}</span><span className="core-source-name">{material.title}</span>
+            <button key={material.id} type="button" className={selectedMaterial?.id === material.id ? "is-selected" : undefined} onClick={() => { setSelectedMaterialId(material.id); setMode("materials"); }} title={material.id.startsWith("material-demo-") ? "Built-in Microeconomics example" : material.title}>
+              <span aria-hidden="true">{material.id.startsWith("material-demo-") ? "◇" : material.storage === "local" ? "▤" : "↗"}</span><span className="core-source-name">{material.id.startsWith("material-demo-") ? "Built-in Microeconomics example" : material.title}</span>
             </button>
           )) : <p className="core-rail-empty">Add a PDF to keep it beside your plan.</p>}
           <input

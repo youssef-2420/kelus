@@ -135,16 +135,19 @@ function MaterialRow({
           ? null
           : "Saved across devices";
 
-  const host = item.storage === "url" ? sourceHost(item.sourceUrl) : null;
+  const isBuiltInExample = item.id.startsWith("material-demo-");
+  const host = item.storage === "url" && item.sourceUrl ? sourceHost(item.sourceUrl) : null;
   const metaBits = item.storage === "local"
     ? [quiet ? materialRoleLabel(item.role) : null, item.fileName, formatBytes(item.sizeBytes)].filter(Boolean)
-    : [quiet ? materialRoleLabel(item.role) : null, quiet ? `Link · ${host}` : `Bookmark · ${host}`].filter(Boolean);
+    : isBuiltInExample
+      ? ["Built-in example · no original PDF"]
+      : [quiet ? materialRoleLabel(item.role) : null, host ? (quiet ? `Link · ${host}` : `Bookmark · ${host}`) : "Saved link"].filter(Boolean);
 
   return (
     <li className={`material-row${item.processingStatus === "failed" ? " is-failed" : ""}${quiet ? " is-quiet" : ""}`}>
-      {quiet ? null : <span className="material-kind">{materialRoleLabel(item.role)}</span>}
+      {quiet ? null : <span className="material-kind">{isBuiltInExample ? "Example" : materialRoleLabel(item.role)}</span>}
       <span className="material-name">
-        <strong>{item.title}</strong>
+        <strong>{isBuiltInExample ? "Built-in Microeconomics example" : item.title}</strong>
         {metaBits.length ? <small>{metaBits.join(" · ")}</small> : null}
         {statusLabel ? <small className={`material-status-badge is-${item.processingStatus}`}>{statusLabel}</small> : null}
         {syncLabel ? <small className={`material-sync-label is-${syncState ?? "synced"}`}>{syncLabel}</small> : null}

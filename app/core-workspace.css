@@ -203,6 +203,11 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .sessio
   body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-phase-track { grid-column: 2; grid-row: 3; }
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] > :is(.study-question.is-page, .reroute-view.is-page) { grid-column: 2; grid-row: 4; max-height: none; }
 }
+@media (max-width: 900px) {
+  /* Match the desktop selector: the lighter rail rule cannot override it. */
+  body.is-course-studio .studio-rail { position: static; height: auto; max-height: none; overflow-y: visible; }
+}
+
 @media (max-width: 650px) {
   body.is-course-studio .material-ingest.is-embedded .material-role-field { grid-template-columns: minmax(0, 1fr); }
   body.is-course-studio .kelus-space.is-studio { display: block; }

@@ -242,7 +242,15 @@ export function clearMaterials() {
 export function seedDemoMaterial(courseId: string, nowIso?: string) {
   const timestamp = nowIso ?? new Date().toISOString();
   const items = readMetadata();
-  if (items.some((item) => item.courseId === courseId && item.id.startsWith("material-demo-"))) {
+  const existing = items.find((item) => item.courseId === courseId && item.id.startsWith("material-demo-"));
+  if (existing) {
+    if (existing.sourceUrl || existing.title !== "Built-in Microeconomics example") {
+      const normalized = items.map((item) => item.id === existing.id
+        ? { ...item, title: "Built-in Microeconomics example", sourceUrl: null, role: "other" as const }
+        : item);
+      persist(normalized);
+      return normalized;
+    }
     return items;
   }
   const record: CourseMaterial = {
@@ -250,12 +258,12 @@ export function seedDemoMaterial(courseId: string, nowIso?: string) {
     courseId,
     kind: "link",
     storage: "url",
-    title: "Sample: Microeconomics lecture pack",
-    sourceUrl: "https://kelus.me/route",
+    title: "Built-in Microeconomics example",
+    sourceUrl: null,
     fileName: null,
     mimeType: null,
     sizeBytes: null,
-    role: "lecture_slides",
+    role: "other",
     processingStatus: "ready",
     addedAt: timestamp,
     updatedAt: timestamp,
