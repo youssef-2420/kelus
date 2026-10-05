@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
+import { SourceArt } from "@/components/SourceArt";
 import { motion, useReducedMotion } from "motion/react";
 import type { SetupInput } from "@/lib/setup";
 import { trackEvent } from "@/lib/analytics";
@@ -105,7 +106,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
               onDrop={dropFile}
             >
               <input type="file" accept="application/pdf,.pdf" onChange={(event) => chooseFile(event.target.files?.[0])} aria-describedby="setup-file-help" />
-              <span className="setup-upload-mark" aria-hidden="true">↑</span>
+              <span className="setup-upload-mark" aria-hidden="true"><SourceArt role="lecture_slides" /></span>
               <strong>{file ? file.name : "Choose a PDF"}</strong>
               <span>{file ? `${(file.size / 1_000_000).toFixed(1)} MB · Choose another file if needed` : "or drop it here"}</span>
             </label>
