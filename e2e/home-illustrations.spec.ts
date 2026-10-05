@@ -9,7 +9,10 @@ test("animated study papers remain readable on mobile", async ({ page }, testInf
   for (const chapter of await chapters.all()) {
     await chapter.scrollIntoViewIfNeeded();
     await expect(chapter.locator("svg")).toBeVisible();
+    const art = chapter.locator("svg").locator("..");
+    expect(parseFloat(await art.evaluate((element) => getComputedStyle(element).borderTopLeftRadius))).toBeGreaterThan(30);
   }
+  await chapters.first().locator("svg").locator("..").screenshot({ path: testInfo.outputPath("rounded-study-mobile.png"), animations: "disabled" });
 
   const section = page.locator("section").filter({ has: page.getByRole("heading", { name: "The studying happens here." }) });
   await section.locator("[data-study-loop]").scrollIntoViewIfNeeded();
@@ -40,6 +43,7 @@ test("home keeps the illustrated chapters and the animated study papers", async 
     await step.scrollIntoViewIfNeeded();
     await expect(step.locator("svg")).toBeVisible();
   }
+  await steps.first().locator("svg").locator("..").screenshot({ path: testInfo.outputPath("rounded-study-desktop.png"), animations: "disabled" });
   await section.locator("[data-study-loop]").scrollIntoViewIfNeeded();
   await expect(section.locator("[data-study-loop]")).toHaveAttribute("data-phase", "2");
   const replay = section.getByRole("button", { name: "Replay" });
