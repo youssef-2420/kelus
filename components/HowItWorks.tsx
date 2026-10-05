@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { RecallIllustration, RouteIllustration, SourceIllustration } from "@/components/home/RevisionObjects";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
@@ -85,7 +85,9 @@ function Chapter({ stage, example, reduceMotion }: { stage: (typeof stages)[numb
 }
 
 export function HowItWorks() {
-  const reduceMotion = useReducedMotion() === true;
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const motionPreference = useReducedMotion();
+  const reduceMotion = !hydrated || motionPreference === true;
   const [exampleIndex, setExampleIndex] = useState(0);
   const example = LEARNING_EXAMPLES[exampleIndex];
   const principleRef = useRef<HTMLElement>(null);

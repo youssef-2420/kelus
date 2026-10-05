@@ -84,7 +84,9 @@ function ReturnIllustration() {
 export function StudyMoment() {
   const stageRef = useRef<HTMLDivElement>(null);
   const inView = useInView(stageRef, { amount: 0.35 });
-  const reducedMotion = useReducedMotion() === true;
+  const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
+  const motionPreference = useReducedMotion();
+  const reducedMotion = !hydrated || motionPreference === true;
   const pageVisible = useSyncExternalStore(subscribeVisibility, () => !document.hidden, () => true);
   const [phase, setPhase] = useState(0);
   const shownPhase = reducedMotion ? 2 : phase;
