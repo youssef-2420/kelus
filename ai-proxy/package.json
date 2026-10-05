@@ -1,0 +1,10 @@
+{
+  "name": "kelus-ai-proxy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Holds the Anthropic API key for Kelus. Receives a topic's page text, returns study questions. Off until deployed.",
+  "main": "index.mjs",
+  "scripts": { "test": "node --test test/*.test.mjs" },
+  "dependencies": { "@anthropic-ai/sdk": "^0.131.0" }
+}

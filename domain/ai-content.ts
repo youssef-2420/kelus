@@ -109,3 +109,14 @@ export function validateAiReply(raw: string, input: AiTopicInput): AiTopicConten
   if (!explanation || !items.length) return null;
   return { explanation, items: items.slice(0, AI_LIMITS.maxItems), rejected };
 }
+
+/** AI questions first (they ask for explanation, not just recall); offline questions stay as the backup. */
+export function mergeAiContent<T extends { teach?: { facts: string[]; pageText?: string; aiExplanation?: string }; practice?: PracticeItem[] }>(activity: T, content: AiTopicContent | null): T {
+  if (!content) return activity;
+  const kept = (activity.practice ?? []).filter((item) => item.origin !== "ai");
+  return {
+    ...activity,
+    teach: { facts: activity.teach?.facts ?? [], ...activity.teach, aiExplanation: content.explanation },
+    practice: [...content.items, ...kept],
+  };
+}

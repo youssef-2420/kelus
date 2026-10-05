@@ -12,7 +12,8 @@ import styles from "./PracticeDrill.module.css";
  */
 export function PracticeDrill({ items }: { items: PracticeItem[] }) {
   const reduce = useReducedMotion() === true;
-  const drill = items.filter(isDrillable).slice(0, 4);
+  const drill = items.filter((item) => isDrillable(item) || item.origin === "ai").slice(0, 4);
+  const checkable = drill.filter(isDrillable).length;
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [typed, setTyped] = useState("");
@@ -24,6 +25,7 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
   useEffect(() => { if (result) feedback.current?.focus(); }, [result]);
 
   if (drill.length < 2) return null;
+  const open_ = !isDrillable(drill[Math.min(index, drill.length - 1)]);
   const item = drill[index];
 
   function answer(value: string | number) {
@@ -54,8 +56,8 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
     return (
       <section className={styles.card} aria-label="Quick practice" role="status">
         <div>
-          <strong>{score} of {drill.length} right</strong>
-          <p>{score === drill.length ? "Everything on the page, from memory." : "The page explains each one above. Come back to the ones you missed."}</p>
+          <strong>{checkable ? `${score} of ${checkable} right` : "Done"}</strong>
+          <p>{checkable && score === checkable ? "Everything on the page, from memory." : "The page explains each one above. Come back to the ones you missed."}</p>
         </div>
       </section>
     );
@@ -72,7 +74,13 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
       <p className={styles.count}>Question {index + 1} of {drill.length}</p>
       <p className={styles.prompt}>{item.prompt}</p>
 
-      {item.kind === "choice" ? (
+      {open_ ? (
+        <div className={styles.openAnswer}>
+          <label htmlFor={`open-${item.id}`} className="sr-only">Your answer</label>
+          <textarea id={`open-${item.id}`} rows={3} value={typed} onChange={(event) => setTyped(event.target.value)} disabled={Boolean(result)} placeholder="Write it in your own words" />
+          {!result ? <button type="button" className={styles.start} onClick={() => setResult({ right: true })}>Show the page’s answer</button> : null}
+        </div>
+      ) : item.kind === "choice" ? (
         <div className={styles.choices} role="group" aria-label="Choose one">
           {item.choices?.map((choice, choiceIndex) => (
             <button
@@ -96,8 +104,10 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
 
       {result ? (
         <div ref={feedback} tabIndex={-1} className={`${styles.feedback} ${result.right ? styles.ok : styles.no}`} role="status">
-          <strong>{result.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
+          <strong>{open_ ? "Compare with the page" : result.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
+          {open_ ? <p>{item.modelAnswer}</p> : null}
           <p>{item.explanation}</p>
+          {open_ ? <p className={styles.quote}>Page: “{item.sourceQuote}”</p> : null}
           <button type="button" className={styles.start} onClick={next}>{index + 1 >= drill.length ? "Finish" : "Next"}</button>
         </div>
       ) : null}

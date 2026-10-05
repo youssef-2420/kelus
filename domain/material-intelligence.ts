@@ -283,7 +283,7 @@ function buildActivity(concept: Concept, proposal: ProposedConcept, siblingNames
       explanation: claim,
       keyPoints: teachingFacts(concept.name, proposal.sourceExcerpt).slice(1, 4),
     },
-    teach: { facts: teachingFacts(concept.name, proposal.sourceExcerpt) },
+    teach: { facts: teachingFacts(concept.name, proposal.sourceExcerpt), pageText: proposal.sourceExcerpt },
     practice,
     retrieve: {
       prompt: recallQuestion(concept.name, claim, language.retrievePrompt),
