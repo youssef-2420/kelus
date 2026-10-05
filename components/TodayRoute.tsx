@@ -3,8 +3,8 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
-import { LoopSteps } from "@/components/LoopSteps";
+import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
+import { ExamSteps } from "@/components/ExamSteps";
 import { InkArt } from "@/components/InkArt";
 import { ExamPulse } from "@/components/ExamPulse";
 import { estimatedReadiness } from "@/domain/readiness";
@@ -30,6 +30,7 @@ export function TodayRoute({
   concepts,
   activities,
   events,
+  sessions,
   examTarget,
   targetPercent,
   daysToExam,
@@ -41,6 +42,7 @@ export function TodayRoute({
   concepts: Concept[];
   activities: LearningActivity[];
   events: LearningEvent[];
+  sessions: StudySession[];
   examTarget: string;
   targetPercent: number;
   daysToExam: number;
@@ -154,7 +156,6 @@ export function TodayRoute({
         >
           {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
         </motion.button>
-        <LoopSteps compact />
       </motion.article>
       {nextStops.length ? (
         <aside className="today-next" aria-label="Planned next topics">
@@ -171,6 +172,14 @@ export function TodayRoute({
           <p className="today-next-note">Your answer can change what comes next.</p>
         </aside>
       ) : null}
+      <ExamSteps
+        concepts={concepts}
+        activities={activities}
+        route={route}
+        sessions={sessions}
+        targetPercent={targetPercent}
+        daysToExam={daysToExam}
+      />
     </div>
   );
 }

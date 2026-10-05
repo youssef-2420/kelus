@@ -324,6 +324,7 @@ export function RevisionSurface() {
                     concepts={concepts}
                     activities={snapshot.learningActivities}
                     events={snapshot.events}
+                    sessions={snapshot.sessions}
                     examTarget={exam.target}
                     targetPercent={exam.targetPercent}
                     daysToExam={days}

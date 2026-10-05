@@ -1,0 +1,248 @@
+.steps {
+  margin-top: 2.5rem;
+}
+
+.title {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-midnight-ink);
+}
+
+.list {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr);
+  gap: 1rem;
+  padding-bottom: 2rem;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: calc(1.125rem - 1px);
+  top: 2.25rem;
+  bottom: 0;
+  width: 2px;
+  background: var(--color-frost);
+}
+
+.isDone:not(:last-child)::before {
+  background: var(--color-kelus);
+}
+
+.marker {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: 1.5px solid var(--color-midnight-ink);
+  border-radius: 50%;
+  background: var(--color-pure-white);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.isDone .marker {
+  border-color: var(--color-kelus);
+  background: var(--color-kelus);
+  color: var(--color-pure-white);
+}
+
+.isCurrent .marker {
+  border-color: var(--color-kelus);
+  box-shadow: 0 0 0 4px var(--color-periwinkle-wash);
+  color: var(--color-kelus);
+}
+
+.body {
+  min-width: 0;
+}
+
+.body h3 {
+  margin: 0.25rem 0 0.25rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.value {
+  margin: 0 0 0.875rem;
+  max-width: 52ch;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-slate);
+}
+
+/* Step 1: the exam map */
+.map {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+}
+
+.map li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(60px, 120px) 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--color-frost);
+}
+
+.map li:first-child {
+  border-top: 0;
+}
+
+.name {
+  font-weight: 500;
+  color: var(--color-midnight-ink);
+  overflow-wrap: anywhere;
+}
+
+.bar {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-frost);
+  overflow: hidden;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--color-kelus);
+}
+
+.share {
+  font-size: var(--text-body-sm);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--color-slate);
+}
+
+.map small {
+  grid-column: 1 / -1;
+  margin-top: -0.375rem;
+  font-size: var(--text-caption);
+  color: var(--color-smoke);
+}
+
+.more {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-size: var(--text-body-sm);
+  font-weight: 500;
+  color: var(--color-kelus);
+  text-decoration: none;
+}
+
+.more:hover {
+  text-decoration: underline;
+}
+
+/* Step 2: the practice question */
+.question {
+  margin: 0;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--color-frost);
+  border-left: 3px solid var(--color-hero-purple);
+  border-radius: 0 4px 4px 0;
+  background: var(--color-mist);
+}
+
+.question blockquote {
+  margin: 0 0 0.875rem;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: 1.45;
+  color: var(--color-midnight-ink);
+}
+
+.lines {
+  display: grid;
+  gap: 0.625rem;
+  margin-bottom: 0.75rem;
+}
+
+.lines span {
+  height: 0;
+  border-top: 1.5px dashed var(--color-frost);
+}
+
+.lines span:last-child {
+  width: 60%;
+}
+
+.question figcaption {
+  font-size: var(--text-caption);
+  color: var(--color-smoke);
+}
+
+/* Step 3: readiness over time */
+.chart {
+  margin: 0;
+  padding: 0.75rem 1rem 0.5rem;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+}
+
+.chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.targetLine {
+  stroke: var(--color-midnight-ink);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+
+.projection {
+  stroke: var(--color-kelus);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1 6;
+}
+
+.dot {
+  fill: var(--color-midnight-ink);
+}
+
+.dotEnd {
+  fill: var(--color-kelus);
+}
+
+.chartLabel {
+  font-size: 9px;
+  fill: var(--color-smoke);
+}
+
+.note {
+  margin: 0.625rem 0 0;
+  font-size: var(--text-caption);
+  color: var(--color-smoke);
+}
