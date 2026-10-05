@@ -18,7 +18,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
  * a part-drawn ring for partly there, an open loop with a return arrow for another attempt.
  * Ink for effort, green only for a pass. Never red: this is feedback, not punishment.
  */
-export function MarkStamp({ outcome }: { outcome: MarkOutcome }) {
+export function MarkStamp({ outcome, label }: { outcome: MarkOutcome; label?: string }) {
   const reduce = useReducedMotion() === true;
   const ringTo = outcome === "success" ? 1 : outcome === "partial" ? 0.62 : 0.78;
   const draw = (delay: number, duration: number) => ({
@@ -28,7 +28,7 @@ export function MarkStamp({ outcome }: { outcome: MarkOutcome }) {
   });
 
   return (
-    <svg className={`${styles.stamp} ${styles[outcome]}`} viewBox="0 0 120 120" role="img" aria-label={LABEL[outcome]}>
+    <svg className={`${styles.stamp} ${styles[outcome]}`} viewBox="0 0 120 120" role="img" aria-label={label ?? LABEL[outcome]}>
       <circle className={styles.track} cx="60" cy="60" r="46" />
       <motion.circle
         className={styles.ring}

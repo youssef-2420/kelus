@@ -227,3 +227,88 @@ body.is-course-studio .core-workspace-grid:not(.is-source-missing) .today-hero {
 body.is-course-studio .core-workspace-grid:not(.is-source-missing) .today-hero-art {
   display: none;
 }
+
+/* Completion: the reward moment. Plain sentence-case labels, one clear next action. */
+body.is-session-complete .kicker,
+body.is-session-complete .complete-folio .study-mark-kicker {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+body.is-session-complete .complete-folio > svg {
+  margin-bottom: 4px;
+}
+
+body.is-session-complete .complete-folio .complete-route-moved {
+  margin-top: 20px;
+}
+
+body.is-session-complete .complete-folio .complete-next-cta {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 20px;
+  min-height: 52px;
+}
+
+body.is-session-complete .complete-folio .complete-next-reason {
+  margin: 10px 0 0;
+  text-align: center;
+  color: var(--color-slate);
+  font-size: var(--text-body-sm);
+}
+
+body.is-session-complete .complete-folio .complete-useful-change {
+  margin-top: 28px;
+}
+
+body.is-session-complete .complete-folio .complete-change {
+  margin-top: 16px;
+  padding: 16px 18px;
+}
+
+body.is-session-complete .complete-folio .complete-change h2 {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+body.is-session-complete .complete-folio .complete-change p:not(.kicker) {
+  margin-bottom: 0;
+  font-size: var(--text-body-sm);
+}
+
+body.is-session-complete .complete-folio .complete-whisper {
+  margin-bottom: 16px;
+}
+
+body.is-session-complete .complete-folio .complete-return .kicker,
+body.is-session-complete .complete-folio .complete-usefulness .kicker,
+body.is-session-complete .complete-folio .complete-columns .kicker {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+body.is-session-complete .complete-folio .complete-useful-change > summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--color-kelus);
+}
+
+body.is-session-complete .complete-folio .complete-useful-change > summary::after {
+  content: " →";
+}
+
+body.is-session-complete .complete-folio .complete-useful-change[open] > summary::after {
+  content: " ↓";
+}
+
+/* Phones and narrow windows: the next action comes before the source document, not after it. */
+@media (max-width: 950px) {
+  .core-workspace-grid:not(.is-materials) > .core-workspace-action {
+    order: -1;
+    border-top: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
