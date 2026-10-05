@@ -1,7 +1,7 @@
 .pulse {
   display: grid;
   grid-template-columns: auto minmax(80px, 1fr) auto auto;
-  align-items: center;
+  align-items: start;
   gap: 1.25rem;
   padding: 0.875rem 1rem;
   border: 1px solid var(--color-frost);
@@ -30,6 +30,7 @@
 
 .track {
   position: relative;
+  align-self: center;
   height: 6px;
   border-radius: 3px;
   background: var(--color-frost);
