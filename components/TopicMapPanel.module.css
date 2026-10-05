@@ -2,7 +2,7 @@
   display: grid;
   gap: 8px;
   margin: 0;
-  padding: 16px 14px 20px;
+  padding: 16px 24px 20px;
 }
 
 .bar {
@@ -72,4 +72,147 @@
 
 @keyframes meter-in {
   from { transform: scaleX(0); }
+}
+
+/* Cards */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 4px 16px 32px;
+  list-style: none;
+}
+
+.start {
+  grid-column: 1 / -1;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 40px;
+  gap: 4px 16px;
+  align-items: center;
+  height: 100%;
+  padding: 16px 16px 16px 14px;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1), border-color 160ms;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-midnight-ink);
+}
+
+.card:active {
+  transform: scale(0.99);
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 2px;
+}
+
+.start .card {
+  grid-template-columns: 88px minmax(0, 1fr) 48px;
+  padding: 22px 22px 22px 18px;
+  border-color: var(--color-kelus);
+  background: var(--color-periwinkle-wash);
+}
+
+.art {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+
+.start .art {
+  width: 88px;
+  height: 88px;
+}
+
+.main {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.facts {
+  font-size: var(--text-caption);
+  color: var(--color-smoke);
+}
+
+.due {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--color-midnight-ink);
+  border-radius: 999px;
+  font-size: var(--text-caption);
+  font-weight: 500;
+  color: var(--color-midnight-ink);
+}
+
+.why {
+  margin-top: 6px;
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+  color: var(--color-slate);
+}
+
+.ring {
+  width: 40px;
+  height: 40px;
+}
+
+.start .ring {
+  width: 48px;
+  height: 48px;
+}
+
+.ringTrack,
+.ringEmpty,
+.ringArc {
+  fill: none;
+  stroke-width: 4;
+}
+
+.ringTrack {
+  stroke: var(--color-frost);
+}
+
+.ringEmpty {
+  stroke: var(--color-frost);
+  stroke-dasharray: 3 5;
+}
+
+.ringArc {
+  stroke: var(--color-kelus);
+  stroke-linecap: round;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 12px;
+  }
+
+  .start .card {
+    grid-template-columns: 64px minmax(0, 1fr) 40px;
+  }
+
+  .start .art {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none;
+  }
 }

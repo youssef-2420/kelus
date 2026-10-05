@@ -296,7 +296,7 @@ export function RevisionSurface() {
                 </motion.h1>
               </AnimatePresence>
               <p className="kelus-paper-lede kelus-space-lede">
-                {mode === "materials" ? "The sources behind your revision." : "Your topics, ordered by exam value."}
+                {mode === "materials" ? "The sources behind your revision." : "What to study next, then the rest by exam weight."}
               </p>
               <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} />
             </div>
