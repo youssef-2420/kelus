@@ -399,3 +399,29 @@ body.is-booklet-system section.studio-onboarding .studio-onboarding-content :is(
   font-weight: 500;
   letter-spacing: -0.02em;
 }
+
+/* Why now: one note, one idea. The reason and what it leads to read as a single thought. */
+body.is-course-studio .core-workspace-action .today-decision {
+  display: grid;
+  gap: 4px;
+  max-width: none;
+  margin-top: var(--spacing-24);
+  padding: 0.875rem 1rem;
+  border: 0;
+  border-left: 2px solid var(--color-kelus);
+  border-radius: 0 4px 4px 0;
+  background: var(--color-periwinkle-wash);
+}
+
+body.is-course-studio .core-workspace-action .today-decision .today-decision-label {
+  margin: 0;
+  color: var(--color-kelus);
+  font-weight: 600;
+}
+
+body.is-course-studio .core-workspace-action .today-decision p:not(.today-decision-label) {
+  margin: 0;
+  color: var(--color-slate);
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+}

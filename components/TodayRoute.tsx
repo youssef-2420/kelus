@@ -142,8 +142,7 @@ export function TodayRoute({
         <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={targetPercent} daysToExam={daysToExam} />
         <div className="today-decision" aria-label="Why this topic is first">
           <p className="today-decision-label">Why now</p>
-          <p>{decision.join(" ")}</p>
-          <p className="today-decision-payoff"><strong>What this unlocks</strong>{payoff}</p>
+          <p>{decision[0]} {payoff}</p>
         </div>
         {whisper ? <p className="today-source-reference">Source · {whisper}</p> : null}
         {lastPractice && lastTopic ? <p className="today-return-note">Last answer: {lastTopic} · {lastResult}.</p> : null}
