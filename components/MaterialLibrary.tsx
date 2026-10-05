@@ -13,6 +13,7 @@ import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgrade
 import { trackEvent } from "@/lib/analytics";
 import type { CourseMaterial, MaterialRole, ProposedConcept } from "@/domain/types";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
+import { SourceArt } from "@/components/SourceArt";
 
 // AnimatePresence can defer mounting this heading until the previous phase exits.
 // Focus on attachment, when the target actually exists, rather than on phase change.
@@ -62,11 +63,22 @@ function sourceHost(value: string | null) {
   }
 }
 
+function addedLabel(iso: string) {
+  const added = Date.parse(iso);
+  if (!Number.isFinite(added)) return null;
+  const days = Math.floor((Date.now() - added) / 86_400_000);
+  if (days <= 0) return "Added today";
+  if (days === 1) return "Added yesterday";
+  if (days < 7) return `Added ${days} days ago`;
+  return `Added ${new Date(added).toLocaleDateString(undefined, { day: "numeric", month: "short" })}`;
+}
+
 function MaterialRow({
   item,
   onAnalyze,
   onRemoved,
   linkedTopics,
+  topicNames = [],
   userId,
   syncState,
   quiet = false,
@@ -75,6 +87,7 @@ function MaterialRow({
   onAnalyze: (item: CourseMaterial) => void;
   onRemoved: (item: CourseMaterial) => void;
   linkedTopics: number;
+  topicNames?: string[];
   userId?: string;
   syncState?: "syncing" | "synced" | "retrying";
   quiet?: boolean;
@@ -144,11 +157,22 @@ function MaterialRow({
       : [quiet ? materialRoleLabel(item.role) : null, host ? (quiet ? `Link · ${host}` : `Bookmark · ${host}`) : "Saved link"].filter(Boolean);
 
   return (
-    <li className={`material-row${item.processingStatus === "failed" ? " is-failed" : ""}${quiet ? " is-quiet" : ""}`}>
-      {quiet ? null : <span className="material-kind">{isBuiltInExample ? "Example" : materialRoleLabel(item.role)}</span>}
+    <li className={`material-row${item.processingStatus === "failed" ? " is-failed" : ""}${quiet ? " is-quiet material-card" : ""}`}>
+      {quiet ? <span className="material-card-art"><SourceArt role={item.role} isLink={item.storage === "url"} /></span> : <span className="material-kind">{isBuiltInExample ? "Example" : materialRoleLabel(item.role)}</span>}
       <span className="material-name">
         <strong>{isBuiltInExample ? "Built-in Microeconomics example" : item.title}</strong>
         {metaBits.length ? <small>{metaBits.join(" · ")}</small> : null}
+        {quiet && !isBuiltInExample ? (
+          <small className="material-card-facts">
+            {[addedLabel(item.addedAt), linkedTopics ? `${linkedTopics} topic${linkedTopics === 1 ? "" : "s"} from this source` : item.processingStatus === "ready" ? "No topics confirmed yet" : null].filter(Boolean).join(" · ")}
+          </small>
+        ) : null}
+        {quiet && topicNames.length ? (
+          <span className="material-card-chips" aria-label="Topics from this source">
+            {topicNames.slice(0, 3).map((name) => <span key={name}>{name}</span>)}
+            {topicNames.length > 3 ? <span>+{topicNames.length - 3} more</span> : null}
+          </span>
+        ) : null}
         {statusLabel ? <small className={`material-status-badge is-${item.processingStatus}`}>{statusLabel}</small> : null}
         {syncLabel ? <small className={`material-sync-label is-${syncState ?? "synced"}`}>{syncLabel}</small> : null}
         {downloadError ? <small className="material-download-error" role="alert">{downloadError}</small> : null}
@@ -815,7 +839,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
             <p className="kicker">{embedded ? "In this binder" : "Source shelf"}</p>
             <h2 id="source-shelf-title">
               {courseMaterials.length
-                ? `${courseMaterials.length} ${embedded ? (courseMaterials.length === 1 ? "page" : "pages") : "saved"}`
+                ? `${courseMaterials.length} ${embedded ? (courseMaterials.length === 1 ? "source" : "sources") : "saved"}`
                 : concepts.length
                   ? "Sample model ready"
                   : embedded
@@ -826,7 +850,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           <span>{embedded ? "This exam" : "This device"}</span>
         </header>
         {courseMaterials.length ? (
-          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} quiet={embedded} onAnalyze={(material) => void analyzePdf(material)} onRemoved={(material) => removeMaterialSource(material.id)} linkedTopics={state.snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === item.id)).length} />)}</ul>
+          <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} quiet={embedded} onAnalyze={(material) => void analyzePdf(material)} onRemoved={(material) => removeMaterialSource(material.id)} linkedTopics={state.snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === item.id)).length} topicNames={[...new Set(state.snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === item.id)).map((activity) => state.snapshot.concepts.find((concept) => concept.id === activity.conceptId)?.name).filter((name): name is string => Boolean(name)))]} />)}</ul>
         ) : concepts.length ? (
           <div className="material-shelf-empty">
             <p>Sample model is ready. Add your own syllabus when you want Kelus grounded in your files.</p>

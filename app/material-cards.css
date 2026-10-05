@@ -1,0 +1,107 @@
+/* Materials: each source is a card with its drawing, what it gave you, and its actions. */
+body.is-course-studio .studio-panel .material-shelf.is-binder > header :is(.kicker, span) {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder > ul {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 0;
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder li.material-card {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 10px 16px;
+  align-items: start;
+  padding: 16px;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder li.material-card.is-failed {
+  border-color: var(--color-midnight-ink);
+}
+
+body.is-course-studio .material-card .material-card-art {
+  grid-row: 1;
+  width: 56px;
+  height: 56px;
+}
+
+body.is-course-studio .material-card .material-name {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder .material-card .material-name strong {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+body.is-course-studio .material-card .material-card-facts {
+  color: var(--color-slate);
+}
+
+body.is-course-studio .material-card .material-card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+body.is-course-studio .material-card .material-card-chips span {
+  padding: 3px 9px;
+  border: 1px solid var(--color-frost);
+  border-radius: 999px;
+  background: var(--color-pure-white);
+  font-size: var(--text-caption);
+  color: var(--color-midnight-ink);
+}
+
+body.is-course-studio .material-card .material-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-frost);
+}
+
+/* Add another source: a dashed card, not a text link. */
+body.is-course-studio .studio-panel .material-binder-stack > .material-add-page {
+  margin-top: 16px;
+  border: 1.5px dashed var(--color-frost);
+  border-radius: 4px;
+  background: none;
+}
+
+body.is-course-studio .studio-panel .material-binder-stack > .material-add-page > summary {
+  padding: 18px 16px;
+  text-align: center;
+  font-weight: 500;
+  color: var(--color-kelus);
+  cursor: pointer;
+}
+
+body.is-course-studio .studio-panel .material-binder-stack > .material-add-page > summary::before {
+  content: "+\00a0";
+}
+
+body.is-course-studio .studio-panel .material-binder-stack > .material-add-page:hover {
+  border-color: var(--color-kelus);
+}
+
+body.is-course-studio .studio-panel .material-binder-stack .material-shelf.is-binder {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
