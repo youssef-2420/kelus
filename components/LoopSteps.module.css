@@ -84,13 +84,13 @@
   grid-auto-flow: column;
   align-items: center;
   justify-content: start;
-  gap: 8px;
-  padding: 10px 12px;
+  gap: 6px;
+  padding: 10px 8px;
 }
 
 .compact .art {
-  width: 28px;
-  height: 26px;
+  width: 22px;
+  height: 20px;
   margin: 0;
 }
 
@@ -100,6 +100,7 @@
 
 .compact .step strong {
   font-size: var(--text-body-sm);
+  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
