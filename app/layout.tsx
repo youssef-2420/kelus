@@ -22,6 +22,7 @@ import "./today-page.css";
 import "./topic-cards.css";
 import "./material-cards.css";
 import "./first-run.css";
+import "./a11y.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";
