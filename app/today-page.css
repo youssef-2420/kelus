@@ -312,3 +312,90 @@ body.is-session-complete .complete-folio .complete-useful-change[open] > summary
     border-bottom: 1px solid var(--line);
   }
 }
+
+/* One voice for page titles: the serif display used on the cards, in ink. */
+body.is-course-studio .core-workspace-action .today-lead-action.is-page #today-title,
+body.is-course-studio .studio-section-head h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-midnight-ink);
+}
+
+body.is-course-studio .core-workspace-action .today-lead-action.is-page #today-title {
+  font-size: clamp(2.25rem, 3.4vw, 3rem);
+  line-height: 1.08;
+}
+
+body.is-course-studio .studio-page .studio-section-head h1 {
+  font-size: clamp(1.75rem, 2.6vw, 2.25rem);
+  line-height: 1.12;
+}
+
+/* Colour carries meaning only in the sidebar marker dots. Titles stay ink. */
+body.is-course-studio .studio-page:has(.material-binder-stack) .studio-section-head h1,
+body.is-course-studio .studio-page:has(.surface-map) .studio-section-head h1 {
+  color: var(--color-midnight-ink);
+}
+
+/* Small labels read as sentences, not shouting. */
+body.is-course-studio :is(.kicker, .studio-eyebrow, .today-decision-label, .today-next-label),
+body.is-course-studio .core-source-title span,
+body.is-course-studio .material-shelf.is-binder :is(.kicker, span),
+body.is-session-booklet :is(.kicker, .study-mark-kicker, .session-rail-topic span, .session-workspace-rail p, .answer-pages section span) {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* The same serif for setup and study titles. */
+body.is-course-studio .destination-page-title,
+body.is-course-studio .studio-onboarding h1,
+body.is-session-booklet :is(.session-learn, .session-work) h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+body.is-session-booklet .session-learn :is(.session-source-line, .session-sources) span,
+body.is-session-booklet .session-learn span {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase] :is(.session-learn, .session-work) > h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+body.is-course-studio .studio-panel .material-shelf.is-binder > header h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+}
+
+/* Setup screens use the same voice as the app. */
+.studio-onboarding :is(.destination-page-title, .setup-stage-content h1, .concept-confirmation h2) {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.studio-onboarding :is(.kicker, .proposal-confidence, .studio-eyebrow, .setup-kicker),
+.studio-onboarding .concept-confirmation :is(span, small, p) {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+body.is-booklet-system section.studio-onboarding .destination-page h1,
+body.is-booklet-system section.studio-onboarding .destination-page .destination-page-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+body.is-booklet-system section.studio-onboarding .studio-onboarding-content :is(h1, h2) {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}

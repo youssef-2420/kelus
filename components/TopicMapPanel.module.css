@@ -175,7 +175,6 @@
 }
 
 .ringTrack,
-.ringEmpty,
 .ringArc {
   fill: none;
   stroke-width: 4;
@@ -185,9 +184,8 @@
   stroke: var(--color-frost);
 }
 
-.ringEmpty {
-  stroke: var(--color-frost);
-  stroke-dasharray: 3 5;
+.ringDot {
+  fill: var(--color-smoke);
 }
 
 .ringArc {

@@ -375,7 +375,7 @@ function SessionBody() {
         </div>
       </div>
       <aside className="session-workspace-rail" aria-label="Course workspace">
-        <p>YOUR COURSE</p>
+        <p>Your course</p>
         <strong>{state.snapshot.courses.find((item) => item.id === concept.courseId)?.name ?? "Course"}</strong>
         <nav aria-label="Workspace sections">
           <Link href="/today">Study plan</Link>
