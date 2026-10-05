@@ -213,3 +213,17 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-
 body.is-session-booklet.is-booklet-system main.study-shell.is-source-open > .study-loop-track {
   grid-column: 1 / -1;
 }
+
+/* Beside a source PDF the plan column is narrow: give the title the whole width and never break inside a word. */
+body.is-course-studio .core-workspace-action .today-lead-action.is-page #today-title {
+  overflow-wrap: break-word;
+  hyphens: manual;
+}
+
+body.is-course-studio .core-workspace-grid:not(.is-source-missing) .today-hero {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body.is-course-studio .core-workspace-grid:not(.is-source-missing) .today-hero-art {
+  display: none;
+}
