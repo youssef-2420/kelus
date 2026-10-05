@@ -105,3 +105,18 @@ body.is-session-booklet.is-booklet-system textarea.session-work-field,
 body.is-session-booklet.is-booklet-system textarea.session-work-field:focus {
   background: var(--color-pure-white);
 }
+
+body.is-session-booklet .session-ai-explanation {
+  margin: 12px 0 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-slate);
+}
+
+body.is-session-booklet .session-ai-explanation span {
+  display: block;
+  margin-bottom: 2px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--color-kelus);
+}

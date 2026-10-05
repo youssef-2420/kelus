@@ -157,6 +157,10 @@ export type LearningActivity = {
   /** What the page actually teaches about this topic, as short facts in the page's own words. */
   teach?: {
     facts: string[];
+    /** The topic's page text, kept so questions can be written later. Only sent anywhere with the learner's opt-in. */
+    pageText?: string;
+    /** A plain-words explanation of the topic, written from the page only. */
+    aiExplanation?: string;
     whyItMatters?: string;
     commonMistake?: string;
   };

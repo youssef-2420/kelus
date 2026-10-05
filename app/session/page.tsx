@@ -17,6 +17,8 @@ import { LoopSteps } from "@/components/LoopSteps";
 import { MarkStamp } from "@/components/MarkStamp";
 import { MinuteShift, RouteShift } from "@/components/RouteShift";
 import { PracticeDrill } from "@/components/PracticeDrill";
+import { aiActive, fetchAiTopicContent } from "@/lib/ai-client";
+import { mergeAiContent, type AiTopicContent } from "@/domain/ai-content";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
@@ -97,8 +99,25 @@ function SessionBody() {
   const conceptId = session?.plannedConceptIds[index];
   const concept = state.snapshot.concepts.find((item) => item.id === conceptId);
   const prompt = state.snapshot.prompts.find((item) => item.conceptId === conceptId);
-  const activity = state.snapshot.learningActivities?.find((item) => item.conceptId === conceptId)
+  const baseActivity = state.snapshot.learningActivities?.find((item) => item.conceptId === conceptId)
     ?? (concept && prompt ? activityFallback(concept, prompt.promptText, prompt.modelAnswer) : null);
+  // Optional, opt-in: questions written from this topic's page. Any failure leaves the offline questions in place.
+  const [ai, setAi] = useState<{ id: string; content: AiTopicContent | null } | null>(null);
+  useEffect(() => {
+    const pageText = baseActivity?.teach?.pageText;
+    if (!concept || !pageText || !aiActive()) return;
+    let live = true;
+    void fetchAiTopicContent({
+      name: concept.name,
+      locator: baseActivity?.sourceReferences[0]?.locator ?? "this page",
+      pageText,
+      otherTopics: state.snapshot.concepts.filter((item) => item.id !== concept.id).map((item) => item.name),
+    }).then((content) => { if (live) setAi({ id: concept.id, content }); });
+    return () => { live = false; };
+    // Re-run only when the topic changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conceptId]);
+  const activity = baseActivity && ai && ai.id === conceptId ? mergeAiContent(baseActivity, ai.content) : baseActivity;
   const total = session?.plannedConceptIds.length ?? 0;
   const focusStep = useCallback((node: HTMLElement | null) => {
     if (node && phase !== "retrieve" && phase !== "apply") node.focus();
@@ -567,6 +586,7 @@ function SessionBody() {
               <div className="session-learn">
                 <h1>{activity.learn.title}</h1>
                 <p className="session-explanation">{activity.learn.explanation}</p>
+                {activity.teach?.aiExplanation ? <p className="session-ai-explanation"><span>In plain words</span>{activity.teach.aiExplanation}</p> : null}
                 <ul>{activity.learn.keyPoints.map((point) => <li key={point}>{point}</li>)}</ul>
                 {activity.sourceReferences.length ? (
                   <div className="session-sources" aria-label="Course sources">

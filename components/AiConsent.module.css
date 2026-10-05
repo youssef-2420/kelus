@@ -1,0 +1,47 @@
+.card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 16px 0 0;
+  padding: 16px 18px;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+}
+
+.card h3 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.card p {
+  margin: 0 0 6px;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-slate);
+}
+
+.fine {
+  font-size: var(--text-caption) !important;
+  color: var(--color-smoke) !important;
+}
+
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-weight: 500;
+  color: var(--color-midnight-ink);
+  cursor: pointer;
+}
+
+.switch input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--color-kelus);
+}
