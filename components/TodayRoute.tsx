@@ -142,7 +142,7 @@ export function TodayRoute({
         <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={targetPercent} daysToExam={daysToExam} />
         <div className="today-decision" aria-label="Why this topic is first">
           <p className="today-decision-label">Why now</p>
-          {decision.map((line) => <p key={line}>{line}</p>)}
+          <p>{decision.join(" ")}</p>
           <p className="today-decision-payoff"><strong>What this unlocks</strong>{payoff}</p>
         </div>
         {whisper ? <p className="today-source-reference">Source · {whisper}</p> : null}
@@ -157,6 +157,14 @@ export function TodayRoute({
           {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
         </motion.button>
       </motion.article>
+      <ExamSteps
+        concepts={concepts}
+        activities={activities}
+        route={route}
+        sessions={sessions}
+        targetPercent={targetPercent}
+        daysToExam={daysToExam}
+      />
       {nextStops.length ? (
         <aside className="today-next" aria-label="Planned next topics">
           <p className="today-next-label">After this</p>
@@ -172,14 +180,6 @@ export function TodayRoute({
           <p className="today-next-note">Your answer can change what comes next.</p>
         </aside>
       ) : null}
-      <ExamSteps
-        concepts={concepts}
-        activities={activities}
-        route={route}
-        sessions={sessions}
-        targetPercent={targetPercent}
-        daysToExam={daysToExam}
-      />
     </div>
   );
 }
