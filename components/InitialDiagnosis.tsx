@@ -159,7 +159,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
               <li key={item.id}>
                 <span>{item.name}</span>
                 <div role="group" aria-label={`Familiarity with ${item.name}`}>
-                  {RATINGS.map((rating) => {
+                  {RATINGS.map((rating, level) => {
                     const selected = ratings[item.id] === rating.value;
                     return (
                       <button
@@ -169,6 +169,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
                         aria-pressed={selected}
                         onClick={() => dispatch({ type: "RATE", conceptId: item.id, rating: rating.value })}
                       >
+                        <span className="rating-meter" data-level={level} aria-hidden="true"><i /><i /><i /></span>
                         {rating.label}
                       </button>
                     );
@@ -178,21 +179,25 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
             ))}
           </ol>
           <div className="diagnosis-cta">
+            <p className="diagnosis-progress" role="status" aria-live="polite">
+              {allRated ? `All ${ratedConcepts.length} rated` : `${ratedConcepts.filter((item) => ratings[item.id] !== undefined).length} of ${ratedConcepts.length} rated`}
+            </p>
             <button type="button" className="cta diagnosis-continue" disabled={!allRated} onClick={beginChecks}>
               {allRated ? "Continue to recall check" : "Rate every topic first"}
               <span aria-hidden="true">→</span>
             </button>
-            <button
-              type="button"
-              className="diagnosis-skip"
-              disabled={!allRated}
-              onClick={() => {
-                trackEvent({ name: "diagnosis_completed", retrieval_count: 0 });
-                onComplete({ ratings, retrievals: [] });
-              }}
-            >
-              Skip recall — open Today
-            </button>
+            {allRated ? (
+              <button
+                type="button"
+                className="diagnosis-skip"
+                onClick={() => {
+                  trackEvent({ name: "diagnosis_completed", retrieval_count: 0 });
+                  onComplete({ ratings, retrievals: [] });
+                }}
+              >
+                Skip recall — open Today
+              </button>
+            ) : null}
           </div>
         </motion.section>
       ) : concept && prompt ? (
