@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState, type SyntheticEvent } from "react
 import { AppShell } from "@/components/AppShell";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { evaluateDiagnosisResponse } from "@/domain/answer-evaluation";
+import { MarkStamp } from "@/components/MarkStamp";
 import { DIAGNOSIS_RETRIEVAL_LIMIT } from "@/domain/constants";
 import type { LearnerSnapshot, RetrievalOutcome, SelfRating } from "@/domain/types";
 import { selectDiagnosisConcept } from "@/domain/diagnosis";
@@ -216,6 +217,7 @@ export function InitialDiagnosis({ snapshot, onComplete, embedded = false }: {
               <p className="kicker">A useful answer includes</p>
               <p>{prompt.modelAnswer}</p>
               <div className={`diagnosis-evaluation is-${evaluation.outcome}`} role="status">
+                <MarkStamp outcome={evaluation.outcome} />
                 <p className="kicker">Kelus evidence check</p>
                 <h2 id="diagnosis-evaluation-title" tabIndex={-1}>{evaluation.label}</h2>
                 <p>{evaluation.explanation}</p>
