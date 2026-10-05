@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { BookletRevisionBoard } from "@/components/hero/BookletRevisionBoard";
 import { RevisionReturn, StudyMoment } from "@/components/home/HomeVisualChapters";
+import { RevisionLoopVisuals } from "@/components/home/RevisionLoopVisuals";
 import { Reveal } from "@/components/motion";
 
 /** Let visitors try the revision loop before explaining it. */
@@ -26,6 +27,8 @@ export function HomeAfterHero() {
           <Link href="/today">Set up my course <span aria-hidden="true">→</span></Link>
         </Reveal>
       </section>
+
+      <RevisionLoopVisuals />
 
       <StudyMoment />
 
