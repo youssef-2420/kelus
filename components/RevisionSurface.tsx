@@ -7,6 +7,9 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { TodayRoute } from "@/components/TodayRoute";
+import { InkArt } from "@/components/InkArt";
+import { ExamPulse } from "@/components/ExamPulse";
+import { estimatedReadiness } from "@/domain/readiness";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
@@ -295,7 +298,9 @@ export function RevisionSurface() {
               <p className="kelus-paper-lede kelus-space-lede">
                 {mode === "materials" ? "The sources behind your revision." : "Your topics, ordered by exam value."}
               </p>
+              <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} />
             </div>
+            <InkArt name={mode === "materials" ? "sources" : "topics"} className="studio-section-art" />
           </header>
         ) : null}
 

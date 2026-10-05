@@ -1445,7 +1445,11 @@ body.is-booklet-system .first-run-gate-preview .how-materials-preview {
 }
 
 body.is-booklet-system .materials-empty.is-session-empty {
-  max-width: 32rem;
+  max-width: 40rem;
+}
+
+body.is-booklet-system .materials-empty.is-session-empty h1 {
+  margin-bottom: var(--spacing-16);
 }
 
 body.is-booklet-system .session-empty-preview {

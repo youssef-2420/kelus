@@ -18,6 +18,7 @@ import "./material-first.css";
 import "./study-session.css";
 import "./monthly-pricing.css";
 import "./core-workspace.css";
+import "./today-page.css";
 import { LearnerProvider } from "@/components/LearnerProvider";
 import { RouteTransition } from "@/components/RouteTransition";
 import { SiteHeader } from "@/components/SiteHeader";

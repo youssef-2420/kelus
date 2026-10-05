@@ -13,6 +13,7 @@ import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } 
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
+import { LoopSteps } from "@/components/LoopSteps";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
@@ -145,24 +146,7 @@ function SessionBody() {
           <p className="kicker">Session</p>
           <h1>No active revision yet.</h1>
           <p>Sessions open from Today’s route. Each block walks one topic through the same loop:</p>
-          <ol className="session-empty-preview" aria-label="Revision loop preview">
-            <li>
-              <strong>Read</strong>
-              <span>Short explanation from your course</span>
-            </li>
-            <li>
-              <strong>Retrieve</strong>
-              <span>Write it without looking</span>
-            </li>
-            <li>
-              <strong>Use</strong>
-              <span>Try it on a fresh prompt</span>
-            </li>
-            <li>
-              <strong>Mark</strong>
-              <span>Then Kelus updates the route</span>
-            </li>
-          </ol>
+          <LoopSteps />
           <div className="materials-empty-actions">
             <button className="cta" type="button" onClick={() => router.replace("/today")}>
               Open today’s route <span aria-hidden="true">→</span>
@@ -396,17 +380,18 @@ function SessionBody() {
           <Link href="/today?section=materials">Materials</Link>
           <Link href="/today?section=map">Topics</Link>
         </nav>
-        <div className="session-rail-topic"><span>NOW STUDYING</span><b>{concept.name}</b><small>{index + 1} of {total} topics</small></div>
+        <div className="session-rail-topic"><span>Now studying</span><b>{concept.name}</b><small>{index + 1} of {total} topics</small></div>
       </aside>
       {hasReadableSource ? <div className="session-workspace-source">
         <CourseSourceReader key={`${currentMaterial.id}-${sourcePage}`} material={currentMaterial} initialPage={sourcePage} concealed={recallWithoutLooking} onShowSource={() => setSourceRevealed(true)} />
       </div> : null}
-      <ol className="study-phase-track" aria-label="Study steps">
-        {(["learn", "retrieve", "apply", "evaluate"] as const).map((step, stepIndex) => {
-          const currentIndex = phase === "result" || phase === "reroute" ? 3 : (["learn", "retrieve", "apply", "evaluate"] as const).indexOf(phase);
-          return <li key={step} className={stepIndex < currentIndex ? "is-done" : stepIndex === currentIndex ? "is-current" : undefined} aria-current={stepIndex === currentIndex ? "step" : undefined}><span aria-hidden="true">{String(stepIndex + 1).padStart(2, "0")}</span>{PHASE_LABEL[step]}</li>;
-        })}
-      </ol>
+      <div className="study-loop-track">
+        <LoopSteps
+          compact
+          label="Study steps"
+          current={(["read", "retrieve", "use", "mark"] as const)[phase === "result" || phase === "reroute" ? 3 : (["learn", "retrieve", "apply", "evaluate"] as const).indexOf(phase)]}
+        />
+      </div>
 
       <AnimatePresence mode="wait" initial={false}>
         {phase === "reroute" ? (

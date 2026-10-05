@@ -6,6 +6,7 @@ import { ConceptTitleTransition } from "@/components/PageTransition";
 import { generateRoute } from "@/domain/routing-engine";
 import { topicEvidence } from "@/domain/mastery-evidence";
 import { percent } from "@/lib/format";
+import styles from "./TopicMapPanel.module.css";
 
 function statusLabel(mastery: number | null, attempts: number) {
   if (attempts < 1 || mastery == null) return "Not started";
@@ -49,13 +50,38 @@ export function TopicMapPanel() {
     );
   }
 
+  const rows = concepts.map((concept) => {
+    const evidence = topicEvidence(concept, state.snapshot.prompts, state.snapshot.events, state.nowIso);
+    return { concept, evidence, label: statusLabel(evidence.mastery, concept.retrievalAttempts) };
+  });
+  const tally = (label: string) => rows.filter((row) => row.label === label).length;
+  const summary = [
+    { label: "Secure", tone: styles.secure },
+    { label: "Developing", tone: styles.developing },
+    { label: "Needs work", tone: styles.needs },
+    { label: "Not started", tone: styles.none },
+  ].map((item) => ({ ...item, count: tally(item.label) }));
+
   return (
     <div className="surface-map is-toc">
+      <div className={styles.summary} role="group" aria-label="Topic readiness summary">
+        <div className={styles.bar} aria-hidden="true">
+          {summary.map((item) => (
+            <span key={item.label} className={item.tone} style={{ flexGrow: item.count }} />
+          ))}
+        </div>
+        <ul className={styles.legend}>
+          {summary.filter((item) => item.count > 0).map((item) => (
+            <li key={item.label}>
+              <i className={item.tone} aria-hidden="true" />
+              {item.count} {item.label.toLowerCase()}
+            </li>
+          ))}
+        </ul>
+      </div>
       <ol className="index-toc" aria-label="Topics by exam weight">
-        {concepts.map((concept, index) => {
-          const evidence = topicEvidence(concept, state.snapshot.prompts, state.snapshot.events, state.nowIso);
+        {rows.map(({ concept, evidence, label }, index) => {
           const isStart = startConceptId === concept.id;
-          const label = statusLabel(evidence.mastery, concept.retrievalAttempts);
           return (
             <li key={concept.id} className={isStart ? "is-start" : undefined}>
               <Link
@@ -71,6 +97,9 @@ export function TopicMapPanel() {
                   <ConceptTitleTransition id={concept.id}>
                     <strong className="index-toc-name">{concept.name}</strong>
                   </ConceptTitleTransition>
+                  <span className={styles.meter} aria-hidden="true">
+                    <span style={{ width: `${Math.round((evidence.mastery ?? 0) * 100)}%` }} />
+                  </span>
                 </span>
                 <span className="index-toc-meta">
                   {isStart ? "Start here" : label}

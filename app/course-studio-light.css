@@ -260,6 +260,9 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
 
 .is-course-studio .today-decision-payoff strong {
   color: var(--color-kelus);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .is-course-studio .today-source-reference,
