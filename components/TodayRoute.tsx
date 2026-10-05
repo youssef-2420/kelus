@@ -4,6 +4,10 @@ import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan } from "@/domain/types";
+import { LoopSteps } from "@/components/LoopSteps";
+import { InkArt } from "@/components/InkArt";
+import { ExamPulse } from "@/components/ExamPulse";
+import { estimatedReadiness } from "@/domain/readiness";
 import { kelusEase } from "@/components/motion";
 import { describeRouteChoice, describeRoutePayoff } from "@/lib/today-reason";
 import { trackEvent } from "@/lib/analytics";
@@ -114,20 +118,26 @@ export function TodayRoute({
           <span>Today</span>
           <span>{route.allocations.length} topic{route.allocations.length === 1 ? "" : "s"} · {routeMinutes} min</span>
         </motion.p>
-        <p className="today-exam-context">{examTarget} · {daysToExam} day{daysToExam === 1 ? "" : "s"} left · Your target {targetPercent}%</p>
-        <motion.h1
-          id="today-title"
-          initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={
-            reduceMotion
-              ? { duration: 0.12 }
-              : { type: "spring", bounce: 0, duration: 0.55, delay: 0.04 }
-          }
-        >
-          {firstName}
-        </motion.h1>
-        <p className="today-first-duration">First block · {first.minutes} min</p>
+        <div className="today-hero">
+          <div className="today-hero-copy">
+            <p className="today-exam-context">{examTarget}</p>
+            <motion.h1
+              id="today-title"
+              initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={
+                reduceMotion
+                  ? { duration: 0.12 }
+                  : { type: "spring", bounce: 0, duration: 0.55, delay: 0.04 }
+              }
+            >
+              {firstName}
+            </motion.h1>
+            <p className="today-first-duration">First block · {first.minutes} min</p>
+          </div>
+          <InkArt name="read" className="today-hero-art" />
+        </div>
+        <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={targetPercent} daysToExam={daysToExam} />
         <div className="today-decision" aria-label="Why this topic is first">
           <p className="today-decision-label">Why now</p>
           {decision.map((line) => <p key={line}>{line}</p>)}
@@ -144,6 +154,7 @@ export function TodayRoute({
         >
           {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
         </motion.button>
+        <LoopSteps compact />
       </motion.article>
       {nextStops.length ? (
         <aside className="today-next" aria-label="Planned next topics">

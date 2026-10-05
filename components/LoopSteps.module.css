@@ -1,0 +1,145 @@
+.loop {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+}
+
+.step {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+  gap: 4px;
+  padding: 16px 14px 18px;
+  border-left: 1px solid var(--color-frost);
+  color: var(--color-slate);
+}
+
+.step:first-child {
+  border-left: 0;
+}
+
+.art {
+  width: 56px;
+  height: 52px;
+  margin-bottom: 8px;
+  fill: none;
+  stroke: var(--color-midnight-ink);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.index {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  font-size: var(--text-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-smoke);
+}
+
+.step strong {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.line {
+  font-size: var(--text-body-sm);
+  line-height: 1.4;
+  color: var(--color-smoke);
+}
+
+/* Mark is the payoff: the one place the pass-mark green appears. */
+.isMark .art {
+  stroke: var(--color-kelus);
+}
+
+.isMark .tick {
+  stroke: var(--color-kelus);
+  stroke-width: 2.5;
+}
+
+.isCurrent {
+  background: var(--color-periwinkle-wash);
+}
+
+.isCurrent .art {
+  stroke: var(--color-kelus);
+}
+
+.compact {
+  margin-top: 16px;
+}
+
+.compact .step {
+  grid-template-rows: auto;
+  grid-auto-flow: column;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.compact .art {
+  width: 28px;
+  height: 26px;
+  margin: 0;
+}
+
+.compact .index {
+  display: none;
+}
+
+.compact .step strong {
+  font-size: var(--text-body-sm);
+}
+
+@media (max-width: 640px) {
+  .loop {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .step:nth-child(3) {
+    border-left: 0;
+  }
+
+  .step:nth-child(n + 3) {
+    border-top: 1px solid var(--color-frost);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .tick {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: draw-tick 520ms cubic-bezier(0.22, 1, 0.36, 1) 240ms forwards;
+  }
+}
+
+@keyframes draw-tick {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.isDone .art {
+  stroke: var(--color-kelus);
+}
+
+.isDone strong {
+  color: var(--color-kelus);
+}
+
+.isDone strong::after {
+  content: " ✓";
+  font-family: var(--font-ledger);
+  font-size: var(--text-caption);
+}

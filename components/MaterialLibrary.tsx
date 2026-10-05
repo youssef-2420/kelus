@@ -562,7 +562,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           <summary>Add a course PDF</summary>
           <section className="material-ingest is-embedded" aria-labelledby="add-material-title">
             <div className="material-ingest-title">
-              <h2 id="add-material-title">Add your course source</h2>
+              <h2 id="add-material-title" className="sr-only">Add your course source</h2>
               <p className="material-ingest-lede">Kelus reads the pages, suggests topics, and waits for your confirmation before changing your route.</p>
             </div>
             <div className="material-role-field">
@@ -580,7 +580,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
               onDrop={drop}
             >
               <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
-              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a course PDF"}</strong>
+              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a PDF"}</strong>
               <span>{busy && statusMessage ? statusMessage : "or drop one here · text-based PDFs work fastest"}</span>
             </label>
             <p className="material-ingest-hint">Digital PDFs with selectable text work best. Kelus reads the page text, and you review every proposed topic before it changes your route.</p>

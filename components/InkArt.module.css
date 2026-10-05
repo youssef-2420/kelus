@@ -1,0 +1,66 @@
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+  fill: none;
+  stroke: var(--color-midnight-ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sheet {
+  fill: var(--color-mist);
+}
+
+.g {
+  stroke: var(--color-kelus);
+}
+
+.hl {
+  stroke-width: 5;
+  opacity: 0.55;
+}
+
+.ring {
+  stroke-width: 3.5;
+}
+
+.tick {
+  stroke-width: 7;
+}
+
+.node {
+  stroke-width: 3;
+}
+
+.dots {
+  stroke-dasharray: 3 7;
+}
+
+.d {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw 700ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.d2 {
+  animation-delay: 180ms;
+}
+
+.d3 {
+  animation-delay: 360ms;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .d {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}

@@ -1,0 +1,215 @@
+/* Today: one clear next action, the reason for it, and what follows.
+   Loaded last so it wins over the older booklet and studio rules. */
+body.is-course-studio .today-exam-context {
+  margin: var(--spacing-8) 0 0;
+  color: var(--color-smoke);
+  font-size: var(--text-body-sm);
+}
+
+body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
+  max-width: 18ch;
+  margin-top: var(--spacing-16);
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+
+body.is-course-studio .today-first-duration {
+  margin-top: 0.75rem;
+  font-size: var(--text-body-sm);
+}
+
+body.is-course-studio .today-decision {
+  display: grid;
+  gap: var(--spacing-8);
+  max-width: 56ch;
+  margin-top: var(--spacing-24);
+  padding-top: var(--spacing-16);
+  border-top: 1px solid var(--color-frost);
+}
+
+body.is-course-studio .today-decision p {
+  margin: 0;
+}
+
+body.is-course-studio .today-decision-label {
+  margin-bottom: 0;
+  color: var(--color-midnight-ink);
+  font-weight: 600;
+  font-size: var(--text-body-sm);
+}
+
+body.is-course-studio .today-decision-payoff {
+  display: grid;
+  gap: 2px;
+  margin-top: var(--spacing-8);
+  padding: 0.75rem var(--spacing-16) 0.75rem var(--spacing-16);
+  border: 0;
+  border-left: 2px solid var(--color-kelus);
+  background: var(--color-periwinkle-wash);
+  border-radius: 0 4px 4px 0;
+}
+
+body.is-course-studio .today-decision-payoff strong {
+  color: var(--color-kelus);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+body.is-course-studio .today-source-reference,
+body.is-course-studio .today-return-note {
+  margin: var(--spacing-16) 0 0;
+  font-size: var(--text-body-sm);
+}
+
+body.is-course-studio .today-lead-action.is-page .today-start {
+  width: 100%;
+  margin-top: var(--spacing-24);
+}
+
+body.is-course-studio .core-workspace-action .today-next {
+  width: 100%;
+  max-width: none;
+  margin-top: var(--spacing-32);
+  padding: var(--spacing-24) 0 0;
+  border: 0;
+  border-top: 1px solid var(--color-frost);
+  background: none;
+}
+
+body.is-course-studio .today-next-label {
+  margin: 0 0 var(--spacing-8);
+  color: var(--color-midnight-ink);
+  font-weight: 600;
+  font-size: var(--text-body-sm);
+}
+
+body.is-course-studio .today-next ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body.is-course-studio .today-next li {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--spacing-8);
+  min-height: 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--color-frost);
+}
+
+body.is-course-studio .today-next li:first-child {
+  border-top: 0;
+}
+
+body.is-course-studio .today-next li strong {
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+
+body.is-course-studio .today-next-note {
+  width: 100%;
+  max-width: none;
+  margin: var(--spacing-8) 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-frost);
+  font-size: var(--text-body-sm);
+}
+
+/* Section heads (Materials, Topics): title, lede and readiness on the left, one ink drawing on the right. */
+body.is-course-studio .studio-section-head.kelus-space-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(120px, 190px);
+  align-items: center;
+  gap: clamp(16px, 4vw, 40px);
+}
+
+body.is-course-studio .studio-section-head .kelus-space-identity {
+  display: grid;
+  gap: var(--spacing-16);
+  min-width: 0;
+}
+
+body.is-course-studio .studio-section-head .kelus-space-lede {
+  margin: 0;
+}
+
+body.is-course-studio .studio-section-art {
+  justify-self: end;
+  width: min(190px, 100%);
+  height: auto;
+}
+
+@media (max-width: 640px) {
+  body.is-course-studio .studio-section-head.kelus-space-top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.is-course-studio .studio-section-art {
+    display: none;
+  }
+}
+
+/* Today hero: the topic is the title; one ink drawing of the current step sits beside it. */
+body.is-course-studio .today-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(110px, 170px);
+  align-items: center;
+  gap: clamp(16px, 4vw, 36px);
+  margin-bottom: var(--spacing-24);
+}
+
+body.is-course-studio .today-hero-copy {
+  min-width: 0;
+}
+
+body.is-course-studio .today-hero-art {
+  width: min(170px, 100%);
+  height: auto;
+  justify-self: end;
+}
+
+@media (max-width: 640px) {
+  body.is-course-studio .today-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  body.is-course-studio .today-hero-art {
+    display: none;
+  }
+}
+
+/* Session step track: the same four ink steps as Today, with finished steps turning green.
+   Placement mirrors the old .study-phase-track grid cell. */
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-loop-track {
+  grid-column: 3;
+  grid-row: 2;
+  align-self: start;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-loop-track ol {
+  margin: 0;
+}
+
+@media (max-width: 950px) {
+  body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-loop-track {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
+
+@media (max-width: 650px) {
+  body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-loop-track {
+    width: 100%;
+  }
+}
+
+body.is-session-booklet.is-booklet-system main.study-shell.is-source-open > .study-loop-track {
+  grid-column: 1 / -1;
+}

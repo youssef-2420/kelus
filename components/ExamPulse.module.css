@@ -1,0 +1,77 @@
+.pulse {
+  display: grid;
+  grid-template-columns: auto minmax(80px, 1fr) auto auto;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+}
+
+.fact {
+  display: grid;
+  gap: 2px;
+  line-height: 1.2;
+}
+
+.fact strong {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-midnight-ink);
+}
+
+.fact span {
+  font-size: var(--text-caption);
+  color: var(--color-smoke);
+}
+
+.track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-frost);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-kelus);
+  transform-origin: left;
+}
+
+.target {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 14px;
+  background: var(--color-midnight-ink);
+  transform: translateX(-1px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fill {
+    animation: fill-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes fill-in {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@media (max-width: 560px) {
+  .pulse {
+    grid-template-columns: auto auto 1fr;
+    row-gap: 0.75rem;
+  }
+
+  .track {
+    grid-column: 1 / -1;
+    order: 4;
+  }
+}
