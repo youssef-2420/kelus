@@ -80,3 +80,28 @@ body.is-session-booklet .study-folio-actions .study-more > summary {
   min-height: 44px;
   min-width: 44px;
 }
+
+/* Questions quote the learner's own page, so they run long: keep them readable, not poster-sized. */
+body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .session-work > h1 {
+  font-size: clamp(1.375rem, 2vw, 1.75rem) !important;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  max-width: 34ch;
+}
+
+body.is-session-booklet .session-work-field,
+body.is-session-booklet .session-work-field:focus {
+  background: var(--color-pure-white);
+  border-color: var(--color-frost);
+}
+
+body.is-session-booklet .session-work-field:focus-visible {
+  border-color: var(--color-kelus);
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 2px;
+}
+
+body.is-session-booklet.is-booklet-system textarea.session-work-field,
+body.is-session-booklet.is-booklet-system textarea.session-work-field:focus {
+  background: var(--color-pure-white);
+}

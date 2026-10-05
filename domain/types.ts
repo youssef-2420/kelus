@@ -124,6 +124,28 @@ export type ProposedConcept = {
   sourceExcerpt: string;
 };
 
+export type PracticeKind = "recall" | "why" | "cloze" | "choice" | "scenario";
+
+/**
+ * One question the learner can answer from a topic's own page.
+ * Every item carries a verbatim quote from the page; nothing is asked or answered from outside it.
+ */
+export type PracticeItem = {
+  id: string;
+  kind: PracticeKind;
+  prompt: string;
+  modelAnswer: string;
+  hint: string;
+  /** Plain-words reason the answer is right. */
+  explanation: string;
+  /** Verbatim text from the source page that supports the answer. */
+  sourceQuote: string;
+  /** For "choice": the options and which one is correct. */
+  choices?: string[];
+  correctIndex?: number;
+  origin: "offline" | "ai";
+};
+
 export type LearningActivity = {
   id: string;
   conceptId: string;
@@ -132,6 +154,14 @@ export type LearningActivity = {
     explanation: string;
     keyPoints: string[];
   };
+  /** What the page actually teaches about this topic, as short facts in the page's own words. */
+  teach?: {
+    facts: string[];
+    whyItMatters?: string;
+    commonMistake?: string;
+  };
+  /** Extra practice beyond the main retrieve/apply pair. */
+  practice?: PracticeItem[];
   retrieve: {
     prompt: string;
     hint: string;
