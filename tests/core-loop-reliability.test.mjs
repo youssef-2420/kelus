@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { evaluateDiagnosisResponse, evaluateLearningResponse } from "../domain/answer-evaluation.ts";
-import { buildConfirmedMaterialModel, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
+import { buildConfirmedMaterialModel, isSourceBackedProposal, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
 import { generateRoute } from "../domain/routing-engine.ts";
 import { createLearnerSnapshot } from "../lib/setup.ts";
 import { buildLayoutPage } from "../lib/pdf-extraction.ts";
@@ -228,4 +228,30 @@ test("material reconciliation keeps the newest edit and honors newer deletion to
   );
   assert.deepEqual(deleted.materials, []);
   assert.deepEqual(deleted.removeLocalIds, [base.id]);
+});
+
+test("touching text fragments such as ligatures stay one word, real gaps stay spaces", () => {
+  const page = buildLayoutPage(1, [
+    { str: "Of", transform: [12, 0, 0, 12, 40, 700], width: 14, height: 12 },
+    { str: "fi", transform: [12, 0, 0, 12, 54, 700], width: 6, height: 12 },
+    { str: "ce hours", transform: [12, 0, 0, 12, 60, 700], width: 48, height: 12 },
+    { str: "Tuesday", transform: [12, 0, 0, 12, 118, 700], width: 40, height: 12, hasEOL: true },
+  ]);
+  assert.equal(page.text, "Office hours Tuesday");
+});
+
+test("a title page with course logistics is not proposed as study topics", () => {
+  const pages = [
+    { pageNumber: 1, text: "ECON 201 Principles of\n\nMicroeconomics\n\nInstructor: Dr. Rivera. Office hours: Tuesday 2pm in room 314. Email: rivera@example.edu" },
+    { pageNumber: 2, text: "Price Elasticity of Demand\n\nPrice elasticity of demand measures how strongly the quantity demanded responds to a change in price." },
+  ];
+  const names = proposeConceptsFromPages({ materialId: "title-page", sourceLabel: "Econ", pages }).filter(isSourceBackedProposal).map((item) => item.name);
+  assert.deepEqual(names, ["Price Elasticity of Demand"]);
+});
+
+test("claims that start with 'The <topic> ...' get a specific recall question", () => {
+  const pages = [{ pageNumber: 3, text: "Total Revenue Test\n\nThe total revenue test links elasticity to a firm's revenue. When demand is elastic, a price increase lowers total revenue." }];
+  const proposals = proposeConceptsFromPages({ materialId: "trt", sourceLabel: "Econ", pages });
+  const model = buildConfirmedMaterialModel({ proposals, courseId: "c", userId: "u", nowIso, pages });
+  assert.equal(model.prompts[0].promptText, "What does Total Revenue Test link, according to your notes?");
 });

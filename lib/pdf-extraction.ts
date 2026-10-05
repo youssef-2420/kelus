@@ -57,7 +57,10 @@ export function buildLayoutPage(pageNumber: number, rawItems: PdfTextItem[]): Ex
     const previous = lines.at(-1);
     const sameLine = previous && Math.abs(previous.y - item.y) <= Math.max(2, Math.min(previous.fontSize, item.fontSize) * 0.28);
     if (sameLine && !previous.hasEOL) {
-      previous.text = `${previous.text} ${item.text}`.replace(/\s+/g, " ");
+      // Fragments that touch (ligatures like "fi", styled runs) belong to one word; only a real gap is a space.
+      const gap = item.x - (previous.x + previous.width);
+      const glue = previous.width > 0 && gap < Math.min(previous.fontSize, item.fontSize) * 0.1 ? "" : " ";
+      previous.text = `${previous.text}${glue}${item.text}`.replace(/\s+/g, " ");
       previous.width = Math.max(previous.width, item.x + item.width - previous.x);
       previous.height = Math.max(previous.height, item.height);
       previous.fontSize = Math.max(previous.fontSize, item.fontSize);
