@@ -9,6 +9,8 @@ import type {
 
 const ADMINISTRATIVE =
   /\b(?:assessment|attendance|calendar|contact|course syllabus|email|grading|instructor|office hours|policy|reading list|schedule|syllabus|textbook)\b/i;
+/** Course-logistics text near a heading means the "topic" is a title page, not something to study. */
+const ADMINISTRATIVE_EXCERPT = /\b(?:office hours?|instructor\s*:|attendance|grading\s*:)|e-?mail\s*:|\S+@\S+\.\S+/i;
 const HEADING_PREFIX = /^(?:week|module|topic|chapter|unit|lecture|section)\s*\d*[.:\-–—]?\s*/i;
 const NUMBER_PREFIX = /^\s*(?:\d+(?:\.\d+)*|[ivx]+)[.)\-:]\s*/i;
 const EXAM_SIGNAL =
@@ -103,7 +105,7 @@ function centralClaim(name: string, excerpt: string) {
 }
 
 function recallQuestion(name: string, claim: string, fallback: string) {
-  const verb = claim.match(new RegExp(`^${escapeRegExp(name)}\\s+(is|are|means|measures?|regulates?|depends on|moves?|converts?|calculates?|requires?)\\b`, "i"))?.[1]?.toLocaleLowerCase();
+  const verb = claim.match(new RegExp(`^(?:the\\s+)?${escapeRegExp(name)}\\s+(is|are|means|measures?|regulates?|depends on|moves?|converts?|calculates?|requires?|links?|describes?|shows?|explains?|determines?|compares?|relates?)\\b`, "i"))?.[1]?.toLocaleLowerCase();
   if (!verb) return fallback;
   if (verb === "is" || verb === "are") return `What ${verb} ${name}, according to your notes?`;
   if (verb === "means") return `What does ${name} mean, according to your notes?`;
@@ -464,7 +466,8 @@ export function isSourceBackedProposal(proposal: ProposedConcept) {
     && excerpt.length >= 30
     && excerpt.split(/\s+/).length >= 5
     && excerpt.toLocaleLowerCase() !== proposal.name.trim().toLocaleLowerCase()
-    && !/^Suggested from the file title/i.test(excerpt);
+    && !/^Suggested from the file title/i.test(excerpt)
+    && !ADMINISTRATIVE_EXCERPT.test(excerpt);
 }
 
 export function proposalConfidence(proposal: ProposedConcept): "high" | "review" {
