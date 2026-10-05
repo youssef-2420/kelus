@@ -781,7 +781,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
             <div className="material-review-workspace">
             <aside className="material-source-preview" aria-label="Original course PDF">
               <div className="material-source-preview-head">
-                <div><span>YOUR SOURCE</span><strong>{analysis.material.fileName ?? analysis.material.title}</strong></div>
+                <div><span>Your source</span><strong>{analysis.material.fileName ?? analysis.material.title}</strong></div>
                 {previewUrl ? <a href={`${previewUrl}#page=${previewPage}`} target="_blank" rel="noreferrer">Open PDF ↗</a> : null}
               </div>
               <div className="material-source-page" aria-label={`Extracted text from page ${previewPage}`}>

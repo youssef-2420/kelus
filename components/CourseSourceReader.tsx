@@ -92,7 +92,7 @@ export function CourseSourceReader({ material, initialPage = 1, concealed = fals
   return (
     <section className="core-source-reader" aria-label="Course source">
       <header className="core-source-toolbar">
-        <div className="core-source-title"><span>COURSE SOURCE</span><strong title={material?.title}>{material?.title ?? "Your material"}</strong></div>
+        <div className="core-source-title"><span>Course source</span><strong title={material?.title}>{material?.title ?? "Your material"}</strong></div>
         {material?.storage === "local" && pages > 0 && !concealed ? (
           <div className="core-page-controls" aria-label="PDF pages">
             <button type="button" onClick={() => setPage(Math.max(1, displayPage - 1))} disabled={displayPage <= 1} aria-label="Previous page">←</button>

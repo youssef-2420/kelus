@@ -24,7 +24,8 @@ function MasteryRing({ value }: { value: number | null }) {
   const circumference = 2 * Math.PI * radius;
   return (
     <svg className={styles.ring} viewBox="0 0 40 40" aria-hidden="true" focusable="false">
-      <circle className={value == null ? styles.ringEmpty : styles.ringTrack} cx="20" cy="20" r={radius} />
+      <circle className={styles.ringTrack} cx="20" cy="20" r={radius} />
+      {value == null ? <circle className={styles.ringDot} cx="20" cy="20" r="3" /> : null}
       {value != null ? (
         <circle
           className={styles.ringArc}
