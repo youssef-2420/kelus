@@ -7,6 +7,9 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useLearner } from "@/components/LearnerProvider";
 import { generateRoute } from "@/domain/routing-engine";
 import { MasteryEvidence } from "@/components/MasteryEvidence";
+import { MarkStamp } from "@/components/MarkStamp";
+import { ReadinessShift } from "@/components/ReadinessShift";
+import { RouteShift } from "@/components/RouteShift";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
@@ -53,13 +56,27 @@ function CompleteBody() {
   const weakNames = summary?.stillWeakIds.slice(0, 2).map(name) ?? [];
   const nextAllocation = nextRoute?.allocations[0];
   const nextMinutes = nextAllocation?.minutes ?? null;
-  const nextReason = nextAllocation?.reasons.includes("PREREQUISITE_GAP")
+  const nextConcept = nextAllocation && nextAllocation.conceptId !== "mixed-retrieval"
+    ? courseConcepts.find((concept) => concept.id === nextAllocation.conceptId)
+    : undefined;
+  const notRecalledYet = Boolean(nextConcept && nextConcept.failedRetrievals > 0 && nextConcept.successfulRetrievals === 0);
+  const nextReason = notRecalledYet
+    ? "You have not recalled it yet. A second try now helps it stick."
+    : nextAllocation?.reasons.includes("PREREQUISITE_GAP")
     ? "It unlocks another topic."
-    : nextAllocation?.reasons.includes("REVIEW_DUE") || nextAllocation?.reasons.includes("RETENTION_FADING")
+    : nextAllocation?.reasons.includes("LOW_MASTERY")
+      ? "It still needs another pass."
+      : nextAllocation?.reasons.includes("REVIEW_DUE") || nextAllocation?.reasons.includes("RETENTION_FADING")
       ? "It is the next memory at risk."
       : nextAllocation?.reasons.includes("HIGH_EXAM_VALUE")
         ? "It carries high exam value."
         : "It offers the strongest next learning gain.";
+
+  const routeNames = (ids: string[]) => ids.filter((id) => id !== "mixed-retrieval").slice(0, 4).map((id) => ({ id, name: name(id) }));
+  const routeBefore = routeNames(session?.initialRoute.allocations.map((allocation) => String(allocation.conceptId)) ?? []);
+  const routeAfter = routeNames(nextRoute?.allocations.map((allocation) => String(allocation.conceptId)) ?? []);
+  const sameTopics = routeBefore.length === routeAfter.length && routeBefore.every((item) => routeAfter.some((other) => other.id === item.id));
+  const routeMoved = sameTopics && routeBefore.map((item) => item.id).join("|") !== routeAfter.map((item) => item.id).join("|");
 
   useEffect(() => {
     document.body.classList.add("is-session-booklet", "is-session-complete");
@@ -114,12 +131,13 @@ function CompleteBody() {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
       >
-        <p className="study-mark-kicker">Done</p>
+        <MarkStamp outcome={strengthenedNames.length ? "success" : "partial"} label={strengthenedNames.length ? "Session complete, topics strengthened" : "Session complete, gaps found"} />
         <h1>Done.</h1>
         <p className="complete-whisper">
           {practisedCount} {practisedCount === 1 ? "topic practised" : "topics practised"}
           {course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.
         </p>
+        {exam ? <ReadinessShift before={summary.readinessBefore} after={summary.readinessAfter} targetPercent={exam.targetPercent} /> : null}
         <section className="complete-change" aria-labelledby="complete-change-title">
           <p className="kicker">What changed</p>
           <h2 id="complete-change-title">
@@ -135,8 +153,21 @@ function CompleteBody() {
               : "Your next route is based on what you could retrieve, not only what you completed."}
           </p>
         </section>
-        <section className="complete-before-after" aria-labelledby="complete-before-after-title">
-          <p className="kicker">The useful change</p>
+        {routeMoved ? (
+          <section className="complete-route-moved" aria-label="How your route moved">
+            <p className="kicker">Your route moved</p>
+            <RouteShift before={routeBefore} after={routeAfter} />
+          </section>
+        ) : null}
+        {nextStopName ? (
+          <Link href="/today" className="cta complete-next-cta" onClick={() => trackEvent({ name: "next_route_opened", source: "completion" })}>
+            Next: {nextStopName}{nextMinutes ? ` · ${nextMinutes} min` : ""} <span aria-hidden="true">→</span>
+          </Link>
+        ) : null}
+        {nextStopName ? <p className="complete-next-reason">{nextReason}</p> : null}
+
+        <details className="complete-useful-change">
+          <summary>The useful change</summary>
           <h2 id="complete-before-after-title">You turned uncertainty into a next move.</h2>
           <div className="complete-before-after-grid">
             <div>
@@ -150,12 +181,7 @@ function CompleteBody() {
               <p>{nextMinutes ? `A focused ${nextMinutes}-minute pass. ${nextReason}` : nextReason}</p>
             </div>
           </div>
-        </section>
-        {nextStopName ? (
-          <p className="complete-next">
-            Next <strong>{nextStopName}</strong><span>{nextMinutes ? `${nextMinutes} minutes · ` : ""}{nextReason}</span>
-          </p>
-        ) : null}
+        </details>
 
         <section className="complete-return" aria-labelledby="complete-return-title">
           <p className="kicker">Come back tomorrow</p>
@@ -170,7 +196,7 @@ function CompleteBody() {
               : "The route will shift as retention fades — no need to rebuild from scratch."}
           </p>
           <div className="complete-return-actions">
-            <Link href="/today" className="cta" onClick={() => trackEvent({ name: "next_route_opened", source: "completion" })}>
+            <Link href="/today" className="text-btn" onClick={() => trackEvent({ name: "next_route_opened", source: "completion" })}>
               Back to Today <span aria-hidden="true">→</span>
             </Link>
             <button type="button" className="text-btn" onClick={addCalendar}>

@@ -255,3 +255,22 @@ test("claims that start with 'The <topic> ...' get a specific recall question", 
   const model = buildConfirmedMaterialModel({ proposals, courseId: "c", userId: "u", nowIso, pages });
   assert.equal(model.prompts[0].promptText, "What does Total Revenue Test link, according to your notes?");
 });
+
+test("a recall check accepts a correct definition without asking for reasoning or transfer", () => {
+  const pages = [{ pageNumber: 2, text: "Price Elasticity of Demand\n\nPrice elasticity of demand measures how strongly the quantity demanded responds to a change in price. Demand is elastic when the absolute value is greater than one." }];
+  const proposals = proposeConceptsFromPages({ materialId: "recall-only", sourceLabel: "Econ", pages });
+  const model = buildConfirmedMaterialModel({ proposals, courseId: "c", userId: "u", nowIso, pages });
+  const activity = model.learningActivities[0];
+  const answer = "It measures how strongly the quantity demanded responds to a change in price.";
+  const diagnosis = evaluateDiagnosisResponse({ answer, modelAnswer: activity.retrieve.modelAnswer, assessment: activity.assessment });
+  assert.equal(diagnosis.outcome, "success");
+  assert.deepEqual(diagnosis.criteria.map((criterion) => criterion.id), ["source-idea"]);
+  assert.doesNotMatch(diagnosis.explanation, /reasoned application/);
+
+  const vague = evaluateDiagnosisResponse({ answer: "It is about prices and stuff in the market.", modelAnswer: activity.retrieve.modelAnswer, assessment: activity.assessment });
+  assert.notEqual(vague.outcome, "success");
+
+  // The session still asks for an application: a definition alone is not a strong session answer.
+  const session = evaluateLearningResponse({ retrieveAnswer: answer, applicationAnswer: answer, retrieveModelAnswer: activity.retrieve.modelAnswer, applicationModelAnswer: activity.apply.modelAnswer, assessment: activity.assessment });
+  assert.notEqual(session.outcome, "success");
+});

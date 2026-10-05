@@ -82,27 +82,33 @@ export function evaluateLearningResponse(input: {
   retrieveModelAnswer: string;
   applicationModelAnswer: string;
   assessment?: LearningActivity["assessment"];
+  /** A recall check asks only for the source idea. Reasoning and transfer belong to the application step. */
+  retrievalOnly?: boolean;
 }): AnswerEvaluation {
+  const retrievalOnly = input.retrievalOnly === true;
   const retrieveWords = evidenceTokens(input.retrieveAnswer).length;
-  const applicationWords = evidenceTokens(input.applicationAnswer).length;
+  const applicationWords = retrievalOnly ? retrieveWords : evidenceTokens(input.applicationAnswer).length;
   const matchedRetrieve = coverage(input.retrieveAnswer, input.retrieveModelAnswer);
-  const matchedApply = coverage(input.applicationAnswer, input.applicationModelAnswer);
+  const matchedApply = retrievalOnly ? matchedRetrieve : coverage(input.applicationAnswer, input.applicationModelAnswer);
   const contradiction = contradictionDetected(input.retrieveAnswer, input.retrieveModelAnswer)
     || contradictionDetected(input.applicationAnswer, input.applicationModelAnswer);
-  const criteria = (input.assessment?.criteria ?? []).map((criterion) => {
+  const rubric = (input.assessment?.criteria ?? []).filter((criterion) => !retrievalOnly || criterion.appliesTo !== "apply");
+  const criteria = rubric.map((criterion) => {
     const answer = criterion.appliesTo === "retrieve" ? input.retrieveAnswer : criterion.appliesTo === "apply" ? input.applicationAnswer : `${input.retrieveAnswer} ${input.applicationAnswer}`;
     const evidence = matchedTerms(answer, criterion.terms);
     return { id: criterion.id, label: criterion.label, met: evidence.length >= criterion.minimumMatches, evidence };
   });
   const criterionRatio = criteria.length ? criteria.filter((criterion) => criterion.met).length / criteria.length : 0;
-  const lexicalScore = matchedRetrieve * 0.55 + matchedApply * 0.25;
+  const lexicalScore = retrievalOnly ? matchedRetrieve * 0.8 : matchedRetrieve * 0.55 + matchedApply * 0.25;
   const score = Number(Math.max(0, lexicalScore + criterionRatio * 0.2 - (contradiction ? 0.45 : 0)).toFixed(3));
-  const reasoningMet = criteria.find((criterion) => criterion.id === "reasoning")?.met ?? matchedApply >= 0.2;
   const sourceMet = criteria.find((criterion) => criterion.id === "source-idea")?.met ?? matchedRetrieve >= 0.34;
+  const reasoningMet = retrievalOnly ? sourceMet : (criteria.find((criterion) => criterion.id === "reasoning")?.met ?? matchedApply >= 0.2);
   const missing = criteria.find((criterion) => !criterion.met);
 
   if (!contradiction && retrieveWords >= 5 && applicationWords >= 5 && sourceMet && reasoningMet && score >= 0.34) {
-    return { outcome: "success", score, label: "Strong evidence", explanation: "The answer includes the source idea and a reasoned application. Compare it with the passage above: matching terms cannot verify every nuance.", matchedRetrieve, matchedApply, criteria, contradiction };
+    return { outcome: "success", score, label: "Strong evidence", explanation: retrievalOnly
+        ? "The answer includes the source idea. Compare it with the passage above: matching terms cannot verify every nuance."
+        : "The answer includes the source idea and a reasoned application. Compare it with the passage above: matching terms cannot verify every nuance.", matchedRetrieve, matchedApply, criteria, contradiction };
   }
   if (!contradiction && retrieveWords >= 3 && applicationWords >= 3 && (sourceMet || reasoningMet || score >= 0.16)) {
     return { outcome: "partial", score, label: "Partial evidence", explanation: missing ? `Some of the idea is here. Try again with: ${missing.label.toLocaleLowerCase()}.` : "Some of the idea is here. Compare your reasoning with the source before moving on.", matchedRetrieve, matchedApply, criteria, contradiction };
@@ -111,5 +117,5 @@ export function evaluateLearningResponse(input: {
 }
 
 export function evaluateDiagnosisResponse(input: { answer: string; modelAnswer: string; assessment?: LearningActivity["assessment"] }): AnswerEvaluation {
-  return evaluateLearningResponse({ retrieveAnswer: input.answer, applicationAnswer: input.answer, retrieveModelAnswer: input.modelAnswer, applicationModelAnswer: input.modelAnswer, assessment: input.assessment });
+  return evaluateLearningResponse({ retrieveAnswer: input.answer, applicationAnswer: input.answer, retrieveModelAnswer: input.modelAnswer, applicationModelAnswer: input.modelAnswer, assessment: input.assessment, retrievalOnly: true });
 }

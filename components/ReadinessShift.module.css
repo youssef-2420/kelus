@@ -1,0 +1,78 @@
+.shift {
+  display: grid;
+  gap: 10px;
+  padding: 16px 18px;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-mist);
+}
+
+.numbers {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.from {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-smoke);
+  font-variant-numeric: tabular-nums;
+}
+
+.arrow {
+  color: var(--color-smoke);
+}
+
+.to {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--color-kelus);
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  margin-left: 4px;
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+}
+
+.track {
+  position: relative;
+  height: 8px;
+  border-radius: 4px;
+  background: var(--color-frost);
+}
+
+.ghost,
+.fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 4px;
+}
+
+.ghost {
+  background: color-mix(in srgb, var(--color-kelus) 28%, var(--color-frost));
+}
+
+.fill {
+  background: var(--color-kelus);
+}
+
+.target {
+  position: absolute;
+  top: -4px;
+  width: 2px;
+  height: 16px;
+  background: var(--color-midnight-ink);
+  transform: translateX(-1px);
+}
+
+.note {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--color-smoke);
+}
