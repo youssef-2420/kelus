@@ -1,0 +1,90 @@
+/* Topic cards: neutralise the old table-of-contents rows so the card owns its layout. */
+body.is-course-studio .surface-map .topic-cards,
+body.is-course-studio .surface-map .topic-cards > li {
+  border: 0;
+  background: none;
+}
+
+body.is-course-studio .surface-map .topic-cards > li {
+  padding: 0;
+  min-height: 0;
+  list-style: none;
+}
+
+body.is-course-studio .surface-map .topic-cards .index-toc-row {
+  min-height: 0;
+  width: auto;
+}
+
+body.is-course-studio .surface-map .topic-cards .index-toc-name {
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--color-midnight-ink);
+}
+
+body.is-course-studio .surface-map .topic-cards .is-start .index-toc-name {
+  font-size: 1.5rem;
+  color: var(--color-midnight-ink);
+}
+
+body.is-course-studio .surface-map .topic-cards .index-toc-meta {
+  position: static;
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+}
+
+body.is-course-studio .surface-map .topic-cards .is-start .index-toc-meta {
+  font-weight: 600;
+  color: var(--color-kelus);
+}
+
+/* The older row rule fixes two narrow columns; cards need art, text and a ring. */
+body.is-course-studio .surface-map .topic-cards .index-toc-row {
+  grid-template-columns: 56px minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 4px 16px;
+  padding: 16px 16px 16px 14px;
+}
+
+body.is-course-studio .surface-map .topic-cards > li.is-start .index-toc-row {
+  grid-template-columns: 88px minmax(0, 1fr) 48px;
+  padding: 22px 22px 22px 18px;
+}
+
+body.is-course-studio .surface-map .topic-cards .index-toc-name {
+  display: block;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 640px) {
+  body.is-course-studio .surface-map .topic-cards > li.is-start .index-toc-row {
+    grid-template-columns: 64px minmax(0, 1fr) 40px;
+  }
+}
+
+body.is-course-studio .surface-map .topic-cards {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  padding: 4px 24px 40px;
+}
+
+@media (max-width: 640px) {
+  body.is-course-studio .surface-map .topic-cards {
+    grid-template-columns: minmax(0, 1fr);
+    padding-inline: 14px;
+  }
+}
+
+/* Old rows placed the status in a third column; inside a card everything stacks in one. */
+body.is-course-studio .surface-map .topic-cards .topic-card-main > * {
+  grid-column: 1;
+  grid-row: auto;
+  justify-self: start;
+  text-align: left;
+  min-width: 0;
+}

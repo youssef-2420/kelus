@@ -131,7 +131,7 @@ test("the index is a paper TOC; uploaded concepts have a static-exportable detai
   ]);
   assert.match(map, /TopicMapPanel|RevisionSurface/);
   assert.match(panel, /index-toc/);
-  assert.match(panel, /Topics by exam weight/);
+  assert.match(panel, /Topics, next topic first/);
   assert.doesNotMatch(panel, /ConceptInspector|KnowledgeMap|Find a topic/);
   assert.match(knowledgeMap, /onSelect/);
   assert.match(knowledgeMap, /aria-pressed/);

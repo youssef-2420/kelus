@@ -261,7 +261,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   }
   await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Topics", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?\?section=map/);
-  await expect(page.getByRole("list", { name: "Topics by exam weight" })).toBeVisible();
+  await expect(page.getByRole("list", { name: "Topics, next topic first" })).toBeVisible();
   await expect(page.locator(".index-toc > li").first()).toBeVisible();
   await expect(page.getByLabel("Find a topic")).toHaveCount(0);
   await expect(page.locator(".topic-map-graph")).toHaveCount(0);
