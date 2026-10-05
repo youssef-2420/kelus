@@ -87,7 +87,7 @@ test("layout-aware extraction recognizes a visually dominant heading and keeps i
   ]);
   const [proposal] = proposeConceptsFromPages({ materialId: "layout-pdf", sourceLabel: "Cell lecture", pages: [page] });
   assert.equal(proposal.name, "ATP Production");
-  assert.match(proposal.sourceExcerpt, /linked sequence.*proton gradient/i);
+  assert.match(proposal.sourceExcerpt, /linked sequence[\s\S]*proton gradient/i);
   assert.equal(proposal.locator, "Page 4");
 });
 

@@ -13,6 +13,55 @@ const CONNECTOR = /\b(because|therefore|so that|which means|this means|leads to|
 const CONDITIONAL = /^(when|if|whenever|as|once|unless)\b/i;
 const EXAMPLE = /\b(for example|for instance|such as|e\.g\.)\b/i;
 
+const BULLET = /^\s*(?:[•◦▪▫●○■□‣⁃*–—-]|\(?\d{1,2}[.)]|\(?[a-z][.)])\s+/;
+const NUMBERED = /^\s*\(?(\d{1,2})[.)]\s+/;
+
+/**
+ * One idea per unit: a bullet, a numbered step, a "term: meaning" line, or a sentence.
+ * Bullet and step markers are removed so they never leak into questions.
+ */
+export function units(text: string) {
+  const out: string[] = [];
+  // A PDF wraps long lines. A line that starts in lowercase continues the one before it.
+  const lines: string[] = [];
+  for (const raw of text.split(/\n+/)) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (lines.length && /^[a-z]/.test(line) && !BULLET.test(line)) lines[lines.length - 1] += ` ${line}`;
+    else lines.push(line);
+  }
+  for (const line of lines) {
+    const cleaned = line.replace(BULLET, "").replace(/\s+/g, " ").trim();
+    if (!cleaned) continue;
+    const parts = cleaned.length > 60 ? splitSentences(cleaned) : [cleaned];
+    for (const part of parts) if (part.length >= 15) out.push(part);
+  }
+  return out;
+}
+
+/** Term/meaning pairs: "Term: meaning" or "Term - meaning". The term is short; the meaning says something. */
+export function termPairs(text: string) {
+  const pairs: Array<{ term: string; meaning: string; line: string }> = [];
+  for (const line of units(text)) {
+    const match = line.match(/^([A-Z][A-Za-z0-9 /&'’()-]{1,40}?)\s*(?::|\s[-–—]\s)\s*(.{12,})$/);
+    if (!match) continue;
+    const term = match[1].trim();
+    if (term.split(/\s+/).length > 5) continue;
+    pairs.push({ term, meaning: match[2].trim().replace(/[.]+$/, ""), line });
+  }
+  return pairs;
+}
+
+/** Numbered steps in the order the page gives them. */
+export function numberedSteps(rawText: string) {
+  const steps: Array<{ n: number; text: string }> = [];
+  for (const line of rawText.split(/\n+/)) {
+    const match = line.match(NUMBERED);
+    if (match) steps.push({ n: Number(match[1]), text: line.replace(NUMBERED, "").replace(/\s+/g, " ").trim() });
+  }
+  return steps.length >= 3 && steps.every((step, index) => step.n === steps[0].n + index) ? steps : [];
+}
+
 export function splitSentences(text: string) {
   return text
     .replace(/\s+/g, " ")
@@ -39,7 +88,7 @@ function stripEnd(sentence: string) {
 export function teachingFacts(name: string, excerpt: string, limit = 4) {
   const seen = new Set<string>();
   const facts: string[] = [];
-  for (const sentence of splitSentences(excerpt)) {
+  for (const sentence of units(excerpt)) {
     const key = sentence.toLocaleLowerCase();
     if (seen.has(key) || sentence.length > 240) continue;
     seen.add(key);
@@ -77,7 +126,7 @@ export function buildPractice(input: {
   siblingNames: string[];
 }): PracticeItem[] {
   const { conceptId, name, excerpt, locator } = input;
-  const sentences = splitSentences(excerpt);
+  const sentences = units(excerpt);
   const items: PracticeItem[] = [];
   const add = (item: Omit<PracticeItem, "id" | "origin">) => items.push({ ...item, id: `practice-${conceptId}-${items.length + 1}`, origin: "offline" });
   const definition = sentences.find((s) => s.toLocaleLowerCase().includes(name.toLocaleLowerCase())) ?? sentences[0];
@@ -138,9 +187,12 @@ export function buildPractice(input: {
   for (const sentence of sentences.slice(0, 5)) {
     if (sentence === definition && sentences.length > 1) continue;
     if (words(sentence).length < 7 || sentence.length > 220) continue;
-    const gap = pickGapWord(sentence, name, excerpt);
+    const pair = termPairs(sentence)[0];
+    const gapSource = pair && sentence.includes(pair.meaning) ? pair.meaning : sentence;
+    const gap = pickGapWord(gapSource, pair ? `${name} ${pair.term}` : name, excerpt);
     if (!gap) continue;
-    const masked = sentence.replace(new RegExp(`\\b${gap}\\b`), "_____");
+    const blank = (value: string) => value.replace(new RegExp(`\\b${gap}\\b`), "_____");
+    const masked = pair && sentence.includes(pair.meaning) ? sentence.replace(pair.meaning, blank(pair.meaning)) : blank(sentence);
     add({
       kind: "cloze",
       prompt: `Fill the gap from ${locator}: “${masked}”`,
@@ -150,6 +202,47 @@ export function buildPractice(input: {
       sourceQuote: sentence,
     });
     break;
+  }
+
+  // 4b. Terms and their meanings on this page: name the term from its meaning, using the page's other terms as options.
+  const pairs = termPairs(excerpt).filter((pair) => pair.term.toLocaleLowerCase() !== name.toLocaleLowerCase());
+  if (pairs.length >= 2) {
+    const target = pairs[hash(conceptId) % pairs.length];
+    const options = pairs.map((pair) => pair.term);
+    const choices = options.sort((a, b) => hash(`${conceptId}t${a}`) - hash(`${conceptId}t${b}`)).slice(0, 4);
+    if (choices.length >= 3 && choices.includes(target.term)) {
+      add({
+        kind: "choice",
+        prompt: `Which one matches: “${target.meaning}”?`,
+        modelAnswer: target.term,
+        hint: `These are the terms listed on ${locator}.`,
+        explanation: `${locator}: “${target.line}”`,
+        sourceQuote: target.line,
+        choices,
+        correctIndex: choices.indexOf(target.term),
+      });
+    }
+  }
+
+  // 4c. Steps in order: what comes next.
+  const steps = numberedSteps(excerpt);
+  if (steps.length >= 3) {
+    const at = hash(conceptId) % (steps.length - 1);
+    const here = steps[at];
+    const after = steps[at + 1];
+    const options = steps.filter((step) => step !== after && step !== here).map((step) => step.text);
+    const choices = [after.text, ...options.sort((a, b) => hash(`${conceptId}s${a}`) - hash(`${conceptId}s${b}`)).slice(0, 3)]
+      .sort((a, b) => hash(`${conceptId}z${a}`) - hash(`${conceptId}z${b}`));
+    add({
+      kind: "choice",
+      prompt: `In your notes, what comes right after: “${here.text}”?`,
+      modelAnswer: after.text,
+      hint: `The steps are numbered on ${locator}.`,
+      explanation: `${locator} lists step ${here.n} then step ${after.n}: “${after.text}”`,
+      sourceQuote: after.text,
+      choices,
+      correctIndex: choices.indexOf(after.text),
+    });
   }
 
   // 5. Recall the definition in the learner's own words.

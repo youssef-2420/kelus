@@ -1,4 +1,4 @@
-import { buildPractice, teachingFacts } from "./content-engine";
+import { buildPractice, teachingFacts, units } from "./content-engine";
 import type {
   Concept,
   ConceptRelationship,
@@ -70,7 +70,7 @@ function excerptFor(lines: string[], index: number, fallback: string) {
     if (line.length > 18 && !looksLikeConcept(line)) nearby.push(line);
     if (nearby.join(" ").length >= 520) break;
   }
-  return (nearby.length ? nearby.join(" ") : fallback).slice(0, 700);
+  return (nearby.length ? nearby.join("\n") : fallback).slice(0, 700);
 }
 
 function escapeRegExp(value: string) {
@@ -98,7 +98,7 @@ function sentencesFrom(excerpt: string) {
 }
 
 function centralClaim(name: string, excerpt: string) {
-  const sentences = sentencesFrom(excerpt);
+  const sentences = units(excerpt);
   if (!sentences.length) return excerpt.slice(0, 220);
   const named = sentences.find((sentence) => sentence.toLocaleLowerCase().includes(name.toLocaleLowerCase()));
   const defined = sentences.find((sentence) => DEFINITION_SIGNAL.test(sentence));
