@@ -1,3 +1,4 @@
+import { buildPractice, teachingFacts } from "./content-engine";
 import type {
   Concept,
   ConceptRelationship,
@@ -258,22 +259,32 @@ function scoreDifficulty(excerpt: string) {
   return clamp(Number(score.toFixed(3)), 0.3, 0.8);
 }
 
-function buildActivity(concept: Concept, proposal: ProposedConcept): LearningActivity {
+function buildActivity(concept: Concept, proposal: ProposedConcept, siblingNames: string[] = []): LearningActivity {
   const claim = centralClaim(concept.name, proposal.sourceExcerpt);
+  const practice = buildPractice({ conceptId: concept.id, name: concept.name, excerpt: proposal.sourceExcerpt, locator: proposal.locator, siblingNames });
+  // The "Use" step asks something the page actually supports: a stated condition or reason, in the learner's words.
+  const facts = teachingFacts(concept.name, proposal.sourceExcerpt);
+  const furtherFact = facts.find((fact) => fact !== claim && fact.length >= 30);
+  const applyItem = practice.find((item) => item.kind === "scenario") ?? practice.find((item) => item.kind === "why")
+    ?? (furtherFact
+      ? {
+          prompt: `Your notes also say: “${furtherFact}” Explain what that means, and give an example of your own.`,
+          hint: `Reread ${proposal.locator}. Put the sentence in simpler words, then make up a case where it applies.`,
+          modelAnswer: furtherFact,
+        }
+      : undefined);
   const language = activityLanguage(subjectModeFor(concept.name, proposal.sourceExcerpt), concept.name, claim);
   const application = sourceBackedApplication(concept.name, claim, proposal.locator);
   return {
     id: `activity-${concept.id}`,
     conceptId: concept.id,
     learn: {
-      title: language.learnTitle,
+      title: concept.name,
       explanation: claim,
-      keyPoints: [
-        `Find the claim the source makes about ${concept.name}.`,
-        "Cover the excerpt, then restate that claim without looking.",
-        `Keep one concrete detail from ${proposal.locator} so the idea stays grounded.`,
-      ],
+      keyPoints: teachingFacts(concept.name, proposal.sourceExcerpt).slice(1, 4),
     },
+    teach: { facts: teachingFacts(concept.name, proposal.sourceExcerpt) },
+    practice,
     retrieve: {
       prompt: recallQuestion(concept.name, claim, language.retrievePrompt),
       hint: `Return to ${proposal.locator}. Start from the relationship or definition, not a list of facts.`,
@@ -282,9 +293,9 @@ function buildActivity(concept: Concept, proposal: ProposedConcept): LearningAct
       modelAnswer: claim,
     },
     apply: {
-      prompt: application?.prompt ?? `${language.applyPrompt} Use ${proposal.locator}: “${claim}” Do not claim a specific outcome the page does not establish.`,
-      hint: application?.hint ?? language.applyHint,
-      modelAnswer: application?.modelAnswer ?? language.applyAnswer,
+      prompt: applyItem?.prompt ?? application?.prompt ?? `${language.applyPrompt} Use ${proposal.locator}: “${claim}” Do not claim a specific outcome the page does not establish.`,
+      hint: applyItem?.hint ?? application?.hint ?? language.applyHint,
+      modelAnswer: applyItem?.modelAnswer ?? application?.modelAnswer ?? language.applyAnswer,
     },
     assessment: assessmentFor(subjectModeFor(concept.name, proposal.sourceExcerpt), concept.name, claim),
     sourceReferences: [{ materialId: proposal.materialId, label: proposal.sourceLabel, locator: proposal.locator }],
@@ -538,7 +549,7 @@ export function buildConfirmedMaterialModel(input: {
     };
   });
   const learningActivities: LearningActivity[] = concepts.map((concept) =>
-    buildActivity(concept, proposalByName.get(concept.name)!),
+    buildActivity(concept, proposalByName.get(concept.name)!, concepts.map((item) => item.name)),
   );
   const relationships = inferRelationships(concepts, corpus);
   return { concepts, prompts, learningActivities, relationships };

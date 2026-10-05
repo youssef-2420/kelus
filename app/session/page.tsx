@@ -16,6 +16,7 @@ import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { LoopSteps } from "@/components/LoopSteps";
 import { MarkStamp } from "@/components/MarkStamp";
 import { MinuteShift, RouteShift } from "@/components/RouteShift";
+import { PracticeDrill } from "@/components/PracticeDrill";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
@@ -522,6 +523,7 @@ function SessionBody() {
               </div>
               {minuteChanges.length ? <div><span>Time adjusted</span><strong>{minuteChanges.slice(0, 2).map((change) => `${change.name} ${change.before} → ${change.after} min`).join(" · ")}</strong></div> : null}
             </div>
+            <PracticeDrill key={concept.id} items={activity.practice ?? []} />
             {currentSource && currentMaterial ? (
               <button
                 type="button"
