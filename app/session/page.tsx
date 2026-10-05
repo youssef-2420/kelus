@@ -14,6 +14,8 @@ import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { LoopSteps } from "@/components/LoopSteps";
+import { MarkStamp } from "@/components/MarkStamp";
+import { MinuteShift, RouteShift } from "@/components/RouteShift";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
@@ -442,7 +444,13 @@ function SessionBody() {
                 </strong>
               </motion.p>
             ) : null}
-            {minuteChanges.length ? <p className="reroute-whisper" aria-label="Changed study time">{minuteChanges.slice(0, 2).map((change) => `${change.name}: ${change.before} → ${change.after} min`).join(" · ")}</p> : null}
+            {routeOrderChanged ? (
+              <RouteShift
+                before={previousRemaining.map((id) => ({ id, name: state.snapshot.concepts.find((item) => item.id === id)?.name ?? "Topic" }))}
+                after={nextRemaining.map((id) => ({ id, name: state.snapshot.concepts.find((item) => item.id === id)?.name ?? "Topic" }))}
+              />
+            ) : null}
+            {minuteChanges.length ? <MinuteShift changes={minuteChanges.slice(0, 3)} /> : null}
             <p className="reroute-whisper" aria-label="How this answer affected the route">{evaluation?.label ?? "New evidence"} · {routeOrderChanged ? "Order updated" : "Time updated"}</p>
             <motion.button
               type="button"
@@ -466,6 +474,7 @@ function SessionBody() {
             transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
           >
             <p className="study-count sr-only" aria-live="polite">Marked</p>
+            {lastOutcome ? <MarkStamp outcome={lastOutcome} /> : null}
             <motion.p
               className="study-mark-kicker"
               initial={reduceMotion ? false : { opacity: 0 }}
@@ -675,34 +684,28 @@ function SessionBody() {
                 <h1>Mark.</h1>
                 <p className="study-mark-lede">Set your answers beside the model, then record what stuck.</p>
                 {currentSource && currentMaterial ? <button type="button" className="text-btn session-source-compare" onClick={() => void openSource(currentSource.materialId, currentSource.locator)}>View original page · {currentSource.locator ?? "source"} <span aria-hidden="true">↗</span></button> : null}
-                <div className="answer-pages" aria-label="Compare your answers">
-                  <section>
-                    <span>Your retrieval</span>
-                    <p>{retrieveAnswer}</p>
-                  </section>
-                  <section>
-                    <span>Key idea</span>
-                    <p>{activity.retrieve.modelAnswer}</p>
-                  </section>
-                  <section>
-                    <span>Your application</span>
-                    <p>{applicationAnswer}</p>
-                  </section>
-                  <section>
-                    <span>A sound application</span>
-                    <p>{activity.apply.modelAnswer}</p>
-                  </section>
-                </div>
                 {evaluation ? (
-                  <div className={`answer-evaluation is-page is-${evaluation.outcome}`} role="status">
+                  <motion.div
+                    className={`answer-evaluation is-page is-${evaluation.outcome}`}
+                    role="status"
+                    initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={reduceMotion ? { duration: 0 } : { duration: 0.4, delay: 0.5, ease: kelusEase }}
+                  >
                     <h2>{evaluation.label}</h2>
                     <p>{evaluation.explanation}</p>
                     {evaluation.criteria.length ? (
                       <ul className="answer-criteria" aria-label="Assessment criteria">
-                        {evaluation.criteria.map((criterion) => (
-                          <li key={criterion.id} className={criterion.met ? "is-met" : "is-missing"}>
+                        {evaluation.criteria.map((criterion, criterionIndex) => (
+                          <motion.li
+                            key={criterion.id}
+                            className={criterion.met ? "is-met" : "is-missing"}
+                            initial={reduceMotion ? false : { opacity: 0, x: -8 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={reduceMotion ? { duration: 0 } : { duration: 0.3, delay: 0.75 + criterionIndex * 0.14, ease: kelusEase }}
+                          >
                             <span aria-hidden="true">{criterion.met ? "✓" : "○"}</span>{criterion.label}
-                          </li>
+                          </motion.li>
                         ))}
                       </ul>
                     ) : null}
@@ -728,8 +731,26 @@ function SessionBody() {
                         </button>
                       ) : null}
                     </div>
-                  </div>
+                  </motion.div>
                 ) : null}
+                <div className="answer-pages" aria-label="Compare your answers">
+                  <section>
+                    <span>Your retrieval</span>
+                    <p>{retrieveAnswer}</p>
+                  </section>
+                  <section>
+                    <span>Key idea</span>
+                    <p>{activity.retrieve.modelAnswer}</p>
+                  </section>
+                  <section>
+                    <span>Your application</span>
+                    <p>{applicationAnswer}</p>
+                  </section>
+                  <section>
+                    <span>A sound application</span>
+                    <p>{activity.apply.modelAnswer}</p>
+                  </section>
+                </div>
               </div>
             ) : null}
           </motion.section>

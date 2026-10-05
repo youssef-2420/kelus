@@ -150,7 +150,9 @@ test("course workspace fills the viewport without a blank footer band", async ({
   const workspace = page.locator(".kelus-space.is-studio");
   await expect(workspace).toBeVisible();
   expect(await workspace.evaluate((element) => element.getBoundingClientRect().bottom)).toBeGreaterThanOrEqual(899);
-  await expect(page.getByText(/Your target 85%/)).toBeVisible();
+  const pulse = page.getByRole("group", { name: "Exam readiness" });
+  await expect(pulse).toContainText("Your target");
+  await expect(pulse).toContainText("85%");
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -1,0 +1,34 @@
+.stamp {
+  display: block;
+  width: 104px;
+  height: 104px;
+  margin-bottom: 8px;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.track {
+  stroke: var(--color-frost);
+  stroke-width: 4;
+}
+
+.ring {
+  stroke: var(--color-midnight-ink);
+  stroke-width: 4;
+}
+
+.mark {
+  stroke: var(--color-midnight-ink);
+  stroke-width: 4;
+}
+
+.tick {
+  stroke: var(--color-kelus);
+  stroke-width: 7;
+}
+
+.success .ring {
+  stroke: var(--color-kelus);
+  stroke-width: 5;
+}
