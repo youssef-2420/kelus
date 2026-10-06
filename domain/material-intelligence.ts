@@ -9,12 +9,14 @@ import type {
 } from "./types";
 
 const ADMINISTRATIVE =
-  /\b(?:assessment|attendance|calendar|contact|course syllabus|email|grading|instructor|office hours|policy|reading list|schedule|syllabus|textbook)\b/i;
+  /\b(?:attendance|calendar|contact|course syllabus|email|grading|instructor|office hours|reading list|schedule|syllabus|textbook)\b|\b(?:late|attendance|grading|course|class|academic|honou?r(?: code)?|privacy|refund|make-?up|plagiarism|submission|exam|office|lab|safety) polic(?:y|ies)\b|^assessments?$|\bassessments? (?:schedule|dates?|weights?|weighting|breakdown|criteria|overview|methods?)\b/i;
 /** Course-logistics text near a heading means the "topic" is a title page, not something to study. */
 const ADMINISTRATIVE_EXCERPT = /\b(?:office hours?|instructor\s*:|attendance|grading\s*:)|e-?mail\s*:|\S+@\S+\.\S+/i;
 /** Headings that structure a document but are not something to study on their own. */
 const GENERIC_HEADING =
   /^(?:examples?|summary|overview|introduction|intro|conclusions?|notes?|references?|resources?|further reading|homework|exercises?|practice|questions?|review|recap|key points|takeaways|table of contents|contents|agenda|to-?do|links?|bibliography|appendix|glossary|extra|misc(?:ellaneous)?)$/i;
+/** A course deck can hold dozens of topics; more than this is shown as a cap, not silently dropped. */
+export const MAX_PROPOSED_TOPICS = 40;
 const HEADING_PREFIX = /^(?:week|module|topic|chapter|unit|lecture|section)\s*\d*[.:\-–—]?\s*/i;
 const NUMBER_PREFIX = /^\s*(?:\d+(?:\.\d+)*|[ivx]+)[.)\-:]\s*/i;
 const EXAM_SIGNAL =
@@ -262,9 +264,9 @@ function scoreDifficulty(excerpt: string) {
   return clamp(Number(score.toFixed(3)), 0.3, 0.8);
 }
 
-function buildActivity(concept: Concept, proposal: ProposedConcept, siblingNames: string[] = []): LearningActivity {
+function buildActivity(concept: Concept, proposal: ProposedConcept, siblingNames: string[] = [], siblingFacts: string[] = []): LearningActivity {
   const claim = centralClaim(concept.name, proposal.sourceExcerpt);
-  const practice = buildPractice({ conceptId: concept.id, name: concept.name, excerpt: proposal.sourceExcerpt, locator: proposal.locator, siblingNames });
+  const practice = buildPractice({ conceptId: concept.id, name: concept.name, excerpt: proposal.sourceExcerpt, locator: proposal.locator, siblingNames, siblingFacts });
   // The "Use" step asks something the page actually supports: a stated condition or reason, in the learner's words.
   const facts = teachingFacts(concept.name, proposal.sourceExcerpt);
   const furtherFact = facts.find((fact) => fact !== claim && fact.length >= 30);
@@ -394,7 +396,7 @@ export function proposeConceptsFromPages(input: {
 }): ProposedConcept[] {
   const proposals: ProposedConcept[] = [];
   const seen = new Set<string>();
-  const limit = input.limit ?? 12;
+  const limit = input.limit ?? MAX_PROPOSED_TOPICS;
   const matcher = input.mode === "relaxed" ? looksLikeConceptRelaxed : looksLikeConcept;
 
   for (const page of input.pages) {
@@ -553,8 +555,10 @@ export function buildConfirmedMaterialModel(input: {
       modelAnswer: centralClaim(concept.name, proposal.sourceExcerpt),
     };
   });
+  const factsByTopic = new Map(input.proposals.map((proposal) => [proposal.name, teachingFacts(proposal.name, proposal.sourceExcerpt, 3)]));
+  const factsFromOtherTopics = (topic: string) => [...factsByTopic.entries()].filter(([other]) => other !== topic).flatMap(([, facts]) => facts).slice(0, 40);
   const learningActivities: LearningActivity[] = concepts.map((concept) =>
-    buildActivity(concept, proposalByName.get(concept.name)!, concepts.map((item) => item.name)),
+    buildActivity(concept, proposalByName.get(concept.name)!, concepts.map((item) => item.name), factsFromOtherTopics(concept.name)),
   );
   const relationships = inferRelationships(concepts, corpus);
   return { concepts, prompts, learningActivities, relationships };

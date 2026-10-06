@@ -125,11 +125,14 @@ function SessionBody() {
   }, [conceptId]);
   const activity = baseActivity && ai && ai.id === conceptId ? mergeAiContent(baseActivity, ai.content) : baseActivity;
   const siblingNames = state.snapshot.concepts.filter((item) => item.courseId === concept?.courseId).map((item) => item.name);
+  // Fixed when the topic opens, so finishing a run does not reshuffle it under the learner.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const round = useMemo(() => concept?.retrievalAttempts ?? 0, [conceptId]);
   const run = useMemo(
-    () => (activity && concept ? buildQuickRun({ activity, name: concept.name, siblingNames }) : null),
+    () => (activity && concept ? buildQuickRun({ activity, name: concept.name, siblingNames, round }) : null),
     // The run is rebuilt only when the topic or its content changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [conceptId, activity?.practice?.length, activity?.teach?.aiExplanation],
+    [conceptId, round, activity?.practice?.length, activity?.teach?.aiExplanation],
   );
   const quickMode = Boolean(run);
   const [runKey, setRunKey] = useState(0);

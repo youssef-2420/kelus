@@ -18,8 +18,9 @@ const MAX_CHECKS = 3;
  * Everything comes from the topic's page. Returns null when the page gives fewer than two checkable questions,
  * so the longer loop is used instead.
  */
-export function buildQuickRun(input: { activity: LearningActivity; name: string; siblingNames: string[] }): QuickRun | null {
+export function buildQuickRun(input: { activity: LearningActivity; name: string; siblingNames: string[]; round?: number }): QuickRun | null {
   const { activity, name, siblingNames } = input;
+  const round = Math.max(0, Math.floor(input.round ?? 0));
   const own = activity.practice?.length
     ? activity.practice
     : buildPractice({
@@ -30,7 +31,10 @@ export function buildQuickRun(input: { activity: LearningActivity; name: string;
         siblingNames,
       });
   // One of each kind before a second of any: a run should feel varied, not repeated.
-  const pool = own.filter(isDrillable);
+  // Each round starts further along the list, so a second session brings questions the first one did not.
+  const all = own.filter(isDrillable);
+  const turn = all.length ? (round * MAX_CHECKS) % all.length : 0;
+  const pool = [...all.slice(turn), ...all.slice(0, turn)];
   const seen = new Set<string>();
   const first = pool.filter((item) => (seen.has(item.kind) ? false : (seen.add(item.kind), true)));
   const rest = pool.filter((item) => !first.includes(item));
@@ -38,7 +42,7 @@ export function buildQuickRun(input: { activity: LearningActivity; name: string;
   if (checks.length < 2) return null;
   return {
     checks,
-    explainPrompt: activity.retrieve.prompt,
+    explainPrompt: round % 2 === 1 ? `Close the page. What would you tell a friend about ${name}?` : activity.retrieve.prompt,
     explainAnswer: activity.retrieve.modelAnswer,
     explainQuote: activity.retrieve.modelAnswer,
   };

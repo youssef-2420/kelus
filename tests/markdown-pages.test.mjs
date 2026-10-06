@@ -83,3 +83,17 @@ test("a saved notes source survives being read back from storage", async () => {
   assert.equal(normalizeMaterial(saved)?.kind, "text");
   assert.equal(normalizeMaterial({ ...saved, kind: "spreadsheet" }), null);
 });
+
+test("policy and assessment are real topics in economics, politics and education, while course admin is still filtered", () => {
+  const body = "This idea is explained here in a sentence long enough to count as a supporting passage for the topic.";
+  const pages = ["Fiscal policy", "Monetary policy", "Formative assessment", "Late policy", "Grading policy", "Assessment", "Office hours"].map((heading, index) => ({
+    pageNumber: index + 1, text: `${heading}\n\n${body}`, blocks: [
+      { text: heading, x: 0, y: 0, width: 100, height: 20, fontSize: 20 },
+      { text: body, x: 0, y: 0, width: 400, height: 12, fontSize: 12 },
+      { text: "More text on the same page so body text is the typical size.", x: 0, y: 0, width: 400, height: 12, fontSize: 12 },
+      { text: "And a third line, as a real page would have.", x: 0, y: 0, width: 400, height: 12, fontSize: 12 },
+    ],
+  }));
+  const names = proposeConceptsFromPages({ materialId: "m", sourceLabel: "x", pages }).filter(isSourceBackedProposal).map((proposal) => proposal.name);
+  assert.deepEqual(names.sort(), ["Fiscal policy", "Formative assessment", "Monetary policy"]);
+});

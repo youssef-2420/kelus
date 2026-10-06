@@ -135,6 +135,8 @@ export function buildPractice(input: {
   excerpt: string;
   locator: string;
   siblingNames: string[];
+  /** Sentences from the course's other topics: wrong options that are real, plausible and clearly off-topic. */
+  siblingFacts?: string[];
 }): PracticeItem[] {
   const { conceptId, name, excerpt, locator } = input;
   const sentences = units(excerpt);
@@ -222,11 +224,12 @@ export function buildPractice(input: {
 
   // 4b. Terms and their meanings on this page: name the term from its meaning, using the page's other terms as options.
   const pairs = termPairs(excerpt).filter((pair) => pair.term.toLocaleLowerCase() !== name.toLocaleLowerCase());
-  if (pairs.length >= 2) {
-    const target = pairs[hash(conceptId) % pairs.length];
-    const options = pairs.map((pair) => pair.term);
-    const choices = options.sort((a, b) => hash(`${conceptId}t${a}`) - hash(`${conceptId}t${b}`)).slice(0, 4);
-    if (choices.length >= 3 && choices.includes(target.term)) {
+  if (pairs.length >= 3) {
+    const start = hash(conceptId) % pairs.length;
+    for (let k = 0; k < Math.min(2, pairs.length); k += 1) {
+      const target = pairs[(start + k) % pairs.length];
+      const choices = pairs.map((pair) => pair.term).sort((x, y) => hash(`${conceptId}t${k}${x}`) - hash(`${conceptId}t${k}${y}`)).slice(0, 4);
+      if (!choices.includes(target.term)) choices[0] = target.term;
       add({
         kind: "choice",
         prompt: `Which one matches: “${target.meaning}”?`,
@@ -240,25 +243,50 @@ export function buildPractice(input: {
     }
   }
 
-  // 4c. Steps in order: what comes next.
+  // 4c. Steps in order: what comes next, for two different steps.
   const steps = numberedSteps(excerpt);
   if (steps.length >= 3) {
-    const at = hash(conceptId) % (steps.length - 1);
-    const here = steps[at];
-    const after = steps[at + 1];
-    const options = steps.filter((step) => step !== after && step !== here).map((step) => step.text);
-    const choices = [after.text, ...options.sort((a, b) => hash(`${conceptId}s${a}`) - hash(`${conceptId}s${b}`)).slice(0, 3)]
-      .sort((a, b) => hash(`${conceptId}z${a}`) - hash(`${conceptId}z${b}`));
-    add({
-      kind: "choice",
-      prompt: `In your notes, what comes right after: “${here.text}”?`,
-      modelAnswer: after.text,
-      hint: `The steps are numbered on ${locator}.`,
-      explanation: `${locator} lists step ${here.n} then step ${after.n}: “${after.text}”`,
-      sourceQuote: after.text,
-      choices,
-      correctIndex: choices.indexOf(after.text),
-    });
+    const start = hash(conceptId) % (steps.length - 1);
+    for (let k = 0; k < Math.min(2, steps.length - 1); k += 1) {
+      const at = (start + k) % (steps.length - 1);
+      const here = steps[at];
+      const after = steps[at + 1];
+      const options = steps.filter((step) => step !== after && step !== here).map((step) => step.text);
+      const choices = [after.text, ...options.sort((x, y) => hash(`${conceptId}s${k}${x}`) - hash(`${conceptId}s${k}${y}`)).slice(0, 3)]
+        .sort((x, y) => hash(`${conceptId}z${k}${x}`) - hash(`${conceptId}z${k}${y}`));
+      add({
+        kind: "choice",
+        prompt: `In your notes, what comes right after: “${here.text}”?`,
+        modelAnswer: after.text,
+        hint: `The steps are numbered on ${locator}.`,
+        explanation: `${locator} lists step ${here.n} then step ${after.n}: “${after.text}”`,
+        sourceQuote: after.text,
+        choices,
+        correctIndex: choices.indexOf(after.text),
+      });
+    }
+  }
+
+  // 4d. Which statement is from your notes on this topic: a real sentence among sentences from the course's other topics.
+  const foreign = (input.siblingFacts ?? []).filter((fact) => fact.length >= 25 && fact.length <= 160 && !excerpt.includes(fact));
+  const statements = sentences.filter((sentence) => sentence.length >= 25 && sentence.length <= 160);
+  if (foreign.length >= 3) {
+    const start = hash(conceptId) % Math.max(1, statements.length);
+    for (let k = 0; k < Math.min(2, statements.length); k += 1) {
+      const real = statements[(start + k) % statements.length];
+      const wrong = [...new Set(foreign)].sort((x, y) => hash(`${conceptId}w${k}${x}`) - hash(`${conceptId}w${k}${y}`)).slice(0, 3);
+      const choices = [real, ...wrong].sort((x, y) => hash(`${conceptId}v${k}${x}`) - hash(`${conceptId}v${k}${y}`));
+      add({
+        kind: "choice",
+        prompt: `Which of these is from your notes on ${name}?`,
+        modelAnswer: real,
+        hint: `Think about what ${locator} says.`,
+        explanation: `${locator}: “${real}”`,
+        sourceQuote: real,
+        choices,
+        correctIndex: choices.indexOf(real),
+      });
+    }
   }
 
   // 5. Recall the definition in the learner's own words.

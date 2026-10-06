@@ -188,3 +188,9 @@ body.is-session-booklet .study-run-label {
 .core-source-stage > article {
   margin: 12px auto;
 }
+
+.read-coverage {
+  margin: 6px 0 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+}

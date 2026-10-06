@@ -36,7 +36,8 @@ test("comfort friction: source-first setup, skip recall, faster PDF, calendar, m
   assert.match(setup, /Continue to exam details/);
   assert.match(setup, /Read my PDF/);
   assert.match(diagnosis, /Skip recall/);
-  assert.match(materials, /maxContentPages:\s*16/);
+  // Faster PDF: reading stays bounded (it was 16 pages; whole decks take well under a second, so the bound is now 150).
+  assert.match(pdf, /MAX_READ_PAGES\s*=\s*150/);
   assert.match(materials, /stopAfterRecoveredPages:\s*4/);
   assert.match(pdf, /maxContentPages/);
   assert.match(pdf, /stopAfterRecoveredPages/);
