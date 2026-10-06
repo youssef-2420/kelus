@@ -9,6 +9,9 @@ type ModelApi = {
   create(options?: object): Promise<ModelSession>;
 };
 
+/** Smaller than this cannot hold a page of notes plus the instructions and a few questions. */
+const MIN_CONTEXT_TOKENS = 3000;
+
 export type LocalAiState = "unknown" | "unavailable" | "downloadable" | "downloading" | "available";
 
 const EVENT = "kelus-local-ai";
@@ -36,7 +39,11 @@ export function checkLocalAi() {
   checking = true;
   const model = api();
   if (!model) { set("unavailable"); checking = false; return; }
-  model.availability(OPTIONS).then((value) => set(value), () => set("unavailable")).finally(() => { checking = false; });
+  model.availability(OPTIONS).then((value) => {
+    // "Available" is only believed after a real answer: some browsers expose the API with no model behind it.
+    if (value === "available") return verifyModel(model).then((real) => set(real ? "available" : "unavailable"));
+    set(value);
+  }, () => set("unavailable")).finally(() => { checking = false; });
 }
 
 export function getLocalAiState() { return state; }
@@ -46,6 +53,22 @@ export function subscribeLocalAi(onChange: () => void) {
   checkLocalAi();
   window.addEventListener(EVENT, onChange);
   return () => window.removeEventListener(EVENT, onChange);
+}
+
+/** Asks one tiny question. A stand-in that echoes its input, or a window too small to be useful, is not a model we can use. */
+async function verifyModel(model: ModelApi) {
+  let session: (ModelSession & { contextWindow?: number }) | null = null;
+  try {
+    session = await model.create(OPTIONS) as ModelSession & { contextWindow?: number };
+    if (typeof session.contextWindow === "number" && session.contextWindow < MIN_CONTEXT_TOKENS) return false;
+    const question = "Reply with only the word: yes";
+    const answer = (await session.prompt(question)).trim().toLocaleLowerCase();
+    return answer.length > 0 && answer.length < 40 && !answer.includes("not available") && !answer.includes("echo") && !answer.includes(question.toLocaleLowerCase());
+  } catch {
+    return false;
+  } finally {
+    session?.destroy();
+  }
 }
 
 /** Starts the one-time model download. Must be called from a click, as Chrome requires. */
@@ -59,8 +82,9 @@ export async function prepareLocalAi() {
       monitor.addEventListener("downloadprogress", (event) => set("downloading", Math.min(1, Number((event as Event & { loaded?: number }).loaded ?? 0))));
     } });
     session.destroy();
-    set("available", 1);
-    return true;
+    const real = await verifyModel(model);
+    set(real ? "available" : "unavailable", 1);
+    return real;
   } catch {
     set("downloadable", 0);
     return false;
