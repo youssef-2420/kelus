@@ -16,6 +16,8 @@ import {
   getDemoStateOwner,
   recordRetrieval,
   removeMaterialLearning,
+  removeConcept,
+  setExamDate,
   loadAminaDemo,
   resetDemoState,
   replaceDemoState,
@@ -56,6 +58,8 @@ type Store = {
   useDemo: () => void;
   confirmConcepts: (proposals: ProposedConcept[], pages?: ExtractedMaterialPage[]) => void;
   removeMaterialSource: (materialId: string) => void;
+  removeTopic: (conceptId: string) => void;
+  setExamDate: (date: string) => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -212,6 +216,12 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     },
     removeMaterialSource(materialId) {
       removeMaterialLearning(state, materialId);
+    },
+    removeTopic(conceptId) {
+      removeConcept(state, conceptId);
+    },
+    setExamDate(date) {
+      setExamDate(state, date);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;

@@ -22,20 +22,17 @@ test("tomorrow study ICS is a valid one-event calendar file", () => {
 });
 
 test("comfort friction: source-first setup, skip recall, faster PDF, calendar, mailto", async () => {
-  const [setup, diagnosis, materials, pdf, complete, form, questions] = await Promise.all([
-    source("components/FirstRunSetup.tsx"),
-    source("components/InitialDiagnosis.tsx"),
+  const [setup, materials, pdf, complete, form, questions] = await Promise.all([
+    source("components/DropNotes.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("lib/pdf-extraction.ts"),
     source("app/session/complete/page.tsx"),
     source("components/QuestionsForm.tsx"),
     source("app/questions/page.tsx"),
   ]);
-  assert.doesNotMatch(setup, /step === 1|Step<\/span>/);
-  assert.match(setup, /Tell Kelus what you are preparing for/);
-  assert.match(setup, /Continue to exam details/);
-  assert.match(setup, /Read my PDF/);
-  assert.match(diagnosis, /Skip recall/);
+  // One screen, one job: notes in. No stepper, no exam form, no recall gate before the first question.
+  assert.match(setup, /Drop your notes\./);
+  assert.doesNotMatch(setup, /Continue to exam details|Read my PDF|Skip recall|Step</);
   // Faster PDF: reading stays bounded (it was 16 pages; whole decks take well under a second, so the bound is now 150).
   assert.match(pdf, /MAX_READ_PAGES\s*=\s*150/);
   assert.match(materials, /stopAfterRecoveredPages:\s*4/);

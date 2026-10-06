@@ -56,6 +56,8 @@ export type Exam = {
   target: string;
   targetPercent: number;
   examDate: string;
+  /** True while the date is a stand-in the learner has not chosen yet; no countdown or reminder is shown. */
+  datePlaceholder?: boolean;
   availableMinutes: number;
   isActive: boolean;
 };

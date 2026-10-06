@@ -56,7 +56,7 @@ function Topics({ title, note, items, empty }: { title: string; note: string; it
 }
 
 /** What changed, from your own answers. Honest first: too little data says so instead of drawing a trend. */
-export function ProgressView({ concepts, events, nowIso, daysToExam, targetPercent }: { concepts: Concept[]; events: LearningEvent[]; nowIso: string; daysToExam: number; targetPercent: number }) {
+export function ProgressView({ concepts, events, nowIso, daysToExam, targetPercent, examDatePending = false }: { concepts: Concept[]; events: LearningEvent[]; nowIso: string; daysToExam: number; targetPercent: number; examDatePending?: boolean }) {
   const reduce = useReducedMotion() === true;
   const summary = progressSummary({ concepts, events, nowMs: Date.parse(nowIso), daysToExam });
   const target = Math.round(Math.max(0, Math.min(100, targetPercent)));
@@ -91,7 +91,9 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
       <section className={styles.pace} aria-label="Pace to your target">
         <PackArt name="target" className={styles.paceArt} size={84} />
         <h3>To reach your target</h3>
-        {summary.topicsLeft > 0 ? (
+        {examDatePending ? (
+          <p>{summary.topicsLeft} topic{summary.topicsLeft === 1 ? " is" : "s are"} not strong yet. Add your exam date on the Study plan page and Kelus will work out how many topics a day you need.</p>
+        ) : summary.topicsLeft > 0 ? (
           <p>
             {summary.topicsLeft} topic{summary.topicsLeft === 1 ? " is" : "s are"} not strong yet, with {daysToExam} day{daysToExam === 1 ? "" : "s"} left. That is about <strong>{summary.perDay} topic{summary.perDay === 1 ? "" : "s"} a day</strong>.
             {gap > 0 ? ` You are ${gap} point${gap === 1 ? "" : "s"} below your ${target}% target.` : ` You are at or above your ${target}% target.`}

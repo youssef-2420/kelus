@@ -7,6 +7,8 @@ export type SetupInput = {
   examDate: string;
   targetPercent: number;
   availableMinutes: number;
+  /** The date is a stand-in: the learner will be asked for the real one after their first run. */
+  examDatePlaceholder?: boolean;
 };
 
 export const CURRENT_COURSE_ID = "course-current";
@@ -41,6 +43,7 @@ export function createLearnerSnapshot(input: SetupInput, nowMs = Date.now()): Le
       target: examName,
       targetPercent: input.targetPercent,
       examDate: examDate.toISOString(),
+      ...(input.examDatePlaceholder ? { datePlaceholder: true } : {}),
       availableMinutes: input.availableMinutes,
     }],
     concepts: [],

@@ -11,7 +11,8 @@ import { FirstRunGate } from "@/components/FirstRunGate";
 import { useLearner } from "@/components/LearnerProvider";
 import { PAYWALL_DISMISS_KEY, SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { trackEvent } from "@/lib/analytics";
-import type { CourseMaterial, MaterialRole, ProposedConcept } from "@/domain/types";
+import type { CourseMaterial, ExtractedMaterialPage, MaterialRole, ProposedConcept } from "@/domain/types";
+import { ReadingNotes } from "@/components/ReadingNotes";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 import { SourceArt } from "@/components/SourceArt";
 
@@ -241,7 +242,7 @@ function MaterialRow({
   );
 }
 
-export function MaterialLibrary({ embedded = false, incomingFile = null, onIncomingFileHandled, interceptFile }: { embedded?: boolean; incomingFile?: File | null; onIncomingFileHandled?: () => void; interceptFile?: (file: File) => boolean } = {}) {
+export function MaterialLibrary({ embedded = false, incomingFile = null, onIncomingFileHandled, interceptFile, quiet = false, onStartOver }: { embedded?: boolean; incomingFile?: File | null; onIncomingFileHandled?: () => void; interceptFile?: (file: File) => boolean; quiet?: boolean; onStartOver?: () => void } = {}) {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const router = useRouter();
@@ -428,6 +429,8 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       };
       dispatch({ type: "REVIEW_READY", analysis: nextAnalysis });
       trackEvent({ name: "concept_review_started", concept_count: proposals.length });
+      // Quiet mode: no checklist first. Every topic found is confirmed, and can be removed later from Topics.
+      if (quiet && proposals.length) confirmProposals(proposals, pages);
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
       if (courseMaterials.filter((item) => item.storage === "local").length >= 3) {
@@ -572,11 +575,8 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
     });
   }
 
-  function buildMap() {
-    if (!analysis) return;
-    const selected = analysis.proposals
-      .filter((proposal) => selectedIds.has(proposal.id))
-      .map((proposal) => ({ ...proposal, name: draftNames[proposal.id]?.trim() || proposal.name }));
+  /** Confirms topics and moves on. Used by the review screen, and automatically in quiet mode. */
+  function confirmProposals(selected: ProposedConcept[], pages: ExtractedMaterialPage[]) {
     try {
       const normalizedNames = selected.map((proposal) => proposal.name.toLocaleLowerCase());
       if (new Set(normalizedNames).size !== normalizedNames.length) {
@@ -587,10 +587,10 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         courseId: course.id,
         userId: state.snapshot.profile.id,
         nowIso: state.nowIso,
-        pages: analysis.pages,
+        pages,
       });
       const first = [...preview.concepts].sort((left, right) => right.examImportance - left.examImportance)[0];
-      confirmConcepts(selected, analysis.pages);
+      confirmConcepts(selected, pages);
       trackEvent({ name: "material_confirmed", concept_count: selected.length });
       dispatch({
         type: "CONFIRM",
@@ -605,6 +605,19 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         message: caught instanceof Error ? caught.message : "Kelus could not build the map. Check concept names and try again.",
       });
     }
+  }
+
+  function buildMap() {
+    if (!analysis) return;
+    const selected = analysis.proposals
+      .filter((proposal) => selectedIds.has(proposal.id))
+      .map((proposal) => ({ ...proposal, name: draftNames[proposal.id]?.trim() || proposal.name }));
+    confirmProposals(selected, analysis.pages);
+  }
+
+  // Quiet mode (first run): nothing to fill in or tick. Show what is happening, or why it failed with one way out.
+  if (quiet && embedded) {
+    return <ReadingNotes message={statusMessage ?? "Finding the topics in your notes."} error={hardError} onStartOver={onStartOver} />;
   }
 
   const shelf = (

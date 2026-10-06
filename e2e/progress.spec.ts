@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { closeToToday, startFromPaste } from "./helpers";
 
 const notes = `# Osmosis
 Osmosis is the movement of water across a selectively permeable membrane from a region of low solute concentration to a region of high solute concentration. Water moves toward the side with more solute because the solute lowers the water potential there.
@@ -10,18 +11,8 @@ Enzymes are biological catalysts, almost always proteins, that speed up reaction
 Active transport moves substances across a membrane against their concentration gradient, from low to high concentration, and it requires energy in the form of ATP.`;
 
 async function newCourse(page: Page) {
-  await page.goto("/today");
-  await page.getByText("Or paste your notes").click();
-  await page.locator("#paste-notes").fill(notes);
-  await page.getByRole("button", { name: "Use these notes" }).click();
-  await page.getByRole("button", { name: /Continue to exam details/ }).click();
-  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Biology");
-  await page.getByLabel("Exam").fill("Midterm");
-  await page.getByLabel("When is it?").fill(new Date(Date.now() + 9 * 86_400_000).toISOString().slice(0, 10));
-  await page.getByRole("button", { name: /Read my/ }).click();
-  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
-  await page.getByRole("button", { name: /Confirm topics/ }).click();
-  await expect(page.locator("#today-title")).toBeVisible();
+  await startFromPaste(page, notes);
+  await closeToToday(page);
 }
 
 async function playRun(page: Page) {
