@@ -329,3 +329,6 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-f
   .start-page .empty-course-art { display: none; }
   .start-page .destination-page-title, .start-page .destination-support { max-width: none; }
 }
+
+/* Tap target: the topic checkbox is at least 24px (WCAG 2.5.8). */
+.proposal-row input[type="checkbox"] { width: 24px; height: 24px; }

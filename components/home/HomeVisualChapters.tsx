@@ -13,8 +13,8 @@ function subscribeVisibility(onChange: () => void) {
 
 const orbitSlots = [
   { x: "0%", y: -14, rotate: 0, scale: 1, opacity: 1 },
-  { x: "72%", y: 28, rotate: 8, scale: 0.78, opacity: 0.68 },
-  { x: "-72%", y: 28, rotate: -8, scale: 0.78, opacity: 0.68 },
+  { x: "72%", y: 28, rotate: 8, scale: 0.78, opacity: 0.92 },
+  { x: "-72%", y: 28, rotate: -8, scale: 0.78, opacity: 0.92 },
 ] as const;
 
 function RevisionPaper({ kind }: { kind: "source" | "recall" | "route" }) {
