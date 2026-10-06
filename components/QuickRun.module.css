@@ -354,3 +354,26 @@
     transition: none;
   }
 }
+
+.unsure {
+  justify-self: start;
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--color-slate);
+  font: inherit;
+  font-size: var(--text-body-sm);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.unsure:hover {
+  color: var(--color-midnight-ink);
+}
+
+.unsure:focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 2px;
+}

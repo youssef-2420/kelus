@@ -6,7 +6,7 @@ import { checkPracticeAnswer } from "@/domain/practice-check";
 import type { QuickRun as Run, SelfGrade } from "@/domain/quick-run";
 import styles from "./QuickRun.module.css";
 
-export type QuickRunResult = { right: number; total: number; self: SelfGrade; explained: string; elapsedMs: number };
+export type QuickRunResult = { right: number; total: number; unsure: number; self: SelfGrade; explained: string; elapsedMs: number };
 
 const GRADES: Array<{ value: SelfGrade; label: string; hint: string }> = [
   { value: "nailed", label: "Nailed it", hint: "Same idea, my own words" },
@@ -25,7 +25,8 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   const [step, setStep] = useState(0); // 0..total-1 = checks, total = explain
   const [picked, setPicked] = useState<number | null>(null);
   const [typed, setTyped] = useState("");
-  const [answered, setAnswered] = useState<null | { right: boolean }>(null);
+  const [answered, setAnswered] = useState<null | { right: boolean; unsure?: boolean }>(null);
+  const [unsure, setUnsure] = useState(0);
   const [right, setRight] = useState(0);
   const [streak, setStreak] = useState(0);
   const [explained, setExplained] = useState("");
@@ -50,13 +51,20 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
     if (ok) { setRight((count) => count + 1); setStreak((count) => count + 1); } else setStreak(0);
   }
 
+  // "Not sure" earns no credit, shows the answer, and does not break a streak: honesty should never cost more than guessing.
+  function notSure() {
+    if (!item || answered) return;
+    setAnswered({ right: false, unsure: true });
+    setUnsure((count) => count + 1);
+  }
+
   function next() {
     setAnswered(null); setPicked(null); setTyped("");
     setStep((current) => current + 1);
   }
 
   function finish(self: SelfGrade, at: number) {
-    onFinish({ right, total, self, explained, elapsedMs: Math.max(0, Math.round(at - started.current)) });
+    onFinish({ right, total, unsure, self, explained, elapsedMs: Math.max(0, Math.round(at - started.current)) });
   }
 
   // 1-4 pick an option, like a quiz.
@@ -113,9 +121,11 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
               </form>
             )}
 
+            {!answered ? <button type="button" className={styles.unsure} onClick={notSure}>I’m not sure</button> : null}
+
             {answered ? (
               <motion.div className={`${styles.feedback} ${answered.right ? styles.ok : styles.no}`} role="status" initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-                <strong>{answered.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
+                <strong>{answered.unsure ? (item.kind === "cloze" ? `That’s fine. It was “${item.modelAnswer}”.` : "That’s fine. Here’s the answer.") : answered.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
                 <p className={styles.quote}>“{item.sourceQuote}”</p>
                 <button ref={nextRef} type="button" className={styles.primary} onClick={next}>{step + 1 >= total ? "Now say it yourself" : "Next"} <span aria-hidden="true">→</span></button>
               </motion.div>

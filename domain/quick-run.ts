@@ -58,7 +58,8 @@ export function quickOutcome(input: { right: number; total: number; self: SelfGr
   return "partial";
 }
 
-export function quickSummary(input: { right: number; total: number; self: SelfGrade }) {
+export function quickSummary(input: { right: number; total: number; self: SelfGrade; unsure?: number }) {
   const rating = input.self === "nailed" ? "nailed it" : input.self === "partly" ? "partly there" : "missed it";
-  return `${input.right} of ${input.total} quick checks right. You rated your explanation: ${rating}.`;
+  const unsure = input.unsure ? ` (${input.unsure} marked not sure)` : "";
+  return `${input.right} of ${input.total} quick checks right${unsure}. You rated your explanation: ${rating}.`;
 }
