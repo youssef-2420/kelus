@@ -176,3 +176,15 @@ body.is-session-booklet .study-run-label {
     margin: 0;
   }
 }
+
+.session-source-notes {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+  background: var(--color-mist);
+}
+
+.core-source-stage > article {
+  margin: 12px auto;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CourseStudioOnboarding } from "@/components/CourseStudioOnboarding";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
@@ -11,13 +11,15 @@ import { useLearner } from "@/components/LearnerProvider";
 import { trackEvent } from "@/lib/analytics";
 import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 import styles from "./loading.module.css";
-import { addPdfMaterial } from "@/lib/material-store";
+import { addSourceMaterial, getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 import { CURRENT_COURSE_ID } from "@/lib/setup";
 
 function TodayBody() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { state, completeSetup, completeDiagnosis, useDemo: loadDemo } = useLearner();
+  const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
+  const notesSource = materials.find((item) => item.storage === "local")?.kind === "text";
   const sampleHandled = useRef(false);
   const [setupStage, setSetupStage] = useState<"upload" | "exam">("upload");
   const wantsSample = searchParams.get("sample") === "1";
@@ -71,7 +73,7 @@ function TodayBody() {
           onComplete={async (input, file) => {
             try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
             const role = /syllabus|outline/i.test(file.name) ? "syllabus" : /slides|lecture/i.test(file.name) ? "lecture_slides" : "notes";
-            await addPdfMaterial({ courseId: CURRENT_COURSE_ID, file, role });
+            await addSourceMaterial({ courseId: CURRENT_COURSE_ID, file, role });
             completeSetup(input);
           }}
         />
@@ -85,9 +87,9 @@ function TodayBody() {
         <div className="workbench-chapter" data-chapter="materials">
           <p className="workbench-chapter-label">Confirm your topics</p>
           <section className="materials-empty workbench-chapter-intro">
-            <p className="kicker">From your PDF</p>
-            <h1>Check the topics from your PDF.</h1>
-            <p>Kelus reads the pages you chose. Keep only the topics you actually need to revise.</p>
+            <p className="kicker">{notesSource ? "From your notes" : "From your PDF"}</p>
+            <h1>{notesSource ? "Check the topics from your notes." : "Check the topics from your PDF."}</h1>
+            <p>{notesSource ? "Kelus reads the sections under each heading. Keep only the topics you actually need to revise." : "Kelus reads the pages you chose. Keep only the topics you actually need to revise."}</p>
           </section>
           <MaterialLibrary embedded />
         </div>

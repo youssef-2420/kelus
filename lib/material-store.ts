@@ -1,4 +1,5 @@
-import { isPdfFile, materialTitle, parseMaterialUrl } from "../domain/materials";
+import { isNotesFile, isPdfFile, materialTitle, parseMaterialUrl } from "../domain/materials";
+import { MAX_NOTES_BYTES } from "../domain/markdown-pages";
 import type { CourseMaterial, MaterialRole } from "../domain/types";
 
 const METADATA_KEY = "kelus-course-materials-v1";
@@ -14,15 +15,16 @@ let activeOwnerId: string | null = null;
 const listeners = new Set<() => void>();
 
 const MATERIAL_ROLES: MaterialRole[] = ["syllabus", "lecture_slides", "notes", "past_exam", "course_outline", "other"];
+const MATERIAL_KINDS: CourseMaterial["kind"][] = ["pdf", "text", "video", "link"];
 const PROCESSING_STATUSES: CourseMaterial["processingStatus"][] = ["saved", "processing", "ready", "failed"];
 
-function normalizeMaterial(value: unknown): CourseMaterial | null {
+export function normalizeMaterial(value: unknown): CourseMaterial | null {
   const item = value as CourseMaterial;
   const valid = Boolean(
     item?.id
     && item.courseId
     && item.title
-    && ["pdf", "video", "link"].includes(item.kind)
+    && MATERIAL_KINDS.includes(item.kind)
     && ["local", "url"].includes(item.storage)
     && item.addedAt
     && (item.storage === "local" || typeof item.sourceUrl === "string"),
@@ -194,19 +196,22 @@ export function addLinkMaterial(input: { courseId: string; title: string; value:
   return record;
 }
 
-export async function addPdfMaterial(input: { courseId: string; file: File; role: MaterialRole; nowIso?: string }) {
-  if (!isPdfFile(input.file)) throw new Error("Choose a PDF file.");
-  if (input.file.size > MAX_PDF_BYTES) throw new Error("PDFs must be 20 MB or smaller.");
+/** Saves a PDF, or notes as Markdown / plain text. Notes are kept as the original text so the section can be shown later. */
+export async function addSourceMaterial(input: { courseId: string; file: File; role: MaterialRole; nowIso?: string }) {
+  const notes = !isPdfFile(input.file) && isNotesFile(input.file);
+  if (!notes && !isPdfFile(input.file)) throw new Error("Choose a PDF, or notes as a .md or .txt file.");
+  if (notes && input.file.size > MAX_NOTES_BYTES) throw new Error("Notes must be 2 MB or smaller.");
+  if (!notes && input.file.size > MAX_PDF_BYTES) throw new Error("PDFs must be 20 MB or smaller.");
   const timestamp = input.nowIso ?? new Date().toISOString();
   const record: CourseMaterial = {
     id: `material-${crypto.randomUUID()}`,
     courseId: input.courseId,
-    kind: "pdf",
+    kind: notes ? "text" : "pdf",
     storage: "local",
     title: materialTitle("", input.file.name),
     sourceUrl: null,
     fileName: input.file.name,
-    mimeType: input.file.type || "application/pdf",
+    mimeType: input.file.type || (notes ? "text/markdown" : "application/pdf"),
     sizeBytes: input.file.size,
     role: input.role,
     processingStatus: "saved",
@@ -217,6 +222,8 @@ export async function addPdfMaterial(input: { courseId: string; file: File; role
   persist([...readMetadata(), record]);
   return record;
 }
+
+export const addPdfMaterial = addSourceMaterial;
 
 export function updateMaterialProcessingStatus(id: string, processingStatus: CourseMaterial["processingStatus"]) {
   const items = readMetadata();

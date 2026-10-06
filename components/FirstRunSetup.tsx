@@ -5,7 +5,9 @@ import { SourceArt } from "@/components/SourceArt";
 import { motion, useReducedMotion } from "motion/react";
 import type { SetupInput } from "@/lib/setup";
 import { trackEvent } from "@/lib/analytics";
-import { isPdfFile } from "@/domain/materials";
+import { SOURCE_FILE_ACCEPT, isNotesFile, isSourceFile } from "@/domain/materials";
+import { MAX_NOTES_BYTES } from "@/domain/markdown-pages";
+import { PasteNotes } from "@/components/PasteNotes";
 
 const TIMES = [15, 30, 45, 60] as const;
 
@@ -40,8 +42,9 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
   function chooseFile(next: File | undefined) {
     setDragging(false);
     if (!next) return;
-    if (!isPdfFile(next)) return fail("form", "Choose a PDF, not another file type.");
-    if (next.size > 20 * 1024 * 1024) return fail("form", "This PDF is over 20 MB. Choose a smaller export or split it first.");
+    if (!isSourceFile(next)) return fail("form", "Choose a PDF, or notes as a .md or .txt file.");
+    if (isNotesFile(next) && next.size > MAX_NOTES_BYTES) return fail("form", "These notes are over 2 MB. Choose a smaller file or split them.");
+    if (!isNotesFile(next) && next.size > 20 * 1024 * 1024) return fail("form", "This PDF is over 20 MB. Choose a smaller export or split it first.");
     setFile(next);
     setError("");
     setErrorField(null);
@@ -63,7 +66,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
     event.preventDefault();
     setError("");
     setErrorField(null);
-    if (!file) return fail("form", "Choose a syllabus, lecture, or notes PDF to begin.");
+    if (!file) return fail("form", "Choose a syllabus, lecture PDF, or your notes to begin.");
     if (stage === "upload") {
       changeStage("exam");
       return;
@@ -105,12 +108,13 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
               onDragOver={(event) => event.preventDefault()}
               onDrop={dropFile}
             >
-              <input type="file" accept="application/pdf,.pdf" onChange={(event) => chooseFile(event.target.files?.[0])} aria-describedby="setup-file-help" />
+              <input type="file" accept={SOURCE_FILE_ACCEPT} onChange={(event) => chooseFile(event.target.files?.[0])} aria-describedby="setup-file-help" />
               <span className="setup-upload-mark" aria-hidden="true"><SourceArt role="lecture_slides" /></span>
-              <strong>{file ? file.name : "Choose a PDF"}</strong>
+              <strong>{file ? file.name : "Choose a PDF or notes"}</strong>
               <span>{file ? `${(file.size / 1_000_000).toFixed(1)} MB · Choose another file if needed` : "or drop it here"}</span>
             </label>
-            <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB. Digital PDFs with selectable text work best. Videos and web links can be saved later, but don’t create topics.</p>
+            <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB (digital PDFs with selectable text work best), or notes as a Markdown or .txt file, such as a Notion export. Videos and web links can be saved later, but don’t create topics.</p>
+            <PasteNotes onFile={chooseFile} />
             {file ? <p className="setup-file-ready" role="status" aria-live="polite"><strong>Ready to read</strong><span>{file.name} · {(file.size / 1_000_000).toFixed(1)} MB</span></p> : null}
             <p className="setup-privacy-note">Your course stays on this device unless you choose free sign-in to sync it across devices. You review every proposed topic before it changes your route.</p>
           </motion.div>

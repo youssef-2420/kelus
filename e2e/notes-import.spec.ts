@@ -1,0 +1,81 @@
+import { readFileSync } from "node:fs";
+import { expect, test, type Page } from "@playwright/test";
+
+const notion = readFileSync("tests/fixtures/notion-export.md", "utf8");
+
+async function toTopicReview(page: Page) {
+  await page.getByRole("button", { name: /Continue to exam details/ }).click();
+  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Cell Biology");
+  await page.getByLabel("Exam").fill("Midterm");
+  await page.getByLabel("When is it?").fill(new Date(Date.now() + 9 * 86_400_000).toISOString().slice(0, 10));
+  await page.getByRole("button", { name: /Read my/ }).click();
+  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+}
+
+test("a Notion Markdown export becomes topics with Section locators, never Page", async ({ page }) => {
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({ name: "cell-biology.md", mimeType: "text/markdown", buffer: Buffer.from(notion) });
+  await toTopicReview(page);
+  await expect(page.getByRole("heading", { name: "Check the topics from your notes." })).toBeVisible();
+  const names = await page.locator("input.proposal-name-input").evaluateAll((inputs) => inputs.map((input) => (input as HTMLInputElement).value));
+  expect(names).toEqual(expect.arrayContaining(["Cell Membrane", "Osmosis", "Steps of Cellular Respiration", "Active vs Passive Transport"]));
+  expect(names).not.toContain("Examples");
+  expect(names).not.toContain("Cell Biology: Week 3");
+  await expect(page.getByText(/Section 1 · text Kelus read/)).toBeVisible();
+  const text = await page.locator("main").innerText();
+  expect(text).toMatch(/· Section \d/);
+  expect(text).not.toMatch(/· Page \d/);
+});
+
+test("pasted notes work the same way, and a quick run quotes the notes", async ({ page }) => {
+  await page.goto("/today");
+  await page.getByText("Or paste your notes").click();
+  await page.locator("#paste-notes").fill(notion);
+  await page.getByRole("button", { name: "Use these notes" }).click();
+  await toTopicReview(page);
+  await page.getByRole("button", { name: /Confirm topics/ }).click();
+  await page.getByRole("button", { name: /Skip recall/ }).waitFor({ state: "hidden" }).catch(() => undefined);
+  const groups = await page.getByRole("button", { name: /^Weak$/ }).count();
+  for (let index = 0; index < groups; index += 1) await page.getByRole("button", { name: /^Okay$/ }).nth(index).click();
+  await page.getByRole("button", { name: /Skip recall/ }).click();
+  await expect(page.getByRole("heading", { name: /Osmosis|Cell Membrane|Steps of Cellular Respiration|Active vs Passive Transport/ }).first()).toBeVisible();
+  await expect(page.locator('article[aria-label^="Section"]')).toBeVisible();
+  await page.getByRole("button", { name: /Start this topic|Resume session/ }).first().click();
+  await expect(page).toHaveURL(/\/session/);
+  await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
+});
+
+test("notes with no headings get a clear message and nothing is saved", async ({ page }) => {
+  await page.goto("/today");
+  await page.getByText("Or paste your notes").click();
+  await page.locator("#paste-notes").fill("Osmosis is the movement of water across a membrane. There are no headings in this text.");
+  await page.getByRole("button", { name: "Use these notes" }).click();
+  await expect(page.locator("p[role=alert]")).toContainText("Kelus finds topics from headings");
+  // Nothing was accepted, so continuing still asks for a source.
+  await page.getByRole("button", { name: /Continue to exam details/ }).click();
+  await expect(page.getByText(/Choose a syllabus, lecture PDF, or your notes to begin/)).toBeVisible();
+});
+
+test("a file that is neither a PDF nor notes is refused with a clear reason", async ({ page }) => {
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({ name: "picture.png", mimeType: "image/png", buffer: Buffer.from("x") });
+  await expect(page.getByText("Choose a PDF, or notes as a .md or .txt file.")).toBeVisible();
+});
+
+test("a notes source is still there after the page is reloaded", async ({ page }) => {
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({ name: "cell-biology.md", mimeType: "text/markdown", buffer: Buffer.from(notion) });
+  await toTopicReview(page);
+  await page.getByRole("button", { name: /Confirm topics/ }).click();
+  const groups = await page.getByRole("button", { name: /^Weak$/ }).count();
+  for (let index = 0; index < groups; index += 1) await page.getByRole("button", { name: /^Okay$/ }).nth(index).click();
+  await page.getByRole("button", { name: /Skip recall/ }).click();
+  await page.goto("/today?section=materials");
+  await expect(page.locator(".material-card")).toHaveCount(1);
+  await page.reload();
+  await expect(page.locator(".material-card")).toHaveCount(1);
+  await expect(page.locator(".material-card")).toContainText("cell biology");
+  await expect(page.locator(".material-card")).toContainText(/topics? from this source/);
+  await page.goto("/today");
+  await expect(page.locator('article[aria-label^="Section"]')).toBeVisible();
+});

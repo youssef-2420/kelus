@@ -38,9 +38,25 @@ export function parseMaterialUrl(value: string): { url: string; kind: MaterialKi
 
 export function materialTitle(input: string, fallback: string) {
   const title = input.trim();
-  return title || fallback.replace(/\.pdf$/i, "").replace(/[-_]+/g, " ").trim();
+  return title || fallback.replace(/\.(pdf|md|markdown|txt)$/i, "").replace(/[-_]+/g, " ").replace(/\s+[0-9a-f]{32}$/i, "").trim();
 }
 
 export function isPdfFile(file: Pick<File, "name" | "type">) {
   return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
+}
+
+/** Notes as text: Markdown (for example a Notion export), or plain text with # headings. */
+export function isNotesFile(file: Pick<File, "name" | "type">) {
+  return /\.(md|markdown|txt)$/i.test(file.name) || file.type === "text/markdown" || file.type === "text/plain";
+}
+
+export function isSourceFile(file: Pick<File, "name" | "type">) {
+  return isPdfFile(file) || isNotesFile(file);
+}
+
+export const SOURCE_FILE_ACCEPT = "application/pdf,.pdf,text/markdown,text/plain,.md,.markdown,.txt";
+
+/** What a saved source is called in a sentence: "PDF" or "notes". */
+export function sourceNoun(kind: MaterialKind | undefined) {
+  return kind === "text" ? "notes" : "PDF";
 }
