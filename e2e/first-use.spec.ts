@@ -105,7 +105,7 @@ test("first-use hierarchy stays readable from upload through exam details", asyn
     buffer: biologyPdf(),
   });
   await page.getByRole("button", { name: /Continue to exam details/ }).click();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your exam");
   await expect(page.getByRole("heading", { name: "Set your exam" })).toBeVisible();
   await expect(page.getByRole("button", { name: /Read my PDF/ })).toBeVisible();
   await expectNoOverlap(page, ".studio-onboarding-steps", ".destination-page-title");
@@ -130,7 +130,7 @@ test("first PDF survives a refresh before topics are confirmed", async ({ page }
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
   await expect(page.getByText("Cell Membranes").first()).toBeVisible();
   await page.getByRole("button", { name: /Confirm topics/ }).click();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("First check");
+  await expect(page.locator("#today-title")).toBeVisible();
 });
 
 test("homepage sample makes both route outcomes visible", async ({ page }) => {
@@ -223,7 +223,7 @@ test("sample course without an original PDF gives the route room and makes uploa
 test("real PDF becomes concepts, diagnosis evidence, and today's route", async ({ page }) => {
   await page.goto("/today");
   await expect(page.locator(".studio-onboarding")).toBeVisible();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Add PDF");
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your notes");
   await expect(page.getByRole("heading", { name: "Add a course PDF." })).toBeVisible();
   await page.screenshot({ path: "/tmp/kelus-pdf-first-desktop.png", fullPage: true });
   await page.locator('.setup-first-upload input[type="file"]').setInputFiles({
@@ -232,7 +232,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
     buffer: biologyPdf(),
   });
   await page.getByRole("button", { name: /Continue to exam details/ }).click();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Exam");
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your exam");
   await page.getByRole("textbox", { name: "Course", exact: true }).fill("Molecular Biology");
   await page.getByLabel("Exam").fill("Cell Biology Final");
   const examDate = new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10);
@@ -241,7 +241,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: /Read my PDF/ }).click();
 
   await expect(page).toHaveURL(/\/today/);
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Confirm topics");
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your topics");
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
   await expect(page.getByRole("complementary", { name: "Original course PDF" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Open PDF/ })).toBeVisible();
@@ -255,19 +255,8 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await page.getByRole("button", { name: /Confirm topics/ }).click();
 
   await expect(page).toHaveURL(/\/today/);
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("First check");
-  const groups = page.getByRole("group", { name: /Familiarity with/ });
-  await expect(groups).toHaveCount(3);
-  for (let index = 0; index < 3; index += 1) {
-    await groups.nth(index).getByRole("button", { name: "Weak" }).click();
-  }
-  await page.getByRole("button", { name: /Continue to recall check/ }).click();
-  await expect(page.getByText(/From .*cell biology lecture.*Page 1/i)).toBeVisible();
-  await page.getByLabel("Try without notes.").fill("Cell membranes regulate transport and selectively control what moves between a cell and its environment.");
-  await page.getByRole("button", { name: "Compare answer" }).click();
-  await expect(page.getByText("Kelus evidence check")).toBeVisible();
-  await page.getByRole("button", { name: "Use this result" }).click();
-
+  // No rating screen: confirming topics goes straight to Today.
+  await expect(page.getByText("How familiar do these feel?")).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan", exact: true })).toBeVisible();
   await expect(page.locator("#today-title")).toBeVisible();

@@ -5,14 +5,12 @@ import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 
-type Stage = "upload" | "exam" | "confirm" | "check";
+type Stage = "upload" | "exam" | "confirm";
 
 const STAGES = [
-  { id: "upload", label: "Add PDF" },
-  { id: "exam", label: "Exam" },
-  { id: "confirm", label: "Confirm topics" },
-  { id: "check", label: "First check" },
-  { id: "route", label: "Study plan" },
+  { id: "upload", label: "Your notes" },
+  { id: "exam", label: "Your exam" },
+  { id: "confirm", label: "Your topics" },
 ] as const;
 
 export function CourseStudioOnboarding({ stage, courseName, children }: {
