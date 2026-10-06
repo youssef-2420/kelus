@@ -39,3 +39,8 @@ test("the outcome needs both kinds of evidence", () => {
 test("the summary says exactly what the outcome is based on", () => {
   assert.equal(quickSummary({ right: 2, total: 3, self: "partly" }), "2 of 3 quick checks right. You rated your explanation: partly there.");
 });
+
+test("not sure is named in the summary, and never counts as right", () => {
+  assert.equal(quickSummary({ right: 1, total: 3, unsure: 2, self: "partly" }), "1 of 3 quick checks right (2 marked not sure). You rated your explanation: partly there.");
+  assert.equal(quickOutcome({ right: 1, total: 3, self: "nailed" }), "partial");
+});
