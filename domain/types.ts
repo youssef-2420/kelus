@@ -143,6 +143,8 @@ export type PracticeItem = {
   /** For "choice": the options and which one is correct. */
   choices?: string[];
   correctIndex?: number;
+  /** Groups look-alike items so a run mixes question styles ("truefalse" is a kind of choice). */
+  variant?: "truefalse";
   origin: "offline" | "ai";
 };
 
