@@ -194,3 +194,54 @@ body.is-session-booklet .study-run-label {
   font-size: var(--text-body-sm);
   color: var(--color-slate);
 }
+
+/* Phone first-run: a progress bar and one step label instead of a cut-off tab row, and the main action stays in reach. */
+.studio-step-now { display: none; }
+
+@media (max-width: 700px) {
+  .is-course-studio .studio-onboarding-steps {
+    display: flex;
+    gap: 6px;
+    margin: 4px 0 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  body.is-course-studio .studio-onboarding .studio-onboarding-steps li {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    height: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: var(--color-frost);
+    font-size: 0;
+    box-shadow: none;
+  }
+
+  body.is-course-studio .studio-onboarding .studio-onboarding-steps li > span { display: none; }
+  body.is-course-studio .studio-onboarding .studio-onboarding-steps li.is-done { background: var(--color-kelus); }
+  body.is-course-studio .studio-onboarding .studio-onboarding-steps li.is-current { background: var(--color-midnight-ink); }
+
+  .studio-step-now {
+    display: block;
+    margin: 8px 0 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-slate);
+  }
+
+  .studio-onboarding .studio-rail .studio-navigation-label { display: none; }
+
+  body.is-course-studio .studio-onboarding .destination-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    margin-inline: -16px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--color-frost);
+    background: var(--color-pure-white);
+  }
+
+  body.is-course-studio .studio-onboarding .destination-actions .cta { flex: 1; justify-content: center; }
+}
