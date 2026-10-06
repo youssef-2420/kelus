@@ -55,9 +55,6 @@
 }
 
 .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 24px; margin-top: 28px; }
-.secondary { display: inline-flex; align-items: center; min-height: 48px; color: var(--color-midnight-ink); font-weight: 500; text-decoration: underline; text-underline-offset: 5px; }
-.secondary:hover { color: var(--color-kelus); }
-.secondary:focus-visible { outline: 3px solid var(--hero-green); outline-offset: 4px; }
 
 .primary {
   display: inline-flex;

@@ -24,7 +24,6 @@ export function KelusHero() {
           <Link href="/today" className={styles.primary}>
             Set up <span className={styles.primaryArrow} aria-hidden="true">→</span>
           </Link>
-          <Link href="/try" className={styles.secondary}>Try a one-minute sample</Link>
         </div>
       </div>
 
