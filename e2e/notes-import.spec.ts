@@ -55,7 +55,7 @@ test("notes with no headings get a clear message and nothing is saved", async ({
 test("a file that is neither a PDF nor notes is refused with a clear reason", async ({ page }) => {
   await page.goto("/today");
   await page.locator('.setup-first-upload input[type="file"]').setInputFiles({ name: "picture.png", mimeType: "image/png", buffer: Buffer.from("x") });
-  await expect(page.getByText("Choose a PDF, or notes as a .md or .txt file.")).toBeVisible();
+  await expect(page.getByText("Choose a PDF, notes as a .md or .txt file, or a Notion export (.zip).")).toBeVisible();
 });
 
 test("a notes source is still there after the page is reloaded", async ({ page }) => {
@@ -71,4 +71,40 @@ test("a notes source is still there after the page is reloaded", async ({ page }
   await expect(page.locator(".material-card")).toContainText(/topics? from this source/);
   await page.goto("/today");
   await expect(page.locator('article[aria-label^="Section"]')).toBeVisible();
+});
+
+test("a Notion zip export becomes topics, with page names free of Notion ids", async ({ page }) => {
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles("tests/fixtures/notion-export.zip");
+  await expect(page.getByText(/Ready to read/)).toBeVisible();
+  await toTopicReview(page);
+  const names = await page.locator("input.proposal-name-input").evaluateAll((inputs) => inputs.map((input) => (input as HTMLInputElement).value));
+  expect(names).toEqual(expect.arrayContaining(["Active transport", "Osmosis"]));
+  expect(names.join(" ")).not.toMatch(/[0-9a-f]{32}|Biology Week 3|Empty page/);
+  await expect(page.getByText(/Section \d · text Kelus read/).first()).toBeVisible();
+});
+
+test("a zip with no pages with text says what to do instead of failing silently", async ({ page }) => {
+  await page.goto("/today");
+  const empty = Buffer.from("PK\x05\x06" + "\0".repeat(18), "binary");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({ name: "empty.zip", mimeType: "application/zip", buffer: empty });
+  await expect(page.locator("#setup-error")).toContainText(/Markdown|pages|zip/i);
+});
+
+test("a real course offers a daily calendar reminder that repeats until the exam", async ({ page }) => {
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({ name: "cell-biology.md", mimeType: "text/markdown", buffer: Buffer.from(notion) });
+  await toTopicReview(page);
+  await page.getByRole("button", { name: /Confirm topics/ }).click();
+  const card = page.getByRole("region", { name: "Make it a daily habit" });
+  await expect(card).toBeVisible();
+  await expect(card).toContainText("can’t send notifications while it’s closed");
+  await card.getByLabel("Remind me at").selectOption("20:00");
+  const [download] = await Promise.all([page.waitForEvent("download"), card.getByRole("button", { name: "Add to my calendar" }).click()]);
+  expect(download.suggestedFilename()).toBe("kelus-daily-study.ics");
+  const text = (await import("node:fs")).readFileSync(await download.path(), "utf8");
+  expect(text).toMatch(/RRULE:FREQ=DAILY;UNTIL=\d{8}T\d{6}/);
+  expect(text).toMatch(/DTSTART:\d{8}T200000/);
+  expect(text).toContain("BEGIN:VALARM");
+  await expect(card.getByRole("status")).toContainText("Downloaded");
 });

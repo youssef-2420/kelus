@@ -331,6 +331,7 @@ export function RevisionSurface() {
                     targetPercent={exam.targetPercent}
                     daysToExam={days}
                     isSampleCourse={isSampleCourse}
+                    reminder={{ courseName: course.name, examDate: exam.examDate.slice(0, 10), minutes: exam.availableMinutes }}
                     onStart={openSession ? resume : begin}
                     startLabel={openSession ? "Resume session" : undefined}
                   />

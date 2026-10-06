@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
 import { HabitStrip } from "@/components/HabitStrip";
+import { ReminderCard } from "@/components/ReminderCard";
 import { estimatedReadiness } from "@/domain/readiness";
 import { describeRouteChoice, describeRoutePayoff } from "@/lib/today-reason";
 import { trackEvent } from "@/lib/analytics";
@@ -35,6 +36,7 @@ export function TodayRoute({
   onStart,
   startLabel,
   isSampleCourse = false,
+  reminder,
 }: {
   route: RoutePlan;
   concepts: Concept[];
@@ -47,6 +49,7 @@ export function TodayRoute({
   onStart: () => void;
   startLabel?: string;
   isSampleCourse?: boolean;
+  reminder?: { courseName: string; examDate: string; minutes: number };
 }) {
   const reduceMotion = useReducedMotion();
   const [first] = route.allocations;
@@ -160,6 +163,8 @@ export function TodayRoute({
           <p>Your answer can change what comes next.</p>
         </aside>
       ) : null}
+
+      {reminder && !isSampleCourse ? <ReminderCard {...reminder} nextStopName={firstName} /> : null}
     </div>
   );
 }

@@ -6,7 +6,8 @@ import { SourceArt } from "@/components/SourceArt";
 import { motion, useReducedMotion } from "motion/react";
 import type { SetupInput } from "@/lib/setup";
 import { trackEvent } from "@/lib/analytics";
-import { SOURCE_FILE_ACCEPT, isNotesFile, isSourceFile } from "@/domain/materials";
+import { SOURCE_FILE_ACCEPT, isNotesFile, isSourceFile, isZipFile } from "@/domain/materials";
+import { zipToNotesFile } from "@/lib/zip-notes";
 import { MAX_NOTES_BYTES } from "@/domain/markdown-pages";
 import { PasteNotes } from "@/components/PasteNotes";
 
@@ -40,10 +41,19 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
     setError(message);
   }
 
-  function chooseFile(next: File | undefined) {
+  async function chooseFile(picked: File | undefined) {
     setDragging(false);
-    if (!next) return;
-    if (!isSourceFile(next)) return fail("form", "Choose a PDF, or notes as a .md or .txt file.");
+    if (!picked) return;
+    if (!isSourceFile(picked)) return fail("form", "Choose a PDF, notes as a .md or .txt file, or a Notion export (.zip).");
+    let next = picked;
+    if (isZipFile(picked)) {
+      try {
+        setError("");
+        next = await zipToNotesFile(picked);
+      } catch (caught) {
+        return fail("form", caught instanceof Error && caught.message ? caught.message : "Kelus couldn’t read this zip. Export from Notion as Markdown & CSV and try again.");
+      }
+    }
     if (isNotesFile(next) && next.size > MAX_NOTES_BYTES) return fail("form", "These notes are over 2 MB. Choose a smaller file or split them.");
     if (!isNotesFile(next) && next.size > 20 * 1024 * 1024) return fail("form", "This PDF is over 20 MB. Choose a smaller export or split it first.");
     setFile(next);
@@ -53,7 +63,7 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
 
   function dropFile(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();
-    chooseFile(event.dataTransfer.files[0]);
+    void chooseFile(event.dataTransfer.files[0]);
   }
 
   function changeStage(next: "upload" | "exam") {
@@ -110,12 +120,12 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
               onDragOver={(event) => event.preventDefault()}
               onDrop={dropFile}
             >
-              <input type="file" accept={SOURCE_FILE_ACCEPT} onChange={(event) => chooseFile(event.target.files?.[0])} aria-describedby="setup-file-help" />
+              <input type="file" accept={SOURCE_FILE_ACCEPT} onChange={(event) => void chooseFile(event.target.files?.[0])} aria-describedby="setup-file-help" />
               <span className="setup-upload-mark" aria-hidden="true"><SourceArt role="lecture_slides" /></span>
               <strong>{file ? file.name : "Choose a PDF or notes"}</strong>
               <span>{file ? `${(file.size / 1_000_000).toFixed(1)} MB · Choose another file if needed` : "or drop it here"}</span>
             </label>
-            <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB (digital PDFs with selectable text work best), or notes as a Markdown or .txt file, such as a Notion export. Videos and web links can be saved later, but don’t create topics.</p>
+            <p id="setup-file-help" className="setup-file-help">PDF up to 20 MB (digital PDFs with selectable text work best), or notes as a Markdown or .txt file. A Notion export (Export → Markdown &amp; CSV, the .zip) works too. Videos and web links can be saved later, but don’t create topics.</p>
             <PasteNotes onFile={chooseFile} />
             {file ? <p className="setup-file-ready" role="status" aria-live="polite"><strong>Ready to read</strong><span>{file.name} · {(file.size / 1_000_000).toFixed(1)} MB</span></p> : null}
             <p className="setup-privacy-note">Your course stays on this device unless you choose free sign-in to sync it across devices. You review every proposed topic before it changes your route.</p>
