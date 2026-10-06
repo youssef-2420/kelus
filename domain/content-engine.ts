@@ -98,19 +98,44 @@ export function teachingFacts(name: string, excerpt: string, limit = 4) {
   return facts.length ? facts : [excerpt.slice(0, 220)];
 }
 
+const DETERMINER = new Set(["the", "a", "an", "its", "their", "this", "that", "these", "those", "of", "in", "on", "into", "inside", "by", "from", "at", "between", "per", "each", "every", "one", "two", "three", "four", "five", "called", "known", "as"]);
+// Verbs and filler that read as a blank but test nothing.
+const WEAK = new Set(["includes", "include", "included", "occurs", "occur", "produces", "produce", "takes", "make", "makes", "made", "uses", "used", "causes", "contains", "contain", "involves", "involve", "requires", "require", "allows", "allow", "gives", "give", "helps", "means", "called", "known", "based", "example", "examples", "several", "various", "different", "important", "usually", "often", "typically", "generally", "process", "result", "results", "number", "type", "types", "form", "forms", "part", "parts", "kind", "way", "ways", "level", "levels", "amount", "value", "values"]);
+
+/**
+ * The word or number that is the point of the sentence: a figure, an acronym, a named term, or a noun after
+ * "the/of/in". Verbs and filler ("includes", "studying") are never blanked, and a sentence with nothing worth
+ * testing makes no gap at all.
+ */
 function pickGapWord(sentence: string, name: string, page: string) {
   const nameParts = new Set(words(name).map((w) => w.toLocaleLowerCase()));
   const counts = new Map<string, number>();
   for (const w of words(page)) counts.set(w.toLocaleLowerCase(), (counts.get(w.toLocaleLowerCase()) ?? 0) + 1);
-  const candidates = words(sentence)
-    .filter((w) => w.length >= 5 && !STOP.has(w.toLocaleLowerCase()) && !nameParts.has(w.toLocaleLowerCase()))
-    // Skip words glued to the start (capitalised sentence openers are rarely the idea).
-    .filter((w, index, all) => !(index === 0 && all.indexOf(w) === 0 && /^[A-Z]/.test(w)));
-  if (!candidates.length) return null;
-  // Prefer words that are the point of the sentence: rarer on the page, then longer.
-  return candidates
-    .map((w) => ({ w, rarity: counts.get(w.toLocaleLowerCase()) ?? 1 }))
-    .sort((a, b) => a.rarity - b.rarity || b.w.length - a.w.length)[0].w;
+  const tokens = [...sentence.matchAll(/\d+(?:\.\d+)?|[A-Za-z][A-Za-z0-9'-]*/g)];
+  let best: { word: string; score: number } | null = null;
+  tokens.forEach((match, index) => {
+    const word = match[0];
+    const lower = word.toLocaleLowerCase();
+    const previous = tokens[index - 1]?.[0].toLocaleLowerCase() ?? "";
+    const after = sentence.slice((match.index ?? 0) + word.length, (match.index ?? 0) + word.length + 6);
+    const before = sentence.slice(Math.max(0, (match.index ?? 0) - 5), match.index ?? 0);
+    const isNumber = /^\d/.test(word);
+    const isAcronym = /^[A-Z][A-Z0-9]{1,}$/.test(word);
+    if (nameParts.has(lower) || STOP.has(lower) || WEAK.has(lower)) return;
+    if (isNumber && (/^\s*(?:to|-|–|or)\s*\d/.test(after) || /\d\s*(?:to|-|–|or)\s*$/.test(before))) return;
+    if (!isNumber && !isAcronym && word.length < 5) return;
+    let score = 0;
+    if (isNumber) score += 5;
+    if (isAcronym) score += 4;
+    if (index > 0 && /^[A-Z][a-z]/.test(word)) score += 3;
+    if (DETERMINER.has(previous)) score += 3;
+    if (/(?:ing|ed)$/.test(lower) && !DETERMINER.has(previous)) score -= 4;
+    if ((counts.get(lower) ?? 1) === 1) score += 1;
+    if (word.length >= 8) score += 1;
+    if (index === 0) score -= 2;
+    if (score >= 3 && (!best || score > best.score)) best = { word, score };
+  });
+  return best ? (best as { word: string }).word : null;
 }
 
 /**
@@ -200,7 +225,7 @@ export function buildPractice(input: {
   // 4. Fill the gap in a key sentence: up to two, from different sentences with different words.
   const usedGaps = new Set<string>();
   let gapsMade = 0;
-  for (const sentence of sentences.slice(0, 6)) {
+  for (const sentence of sentences.slice(0, 10)) {
     if (sentence === definition && sentences.length > 1) continue;
     if (words(sentence).length < 7 || sentence.length > 220) continue;
     const pair = termPairs(sentence)[0];
@@ -208,18 +233,19 @@ export function buildPractice(input: {
     const gap = pickGapWord(gapSource, pair ? `${name} ${pair.term}` : name, excerpt);
     if (!gap || usedGaps.has(gap.toLocaleLowerCase())) continue;
     usedGaps.add(gap.toLocaleLowerCase());
-    const blank = (value: string) => value.replace(new RegExp(`\\b${gap}\\b`), "_____");
+    // Every occurrence: a figure or term that appears twice would otherwise give the answer away.
+    const blank = (value: string) => value.replace(new RegExp(`(?<![\\w])${gap.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w])`, "g"), "_____");
     const masked = pair && sentence.includes(pair.meaning) ? sentence.replace(pair.meaning, blank(pair.meaning)) : blank(sentence);
     add({
       kind: "cloze",
       prompt: `Fill the gap from ${locator}: “${masked}”`,
       modelAnswer: gap,
-      hint: `It is one word. It starts with “${gap[0]}” and has ${gap.length} letters.`,
+      hint: /^\d/.test(gap) ? "It is a number from the page." : `It is one word. It starts with “${gap[0]}” and has ${gap.length} letters.`,
       explanation: `The page says: “${sentence}”`,
       sourceQuote: sentence,
     });
     gapsMade += 1;
-    if (gapsMade >= 2) break;
+    if (gapsMade >= 4) break;
   }
 
   // 4b. Terms and their meanings on this page: name the term from its meaning, using the page's other terms as options.
