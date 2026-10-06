@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { checkPracticeAnswer } from "@/domain/practice-check";
+import { PackArt } from "@/components/PackArt";
 import type { QuickRun as Run, SelfGrade } from "@/domain/quick-run";
 import styles from "./QuickRun.module.css";
 
@@ -125,7 +126,7 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
 
             {answered ? (
               <motion.div className={`${styles.feedback} ${answered.right ? styles.ok : styles.no}`} role="status" initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-                <strong>{answered.unsure ? (item.kind === "cloze" ? `That’s fine. It was “${item.modelAnswer}”.` : "That’s fine. Here’s the answer.") : answered.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
+                <strong><PackArt name={answered.right ? "check" : "info"} className={styles.mark} />{answered.unsure ? (item.kind === "cloze" ? `That’s fine. It was “${item.modelAnswer}”.` : "That’s fine. Here’s the answer.") : answered.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
                 <p className={styles.quote}>“{item.sourceQuote}”</p>
                 <button ref={nextRef} type="button" className={styles.primary} onClick={next}>{step + 1 >= total ? "Now say it yourself" : "Next"} <span aria-hidden="true">→</span></button>
               </motion.div>

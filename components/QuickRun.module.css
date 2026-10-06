@@ -378,3 +378,10 @@
   outline: 2px solid var(--color-kelus);
   outline-offset: 2px;
 }
+
+.mark {
+  width: 22px;
+  height: 22px;
+  margin-right: 8px;
+  vertical-align: -4px;
+}

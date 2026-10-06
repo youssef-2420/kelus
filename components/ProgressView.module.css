@@ -99,3 +99,15 @@
   .group li { grid-template-columns: minmax(0, 1fr) auto; }
   .group li .bar { display: none; }
 }
+
+.thinRow { display: flex; align-items: center; gap: 20px; }
+.growing { flex: none; height: auto; }
+.pace { position: relative; padding-right: 120px; }
+.paceArt { position: absolute; right: 20px; top: 50%; height: auto; transform: translateY(-50%); }
+
+@media (max-width: 640px) {
+  .thinRow { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .growing { width: 110px; }
+  .pace { padding-right: 20px; }
+  .paceArt { display: none; }
+}

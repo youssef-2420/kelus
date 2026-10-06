@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
+import { PackArt } from "@/components/PackArt";
 import { progressHeadline, progressSummary, type TopicChange } from "@/domain/progress";
 import type { Concept, LearningEvent } from "@/domain/types";
 import styles from "./ProgressView.module.css";
@@ -70,7 +71,10 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
         {summary.enough ? (
           <Trend series={summary.series} target={target} />
         ) : (
-          <p className={styles.thin}>Based on {summary.answers} answer{summary.answers === 1 ? "" : "s"} so far. A trend needs at least 6 answers across 2 topics in two weeks, so Kelus doesn’t guess before then.</p>
+          <div className={styles.thinRow}>
+            <PackArt name="growing" className={styles.growing} size={150} />
+            <p className={styles.thin}>Based on {summary.answers} answer{summary.answers === 1 ? "" : "s"} so far. A trend needs at least 6 answers across 2 topics in two weeks, so Kelus doesn’t guess before then.</p>
+          </div>
         )}
         <dl className={styles.stats}>
           <div><dt>Answers</dt><dd>{summary.answers}</dd></div>
@@ -85,6 +89,7 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
       <Topics title="Not started" note="No answers yet, so Kelus has no evidence either way." items={summary.notStarted} empty="You have answered every topic at least once." />
 
       <section className={styles.pace} aria-label="Pace to your target">
+        <PackArt name="target" className={styles.paceArt} size={84} />
         <h3>To reach your target</h3>
         {summary.topicsLeft > 0 ? (
           <p>
