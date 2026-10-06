@@ -20,7 +20,7 @@ import { SourceArt } from "@/components/SourceArt";
 function focusPhaseHeading(node: HTMLHeadingElement | null) {
   node?.focus();
 }
-import { buildConfirmedMaterialModel, isSourceBackedProposal, proposalConfidence, proposeConceptsFromPages } from "@/domain/material-intelligence";
+import { buildConfirmedMaterialModel, isSourceBackedProposal, MAX_PROPOSED_TOPICS, proposalConfidence, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
   addSourceMaterial,
@@ -48,6 +48,7 @@ import {
   type IngestState,
   type WorkingStep,
 } from "@/lib/material-ingest-machine";
+import type { AnalysisPayload } from "@/lib/material-ingest-machine";
 import { assessPdfTextQuality, ocrPdfPages, pageNeedsOcr } from "@/lib/pdf-extraction";
 import { extractSourcePages, NotesWithoutHeadingsError } from "@/lib/source-extraction";
 import { SOURCE_FILE_ACCEPT, isNotesFile, sourceNoun } from "@/domain/materials";
@@ -63,6 +64,19 @@ function sourceHost(value: string | null) {
   } catch {
     return "Saved link";
   }
+}
+
+/** What Kelus actually read, said plainly. A cut-off document must never look complete. */
+function ReadCoverage({ coverage, found }: { coverage: NonNullable<AnalysisPayload["coverage"]>; found: number }) {
+  const unit = coverage.unit === "section" ? "section" : "page";
+  const plural = (count: number) => `${count} ${unit}${count === 1 ? "" : "s"}`;
+  const all = coverage.pagesRead >= coverage.totalPages;
+  return (
+    <p className="read-coverage" role="status">
+      {all ? `Read all ${plural(coverage.totalPages)}.` : `Read the first ${plural(coverage.pagesRead)} of ${coverage.totalPages}. Add the rest as a separate file to include it.`}
+      {coverage.topicCapHit ? ` Showing the first ${found} topics; remove the ones you don’t need, or add the rest as another file.` : ""}
+    </p>
+  );
 }
 
 function addedLabel(iso: string) {
@@ -314,8 +328,8 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       setPreviewUrl(nextPreviewUrl);
       setPreviewPage(1);
       dispatch({ type: "WORK_STEP", step: "extracting", message: defaultStepMessage("extracting") });
-      const extraction = await extractSourcePages(pdfFile, { maxContentPages: 16 });
-      const { isNotes, locatorLabel } = extraction;
+      const extraction = await extractSourcePages(pdfFile);
+      const { isNotes, locatorLabel, totalPages, pagesRead } = extraction;
       let pages = extraction.pages;
       let quality = assessPdfTextQuality(pages);
       let usedOcr = false;
@@ -405,7 +419,12 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         throw fail;
       }
       updateMaterialProcessingStatus(material.id, "ready");
-      const nextAnalysis = { material: { ...material, processingStatus: "ready" as const }, proposals, pages };
+      const nextAnalysis = {
+        material: { ...material, processingStatus: "ready" as const },
+        proposals,
+        pages,
+        coverage: { totalPages, pagesRead, unit: isNotes ? ("section" as const) : ("page" as const), topicCapHit: proposals.length >= MAX_PROPOSED_TOPICS },
+      };
       dispatch({ type: "REVIEW_READY", analysis: nextAnalysis });
       trackEvent({ name: "concept_review_started", concept_count: proposals.length });
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
@@ -779,7 +798,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
             transition={{ duration: reduceMotion ? kelusDuration.micro : kelusDuration.normal, ease: kelusEase }}
           >
             <header>
-              <div><p className="kicker">Review your topics</p><h2 id="concept-confirmation-title" tabIndex={-1} ref={focusPhaseHeading}>Kelus found {analysis.proposals.length} proposed concepts.</h2></div>
+              <div><p className="kicker">Review your topics</p><h2 id="concept-confirmation-title" tabIndex={-1} ref={focusPhaseHeading}>Kelus found {analysis.proposals.length} proposed concepts.</h2>{analysis.coverage ? <ReadCoverage coverage={analysis.coverage} found={analysis.proposals.length} /> : null}</div>
               <p>
                 Keep only the concepts this exam actually covers. Each one retains the page where Kelus found it.
                 {state.diagnosisCompleted

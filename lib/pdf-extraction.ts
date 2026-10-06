@@ -83,7 +83,10 @@ export function buildLayoutPage(pageNumber: number, rawItems: PdfTextItem[]): Ex
   return { pageNumber, text: text.trim(), blocks: lines.map(({ hasEOL: _hasEOL, ...line }) => line) };
 }
 
-export async function extractPdfPages(file: File, options?: { maxContentPages?: number }): Promise<ExtractedMaterialPage[]> {
+/** Most pages read from one PDF. Extracting text is fast (31 pages take well under a second); this only guards memory. */
+export const MAX_READ_PAGES = 150;
+
+export async function extractPdfPages(file: File, options?: { maxContentPages?: number; onInfo?: (info: { totalPages: number }) => void }): Promise<ExtractedMaterialPage[]> {
   const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/legacy/build/pdf.worker.min.mjs",
@@ -91,7 +94,8 @@ export async function extractPdfPages(file: File, options?: { maxContentPages?: 
   ).toString();
   const document = await pdfjs.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
   const pages: ExtractedMaterialPage[] = [];
-  const maxContentPages = options?.maxContentPages ?? 16;
+  const maxContentPages = options?.maxContentPages ?? MAX_READ_PAGES;
+  options?.onInfo?.({ totalPages: document.numPages });
   try {
     try {
       const outline = (await document.getOutline()) as PdfOutlineNode[] | null;
