@@ -17,6 +17,7 @@ import { ExamPulse } from "@/components/ExamPulse";
 import { estimatedReadiness } from "@/domain/readiness";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { ProgressView } from "@/components/ProgressView";
+import { AutoStart } from "@/components/AutoStart";
 import { PackArt, type PackArtName } from "@/components/PackArt";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
@@ -58,7 +59,7 @@ export function RevisionSurface() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion() === true;
-  const { state, start, reset, removeMaterialSource } = useLearner();
+  const { state, start, reset, removeMaterialSource, setExamDate } = useLearner();
   const auth = useAuth();
   const [confirmReset, setConfirmReset] = useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
@@ -129,6 +130,7 @@ export function RevisionSurface() {
     nowIso,
   });
   const days = daysUntilExam(exam, nowIso);
+  const examDatePending = Boolean(exam.datePlaceholder);
   const isSampleCourse = course.id === "course-microeconomics" && exam.id === "exam-microeconomics-final";
   const courseId = course.id;
   const examId = exam.id;
@@ -287,7 +289,7 @@ export function RevisionSurface() {
       <div className="studio-main">
         <header className="studio-topbar">
           <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={() => setRailHidden(false)} aria-label="Show workspace sidebar">→ <span>Show sidebar</span></button> : null}<span className="studio-topbar-course" title={course.name}>{course.name}</span></span>
-          <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{days} day{days === 1 ? "" : "s"} to exam</span></span>
+          <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{examDatePending ? "Add your exam date" : `${days} day${days === 1 ? "" : "s"} to exam`}</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
         {mode !== "today" ? (
@@ -329,6 +331,7 @@ export function RevisionSurface() {
                 {hasReadableSource ? <CourseSourceReader key={`${selectedMaterial.id}-${selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1}`} material={selectedMaterial} initialPage={selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1} /> : null}
                 <div className="core-workspace-action workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
                   {!hasReadableSource ? <p className="core-source-inline">This plan has no original PDF beside it. <Link href="/today?section=materials">Add your course PDF</Link> to study from your own pages.</p> : null}
+                  <AutoStart ready={route.allocations.length > 0} onStart={openSession ? resume : begin} />
                   <AiPrefetch route={route} concepts={concepts} activities={snapshot.learningActivities} />
                   <TodayRoute
                     route={route}
@@ -340,6 +343,8 @@ export function RevisionSurface() {
                     targetPercent={exam.targetPercent}
                     daysToExam={days}
                     isSampleCourse={isSampleCourse}
+                    examDatePending={examDatePending}
+                    onSetExamDate={setExamDate}
                     reminder={{ courseName: course.name, examDate: exam.examDate.slice(0, 10), minutes: exam.availableMinutes }}
                     onStart={openSession ? resume : begin}
                     startLabel={openSession ? "Resume session" : undefined}
@@ -349,7 +354,7 @@ export function RevisionSurface() {
             ) : null}
             {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} interceptFile={isSampleCourse ? (file) => { setSampleFile(file); return true; } : undefined} /><AiConsent /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
-            {mode === "progress" ? <ProgressView concepts={concepts} events={snapshot.events} nowIso={nowIso} daysToExam={days} targetPercent={exam.targetPercent} /> : null}
+            {mode === "progress" ? <ProgressView concepts={concepts} events={snapshot.events} nowIso={nowIso} daysToExam={days} targetPercent={exam.targetPercent} examDatePending={examDatePending} /> : null}
           </motion.div>
         </AnimatePresence>
         </main>

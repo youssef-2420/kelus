@@ -348,6 +348,23 @@ export function removeMaterialLearning(state: DemoState, materialId: string) {
   return next;
 }
 
+/** The learner chose their real exam date. Must be in the future. */
+export function setExamDate(state: DemoState, date: string) {
+  const when = new Date(`${date}T12:00:00.000Z`);
+  if (Number.isNaN(when.getTime()) || when.getTime() <= Date.parse(state.nowIso)) throw new Error("Choose an exam date in the future.");
+  const exams = state.snapshot.exams.map((exam) => (exam.isActive ? { ...exam, examDate: when.toISOString(), datePlaceholder: false } : exam));
+  const next: DemoState = { ...state, snapshot: refreshCaches({ ...state.snapshot, exams }, state.nowIso) };
+  persistDemoState(next);
+  return next;
+}
+
+/** Take one topic out of the course (it was not a real topic). Its practice history stays as history. */
+export function removeConcept(state: DemoState, conceptId: string) {
+  const next = withoutConcepts(state, new Set([conceptId]));
+  persistDemoState(next);
+  return next;
+}
+
 /**
  * Older versions could make topics out of a file name ("Material", "Youssef"). Nothing in the file supports
  * them, so they are removed from saved data instead of being studied.

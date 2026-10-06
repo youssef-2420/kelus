@@ -56,7 +56,7 @@ test("trust surfaces show a real demo outcome and student-facing support copy", 
     source("components/QuestionsInboxStatus.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("app/session/complete/page.tsx"),
-    source("components/FirstRunSetup.tsx"),
+    source("components/DropNotes.tsx"),
   ]);
 
   assert.match(demo, /setRouteOutcome\("again"\)/);
@@ -67,5 +67,5 @@ test("trust surfaces show a real demo outcome and student-facing support copy", 
   assert.match(complete, /The useful change/);
   assert.match(complete, /Before/);
   assert.match(complete, /After/);
-  assert.match(setup, /Your course stays on this device/);
+  assert.match(setup, /Your notes stay on this device/);
 });

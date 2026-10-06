@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { closeToToday, startFromFile } from "./helpers";
 
 function biologyPdf() {
   const text = [
@@ -66,7 +67,7 @@ async function playQuickRun(page: Page, explanation: string, grade: string) {
   await page.getByRole("button", { name: new RegExp(grade) }).click();
 }
 
-test("first-use hierarchy stays readable from upload through exam details", async ({ page }) => {
+test("the start screen is one clear screen on phone, tablet and desktop", async ({ page }) => {
   for (const viewport of [
     { width: 390, height: 844 },
     { width: 768, height: 900 },
@@ -74,63 +75,25 @@ test("first-use hierarchy stays readable from upload through exam details", asyn
   ]) {
     await page.setViewportSize(viewport);
     await page.goto("/today");
-    await expect(page.locator(".studio-onboarding")).toBeVisible();
-    await expect(page.locator(".setup-first-upload")).toBeVisible();
-    await expect(page.locator(".setup-payoff li")).toHaveCount(3);
-    expect(await page.locator(".setup-first-upload").evaluate((element) => {
-      const payoff = document.querySelector(".setup-payoff");
-      return payoff !== null && Boolean(element.compareDocumentPosition(payoff) & Node.DOCUMENT_POSITION_FOLLOWING);
-    })).toBe(true);
-    expect(await page.locator(".destination-actions").evaluate((element) => {
-      const payoff = document.querySelector(".setup-payoff");
-      return payoff !== null && Boolean(element.compareDocumentPosition(payoff) & Node.DOCUMENT_POSITION_FOLLOWING);
-    })).toBe(true);
-    await expectNoOverlap(page, ".studio-onboarding-steps", ".destination-page-title");
+    await expect(page.getByRole("heading", { name: "Drop your notes." })).toBeVisible();
+    // One job: no stepper, no exam form, no topic checklist.
+    await expect(page.locator(".studio-onboarding-steps")).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /Continue to exam details|Read my PDF/ })).toHaveCount(0);
+    await expect(page.locator('input[type="file"]')).toHaveCount(1);
+    const box = await page.locator(".setup-first-upload").boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y).toBeLessThan(viewport.height);
     await expectNoHorizontalOverflow(page);
-    if (viewport.width === 768) {
-      const rail = await page.locator(".studio-rail").boundingBox();
-      const setup = await page.locator(".setup-first-upload").boundingBox();
-      expect(rail).not.toBeNull();
-      expect(setup).not.toBeNull();
-      expect(rail!.height).toBeLessThan(viewport.height / 2);
-      expect(setup!.y).toBeLessThan(viewport.height);
-    }
   }
-
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/today");
-  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({
-    name: "cell-biology-lecture.pdf",
-    mimeType: "application/pdf",
-    buffer: biologyPdf(),
-  });
-  await page.getByRole("button", { name: /Continue to exam details/ }).click();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your exam");
-  await expect(page.getByRole("heading", { name: "Set your exam" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Read my PDF/ })).toBeVisible();
-  await expectNoOverlap(page, ".studio-onboarding-steps", ".destination-page-title");
-  await expectNoHorizontalOverflow(page);
 });
 
-test("first PDF survives a refresh before topics are confirmed", async ({ page }) => {
-  await page.goto("/today");
-  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({
-    name: "cell-biology-lecture.pdf",
-    mimeType: "application/pdf",
-    buffer: biologyPdf(),
-  });
-
-  await page.getByRole("button", { name: /Continue to exam details/ }).click();
-  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Molecular Biology");
-  await page.getByLabel("Exam").fill("Cell Biology Final");
-  await page.getByLabel("When is it?").fill(new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10));
-  await page.getByRole("button", { name: /Read my PDF/ }).click();
-  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+test("a PDF opens its first question by itself, and is still there after a refresh", async ({ page }) => {
+  await startFromFile(page, { name: "cell-biology-lecture.pdf", mimeType: "application/pdf", buffer: biologyPdf() });
   await page.reload();
-  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+  await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
+  await expect(page.getByText(/Cell Membranes/).first()).toBeVisible({ timeout: 15_000 }).catch(() => undefined);
+  await closeToToday(page);
   await expect(page.getByText("Cell Membranes").first()).toBeVisible();
-  await page.getByRole("button", { name: /Confirm topics/ }).click();
-  await expect(page.locator("#today-title")).toBeVisible();
 });
 
 test("homepage sample makes both route outcomes visible", async ({ page }) => {
@@ -161,14 +124,9 @@ test("Add source opens the file picker and reads the chosen PDF", async ({ page 
   });
   // The sample is never mixed with your own file: it offers to start your own course with it.
   await page.getByRole("dialog", { name: "Start your own course?" }).getByRole("button", { name: "Start my own course" }).click();
-  await expect(page.getByText(/Ready to read/)).toBeVisible();
-  await page.getByRole("button", { name: /Continue to exam details/ }).click();
-  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Cell Biology");
-  await page.getByLabel("Exam").fill("Midterm");
-  await page.getByLabel("When is it?").fill(new Date(Date.now() + 9 * 86_400_000).toISOString().slice(0, 10));
-  await page.getByRole("button", { name: /Read my PDF/ }).click();
-  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
-  await expect(page.getByText("Cell Membranes").first()).toBeVisible();
+  // Your file starts your own course and its first question opens: no form in between.
+  await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
+  await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
 });
 
 test("course workspace fills the viewport without a blank footer band", async ({ page }) => {
@@ -227,50 +185,20 @@ test("sample course without an original PDF gives the route room and makes uploa
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 
-test("real PDF becomes concepts, diagnosis evidence, and today's route", async ({ page }) => {
+test("a real PDF becomes a first question, then Today, topics and a full session", async ({ page }) => {
   await page.goto("/today");
-  await expect(page.locator(".studio-onboarding")).toBeVisible();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your notes");
-  await expect(page.getByRole("heading", { name: "Add a course PDF." })).toBeVisible();
   await page.screenshot({ path: "/tmp/kelus-pdf-first-desktop.png", fullPage: true });
-  await page.locator('.setup-first-upload input[type="file"]').setInputFiles({
-    name: "cell-biology-lecture.pdf",
-    mimeType: "application/pdf",
-    buffer: biologyPdf(),
-  });
-  await page.getByRole("button", { name: /Continue to exam details/ }).click();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your exam");
-  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Molecular Biology");
-  await page.getByLabel("Exam").fill("Cell Biology Final");
-  const examDate = new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10);
-  await page.getByLabel("When is it?").fill(examDate);
-  await page.getByLabel(/45/).check();
-  await page.getByRole("button", { name: /Read my PDF/ }).click();
-
+  await startFromFile(page, { name: "cell-biology-lecture.pdf", mimeType: "application/pdf", buffer: biologyPdf() });
+  await closeToToday(page);
   await expect(page).toHaveURL(/\/today/);
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your topics");
-  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
-  await expect(page.getByRole("complementary", { name: "Original course PDF" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Open PDF/ })).toBeVisible();
-  await page.screenshot({ path: "/tmp/kelus-source-review-desktop.png", fullPage: true });
-  await page.setViewportSize({ width: 390, height: 844 });
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.screenshot({ path: "/tmp/kelus-source-review-mobile.png", fullPage: true });
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeFocused();
-  await expect(page.locator(".material-ingest")).toBeHidden();
-  await page.getByRole("button", { name: /Confirm topics/ }).click();
-
-  await expect(page).toHaveURL(/\/today/);
-  // No rating screen: confirming topics goes straight to Today.
-  await expect(page.getByText("How familiar do these feel?")).toHaveCount(0);
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan", exact: true })).toBeVisible();
   await expect(page.locator("#today-title")).toBeVisible();
   await expect(page.locator(".core-source-reader canvas")).toBeVisible();
   await page.screenshot({ path: "/tmp/kelus-core-source-desktop.png", fullPage: true });
   await expect(page.getByRole("heading", { name: "Today", exact: true })).toHaveCount(0);
-  await expect(page.getByText(/Molecular Biology/).first()).toBeVisible();
+  // The course is named after the file until the learner renames it (no form asks for a name any more).
+  await expect(page.getByText(/cell biology lecture/i).first()).toBeVisible();
   for (const width of [320, 375, 768, 1280]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

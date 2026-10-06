@@ -76,7 +76,7 @@ function SessionBody() {
   const search = useSearchParams();
   const reduceMotion = useReducedMotion();
   const sessionId = search.get("id");
-  const { state, submit, abandon } = useLearner();
+  const { state, submit, abandon, removeTopic } = useLearner();
   const auth = useAuth();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const session = state.snapshot.sessions.find((item) => item.id === sessionId);
@@ -97,6 +97,7 @@ function SessionBody() {
   const [sourceRevealed, setSourceRevealed] = useState(false);
   const sourceRequest = useRef(0);
   const [confirmDiscard, setConfirmDiscard] = useState(false);
+  const [confirmRemoveTopic, setConfirmRemoveTopic] = useState(false);
   const sourceCloseRef = useRef<HTMLButtonElement>(null);
   const sourceOpenerRef = useRef<HTMLElement | null>(null);
   const startedAt = useRef(0);
@@ -468,7 +469,18 @@ function SessionBody() {
       </div> : null}
       <div className="study-loop-track">
         {quickMode ? (
-          <p className="study-run-label">{concept.name} · topic {index + 1} of {total}{recallWithoutLooking && hasReadableSource ? <> · <button type="button" className="text-btn study-peek" onClick={() => setSourceRevealed(true)}>Peek at the notes</button></> : null}</p>
+          <p className="study-run-label">{concept.name} · topic {index + 1} of {total}{recallWithoutLooking && hasReadableSource ? <> · <button type="button" className="text-btn study-peek" onClick={() => setSourceRevealed(true)}>Peek at the notes</button></> : null}
+            {" · "}
+            {confirmRemoveTopic ? (
+              <span role="group" aria-label="Confirm remove this topic">
+                Remove “{concept.name}” for good?{" "}
+                <button type="button" className="text-btn study-peek" onClick={() => { abandon(session.id); removeTopic(concept.id); router.push("/today"); }}>Yes, remove</button>{" "}
+                <button type="button" className="text-btn study-peek" onClick={() => setConfirmRemoveTopic(false)}>Keep</button>
+              </span>
+            ) : (
+              <button type="button" className="text-btn study-peek" onClick={() => setConfirmRemoveTopic(true)}>Not a real topic? Remove it</button>
+            )}
+          </p>
         ) : (
           <LoopSteps
             compact

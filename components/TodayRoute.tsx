@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
 import { HabitStrip } from "@/components/HabitStrip";
 import { ReminderCard } from "@/components/ReminderCard";
+import { ExamDateCard } from "@/components/ExamDateCard";
 import { estimatedReadiness } from "@/domain/readiness";
 import { describeRouteChoice, describeRoutePayoff } from "@/lib/today-reason";
 import { trackEvent } from "@/lib/analytics";
@@ -37,6 +38,8 @@ export function TodayRoute({
   startLabel,
   isSampleCourse = false,
   reminder,
+  examDatePending = false,
+  onSetExamDate,
 }: {
   route: RoutePlan;
   concepts: Concept[];
@@ -50,6 +53,8 @@ export function TodayRoute({
   startLabel?: string;
   isSampleCourse?: boolean;
   reminder?: { courseName: string; examDate: string; minutes: number };
+  examDatePending?: boolean;
+  onSetExamDate?: (date: string) => void;
 }) {
   const reduceMotion = useReducedMotion();
   const [first] = route.allocations;
@@ -106,7 +111,7 @@ export function TodayRoute({
   return (
     <div className={styles.page}>
       <div className={styles.top}>
-        <p><strong>{examTarget}</strong> · {daysToExam} day{daysToExam === 1 ? "" : "s"} to go</p>
+        <p><strong>{examTarget}</strong> · {examDatePending ? "no date yet" : `${daysToExam} day${daysToExam === 1 ? "" : "s"} to go`}</p>
         <div className={styles.ready} role="group" aria-label="Exam readiness">
           <span>Ready {ready}%</span>
           <span className={styles.track} aria-hidden="true"><i style={{ width: `${ready}%` }} /></span>
@@ -164,7 +169,8 @@ export function TodayRoute({
         </aside>
       ) : null}
 
-      {reminder && !isSampleCourse ? <ReminderCard {...reminder} nextStopName={firstName} /> : null}
+      {examDatePending && onSetExamDate && !isSampleCourse ? <ExamDateCard onSave={onSetExamDate} /> : null}
+      {reminder && !isSampleCourse && !examDatePending ? <ReminderCard {...reminder} nextStopName={firstName} /> : null}
     </div>
   );
 }

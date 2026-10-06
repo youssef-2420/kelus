@@ -9,7 +9,7 @@ const source = (path) => readFile(new URL(path, root), "utf8");
 test("audit harden: smoke meets AA, first-run has h1, session skip target", async () => {
   const [tokens, setup, session, illustration, css, design] = await Promise.all([
     source("tokens.css"),
-    source("components/FirstRunSetup.tsx"),
+    source("components/DropNotes.tsx"),
     source("app/session/page.tsx"),
     source("components/hero/StudentIllustration.tsx"),
     source("app/globals.css"),
@@ -18,8 +18,7 @@ test("audit harden: smoke meets AA, first-run has h1, session skip target", asyn
 
   assert.match(tokens, /--color-smoke:\s*#5a6358|--color-smoke:\s*#5b6f92/);
   assert.doesNotMatch(tokens, /--color-smoke:\s*#839bc8/);
-  assert.match(setup, /<h1 className="destination-page-title">Add a course PDF\.<\/h1>/);
-  assert.match(setup, /<h1 className="destination-page-title">Set your exam<\/h1>/);
+  assert.match(setup, /<h1 id="start-title" className="destination-page-title">/);
   assert.match(session, /fallback=\{[\s\S]*?<main id="main"/);
   assert.match(illustration, /student\.webp/);
   assert.match(illustration, /fetchPriority="high"/);

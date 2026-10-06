@@ -127,18 +127,15 @@ test("client questions page captures name email and question for inbox delivery"
 });
 
 test("ready-to-today path stays short and does not overpromise stop 1", async () => {
-  const [diagnosis, ui, materials, complete, header, setup, how] = await Promise.all([
+  const [diagnosis, materials, complete, header, setup, how] = await Promise.all([
     source("domain/diagnosis.ts"),
-    source("components/InitialDiagnosis.tsx"),
     source("components/MaterialLibrary.tsx"),
     source("app/session/complete/page.tsx"),
     source("components/SiteHeader.tsx"),
-    source("components/FirstRunSetup.tsx"),
+    source("components/DropNotes.tsx"),
     source("components/HowItWorks.tsx"),
   ]);
   assert.match(diagnosis, /maximumChecks \?\? 2/);
-  assert.match(ui, /slice\(0, 3\)/);
-  assert.match(ui, /DIAGNOSIS_RETRIEVAL_LIMIT/);
   assert.match(materials, /Continue:\ short\ check,\ then\ study/);
   assert.doesNotMatch(materials, /Try sample|Try the sample course/);
   assert.match(materials, /SoftUpgradePrompt/);
@@ -177,7 +174,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(await source("components/TodayRoute.tsx"), /today-decision/);
   assert.match(await source("components/TodayRoute.tsx"), /today-next/);
   assert.match(today, /get\("sample"\) === "1"/);
-  assert.doesNotMatch(await source("components/FirstRunSetup.tsx"), /Try sample|setup-sample-cta/);
+  assert.doesNotMatch(await source("components/DropNotes.tsx"), /Try sample|setup-sample-cta/);
 });
 
 test("pricing conversion loop is linked from product surfaces", async () => {

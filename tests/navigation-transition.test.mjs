@@ -68,11 +68,12 @@ test("one persistent header owns navigation for every page", async () => {
 });
 
 test("setup starts with a PDF and shows the full route to study", async () => {
-  const [setup, onboarding] = await Promise.all([source("components/FirstRunSetup.tsx"), source("components/CourseStudioOnboarding.tsx")]);
-  assert.match(onboarding, /Your notes[\s\S]*Your exam[\s\S]*Your topics/);
-  assert.match(setup, /Add a course PDF/);
-  assert.match(setup, /Continue to exam details/);
-  assert.match(setup, /Read my PDF/);
+  const [setup, today] = await Promise.all([source("components/DropNotes.tsx"), source("app/today/page.tsx")]);
+  // One step: notes in. The course is made with defaults and the exam date is asked after the first run.
+  assert.match(setup, /Drop your notes\./);
+  assert.doesNotMatch(setup, /Continue to exam details|Read my PDF|studio-onboarding-steps/);
+  assert.match(today, /startFromFile/);
+  assert.match(today, /examDatePlaceholder:\s*true/);
   assert.doesNotMatch(setup, /Try sample/);
   assert.doesNotMatch(setup, /destination-brand/);
   assert.doesNotMatch(setup, /setup-progress/);
@@ -103,10 +104,9 @@ test("how it works content never depends on viewport-triggered visibility", asyn
 });
 
 test("the course workspace keeps destination and setup progress across product pages", async () => {
-  const [shell, rail, diagnosis] = await Promise.all([
+  const [shell, rail] = await Promise.all([
     source("components/AppShell.tsx"),
     source("components/CourseWorkspaceRail.tsx"),
-    source("components/InitialDiagnosis.tsx"),
   ]);
   assert.match(shell, /CourseWorkspaceRail/);
   assert.match(shell, /is-booklet-shell/);
@@ -117,7 +117,6 @@ test("the course workspace keeps destination and setup progress across product p
   assert.match(rail, /aria-current="step"/);
   assert.match(rail, /Est\. readiness|First estimate|Today’s stops|Add sources|Confirm topics/);
   assert.doesNotMatch(rail, /Learning loop|Rerouting|course-stage|course-masthead-nav/);
-  assert.match(diagnosis, /<AppShell>/);
 });
 
 test("the index is a paper TOC; uploaded concepts have a static-exportable detail route", async () => {

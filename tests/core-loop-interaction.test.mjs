@@ -39,15 +39,8 @@ describe("core-loop interaction design", () => {
     assert.match(DIAGNOSIS_ERRORS.prevention, /Continue\/Skip/);
   });
 
-  it("wires diagnosis phase motion, evaluation focus, and rating press affordance", async () => {
-    const [diagnosis, css] = await Promise.all([
-      source("components/InitialDiagnosis.tsx"),
-      source("app/globals.css"),
-    ]);
-    assert.match(diagnosis, /AnimatePresence/);
-    assert.match(diagnosis, /diagnosis-evaluation-title/);
-    assert.match(diagnosis, /tabIndex=\{-1\}/);
-    assert.match(css, /diagnosis-list button:active/);
+  it("keeps the material work-steps styling used while notes are read", async () => {
+    const css = await source("app/globals.css");
     assert.match(css, /material-work-steps/);
   });
 });
