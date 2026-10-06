@@ -2,6 +2,7 @@
 
 import { useState, type DragEvent } from "react";
 import { SourceArt } from "@/components/SourceArt";
+import { PackArt } from "@/components/PackArt";
 import { PasteNotes } from "@/components/PasteNotes";
 import { MAX_NOTES_BYTES } from "@/domain/markdown-pages";
 import { SOURCE_FILE_ACCEPT, isNotesFile, isSourceFile, isZipFile } from "@/domain/materials";
@@ -44,8 +45,9 @@ export function EmptyCourse({ courseId, courseName }: { courseId: string; course
   return (
     <div className="destination-page is-booklet-product is-marked-setup is-material-first">
       <div className="destination-form">
-      <section className="setup-stage-content" aria-labelledby="empty-course-title">
+      <section className="setup-stage-content empty-course" aria-labelledby="empty-course-title">
         <p className="kicker">{courseName ? courseName : "Your course"}</p>
+        <PackArt name="on-the-laptop" className="empty-course-art" size={230} />
         <h1 id="empty-course-title" className="destination-page-title">Add your notes.</h1>
         <p className="destination-support">Drop a PDF, a Notion export, or paste text. Kelus finds the topics and builds today’s plan. You review them before anything changes.</p>
         <label

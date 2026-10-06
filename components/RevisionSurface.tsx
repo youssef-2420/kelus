@@ -17,6 +17,7 @@ import { ExamPulse } from "@/components/ExamPulse";
 import { estimatedReadiness } from "@/domain/readiness";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { ProgressView } from "@/components/ProgressView";
+import { PackArt, type PackArtName } from "@/components/PackArt";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
@@ -29,11 +30,11 @@ import { removeRemoteMaterial } from "@/lib/material-sync";
 
 export type SurfaceMode = "today" | "materials" | "map" | "progress";
 
-const MODES: Array<{ id: SurfaceMode; label: string }> = [
-  { id: "today", label: "Study plan" },
-  { id: "materials", label: "Materials" },
-  { id: "map", label: "Topics" },
-  { id: "progress", label: "Progress" },
+const MODES: Array<{ id: SurfaceMode; label: string; art: PackArtName }> = [
+  { id: "today", label: "Study plan", art: "list-check" },
+  { id: "materials", label: "Materials", art: "folder" },
+  { id: "map", label: "Topics", art: "diagram-project" },
+  { id: "progress", label: "Progress", art: "award" },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2, progress: 3 };
@@ -210,6 +211,7 @@ export function RevisionSurface() {
                 whileTap={reduceMotion ? undefined : { scale: 0.97 }}
                 transition={pressSpring}
               >
+                <PackArt name={item.art} className="nav-art" />
                 {item.label}
               </motion.button>
             );
