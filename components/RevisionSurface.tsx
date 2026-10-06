@@ -16,6 +16,7 @@ import { SOURCE_FILE_ACCEPT } from "@/domain/materials";
 import { ExamPulse } from "@/components/ExamPulse";
 import { estimatedReadiness } from "@/domain/readiness";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
+import { ProgressView } from "@/components/ProgressView";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
@@ -26,20 +27,21 @@ import { trackEvent } from "@/lib/analytics";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, removeMaterial, subscribeMaterials } from "@/lib/material-store";
 import { removeRemoteMaterial } from "@/lib/material-sync";
 
-export type SurfaceMode = "today" | "materials" | "map";
+export type SurfaceMode = "today" | "materials" | "map" | "progress";
 
 const MODES: Array<{ id: SurfaceMode; label: string }> = [
   { id: "today", label: "Study plan" },
   { id: "materials", label: "Materials" },
   { id: "map", label: "Topics" },
+  { id: "progress", label: "Progress" },
 ];
 
-const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2 };
+const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2, progress: 3 };
 
 const pressSpring = { type: "spring", bounce: 0, duration: 0.24 } as const;
 
 function modeFromSection(section: string | null): SurfaceMode {
-  if (section === "materials" || section === "map") return section;
+  if (section === "materials" || section === "map" || section === "progress") return section;
   return "today";
 }
 
@@ -302,7 +304,7 @@ export function RevisionSurface() {
                 </motion.h1>
               </AnimatePresence>
               <p className="kelus-paper-lede kelus-space-lede">
-                {mode === "materials" ? "The sources behind your revision." : "What to study next, then the rest by exam weight."}
+                {mode === "materials" ? "The sources behind your revision." : mode === "progress" ? "What your own answers say has changed." : "What to study next, then the rest by exam weight."}
               </p>
               <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} />
             </div>
@@ -345,6 +347,7 @@ export function RevisionSurface() {
             ) : null}
             {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} interceptFile={isSampleCourse ? (file) => { setSampleFile(file); return true; } : undefined} /><AiConsent /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
+            {mode === "progress" ? <ProgressView concepts={concepts} events={snapshot.events} nowIso={nowIso} daysToExam={days} targetPercent={exam.targetPercent} /> : null}
           </motion.div>
         </AnimatePresence>
         </main>
