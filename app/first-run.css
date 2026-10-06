@@ -262,3 +262,23 @@ body.is-booklet-system.is-course-studio .studio-onboarding .diagnosis-page butto
   opacity: 1;
   cursor: not-allowed;
 }
+
+.setup-try {
+  margin: 0 0 16px;
+}
+
+.setup-try a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--color-kelus);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.setup-try a:focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 3px;
+}
