@@ -123,6 +123,8 @@
 
 .source { margin: 0; font-size: var(--text-body-sm); color: var(--color-smoke); }
 
+.then { container-type: inline-size; }
+
 .then h2 {
   margin: 0 0 8px;
   font-family: inherit;
@@ -164,6 +166,13 @@
 .min { font-size: var(--text-body-sm); text-align: right; color: var(--color-smoke); }
 
 .then > p { margin: 8px 4px 0; font-size: var(--text-body-sm); color: var(--color-smoke); }
+
+/* The column is narrow beside the notes pane: drop the bar and let names wrap, never collide with the tag. */
+@container (max-width: 34rem) {
+  .then li { grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; }
+  .then li .track { display: none; }
+  .then li strong { font-size: 1.125rem; overflow-wrap: anywhere; }
+}
 
 @media (max-width: 640px) {
   .page { width: min(100% - 32px, 45rem); padding-top: 20px; gap: 22px; }

@@ -51,7 +51,8 @@ import {
 import type { AnalysisPayload } from "@/lib/material-ingest-machine";
 import { assessPdfTextQuality, ocrPdfPages, pageNeedsOcr } from "@/lib/pdf-extraction";
 import { extractSourcePages, NotesWithoutHeadingsError } from "@/lib/source-extraction";
-import { SOURCE_FILE_ACCEPT, isNotesFile, sourceNoun } from "@/domain/materials";
+import { SOURCE_FILE_ACCEPT, isNotesFile, isZipFile, sourceNoun } from "@/domain/materials";
+import { zipToNotesFile } from "@/lib/zip-notes";
 
 function formatBytes(bytes: number | null) {
   if (bytes === null) return null;
@@ -459,8 +460,18 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
     }
   }
 
-  async function savePdf(file: File | undefined) {
-    if (!file || !course) return;
+  async function savePdf(picked: File | undefined) {
+    if (!picked || !course) return;
+    let file = picked;
+    if (isZipFile(picked)) {
+      dispatch({ type: "WORK_STARTED", step: "saving", message: "Reading your export…" });
+      try {
+        file = await zipToNotesFile(picked);
+      } catch (caught) {
+        dispatch({ type: "FAIL", kind: "generic", message: caught instanceof Error && caught.message ? caught.message : "Kelus couldn’t read this zip. Export from Notion as Markdown & CSV and try again." });
+        return;
+      }
+    }
     trackEvent({ name: "material_upload_started", role });
     if (file.size > 20 * 1024 * 1024) {
       dispatch({

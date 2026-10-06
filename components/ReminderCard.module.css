@@ -1,0 +1,66 @@
+.card {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--color-frost);
+  border-radius: 10px;
+  background: var(--color-mist);
+}
+
+.card h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.card p {
+  margin: 0;
+  max-width: 38rem;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-slate);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 12px 16px;
+}
+
+.controls label {
+  display: grid;
+  gap: 4px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--color-slate);
+}
+
+.controls select {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--color-frost);
+  border-radius: 6px;
+  background: var(--color-pure-white);
+  font: inherit;
+  color: var(--color-midnight-ink);
+}
+
+.controls button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-kelus);
+  color: var(--color-pure-white);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.controls button:hover { background: var(--color-kelus-hover); }
+.controls select:focus-visible, .controls button:focus-visible { outline: 2px solid var(--color-midnight-ink); outline-offset: 2px; }
+
+.card .done { color: var(--color-kelus); font-weight: 500; }

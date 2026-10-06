@@ -50,11 +50,16 @@ export function isNotesFile(file: Pick<File, "name" | "type">) {
   return /\.(md|markdown|txt)$/i.test(file.name) || file.type === "text/markdown" || file.type === "text/plain";
 }
 
-export function isSourceFile(file: Pick<File, "name" | "type">) {
-  return isPdfFile(file) || isNotesFile(file);
+/** A workspace export (for example Notion's Markdown & CSV). It is opened and turned into notes on the way in. */
+export function isZipFile(file: Pick<File, "name" | "type">) {
+  return /\.zip$/i.test(file.name) || file.type === "application/zip" || file.type === "application/x-zip-compressed";
 }
 
-export const SOURCE_FILE_ACCEPT = "application/pdf,.pdf,text/markdown,text/plain,.md,.markdown,.txt";
+export function isSourceFile(file: Pick<File, "name" | "type">) {
+  return isPdfFile(file) || isNotesFile(file) || isZipFile(file);
+}
+
+export const SOURCE_FILE_ACCEPT = "application/pdf,.pdf,text/markdown,text/plain,.md,.markdown,.txt,.zip,application/zip";
 
 /** What a saved source is called in a sentence: "PDF" or "notes". */
 export function sourceNoun(kind: MaterialKind | undefined) {
