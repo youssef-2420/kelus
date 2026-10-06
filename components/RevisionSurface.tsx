@@ -9,6 +9,7 @@ import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { TodayRoute } from "@/components/TodayRoute";
 import { InkArt } from "@/components/InkArt";
 import { AiConsent } from "@/components/AiConsent";
+import { SOURCE_FILE_ACCEPT } from "@/domain/materials";
 import { ExamPulse } from "@/components/ExamPulse";
 import { estimatedReadiness } from "@/domain/readiness";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
@@ -230,7 +231,7 @@ export function RevisionSurface() {
             ref={sourcePickerRef}
             className="sr-only"
             type="file"
-            accept="application/pdf,.pdf"
+            accept={SOURCE_FILE_ACCEPT}
             aria-label="Choose a course PDF"
             onChange={(event) => {
               const file = event.target.files?.[0];

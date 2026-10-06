@@ -5,6 +5,9 @@ import { useEffect, useRef, useState } from "react";
 import type { CourseMaterial } from "@/domain/types";
 import { useAuth } from "@/components/AuthProvider";
 import { readMaterialPdf } from "@/lib/material-sync";
+import { markdownToPages } from "@/domain/markdown-pages";
+import { NotesSection } from "@/components/NotesSection";
+import type { ExtractedMaterialPage } from "@/domain/types";
 
 type Props = {
   material: CourseMaterial | null;
@@ -22,6 +25,8 @@ export function CourseSourceReader({ material, initialPage = 1, concealed = fals
   const [pages, setPages] = useState(0);
   const [status, setStatus] = useState<"loading" | "ready" | "missing" | "error">("loading");
   const [accessibleText, setAccessibleText] = useState("");
+  const [sections, setSections] = useState<ExtractedMaterialPage[]>([]);
+  const isNotes = material?.kind === "text";
   const displayPage = Math.min(page, pages || page);
 
   useEffect(() => {
@@ -37,6 +42,14 @@ export function CourseSourceReader({ material, initialPage = 1, concealed = fals
         const blob = await readMaterialPdf(material!.id, auth.user?.id);
         if (cancelled) return;
         if (!blob) { setStatus("missing"); return; }
+        if (material!.kind === "text") {
+          const parsed = markdownToPages(await blob.text());
+          if (cancelled) return;
+          setSections(parsed);
+          setPages(parsed.length);
+          setStatus(parsed.length ? "ready" : "error");
+          return;
+        }
         const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
         pdfjs.GlobalWorkerOptions.workerSrc = new URL(
           "pdfjs-dist/legacy/build/pdf.worker.min.mjs", import.meta.url,
@@ -94,10 +107,10 @@ export function CourseSourceReader({ material, initialPage = 1, concealed = fals
       <header className="core-source-toolbar">
         <div className="core-source-title"><span>Course source</span><strong title={material?.title}>{material?.title ?? "Your material"}</strong></div>
         {material?.storage === "local" && pages > 0 && !concealed ? (
-          <div className="core-page-controls" aria-label="PDF pages">
-            <button type="button" onClick={() => setPage(Math.max(1, displayPage - 1))} disabled={displayPage <= 1} aria-label="Previous page">←</button>
+          <div className="core-page-controls" aria-label={isNotes ? "Note sections" : "PDF pages"}>
+            <button type="button" onClick={() => setPage(Math.max(1, displayPage - 1))} disabled={displayPage <= 1} aria-label={isNotes ? "Previous section" : "Previous page"}>←</button>
             <span>{displayPage} / {pages}</span>
-            <button type="button" onClick={() => setPage(Math.min(pages, displayPage + 1))} disabled={displayPage >= pages} aria-label="Next page">→</button>
+            <button type="button" onClick={() => setPage(Math.min(pages, displayPage + 1))} disabled={displayPage >= pages} aria-label={isNotes ? "Next section" : "Next page"}>→</button>
           </div>
         ) : null}
       </header>
@@ -113,10 +126,16 @@ export function CourseSourceReader({ material, initialPage = 1, concealed = fals
         ) : (
           <>
             {status === "loading" ? <p className="core-source-loading" role="status">Opening original page…</p> : null}
-            {status === "missing" ? <div className="core-source-state"><strong>PDF not available here</strong><p>The source is saved, but its file could not be opened on this device.</p><Link href="/today?section=materials">Add the PDF again →</Link></div> : null}
+            {status === "missing" ? <div className="core-source-state"><strong>{isNotes ? "Notes not available here" : "PDF not available here"}</strong><p>The source is saved, but its file could not be opened on this device.</p><Link href="/today?section=materials">Add the PDF again →</Link></div> : null}
             {status === "error" ? <div className="core-source-state"><strong>Couldn’t show this page</strong><p>Your source and study route are still saved. Try the PDF from Materials.</p><Link href="/today?section=materials">Open Materials →</Link></div> : null}
-            <canvas ref={canvas} role="img" aria-label={`Page ${displayPage} of ${material.title}`} hidden={status !== "ready"} />
-            {status === "ready" && accessibleText ? <p className="sr-only">Page {displayPage} text: {accessibleText}</p> : null}
+            {isNotes ? (
+              status === "ready" && sections[displayPage - 1] ? <NotesSection page={sections[displayPage - 1]} title={material.title} /> : null
+            ) : (
+              <>
+                <canvas ref={canvas} role="img" aria-label={`Page ${displayPage} of ${material.title}`} hidden={status !== "ready"} />
+                {status === "ready" && accessibleText ? <p className="sr-only">Page {displayPage} text: {accessibleText}</p> : null}
+              </>
+            )}
           </>
         )}
       </div>

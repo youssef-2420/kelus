@@ -1,0 +1,69 @@
+.paste {
+  margin-top: 16px;
+  border-top: 1px solid var(--color-frost);
+  padding-top: 12px;
+}
+
+.paste summary {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--color-kelus);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.help {
+  margin: 4px 0 10px;
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+}
+
+.paste textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-pure-white);
+  font: inherit;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.paste textarea:focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 2px;
+}
+
+.error {
+  margin: 8px 0 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-midnight-ink);
+  border-left: 3px solid var(--color-midnight-ink);
+  padding-left: 10px;
+}
+
+.use {
+  margin-top: 10px;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid var(--color-kelus);
+  border-radius: 4px;
+  background: var(--color-pure-white);
+  color: var(--color-kelus);
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.use:disabled {
+  border-color: var(--color-frost);
+  color: var(--color-smoke);
+  cursor: not-allowed;
+}
+
+.use:hover:not(:disabled) {
+  background: var(--color-periwinkle-wash);
+}

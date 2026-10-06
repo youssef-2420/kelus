@@ -17,6 +17,9 @@ import { LoopSteps } from "@/components/LoopSteps";
 import { MarkStamp } from "@/components/MarkStamp";
 import { MinuteShift, RouteShift } from "@/components/RouteShift";
 import { PracticeDrill } from "@/components/PracticeDrill";
+import { NotesSection } from "@/components/NotesSection";
+import { markdownToPages } from "@/domain/markdown-pages";
+import type { ExtractedMaterialPage } from "@/domain/types";
 import { QuickRun, type QuickRunResult } from "@/components/QuickRun";
 import { buildQuickRun, quickOutcome, quickSummary } from "@/domain/quick-run";
 import { aiActive, fetchAiTopicContent } from "@/lib/ai-client";
@@ -30,8 +33,9 @@ type HelpMode = "hint" | "explain" | null;
 type SourcePanelState = {
   title: string;
   locator: string | null;
-  kind: "pdf" | "link" | "unavailable";
+  kind: "pdf" | "notes" | "link" | "unavailable";
   href: string | null;
+  section?: ExtractedMaterialPage | null;
   reason?: "missing" | "read_failed" | "built_in";
 };
 
@@ -380,6 +384,11 @@ function SessionBody() {
       return;
     }
     const page = Number(locator?.match(/\d+/)?.[0] ?? 1);
+    if (material.kind === "text") {
+      const sections = markdownToPages(await blob.text());
+      setSourcePanel({ title: material.title, locator, kind: "notes", href: null, section: sections[Math.min(Math.max(page, 1), sections.length) - 1] ?? null });
+      return;
+    }
     const objectUrl = URL.createObjectURL(blob);
     sourceObjectUrl.current = objectUrl;
     setSourcePanel({ title: material.title, locator, kind: "pdf", href: `${objectUrl}#page=${page}` });
@@ -844,6 +853,7 @@ function SessionBody() {
               <div><span>{sourcePanel.reason === "built_in" ? "Built-in example" : "From your course"}</span><strong>{sourcePanel.title}</strong>{sourcePanel.locator && sourcePanel.reason !== "built_in" ? <small>{sourcePanel.locator}</small> : null}</div>
               <button ref={sourceCloseRef} type="button" onClick={closeSource} aria-label="Close course source">Close</button>
             </header>
+            {sourcePanel.kind === "notes" && sourcePanel.section ? <div className="session-source-notes"><NotesSection page={sourcePanel.section} title={sourcePanel.title} /></div> : null}
             {sourcePanel.kind === "pdf" && sourcePanel.href ? <iframe title={`${sourcePanel.title} ${sourcePanel.locator ?? ""}`} src={sourcePanel.href} /> : null}
             {sourcePanel.kind === "link" && sourcePanel.href ? (
               <div className="session-source-link">

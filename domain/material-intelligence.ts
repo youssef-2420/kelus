@@ -12,6 +12,9 @@ const ADMINISTRATIVE =
   /\b(?:assessment|attendance|calendar|contact|course syllabus|email|grading|instructor|office hours|policy|reading list|schedule|syllabus|textbook)\b/i;
 /** Course-logistics text near a heading means the "topic" is a title page, not something to study. */
 const ADMINISTRATIVE_EXCERPT = /\b(?:office hours?|instructor\s*:|attendance|grading\s*:)|e-?mail\s*:|\S+@\S+\.\S+/i;
+/** Headings that structure a document but are not something to study on their own. */
+const GENERIC_HEADING =
+  /^(?:examples?|summary|overview|introduction|intro|conclusions?|notes?|references?|resources?|further reading|homework|exercises?|practice|questions?|review|recap|key points|takeaways|table of contents|contents|agenda|to-?do|links?|bibliography|appendix|glossary|extra|misc(?:ellaneous)?)$/i;
 const HEADING_PREFIX = /^(?:week|module|topic|chapter|unit|lecture|section)\s*\d*[.:\-–—]?\s*/i;
 const NUMBER_PREFIX = /^\s*(?:\d+(?:\.\d+)*|[ivx]+)[.)\-:]\s*/i;
 const EXAM_SIGNAL =
@@ -40,7 +43,7 @@ function cleanCandidate(value: string) {
 }
 
 function looksLikeConcept(value: string) {
-  if (value.length < 3 || value.length > 72 || ADMINISTRATIVE.test(value)) return false;
+  if (value.length < 3 || value.length > 72 || ADMINISTRATIVE.test(value) || GENERIC_HEADING.test(value.trim())) return false;
   if (/https?:|@|\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(value)) return false;
   if (/\b(?:due|points?|percent|room|pm|am)\b/i.test(value)) return false;
   const words = value.split(/\s+/);
@@ -358,7 +361,7 @@ function inferRelationships(concepts: Concept[], corpus: string): ConceptRelatio
 }
 
 function looksLikeConceptRelaxed(value: string) {
-  if (value.length < 3 || value.length > 80 || ADMINISTRATIVE.test(value)) return false;
+  if (value.length < 3 || value.length > 80 || ADMINISTRATIVE.test(value) || GENERIC_HEADING.test(value.trim())) return false;
   if (/https?:|@|\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i.test(value)) return false;
   if (/\b(?:due|points?|percent|room)\b/i.test(value)) return false;
   const words = value.split(/\s+/);
@@ -386,6 +389,8 @@ export function proposeConceptsFromPages(input: {
   pages: ExtractedMaterialPage[];
   limit?: number;
   mode?: "strict" | "relaxed";
+  /** Notes are divided into sections, not pages. */
+  locatorLabel?: "Page" | "Section";
 }): ProposedConcept[] {
   const proposals: ProposedConcept[] = [];
   const seen = new Set<string>();
@@ -402,14 +407,14 @@ export function proposeConceptsFromPages(input: {
       if (proposals.length >= limit || (!matcher(line) && !layoutHeading)) return;
       const name = cleanCandidate(line);
       const key = name.toLocaleLowerCase();
-      if ((!matcher(name) && !layoutHeading) || seen.has(key) || ADMINISTRATIVE.test(name)) return;
+      if ((!matcher(name) && !layoutHeading) || seen.has(key) || ADMINISTRATIVE.test(name) || GENERIC_HEADING.test(name.trim())) return;
       seen.add(key);
       proposals.push({
         id: `proposal-${stablePart(`${input.materialId}:${key}`)}`,
         materialId: input.materialId,
         name,
         sourceLabel: input.sourceLabel,
-        locator: page.pageNumber === 0 ? "Document outline" : `Page ${page.pageNumber}`,
+        locator: page.pageNumber === 0 ? "Document outline" : `${input.locatorLabel ?? "Page"} ${page.pageNumber}`,
         sourceExcerpt: excerptFor(lines, index, line),
       });
     });
@@ -473,7 +478,7 @@ export function proposeConceptsFromMetadata(input: {
 /** A filename or outline can suggest a topic, but cannot support a lesson or answer key. */
 export function isSourceBackedProposal(proposal: ProposedConcept) {
   const excerpt = proposal.sourceExcerpt.trim();
-  return /^Page [1-9]\d*$/i.test(proposal.locator)
+  return /^(?:Page|Section) [1-9]\d*$/i.test(proposal.locator)
     && excerpt.length >= 30
     && excerpt.split(/\s+/).length >= 5
     && excerpt.toLocaleLowerCase() !== proposal.name.trim().toLocaleLowerCase()

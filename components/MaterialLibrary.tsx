@@ -23,7 +23,7 @@ function focusPhaseHeading(node: HTMLHeadingElement | null) {
 import { buildConfirmedMaterialModel, isSourceBackedProposal, proposalConfidence, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
-  addPdfMaterial,
+  addSourceMaterial,
   getMaterialsSnapshot,
   getServerMaterialsSnapshot,
   removeMaterial,
@@ -48,7 +48,9 @@ import {
   type IngestState,
   type WorkingStep,
 } from "@/lib/material-ingest-machine";
-import { assessPdfTextQuality, extractPdfPages, ocrPdfPages, pageNeedsOcr } from "@/lib/pdf-extraction";
+import { assessPdfTextQuality, ocrPdfPages, pageNeedsOcr } from "@/lib/pdf-extraction";
+import { extractSourcePages, NotesWithoutHeadingsError } from "@/lib/source-extraction";
+import { SOURCE_FILE_ACCEPT, isNotesFile, sourceNoun } from "@/domain/materials";
 
 function formatBytes(bytes: number | null) {
   if (bytes === null) return null;
@@ -201,7 +203,7 @@ function MaterialRow({
           ) : null
         ) : (
           <button type="button" onClick={() => void downloadPdf()} disabled={busy}>
-            {busy ? "Preparing…" : quiet ? "PDF" : "Download"}
+            {busy ? "Preparing…" : quiet ? (item.kind === "text" ? "File" : "PDF") : "Download"}
           </button>
         )}
         {confirmRemove ? (
@@ -300,15 +302,21 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
     let attemptedOcr = false;
     try {
       const stored = file ?? await readMaterialPdf(material.id, auth.user?.id);
-      if (!stored) throw new Error("This PDF is no longer available on this device. Add it again to continue.");
-      const pdfFile = stored instanceof File ? stored : new File([stored], material.fileName ?? `${material.title}.pdf`, { type: material.mimeType ?? "application/pdf" });
+      if (!stored) throw new Error(material.kind === "text" ? "These notes are no longer available on this device. Add them again to continue." : "This PDF is no longer available on this device. Add it again to continue.");
+      const isNotesSource = material.kind === "text";
+      const pdfFile = stored instanceof File
+        ? stored
+        : new File([stored], material.fileName ?? `${material.title}.${isNotesSource ? "md" : "pdf"}`, { type: material.mimeType ?? (isNotesSource ? "text/markdown" : "application/pdf") });
       if (previewObjectUrl.current) URL.revokeObjectURL(previewObjectUrl.current);
-      const nextPreviewUrl = URL.createObjectURL(pdfFile);
+      // A PDF can be opened in its own layout; notes have no separate layout, the text Kelus read is the source.
+      const nextPreviewUrl = isNotesSource ? null : URL.createObjectURL(pdfFile);
       previewObjectUrl.current = nextPreviewUrl;
       setPreviewUrl(nextPreviewUrl);
       setPreviewPage(1);
       dispatch({ type: "WORK_STEP", step: "extracting", message: defaultStepMessage("extracting") });
-      let pages = await extractPdfPages(pdfFile, { maxContentPages: 16 });
+      const extraction = await extractSourcePages(pdfFile, { maxContentPages: 16 });
+      const { isNotes, locatorLabel } = extraction;
+      let pages = extraction.pages;
       let quality = assessPdfTextQuality(pages);
       let usedOcr = false;
       let proposals: ProposedConcept[] = [];
@@ -323,13 +331,14 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         }
       }
 
-      proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages }).filter(isSourceBackedProposal);
+      proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages, locatorLabel }).filter(isSourceBackedProposal);
       if (proposals.length < 3) {
         mergeProposals(proposeConceptsFromPages({
           materialId: material.id,
           sourceLabel: material.title,
           pages,
           mode: "relaxed",
+          locatorLabel,
         }).filter(isSourceBackedProposal));
       }
 
@@ -352,7 +361,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         return ocr;
       }
 
-      const needsScanHelp = quality.density === "sparse" || quality.density === "empty" || pages.some(pageNeedsOcr);
+      const needsScanHelp = !isNotes && (quality.density === "sparse" || quality.density === "empty" || pages.some(pageNeedsOcr));
       if (proposals.length < 3 && needsScanHelp) {
         const ocrResult = await runOcr("Scanned or weak PDF text — reading pages with on-device OCR…");
         if (ocrResult.ocrPages === 0 && quality.density === "empty") {
@@ -369,13 +378,14 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           step: "building",
           message: usedOcr ? "Building concepts from scanned text…" : defaultStepMessage("building"),
         });
-        proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages }).filter(isSourceBackedProposal);
+        proposals = proposeConceptsFromPages({ materialId: material.id, sourceLabel: material.title, pages, locatorLabel }).filter(isSourceBackedProposal);
         if (proposals.length < 3) {
           mergeProposals(proposeConceptsFromPages({
             materialId: material.id,
             sourceLabel: material.title,
             pages,
             mode: "relaxed",
+            locatorLabel,
           }).filter(isSourceBackedProposal));
         }
       } else {
@@ -387,7 +397,9 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         const fail = new Error(
           emptyScan
             ? "Kelus still could not recover usable English text from this scan. Try a clearer export or another course PDF."
-            : "Kelus found no topics with a readable supporting passage. Try lecture notes with selectable text or a clearer scan; it will not invent a lesson from the filename.",
+            : isNotes
+              ? "Kelus found no topics with a supporting passage under a heading. Put each topic under its own heading (for example “## Osmosis”) with a few sentences beneath it; it will not invent a lesson from the filename."
+              : "Kelus found no topics with a readable supporting passage. Try lecture notes with selectable text or a clearer scan; it will not invent a lesson from the filename.",
         );
         if (emptyScan) (fail as Error & { kind?: string }).kind = "ocr";
         throw fail;
@@ -416,11 +428,11 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           message: "OCR cancelled. You can retry this file or export a text PDF.",
         });
       } else {
-        const kind = caught instanceof Error && (caught as Error & { kind?: string }).kind === "ocr" ? "ocr" : "generic";
+        const kind = caught instanceof Error && (caught as Error & { kind?: string }).kind === "ocr" && !(caught instanceof NotesWithoutHeadingsError) ? "ocr" : "generic";
         dispatch({
           type: "FAIL",
           kind,
-          message: caught instanceof Error ? caught.message : "Kelus could not read this PDF.",
+          message: caught instanceof Error ? caught.message : "Kelus could not read this file.",
         });
       }
     } finally {
@@ -434,13 +446,13 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
     if (file.size > 20 * 1024 * 1024) {
       dispatch({
         type: "SIZE_REJECTED",
-        message: "This PDF is larger than 20 MB. Export a smaller file, or split it, then try again.",
+        message: isNotesFile(file) ? "These notes are larger than 2 MB. Split them into smaller files, then try again." : "This PDF is larger than 20 MB. Export a smaller file, or split it, then try again.",
       });
       return;
     }
     dispatch({ type: "WORK_STARTED", step: "saving", message: defaultStepMessage("saving") });
     try {
-      const material = await addPdfMaterial({ courseId: course.id, file, role });
+      const material = await addSourceMaterial({ courseId: course.id, file, role });
       trackEvent({ name: "material_upload_completed", role });
       if (auth.user?.id) {
         setSyncStates((current) => ({ ...current, [material.id]: "syncing" }));
@@ -450,7 +462,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           setSyncStates((current) => ({ ...current, [material.id]: "retrying" }));
           dispatch({
             type: "SOFT_NOTICE",
-            message: "The PDF is ready here. Its encrypted account copy will retry when the connection returns.",
+            message: `The ${sourceNoun(material.kind)} ${material.kind === "text" ? "are" : "is"} ready here. The account copy will retry when the connection returns.`,
           });
         });
       }
@@ -460,7 +472,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       dispatch({
         type: "FAIL",
         kind: "generic",
-        message: caught instanceof Error ? caught.message : "The PDF could not be saved.",
+        message: caught instanceof Error ? caught.message : "This file could not be saved.",
       });
     } finally {
       if (fileRef.current) fileRef.current.value = "";
@@ -583,7 +595,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           className="material-add-page"
           open={busy || Boolean(hardError) || sourceFirst || undefined}
         >
-          <summary>Add a course PDF</summary>
+          <summary>Add a PDF or notes</summary>
           <section className="material-ingest is-embedded" aria-labelledby="add-material-title">
             <div className="material-ingest-title">
               <h2 id="add-material-title" className="sr-only">Add your course source</h2>
@@ -603,8 +615,8 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
               onDragOver={(event) => event.preventDefault()}
               onDrop={drop}
             >
-              <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
-              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a PDF"}</strong>
+              <input ref={fileRef} type="file" accept={SOURCE_FILE_ACCEPT} onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
+              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a PDF or notes"}</strong>
               <span>{busy && statusMessage ? statusMessage : "or drop one here · text-based PDFs work fastest"}</span>
             </label>
             <p className="material-ingest-hint">Digital PDFs with selectable text work best. Kelus reads the page text, and you review every proposed topic before it changes your route.</p>
@@ -676,7 +688,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           onDragOver={(event) => event.preventDefault()}
           onDrop={drop}
         >
-          <input ref={fileRef} type="file" accept="application/pdf,.pdf" onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
+          <input ref={fileRef} type="file" accept={SOURCE_FILE_ACCEPT} onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
           <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
           <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · clear text works fastest"}</span>
@@ -784,11 +796,11 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
                 <div><span>Your source</span><strong>{analysis.material.fileName ?? analysis.material.title}</strong></div>
                 {previewUrl ? <a href={`${previewUrl}#page=${previewPage}`} target="_blank" rel="noreferrer">Open PDF ↗</a> : null}
               </div>
-              <div className="material-source-page" aria-label={`Extracted text from page ${previewPage}`}>
-                <span>Page {previewPage} · text Kelus read</span>
-                <p>{analysis.pages.find((page) => page.pageNumber === previewPage)?.text.slice(0, 2200) || "No readable text on this page. Open the original PDF to inspect it."}</p>
+              <div className="material-source-page" aria-label={`Extracted text from ${analysis.material.kind === "text" ? "section" : "page"} ${previewPage}`}>
+                <span>{analysis.material.kind === "text" ? "Section" : "Page"} {previewPage} · text Kelus read</span>
+                <p>{analysis.pages.find((page) => page.pageNumber === previewPage)?.text.slice(0, 2200) || analysis.material.kind === "text" ? "This section is empty." : "No readable text on this page. Open the original PDF to inspect it."}</p>
               </div>
-              <p>Select a topic to check its source page. Open PDF shows the original layout.</p>
+              <p>{analysis.material.kind === "text" ? "Select a topic to check its source section." : "Select a topic to check its source page. Open PDF shows the original layout."}</p>
             </aside>
             <ol className="concept-proposal-list">
               {analysis.proposals.map((proposal, index) => (
