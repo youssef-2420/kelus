@@ -1,3 +1,4 @@
+import { generateLocally, getLocalAiState } from "@/lib/local-ai";
 import { buildPrompt, mergeAiContent, validateAiReply, type AiTopicContent, type AiTopicInput } from "@/domain/ai-content";
 
 /**
@@ -39,8 +40,9 @@ export function subscribeAiConsent(onChange: () => void) {
   };
 }
 
+/** Writing questions is possible: a configured service, or this browser's own on-device model, and the learner said yes. */
 export function aiActive() {
-  return aiConfigured() && getAiConsent();
+  return getAiConsent() && (aiConfigured() || getLocalAiState() === "available");
 }
 
 function cacheKey(input: AiTopicInput) {
@@ -65,9 +67,10 @@ export function forgetAiContent() {
 /** Asks the proxy to write questions for one topic. Returns checked content, or null on any problem. */
 export async function fetchAiTopicContent(input: AiTopicInput, options: { endpoint?: string; fetchImpl?: typeof fetch } = {}): Promise<AiTopicContent | null> {
   const endpoint = options.endpoint ?? aiEndpoint();
-  if (!endpoint || input.pageText.trim().length < 40) return null;
+  if (input.pageText.trim().length < 40) return null;
   const cached = typeof window !== "undefined" ? readCachedAi(input) : null;
   if (cached) return cached;
+  if (!endpoint) return fetchOnDevice(input);
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
@@ -90,6 +93,26 @@ export async function fetchAiTopicContent(input: AiTopicInput, options: { endpoi
     return null;
   } finally {
     clearTimeout(timer);
+  }
+}
+
+/** The same request, answered by the model in this browser. Slower, free, and private. */
+async function fetchOnDevice(input: AiTopicInput): Promise<AiTopicContent | null> {
+  const { system, user } = buildPrompt(input, { maxItems: 4 });
+  const raw = await generateLocally(system, user);
+  if (!raw) return null;
+  const content = validateAiReply(raw, input);
+  if (content && typeof window !== "undefined") {
+    try { window.localStorage.setItem(cacheKey(input), JSON.stringify(content)); } catch { /* Cache is optional. */ }
+  }
+  return content;
+}
+
+/** Writes questions for the next few topics in the background, so they are ready the moment a session opens. */
+export async function prefetchAiTopics(inputs: AiTopicInput[]) {
+  for (const input of inputs) {
+    if (!aiActive()) return;
+    await fetchAiTopicContent(input);
   }
 }
 

@@ -22,7 +22,7 @@ import { markdownToPages } from "@/domain/markdown-pages";
 import type { ExtractedMaterialPage } from "@/domain/types";
 import { QuickRun, type QuickRunResult } from "@/components/QuickRun";
 import { buildQuickRun, quickOutcome, quickSummary } from "@/domain/quick-run";
-import { aiActive, fetchAiTopicContent } from "@/lib/ai-client";
+import { aiActive, aiConfigured, fetchAiTopicContent, readCachedAi } from "@/lib/ai-client";
 import { mergeAiContent, type AiTopicContent } from "@/domain/ai-content";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { trackEvent } from "@/lib/analytics";
@@ -109,21 +109,27 @@ function SessionBody() {
     ?? (concept && prompt ? activityFallback(concept, prompt.promptText, prompt.modelAnswer) : null);
   // Optional, opt-in: questions written from this topic's page. Any failure leaves the offline questions in place.
   const [ai, setAi] = useState<{ id: string; content: AiTopicContent | null } | null>(null);
+  const pageText = baseActivity?.teach?.pageText;
+  const aiRequest = concept && pageText
+    ? {
+        name: concept.name,
+        locator: baseActivity?.sourceReferences[0]?.locator ?? "this page",
+        pageText,
+        otherTopics: state.snapshot.concepts.filter((item) => item.id !== concept.id).map((item) => item.name),
+      }
+    : null;
+  // On-device writing is slow and happens ahead of time from Today; here only finished questions are used,
+  // so a run never changes while someone is answering it.
+  const writtenAhead = aiRequest && !aiConfigured() && aiActive() ? readCachedAi(aiRequest) : null;
   useEffect(() => {
-    const pageText = baseActivity?.teach?.pageText;
-    if (!concept || !pageText || !aiActive()) return;
+    if (!aiRequest || !aiConfigured() || !aiActive()) return;
     let live = true;
-    void fetchAiTopicContent({
-      name: concept.name,
-      locator: baseActivity?.sourceReferences[0]?.locator ?? "this page",
-      pageText,
-      otherTopics: state.snapshot.concepts.filter((item) => item.id !== concept.id).map((item) => item.name),
-    }).then((content) => { if (live) setAi({ id: concept.id, content }); });
+    void fetchAiTopicContent(aiRequest).then((content) => { if (live) setAi({ id: aiRequest.name === concept?.name ? concept.id : "", content }); });
     return () => { live = false; };
     // Re-run only when the topic changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conceptId]);
-  const activity = baseActivity && ai && ai.id === conceptId ? mergeAiContent(baseActivity, ai.content) : baseActivity;
+  const activity = baseActivity && writtenAhead ? mergeAiContent(baseActivity, writtenAhead) : baseActivity && ai && ai.id === conceptId ? mergeAiContent(baseActivity, ai.content) : baseActivity;
   const siblingNames = state.snapshot.concepts.filter((item) => item.courseId === concept?.courseId).map((item) => item.name);
   // Fixed when the topic opens, so finishing a run does not reshuffle it under the learner.
   // eslint-disable-next-line react-hooks/exhaustive-deps
