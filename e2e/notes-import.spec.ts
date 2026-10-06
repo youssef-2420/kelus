@@ -145,3 +145,21 @@ test("a scanned, image-only PDF is read with on-device OCR and becomes topics", 
   expect(names).toEqual(expect.arrayContaining(["Osmosis", "Enzymes"]));
   await expect(page.getByText(/Page 1 · text Kelus read/)).toBeVisible();
 });
+
+test("a course with no topics is one screen with one job, and adding notes there continues the normal flow", async ({ page }) => {
+  await page.goto("/today?sample=1");
+  await page.getByRole("button", { name: "Remove Built-in Microeconomics example" }).click();
+  await page.getByRole("group", { name: /Confirm remove/ }).getByRole("button", { name: "Remove" }).click();
+
+  await expect(page.getByRole("heading", { name: "Add your notes." })).toBeVisible();
+  // Not a second form: no source-role dropdown, no bookmark box, no empty-binder panel, a single file picker.
+  await expect(page.getByLabel("This source is")).toHaveCount(0);
+  await expect(page.getByText("Save a video or web link instead")).toHaveCount(0);
+  await expect(page.getByText("Empty binder")).toHaveCount(0);
+  await expect(page.locator('input[type="file"]')).toHaveCount(1);
+
+  await page.locator('input[type="file"]').setInputFiles({ name: "cell-biology.md", mimeType: "text/markdown", buffer: Buffer.from(notion) });
+  await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
+  await page.getByRole("button", { name: /Confirm topics/ }).click();
+  await expect(page.locator("#today-title")).toBeVisible();
+});
