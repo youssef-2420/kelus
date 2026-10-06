@@ -159,7 +159,14 @@ test("Add source opens the file picker and reads the chosen PDF", async ({ page 
     mimeType: "application/pdf",
     buffer: biologyPdf(),
   });
-  await expect(page).toHaveURL(/section=materials/);
+  // The sample is never mixed with your own file: it offers to start your own course with it.
+  await page.getByRole("dialog", { name: "Start your own course?" }).getByRole("button", { name: "Start my own course" }).click();
+  await expect(page.getByText(/Ready to read/)).toBeVisible();
+  await page.getByRole("button", { name: /Continue to exam details/ }).click();
+  await page.getByRole("textbox", { name: "Course", exact: true }).fill("Cell Biology");
+  await page.getByLabel("Exam").fill("Midterm");
+  await page.getByLabel("When is it?").fill(new Date(Date.now() + 9 * 86_400_000).toISOString().slice(0, 10));
+  await page.getByRole("button", { name: /Read my PDF/ }).click();
   await expect(page.getByRole("heading", { name: /Kelus found/ })).toBeVisible();
   await expect(page.getByText("Cell Membranes").first()).toBeVisible();
 });

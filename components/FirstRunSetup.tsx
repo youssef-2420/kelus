@@ -8,6 +8,7 @@ import type { SetupInput } from "@/lib/setup";
 import { trackEvent } from "@/lib/analytics";
 import { SOURCE_FILE_ACCEPT, isNotesFile, isSourceFile, isZipFile } from "@/domain/materials";
 import { zipToNotesFile } from "@/lib/zip-notes";
+import { takePendingSetupFile } from "@/lib/pending-setup-file";
 import { MAX_NOTES_BYTES } from "@/domain/markdown-pages";
 import { PasteNotes } from "@/components/PasteNotes";
 
@@ -29,6 +30,14 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
   const [minimumDate] = useState(() => new Date(Date.now() + 86_400_000).toISOString().slice(0, 10));
   const setupTracked = useRef(false);
   const reduceMotion = useReducedMotion();
+
+  // A file chosen while the sample was open: start from it instead of asking again.
+  useEffect(() => {
+    const waiting = takePendingSetupFile();
+    if (waiting) void chooseFile(waiting);
+    // Once, when the setup screen opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (setupTracked.current) return;

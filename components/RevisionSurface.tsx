@@ -9,6 +9,8 @@ import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { TodayRoute } from "@/components/TodayRoute";
 import { InkArt } from "@/components/InkArt";
 import { AiConsent } from "@/components/AiConsent";
+import { SampleReplaceConfirm } from "@/components/SampleReplaceConfirm";
+import { setPendingSetupFile } from "@/lib/pending-setup-file";
 import { SOURCE_FILE_ACCEPT } from "@/domain/materials";
 import { ExamPulse } from "@/components/ExamPulse";
 import { estimatedReadiness } from "@/domain/readiness";
@@ -57,6 +59,7 @@ export function RevisionSurface() {
   const [confirmReset, setConfirmReset] = useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
   const [incomingSource, setIncomingSource] = useState<File | null>(null);
+  const [sampleFile, setSampleFile] = useState<File | null>(null);
   const [railHidden, setRailHidden] = useState(false);
   const [confirmSourceId, setConfirmSourceId] = useState<string | null>(null);
   const [removingSourceId, setRemovingSourceId] = useState<string | null>(null);
@@ -338,12 +341,19 @@ export function RevisionSurface() {
                 </div>
               </div>
             ) : null}
-            {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} /><AiConsent /></div></div> : null}
+            {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} interceptFile={isSampleCourse ? (file) => { setSampleFile(file); return true; } : undefined} /><AiConsent /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
           </motion.div>
         </AnimatePresence>
         </main>
       </div>
+      {sampleFile ? (
+        <SampleReplaceConfirm
+          fileName={sampleFile.name}
+          onCancel={() => setSampleFile(null)}
+          onConfirm={() => { setPendingSetupFile(sampleFile); setSampleFile(null); reset(); router.push("/today"); }}
+        />
+      ) : null}
     </section>
   );
 }

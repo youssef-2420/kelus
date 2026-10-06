@@ -108,3 +108,28 @@ test("a real course offers a daily calendar reminder that repeats until the exam
   expect(text).toContain("BEGIN:VALARM");
   await expect(card.getByRole("status")).toContainText("Downloaded");
 });
+
+test("your own file never mixes into the sample: it starts your own course, and the sample is replaced", async ({ page }) => {
+  await page.goto("/today?sample=1");
+  await expect(page.getByText("Sample course")).toBeVisible();
+  await page.locator('input[aria-label="Choose a course PDF"]').setInputFiles({ name: "my-notes.md", mimeType: "text/markdown", buffer: Buffer.from(notion) });
+  const dialog = page.getByRole("dialog", { name: "Start your own course?" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("my-notes.md");
+
+  // Keeping the sample changes nothing.
+  await dialog.getByRole("button", { name: "Keep the sample" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByText("Sample course")).toBeVisible();
+
+  await page.locator('input[aria-label="Choose a course PDF"]').setInputFiles({ name: "my-notes.md", mimeType: "text/markdown", buffer: Buffer.from(notion) });
+  await page.getByRole("dialog", { name: "Start your own course?" }).getByRole("button", { name: "Start my own course" }).click();
+
+  // Setup opens with the file already chosen, and none of the sample is left.
+  await expect(page.getByText(/Ready to read/)).toBeVisible();
+  await expect(page.getByText("Microeconomics")).toHaveCount(0);
+  await toTopicReview(page);
+  await page.getByRole("button", { name: /Confirm topics/ }).click();
+  await expect(page.getByText("Sample course")).toHaveCount(0);
+  await expect(page.locator("#today-title")).not.toHaveText(/Elasticity|Supply|Monetary/);
+});
