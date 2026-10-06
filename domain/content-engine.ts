@@ -9,6 +9,34 @@ const STOP = new Set([
   "about", "above", "after", "again", "also", "among", "because", "before", "being", "between", "both", "could", "does", "each", "from", "have", "into", "more", "most", "much", "only", "other", "over", "same", "should", "some", "such", "than", "that", "their", "them", "then", "there", "these", "they", "this", "those", "through", "under", "until", "very", "when", "where", "which", "while", "with", "within", "would", "will", "than", "unit",
 ]);
 
+/**
+ * Words that have a clear opposite. A true/false statement is made by swapping exactly one of them in a
+ * sentence from the page: the result is plausible, false, and the page itself shows the right version.
+ */
+const OPPOSITES: Array<[string, string]> = [
+  ["increases", "decreases"], ["increase", "decrease"], ["increased", "decreased"], ["increasing", "decreasing"],
+  ["rises", "falls"], ["rise", "fall"], ["rising", "falling"], ["higher", "lower"], ["highest", "lowest"],
+  ["more", "less"], ["gains", "loses"], ["gain", "lose"], ["inside", "outside"], ["elastic", "inelastic"],
+  ["hypotonic", "hypertonic"], ["faster", "slower"], ["larger", "smaller"], ["greater", "smaller"],
+  ["before", "after"], ["positive", "negative"], ["absorbs", "releases"], ["expands", "contracts"],
+  ["shifts left", "shifts right"], ["stronger", "weaker"], ["maximum", "minimum"], ["above", "below"],
+  ["internal", "external"], ["active", "passive"], ["first", "last"], ["early", "late"],
+];
+const SWAP = new Map<string, string>(OPPOSITES.flatMap(([a, b]) => [[a, b], [b, a]] as Array<[string, string]>));
+const NEGATION = /\b(?:not|no|never|neither|nor|without|unless|cannot|can't|isn't|aren't|doesn't|don't|n't)\b/i;
+
+/** The sentence with one word swapped for its opposite, or null when that cannot be done safely. */
+export function flipOneWord(sentence: string): string | null {
+  if (NEGATION.test(sentence)) return null;
+  const matches = [...sentence.matchAll(/[A-Za-z]+(?: (?:left|right))?/g)].filter((match) => SWAP.has(match[0].toLocaleLowerCase()));
+  // Exactly one swappable word: with two ("from low to high") a swap could read as true.
+  if (matches.length !== 1) return null;
+  const [match] = matches;
+  const swapped = SWAP.get(match[0].toLocaleLowerCase())!;
+  const word = /^[A-Z]/.test(match[0]) ? swapped[0].toLocaleUpperCase() + swapped.slice(1) : swapped;
+  return sentence.slice(0, match.index) + word + sentence.slice((match.index ?? 0) + match[0].length);
+}
+
 const CONNECTOR = /\b(because|therefore|so that|which means|this means|leads to|results in|causes|as a result)\b/i;
 const CONDITIONAL = /^(when|if|whenever|as|once|unless)\b/i;
 const EXAMPLE = /\b(for example|for instance|such as|e\.g\.)\b/i;
@@ -321,6 +349,30 @@ export function buildPractice(input: {
       });
     }
   }
+
+  // 4e. True or false: a real sentence from the notes, or the same sentence with one word flipped. One tap, and
+  // it tests whether you can tell the right claim from a plausible wrong one.
+  const flippable = sentences
+    .filter((sentence) => sentence.length >= 40 && sentence.length <= 200)
+    .map((sentence) => ({ sentence, flipped: flipOneWord(sentence) }))
+    .filter((entry) => entry.flipped !== null)
+    .sort((x, y) => hash(`${conceptId}f${x.sentence}`) - hash(`${conceptId}f${y.sentence}`))
+    .slice(0, 2);
+  flippable.forEach((entry, k) => {
+    // With two, show one false and one true, in an order that depends on the topic.
+    const showFalse = flippable.length > 1 ? (hash(conceptId) + k) % 2 === 0 : hash(conceptId) % 2 === 0;
+    add({
+      kind: "choice",
+      variant: "truefalse",
+      prompt: `True or false, according to your notes: “${showFalse ? entry.flipped : entry.sentence}”`,
+      modelAnswer: showFalse ? "False" : "True",
+      hint: `Look at the exact words ${locator} uses.`,
+      explanation: showFalse ? `False. ${locator} says: “${entry.sentence}”` : `True. ${locator} says: “${entry.sentence}”`,
+      sourceQuote: entry.sentence,
+      choices: ["True", "False"],
+      correctIndex: showFalse ? 1 : 0,
+    });
+  });
 
   // 5. Recall the definition in the learner's own words.
   if (definition) {

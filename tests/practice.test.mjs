@@ -48,7 +48,8 @@ test("a quote that is not on the page is rejected", () => {
 
 test("a topic with no other topics gets no multiple choice instead of a bad one", () => {
   const items = buildPractice({ conceptId: "c2", name: "Total Revenue Test", excerpt: page, locator: "Page 3", siblingNames: ["Total Revenue Test"] });
-  assert.ok(items.every((item) => item.kind !== "choice"));
+  // A true/false check needs no other topics, so it is allowed; a "which idea" choice is not.
+  assert.ok(items.every((item) => item.kind !== "choice" || item.variant === "truefalse"));
 });
 
 const bullets = "• Phospholipid bilayer: two layers of lipids with hydrophilic heads and hydrophobic tails\n• Selectively permeable: lets some molecules through, blocks others\n• Fluid mosaic model: proteins float in the lipid layer\n• Cholesterol keeps the membrane stable at different temperatures";
