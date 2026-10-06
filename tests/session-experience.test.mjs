@@ -88,8 +88,6 @@ test("today leads with one topic and shows evidence and next stops as secondary"
   const page = await source("app/today/page.tsx");
   const surface = await source("components/RevisionSurface.tsx");
   const store = await source("lib/demo-store.ts");
-  assert.match(today, /is-booklet-page/);
-  assert.match(today, /is-presence/);
   assert.match(today, /id="today-title"/);
   assert.match(today, /today-page-folio/);
   assert.match(today, /whileTap/);

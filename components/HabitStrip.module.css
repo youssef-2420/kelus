@@ -3,13 +3,8 @@
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px 28px;
   align-items: end;
-  box-sizing: border-box;
-  width: min(100% - 48px, 52.75rem);
-  margin: 16px auto 20px;
-  padding: 14px 16px;
-  border: 1px solid var(--color-frost);
-  border-radius: 4px;
-  background: var(--color-pure-white);
+  padding: 0 4px;
+  margin: 0;
 }
 
 .label {

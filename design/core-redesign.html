@@ -1,0 +1,126 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;color:#12160f;background:#fff}
+:root{--g:#1f6b45;--gh:#185536;--ink:#12160f;--sl:#4a5246;--sm:#5a6358;--mist:#f7f8f5;--frost:#d5d9d0;--wash:#e8f1eb}
+.serif{font-family:Georgia,'Times New Roman',serif}
+.frame{position:relative;background:#fff;overflow:hidden}
+.d{width:1440px;height:900px;display:flex}
+.rail{width:248px;background:var(--mist);border-right:1px solid var(--frost);padding:28px 20px;display:flex;flex-direction:column;gap:28px}
+.logo{font-family:Georgia,serif;font-size:22px;font-weight:600;color:var(--g)}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav div{padding:10px 12px;border-radius:6px;font-size:15px;color:var(--sl)}
+.nav .on{background:var(--wash);color:var(--ink);font-weight:600}
+.src{font-size:13px;color:var(--sm);line-height:1.5}
+.src b{display:block;color:var(--ink);font-size:12px;margin-bottom:6px;letter-spacing:.02em}
+.main{flex:1;padding:44px 0;display:flex;justify-content:center}
+.col{width:720px;display:flex;flex-direction:column;gap:28px}
+.top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;color:var(--sl)}
+.top b{color:var(--ink);font-weight:600}
+.ready{display:flex;align-items:center;gap:10px}
+.bar{width:140px;height:6px;border-radius:3px;background:var(--frost);position:relative}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--g)}
+.card{border:1px solid var(--frost);border-radius:14px;padding:36px 40px;display:flex;flex-direction:column;gap:20px;box-shadow:0 1px 0 rgba(18,22,15,.03),0 12px 32px -18px rgba(18,22,15,.18)}
+.kick{font-size:13px;font-weight:600;color:var(--g)}
+.title{font-family:Georgia,serif;font-size:52px;line-height:1.05;font-weight:500;letter-spacing:-.015em}
+.why{font-size:17px;line-height:1.55;color:var(--sl);max-width:560px}
+.chips{display:flex;gap:8px}
+.chip{border:1px solid var(--frost);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--sl)}
+.cta{display:flex;align-items:center;gap:20px;margin-top:6px}
+.btn{background:var(--g);color:#fff;font-weight:600;font-size:17px;padding:0 28px;height:54px;border-radius:8px;display:flex;align-items:center;gap:10px}
+.link{font-size:15px;color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.goal{display:flex;justify-content:space-between;align-items:center;padding:0 4px}
+.goal .l{display:flex;align-items:center;gap:14px;font-size:15px;color:var(--sl)}
+.goal .l b{font-family:Georgia,serif;font-size:22px;color:var(--ink)}
+.dots{display:flex;gap:8px}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--frost)}
+.dot.f{background:var(--g);border-color:var(--g)}
+.week{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--sl)}
+.wd{width:26px;height:26px;border-radius:50%;border:1px solid var(--frost);display:grid;place-items:center;font-size:12px}
+.wd.f{background:var(--g);border-color:var(--g);color:#fff}
+.wd.t{outline:2px solid var(--ink);outline-offset:2px}
+.then h3{font-size:13px;font-weight:600;color:var(--sm);margin-bottom:10px}
+.row{display:flex;align-items:center;gap:16px;padding:16px 4px;border-top:1px solid var(--frost)}
+.row .n{flex:1;font-family:Georgia,serif;font-size:21px}
+.row .min{font-size:13px;color:var(--sm);width:70px;text-align:right}
+.row .bar{width:120px}
+.tag{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--mist);border:1px solid var(--frost);color:var(--sl);width:74px;text-align:center}
+.q{width:1440px;height:900px;background:#fff;display:flex;flex-direction:column;align-items:center}
+.qh{width:720px;padding-top:40px;display:flex;flex-direction:column;gap:14px}
+.steps{display:flex;gap:6px}.steps i{flex:1;height:6px;border-radius:3px;background:var(--frost)}.steps i.d{background:var(--g)}.steps i.n{background:var(--ink)}
+.meta{display:flex;justify-content:space-between;font-size:14px;color:var(--sl)}
+.pill{background:var(--wash);color:var(--g);padding:4px 10px;border-radius:999px;font-size:13px;font-weight:600}
+.qb{width:720px;margin-top:64px;display:flex;flex-direction:column;gap:28px}
+.prompt{font-family:Georgia,serif;font-size:36px;line-height:1.25;font-weight:500;letter-spacing:-.01em}
+.opts{display:flex;flex-direction:column;gap:12px}
+.opt{display:flex;align-items:center;gap:16px;border:1px solid var(--frost);border-radius:10px;padding:0 20px;min-height:62px;font-size:18px}
+.opt kbd{width:28px;height:28px;border:1px solid var(--frost);border-radius:5px;display:grid;place-items:center;font:inherit;font-size:13px;color:var(--sm)}
+.opt.ok{border-color:var(--g);background:var(--wash);box-shadow:inset 0 0 0 2px var(--g);color:var(--g);font-weight:600}
+.opt.ok kbd{border-color:var(--g);color:var(--g)}
+.fb{border-left:3px solid var(--g);background:var(--mist);border-radius:0 8px 8px 0;padding:18px 22px;display:flex;flex-direction:column;gap:8px}
+.fb b{font-family:Georgia,serif;font-size:22px;color:var(--g)}
+.fb em{font-size:15px;color:var(--sl);line-height:1.5}
+.ph{width:390px;height:844px;display:flex;flex-direction:column}
+.mh{padding:18px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--frost)}
+.mb{padding:20px 16px;display:flex;flex-direction:column;gap:20px;flex:1}
+.ph .card{padding:24px 20px;gap:14px}.ph .title{font-size:38px}.ph .why{font-size:16px}
+.ph .btn{width:100%;justify-content:center}
+.tab{display:flex;border-top:1px solid var(--frost);height:64px;background:#fff}
+.tab div{flex:1;display:grid;place-items:center;font-size:13px;color:var(--sm)}.tab .on{color:var(--g);font-weight:600}
+</style></head><body>
+
+<div class="frame d" id="today" data-name="Today · desktop">
+  <aside class="rail"><div class="logo">kelus</div>
+    <div class="nav"><div class="on">Today</div><div>Materials</div><div>Topics</div></div>
+    <div class="src"><b>SOURCES</b>Pasted notes · 4 topics<br>＋ Add source</div>
+    <div class="src" style="margin-top:auto">← Back to Kelus</div>
+  </aside>
+  <div class="main"><div class="col">
+    <div class="top"><span><b>Biology</b> · Midterm in 14 days</span><span class="ready">Ready 25% <span class="bar"><i style="width:25%"></i></span> aiming 85%</span></div>
+    <div class="card">
+      <div class="kick">Up next · about 5 minutes</div>
+      <div class="title">Enzymes</div>
+      <div class="why">You haven’t been checked on this one yet. A short recall now makes it stick, and shows what to revisit.</div>
+      <div class="chips"><span class="chip">3 quick checks</span><span class="chip">1 explanation, notes closed</span></div>
+      <div class="cta"><div class="btn">Start this topic →</div><span class="link">Peek at the notes</span></div>
+    </div>
+    <div class="goal">
+      <div class="l"><b>1 of 3</b> topics today <span class="dots"><i class="dot f"></i><i class="dot"></i><i class="dot"></i></span></div>
+      <div class="week">4-day streak&nbsp;&nbsp;<span class="wd">M</span><span class="wd f">T</span><span class="wd f">W</span><span class="wd f">T</span><span class="wd f t">F</span><span class="wd">S</span><span class="wd">S</span></div>
+    </div>
+    <div class="then"><h3>THEN</h3>
+      <div class="row"><span class="n">Cellular respiration</span><span class="tag">Weak</span><span class="bar"><i style="width:20%"></i></span><span class="min">8 min</span></div>
+      <div class="row"><span class="n">Active transport</span><span class="tag">Weak</span><span class="bar"><i style="width:15%"></i></span><span class="min">6 min</span></div>
+      <div class="row"><span class="n">Osmosis</span><span class="tag">Okay</span><span class="bar"><i style="width:45%"></i></span><span class="min">5 min</span></div>
+    </div>
+  </div></div>
+</div>
+
+<div class="frame q" id="question" data-name="Question · desktop">
+  <div class="qh"><div class="steps"><i class="d"></i><i class="n"></i><i></i><i></i></div>
+    <div class="meta"><span>Enzymes · Check 2 of 3</span><span class="pill">Notes closed for recall</span></div></div>
+  <div class="qb">
+    <div class="prompt">Above the optimum temperature, what happens to an enzyme?</div>
+    <div class="opts">
+      <div class="opt"><kbd>1</kbd>It binds a competitive inhibitor</div>
+      <div class="opt ok"><kbd>2</kbd>It denatures and stops working</div>
+      <div class="opt"><kbd>3</kbd>Its active site gets larger</div>
+      <div class="opt"><kbd>4</kbd>It speeds up without limit</div>
+    </div>
+    <div class="fb"><b>Right.</b><em>“Above the optimum temperature the enzyme denatures and stops working.” · Section 4</em><div class="btn" style="width:160px;height:48px;font-size:16px">Next →</div></div>
+  </div>
+</div>
+
+<div class="frame ph" id="mobile" data-name="Today · phone">
+  <div class="mh"><span class="logo">kelus</span><span style="font-size:13px;color:#4a5246">14 days to exam</span></div>
+  <div class="mb">
+    <div class="card"><div class="kick">Up next · about 5 min</div><div class="title">Enzymes</div>
+      <div class="why">Not checked yet. A short recall now makes it stick.</div>
+      <div class="chips"><span class="chip">3 checks</span><span class="chip">1 explanation</span></div>
+      <div class="btn">Start this topic →</div></div>
+    <div class="goal" style="flex-direction:column;align-items:flex-start;gap:12px"><div class="l"><b>1 of 3</b> topics today <span class="dots"><i class="dot f"></i><i class="dot"></i><i class="dot"></i></span></div>
+      <div class="week">4-day streak&nbsp;<span class="wd f">T</span><span class="wd f">W</span><span class="wd f">T</span><span class="wd f t">F</span></div></div>
+    <div class="then"><h3>THEN</h3><div class="row"><span class="n">Cellular respiration</span><span class="tag">Weak</span></div><div class="row"><span class="n">Active transport</span><span class="tag">Weak</span></div></div>
+  </div>
+  <div class="tab"><div class="on">Today</div><div>Materials</div><div>Topics</div></div>
+</div>
+</body></html>

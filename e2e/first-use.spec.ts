@@ -213,7 +213,7 @@ test("sample course without an original PDF gives the route room and makes uploa
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await expect(page.locator(".material-add-page[open] input[type='file']")).toBeVisible();
   await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan" }).click();
-  await page.locator("button.today-start").click();
+  await page.locator('button[data-action="start-topic"]').click();
   await expect(page.locator("main.study-shell.is-source-missing")).toBeVisible();
   await expect(page.locator(".session-workspace-source")).toHaveCount(0);
   await expect(page.locator(".study-question")).toBeVisible();
@@ -301,7 +301,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page.locator(".today-evidence-disclosure")).toHaveCount(0);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-today-mobile.png", fullPage: true });
-  const start = page.locator("button.today-start");
+  const start = page.locator('button[data-action="start-topic"]');
   await expect(start).toBeVisible();
   await start.click();
 
