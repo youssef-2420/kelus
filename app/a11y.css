@@ -245,3 +245,39 @@ body.is-session-booklet .study-run-label {
 
   body.is-course-studio .studio-onboarding .destination-actions .cta { flex: 1; justify-content: center; }
 }
+
+/* Quick run while the notes are closed: one centred column, nothing competing with the question.
+   The page opens beside it as soon as the learner compares or peeks. */
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus {
+  display: block;
+  min-height: 100dvh;
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus > .session-workspace-rail,
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus > .session-workspace-source {
+  display: none;
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus > .study-loop-track {
+  width: min(100% - 32px, 42rem);
+  margin: 28px auto 0;
+  padding: 0;
+  border: 0;
+}
+
+body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus > :is(.study-question.is-page, .reroute-view.is-page) {
+  width: min(100% - 32px, 42rem);
+  max-height: none;
+  margin: 0 auto;
+  padding: 20px 0 80px;
+  overflow: visible;
+  border: 0;
+}
+
+.study-run-label .study-peek {
+  min-height: 0;
+  padding: 0;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -817,7 +817,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
               </div>
               <div className="material-source-page" aria-label={`Extracted text from ${analysis.material.kind === "text" ? "section" : "page"} ${previewPage}`}>
                 <span>{analysis.material.kind === "text" ? "Section" : "Page"} {previewPage} · text Kelus read</span>
-                <p>{analysis.pages.find((page) => page.pageNumber === previewPage)?.text.slice(0, 2200) || analysis.material.kind === "text" ? "This section is empty." : "No readable text on this page. Open the original PDF to inspect it."}</p>
+                <p>{analysis.pages.find((page) => page.pageNumber === previewPage)?.text.slice(0, 2200) || (analysis.material.kind === "text" ? "This section is empty." : "No readable text on this page. Open the original PDF to inspect it.")}</p>
               </div>
               <p>{analysis.material.kind === "text" ? "Select a topic to check its source section." : "Select a topic to check its source page. Open PDF shows the original layout."}</p>
             </aside>
