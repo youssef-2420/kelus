@@ -21,7 +21,8 @@ export type AiTopicContent = {
   rejected: Array<{ reason: string; prompt: string }>;
 };
 
-export function buildPrompt(input: AiTopicInput) {
+export function buildPrompt(input: AiTopicInput, options: { maxItems?: number } = {}) {
+  const maxItems = Math.min(options.maxItems ?? AI_LIMITS.maxItems, AI_LIMITS.maxItems);
   const page = input.pageText.replace(/\s+/g, " ").trim().slice(0, AI_LIMITS.maxPageChars);
   const system = [
     "You write study material for one topic of a student's own course, using ONLY the page text provided.",
@@ -48,7 +49,7 @@ export function buildPrompt(input: AiTopicInput) {
         correctIndex: "for kind=choice only: index of the correct option",
       }],
     },
-    wanted: `Up to ${AI_LIMITS.maxItems} items, a mix of kinds, at least one that asks the student to explain or predict, not just recall.`,
+    wanted: `Up to ${maxItems} items, a mix of kinds, at least one that asks the student to explain or predict, not just recall.`,
   });
   return { system, user };
 }

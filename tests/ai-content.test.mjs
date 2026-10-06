@@ -52,3 +52,10 @@ test("junk, prose around the JSON, and empty replies are handled", () => {
   assert.equal(validateAiReply("{}", input), null);
   assert.equal(validateAiReply(`Here you go:\n${JSON.stringify(good)}\nHope it helps!`, input).items.length, 2);
 });
+
+test("a smaller request asks for fewer items, and never more than the limit", async () => {
+  const { buildPrompt, AI_LIMITS } = await import("../domain/ai-content.ts");
+  const input = { name: "T", locator: "Page 1", pageText: "x".repeat(80), otherTopics: [] };
+  assert.match(JSON.parse(buildPrompt(input, { maxItems: 4 }).user).wanted, /Up to 4 items/);
+  assert.match(JSON.parse(buildPrompt(input, { maxItems: 99 }).user).wanted, new RegExp(`Up to ${AI_LIMITS.maxItems} items`));
+});
