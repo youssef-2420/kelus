@@ -120,3 +120,59 @@ body.is-session-booklet .session-ai-explanation span {
   font-weight: 600;
   color: var(--color-kelus);
 }
+
+body.is-session-booklet .study-run-label {
+  margin: 0;
+  padding: 10px 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+}
+
+/* Phones: while you recall, the closed source is a slim bar, so the question is the first thing you see. */
+@media (max-width: 950px) {
+  body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-recalling {
+    grid-template-rows: 56px 132px auto 1fr;
+  }
+
+  main.study-shell.is-recalling .core-source-state.is-concealed {
+    gap: 4px;
+    padding: 8px 16px;
+  }
+
+  main.study-shell.is-recalling .core-source-state.is-concealed > span,
+  main.study-shell.is-recalling .core-source-state.is-concealed > p {
+    display: none;
+  }
+
+  main.study-shell.is-recalling .core-source-stage {
+    min-height: 0;
+    max-height: 132px;
+  }
+}
+
+@media (max-width: 650px) {
+  main.study-shell.is-recalling .session-workspace-source {
+    height: 132px;
+  }
+
+  main.study-shell.is-recalling .session-workspace-source .core-source-stage {
+    min-height: 0;
+    max-height: 132px;
+  }
+}
+
+@media (max-width: 650px) {
+  main.study-shell.is-recalling .core-source-state.is-concealed {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8px 14px;
+    padding: 10px 16px;
+  }
+
+  main.study-shell.is-recalling .core-source-state.is-concealed > strong {
+    font-size: var(--text-body-sm);
+    margin: 0;
+  }
+}

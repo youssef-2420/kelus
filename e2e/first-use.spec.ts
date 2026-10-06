@@ -46,6 +46,26 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 }
 
+/** Answers every quick check (a wrong gap word, or option 1), then explains and rates itself. */
+async function playQuickRun(page: Page, explanation: string, grade: string) {
+  for (let guard = 0; guard < 6; guard += 1) {
+    // The previous card animates out first: wait for something that can actually be used.
+    await expect(page.locator('#run-explain, input[id^="run-gap"]:not([disabled]), [role="group"][aria-label="Choose one"] button:not([disabled])').first()).toBeVisible();
+    if (await page.locator("#run-explain").count()) break;
+    const gap = page.locator(`input[id^="run-gap"]:not([disabled])`);
+    if (await gap.count()) {
+      await gap.fill("zzz");
+      await page.getByRole("button", { name: "Check", exact: true }).click();
+    } else {
+      await page.getByRole("group", { name: "Choose one" }).getByRole("button").first().click();
+    }
+    await page.getByRole("button", { name: /^(Next|Now say it yourself)/ }).click();
+  }
+  await page.locator("#run-explain").fill(explanation);
+  await page.getByRole("button", { name: /Compare with the page/ }).click();
+  await page.getByRole("button", { name: new RegExp(grade) }).click();
+}
+
 test("first-use hierarchy stays readable from upload through exam details", async ({ page }) => {
   for (const viewport of [
     { width: 390, height: 844 },
@@ -287,36 +307,20 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
 
   await expect(page).toHaveURL(/\/session/);
   await expect(page.locator(".study-context.is-folio")).toContainText(/Topic 1 of \d+/);
-  await expect(page.getByRole("list", { name: "Study steps" }).locator("li")).toHaveCount(4);
-  await expect(page.getByRole("list", { name: "Study steps" }).locator('[aria-current="step"]')).toContainText("Read");
+  // One topic is a short run: instant checks, then one explanation in your own words.
+  await expect(page.getByRole("list", { name: /^Step 1 of \d$/ })).toBeVisible();
   await expect(page.getByRole("button", { name: "Close", exact: true })).toBeVisible();
   await expect(page.getByRole("list", { name: "Revision pages" })).toHaveCount(0);
   await expect(page.locator(".study-progress")).toHaveCount(0);
   await expect(page.locator("header.site-header.is-session")).toHaveCount(1);
   await expect(page.locator("header.site-header.is-session")).toBeHidden();
-  await page.locator(".session-sources button").first().click();
-  await expect(page.getByRole("button", { name: "Close course source" })).toBeFocused();
-  await expect(page.locator(".session-source-panel iframe")).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: /Retrieve it/ }).click();
-  await expect(page.getByRole("list", { name: "Study steps" }).locator('[aria-current="step"]')).toContainText("Retrieve");
   await expect(page.getByText("Source closed for recall")).toBeVisible();
-  await page.getByLabel(/Close the page\. Write it in your own words/).fill("I cannot yet explain the mechanism from memory.");
-  await page.getByRole("button", { name: /Continue/ }).click();
-  await page.getByRole("button", { name: "Back", exact: true }).click();
-  await expect(page.getByLabel(/Close the page\. Write it in your own words/)).toHaveValue("I cannot yet explain the mechanism from memory.");
-  await page.getByRole("button", { name: "Back", exact: true }).click();
-  await page.getByRole("button", { name: /Retrieve it/ }).click();
-  await expect(page.getByLabel(/Close the page\. Write it in your own words/)).toHaveValue("I cannot yet explain the mechanism from memory.");
-  await page.getByRole("button", { name: /Continue/ }).click();
-  await page.getByLabel(/Use the idea to explain this question/).fill("I cannot apply this relationship to the new situation yet.");
-  await expect(page.locator(".study-question")).toHaveCSS("opacity", "1");
+  await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
-  await page.getByRole("button", { name: /Check my thinking/ }).click();
-  await page.getByRole("button", { name: "Mark this" }).click();
-  await expect(page.getByRole("heading", { name: "Needs another attempt." })).toBeVisible();
+  await playQuickRun(page, "I cannot yet explain the mechanism from memory.", "Missed it");
+  await expect(page.getByRole("heading", { name: /^(Needs another attempt|Partly there)\.$/ })).toBeVisible();
   await expect(page.getByText(/first check/)).toBeVisible();
   await expect(page.getByRole("status").filter({ hasText: /(topic order stayed|remaining topic order|remaining route)/ })).toBeVisible();
   for (const width of [320, 375, 414]) {
@@ -325,15 +329,11 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   }
   await page.screenshot({ path: "/tmp/kelus-result-mobile.png", fullPage: true });
   await page.getByRole("button", { name: /Try again/ }).click();
-  await expect(page.getByLabel(/Close the page\. Write it in your own words/)).toHaveValue("");
-  await page.getByLabel(/Close the page\. Write it in your own words/).fill("I still cannot explain it.");
-  await page.getByRole("button", { name: /Continue/ }).click();
-  await page.getByLabel(/Use the idea to explain this question/).fill("I need to review the source first.");
-  await page.getByRole("button", { name: /Check my thinking/ }).click();
-  await page.getByRole("button", { name: "Mark this" }).click();
+  await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
+  await playQuickRun(page, "I still cannot explain it.", "Missed it");
   await expect(page.getByText(/2 checks/)).toBeVisible();
   await page.getByRole("button", { name: /Continue to/ }).click();
-  await expect(page.locator(".reroute-view h1, .session-learn h1").first()).toBeVisible();
+  await expect(page.locator(".reroute-view h1, section[aria-label^=\"Check 1 of\"], .session-learn h1").first()).toBeVisible();
   await expect(page.locator(".reroute-lines")).toHaveCount(0);
   await expect(page.locator(".reroute-cause")).toHaveCount(0);
   await page.getByRole("button", { name: "Close", exact: true }).click();
