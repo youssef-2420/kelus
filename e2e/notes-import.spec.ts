@@ -34,10 +34,6 @@ test("pasted notes work the same way, and a quick run quotes the notes", async (
   await page.getByRole("button", { name: "Use these notes" }).click();
   await toTopicReview(page);
   await page.getByRole("button", { name: /Confirm topics/ }).click();
-  await page.getByRole("button", { name: /Skip recall/ }).waitFor({ state: "hidden" }).catch(() => undefined);
-  const groups = await page.getByRole("button", { name: /^Weak$/ }).count();
-  for (let index = 0; index < groups; index += 1) await page.getByRole("button", { name: /^Okay$/ }).nth(index).click();
-  await page.getByRole("button", { name: /Skip recall/ }).click();
   await expect(page.getByRole("heading", { name: /Osmosis|Cell Membrane|Steps of Cellular Respiration|Active vs Passive Transport/ }).first()).toBeVisible();
   await expect(page.locator('article[aria-label^="Section"]')).toBeVisible();
   await page.getByRole("button", { name: /Start this topic|Resume session/ }).first().click();
@@ -67,9 +63,6 @@ test("a notes source is still there after the page is reloaded", async ({ page }
   await page.locator('.setup-first-upload input[type="file"]').setInputFiles({ name: "cell-biology.md", mimeType: "text/markdown", buffer: Buffer.from(notion) });
   await toTopicReview(page);
   await page.getByRole("button", { name: /Confirm topics/ }).click();
-  const groups = await page.getByRole("button", { name: /^Weak$/ }).count();
-  for (let index = 0; index < groups; index += 1) await page.getByRole("button", { name: /^Okay$/ }).nth(index).click();
-  await page.getByRole("button", { name: /Skip recall/ }).click();
   await page.goto("/today?section=materials");
   await expect(page.locator(".material-card")).toHaveCount(1);
   await page.reload();

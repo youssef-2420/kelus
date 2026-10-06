@@ -4,7 +4,6 @@ import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "rea
 import { useRouter, useSearchParams } from "next/navigation";
 import { CourseStudioOnboarding } from "@/components/CourseStudioOnboarding";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
-import { InitialDiagnosis } from "@/components/InitialDiagnosis";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { RevisionSurface } from "@/components/RevisionSurface";
 import { useLearner } from "@/components/LearnerProvider";
@@ -13,6 +12,24 @@ import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/
 import styles from "./loading.module.css";
 import { addSourceMaterial, getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 import { CURRENT_COURSE_ID } from "@/lib/setup";
+import type { LearnerSnapshot } from "@/domain/types";
+
+function BuildingPlan({ snapshot, onReady }: { snapshot: LearnerSnapshot; onReady: (input: Parameters<ReturnType<typeof useLearner>["completeDiagnosis"]>[0]) => void }) {
+  const done = useRef(false);
+  useEffect(() => {
+    if (done.current) return;
+    done.current = true;
+    const top = [...snapshot.concepts].sort((a, b) => b.examImportance - a.examImportance || a.name.localeCompare(b.name)).slice(0, 3);
+    onReady({ ratings: Object.fromEntries(top.map((concept) => [concept.id, "dont_know" as const])), retrievals: [] });
+    // Runs once when the topics are confirmed.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return (
+    <main id="main" className="destination-page">
+      <h1 className="destination-page-title" role="status">Building your plan…</h1>
+    </main>
+  );
+}
 
 function TodayBody() {
   const router = useRouter();
@@ -98,14 +115,8 @@ function TodayBody() {
   }
 
   if (!state.diagnosisCompleted) {
-    return (
-      <CourseStudioOnboarding stage="check" courseName={state.snapshot.courses[0]?.name}>
-        <div className="workbench-chapter" data-chapter="check">
-          <p className="workbench-chapter-label">Chapter 3 · First estimate</p>
-          <InitialDiagnosis snapshot={state.snapshot} onComplete={finishDiagnosis} embedded />
-        </div>
-      </CourseStudioOnboarding>
-    );
+    // No rating screen: topics start as "new", and your first answers set the route.
+    return <BuildingPlan snapshot={state.snapshot} onReady={finishDiagnosis} />;
   }
 
   return <RevisionSurface />;

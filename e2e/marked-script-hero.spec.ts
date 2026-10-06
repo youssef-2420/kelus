@@ -28,7 +28,7 @@ test("Set up and sample revision open the course workspace without a cover image
   await expect(page.locator(".studio-rail")).toBeVisible();
   await expect(page.locator(".studio-cover")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Add a course PDF." })).toBeVisible();
-  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Add PDF");
+  await expect(page.locator(".studio-onboarding-steps [aria-current='step']")).toContainText("Your notes");
   await page.goto("/today/?sample=1");
   await expect(page.locator(".studio-cover")).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();

@@ -69,7 +69,7 @@ test("one persistent header owns navigation for every page", async () => {
 
 test("setup starts with a PDF and shows the full route to study", async () => {
   const [setup, onboarding] = await Promise.all([source("components/FirstRunSetup.tsx"), source("components/CourseStudioOnboarding.tsx")]);
-  assert.match(onboarding, /Add PDF[\s\S]*Exam[\s\S]*Confirm topics[\s\S]*First check[\s\S]*Study plan/);
+  assert.match(onboarding, /Your notes[\s\S]*Your exam[\s\S]*Your topics/);
   assert.match(setup, /Add a course PDF/);
   assert.match(setup, /Continue to exam details/);
   assert.match(setup, /Read my PDF/);
