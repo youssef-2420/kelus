@@ -47,6 +47,7 @@ export function CourseStudioOnboarding({ stage, courseName, children }: {
             </li>
           ))}
         </ol>
+        <p className="studio-step-now" aria-hidden="true">Step {currentIndex + 1} of {STAGES.length} · {STAGES[currentIndex]?.label}</p>
         <div className="studio-rail-bottom">
           <Link href="/" className="studio-home-link">← Back to Kelus</Link>
           {auth.user ? (
