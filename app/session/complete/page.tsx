@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useLearner } from "@/components/LearnerProvider";
+import { HabitStrip } from "@/components/HabitStrip";
 import { generateRoute } from "@/domain/routing-engine";
 import { MasteryEvidence } from "@/components/MasteryEvidence";
 import { MarkStamp } from "@/components/MarkStamp";
@@ -138,6 +139,7 @@ function CompleteBody() {
           {course ? ` in ${course.name}` : ""}. Your answers are saved for the next session.
         </p>
         {exam ? <ReadinessShift before={summary.readinessBefore} after={summary.readinessAfter} targetPercent={exam.targetPercent} /> : null}
+        <HabitStrip events={state.snapshot.events} concepts={courseConcepts} />
         <section className="complete-change" aria-labelledby="complete-change-title">
           <p className="kicker">What changed</p>
           <h2 id="complete-change-title">
