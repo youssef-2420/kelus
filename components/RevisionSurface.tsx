@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { TodayRoute } from "@/components/TodayRoute";
+import { HabitStrip } from "@/components/HabitStrip";
 import { InkArt } from "@/components/InkArt";
 import { AiConsent } from "@/components/AiConsent";
 import { SOURCE_FILE_ACCEPT } from "@/domain/materials";
@@ -321,6 +322,7 @@ export function RevisionSurface() {
                 {hasReadableSource ? <CourseSourceReader key={`${selectedMaterial.id}-${selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1}`} material={selectedMaterial} initialPage={selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1} /> : null}
                 <div className="core-workspace-action workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
                   {!hasReadableSource ? <p className="core-source-inline">This plan has no original PDF beside it. <Link href="/today?section=materials">Add your course PDF</Link> to study from your own pages.</p> : null}
+                  <HabitStrip events={snapshot.events} concepts={concepts} />
                   <TodayRoute
                     route={route}
                     concepts={concepts}

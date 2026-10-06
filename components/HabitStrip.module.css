@@ -1,0 +1,106 @@
+.strip {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px 28px;
+  align-items: end;
+  box-sizing: border-box;
+  width: min(100% - 48px, 52.75rem);
+  margin: 16px auto 20px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-frost);
+  border-radius: 4px;
+  background: var(--color-pure-white);
+}
+
+.label {
+  margin: 0 0 4px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--color-kelus);
+}
+
+.count {
+  margin: 0 0 8px;
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+}
+
+.count strong {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--color-frost);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-midnight-ink);
+  transition: background-color 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.fill.met {
+  background: var(--color-kelus);
+}
+
+.days {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.days li {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-frost);
+  border-radius: 50%;
+  font-size: var(--text-caption);
+  color: var(--color-slate);
+}
+
+.days li.studied {
+  border-color: var(--color-kelus);
+  background: var(--color-kelus);
+  color: var(--color-pure-white);
+}
+
+.days li.isToday {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}
+
+.note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-midnight-ink);
+}
+
+.note span {
+  color: var(--color-slate);
+}
+
+@media (max-width: 560px) {
+  .strip {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fill {
+    transition: none;
+  }
+}
