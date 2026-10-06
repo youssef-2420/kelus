@@ -314,7 +314,7 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   await expect(page.locator(".study-progress")).toHaveCount(0);
   await expect(page.locator("header.site-header.is-session")).toHaveCount(1);
   await expect(page.locator("header.site-header.is-session")).toBeHidden();
-  await expect(page.getByText("Source closed for recall")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Peek at the notes" })).toBeVisible();
   await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.evaluate(() => window.scrollTo(0, 0));

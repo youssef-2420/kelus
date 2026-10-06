@@ -406,7 +406,7 @@ function SessionBody() {
   }
 
   return (
-    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}${recallWithoutLooking && hasReadableSource ? " is-recalling" : ""}`}>
+    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}${recallWithoutLooking && hasReadableSource ? " is-recalling" : ""}${quickMode && recallWithoutLooking ? " is-focus" : ""}`}>
       <div className="study-context is-folio">
         <span className="study-context-title">
           <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
@@ -462,7 +462,7 @@ function SessionBody() {
       </div> : null}
       <div className="study-loop-track">
         {quickMode ? (
-          <p className="study-run-label">{concept.name} · topic {index + 1} of {total}</p>
+          <p className="study-run-label">{concept.name} · topic {index + 1} of {total}{recallWithoutLooking && hasReadableSource ? <> · <button type="button" className="text-btn study-peek" onClick={() => setSourceRevealed(true)}>Peek at the notes</button></> : null}</p>
         ) : (
           <LoopSteps
             compact
