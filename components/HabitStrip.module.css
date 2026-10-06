@@ -99,3 +99,19 @@
     transition: none;
   }
 }
+
+.more {
+  grid-column: 1 / -1;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--color-kelus);
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.more:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 3px; }
