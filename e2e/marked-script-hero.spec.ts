@@ -86,3 +86,12 @@ test("the hero question is playable and the route reacts to the answer", async (
   await page.locator('[data-hero="marked-script"] figure').getByRole("button", { name: /Buyers can switch/ }).click();
   await expect(page.locator('[data-hero="marked-script"] figure')).toContainText("Elasticity can wait");
 });
+
+test("there is no 'Try a one-minute sample' link on the homepage or the first-run screen", async ({ page }) => {
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: /one-minute sample/i })).toHaveCount(0);
+  await page.goto("/today");
+  await expect(page.getByRole("link", { name: /one-minute sample/i })).toHaveCount(0);
+  const gone = await page.goto("/try/", { waitUntil: "domcontentloaded" });
+  expect(gone?.status()).toBe(404);
+});

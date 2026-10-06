@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
 import { SourceArt } from "@/components/SourceArt";
 import { motion, useReducedMotion } from "motion/react";
@@ -121,7 +120,6 @@ export function FirstRunSetup({ onComplete, onStageChange }: {
             <p className="kicker">First, your material</p>
             <h1 className="destination-page-title">Add a course PDF.</h1>
             <p className="destination-support">Upload a syllabus, lecture slides, or notes. You’ll review the topics Kelus finds before they shape your plan.</p>
-            <p className="setup-try"><Link href="/try">No file yet? Try a one-minute sample first <span aria-hidden="true">→</span></Link></p>
             <label
               className={`setup-first-upload${dragging ? " is-dragging" : ""}${file ? " has-file" : ""}`}
               onDragEnter={() => setDragging(true)}
