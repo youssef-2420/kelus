@@ -100,14 +100,14 @@ export function teachingFacts(name: string, excerpt: string, limit = 4) {
 
 const DETERMINER = new Set(["the", "a", "an", "its", "their", "this", "that", "these", "those", "of", "in", "on", "into", "inside", "by", "from", "at", "between", "per", "each", "every", "one", "two", "three", "four", "five", "called", "known", "as"]);
 // Verbs and filler that read as a blank but test nothing.
-const WEAK = new Set(["includes", "include", "included", "occurs", "occur", "produces", "produce", "takes", "make", "makes", "made", "uses", "used", "causes", "contains", "contain", "involves", "involve", "requires", "require", "allows", "allow", "gives", "give", "helps", "means", "called", "known", "based", "example", "examples", "several", "various", "different", "important", "usually", "often", "typically", "generally", "process", "result", "results", "number", "type", "types", "form", "forms", "part", "parts", "kind", "way", "ways", "level", "levels", "amount", "value", "values"]);
+const WEAK = new Set(["includes", "include", "included", "occurs", "occur", "produces", "produce", "takes", "make", "makes", "made", "uses", "used", "causes", "contains", "contain", "involves", "involve", "requires", "require", "allows", "allow", "gives", "give", "helps", "means", "called", "known", "based", "example", "examples", "several", "various", "different", "important", "usually", "often", "typically", "generally", "process", "result", "results", "number", "type", "types", "form", "forms", "part", "parts", "kind", "way", "ways", "tends", "tend", "first", "effect", "effects", "level", "levels", "amount", "value", "values"]);
 
 /**
  * The word or number that is the point of the sentence: a figure, an acronym, a named term, or a noun after
  * "the/of/in". Verbs and filler ("includes", "studying") are never blanked, and a sentence with nothing worth
  * testing makes no gap at all.
  */
-function pickGapWord(sentence: string, name: string, page: string) {
+function pickGapWord(sentence: string, name: string, page: string, relaxed = false) {
   const nameParts = new Set(words(name).map((w) => w.toLocaleLowerCase()));
   const counts = new Map<string, number>();
   for (const w of words(page)) counts.set(w.toLocaleLowerCase(), (counts.get(w.toLocaleLowerCase()) ?? 0) + 1);
@@ -123,7 +123,7 @@ function pickGapWord(sentence: string, name: string, page: string) {
     const isAcronym = /^[A-Z][A-Z0-9]{1,}$/.test(word);
     if (nameParts.has(lower) || STOP.has(lower) || WEAK.has(lower)) return;
     if (isNumber && (/^\s*(?:to|-|–|or)\s*\d/.test(after) || /\d\s*(?:to|-|–|or)\s*$/.test(before))) return;
-    if (!isNumber && !isAcronym && word.length < 5) return;
+    if (!isNumber && !isAcronym && word.length < (relaxed ? 6 : 5)) return;
     let score = 0;
     if (isNumber) score += 5;
     if (isAcronym) score += 4;
@@ -133,7 +133,7 @@ function pickGapWord(sentence: string, name: string, page: string) {
     if ((counts.get(lower) ?? 1) === 1) score += 1;
     if (word.length >= 8) score += 1;
     if (index === 0) score -= 2;
-    if (score >= 3 && (!best || score > best.score)) best = { word, score };
+    if (score >= (relaxed ? 1 : 3) && (!best || score > best.score)) best = { word, score };
   });
   return best ? (best as { word: string }).word : null;
 }
@@ -222,17 +222,23 @@ export function buildPractice(input: {
     }
   }
 
-  // 4. Fill the gap in a key sentence: up to two, from different sentences with different words.
+  // 4. Fill the gap in a key sentence: up to four, from different sentences with different words. A looser pass runs
+  // only when the strict one leaves fewer than two, so a sparse topic still gets a short run.
   const usedGaps = new Set<string>();
+  const gapSentences = new Set<string>();
   let gapsMade = 0;
+  for (const relaxed of [false, true]) {
+  if (relaxed && gapsMade >= 2) break;
   for (const sentence of sentences.slice(0, 10)) {
+    if (gapSentences.has(sentence)) continue;
     if (sentence === definition && sentences.length > 1) continue;
     if (words(sentence).length < 7 || sentence.length > 220) continue;
     const pair = termPairs(sentence)[0];
     const gapSource = pair && sentence.includes(pair.meaning) ? pair.meaning : sentence;
-    const gap = pickGapWord(gapSource, pair ? `${name} ${pair.term}` : name, excerpt);
+    const gap = pickGapWord(gapSource, pair ? `${name} ${pair.term}` : name, excerpt, relaxed);
     if (!gap || usedGaps.has(gap.toLocaleLowerCase())) continue;
     usedGaps.add(gap.toLocaleLowerCase());
+    gapSentences.add(sentence);
     // Every occurrence: a figure or term that appears twice would otherwise give the answer away.
     const blank = (value: string) => value.replace(new RegExp(`(?<![\\w])${gap.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w])`, "g"), "_____");
     const masked = pair && sentence.includes(pair.meaning) ? sentence.replace(pair.meaning, blank(pair.meaning)) : blank(sentence);
@@ -246,6 +252,7 @@ export function buildPractice(input: {
     });
     gapsMade += 1;
     if (gapsMade >= 4) break;
+  }
   }
 
   // 4b. Terms and their meanings on this page: name the term from its meaning, using the page's other terms as options.

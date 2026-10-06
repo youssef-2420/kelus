@@ -58,3 +58,11 @@ test("a later round brings different questions, all still quoting the page", () 
   assert.deepEqual(buildQuickRun({ activity, name: "Elasticity", siblingNames: [], round: 1 }).checks, b.checks);
   for (const item of b.checks) assert.ok(quoteIsOnPage(item.sourceQuote, excerpt));
 });
+
+test("every built-in sample topic still gets a quick run, even though gaps are stricter", async () => {
+  const { createDemoLearningActivities } = await import("../data/demo-learning-activities.ts");
+  for (const item of createDemoLearningActivities()) {
+    const run = buildQuickRun({ activity: item, name: item.learn.title, siblingNames: ["Supply & Demand", "Elasticity", "Consumer Surplus"] });
+    assert.ok(run && run.checks.length >= 2, `${item.conceptId} has no quick run`);
+  }
+});
