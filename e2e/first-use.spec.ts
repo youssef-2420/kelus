@@ -197,7 +197,7 @@ test("workspace sidebar can be hidden and a source can be removed from it", asyn
   await expect(page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" })).toContainText("linked topic");
   await page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" }).getByRole("button", { name: "Remove" }).click();
   await expect(page.getByRole("button", { name: "Remove Built-in Microeconomics example" })).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Check the topics from your PDF." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Add your notes." })).toBeVisible();
   await expect(page.locator(".material-row")).toHaveCount(0);
 });
 
@@ -344,6 +344,6 @@ test("real PDF becomes concepts, diagnosis evidence, and today's route", async (
   const confirmation = page.getByRole("group", { name: /Confirm remove cell biology lecture/ });
   await expect(confirmation).toContainText("linked topics from your route");
   await confirmation.getByRole("button", { name: "Remove" }).click();
-  await expect(page.getByRole("heading", { name: "Check the topics from your PDF." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Add your notes." })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start today’s route" })).toHaveCount(0);
 });

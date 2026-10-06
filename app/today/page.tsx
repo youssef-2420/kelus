@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState, useSyncExternalStore } from "rea
 import { useRouter, useSearchParams } from "next/navigation";
 import { CourseStudioOnboarding } from "@/components/CourseStudioOnboarding";
 import { FirstRunSetup } from "@/components/FirstRunSetup";
+import { EmptyCourse } from "@/components/EmptyCourse";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { RevisionSurface } from "@/components/RevisionSurface";
 import { useLearner } from "@/components/LearnerProvider";
@@ -99,17 +100,24 @@ function TodayBody() {
   }
 
   if (!state.snapshot.concepts.length) {
+    const course = state.snapshot.courses[0];
+    const hasSource = materials.some((item) => item.storage === "local");
     return (
-      <CourseStudioOnboarding stage="confirm" courseName={state.snapshot.courses[0]?.name}>
-        <div className="workbench-chapter" data-chapter="materials">
-          <p className="workbench-chapter-label">Confirm your topics</p>
-          <section className="materials-empty workbench-chapter-intro">
-            <p className="kicker">{notesSource ? "From your notes" : "From your PDF"}</p>
-            <h1>{notesSource ? "Check the topics from your notes." : "Check the topics from your PDF."}</h1>
-            <p>{notesSource ? "Kelus reads the sections under each heading. Keep only the topics you actually need to revise." : "Kelus reads the pages you chose. Keep only the topics you actually need to revise."}</p>
-          </section>
-          <MaterialLibrary embedded />
-        </div>
+      <CourseStudioOnboarding stage="confirm" courseName={course?.name}>
+        {hasSource ? (
+          <div className="workbench-chapter" data-chapter="materials">
+            <p className="workbench-chapter-label">Confirm your topics</p>
+            <section className="materials-empty workbench-chapter-intro">
+              <p className="kicker">{notesSource ? "From your notes" : "From your PDF"}</p>
+              <h1>{notesSource ? "Check the topics from your notes." : "Check the topics from your PDF."}</h1>
+              <p>{notesSource ? "Kelus reads the sections under each heading. Keep only the topics you actually need to revise." : "Kelus reads the pages you chose. Keep only the topics you actually need to revise."}</p>
+            </section>
+            <MaterialLibrary embedded />
+          </div>
+        ) : (
+          // One screen, one job: no topics and no source means the only thing to do is add notes.
+          <EmptyCourse courseId={course?.id ?? CURRENT_COURSE_ID} courseName={course?.name} />
+        )}
       </CourseStudioOnboarding>
     );
   }
