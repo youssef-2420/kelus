@@ -10,8 +10,8 @@ test("revision-sheet hero preserves copy, links, and narrow-screen layout", asyn
     await expect(hero.locator("h1")).toHaveText("Revise your lessons. Walk into the exam ready.");
     await expect(hero.getByRole("link", { name: "Set up" })).toHaveAttribute("href", /^\/today\/?$/);
     await expect(hero.getByRole("link", { name: "Try sample (~1 min)" })).toHaveCount(0);
-    await expect(hero.getByRole("img", { name: /Illustrative Microeconomics study sheet/ })).toBeVisible();
-    await expect(hero.locator("figure")).toContainText("Elasticity moves to the top of the route");
+    await expect(hero.getByRole("group", { name: /Sample Microeconomics study sheet/ })).toBeVisible();
+    await expect(hero.locator("figure")).toContainText("Pick an answer");
     const sheet = await hero.locator("figure").boundingBox();
     expect(sheet).not.toBeNull();
     expect(sheet!.x).toBeGreaterThanOrEqual(0);
@@ -54,7 +54,7 @@ test("hero is readable immediately and does not hold navigation for an animation
   await expect(hero.locator("figure")).toContainText("Close substitutes make demand");
   await expect(hero.locator("figure")).toContainText("Try to recall");
   await expect(hero.locator("[data-ink]")).toHaveCount(0);
-  await expect(hero.locator("[data-cue]")).toHaveCount(3);
+  await expect(hero.locator("[data-cue]")).toHaveCount(2);
   await expect(hero.getByRole("link", { name: "Set up" })).toHaveCSS("border-radius", "999px");
   await expect(hero.getByRole("link", { name: "Set up" })).toBeEnabled();
 });
@@ -68,10 +68,21 @@ test("reduced motion presents the same finished sheet without hydration errors",
   });
   await page.goto("/");
   const hero = page.locator('[data-hero="marked-script"]');
-  await expect(hero.locator("figure")).toContainText("Elasticity moves to the top of the route");
-  await expect(hero.locator("button")).toHaveCount(0);
+  await expect(hero.locator("figure")).toContainText("Pick an answer");
+  await expect(hero.getByRole("button", { name: /replay/i })).toHaveCount(0);
   await expect(hero.locator("[data-ink]")).toHaveCount(0);
   await expect(hero.locator('[data-cue="source"]')).toHaveCSS("transform", "none");
   await expect(hero.locator('[data-cue="recall"]')).toHaveCSS("transform", "none");
   expect(errors).toEqual([]);
+});
+
+test("the hero question is playable and the route reacts to the answer", async ({ page }) => {
+  await page.goto("/");
+  const figure = page.locator('[data-hero="marked-script"] figure');
+  await figure.getByRole("button", { name: "Sellers are allowed to charge more." }).click();
+  await expect(figure).toContainText("Elasticity moves to the top of the route.");
+  await expect(figure.getByRole("button", { name: /Buyers can switch/ })).toBeDisabled();
+  await page.reload();
+  await page.locator('[data-hero="marked-script"] figure').getByRole("button", { name: /Buyers can switch/ }).click();
+  await expect(page.locator('[data-hero="marked-script"] figure')).toContainText("Elasticity can wait");
 });

@@ -1,27 +1,35 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import styles from "./MarkedScriptHero.module.css";
 
-/** One legible revision moment, rather than an animated map of the whole course. */
+const OPTIONS = [
+  { text: "Buyers can switch to another option when the price rises.", right: true },
+  { text: "Sellers are allowed to charge more.", right: false },
+  { text: "Buyers like the product less.", right: false },
+] as const;
+
+/** One legible revision moment you can play: answer the question and watch the route react. */
 export function ExamRoutePoster() {
   const sheetRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sheetRef, { once: true, amount: 0.3 });
   const reduceMotion = useReducedMotion();
+  const [picked, setPicked] = useState<number | null>(null);
+  const answered = picked !== null;
+  const gotIt = answered && OPTIONS[picked].right;
   // The server and first client render must agree; reduced motion changes only timing.
   const settled = inView;
 
   return (
     <figure
       className={styles.script}
-      role="img"
-      aria-label="Illustrative Microeconomics study sheet: a note about substitutes becomes a recall question. After an answer needs another attempt, Elasticity moves to the top of today's route."
+      role="group"
+      aria-label="Sample Microeconomics study sheet: answer one question and see how your route changes."
     >
       <motion.div
         ref={sheetRef}
         className={styles.sheet}
-        aria-hidden="true"
         initial={false}
         animate={{ opacity: settled ? 1 : 0.92, y: settled ? 0 : 8 }}
         transition={{ duration: reduceMotion ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -52,18 +60,24 @@ export function ExamRoutePoster() {
           />
           <span className={styles.recallLabel}>Try to recall</span>
           <p>Why does having another option make demand more elastic?</p>
-          <div className={styles.answerLines} aria-hidden="true"><span /><span /></div>
+          <div className={styles.options} role="group" aria-label="Choose one">
+            {OPTIONS.map((option, index) => {
+              const state = !answered ? "" : option.right ? styles.optionRight : index === picked ? styles.optionWrong : styles.optionDim;
+              return (
+                <button key={option.text} type="button" className={`${styles.option} ${state}`} disabled={answered} onClick={() => setPicked(index)}>
+                  {option.text}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className={styles.nextStep}>
-          <span className={styles.nextLabel}>After a shaky answer</span>
-          <strong>Elasticity moves to the top of the route <motion.span
-            className={styles.routeArrow}
-            data-cue="route"
-            initial={false}
-            animate={{ opacity: settled ? 1 : 0, x: settled ? 0 : -6 }}
-            transition={{ duration: reduceMotion ? 0 : 0.3, delay: reduceMotion ? 0 : 0.48, ease: [0.22, 1, 0.36, 1] }}
-          >↗</motion.span></strong>
+        <div className={styles.nextStep} aria-live="polite">
+          <span className={styles.nextLabel}>{answered ? (gotIt ? "After a confident answer" : "After a shaky answer") : "Your route"}</span>
+          <strong>
+            {!answered ? "Pick an answer to see how it changes." : gotIt ? "Elasticity can wait. Kelus asks again later." : "Elasticity moves to the top of the route."}
+            {answered ? <motion.span key={String(gotIt)} className={styles.routeArrow} data-cue="route" initial={reduceMotion ? false : { opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>{gotIt ? "✓" : "↗"}</motion.span> : null}
+          </strong>
         </div>
       </motion.div>
     </figure>
