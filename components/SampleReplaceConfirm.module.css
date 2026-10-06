@@ -1,0 +1,66 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(18, 22, 15, 0.45);
+}
+
+.dialog {
+  width: min(100%, 28rem);
+  padding: 28px;
+  border-radius: 12px;
+  background: var(--color-pure-white);
+  box-shadow: 0 24px 60px -20px rgba(18, 22, 15, 0.5);
+}
+
+.dialog h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-midnight-ink);
+}
+
+.dialog p {
+  margin: 0 0 20px;
+  line-height: 1.55;
+  color: var(--color-slate);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+}
+
+.primary {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-kelus);
+  color: var(--color-pure-white);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary:hover { background: var(--color-kelus-hover); }
+
+.link {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--color-midnight-ink);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+
+.primary:focus-visible, .link:focus-visible { outline: 2px solid var(--color-midnight-ink); outline-offset: 2px; }

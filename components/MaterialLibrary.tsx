@@ -241,7 +241,7 @@ function MaterialRow({
   );
 }
 
-export function MaterialLibrary({ embedded = false, incomingFile = null, onIncomingFileHandled }: { embedded?: boolean; incomingFile?: File | null; onIncomingFileHandled?: () => void } = {}) {
+export function MaterialLibrary({ embedded = false, incomingFile = null, onIncomingFileHandled, interceptFile }: { embedded?: boolean; incomingFile?: File | null; onIncomingFileHandled?: () => void; interceptFile?: (file: File) => boolean } = {}) {
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const router = useRouter();
@@ -462,6 +462,8 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
 
   async function savePdf(picked: File | undefined) {
     if (!picked || !course) return;
+    // The sample course asks before anything of yours goes near it.
+    if (interceptFile?.(picked)) { if (fileRef.current) fileRef.current.value = ""; return; }
     let file = picked;
     if (isZipFile(picked)) {
       dispatch({ type: "WORK_STARTED", step: "saving", message: "Reading your export…" });

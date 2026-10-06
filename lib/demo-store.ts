@@ -133,9 +133,10 @@ export function readStoredDemoState(ownerId = activeOwnerId): DemoState | null {
   try {
     const parsed: unknown = JSON.parse(window.localStorage.getItem(demoStateStorageKey(ownerId)) ?? "null");
     if (!validStoredState(parsed)) return null;
-    const { state, changed } = advanceNowIfNeeded(parsed);
-    if (changed) window.localStorage.setItem(demoStateStorageKey(ownerId), JSON.stringify(state));
-    return state;
+    const advanced = advanceNowIfNeeded(parsed);
+    const purged = purgeUnsourcedTopics(advanced.state);
+    if (advanced.changed || purged.changed) window.localStorage.setItem(demoStateStorageKey(ownerId), JSON.stringify(purged.state));
+    return purged.state;
   } catch {
     return null;
   }
@@ -319,11 +320,7 @@ export function confirmMaterialConcepts(
 }
 
 /** A removed source cannot continue to supply questions or route stops. */
-export function removeMaterialLearning(state: DemoState, materialId: string) {
-  const removedIds = new Set(state.snapshot.learningActivities
-    .filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === materialId))
-    .map((activity) => activity.conceptId));
-  if (!removedIds.size) return state;
+function withoutConcepts(state: DemoState, removedIds: Set<string>): DemoState {
   const snapshot: LearnerSnapshot = refreshCaches({
     ...state.snapshot,
     concepts: state.snapshot.concepts.filter((concept) => !removedIds.has(concept.id)),
@@ -338,9 +335,28 @@ export function removeMaterialLearning(state: DemoState, materialId: string) {
     // Keep practice events as history. Reconfirming a topic from a surviving
     // source can recover its evidence without pretending the removed PDF exists.
   }, state.nowIso);
-  const next = { ...state, snapshot, diagnosisCompleted: state.diagnosisCompleted && snapshot.concepts.length > 0 };
+  return { ...state, snapshot, diagnosisCompleted: state.diagnosisCompleted && snapshot.concepts.length > 0 };
+}
+
+export function removeMaterialLearning(state: DemoState, materialId: string) {
+  const removedIds = new Set(state.snapshot.learningActivities
+    .filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === materialId))
+    .map((activity) => activity.conceptId));
+  if (!removedIds.size) return state;
+  const next = withoutConcepts(state, removedIds);
   persistDemoState(next);
   return next;
+}
+
+/**
+ * Older versions could make topics out of a file name ("Material", "Youssef"). Nothing in the file supports
+ * them, so they are removed from saved data instead of being studied.
+ */
+export function purgeUnsourcedTopics(state: DemoState): { state: DemoState; changed: boolean } {
+  const ids = new Set(state.snapshot.learningActivities
+    .filter((activity) => activity.sourceReferences.length > 0 && activity.sourceReferences.every((reference) => reference.locator === "From filename"))
+    .map((activity) => activity.conceptId));
+  return ids.size ? { state: withoutConcepts(state, ids), changed: true } : { state, changed: false };
 }
 
 export function recordRetrieval(state: DemoState, input: {
