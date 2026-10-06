@@ -75,6 +75,14 @@ export default function PrivacyPage() {
           anonymization on. It helps us understand which pages are used — not to build an advertising profile.
         </p>
 
+        <h2>Reading scanned PDFs</h2>
+        <p>
+          If a PDF is a scan with no selectable text, Kelus reads it on your device with an open-source text-recognition
+          engine. To do that, your browser downloads the engine and its English language data from the jsDelivr public
+          CDN (cdn.jsdelivr.net). Your pages and their text are not sent anywhere; the request is only for the engine,
+          so jsDelivr can see that your browser asked for it. PDFs with real text never make this request.
+        </p>
+
         <h2>What we do not do</h2>
         <ul>
           <li>We do not sell personal information.</li>

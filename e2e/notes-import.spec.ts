@@ -133,3 +133,15 @@ test("your own file never mixes into the sample: it starts your own course, and 
   await expect(page.getByText("Sample course")).toHaveCount(0);
   await expect(page.locator("#today-title")).not.toHaveText(/Elasticity|Supply|Monetary/);
 });
+
+// Reads the engine from a public CDN, so it needs a network and is skipped in CI to keep CI deterministic.
+test("a scanned, image-only PDF is read with on-device OCR and becomes topics", async ({ page }) => {
+  test.skip(Boolean(process.env.CI), "needs the OCR engine from a CDN");
+  test.setTimeout(120_000);
+  await page.goto("/today");
+  await page.locator('.setup-first-upload input[type="file"]').setInputFiles("tests/fixtures/scanned-notes.pdf");
+  await toTopicReview(page);
+  const names = await page.locator("input.proposal-name-input").evaluateAll((inputs) => inputs.map((input) => (input as HTMLInputElement).value));
+  expect(names).toEqual(expect.arrayContaining(["Osmosis", "Enzymes"]));
+  await expect(page.getByText(/Page 1 · text Kelus read/)).toBeVisible();
+});
