@@ -14,6 +14,8 @@ import { removeRemoteMaterial } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
 import { materialTitle } from "@/domain/materials";
 import { CURRENT_COURSE_ID, type SetupInput } from "@/lib/setup";
+
+const SAMPLE_COURSE_ID = "course-microeconomics";
 import type { LearnerSnapshot } from "@/domain/types";
 
 function BuildingPlan({ snapshot, onReady }: { snapshot: LearnerSnapshot; onReady: (input: Parameters<ReturnType<typeof useLearner>["completeDiagnosis"]>[0]) => void }) {
@@ -126,7 +128,10 @@ function TodayBody() {
     const course = state.snapshot.courses[0];
     const local = materials.filter((item) => item.storage === "local");
     if (!local.length) {
-      // No topics and no notes: the same single screen as the very first one.
+      // No topics and no notes: the same single screen as the very first one. A leftover built-in sample is not
+      // the learner's course, so it never names the page or receives their notes: they start their own.
+      const leftoverSample = course?.id === SAMPLE_COURSE_ID;
+      if (leftoverSample) return <DropNotes first onFile={startFromFile} />;
       return <DropNotes courseName={course?.name} onFile={(file) => addNotes(file, course?.id ?? CURRENT_COURSE_ID)} />;
     }
     return (

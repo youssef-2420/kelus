@@ -119,8 +119,9 @@ test("a scanned, image-only PDF is read with on-device OCR and becomes topics", 
 });
 
 test("a course with no topics is one screen with one job, and adding notes there continues the normal flow", async ({ page }) => {
-  await page.goto("/today?sample=1");
-  await page.getByRole("button", { name: "Remove Built-in Microeconomics example" }).click();
+  await startFromFile(page, mdFile);
+  await closeToToday(page);
+  await page.getByRole("button", { name: /^Remove cell biology/i }).click();
   await page.getByRole("group", { name: /Confirm remove/ }).getByRole("button", { name: "Remove" }).click();
 
   await expect(page.getByRole("heading", { name: "Add your notes." })).toBeVisible();
@@ -181,4 +182,18 @@ test("the exam date is asked after the first run, not before, and a real date tu
   await ask.getByRole("button", { name: "Save date" }).click();
   await expect(page.getByText(/\d+ days? to go/)).toBeVisible();
   await expect(page.getByText(/days? to exam/).first()).toBeVisible();
+});
+
+test("a leftover built-in sample never names the start screen or receives your notes", async ({ page }) => {
+  await page.goto("/today?sample=1");
+  await page.getByRole("button", { name: "Remove Built-in Microeconomics example" }).click();
+  await page.getByRole("group", { name: /Confirm remove/ }).getByRole("button", { name: "Remove" }).click();
+  await expect(page.getByRole("heading", { name: "Drop your notes." })).toBeVisible();
+  await expect(page.getByText("Microeconomics")).toHaveCount(0);
+  await page.locator('input[type="file"]').setInputFiles(mdFile);
+  await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
+  await closeToToday(page);
+  // It is a new course made from the file, not the sample with notes added.
+  await expect(page.getByText(/Sample course|Microeconomics/)).toHaveCount(0);
+  await expect(page.getByText(/cell biology/i).first()).toBeVisible();
 });
