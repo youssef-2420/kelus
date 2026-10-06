@@ -93,3 +93,38 @@ test("numbered steps ask what comes next, without offering the step in the quest
   assert.ok(next.choices.includes(next.modelAnswer));
   assert.equal(next.choices[next.correctIndex], next.modelAnswer);
 });
+
+test("the topic name is hidden only as the subject, never inside a longer phrase", () => {
+  const phrase = "Price elasticity of demand asks how strongly quantity demanded responds to a change in price. It is calculated as a percentage change.";
+  const items = buildPractice({ conceptId: "e1", name: "Elasticity", excerpt: phrase, locator: "Page 2", siblingNames: ["Elasticity", "Supply", "Demand"] });
+  assert.ok(items.every((item) => !/this idea of demand|Price this idea/i.test(item.prompt)), "no broken sentence");
+  assert.ok(items.every((item) => item.kind !== "choice" || !/^Which idea/.test(item.prompt)), "no which-idea question when the name is not the subject");
+});
+
+test("a subject at the start of the sentence is hidden cleanly", () => {
+  const items = buildPractice({ conceptId: "e2", name: "Osmosis", excerpt: "Osmosis: the movement of water across a semipermeable membrane.", locator: "Page 3", siblingNames: ["Osmosis", "Diffusion", "Transport"] });
+  const which = items.find((item) => /^Which idea/.test(item.prompt));
+  assert.ok(which);
+  assert.match(which.prompt, /“This idea: the movement of water/);
+  assert.doesNotMatch(which.prompt, /Osmosis/i);
+});
+
+test("a name that appears again in the sentence is not given away", () => {
+  const items = buildPractice({ conceptId: "e3", name: "Osmosis", excerpt: "Osmosis moves water, and osmosis stops when concentrations are equal.", locator: "Page 3", siblingNames: ["Osmosis", "Diffusion", "Transport"] });
+  assert.ok(items.every((item) => !/^Which idea/.test(item.prompt)));
+});
+
+test("a page with several sentences can give two different gap questions", () => {
+  const items = buildPractice({ conceptId: "g1", name: "Total Revenue Test", excerpt: page, locator: "Page 3", siblingNames: [] });
+  const gaps = items.filter((item) => item.kind === "cloze");
+  assert.equal(gaps.length, 2);
+  assert.notEqual(gaps[0].modelAnswer.toLowerCase(), gaps[1].modelAnswer.toLowerCase());
+  assert.notEqual(gaps[0].sourceQuote, gaps[1].sourceQuote);
+});
+
+test("a plural subject becomes 'These ideas' so the sentence still agrees", () => {
+  const items = buildPractice({ conceptId: "p1", name: "Market Structures", excerpt: "Market structures differ in the number of sellers and barriers to entry.", locator: "Page 5", siblingNames: ["Market Structures", "Elasticity", "Monetary Policy"] });
+  const which = items.find((item) => /^Which idea/.test(item.prompt));
+  assert.ok(which);
+  assert.match(which.prompt, /“These ideas differ in the number of sellers/);
+});
