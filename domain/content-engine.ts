@@ -113,9 +113,20 @@ function pickGapWord(sentence: string, name: string, page: string) {
     .sort((a, b) => a.rarity - b.rarity || b.w.length - a.w.length)[0].w;
 }
 
+/**
+ * Hides the topic name so the question does not give itself away. Only when the topic is the subject at the
+ * start of the sentence and appears nowhere else: replacing it inside a longer phrase ("Price elasticity of
+ * demand" for the topic "Elasticity") would break the sentence, so no question is made instead.
+ */
 function maskName(sentence: string, name: string) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return sentence.replace(new RegExp(`(?:the\\s+)?${escaped}`, "gi"), "this idea");
+  const lead = new RegExp(`^(?:the\\s+)?${escaped}(?![A-Za-z])`, "i");
+  if (!lead.test(sentence)) return null;
+  const rest = sentence.replace(lead, "");
+  if (new RegExp(`(?<![A-Za-z])${escaped}(?![A-Za-z])`, "i").test(rest)) return null;
+  // A plural subject ("Market structures differ...") reads "These ideas", not "This idea differ".
+  const plural = /^\s*(?:are|were|have|do|differ|vary|include|share|use|take|make|need|require|form|become|depend|determine)\b/i.test(rest);
+  return `${plural ? "These ideas" : "This idea"}${rest}`;
 }
 
 export function buildPractice(input: {
@@ -133,12 +144,13 @@ export function buildPractice(input: {
 
   // 1. Identify the idea from its description, among the course's other topics.
   const others = [...new Set(input.siblingNames.filter((other) => other.toLocaleLowerCase() !== name.toLocaleLowerCase()))];
-  if (definition && others.length >= 2) {
+  const maskedDefinition = definition ? maskName(definition, name) : null;
+  if (definition && maskedDefinition && others.length >= 2) {
     const distractors = others.sort((a, b) => hash(`${conceptId}${a}`) - hash(`${conceptId}${b}`)).slice(0, 3);
     const choices = [name, ...distractors].sort((a, b) => hash(`${conceptId}x${a}`) - hash(`${conceptId}x${b}`));
     add({
       kind: "choice",
-      prompt: `Which idea from your notes does this describe? “${stripEnd(maskName(definition, name))}.”`,
+      prompt: `Which idea from your notes does this describe? “${stripEnd(maskedDefinition)}.”`,
       modelAnswer: name,
       hint: `Think about what ${locator} is mostly about.`,
       explanation: `${locator} says: “${definition}”`,
@@ -183,14 +195,17 @@ export function buildPractice(input: {
     }
   }
 
-  // 4. Fill the gap in a key sentence.
-  for (const sentence of sentences.slice(0, 5)) {
+  // 4. Fill the gap in a key sentence: up to two, from different sentences with different words.
+  const usedGaps = new Set<string>();
+  let gapsMade = 0;
+  for (const sentence of sentences.slice(0, 6)) {
     if (sentence === definition && sentences.length > 1) continue;
     if (words(sentence).length < 7 || sentence.length > 220) continue;
     const pair = termPairs(sentence)[0];
     const gapSource = pair && sentence.includes(pair.meaning) ? pair.meaning : sentence;
     const gap = pickGapWord(gapSource, pair ? `${name} ${pair.term}` : name, excerpt);
-    if (!gap) continue;
+    if (!gap || usedGaps.has(gap.toLocaleLowerCase())) continue;
+    usedGaps.add(gap.toLocaleLowerCase());
     const blank = (value: string) => value.replace(new RegExp(`\\b${gap}\\b`), "_____");
     const masked = pair && sentence.includes(pair.meaning) ? sentence.replace(pair.meaning, blank(pair.meaning)) : blank(sentence);
     add({
@@ -201,7 +216,8 @@ export function buildPractice(input: {
       explanation: `The page says: “${sentence}”`,
       sourceQuote: sentence,
     });
-    break;
+    gapsMade += 1;
+    if (gapsMade >= 2) break;
   }
 
   // 4b. Terms and their meanings on this page: name the term from its meaning, using the page's other terms as options.
