@@ -17,6 +17,8 @@ import { LoopSteps } from "@/components/LoopSteps";
 import { MarkStamp } from "@/components/MarkStamp";
 import { MinuteShift, RouteShift } from "@/components/RouteShift";
 import { PracticeDrill } from "@/components/PracticeDrill";
+import { QuickRun, type QuickRunResult } from "@/components/QuickRun";
+import { buildQuickRun, quickOutcome, quickSummary } from "@/domain/quick-run";
 import { aiActive, fetchAiTopicContent } from "@/lib/ai-client";
 import { mergeAiContent, type AiTopicContent } from "@/domain/ai-content";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
@@ -118,6 +120,15 @@ function SessionBody() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conceptId]);
   const activity = baseActivity && ai && ai.id === conceptId ? mergeAiContent(baseActivity, ai.content) : baseActivity;
+  const siblingNames = state.snapshot.concepts.filter((item) => item.courseId === concept?.courseId).map((item) => item.name);
+  const run = useMemo(
+    () => (activity && concept ? buildQuickRun({ activity, name: concept.name, siblingNames }) : null),
+    // The run is rebuilt only when the topic or its content changes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [conceptId, activity?.practice?.length, activity?.teach?.aiExplanation],
+  );
+  const quickMode = Boolean(run);
+  const [runKey, setRunKey] = useState(0);
   const total = session?.plannedConceptIds.length ?? 0;
   const focusStep = useCallback((node: HTMLElement | null) => {
     if (node && phase !== "retrieve" && phase !== "apply") node.focus();
@@ -199,7 +210,7 @@ function SessionBody() {
     setPhase("evaluate");
   }
 
-  function grade(outcome: RetrievalOutcome) {
+  function grade(outcome: RetrievalOutcome, texts?: { retrieve: string; application: string }) {
     // Hold the current page while the recorded event moves the resumable index forward.
     setPosition({ sessionId: activeSessionId, index });
     setLastOutcome(outcome);
@@ -209,7 +220,7 @@ function SessionBody() {
       conceptId: activeConcept.id,
       sessionId: activeSessionId,
       promptId: activePrompt.id,
-      responseText: `${retrieveAnswer}\n\nApplication: ${applicationAnswer}`,
+      responseText: `${texts?.retrieve ?? retrieveAnswer}\n\nApplication: ${texts?.application ?? applicationAnswer}`,
       outcome,
       responseTimeMs: responseTimeMs.current,
       answerRevealed: true,
@@ -233,7 +244,37 @@ function SessionBody() {
     responseTimeMs.current = 0;
   }
 
+  function finishQuick(result: QuickRunResult) {
+    const outcome = quickOutcome(result);
+    const summary = quickSummary(result);
+    setRetrieveAnswer(result.explained);
+    setApplicationAnswer(summary);
+    responseTimeMs.current = result.elapsedMs;
+    setEvaluation({
+      outcome,
+      score: result.total ? result.right / result.total : 0,
+      label: outcome === "success" ? "Strong evidence" : outcome === "partial" ? "Partial evidence" : "Not enough evidence yet",
+      explanation: summary,
+      matchedRetrieve: 0,
+      matchedApply: 0,
+      criteria: [],
+      contradiction: false,
+    });
+    grade(outcome, { retrieve: result.explained, application: summary });
+  }
+
   function retryCurrentConcept() {
+    if (quickMode) {
+      setRetrieveAnswer("");
+      setApplicationAnswer("");
+      setEvaluation(null);
+      setHelpMode(null);
+      setSourceRevealed(false);
+      setRunKey((value) => value + 1);
+      setPhase("learn");
+      startedAt.current = performance.now();
+      return;
+    }
     setRetrieveAnswer("");
     setApplicationAnswer("");
     setEvaluation(null);
@@ -294,7 +335,7 @@ function SessionBody() {
     ?? null;
   const hasReadableSource = currentMaterial?.storage === "local" && !currentMaterial.id.startsWith("material-demo-");
   const sourcePage = Number(currentSource?.locator?.match(/\d+/)?.[0] ?? 1);
-  const recallWithoutLooking = (["retrieve", "apply"] as Phase[]).includes(phase) && !sourceRevealed;
+  const recallWithoutLooking = ((["retrieve", "apply"] as Phase[]).includes(phase) || (quickMode && phase === "learn")) && !sourceRevealed;
 
   async function openSource(materialId: string, locator: string | null) {
     sourceOpenerRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -353,7 +394,7 @@ function SessionBody() {
   }
 
   return (
-    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}`}>
+    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}${recallWithoutLooking && hasReadableSource ? " is-recalling" : ""}`}>
       <div className="study-context is-folio">
         <span className="study-context-title">
           <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
@@ -408,11 +449,15 @@ function SessionBody() {
         <CourseSourceReader key={`${currentMaterial.id}-${sourcePage}`} material={currentMaterial} initialPage={sourcePage} concealed={recallWithoutLooking} onShowSource={() => setSourceRevealed(true)} />
       </div> : null}
       <div className="study-loop-track">
-        <LoopSteps
-          compact
-          label="Study steps"
-          current={(["read", "retrieve", "use", "mark"] as const)[phase === "result" || phase === "reroute" ? 3 : (["learn", "retrieve", "apply", "evaluate"] as const).indexOf(phase)]}
-        />
+        {quickMode ? (
+          <p className="study-run-label">{concept.name} · topic {index + 1} of {total}</p>
+        ) : (
+          <LoopSteps
+            compact
+            label="Study steps"
+            current={(["read", "retrieve", "use", "mark"] as const)[phase === "result" || phase === "reroute" ? 3 : (["learn", "retrieve", "apply", "evaluate"] as const).indexOf(phase)]}
+          />
+        )}
       </div>
 
       <AnimatePresence mode="wait" initial={false}>
@@ -542,7 +587,7 @@ function SessionBody() {
               </div>
               {minuteChanges.length ? <div><span>Time adjusted</span><strong>{minuteChanges.slice(0, 2).map((change) => `${change.name} ${change.before} → ${change.after} min`).join(" · ")}</strong></div> : null}
             </div>
-            <PracticeDrill key={concept.id} items={activity.practice ?? []} />
+            {quickMode ? null : <PracticeDrill key={concept.id} items={activity.practice ?? []} />}
             {currentSource && currentMaterial ? (
               <button
                 type="button"
@@ -582,7 +627,11 @@ function SessionBody() {
           >
             <p className="study-count sr-only" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
-            {phase === "learn" ? (
+            {phase === "learn" && quickMode && run ? (
+              <QuickRun key={`${concept.id}-${runKey}`} run={run} onRevealSource={() => setSourceRevealed(true)} onFinish={finishQuick} />
+            ) : null}
+
+            {phase === "learn" && !quickMode ? (
               <div className="session-learn">
                 <h1>{activity.learn.title}</h1>
                 <p className="session-explanation">{activity.learn.explanation}</p>
