@@ -4,10 +4,11 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { checkPracticeAnswer } from "@/domain/practice-check";
 import { PackArt } from "@/components/PackArt";
-import type { QuickRun as Run, SelfGrade } from "@/domain/quick-run";
+import { whereAnswerBelongs, type QuickRun as Run, type SelfGrade } from "@/domain/quick-run";
 import styles from "./QuickRun.module.css";
 
-export type QuickRunResult = { right: number; total: number; unsure: number; self: SelfGrade; explained: string; elapsedMs: number };
+/** `missed` holds the page lines behind the checks that were wrong or not sure, so the result can point back to them. */
+export type QuickRunResult = { right: number; total: number; unsure: number; self: SelfGrade; explained: string; elapsedMs: number; missed: string[] };
 
 const GRADES: Array<{ value: SelfGrade; label: string; hint: string }> = [
   { value: "nailed", label: "Nailed it", hint: "Same idea, my own words" },
@@ -26,7 +27,8 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   const [step, setStep] = useState(0); // 0..total-1 = checks, total = explain
   const [picked, setPicked] = useState<number | null>(null);
   const [typed, setTyped] = useState("");
-  const [answered, setAnswered] = useState<null | { right: boolean; unsure?: boolean }>(null);
+  const [answered, setAnswered] = useState<null | { right: boolean; unsure?: boolean; elsewhere?: string | null; given?: string }>(null);
+  const [missed, setMissed] = useState<string[]>([]);
   const [unsure, setUnsure] = useState(0);
   const [right, setRight] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -48,8 +50,9 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
     if (!item || answered) return;
     const ok = checkPracticeAnswer(item, value);
     if (typeof value === "number") setPicked(value);
-    setAnswered({ right: ok });
-    if (ok) { setRight((count) => count + 1); setStreak((count) => count + 1); } else setStreak(0);
+    const given = typeof value === "number" ? item.choices?.[value] ?? "" : value.trim();
+    setAnswered({ right: ok, given, elsewhere: ok ? null : whereAnswerBelongs(item, given, run.sentences) });
+    if (ok) { setRight((count) => count + 1); setStreak((count) => count + 1); } else { setStreak(0); setMissed((list) => [...list, item.sourceQuote]); }
   }
 
   // "Not sure" earns no credit, shows the answer, and does not break a streak: honesty should never cost more than guessing.
@@ -57,6 +60,7 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
     if (!item || answered) return;
     setAnswered({ right: false, unsure: true });
     setUnsure((count) => count + 1);
+    setMissed((list) => [...list, item.sourceQuote]);
   }
 
   function next() {
@@ -65,7 +69,7 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   }
 
   function finish(self: SelfGrade, at: number) {
-    onFinish({ right, total, unsure, self, explained, elapsedMs: Math.max(0, Math.round(at - started.current)) });
+    onFinish({ right, total, unsure, self, explained, elapsedMs: Math.max(0, Math.round(at - started.current)), missed });
   }
 
   // 1-4 pick an option, like a quiz.
@@ -128,6 +132,12 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
               <motion.div className={`${styles.feedback} ${answered.right ? styles.ok : styles.no}`} role="status" initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
                 <strong><PackArt name={answered.right ? "check" : "info"} className={styles.mark} />{answered.unsure ? (item.kind === "cloze" ? `That’s fine. It was “${item.modelAnswer}”.` : "That’s fine. Here’s the answer.") : answered.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
                 <p className={styles.quote}>“{item.sourceQuote}”</p>
+                {answered.elsewhere ? (
+                  <div className={styles.elsewhere}>
+                    <span>{answered.given && !/\s/.test(answered.given) ? `“${answered.given}” belongs to this line in your notes:` : "That answer belongs to this line in your notes:"}</span>
+                    <p>“{answered.elsewhere}”</p>
+                  </div>
+                ) : null}
                 <button ref={nextRef} type="button" className={styles.primary} onClick={next}>{step + 1 >= total ? "Now say it yourself" : "Next"} <span aria-hidden="true">→</span></button>
               </motion.div>
             ) : null}

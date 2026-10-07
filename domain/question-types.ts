@@ -156,3 +156,49 @@ export function termFromMeaning(ctx: Ctx): Draft[] {
   }
   return out;
 }
+
+/**
+ * Two sentences built the same way that differ in one key word ("In a hypotonic solution …" / "In a hypertonic
+ * solution …") are the classic mix-up. One question asks which ending belongs to which case, with the other case's
+ * ending as the wrong option, so a student has to tell the two apart instead of filling the same gap twice.
+ */
+export function framePairs(ctx: Ctx): Draft[] {
+  const out: Draft[] = [];
+  const tokens = ctx.sentences.map((sentence) => strip(sentence).split(/\s+/));
+  // The ending is what the case leads to; a trailing "because …" reason is a separate question.
+  const ending = (rest: string[]) => rest.join(" ").replace(/,?\s+(?:because|since|so that|as a result)\b.*$/i, "").trim();
+  for (let i = 0; i < tokens.length; i += 1) {
+    for (let j = i + 1; j < tokens.length; j += 1) {
+      const [a, b] = [tokens[i], tokens[j]];
+      let p = 0;
+      while (p < a.length && p < b.length && a[p].toLocaleLowerCase() === b[p].toLocaleLowerCase()) p += 1;
+      if (p < 2 || p > 6 || p >= a.length - 3 || p >= b.length - 3) continue;
+      const [one, two] = [a[p], b[p]];
+      if (one.length < 4 || two.length < 4 || !/^[A-Za-z-]+$/.test(one + two)) continue;
+      // Words shared right after the key word ("solution") stay in the prompt.
+      let s = p + 1;
+      while (s < a.length && s < b.length && a[s].toLocaleLowerCase() === b[s].toLocaleLowerCase() && s - p <= 2) s += 1;
+      const endA = ending(a.slice(s));
+      const endB = ending(b.slice(s));
+      if (words(endA) < 3 || words(endB) < 3 || words(endA) > 14 || words(endB) > 14 || endA.toLocaleLowerCase() === endB.toLocaleLowerCase()) continue;
+      const askB = h(`${ctx.conceptId}${ctx.sentences[i]}`) % 2 === 0;
+      const [target, wrong, sentence, other] = askB ? [endB, endA, ctx.sentences[j], ctx.sentences[i]] : [endA, endB, ctx.sentences[i], ctx.sentences[j]];
+      const stem = (askB ? b : a).slice(0, s).join(" ");
+      const choices = shuffle([cap(target), cap(wrong)], `${ctx.conceptId}p${sentence}`);
+      out.push({
+        kind: "choice",
+        variant: "pair",
+        level: "understand",
+        prompt: `Your notes describe two cases. Which ending is right? “${stem} …”`,
+        modelAnswer: cap(target),
+        hint: `${ctx.locator} compares “${one}” and “${two}”.`,
+        explanation: `${ctx.locator}: “${sentence}” and “${other}”`,
+        sourceQuote: sentence,
+        choices,
+        correctIndex: choices.indexOf(cap(target)),
+      });
+      if (out.length >= 2) return out;
+    }
+  }
+  return out;
+}

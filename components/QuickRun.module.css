@@ -255,6 +255,28 @@
   color: var(--color-slate);
 }
 
+/* Where the wrong answer really belongs: the contrast is the lesson, so it sits right under the right line. */
+.elsewhere {
+  margin: 4px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--color-frost);
+}
+
+.elsewhere span {
+  display: block;
+  font-size: var(--text-caption, 0.8125rem);
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.elsewhere p {
+  margin: 4px 0 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-slate);
+}
+
 .feedback .primary {
   justify-self: start;
   margin-top: 4px;

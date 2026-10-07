@@ -24,7 +24,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
  * remember (quoted from your notes), today's goal filling up, and a single next step. Detail is one tap away.
  */
 export function QuickResult({
-  outcome, topic, attempts, stats, remember, locator, goalDone, goal, routeLine, nextName, details, onRetry, onContinue, onSource,
+  outcome, topic, attempts, stats, remember, rememberLabel = "Worth remembering", locator, goalDone, goal, routeLine, nextName, details, onRetry, onContinue, onSource,
 }: {
   outcome: RetrievalOutcome;
   topic: string;
@@ -32,6 +32,8 @@ export function QuickResult({
   attempts: number;
   stats: QuickStats | null;
   remember: string;
+  /** What the quote is: a line to look at again, a new line, or the main idea. */
+  rememberLabel?: string;
   locator: string;
   goalDone: number;
   goal: number;
@@ -75,7 +77,7 @@ export function QuickResult({
       ) : null}
 
       <motion.blockquote {...rise(0.42)} className={styles.remember}>
-        <span className={styles.rememberHead}><PackArt name="clipboard-check" className={styles.icon} />Worth remembering · {locator}</span>
+        <span className={styles.rememberHead}><PackArt name="clipboard-check" className={styles.icon} />{rememberLabel}{/^Section\b/.test(locator) ? "" : ` · ${locator}`}</span>
         <p>“{remember}”</p>
       </motion.blockquote>
 

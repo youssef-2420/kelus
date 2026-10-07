@@ -1,4 +1,4 @@
-import { buildPractice } from "./content-engine";
+import { buildPractice, splitSentences } from "./content-engine";
 import { isDrillable } from "./practice-check";
 import type { LearningActivity, PracticeItem, RetrievalOutcome } from "./types";
 
@@ -9,13 +9,62 @@ export type QuickRun = {
   explainPrompt: string;
   explainAnswer: string;
   explainQuote: string;
+  /** The page's sentences, so a wrong answer can be shown where it really belongs. */
+  sentences: string[];
+  /** A line from the page that no check and no explanation used: something new to end on. */
+  extraFact?: string;
 };
+
+const norm = (text: string) => text.toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+const overlaps = (a: string, b: string) => { const x = norm(a); const y = norm(b); return Boolean(x && y) && (x.includes(y) || y.includes(x)); };
+const hasWord = (text: string, word: string) => new RegExp(`(?:^| )${norm(word)}(?: |$)`).test(norm(text));
+
+/** The words around a gap: "In a _____ solution" twice is the same question twice, whatever the answer. */
+function gapFrame(item: PracticeItem) {
+  if (item.kind !== "cloze") return null;
+  const [before = "", after = ""] = item.prompt.split("_____");
+  return `${norm(before).split(" ").slice(-2).join(" ")}|${norm(after).split(" ")[0] ?? ""}`;
+}
+
+/**
+ * Two checks clash when they test the same fact, use the same gap frame, or when the earlier one's feedback
+ * (which shows its quote) would give away the later one's answer.
+ */
+function clashes(earlier: PracticeItem, later: PracticeItem) {
+  if (overlaps(earlier.sourceQuote, later.sourceQuote)) return true;
+  const frame = gapFrame(later);
+  if (frame && frame === gapFrame(earlier)) return true;
+  if (later.kind === "cloze" && hasWord(earlier.sourceQuote, later.modelAnswer)) return true;
+  if (earlier.kind === "cloze" && hasWord(later.prompt, earlier.modelAnswer)) return true;
+  return false;
+}
 
 const MAX_CHECKS = 3;
 
+function pickChecks(all: PracticeItem[], round: number, strict = true) {
+  const turn = all.length ? (round * MAX_CHECKS) % all.length : 0;
+  const pool = [...all.slice(turn), ...all.slice(0, turn)];
+  const style = (item: PracticeItem) => item.variant ?? item.kind;
+  // A question that asks "why" or "which" beats a fill-in gap, so one understanding item leads when the page has one.
+  // Then one of each style before a second of any, and never two checks on the same fact.
+  const lead = pool.find((item) => item.level === "understand");
+  const ordered = [...(lead ? [lead] : []), ...pool.filter((item) => item !== lead)];
+  const checks: PracticeItem[] = [];
+  for (const varied of [true, false]) {
+    for (const item of ordered) {
+      if (checks.length >= MAX_CHECKS || checks.includes(item)) continue;
+      if (varied && checks.some((chosen) => style(chosen) === style(item))) continue;
+      if (strict && checks.some((chosen) => clashes(chosen, item))) continue;
+      checks.push(item);
+    }
+  }
+  return checks;
+}
+
 /**
  * A short run for one topic: up to three instant checks, then one explanation in the learner's own words.
- * Everything comes from the topic's page. Returns null when the page gives fewer than two checkable questions,
+ * Everything comes from the topic's page, and each check tests a different fact from the one the explanation asks for.
+ * Returns null when the page gives fewer than two checkable questions,
  * so the longer loop is used instead.
  */
 export function buildQuickRun(input: { activity: LearningActivity; name: string; siblingNames: string[]; round?: number }): QuickRun | null {
@@ -32,24 +81,41 @@ export function buildQuickRun(input: { activity: LearningActivity; name: string;
       });
   // One of each kind before a second of any: a run should feel varied, not repeated.
   // Each round starts further along the list, so a second session brings questions the first one did not.
-  const all = own.filter(isDrillable);
-  const turn = all.length ? (round * MAX_CHECKS) % all.length : 0;
-  const pool = [...all.slice(turn), ...all.slice(0, turn)];
-  const seen = new Set<string>();
-  const style = (item: PracticeItem) => item.variant ?? item.kind;
-  // A question that asks "why" or "which" beats a fill-in gap, so one understanding item leads when the page has one.
-  const lead = pool.find((item) => item.level === "understand");
-  if (lead) seen.add(style(lead));
-  const first = pool.filter((item) => (item === lead ? false : seen.has(style(item)) ? false : (seen.add(style(item)), true)));
-  const rest = pool.filter((item) => item !== lead && !first.includes(item));
-  const checks = [...(lead ? [lead] : []), ...first, ...rest].slice(0, MAX_CHECKS);
+  const explainAnswer = activity.retrieve.modelAnswer;
+  // "Which idea does this describe?" is answered by the topic name at the top of the screen, so it is a last resort.
+  const anyDrillable = own.filter(isDrillable);
+  const drillable = anyDrillable.filter((item) => !/^Which idea\b/.test(item.prompt));
+  // The explanation at the end asks for this sentence, so a check that shows it first would spoil it.
+  const fresh = drillable.filter((item) => !overlaps(item.sourceQuote, explainAnswer));
+  // A very short page may have nothing else to ask; then a check on the main sentence beats no quick run at all.
+  const fromFresh = pickChecks(fresh, round);
+  const fromAny = fromFresh.length >= 2 ? fromFresh : pickChecks(drillable, round);
+  const fromAll = fromAny.length >= 2 ? fromAny : pickChecks(anyDrillable, round);
+  // A one-sentence page (common in slides) can only be asked about that sentence; two angles on it still beat none.
+  const checks = fromAll.length >= 2 ? fromAll : pickChecks(anyDrillable, round, false);
   if (checks.length < 2) return null;
+  const sentences = splitSentences([activity.learn.explanation, ...activity.learn.keyPoints].join("\n"));
+  const used = [explainAnswer, ...checks.map((item) => item.sourceQuote)];
+  const extraFact = sentences.find((sentence) => sentence.length >= 40 && !used.some((quote) => overlaps(quote, sentence)));
   return {
     checks,
     explainPrompt: round % 2 === 1 ? `Close the page. What would you tell a friend about ${name}?` : activity.retrieve.prompt,
-    explainAnswer: activity.retrieve.modelAnswer,
-    explainQuote: activity.retrieve.modelAnswer,
+    explainAnswer,
+    explainQuote: explainAnswer,
+    sentences,
+    extraFact,
   };
+}
+
+/**
+ * A wrong answer is usually a real word from the notes, just from another line. Finding that line turns "Not quite"
+ * into the actual lesson: what the word does mean, next to what was asked.
+ */
+export function whereAnswerBelongs(item: PracticeItem, given: string, sentences: string[]) {
+  const answer = norm(given);
+  if (answer.length < 3 || answer === norm(item.modelAnswer)) return null;
+  const single = !answer.includes(" ");
+  return sentences.find((sentence) => !overlaps(sentence, item.sourceQuote) && (single ? hasWord(sentence, answer) : norm(sentence).includes(answer))) ?? null;
 }
 
 /**
