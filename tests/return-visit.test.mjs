@@ -45,3 +45,14 @@ test("each warm-up check is built from the missed sentence itself and quotes it 
     assert.ok(item.kind === "cloze" || item.kind === "choice");
   }
 });
+
+test("straight after a block, the next topic is one you have not just answered, even if the plan only held those", async () => {
+  const { restAware } = await import("../lib/today-focus.ts");
+  const now = "2026-10-06T12:00:00.000Z";
+  const events = ["a", "b"].map((conceptId) => ({ kind: "retrieval", conceptId, createdAt: "2026-10-06T11:30:00.000Z" }));
+  const concepts = [{ id: "a", retrievalAttempts: 1, examImportance: 0.3 }, { id: "b", retrievalAttempts: 1, examImportance: 0.3 }, { id: "c", retrievalAttempts: 0, examImportance: 0.2 }, { id: "d", retrievalAttempts: 0, examImportance: 0.5 }];
+  const plan = [{ conceptId: "a", minutes: 9 }, { conceptId: "b", minutes: 8 }, { conceptId: "mixed-retrieval", minutes: 5 }];
+  assert.equal(restAware(plan, events, now, concepts)[0].conceptId, "d", "an untouched topic, most exam weight first");
+  assert.equal(restAware([{ conceptId: "c", minutes: 8 }, ...plan], events, now, concepts)[0].conceptId, "c", "a fresh planned topic stays first");
+  assert.equal(restAware(plan, events, "2026-10-06T18:00:00.000Z", concepts)[0].conceptId, "a", "after a rest, the plan is the plan");
+});

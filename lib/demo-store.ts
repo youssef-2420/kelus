@@ -10,6 +10,7 @@ import { createRetrievalEvent, sessionSummary } from "../domain/session";
 import type { Concept, ExtractedMaterialPage, LearnerSnapshot, LearningEvent, ProposedConcept, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
 import { createLearnerSnapshot, type SetupInput } from "./setup";
 import type { MissedLine } from "../domain/return-visit";
+import { restAware } from "./today-focus";
 
 const STORAGE_KEY = "kelus-learning-state-v2";
 const LAST_SESSION_KEY = "kelus:last-session-completed-at";
@@ -484,7 +485,8 @@ export function startSession(state: DemoState, courseId: string, examId: string)
     exam,
     nowIso: state.nowIso,
   });
-  const plannedConceptIds = route.allocations.map((item) => item.conceptId).filter((id): id is string => id !== "mixed-retrieval");
+  // Topics answered in the last few hours rest behind the others: the same order Today shows.
+  const plannedConceptIds = restAware(route.allocations, state.snapshot.events, state.nowIso, state.snapshot.concepts.filter((concept) => concept.courseId === courseId)).map((item) => item.conceptId).filter((id): id is string => id !== "mixed-retrieval");
   const abandoned = state.snapshot.sessions.map((item) =>
     item.courseId === courseId && item.status === "in_progress"
       ? { ...item, status: "abandoned" as const, endedAt: state.nowIso }

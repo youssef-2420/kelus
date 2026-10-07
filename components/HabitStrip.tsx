@@ -19,7 +19,7 @@ function message(summary: ReturnType<typeof habitSummary>, studiedBefore: boolea
 }
 
 /** The return loop on Today: today's goal, the last seven days, and the one thing that makes tomorrow worth opening. */
-export function HabitStrip({ events, concepts }: { events: LearningEvent[]; concepts: Concept[] }) {
+export function HabitStrip({ events, concepts, compact = false }: { events: LearningEvent[]; concepts: Concept[]; /** Goal and week only, where the page says what comes next itself. */ compact?: boolean }) {
   const reduce = useReducedMotion() === true;
   const summary = habitSummary({ events, concepts });
   const share = Math.min(1, summary.topicsToday / summary.goal);
@@ -46,13 +46,13 @@ export function HabitStrip({ events, concepts }: { events: LearningEvent[]; conc
         </ol>
       </div>
 
-      {text || summary.pointsThisWeek > 0 ? (
+      {compact ? null : text || summary.pointsThisWeek > 0 ? (
         <p className={styles.note} role="status">
           {text}
           {summary.pointsThisWeek > 0 ? <span> Estimated readiness is up {summary.pointsThisWeek} point{summary.pointsThisWeek === 1 ? "" : "s"} this week.</span> : null}
         </p>
       ) : null}
-      <Link href="/today?section=progress" className={styles.more}>See your progress <span aria-hidden="true">→</span></Link>
+      {compact ? null : <Link href="/today?section=progress" className={styles.more}>See your progress <span aria-hidden="true">→</span></Link>}
     </section>
   );
 }

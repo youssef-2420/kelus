@@ -37,6 +37,8 @@ function Trend({ series, target }: { series: Array<{ label: string; readiness: n
   );
 }
 
+const LAST: Record<string, string> = { success: "Last answer: solid", partial: "Last answer: partly there", failure: "Last answer: missed" };
+
 function Topics({ title, note, items, empty }: { title: string; note: string; items: TopicChange[]; empty: string }) {
   return (
     <section className={styles.group} aria-label={title}>
@@ -48,7 +50,8 @@ function Topics({ title, note, items, empty }: { title: string; note: string; it
             <li key={topic.id}>
               <strong>{topic.name}</strong>
               <span className={styles.move} aria-label={`${pct(topic.before)} percent to ${pct(topic.after)} percent`}>
-                {topic.attempts > 0 ? <>{pct(topic.before)}% <span aria-hidden="true">→</span> {pct(topic.after)}%</> : "Not started"}
+                {/* A change is shown as a change; "0% → 0%" says nothing, so the last answer is named instead. */}
+                {topic.attempts === 0 ? "Not started" : pct(topic.before) !== pct(topic.after) ? <>{pct(topic.before)}% <span aria-hidden="true">→</span> {pct(topic.after)}%</> : LAST[topic.lastOutcome ?? "partial"]}
               </span>
               <span className={styles.bar} aria-hidden="true"><i style={{ width: `${pct(topic.after)}%` }} /></span>
             </li>
