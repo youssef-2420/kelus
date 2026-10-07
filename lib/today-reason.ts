@@ -2,30 +2,30 @@ import type { Concept, RouteAllocation } from "@/domain/types";
 
 /** Plain-language evidence for a route choice, without claiming a predicted grade. */
 export function describeRouteChoice(allocation: RouteAllocation, concept?: Concept): string[] {
-  if (!concept) return ["A short mixed-recall block helps check what is still available from memory."];
+  if (!concept) return ["A short mixed-recall block: a few topics at once, from memory."];
 
   const reasons = new Set(allocation.reasons);
   const lines: string[] = [];
 
   if (concept.retrievalAttempts === 0) {
-    lines.push("You have not checked your recall on this topic in Kelus yet.");
+    lines.push("New to you here: no answers on it yet.");
   } else if (reasons.has("LOW_MASTERY")) {
-    lines.push("Your earlier answers suggest this topic needs another pass.");
+    lines.push("Your last answers here were shaky.");
   } else if (reasons.has("REVIEW_DUE") || reasons.has("RETENTION_FADING")) {
-    lines.push("It is time to check what you still remember from earlier practice.");
+    lines.push("Time to check you still remember it.");
   } else if (reasons.has("LOW_CONFIDENCE_ESTIMATE")) {
-    lines.push("Kelus needs more answer evidence before trusting its estimate here.");
+    lines.push("A few more answers will show where you stand.");
   }
 
   if (reasons.has("PREREQUISITE_GAP")) {
-    lines.push("A stronger grasp here may help with connected topics later.");
+    lines.push("It helps with the topics that build on it.");
   } else if (reasons.has("HIGH_EXAM_VALUE")) {
-    lines.push("Your current course model gives this topic higher exam weight.");
+    lines.push("It carries more weight in your exam.");
   } else if (reasons.has("EXAM_APPROACHING")) {
-    lines.push("The exam is close, so a check now is useful.");
+    lines.push("Your exam is close.");
   }
 
-  return lines.length ? lines.slice(0, 2) : ["Selected from your current course and study history."];
+  return lines.length ? lines.slice(0, 2) : ["Next in your plan."];
 }
 
 /** A student-facing payoff for the next focused block, without promising grades. */

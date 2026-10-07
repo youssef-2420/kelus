@@ -13,6 +13,7 @@ export type QuickRun = {
   sentences: string[];
   /** A line from the page that no check and no explanation used: something new to end on. */
   extraFact?: string;
+  topic: string;
 };
 
 const norm = (text: string) => text.toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
@@ -104,6 +105,7 @@ export function buildQuickRun(input: { activity: LearningActivity; name: string;
     explainQuote: explainAnswer,
     sentences,
     extraFact,
+    topic: name,
   };
 }
 

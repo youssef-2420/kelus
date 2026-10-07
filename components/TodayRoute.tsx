@@ -8,7 +8,7 @@ import { HabitStrip } from "@/components/HabitStrip";
 import { ReminderCard } from "@/components/ReminderCard";
 import { ExamDateCard } from "@/components/ExamDateCard";
 import { estimatedReadiness } from "@/domain/readiness";
-import { describeRouteChoice, describeRoutePayoff } from "@/lib/today-reason";
+import { describeRouteChoice } from "@/lib/today-reason";
 import { trackEvent } from "@/lib/analytics";
 import styles from "./TodayRoute.module.css";
 
@@ -99,7 +99,6 @@ export function TodayRoute({
     const concept = concepts.find((item) => item.id === allocation.conceptId);
     return { ...allocation, name: concept?.name ?? "Mixed recall", mastery: concept?.mastery ?? 0, tried: (concept?.retrievalAttempts ?? 0) > 0 };
   });
-  const payoff = describeRoutePayoff(first, nextStops[0]?.name);
   const lastPractice = isSampleCourse ? null : [...events]
     .filter((event) => event.kind === "retrieval" && concepts.some((item) => item.id === event.conceptId))
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
@@ -131,7 +130,7 @@ export function TodayRoute({
       >
         <p className={styles.kicker} data-block="today-page-folio">Up next · about {first.minutes} minutes</p>
         <h1 id="today-title" className={styles.title}>{firstName}</h1>
-        <p className={styles.why} data-block="today-decision" aria-label="Why this topic is first">{decision[0]} {payoff}</p>
+        <p className={styles.why} data-block="today-decision" aria-label="Why this topic is first">{decision.join(" ")}</p>
         <ul className={styles.chips} aria-label="What this takes">
           <li>3 quick checks</li>
           <li>1 explanation</li>
