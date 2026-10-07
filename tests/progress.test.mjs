@@ -33,7 +33,7 @@ test("enough answers across enough topics shows the change in weighted points an
   const s = progressSummary({ concepts, events, nowMs: NOW, daysToExam: 5 });
   assert.equal(s.enough, true);
   assert.ok(s.points > 0);
-  assert.deepEqual(s.stronger.map((t) => t.id), ["a", "b"]); // largest gain first
+  assert.ok(s.stronger.every((t) => !s.needsPass.some((n) => n.id === t.id))); // never in both lists
   assert.deepEqual(s.notStarted.map((t) => t.id), ["c"]);
   assert.ok(s.needsPass.some((t) => t.id === "b")); // low mastery and last answer failed
   assert.equal(s.series.length, 14);
@@ -65,13 +65,13 @@ test("the week's counts only include this week's answers", () => {
   assert.equal(s.topicsPractised, 2);
 });
 
-test("a topic that went up is not also listed as needing a pass, unless your last answer missed", () => {
+test("every topic is in exactly one list: one that went up but last missed needs a pass, not praise", () => {
   const concepts = [concept("a", 0.3), concept("b", 0.3)];
   const events = [
     ev("a", 6, 0, 0.1), ev("a", 4, 0.1, 0.2), ev("a", 1, 0.2, 0.3, "partial"), // climbing, still low
     ev("b", 6, 0, 0.1), ev("b", 4, 0.1, 0.2), ev("b", 1, 0.2, 0.3, "failure"), // climbing, but last answer missed
   ];
   const s = progressSummary({ concepts, events, nowMs: NOW, daysToExam: 5 });
-  assert.deepEqual(s.stronger.map((t) => t.id).sort(), ["a", "b"]);
+  assert.deepEqual(s.stronger.map((t) => t.id), ["a"]);
   assert.deepEqual(s.needsPass.map((t) => t.id), ["b"]);
 });

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type DragEvent } from "react";
-import { SourceArt } from "@/components/SourceArt";
 import { PackArt } from "@/components/PackArt";
 import { PasteNotes } from "@/components/PasteNotes";
 import { MAX_NOTES_BYTES } from "@/domain/markdown-pages";
@@ -54,11 +53,11 @@ export function DropNotes({ onFile, first = false, courseName }: { onFile: (file
         <section className="setup-stage-content empty-course" aria-labelledby="start-title">
           <p className="kicker">{courseName ?? "Start here"}</p>
           <PackArt name="on-the-laptop" className="empty-course-art" size={190} />
-          <h1 id="start-title" className="destination-page-title">{first ? "Drop your notes." : "Add your notes."}</h1>
+          <h1 id="start-title" className="destination-page-title">{first ? "Start with your notes." : "Add your notes."}</h1>
           <p className="destination-support">
             {first
-              ? "A PDF, a Notion export, or pasted text. Kelus finds the topics and has your first question ready in about a minute."
-              : "Drop a PDF, a Notion export, or paste text. Kelus finds the topics and builds today’s plan."}
+              ? "A PDF, a Notion export or pasted text. Kelus finds the topics, and your first question is ready in about a minute."
+              : "A PDF, a Notion export or pasted text. Kelus finds the topics and adds them to today’s plan."}
           </p>
           <label
             className={`setup-first-upload${dragging ? " is-dragging" : ""}`}
@@ -69,13 +68,14 @@ export function DropNotes({ onFile, first = false, courseName }: { onFile: (file
             onDrop={drop}
           >
             <input type="file" accept={SOURCE_FILE_ACCEPT} disabled={busy} onChange={(event) => { void take(event.target.files?.[0]); event.target.value = ""; }} />
-            <span className="setup-upload-mark" aria-hidden="true"><SourceArt role="lecture_slides" /></span>
+            <span className="setup-upload-mark" aria-hidden="true"><PackArt name="folder" size={44} /></span>
             <strong>{busy ? "Reading your file…" : "Choose a PDF or notes"}</strong>
-            <span>{busy ? "This takes a few seconds." : "or drop it here"}</span>
+            {/* Dragging only exists with a mouse or trackpad; a phone gets the file types instead. */}
+            <span>{busy ? "This takes a few seconds." : <><span className="drop-hint">or drop it here · </span>PDF, Markdown, .txt or a Notion .zip</>}</span>
           </label>
           <PasteNotes onFile={(file) => void take(file)} disabled={busy} />
           {error ? <p className="setup-error" role="alert">{error}</p> : null}
-          <p className="setup-file-help">PDF up to 20 MB (digital PDFs with selectable text work best, scans are read too), or notes as Markdown or .txt. A Notion export (Export → Markdown &amp; CSV, the .zip) works as well.</p>
+          <p className="setup-file-help">PDFs up to 20 MB, scans included. From Notion: Export, then Markdown &amp; CSV, and choose the .zip.</p>
           <p className="setup-privacy-note">Your notes stay on this device. You can sign in later to sync.</p>
         </section>
       </div>

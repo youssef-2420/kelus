@@ -22,7 +22,8 @@ test("answering a topic starts a streak and moves today's goal", async ({ page }
   await page.goto("/today?sample=1");
   const strip = page.getByRole("region", { name: "Your study habit" });
   await expect(strip).toContainText("0 of 3 topics");
-  await expect(strip).toContainText("Answer your first topic to start a streak.");
+  // The sample comes with earlier practice, so it is a new streak, not a first one.
+  await expect(strip).toContainText("Answer one topic today to start a new streak.");
 
   await page.getByRole("button", { name: /Start this topic/ }).click();
   await playQuickRun(page);

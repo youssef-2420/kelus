@@ -5,7 +5,7 @@ export type UploadFile = string | { name: string; mimeType: string; buffer: Buff
 /** Opens the start screen and waits until its scripts have run, so a file chosen at once is not lost. */
 export async function gotoStart(page: Page) {
   await page.goto("/today", { waitUntil: "networkidle" });
-  await expect(page.getByRole("heading", { name: "Drop your notes." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
 }
 
 /** The one-step start: drop a file, and the first question opens by itself. */

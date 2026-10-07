@@ -8,7 +8,6 @@ import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { TodayRoute } from "@/components/TodayRoute";
 import { AiPrefetch } from "@/components/AiPrefetch";
-import { InkArt } from "@/components/InkArt";
 import { AiConsent } from "@/components/AiConsent";
 import { SampleReplaceConfirm } from "@/components/SampleReplaceConfirm";
 import { setPendingSetupFile } from "@/lib/pending-setup-file";
@@ -24,6 +23,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
+import { freshOpenSession, resumeConceptId } from "@/lib/today-focus";
 import { generateRoute } from "@/domain/routing-engine";
 import { trackEvent } from "@/lib/analytics";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, removeMaterial, subscribeMaterials } from "@/lib/material-store";
@@ -59,7 +59,7 @@ export function RevisionSurface() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion() === true;
-  const { state, start, reset, removeMaterialSource, setExamDate } = useLearner();
+  const { state, start, reset, removeMaterialSource, setExamDate, abandon } = useLearner();
   const auth = useAuth();
   const [confirmReset, setConfirmReset] = useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
@@ -134,7 +134,15 @@ export function RevisionSurface() {
   const isSampleCourse = course.id === "course-microeconomics" && exam.id === "exam-microeconomics-final";
   const courseId = course.id;
   const examId = exam.id;
-  const openSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
+  const anyOpenSession = snapshot.sessions.find((session) => session.courseId === courseId && session.status === "in_progress");
+  const openSession = freshOpenSession(snapshot.sessions, courseId, nowIso);
+  // With a block open, the card names the topic "Continue" will open, never a different one.
+  const resumeAllocation = openSession
+    ? (() => {
+        const conceptId = resumeConceptId(openSession, snapshot.events);
+        return route.allocations.find((item) => item.conceptId === conceptId) ?? openSession.latestRoute.allocations.find((item) => item.conceptId === conceptId);
+      })()
+    : undefined;
   const modeMeta = MODES.find((item) => item.id === mode)!;
   const courseMaterials = materials.filter((item) => item.courseId === courseId);
   const firstConceptId = route.allocations[0]?.conceptId;
@@ -153,6 +161,7 @@ export function RevisionSurface() {
   }
 
   function begin() {
+    if (anyOpenSession && !openSession) abandon(anyOpenSession.id);
     const sessionId = start(courseId, examId);
     trackEvent({ name: "session_started" });
     try {
@@ -312,7 +321,8 @@ export function RevisionSurface() {
               </p>
               <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} datePending={examDatePending} />
             </div>
-            <InkArt name={mode === "materials" ? "sources" : "topics"} className="studio-section-art" />
+            {/* A drawing beside the section name, from the same hand as the rest of the app. Progress has its own. */}
+            {mode !== "progress" ? <PackArt name={mode === "materials" ? "on-the-laptop" : "target"} className="studio-section-art" size={mode === "materials" ? 168 : 128} /> : null}
           </header>
         ) : null}
 
@@ -348,6 +358,7 @@ export function RevisionSurface() {
                     reminder={{ courseName: course.name, examDate: exam.examDate.slice(0, 10), minutes: exam.availableMinutes }}
                     onStart={openSession ? resume : begin}
                     startLabel={openSession ? "Continue" : undefined}
+                    focus={resumeAllocation}
                   />
                 </div>
               </div>

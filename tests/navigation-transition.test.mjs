@@ -70,7 +70,7 @@ test("one persistent header owns navigation for every page", async () => {
 test("setup starts with a PDF and shows the full route to study", async () => {
   const [setup, today] = await Promise.all([source("components/DropNotes.tsx"), source("app/today/page.tsx")]);
   // One step: notes in. The course is made with defaults and the exam date is asked after the first run.
-  assert.match(setup, /Drop your notes\./);
+  assert.match(setup, /Start with your notes\./);
   assert.doesNotMatch(setup, /Continue to exam details|Read my PDF|studio-onboarding-steps/);
   assert.match(today, /startFromFile/);
   assert.match(today, /examDatePlaceholder:\s*true/);

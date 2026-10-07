@@ -176,3 +176,18 @@ export function structurePastedText(raw: string) {
   const first = text.replace(/^[•\-*\s]+/, "").split(/\s+/).slice(0, 4).join(" ").replace(/[^\p{L}\p{N}]+$/u, "");
   return `# ${titleCase(first) || "My Notes"}\n${text}`;
 }
+
+/**
+ * A title at the top of pasted notes ("Cell biology", or "# Cell biology" above the topics) names the course.
+ * Only a short line standing alone counts: one with its own text beneath it is a topic, not a title.
+ */
+export function pastedTitle(raw: string) {
+  const lines = raw.replace(/\r\n?/g, "\n").split("\n");
+  const at = lines.findIndex((line) => line.trim());
+  if (at < 0) return null;
+  const first = lines[at].trim().replace(/^#\s+/, "").replace(/:$/, "");
+  const next = lines.slice(at + 1).find((line) => line.trim()) ?? "";
+  const standsAlone = !lines[at + 1]?.trim() || /^#{1,6}\s/.test(next.trim()) && /^#\s/.test(lines[at].trim()) && !/^#\s/.test(next.trim());
+  const looksLikeTitle = first.length >= 3 && first.length <= 60 && first.split(/\s+/).length <= 6 && !/[.!?;,]$/.test(first) && !/^#{2,}/.test(lines[at].trim());
+  return standsAlone && looksLikeTitle && next ? first : null;
+}

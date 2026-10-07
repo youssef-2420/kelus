@@ -1,10 +1,12 @@
 import type { Concept, RouteAllocation } from "@/domain/types";
 
 /** Plain-language evidence for a route choice, without claiming a predicted grade. */
-export function describeRouteChoice(allocation: RouteAllocation, concept?: Concept): string[] {
+export function describeRouteChoice(allocation: RouteAllocation, concept?: Concept, options: { examDateKnown?: boolean } = {}): string[] {
   if (!concept) return ["A short mixed-recall block: a few topics at once, from memory."];
 
   const reasons = new Set(allocation.reasons);
+  // Without a real exam date, "the exam is close" would be invented: the countdown runs from a placeholder.
+  if (options.examDateKnown === false) reasons.delete("EXAM_APPROACHING");
   const lines: string[] = [];
 
   if (concept.retrievalAttempts === 0) {

@@ -7,6 +7,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 import { TopicArt, topicArtKind } from "@/components/TopicArt";
 import { generateRoute } from "@/domain/routing-engine";
+import { freshOpenSession, resumeConceptId } from "@/lib/today-focus";
 import { describeRouteChoice } from "@/lib/today-reason";
 import { percent } from "@/lib/format";
 import styles from "./TopicMapPanel.module.css";
@@ -49,7 +50,7 @@ export function TopicMapPanel() {
     .slice()
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
   const exam = state.snapshot.exams.find((item) => item.courseId === course.id && item.isActive);
-  const startAllocation = exam
+  const routeStart = exam
     ? generateRoute({
         concepts,
         relationships: state.snapshot.relationships,
@@ -58,6 +59,10 @@ export function TopicMapPanel() {
         nowIso: state.nowIso,
       }).allocations.find((item) => item.conceptId !== "mixed-retrieval")
     : undefined;
+  // With a block open, "Start here" is the topic Continue opens on Today, not the one just answered.
+  const openBlock = freshOpenSession(state.snapshot.sessions, course.id, state.nowIso);
+  const resumeId = resumeConceptId(openBlock, state.snapshot.events);
+  const startAllocation = resumeId ? (routeStart?.conceptId === resumeId ? routeStart : openBlock?.latestRoute.allocations.find((item) => item.conceptId === resumeId) ?? routeStart) : routeStart;
   const startConceptId = startAllocation?.conceptId ?? null;
 
   if (!concepts.length) {
@@ -117,7 +122,7 @@ export function TopicMapPanel() {
         {rows.map(({ concept, mastery, label, page, due }, index) => {
           const isStart = startConceptId === concept.id;
           const checks = concept.retrievalAttempts;
-          const reason = isStart && startAllocation ? describeRouteChoice(startAllocation, concept)[0] : null;
+          const reason = isStart && startAllocation ? describeRouteChoice(startAllocation, concept, { examDateKnown: !state.snapshot.exams.some((exam) => exam.isActive && exam.datePlaceholder) })[0] : null;
           return (
             <motion.li
               key={concept.id}

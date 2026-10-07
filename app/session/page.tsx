@@ -551,10 +551,10 @@ function SessionBody() {
             tabIndex={-1}
             key={`${concept.id}-result`}
             className="study-question is-page study-mark-moment"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.985, y: 10 }}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.99, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
+            exit={reduceMotion ? { opacity: 0, transition: { duration: 0.08 } } : { opacity: 0, y: -6, transition: { duration: 0.14, ease: kelusEase } }}
+            transition={reduceMotion ? { duration: 0.12 } : { duration: 0.28, ease: kelusEase }}
           >
             <p className="study-count sr-only" aria-live="polite">Marked</p>
             {lastOutcome && !quickMode ? <MarkStamp outcome={lastOutcome} /> : null}
@@ -666,12 +666,13 @@ function SessionBody() {
                   : { opacity: 0, x: 28 }
             }
             animate={{ opacity: 1, x: 0, y: 0 }}
+            // Leaving is a quick fade: the next screen waits for it, so a long exit is dead time.
             exit={
               reduceMotion
-                ? { opacity: 0 }
+                ? { opacity: 0, transition: { duration: 0.08 } }
                 : phase === "learn" || phase === "retrieve" || phase === "apply"
-                  ? { opacity: 0, y: -8 }
-                  : { opacity: 0, x: -16 }
+                  ? { opacity: 0, y: -6, transition: { duration: 0.14, ease: kelusEase } }
+                  : { opacity: 0, x: -12, transition: { duration: 0.14, ease: kelusEase } }
             }
             transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.45 }}
           >
