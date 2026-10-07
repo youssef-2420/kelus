@@ -27,6 +27,7 @@ import { buildQuickRun, quickOutcome, quickSummary } from "@/domain/quick-run";
 import { aiActive, aiConfigured, fetchAiTopicContent, readCachedAi } from "@/lib/ai-client";
 import { mergeAiContent, type AiTopicContent } from "@/domain/ai-content";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
+import { SessionMenu } from "@/components/SessionMenu";
 import { trackEvent } from "@/lib/analytics";
 
 type Phase = "learn" | "retrieve" | "apply" | "evaluate" | "result" | "reroute";
@@ -99,8 +100,6 @@ function SessionBody() {
   const [openingSource, setOpeningSource] = useState(false);
   const [sourceRevealed, setSourceRevealed] = useState(false);
   const sourceRequest = useRef(0);
-  const [confirmDiscard, setConfirmDiscard] = useState(false);
-  const [confirmRemoveTopic, setConfirmRemoveTopic] = useState(false);
   const sourceCloseRef = useRef<HTMLButtonElement>(null);
   const sourceOpenerRef = useRef<HTMLElement | null>(null);
   const startedAt = useRef(0);
@@ -423,33 +422,26 @@ function SessionBody() {
       <div className="study-context is-folio">
         <span className="study-context-title">
           <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
-          <small>Topic {index + 1} of {total} · {concept.name}</small>
+          <small><b>{concept.name}</b>{total > 1 ? ` · topic ${index + 1} of ${total}` : ""}</small>
         </span>
         <div className="study-folio-actions">
-          <details className="study-more" open={confirmDiscard || undefined}>
-            <summary aria-label="More session options">More</summary>
-            {confirmDiscard ? (
-              <span className="today-reset-confirm study-discard" role="group" aria-label="Confirm discard block">
-                <span>Discard this block?</span>
-                <button type="button" className="text-btn" onClick={() => setConfirmDiscard(false)}>Keep</button>
-                <button
-                  type="button"
-                  className="text-btn is-danger"
-                  onClick={() => {
-                    trackEvent({ name: "session_abandoned" });
-                    abandon(session.id);
-                    router.push("/today");
-                  }}
-                >
-                  Discard
-                </button>
-              </span>
-            ) : (
-              <button type="button" className="text-btn study-discard-trigger" onClick={() => setConfirmDiscard(true)}>
-                Discard block
-              </button>
-            )}
-          </details>
+          <SessionMenu
+            items={[
+              ...(quickMode && recallWithoutLooking && hasReadableSource ? [{ label: "Peek at the notes", onSelect: () => setSourceRevealed(true) }] : []),
+              ...(quickMode ? [{
+                label: "Remove this topic",
+                danger: true,
+                confirm: { question: `Remove “${concept.name}” for good? It is not a real topic.`, yes: "Yes, remove" },
+                onSelect: () => { abandon(session.id); removeTopic(concept.id); router.push("/today"); },
+              }] : []),
+              {
+                label: "Discard block",
+                danger: true,
+                confirm: { question: "Discard this block? Your answers so far are kept.", yes: "Discard" },
+                onSelect: () => { trackEvent({ name: "session_abandoned" }); abandon(session.id); router.push("/today"); },
+              },
+            ]}
+          />
           <button
             type="button"
             className="text-btn study-close"
@@ -474,20 +466,7 @@ function SessionBody() {
         <CourseSourceReader key={`${currentMaterial.id}-${sourcePage}`} material={currentMaterial} initialPage={sourcePage} concealed={recallWithoutLooking} onShowSource={() => setSourceRevealed(true)} />
       </div> : null}
       <div className="study-loop-track">
-        {quickMode ? (
-          <p className="study-run-label">{concept.name} · topic {index + 1} of {total}{recallWithoutLooking && hasReadableSource ? <> · <button type="button" className="text-btn study-peek" onClick={() => setSourceRevealed(true)}>Peek at the notes</button></> : null}
-            {" · "}
-            {confirmRemoveTopic ? (
-              <span role="group" aria-label="Confirm remove this topic">
-                Remove “{concept.name}” for good?{" "}
-                <button type="button" className="text-btn study-peek" onClick={() => { abandon(session.id); removeTopic(concept.id); router.push("/today"); }}>Yes, remove</button>{" "}
-                <button type="button" className="text-btn study-peek" onClick={() => setConfirmRemoveTopic(false)}>Keep</button>
-              </span>
-            ) : (
-              <button type="button" className="text-btn study-peek" onClick={() => setConfirmRemoveTopic(true)}>Not a real topic? Remove it</button>
-            )}
-          </p>
-        ) : (
+        {quickMode ? null : (
           <LoopSteps
             compact
             label="Study steps"
