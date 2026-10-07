@@ -1,4 +1,6 @@
 import type { PracticeItem } from "./types";
+import { lintQuestion } from "./question-lint";
+import { contrastChoices, termFromMeaning, whyChoices } from "./question-types";
 
 /**
  * Builds teaching facts and varied practice from a topic's own page text, with no outside knowledge.
@@ -16,11 +18,11 @@ const STOP = new Set([
 const OPPOSITES: Array<[string, string]> = [
   ["increases", "decreases"], ["increase", "decrease"], ["increased", "decreased"], ["increasing", "decreasing"],
   ["rises", "falls"], ["rise", "fall"], ["rising", "falling"], ["higher", "lower"], ["highest", "lowest"],
-  ["more", "less"], ["gains", "loses"], ["gain", "lose"], ["inside", "outside"], ["elastic", "inelastic"],
+  ["more", "less"], ["gains", "loses"], ["inside", "outside"], ["elastic", "inelastic"],
   ["hypotonic", "hypertonic"], ["faster", "slower"], ["larger", "smaller"], ["greater", "smaller"],
   ["before", "after"], ["positive", "negative"], ["absorbs", "releases"], ["expands", "contracts"],
   ["shifts left", "shifts right"], ["stronger", "weaker"], ["maximum", "minimum"], ["above", "below"],
-  ["internal", "external"], ["active", "passive"], ["first", "last"], ["early", "late"],
+  ["internal", "external"], ["active", "passive"],
 ];
 const SWAP = new Map<string, string>(OPPOSITES.flatMap(([a, b]) => [[a, b], [b, a]] as Array<[string, string]>));
 const NEGATION = /\b(?:not|no|never|neither|nor|without|unless|cannot|can't|isn't|aren't|doesn't|don't|n't)\b/i;
@@ -32,6 +34,9 @@ export function flipOneWord(sentence: string): string | null {
   // Exactly one swappable word: with two ("from low to high") a swap could read as true.
   if (matches.length !== 1) return null;
   const [match] = matches;
+  // "many less" and "net decrease"-style uses change the grammar when swapped; leave those sentences alone.
+  const before = sentence.slice(0, match.index).trim().split(/\s+/).pop()?.toLocaleLowerCase() ?? "";
+  if (/^(?:more|less)$/i.test(match[0]) && /^(?:many|much|few|fewer)$/.test(before)) return null;
   const swapped = SWAP.get(match[0].toLocaleLowerCase())!;
   const word = /^[A-Z]/.test(match[0]) ? swapped[0].toLocaleUpperCase() + swapped.slice(1) : swapped;
   return sentence.slice(0, match.index) + word + sentence.slice((match.index ?? 0) + match[0].length);
@@ -139,7 +144,7 @@ function pickGapWord(sentence: string, name: string, page: string, relaxed = fal
   const nameParts = new Set(words(name).map((w) => w.toLocaleLowerCase()));
   const counts = new Map<string, number>();
   for (const w of words(page)) counts.set(w.toLocaleLowerCase(), (counts.get(w.toLocaleLowerCase()) ?? 0) + 1);
-  const tokens = [...sentence.matchAll(/\d+(?:\.\d+)?|[A-Za-z][A-Za-z0-9'-]*/g)];
+  const tokens = [...sentence.matchAll(/\d[\d,]*(?:\.\d+)?|[A-Za-z][A-Za-z0-9'-]*/g)];
   let best: { word: string; score: number } | null = null;
   tokens.forEach((match, index) => {
     const word = match[0];
@@ -150,6 +155,12 @@ function pickGapWord(sentence: string, name: string, page: string, relaxed = fal
     const isNumber = /^\d/.test(word);
     const isAcronym = /^[A-Z][A-Z0-9]{1,}$/.test(word);
     if (nameParts.has(lower) || STOP.has(lower) || WEAK.has(lower)) return;
+    // A word that appears twice in the sentence would need two blanks, and one inside a hyphenated compound
+    // ("competitive" in "non-competitive") cannot be blanked cleanly. Pick a different word instead.
+    const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    if ((sentence.match(new RegExp(`(?<![\\w-])${escaped}(?![\\w-])`, "gi")) ?? []).length !== 1) return;
+    if (new RegExp(`[\\w]-${escaped}(?![\\w])|(?<![\\w])${escaped}-[\\w]`, "i").test(sentence)) return;
+    // The comma in "17,000" is part of the number, so the gap is the whole figure.
     if (isNumber && (/^\s*(?:to|-|–|or)\s*\d/.test(after) || /\d\s*(?:to|-|–|or)\s*$/.test(before))) return;
     if (!isNumber && !isAcronym && word.length < (relaxed ? 6 : 5)) return;
     let score = 0;
@@ -194,13 +205,20 @@ export function buildPractice(input: {
   const { conceptId, name, excerpt, locator } = input;
   const sentences = units(excerpt);
   const items: PracticeItem[] = [];
-  const add = (item: Omit<PracticeItem, "id" | "origin">) => items.push({ ...item, id: `practice-${conceptId}-${items.length + 1}`, origin: "offline" });
+  // A question with a visible defect is worse than none: the lint decides, not the generator's optimism.
+  const add = (item: Omit<PracticeItem, "id" | "origin">) => {
+    const candidate: PracticeItem = { level: "recall", ...item, id: `practice-${conceptId}-${items.length + 1}`, origin: "offline" };
+    if (lintQuestion(candidate).length) return;
+    items.push(candidate);
+  };
   const definition = sentences.find((s) => s.toLocaleLowerCase().includes(name.toLocaleLowerCase())) ?? sentences[0];
 
   // 1. Identify the idea from its description, among the course's other topics.
   const others = [...new Set(input.siblingNames.filter((other) => other.toLocaleLowerCase() !== name.toLocaleLowerCase()))];
   const maskedDefinition = definition ? maskName(definition, name) : null;
+  let usedDefinitionForIdea = false;
   if (definition && maskedDefinition && others.length >= 2) {
+    usedDefinitionForIdea = true;
     const distractors = others.sort((a, b) => hash(`${conceptId}${a}`) - hash(`${conceptId}${b}`)).slice(0, 3);
     const choices = [name, ...distractors].sort((a, b) => hash(`${conceptId}x${a}`) - hash(`${conceptId}x${b}`));
     add({
@@ -250,6 +268,11 @@ export function buildPractice(input: {
     }
   }
 
+  // 3b. Understanding you can check instantly: why, how two ideas differ, which term a definition belongs to.
+  const terms = [...new Set(sentences.map((sentence) => pickGapWord(sentence, name, excerpt, true)).filter((term): term is string => Boolean(term) && !/^\d/.test(term as string)))];
+  const ctx = { conceptId, name, locator, sentences, siblingNames: input.siblingNames, others, terms };
+  for (const draft of [...whyChoices(ctx), ...contrastChoices(ctx), ...termFromMeaning(ctx)]) add(draft);
+
   // 4. Fill the gap in a key sentence: up to four, from different sentences with different words. A looser pass runs
   // only when the strict one leaves fewer than two, so a sparse topic still gets a short run.
   const usedGaps = new Set<string>();
@@ -259,7 +282,7 @@ export function buildPractice(input: {
   if (relaxed && gapsMade >= 2) break;
   for (const sentence of sentences.slice(0, 10)) {
     if (gapSentences.has(sentence)) continue;
-    if (sentence === definition && sentences.length > 1) continue;
+    if (sentence === definition && sentences.length > 1 && usedDefinitionForIdea) continue;
     if (words(sentence).length < 7 || sentence.length > 220) continue;
     const pair = termPairs(sentence)[0];
     const gapSource = pair && sentence.includes(pair.meaning) ? pair.meaning : sentence;
@@ -268,7 +291,7 @@ export function buildPractice(input: {
     usedGaps.add(gap.toLocaleLowerCase());
     gapSentences.add(sentence);
     // Every occurrence: a figure or term that appears twice would otherwise give the answer away.
-    const blank = (value: string) => value.replace(new RegExp(`(?<![\\w])${gap.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w])`, "g"), "_____");
+    const blank = (value: string) => value.replace(new RegExp(`(?<![\\w-])${gap.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?![\\w-])`, "g"), "_____").replace(/\b([Aa])n _____/g, "$1/an _____");
     const masked = pair && sentence.includes(pair.meaning) ? sentence.replace(pair.meaning, blank(pair.meaning)) : blank(sentence);
     add({
       kind: "cloze",
@@ -350,29 +373,35 @@ export function buildPractice(input: {
     }
   }
 
-  // 4e. True or false: a real sentence from the notes, or the same sentence with one word flipped. One tap, and
-  // it tests whether you can tell the right claim from a plausible wrong one.
-  const flippable = sentences
+  // 4e. Predict the direction: a rule from the notes with one word to choose ("increases" or "decreases", "more" or
+  // "less"). Only the two words are shown, so there is no flipped sentence to read badly or to give itself away.
+  const rules = sentences
     .filter((sentence) => sentence.length >= 40 && sentence.length <= 200)
     .map((sentence) => ({ sentence, flipped: flipOneWord(sentence) }))
     .filter((entry) => entry.flipped !== null)
     .sort((x, y) => hash(`${conceptId}f${x.sentence}`) - hash(`${conceptId}f${y.sentence}`))
     .slice(0, 2);
-  flippable.forEach((entry, k) => {
-    // With two, show one false and one true, in an order that depends on the topic.
-    const showFalse = flippable.length > 1 ? (hash(conceptId) + k) % 2 === 0 : hash(conceptId) % 2 === 0;
+  for (const entry of rules) {
+    const original = [...entry.sentence.matchAll(/[A-Za-z]+(?: (?:left|right))?/g)].find((match) => SWAP.has(match[0].toLocaleLowerCase()));
+    if (!original) continue;
+    const word = original[0];
+    const opposite = SWAP.get(word.toLocaleLowerCase())!;
+    const blanked = (entry.sentence.slice(0, original.index) + "_____" + entry.sentence.slice((original.index ?? 0) + word.length)).replace(/\b([Aa])n? _____/g, "$1/an _____");
+    const options = [word.toLocaleLowerCase(), opposite].sort((x, y) => hash(`${conceptId}d${entry.sentence}${x}`) - hash(`${conceptId}d${entry.sentence}${y}`));
+    const reasoning = /\b(?:when|if|because|so|than|as|while|whereas|therefore)\b/i.test(entry.sentence);
     add({
       kind: "choice",
-      variant: "truefalse",
-      prompt: `True or false, according to your notes: “${showFalse ? entry.flipped : entry.sentence}”`,
-      modelAnswer: showFalse ? "False" : "True",
-      hint: `Look at the exact words ${locator} uses.`,
-      explanation: showFalse ? `False. ${locator} says: “${entry.sentence}”` : `True. ${locator} says: “${entry.sentence}”`,
+      variant: "direction",
+      level: reasoning ? "understand" : "recall",
+      prompt: `Which word completes this statement from your notes? “${stripEnd(blanked)}.”`,
+      modelAnswer: word.toLocaleLowerCase(),
+      hint: `Think about what ${locator} says happens, and why.`,
+      explanation: `${locator}: “${entry.sentence}”`,
       sourceQuote: entry.sentence,
-      choices: ["True", "False"],
-      correctIndex: showFalse ? 1 : 0,
+      choices: options,
+      correctIndex: options.indexOf(word.toLocaleLowerCase()),
     });
-  });
+  }
 
   // 5. Recall the definition in the learner's own words.
   if (definition) {

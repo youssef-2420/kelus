@@ -25,20 +25,16 @@ test("flipOneWord swaps exactly one safe word, and refuses when a flip could sti
   assert.equal(flipOneWord("Higher prices reduce the quantity that buyers want."), "Lower prices reduce the quantity that buyers want."); // capital kept
 });
 
-test("true/false items: the page quote is always the real sentence, the false version is never the real one, and the answer is consistent", async () => {
+test("direction items: the quote is the real sentence, the options are the real word and its opposite, the answer is the real word", async () => {
   const { buildPractice, quoteIsOnPage } = await import("../domain/content-engine.ts");
   const excerpt = "Water moves toward the side with more solute because the solute lowers the water potential there. Higher prices reduce the quantity that buyers want from the market. Plant cells resist bursting because the cell wall pushes back, creating turgor pressure inside the cell.";
-  const items = buildPractice({ conceptId: "tf1", name: "Osmosis", excerpt, locator: "Page 2", siblingNames: [] }).filter((item) => item.variant === "truefalse");
+  const items = buildPractice({ conceptId: "tf1", name: "Osmosis", excerpt, locator: "Page 2", siblingNames: [] }).filter((item) => item.variant === "direction");
   assert.ok(items.length >= 1);
-  const verdicts = new Set(items.map((item) => item.modelAnswer));
   for (const item of items) {
-    assert.deepEqual(item.choices, ["True", "False"]);
+    assert.equal(item.choices.length, 2);
     assert.equal(item.choices[item.correctIndex], item.modelAnswer);
     assert.ok(quoteIsOnPage(item.sourceQuote, excerpt));
-    const shown = item.prompt.replace(/^[^“]*“/, "").replace(/”$/, "");
-    if (item.modelAnswer === "True") assert.equal(shown, item.sourceQuote);
-    else { assert.notEqual(shown, item.sourceQuote); assert.ok(!excerpt.includes(shown)); }
-    assert.match(item.explanation, /^(True|False)\./);
+    assert.ok(item.sourceQuote.toLowerCase().includes(item.modelAnswer.toLowerCase()));
+    assert.ok(!item.prompt.includes(item.modelAnswer + " ") || item.prompt.includes("_____"));
   }
-  if (items.length > 1) assert.equal(verdicts.size, 2); // one true, one false
 });

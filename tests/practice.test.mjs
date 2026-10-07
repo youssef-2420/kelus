@@ -48,8 +48,8 @@ test("a quote that is not on the page is rejected", () => {
 
 test("a topic with no other topics gets no multiple choice instead of a bad one", () => {
   const items = buildPractice({ conceptId: "c2", name: "Total Revenue Test", excerpt: page, locator: "Page 3", siblingNames: ["Total Revenue Test"] });
-  // A true/false check needs no other topics, so it is allowed; a "which idea" choice is not.
-  assert.ok(items.every((item) => item.kind !== "choice" || item.variant === "truefalse"));
+  // A direction check needs no other topics, so it is allowed; a "which idea" choice is not.
+  assert.ok(items.every((item) => item.kind !== "choice" || item.variant === "direction" || item.variant === "why"));
 });
 
 const bullets = "• Phospholipid bilayer: two layers of lipids with hydrophilic heads and hydrophobic tails\n• Selectively permeable: lets some molecules through, blocks others\n• Fluid mosaic model: proteins float in the lipid layer\n• Cholesterol keeps the membrane stable at different temperatures";
@@ -118,7 +118,7 @@ test("a name that appears again in the sentence is not given away", () => {
 test("a page with several sentences can give two different gap questions", () => {
   const items = buildPractice({ conceptId: "g1", name: "Total Revenue Test", excerpt: page, locator: "Page 3", siblingNames: [] });
   const gaps = items.filter((item) => item.kind === "cloze");
-  assert.equal(gaps.length, 2);
+  assert.ok(gaps.length >= 2);
   assert.notEqual(gaps[0].modelAnswer.toLowerCase(), gaps[1].modelAnswer.toLowerCase());
   assert.notEqual(gaps[0].sourceQuote, gaps[1].sourceQuote);
 });
