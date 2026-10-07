@@ -1,0 +1,133 @@
+/* ── Kelus colour roles ─────────────────────────────────────────────────────────────────────────────────
+   Three colours, each with one job, so colour carries meaning instead of decoration:
+   green   = do      (study, check, continue)
+   marigold = returns (warm-ups, missed lines, streaks, nudges)
+   iris    = see      (progress, readiness, topics, the exam plan)
+   Coral is kept for a miss and nothing else. */
+:root {
+  --k-green: #1f6b45;
+  --k-green-edge: #134630;
+  --k-green-wash: #e6f1ea;
+  --k-marigold: #f3b23e;
+  --k-marigold-edge: #c5841a;
+  --k-marigold-ink: #3a2706;
+  --k-marigold-text: #8d5410;
+  --k-marigold-wash: #fdf2dc;
+  --k-iris: #6a4fa3;
+  --k-iris-edge: #4a3578;
+  --k-iris-wash: #f0ebf8;
+  --k-coral: #c2513e;
+  --k-paper-edge: rgba(18, 22, 15, 0.16);
+}
+
+/* ── The Kelus button ───────────────────────────────────────────────────────────────────────────────────
+   A pressed-ink button: a darker edge sits under it like the thickness of card stock, and a tap pushes it
+   down onto that edge. The arrow leans forward on hover. Variants only swap the colour role. */
+.k-btn,
+.cta:not(.home-cta) {
+  --btn-bg: var(--k-green);
+  --btn-ink: #fff;
+  --btn-edge: var(--k-green-edge);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 22px;
+  border: 0 !important;
+  border-radius: 14px !important;
+  background: var(--btn-bg) !important;
+  color: var(--btn-ink) !important;
+  font: inherit;
+  font-weight: 650 !important;
+  letter-spacing: 0.005em;
+  text-decoration: none !important;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--btn-edge), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  transform: translateY(0);
+  transition: transform 90ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 90ms cubic-bezier(0.22, 1, 0.36, 1), filter 120ms !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.k-btn:hover:not(:disabled),
+.cta:not(.home-cta):hover:not(:disabled) {
+  filter: brightness(1.05) saturate(1.04);
+}
+
+.k-btn:active:not(:disabled),
+.cta:not(.home-cta):active:not(:disabled) {
+  transform: translateY(3px) !important;
+  box-shadow: 0 0 0 var(--btn-edge), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.k-btn:focus-visible,
+.cta:not(.home-cta):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--btn-edge) 55%, transparent) !important;
+  outline-offset: 3px !important;
+}
+
+.k-btn:disabled,
+.cta:not(.home-cta):disabled {
+  --btn-bg: #e7e9e4;
+  --btn-ink: #7a8077;
+  --btn-edge: #d3d7cf;
+  cursor: not-allowed;
+}
+
+/* The arrow (any aria-hidden span at the end) leans forward on hover. */
+.k-btn > span[aria-hidden="true"]:last-child,
+.cta:not(.home-cta) > span[aria-hidden="true"]:last-child {
+  display: inline-block;
+  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.k-btn:hover:not(:disabled) > span[aria-hidden="true"]:last-child,
+.cta:not(.home-cta):hover:not(:disabled) > span[aria-hidden="true"]:last-child {
+  transform: translateX(3px);
+}
+
+.k-btn--marigold {
+  --btn-bg: var(--k-marigold);
+  --btn-ink: var(--k-marigold-ink);
+  --btn-edge: var(--k-marigold-edge);
+}
+
+.k-btn--iris {
+  --btn-bg: var(--k-iris);
+  --btn-ink: #fff;
+  --btn-edge: var(--k-iris-edge);
+}
+
+/* Second in line: paper with an ink edge, same shape, same press. */
+.k-btn--paper {
+  --btn-bg: #fff;
+  --btn-ink: var(--color-midnight-ink);
+  --btn-edge: var(--k-paper-edge);
+  box-shadow: 0 3px 0 var(--btn-edge), inset 0 0 0 1.5px rgba(18, 22, 15, 0.14) !important;
+}
+
+.k-btn--paper:active:not(:disabled) {
+  box-shadow: 0 0 0 var(--btn-edge), inset 0 0 0 1.5px rgba(18, 22, 15, 0.14) !important;
+}
+
+.k-btn--small {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 12px !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-btn,
+  .k-btn > span[aria-hidden="true"]:last-child {
+    transition: none !important;
+  }
+
+  .k-btn:active:not(:disabled) {
+    transform: none !important;
+  }
+
+  .k-btn:hover:not(:disabled) > span[aria-hidden="true"]:last-child {
+    transform: none;
+  }
+}

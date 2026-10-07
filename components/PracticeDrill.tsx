@@ -47,7 +47,7 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
           <strong>Lock it in</strong>
           <p>{drill.length} quick questions from this page. About a minute.</p>
         </div>
-        <button type="button" className={styles.start} onClick={() => setOpen(true)}>Practice now</button>
+        <button type="button" className={`k-btn k-btn--small ${styles.start}`} onClick={() => setOpen(true)}>Practice now</button>
       </section>
     );
   }
@@ -78,7 +78,7 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
         <div className={styles.openAnswer}>
           <label htmlFor={`open-${item.id}`} className="sr-only">Your answer</label>
           <textarea id={`open-${item.id}`} rows={3} value={typed} onChange={(event) => setTyped(event.target.value)} disabled={Boolean(result)} placeholder="Write it in your own words" />
-          {!result ? <button type="button" className={styles.start} onClick={() => setResult({ right: true })}>Show the page’s answer</button> : null}
+          {!result ? <button type="button" className={`k-btn k-btn--small ${styles.start}`} onClick={() => setResult({ right: true })}>Show the page’s answer</button> : null}
         </div>
       ) : item.kind === "choice" ? (
         <div className={styles.choices} role="group" aria-label="Choose one">
@@ -98,7 +98,7 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
         <form className={styles.gap} onSubmit={(event) => { event.preventDefault(); if (typed.trim()) answer(typed); }}>
           <label htmlFor={`gap-${item.id}`} className="sr-only">Your answer</label>
           <input id={`gap-${item.id}`} value={typed} onChange={(event) => setTyped(event.target.value)} disabled={Boolean(result)} autoComplete="off" autoFocus placeholder="One word" />
-          {!result ? <button type="submit" className={styles.start} disabled={!typed.trim()}>Check</button> : null}
+          {!result ? <button type="submit" className={`k-btn k-btn--small ${styles.start}`} disabled={!typed.trim()}>Check</button> : null}
         </form>
       )}
 
@@ -108,7 +108,7 @@ export function PracticeDrill({ items }: { items: PracticeItem[] }) {
           {open_ ? <p>{item.modelAnswer}</p> : null}
           <p>{item.explanation}</p>
           {open_ ? <p className={styles.quote}>Page: “{item.sourceQuote}”</p> : null}
-          <button type="button" className={styles.start} onClick={next}>{index + 1 >= drill.length ? "Finish" : "Next"}</button>
+          <button type="button" className={`k-btn k-btn--small ${styles.start}`} onClick={next}>{index + 1 >= drill.length ? "Finish" : "Next"}</button>
         </div>
       ) : null}
     </motion.section>

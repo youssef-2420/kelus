@@ -150,7 +150,7 @@ export function TodayRoute({
           <motion.button
             type="button"
             data-action="start-topic"
-            className={`${styles.start}${warmupFirst ? ` ${styles.quiet}` : ""}`}
+            className={`k-btn ${styles.start}${warmupFirst ? ` k-btn--paper ${styles.quiet}` : ""}`}
             onClick={onStart}
             whileTap={reduceMotion ? undefined : { scale: 0.97 }}
             transition={pressSpring}

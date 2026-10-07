@@ -20,10 +20,12 @@
 
 .pips, .goalDots { display: inline-flex; gap: 8px; }
 .pips i, .goalDots i { display: block; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--color-frost); background: var(--color-pure-white); transition: background-color 200ms, border-color 200ms; }
-.pips i.on, .goalDots i.on { border-color: var(--color-kelus); background: var(--color-kelus); }
+.pips i.on { border-color: var(--k-green); background: var(--k-green); }
+/* Today's goal is a habit, so it takes the marigold of things that bring you back. */
+.goalDots i.on { border-color: var(--k-marigold-edge); background: var(--k-marigold); }
 
-.remember { display: grid; gap: 6px; margin: 0; padding: 14px 16px; border-left: 3px solid var(--color-kelus); border-radius: 0 6px 6px 0; background: var(--color-mist); }
-.rememberHead { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-caption); font-weight: 600; color: var(--color-kelus); }
+.remember { display: grid; gap: 6px; margin: 0; padding: 14px 16px; border-left: 3px solid var(--k-marigold); border-radius: 0 8px 8px 0; background: var(--k-marigold-wash); }
+.rememberHead { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-caption); font-weight: 600; color: var(--k-marigold-text); }
 .remember p { margin: 0; font-family: var(--font-display); font-size: 1.125rem; line-height: 1.45; color: var(--color-midnight-ink); }
 .icon { width: 20px; height: 20px; flex: none; vertical-align: -4px; }
 

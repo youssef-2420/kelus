@@ -79,7 +79,7 @@ export function NudgeCard() {
                 {REMINDER_TIMES.map((option) => <option key={option} value={option}>{label(option)}</option>)}
               </select>
             </label>
-            <button type="button" className={styles.primary} onClick={() => void enable()} disabled={busy || env.allowed === "denied"}>
+            <button type="button" className={`k-btn k-btn--marigold k-btn--small ${styles.primary}`} onClick={() => void enable()} disabled={busy || env.allowed === "denied"}>
               {busy ? "Asking your browser…" : "Turn on nudges"}
             </button>
           </div>
