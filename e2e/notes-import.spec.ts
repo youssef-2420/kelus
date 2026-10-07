@@ -20,14 +20,13 @@ test("pasted notes work the same way, and the first question quotes the notes", 
   await expect(page.locator('article[aria-label^="Section"]')).toBeVisible();
 });
 
-test("notes with no headings get a clear message and nothing is saved", async ({ page }) => {
+test("notes too short to study from get a plain reason, and nothing is saved", async ({ page }) => {
   await gotoStart(page);
   await page.getByText("Or paste your notes").click();
-  await page.locator("#paste-notes").fill("Osmosis is the movement of water across a membrane. There are no headings in this text.");
+  await page.locator("#paste-notes").fill("Osmosis is water.");
   await page.getByRole("button", { name: "Use these notes" }).click();
-  await expect(page.locator("p[role=alert]")).toContainText("Kelus finds topics from headings");
-  await expect(page).toHaveURL(/\/today/);
-  await expect(page.getByRole("heading", { name: "Drop your notes." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /couldn.t find topics/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Drop your notes." })).toHaveCount(0);
 });
 
 test("a file that is neither a PDF nor notes is refused with a clear reason", async ({ page }) => {
@@ -196,4 +195,9 @@ test("a leftover built-in sample never names the start screen or receives your n
   // It is a new course made from the file, not the sample with notes added.
   await expect(page.getByText(/Sample course|Microeconomics/)).toHaveCount(0);
   await expect(page.getByText(/cell biology/i).first()).toBeVisible();
+});
+
+test("pasted notes with no headings still start, with no error and no extra step", async ({ page }) => {
+  await startFromPaste(page, "Price elasticity of demand measures how strongly the quantity demanded responds to a change in price. Demand is elastic when buyers react strongly to a price change, and inelastic when they barely react. Close substitutes make demand more elastic because buyers can switch when the price rises.");
+  await expect(page.getByRole("alert").filter({ hasText: "heading" })).toHaveCount(0);
 });

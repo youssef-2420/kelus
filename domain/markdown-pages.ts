@@ -148,3 +148,31 @@ export function markdownToPages(markdown: string): ExtractedMaterialPage[] {
 export function looksLikeMarkdownHeadings(markdown: string) {
   return /^\s{0,3}#{1,6}\s+\S/m.test(markdown);
 }
+
+/**
+ * Pasted text without headings still has a shape: a short line standing alone above a paragraph is a title.
+ * Those become "# Title" so the usual import finds the topics. With no such lines the whole paste is one topic,
+ * named from its first words, so nobody is sent back to add "#" by hand.
+ */
+function titleCase(value: string) {
+  return value.replace(/[A-Za-z][A-Za-z'/&-]*/g, (word, offset) => (offset > 0 && /^(?:a|an|and|of|the|to|in|on|for|or|vs)$/i.test(word) ? word.toLowerCase() : word[0].toUpperCase() + word.slice(1)));
+}
+
+export function structurePastedText(raw: string) {
+  const text = raw.replace(/\r\n?/g, "\n").trim();
+  if (looksLikeMarkdownHeadings(text)) return text;
+  const lines = text.split("\n");
+  const isTitle = (line: string, next: string | undefined) => {
+    const trimmed = line.trim().replace(/:$/, "");
+    return trimmed.length >= 3 && trimmed.length <= 60 && !/[.!?;,]$/.test(trimmed) && trimmed.split(/\s+/).length <= 8 && Boolean(next?.trim());
+  };
+  let titles = 0;
+  const out = lines.map((line, index) => {
+    const alone = index === 0 || !lines[index - 1].trim();
+    if (alone && isTitle(line, lines[index + 1]) && !/^[•\-*\d]/.test(line.trim())) { titles += 1; return `# ${titleCase(line.trim().replace(/:$/, ""))}`; }
+    return line;
+  });
+  if (titles > 0) return out.join("\n");
+  const first = text.replace(/^[•\-*\s]+/, "").split(/\s+/).slice(0, 4).join(" ").replace(/[^\p{L}\p{N}]+$/u, "");
+  return `# ${titleCase(first) || "My Notes"}\n${text}`;
+}
