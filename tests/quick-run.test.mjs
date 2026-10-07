@@ -66,3 +66,38 @@ test("every built-in sample topic still gets a quick run, even though gaps are s
     assert.ok(run && run.checks.length >= 2, `${item.conceptId} has no quick run`);
   }
 });
+
+const osmosisText = "Osmosis is the movement of water across a partially permeable membrane from a dilute solution to a more concentrated solution. In a hypotonic solution a plant cell gains water and becomes turgid because the cell wall pushes back. In a hypertonic solution the cell loses water and becomes plasmolysed. Animal cells have no cell wall, so in a hypotonic solution they may burst.";
+const osmosis = {
+  ...activity, conceptId: "osm",
+  learn: { title: "Osmosis", explanation: osmosisText, keyPoints: [] },
+  retrieve: { ...activity.retrieve, prompt: "What is Osmosis, according to your notes?", modelAnswer: "Osmosis is the movement of water across a partially permeable membrane from a dilute solution to a more concentrated solution." },
+  sourceReferences: [{ materialId: "m", label: "doc", locator: "Section 1" }],
+};
+
+test("a run never shows the sentence it later asks you to explain, never names the topic as an answer, and tests each fact once", () => {
+  const run = buildQuickRun({ activity: osmosis, name: "Osmosis", siblingNames: ["Active Transport", "Enzymes"] });
+  assert.ok(run && run.checks.length >= 2);
+  assert.ok(run.checks.every((item) => !item.sourceQuote.startsWith("Osmosis is the movement")), "the definition is saved for the explanation");
+  assert.ok(run.checks.every((item) => !/^Which idea/.test(item.prompt)), "the topic name is already on screen");
+  assert.equal(new Set(run.checks.map((item) => item.sourceQuote)).size, run.checks.length, "one check per sentence");
+  const frames = run.checks.filter((item) => item.kind === "cloze").map((item) => item.prompt.split("_____")[0].trim().split(" ").slice(-2).join(" "));
+  assert.equal(new Set(frames).size, frames.length, "no two gaps in the same frame");
+  assert.ok(run.checks.some((item) => item.variant === "pair"), "two cases built the same way become one question about telling them apart");
+  assert.match(run.extraFact ?? "", /Animal cells/, "the run ends on a line it did not use");
+});
+
+test("a wrong answer is shown where it really belongs in the notes", async () => {
+  const { whereAnswerBelongs } = await import("../domain/quick-run.ts");
+  const run = buildQuickRun({ activity: osmosis, name: "Osmosis", siblingNames: ["Active Transport", "Enzymes"] });
+  const gap = run.checks.find((item) => item.kind === "cloze" && item.modelAnswer === "hypertonic");
+  assert.ok(gap);
+  assert.match(whereAnswerBelongs(gap, "hypotonic", run.sentences) ?? "", /^In a hypotonic solution a plant cell gains water/);
+  assert.equal(whereAnswerBelongs(gap, "hypertonic", run.sentences), null, "a right answer needs no contrast");
+  assert.equal(whereAnswerBelongs(gap, "zzz", run.sentences), null, "a word not in the notes has nowhere to point");
+});
+
+test("pasted notes do not mention a meaningless section number in gap prompts", () => {
+  const items = buildPractice({ conceptId: "osm", name: "Osmosis", excerpt: osmosisText, locator: "Section 1", siblingNames: [] });
+  assert.ok(items.filter((item) => item.kind === "cloze").every((item) => item.prompt.startsWith("Fill the gap: ")));
+});

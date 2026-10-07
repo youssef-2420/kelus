@@ -92,6 +92,7 @@ function SessionBody() {
   const [evaluation, setEvaluation] = useState<AnswerEvaluation | null>(null);
   const [lastOutcome, setLastOutcome] = useState<RetrievalOutcome | null>(null);
   const [quickStats, setQuickStats] = useState<QuickStats | null>(null);
+  const [quickMissed, setQuickMissed] = useState<string[]>([]);
   const [routeBeforeIds, setRouteBeforeIds] = useState<string[]>([]);
   const [routeBeforeAllocations, setRouteBeforeAllocations] = useState<RouteAllocation[]>([]);
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
@@ -264,6 +265,7 @@ function SessionBody() {
     const outcome = quickOutcome(result);
     const summary = quickSummary(result);
     setQuickStats({ right: result.right, total: result.total, unsure: result.unsure, self: result.self });
+    setQuickMissed(result.missed);
     setRetrieveAnswer(result.explained);
     setApplicationAnswer(summary);
     responseTimeMs.current = result.elapsedMs;
@@ -580,7 +582,10 @@ function SessionBody() {
                 topic={concept.name}
                 attempts={checkCount}
                 stats={quickStats}
-                remember={activity.retrieve.modelAnswer}
+                // The definition was just compared on the screen before, so end on something else: the line that was
+                // missed, or a line from the page that this run did not use.
+                remember={quickMissed[0] ?? run?.extraFact ?? activity.retrieve.modelAnswer}
+                rememberLabel={quickMissed[0] ? "Worth another look" : run?.extraFact ? "One more line from your notes" : "Worth remembering"}
                 locator={activity.sourceReferences[0]?.locator ?? "your notes"}
                 goalDone={goalToday.topicsToday}
                 goal={goalToday.goal}

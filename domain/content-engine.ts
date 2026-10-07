@@ -1,6 +1,6 @@
 import type { PracticeItem } from "./types";
 import { lintQuestion } from "./question-lint";
-import { contrastChoices, termFromMeaning, whyChoices } from "./question-types";
+import { contrastChoices, framePairs, termFromMeaning, whyChoices } from "./question-types";
 
 /**
  * Builds teaching facts and varied practice from a topic's own page text, with no outside knowledge.
@@ -271,7 +271,7 @@ export function buildPractice(input: {
   // 3b. Understanding you can check instantly: why, how two ideas differ, which term a definition belongs to.
   const terms = [...new Set(sentences.map((sentence) => pickGapWord(sentence, name, excerpt, true)).filter((term): term is string => Boolean(term) && !/^\d/.test(term as string)))];
   const ctx = { conceptId, name, locator, sentences, siblingNames: input.siblingNames, others, terms };
-  for (const draft of [...whyChoices(ctx), ...contrastChoices(ctx), ...termFromMeaning(ctx)]) add(draft);
+  for (const draft of [...whyChoices(ctx), ...contrastChoices(ctx), ...framePairs(ctx), ...termFromMeaning(ctx)]) add(draft);
 
   // 4. Fill the gap in a key sentence: up to four, from different sentences with different words. A looser pass runs
   // only when the strict one leaves fewer than two, so a sparse topic still gets a short run.
@@ -295,7 +295,8 @@ export function buildPractice(input: {
     const masked = pair && sentence.includes(pair.meaning) ? sentence.replace(pair.meaning, blank(pair.meaning)) : blank(sentence);
     add({
       kind: "cloze",
-      prompt: `Fill the gap from ${locator}: “${masked}”`,
+      // "Section 2" means nothing in pasted notes; a PDF page number does help.
+      prompt: /^Section\b/.test(locator) ? `Fill the gap: “${masked}”` : `Fill the gap from ${locator}: “${masked}”`,
       modelAnswer: gap,
       hint: /^\d/.test(gap) ? "It is a number from the page." : `It is one word. It starts with “${gap[0]}” and has ${gap.length} letters.`,
       explanation: `The page says: “${sentence}”`,
