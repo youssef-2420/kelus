@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
 import { HabitStrip } from "@/components/HabitStrip";
+import { useReturnVisit, WelcomeBack } from "@/components/WelcomeBack";
 import { ReminderCard } from "@/components/ReminderCard";
 import { ExamDateCard } from "@/components/ExamDateCard";
 import { estimatedReadiness } from "@/domain/readiness";
@@ -60,6 +61,9 @@ export function TodayRoute({
 }) {
   const reduceMotion = useReducedMotion();
   const [first] = route.allocations;
+  const { visit, nowIso } = useReturnVisit(events, concepts);
+  // When the visit opens with a warm-up, that is the one green button; the topic waits one step quieter.
+  const warmupFirst = !isSampleCourse && visit.returning && visit.warmup.length > 0;
   const openedRef = useRef(false);
   const hasPriorEvidence = !isSampleCourse && events.some((event) => event.kind === "retrieval");
 
@@ -112,6 +116,7 @@ export function TodayRoute({
 
   return (
     <div className={styles.page}>
+      {!isSampleCourse ? <WelcomeBack visit={visit} nowIso={nowIso} nextName={firstName} /> : null}
       <div className={styles.top}>
         <p><strong>{examTarget}</strong> · {examDatePending ? "no date yet" : `${daysToExam} day${daysToExam === 1 ? "" : "s"} to go`}</p>
         <div className={styles.ready} role="group" aria-label="Exam readiness">
@@ -140,7 +145,7 @@ export function TodayRoute({
           <motion.button
             type="button"
             data-action="start-topic"
-            className={styles.start}
+            className={`${styles.start}${warmupFirst ? ` ${styles.quiet}` : ""}`}
             onClick={onStart}
             whileTap={reduceMotion ? undefined : { scale: 0.97 }}
             transition={pressSpring}

@@ -21,7 +21,13 @@ const GRADES: Array<{ value: SelfGrade; label: string; hint: string }> = [
  * One topic as a short run: instant checks that quote the page, then one explanation in your own words.
  * It is the whole loop for a topic: no separate read, use and mark screens.
  */
-export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onRevealSource: () => void; onFinish: (result: QuickRunResult) => void }) {
+export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
+  run: Run;
+  onRevealSource: () => void;
+  onFinish: (result: QuickRunResult) => void;
+  /** A warm-up is checks only: given this, the last Next ends the run instead of opening the explanation. */
+  onChecksDone?: (result: { right: number; total: number; missed: string[] }) => void;
+}) {
   const reduce = useReducedMotion() === true;
   const started = useRef(0);
   const total = run.checks.length;
@@ -69,6 +75,7 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   }
 
   function next() {
+    if (onChecksDone && step + 1 >= total) { onChecksDone({ right, total, missed }); return; }
     setAnswered(null); setPicked(null); setTyped("");
     setStep((current) => current + 1);
   }
@@ -106,8 +113,8 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   return (
     <div className={styles.run}>
       <header className={styles.top}>
-        <ol className={styles.steps} aria-label={`Step ${Math.min(step + 1, total + 1)} of ${total + 1}`}>
-          {[...run.checks, null].map((_, index) => (
+        <ol className={styles.steps} aria-label={`Step ${Math.min(step + 1, total + (onChecksDone ? 0 : 1))} of ${total + (onChecksDone ? 0 : 1)}`}>
+          {[...run.checks, ...(onChecksDone ? [] : [null])].map((_, index) => (
             <li key={index} className={index < step ? styles.done : index === step ? styles.now : undefined} aria-current={index === step ? "step" : undefined} />
           ))}
         </ol>
@@ -164,7 +171,7 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
                     <p>“{answered.elsewhere}”</p>
                   </div>
                 ) : null}
-                <button ref={nextRef} type="button" className={styles.primary} onClick={next}>{step + 1 >= total ? "Now say it yourself" : "Next"} <span aria-hidden="true">→</span></button>
+                <button ref={nextRef} type="button" className={styles.primary} onClick={next}>{step + 1 >= total ? (onChecksDone ? "See how it went" : "Now say it yourself") : "Next"} <span aria-hidden="true">→</span></button>
               </motion.div>
             ) : null}
           </motion.section>

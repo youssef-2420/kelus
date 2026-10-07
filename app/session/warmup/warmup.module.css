@@ -1,0 +1,193 @@
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 28px 16px 48px;
+  background: var(--color-pure-white, #fff);
+  color: var(--color-midnight-ink);
+}
+
+
+
+
+
+
+
+.runWrap,
+.done,
+.empty {
+  display: grid;
+  gap: 16px;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.kicker {
+  margin: 0;
+  color: #9a5b16;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+}
+
+/* The ending: a drawing, a plain verdict, the lines themselves, one way on. */
+.done {
+  justify-items: start;
+  gap: 14px;
+}
+
+.art {
+  width: min(180px, 46vw);
+  height: auto;
+  margin: 8px 0 4px;
+}
+
+/* Global heading rules set a sans face; this page keeps the product's serif voice. */
+.done h1,
+.empty h1,
+.heading {
+  font-family: var(--font-display) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.done h1,
+.empty h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4.6vw, 1.875rem);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.line,
+.empty p {
+  margin: 0;
+  color: var(--color-slate);
+  line-height: 1.5;
+}
+
+.lines {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin: 6px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.lines li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px 14px;
+  border: 1px solid rgba(18, 22, 15, 0.08);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.lines b {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-slate);
+}
+
+.lines q {
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+  color: var(--color-midnight-ink);
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.back {
+  background: color-mix(in srgb, var(--color-kelus) 5%, #fff) !important;
+}
+
+.back .mark {
+  background: var(--color-kelus);
+  color: #fff;
+}
+
+.still .mark {
+  background: #f4ead8;
+  color: #9a5b16;
+}
+
+.actions {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 52px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 6px;
+  background: var(--color-kelus);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.primary:hover {
+  background: var(--color-kelus-hover, #18573a);
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  color: var(--color-slate);
+  font-size: var(--text-body-sm);
+}
+
+.primary:focus-visible,
+.secondary:focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: 2px;
+}
+
+.empty {
+  justify-items: start;
+}
+
+.emptyIcon {
+  width: 40px;
+  height: 40px;
+}
+
+@media (min-width: 768px) {
+  .actions {
+    grid-template-columns: auto auto;
+    justify-content: start;
+    align-items: center;
+  }
+}
+
+.heading {
+  margin: -6px 0 4px;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4.6vw, 1.875rem);
+  font-weight: 500;
+  line-height: 1.2;
+}
