@@ -58,8 +58,12 @@ body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer.is-free {
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer.is-pass {
-  border-color: #d5d9d0;
-  background: #fff;
+  border-color: var(--color-hero-purple);
+  background: var(--color-hero-purple-wash);
+}
+
+body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-offer.is-pass .pricing-offer-head .kicker {
+  color: var(--color-hero-purple);
 }
 
 body.is-booklet-system .pricing-page.is-monthly-pricing .pricing-plan-name {

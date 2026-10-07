@@ -40,13 +40,15 @@
   animation: none;
 }
 
-/* Lateral / unordered navigation — opacity settle only (no slide). */
+/* Lateral / unordered navigation: cut directly to the destination.
+   The old page snapshot otherwise lingers under the already-updated nav,
+   making Pricing briefly show the homepage with Pricing marked active. */
 ::view-transition-old(.fade-out) {
-  animation: var(--vt-duration-exit) ease-out both vt-fade reverse;
+  display: none;
 }
 
 ::view-transition-new(.fade-in) {
-  animation: var(--vt-duration-enter) var(--vt-ease) both vt-fade;
+  animation: none;
 }
 
 /* Suspense handoff — same quiet fade; no rise/fall double-motion. */
