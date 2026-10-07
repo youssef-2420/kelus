@@ -212,3 +212,7 @@ html body .site-header.is-product:not(.is-session) .mark {
 }
 html body .site-header.is-product:not(.is-session) { display: flex !important; align-items: center !important; }
 html body .site-header.is-product:not(.is-session) .site-header-inner { display: flex !important; align-items: center !important; }
+
+/* Marketing pages too: "K kelus" in ink, the same mark the product uses. */
+html body .site-header .mark { display: inline-flex !important; align-items: center; gap: 6px; color: var(--color-midnight-ink) !important; text-decoration: none; }
+html body .site-header .mark svg { width: 22px !important; height: 22px !important; }
