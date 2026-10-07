@@ -59,7 +59,7 @@ export function TodayRoute({
   isSampleCourse?: boolean;
   reminder?: { courseName: string; examDate: string; minutes: number };
   examDatePending?: boolean;
-  onSetExamDate?: (date: string) => void;
+  onSetExamDate?: (date: string, targetPercent?: number) => void;
   focus?: RoutePlan["allocations"][number];
 }) {
   const reduceMotion = useReducedMotion();
@@ -101,12 +101,12 @@ export function TodayRoute({
   const firstConcept = concepts.find((item) => item.id === first.conceptId);
   const firstActivity = activities.find((item) => item.conceptId === first.conceptId);
   const firstSource = firstActivity?.sourceReferences[0];
-  const firstName = firstConcept?.name ?? "Mixed Retrieval";
+  const firstName = firstConcept?.name ?? "A mix of earlier topics";
   const whisper = citeWhisper(firstSource);
   const decision = describeRouteChoice(first, firstConcept, { examDateKnown: !examDatePending });
   const nextStops = route.allocations.filter((allocation) => allocation.conceptId !== first.conceptId).slice(0, 3).map((allocation) => {
     const concept = concepts.find((item) => item.id === allocation.conceptId);
-    return { ...allocation, name: concept?.name ?? "Mixed recall", mastery: concept?.mastery ?? 0, tried: (concept?.retrievalAttempts ?? 0) > 0 };
+    return { ...allocation, name: concept?.name ?? "A mix of earlier topics", mastery: concept?.mastery ?? 0, tried: (concept?.retrievalAttempts ?? 0) > 0 };
   });
   const lastPractice = isSampleCourse ? null : [...events]
     .filter((event) => event.kind === "retrieval" && concepts.some((item) => item.id === event.conceptId))
@@ -126,7 +126,7 @@ export function TodayRoute({
         <div className={styles.ready} role="group" aria-label="Exam readiness">
           <span>Ready {ready}%</span>
           <span className={styles.track} aria-hidden="true"><i style={{ width: `${ready}%` }} /></span>
-          <span>Your target {aim}%</span>
+          {examDatePending ? null : <span>Your target {aim}%</span>}
         </div>
       </div>
 

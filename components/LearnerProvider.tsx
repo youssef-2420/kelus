@@ -61,7 +61,7 @@ type Store = {
   confirmConcepts: (proposals: ProposedConcept[], pages?: ExtractedMaterialPage[]) => void;
   removeMaterialSource: (materialId: string) => void;
   removeTopic: (conceptId: string) => void;
-  setExamDate: (date: string) => void;
+  setExamDate: (date: string, targetPercent?: number) => void;
   renameCourse: (courseId: string, name: string) => void;
 };
 
@@ -226,8 +226,8 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     removeTopic(conceptId) {
       removeConcept(state, conceptId);
     },
-    setExamDate(date) {
-      setExamDate(state, date);
+    setExamDate(date, targetPercent) {
+      setExamDate(state, date, targetPercent);
     },
     renameCourse(courseId, name) {
       renameCourse(courseId, name);

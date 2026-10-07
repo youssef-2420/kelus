@@ -134,16 +134,30 @@ function centralClaim(name: string, excerpt: string) {
   return (named ?? defined ?? sentences[0]).slice(0, 260);
 }
 
+/**
+ * The topic as it reads inside a sentence: "the cell membrane", "osmosis", but "ATP" and "Bayes' theorem" as written.
+ * A heading capitalises every word; a question in the middle of a sentence should not.
+ */
+export function spokenName(name: string, claim: string) {
+  const leadingThe = new RegExp(`^the\\s+${escapeRegExp(name)}\\b`, "i").test(claim.trim());
+  // Capitalised in the middle of a sentence in the notes themselves: a proper name, keep it.
+  const properNoun = new RegExp(`[a-z,;:]\\s+${escapeRegExp(name)}\\b`).test(claim) && /^[A-Z]/.test(name);
+  const words = name.split(/\s+/).map((word) => (/^[A-Z0-9]{2,}s?$/.test(word) || /\d/.test(word) || /['’]/.test(word) ? word : word.charAt(0).toLocaleLowerCase() + word.slice(1)));
+  const base = properNoun ? name : words.join(" ");
+  return leadingThe ? `the ${base}` : base;
+}
+
 function recallQuestion(name: string, claim: string, fallback: string) {
   const verb = claim.match(new RegExp(`^(?:the\\s+)?${escapeRegExp(name)}\\s+(is|are|means|measures?|regulates?|depends on|moves?|converts?|calculates?|requires?|links?|describes?|shows?|explains?|determines?|compares?|relates?)\\b`, "i"))?.[1]?.toLocaleLowerCase();
   if (!verb) return fallback;
-  if (verb === "is" || verb === "are") return `What ${verb} ${name}, according to your notes?`;
-  if (verb === "means") return `What does ${name} mean, according to your notes?`;
+  const spoken = spokenName(name, claim);
+  if (verb === "is" || verb === "are") return `What ${verb} ${spoken}, according to your notes?`;
+  if (verb === "means") return `What does ${spoken} mean, according to your notes?`;
   const singular = /(?:s|es)$/.test(verb) && verb !== "is";
   const auxiliary = singular ? "does" : "do";
   const base = singular ? verb.slice(0, -1) : verb;
-  if (verb === "depends on") return `What does ${name} depend on, according to your notes?`;
-  return `What ${auxiliary} ${name} ${base}, according to your notes?`;
+  if (verb === "depends on") return `What does ${spoken} depend on, according to your notes?`;
+  return `What ${auxiliary} ${spoken} ${base}, according to your notes?`;
 }
 
 type SubjectMode = "biology" | "computer_science" | "history" | "law" | "mathematics" | "general";
@@ -159,11 +173,12 @@ function subjectModeFor(name: string, excerpt: string): SubjectMode {
 }
 
 function activityLanguage(mode: SubjectMode, name: string, claim: string) {
+  const spoken = spokenName(name, claim);
   switch (mode) {
     case "biology":
       return {
         learnTitle: `Trace the mechanism behind ${name}.`,
-        retrievePrompt: `How does ${name} work, according to your notes?`,
+        retrievePrompt: `How does ${spoken} work, according to your notes?`,
         applyPrompt: `Suppose one required part of ${name} is reduced or blocked. Predict the consequence and trace the mechanism.`,
         applyHint: "Name the changed component, then trace its effect through the system.",
         applyAnswer: `A sound answer identifies the changed component and uses this source-backed mechanism to predict the result: ${claim}`,
@@ -171,7 +186,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "computer_science":
       return {
         learnTitle: `Trace how ${name} behaves.`,
-        retrievePrompt: `How does ${name} work, step by step?`,
+        retrievePrompt: `How does ${spoken} work, step by step?`,
         applyPrompt: `Suppose the input grows or one required condition fails. Trace how ${name} behaves and name the resulting state or output.`,
         applyHint: "State the input, follow the process in order, and name the resulting state or output.",
         applyAnswer: `A sound trace follows the source-backed process step by step and reaches a consistent output: ${claim}`,
@@ -179,7 +194,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "history":
       return {
         learnTitle: `Explain the forces shaping ${name}.`,
-        retrievePrompt: `What do your notes say caused ${name}, or what it led to?`,
+        retrievePrompt: `What do your notes say caused ${spoken}, or what it led to?`,
         applyPrompt: `Suppose the source's main causal condition were weaker. Explain how that could alter the historical outcome.`,
         applyHint: "Name the changed condition, connect it to the source's cause, then explain the likely consequence.",
         applyAnswer: `A sound answer preserves the source's causal relationship while changing the historical condition: ${claim}`,
@@ -187,7 +202,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "law":
       return {
         learnTitle: `Make the rule in ${name} usable.`,
-        retrievePrompt: `What is the rule for ${name}, according to your notes?`,
+        retrievePrompt: `What is the rule for ${spoken}, according to your notes?`,
         applyPrompt: `Suppose one required element of the rule for ${name} is missing. Apply the rule and give a qualified conclusion.`,
         applyHint: "State the rule, connect each relevant fact to it, then give a qualified conclusion.",
         applyAnswer: `A sound application states the source-backed rule, tests the relevant facts, and reaches a supported conclusion: ${claim}`,
@@ -195,7 +210,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "mathematics":
       return {
         learnTitle: `Reconstruct the method behind ${name}.`,
-        retrievePrompt: `What is the rule or method for ${name}?`,
+        retrievePrompt: `What is the rule or method for ${spoken}?`,
         applyPrompt: `Suppose one condition of the rule or method for ${name} is not satisfied. Show what can still be concluded and why.`,
         applyHint: "Name the rule first, substitute or transform carefully, and check the result against the conditions.",
         applyAnswer: `A sound solution names the source-backed method, applies it step by step, and checks its conditions: ${claim}`,
@@ -203,7 +218,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     default:
       return {
         learnTitle: `Make ${name} usable from the source.`,
-        retrievePrompt: `What do your notes say about ${name}?`,
+        retrievePrompt: `What do your notes say about ${spoken}?`,
         applyPrompt: `Apply the source's claim about ${name} to a new example that is not copied from the page.`,
         applyHint: "Keep the same underlying relationship. Change only the situation.",
         applyAnswer: `A strong answer reuses this source-backed claim in a new context: ${claim}`,
