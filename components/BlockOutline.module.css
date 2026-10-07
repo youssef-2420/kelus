@@ -1,18 +1,7 @@
-/* Only where there is room beside the question: a quiet outline in the left margin. */
+/* A quiet outline of the block: in the side column when it shows, or floating in the margin (see a11y.css). */
 .outline {
-  display: none;
-}
-
-@media (min-width: 1180px) {
-  .outline {
-    position: fixed;
-    top: 112px;
-    left: max(32px, calc(50vw - 640px));
-    z-index: 1;
-    display: grid;
-    gap: 4px;
-    width: 220px;
-  }
+  display: grid;
+  gap: 4px;
 }
 
 .course {

@@ -123,7 +123,8 @@ test("a course with no topics is one screen with one job, and adding notes there
   await page.getByRole("button", { name: /^Remove cell biology/i }).click();
   await page.getByRole("group", { name: /Confirm remove/ }).getByRole("button", { name: "Remove" }).click();
 
-  await expect(page.getByRole("heading", { name: "Add your notes." })).toBeVisible();
+  // A course with no topics left is a clean start: the same screen as the very first one, with no course name.
+  await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   // Not a second form: no source-role dropdown, no bookmark box, no empty-binder panel, a single file picker.
   await expect(page.getByLabel("This source is")).toHaveCount(0);
   await expect(page.getByText("Save a video or web link instead")).toHaveCount(0);
@@ -142,7 +143,7 @@ test("a file with no real topics says so plainly and returns to the start screen
   await page.locator('input[type="file"]').setInputFiles({ name: "admin.md", mimeType: "text/markdown", buffer: Buffer.from(admin) });
   await expect(page.getByRole("heading", { name: "Kelus couldn’t find topics in this file." })).toBeVisible({ timeout: 30_000 });
   await page.getByRole("button", { name: "Try another file" }).click();
-  await expect(page.getByRole("heading", { name: /^(Drop|Add) your notes\.$/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^(Start with|Add) your notes\.$/ })).toBeVisible();
   // The failed file is gone, so a good one works straight away.
   await page.locator('input[type="file"]').setInputFiles(mdFile);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });

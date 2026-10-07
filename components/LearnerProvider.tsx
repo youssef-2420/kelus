@@ -62,7 +62,7 @@ type Store = {
   removeMaterialSource: (materialId: string) => void;
   removeTopic: (conceptId: string) => void;
   setExamDate: (date: string, targetPercent?: number) => void;
-  renameCourse: (courseId: string, name: string) => void;
+  renameCourse: (courseId: string, name: string, source?: "notes" | "repair" | "user") => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -229,8 +229,8 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     setExamDate(date, targetPercent) {
       setExamDate(state, date, targetPercent);
     },
-    renameCourse(courseId, name) {
-      renameCourse(courseId, name);
+    renameCourse(courseId, name, source) {
+      renameCourse(courseId, name, source);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;

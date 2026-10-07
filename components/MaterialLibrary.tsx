@@ -431,11 +431,12 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       trackEvent({ name: "concept_review_started", concept_count: proposals.length });
       // Quiet mode: no checklist first. Every topic found is confirmed, and can be removed later from Topics.
       if (quiet && proposals.length) {
+        // The first notes that hold topics name the course: the document's own title ("BIO 101 · Week 4: Cells and
+        // transport"), else the file's. Never a file that held no topics, and never on later notes.
+        const firstTopics = !state.snapshot.concepts.some((concept) => concept.courseId === course.id);
         confirmProposals(proposals, pages);
-        // On the first notes, the document's own title ("BIO 101 · Week 4: Cells and transport") names the course,
-        // in place of a name pieced together from the file name.
-        const title = documentTitle(pages);
-        if (title && course.name === material.title) renameCourse(course.id, title);
+        const name = documentTitle(pages) ?? (/^pasted notes$/i.test(material.title) ? null : material.title);
+        if (firstTopics && name) renameCourse(course.id, name);
       }
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));

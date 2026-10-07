@@ -24,6 +24,25 @@ export function assessPdfTextQuality(pages: ExtractedMaterialPage[]): PdfTextQua
   return { totalChars, pagesWithText, pageCount: pageCount || target.length, density };
 }
 
+type OcrLine = { text: string; confidence: number };
+type OcrData = { text: string; confidence?: number; blocks?: Array<{ paragraphs: Array<{ lines: OcrLine[] }> }> | null };
+
+/** Below this, a recognised line is more likely a misreading ("Alrerat all acation") than what the page says. */
+export const MIN_OCR_LINE_CONFIDENCE = 70;
+
+/**
+ * Keeps only the lines the text recogniser is reasonably sure of, paragraphs kept apart. A diagram or a blurry scan
+ * yields mostly unsure lines; questions built from them would quote noise as if it were the student's notes.
+ */
+export function confidentOcrText(data: OcrData) {
+  const paragraphs = (data.blocks ?? []).flatMap((block) => block.paragraphs);
+  if (!paragraphs.length) return (data.confidence ?? 0) >= MIN_OCR_LINE_CONFIDENCE ? data.text : "";
+  return paragraphs
+    .map((paragraph) => paragraph.lines.filter((line) => line.confidence >= MIN_OCR_LINE_CONFIDENCE).map((line) => line.text.trim()).filter(Boolean).join("\n"))
+    .filter(Boolean)
+    .join("\n\n");
+}
+
 function flattenOutline(nodes: PdfOutlineNode[] | null | undefined, depth = 0): string[] {
   if (!nodes?.length || depth > 4) return [];
   const titles: string[] = [];
@@ -246,9 +265,9 @@ export async function ocrPdfPages(
         message: `Reading scanned page ${index + 1} of ${targets.length}…`,
       });
 
-      const result = await worker.recognize(canvas);
+      const result = await worker.recognize(canvas, {}, { text: true, blocks: true });
       throwIfAborted(options?.signal);
-      const text = result.data.text.replace(/[ \t]+\n/g, "\n").trim();
+      const text = confidentOcrText(result.data as OcrData).replace(/[ \t]+\n/g, "\n").trim();
       if (text.length > target.text.trim().length) {
         byNumber.set(target.pageNumber, {
           pageNumber: target.pageNumber,

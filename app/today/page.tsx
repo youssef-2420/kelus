@@ -11,7 +11,6 @@ import styles from "./loading.module.css";
 import { addSourceMaterial, getMaterialsSnapshot, getServerMaterialsSnapshot, removeMaterial, subscribeMaterials } from "@/lib/material-store";
 import { removeRemoteMaterial } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
-import { materialTitle } from "@/domain/materials";
 import { CURRENT_COURSE_ID, type SetupInput } from "@/lib/setup";
 
 const SAMPLE_COURSE_ID = "course-microeconomics";
@@ -80,10 +79,11 @@ function TodayBody() {
   /** The very first notes: make the course with sensible defaults and read the file. The exam date is asked after the first run. */
   async function startFromFile(file: File) {
     try { window.localStorage.setItem("kelus-first-route-started-at", String(Date.now())); } catch { /* Timing analytics are optional. */ }
-    const title = materialTitle("", file.name);
     const examDate = new Date(Date.now() + 14 * 86_400_000).toISOString().slice(0, 10);
     const input: SetupInput = {
-      courseName: !title || /^pasted notes$/i.test(title) ? "My course" : title,
+      // Named only once a file is shown to hold topics (see MaterialLibrary): an unreadable or unrelated file
+      // ("Attestation de stage") must never become the course's name.
+      courseName: "My course",
       examName: "Your exam",
       examDate,
       targetPercent: 85,
@@ -131,7 +131,8 @@ function TodayBody() {
       // the learner's course, so it never names the page or receives their notes: they start their own.
       const leftoverSample = course?.id === SAMPLE_COURSE_ID;
       if (leftoverSample) return <DropNotes first onFile={startFromFile} />;
-      return <DropNotes courseName={course?.name} onFile={(file) => addNotes(file, course?.id ?? CURRENT_COURSE_ID)} />;
+      // A course without a single topic has nothing of its own yet, not even a name worth showing.
+      return <DropNotes first onFile={(file) => addNotes(file, course?.id ?? CURRENT_COURSE_ID)} />;
     }
     return (
       <main id="main" className="destination-page start-page">

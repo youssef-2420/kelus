@@ -31,6 +31,8 @@ export type Course = {
   userId: string;
   name: string;
   createdAt: string;
+  /** Where the name came from. Older courses have none, and may still carry the name of a file that held no topics. */
+  nameSource?: "notes" | "repair" | "user";
 };
 
 export type CourseMaterial = {
