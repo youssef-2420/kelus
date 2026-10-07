@@ -3,7 +3,7 @@
 import { useRef, useSyncExternalStore } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { Reveal } from "@/components/motion";
-import { SourceIllustration, RecallIllustration, RouteIllustration } from "./RevisionObjects";
+import { StudyScene } from "./StudyScene";
 import styles from "./RevisionLoopVisuals.module.css";
 
 const stages = [
@@ -12,21 +12,28 @@ const stages = [
     title: "Start with your material.",
     description: "Your lecture notes give the question its context.",
     className: styles.source,
-    Illustration: SourceIllustration,
+    kind: "notes",
   },
   {
     number: "02",
     title: "Try it from memory.",
     description: "An answer shows what you can recall—and what still needs work.",
     className: styles.recall,
-    Illustration: RecallIllustration,
+    kind: "recall",
   },
   {
     number: "03",
+    title: "Check what held up.",
+    description: "See the answer beside your attempt, then mark what still needs another pass.",
+    className: styles.feedback,
+    kind: "feedback",
+  },
+  {
+    number: "04",
     title: "See the route change.",
     description: "A weak answer brings that topic closer, without guessing a grade.",
     className: styles.route,
-    Illustration: RouteIllustration,
+    kind: "route",
   },
 ] as const;
 
@@ -38,8 +45,8 @@ function RevisionStep({ stage }: { stage: (typeof stages)[number] }) {
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const reducedMotion = hydrated && prefersReducedMotion;
   const active = reducedMotion || inView;
-  const { number, title, description, className, Illustration } = stage;
-  const entranceX = number === "02" ? -56 : 56;
+  const { number, title, description, className, kind } = stage;
+  const entranceX = number === "02" || number === "04" ? -32 : 32;
 
   return (
     <article ref={ref} className={`${styles.stage} ${className}`} data-revision-step={number}>
@@ -55,11 +62,11 @@ function RevisionStep({ stage }: { stage: (typeof stages)[number] }) {
         animate={{
           opacity: active ? 1 : 0,
           x: active ? 0 : entranceX,
-          scale: active ? 1 : 0.94,
+          scale: active ? 1 : 0.98,
         }}
-        transition={reducedMotion ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.6 }}
+        transition={reducedMotion ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.45 }}
       >
-        <Illustration active={active} instant={reducedMotion} />
+        <StudyScene kind={kind} />
       </motion.div>
     </article>
   );

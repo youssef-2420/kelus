@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { RecallIllustration, RouteIllustration, SourceIllustration } from "@/components/home/RevisionObjects";
+import { StudyScene } from "@/components/home/StudyScene";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
 import styles from "./how/HowItWorks.module.css";
 
@@ -29,25 +30,13 @@ function RecallVisual({ example, visible, reduceMotion }: VisualProps) {
 }
 
 function RerouteVisual({ example, visible, reduceMotion }: VisualProps) {
-  const [playing, setPlaying] = useState(true);
-  const replayTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => {
-    if (replayTimer.current !== null) clearTimeout(replayTimer.current);
-  }, []);
-
-  function replayChange() {
-    if (replayTimer.current !== null) clearTimeout(replayTimer.current);
-    setPlaying(false);
-    replayTimer.current = setTimeout(() => setPlaying(true), 360);
-  }
   return (
     <figure className={`${styles.visual} ${styles.rerouteVisual}`}>
-      <div className={styles.art}><RouteIllustration example={example} active={reduceMotion || (visible && playing)} instant={reduceMotion} showReorder /></div>
+      <div className={styles.art}><RouteIllustration example={example} active={reduceMotion || visible} instant={reduceMotion} showReorder /></div>
       <figcaption className={styles.visualCaption}>
         <span>After that answer</span>
         <strong>First to review: {example.route[0].name}.</strong>
         <small>{example.route[0].name} moves ahead of {example.route[1].name} for another attempt.</small>
-        {!reduceMotion && <button className={styles.replayAction} type="button" onClick={replayChange} aria-label="Replay how the study route changes">Replay the change <span aria-hidden="true">↺</span></button>}
       </figcaption>
     </figure>
   );
@@ -123,7 +112,10 @@ export function HowItWorks() {
           <p className={styles.eyebrow}>What Kelus does—and doesn’t do</p>
           <h2 id="how-principle-title">A route to practise.<br />Not a predicted grade.</h2>
         </div>
-        <p>Kelus uses your course material, exam date, and practice answers to choose what to revisit. Readiness is an estimate from that evidence, not a promise about your exam result.</p>
+        <div className={styles.principleAside}>
+          <div className={styles.principleArt}><StudyScene kind="feedback" /></div>
+          <p>Kelus uses your course material, exam date, and practice answers to choose what to revisit. Readiness is an estimate from that evidence, not a promise about your exam result.</p>
+        </div>
       </motion.section>
       <motion.footer ref={finalRef} className={styles.final} initial={reduceMotion ? false : { opacity: 0, y: 14 }} animate={finalVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.55, ease: kelusEase }}>
         <p>Ready to revise your own lessons?</p>

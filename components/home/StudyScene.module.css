@@ -1,0 +1,12 @@
+.scene { display: block; width: min(100%, 31rem); height: auto; overflow: visible; }
+.ink, .inkThin, .idea { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+.ink { stroke-width: 2; }
+.inkThin { stroke-width: 1.7; }
+.idea { stroke-width: 2.3; }
+.paper { fill: var(--color-pure-white); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.paperBack { fill: var(--color-loop-student-paper); stroke: var(--ink); stroke-width: 2.5; stroke-linejoin: round; }
+.peach { fill: var(--color-hero-orange-wash); }
+.lilac { fill: var(--color-hero-purple-wash); }
+.greenMark { fill: none; stroke: var(--color-kelus); stroke-width: 8; stroke-linecap: round; }
+.greenWash { fill: color-mix(in srgb, var(--color-kelus) 14%, white); }
+.routeHighlight { fill: color-mix(in srgb, var(--color-kelus) 14%, white); stroke: var(--color-kelus); stroke-width: 2.5; }
