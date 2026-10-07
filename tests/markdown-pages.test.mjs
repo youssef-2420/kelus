@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { looksLikeMarkdownHeadings, markdownToPages, plainInline } from "../domain/markdown-pages.ts";
+import { looksLikeMarkdownHeadings, markdownToPages, plainInline, structurePastedText } from "../domain/markdown-pages.ts";
 import { buildConfirmedMaterialModel, isSourceBackedProposal, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
 import { quoteIsOnPage } from "../domain/content-engine.ts";
 
@@ -96,4 +96,14 @@ test("policy and assessment are real topics in economics, politics and education
   }));
   const names = proposeConceptsFromPages({ materialId: "m", sourceLabel: "x", pages }).filter(isSourceBackedProposal).map((proposal) => proposal.name);
   assert.deepEqual(names.sort(), ["Fiscal policy", "Formative assessment", "Monetary policy"]);
+});
+
+test("pasted text without headings gets topics from its title lines, or becomes one named topic", () => {
+  assert.equal(structurePastedText("# A\ntext here"), "# A\ntext here");
+  const titled = structurePastedText("Osmosis\nWater moves across a membrane toward more solute.\n\nActive transport:\nUses ATP to move substances against a gradient.");
+  assert.match(titled, /^# Osmosis\nWater/);
+  assert.match(titled, /\n# Active Transport\nUses ATP/);
+  const plain = structurePastedText("Price elasticity measures how strongly buyers respond to a change in price. It matters for revenue.");
+  assert.match(plain, /^# Price Elasticity Measures How\nPrice elasticity/);
+  assert.equal(structurePastedText("• one fact about cells that is long enough\n• another fact about cells that is long").startsWith("# One Fact About Cells"), true);
 });
