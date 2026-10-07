@@ -15,6 +15,8 @@ import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { LoopSteps } from "@/components/LoopSteps";
 import { MarkStamp } from "@/components/MarkStamp";
+import { QuickResult, type QuickStats } from "@/components/QuickResult";
+import { habitSummary } from "@/domain/habit";
 import { MinuteShift, RouteShift } from "@/components/RouteShift";
 import { PracticeDrill } from "@/components/PracticeDrill";
 import { NotesSection } from "@/components/NotesSection";
@@ -90,6 +92,7 @@ function SessionBody() {
   const [helpMode, setHelpMode] = useState<HelpMode>(null);
   const [evaluation, setEvaluation] = useState<AnswerEvaluation | null>(null);
   const [lastOutcome, setLastOutcome] = useState<RetrievalOutcome | null>(null);
+  const [quickStats, setQuickStats] = useState<QuickStats | null>(null);
   const [routeBeforeIds, setRouteBeforeIds] = useState<string[]>([]);
   const [routeBeforeAllocations, setRouteBeforeAllocations] = useState<RouteAllocation[]>([]);
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
@@ -261,6 +264,7 @@ function SessionBody() {
   function finishQuick(result: QuickRunResult) {
     const outcome = quickOutcome(result);
     const summary = quickSummary(result);
+    setQuickStats({ right: result.right, total: result.total, unsure: result.unsure, self: result.self });
     setRetrieveAnswer(result.explained);
     setApplicationAnswer(summary);
     responseTimeMs.current = result.elapsedMs;
@@ -340,6 +344,7 @@ function SessionBody() {
     }));
   const routeChanged = routeOrderChanged || minuteChanges.length > 0;
   const nextConceptName = state.snapshot.concepts.find((item) => item.id === session.plannedConceptIds[index + 1])?.name;
+  const goalToday = habitSummary({ events: state.snapshot.events, concepts: state.snapshot.concepts.filter((item) => item.courseId === concept?.courseId) });
   const checkCount = state.snapshot.events.filter((event) => event.conceptId === concept.id && event.kind === "retrieval").length;
   const helpCopy = helpMode === "hint" ? activity.retrieve.hint : helpMode === "explain" ? activity.retrieve.explanation : null;
   const currentSource = activity.sourceReferences[0];
@@ -413,7 +418,7 @@ function SessionBody() {
   }
 
   return (
-    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}${recallWithoutLooking && hasReadableSource ? " is-recalling" : ""}${quickMode && recallWithoutLooking ? " is-focus" : ""}`}>
+    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}${recallWithoutLooking && hasReadableSource ? " is-recalling" : ""}${quickMode && (recallWithoutLooking || phase === "result") ? " is-focus" : ""}`}>
       <div className="study-context is-folio">
         <span className="study-context-title">
           <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
@@ -569,7 +574,34 @@ function SessionBody() {
             transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
           >
             <p className="study-count sr-only" aria-live="polite">Marked</p>
-            {lastOutcome ? <MarkStamp outcome={lastOutcome} /> : null}
+            {lastOutcome && !quickMode ? <MarkStamp outcome={lastOutcome} /> : null}
+            {quickMode && lastOutcome ? (
+              <QuickResult
+                outcome={lastOutcome}
+                topic={concept.name}
+                attempts={checkCount}
+                stats={quickStats}
+                remember={activity.retrieve.modelAnswer}
+                locator={activity.sourceReferences[0]?.locator ?? "your notes"}
+                goalDone={goalToday.topicsToday}
+                goal={goalToday.goal}
+                routeLine={`${routeOrderChanged ? "The remaining topic order changed. " : minuteChanges.length ? "The topic order stayed, but the time plan changed. " : "The remaining route is unchanged. "}${nextConceptName ? `${nextConceptName} is next.` : "This is the last topic in this block."}`}
+                nextName={nextConceptName}
+                onRetry={retryCurrentConcept}
+                onContinue={advance}
+                onSource={currentSource && currentMaterial ? () => void openSource(currentSource.materialId, currentSource.locator) : undefined}
+                details={(
+                  <div className="session-value-proof" aria-label="What changed in this session">
+                    <div>
+                      <span>This check</span>
+                      <strong>{evaluation?.label ?? (lastOutcome === "failure" ? "Needs another pass" : "Partial evidence")}</strong>
+                    </div>
+                    {minuteChanges.length ? <div><span>Time adjusted</span><strong>{minuteChanges.slice(0, 2).map((change) => `${change.name} ${change.before} → ${change.after} min`).join(" · ")}</strong></div> : null}
+                  </div>
+                )}
+              />
+            ) : (
+              <>
             <motion.p
               className="study-mark-kicker"
               initial={reduceMotion ? false : { opacity: 0 }}
@@ -631,6 +663,8 @@ function SessionBody() {
               {lastOutcome !== "success" ? <motion.button type="button" className="cta" onClick={retryCurrentConcept} whileTap={reduceMotion ? undefined : { scale: 0.97 }} transition={{ type: "spring", bounce: 0, duration: 0.28 }}>Try again <span aria-hidden="true">↻</span></motion.button> : null}
               <button type="button" className={lastOutcome === "success" ? "cta" : "text-btn"} onClick={advance}>{nextConceptName ? `Continue to ${nextConceptName}` : "Finish block"} <span aria-hidden="true">→</span></button>
             </div>
+              </>
+            )}
           </motion.section>
         ) : (
           <motion.section
