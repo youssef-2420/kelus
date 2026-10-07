@@ -5,7 +5,7 @@ import { recomputeConceptCache, withCachedState } from "../domain/learner-model"
 import { generateRoute } from "../domain/routing-engine";
 import { estimatedReadiness } from "../domain/readiness";
 import { recalculateSessionRoute } from "../domain/session-engine";
-import { buildConfirmedMaterialModel } from "../domain/material-intelligence";
+import { buildConfirmedMaterialModel, looksReadable } from "../domain/material-intelligence";
 import { createRetrievalEvent, sessionSummary } from "../domain/session";
 import type { Concept, ExtractedMaterialPage, LearnerSnapshot, LearningEvent, ProposedConcept, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
 import { createLearnerSnapshot, type SetupInput } from "./setup";
@@ -371,7 +371,9 @@ export function removeConcept(state: DemoState, conceptId: string) {
  */
 export function purgeUnsourcedTopics(state: DemoState): { state: DemoState; changed: boolean } {
   const ids = new Set(state.snapshot.learningActivities
-    .filter((activity) => activity.sourceReferences.length > 0 && activity.sourceReferences.every((reference) => reference.locator === "From filename"))
+    .filter((activity) => (activity.sourceReferences.length > 0 && activity.sourceReferences.every((reference) => reference.locator === "From filename"))
+      // A topic made from scan noise has nothing to learn from and only produces nonsense questions.
+      || !looksReadable([activity.learn.explanation, ...activity.learn.keyPoints].join(" ")))
     .map((activity) => activity.conceptId));
   return ids.size ? { state: withoutConcepts(state, ids), changed: true } : { state, changed: false };
 }

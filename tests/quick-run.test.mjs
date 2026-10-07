@@ -22,9 +22,22 @@ test("a run is two to three checks from the page, then one explanation", () => {
   assert.equal(new Set(run.checks.map((item) => item.kind)).size, run.checks.length === 2 ? 2 : new Set(run.checks.map((item) => item.kind)).size);
 });
 
-test("a page that gives fewer than two checks keeps the longer loop", () => {
+test("a page too thin for checks still gets the same run: just the explanation, never the old four-step loop", () => {
   const thin = { ...activity, learn: { ...activity.learn, explanation: "Short.", keyPoints: [] } };
-  assert.equal(buildQuickRun({ activity: thin, name: "Tax Incidence", siblingNames: ["Tax Incidence"] }), null);
+  const run = buildQuickRun({ activity: thin, name: "Tax Incidence", siblingNames: ["Tax Incidence"] });
+  assert.ok(run);
+  assert.ok(run.checks.length <= 1);
+  assert.equal(run.explainPrompt, activity.retrieve.prompt);
+  assert.equal(quickOutcome({ right: 0, total: 0, self: "nailed" }), "success", "with no checks the explanation decides");
+  assert.equal(quickSummary({ right: 0, total: 0, self: "partly" }), "You rated your explanation: partly there.");
+});
+
+test("scan noise is not readable text, but slide bullets and notation are", async () => {
+  const { looksReadable } = await import("../domain/material-intelligence.ts");
+  assert.equal(looksReadable("omaliance tet Sralysing fuel co"), false);
+  assert.equal(looksReadable("hhhhhhh hhhh hhh hhhh hhhhh"), false);
+  assert.equal(looksReadable("Perfect competition: many firms, identical products, free entry, firms are price takers"), true);
+  assert.equal(looksReadable("It ignores constant factors, so 3n + 10 is O(n) and O(n log n) is slower."), true);
 });
 
 test("the outcome needs both kinds of evidence", () => {

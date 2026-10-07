@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { checkPracticeAnswer } from "@/domain/practice-check";
-import { explainMatch } from "@/domain/answer-evaluation";
+import { explainMatch, looksLikeWords } from "@/domain/answer-evaluation";
 import { PackArt } from "@/components/PackArt";
 import { whereAnswerBelongs, type QuickRun as Run, type SelfGrade } from "@/domain/quick-run";
 import styles from "./QuickRun.module.css";
@@ -35,6 +35,7 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   const [streak, setStreak] = useState(0);
   const [explained, setExplained] = useState("");
   const [compared, setCompared] = useState(false);
+  const [nudge, setNudge] = useState(false);
   const nextRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => { started.current = performance.now(); }, []);
@@ -75,6 +76,8 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   // On a wide screen the notes open beside the comparison. On a phone they would land above it and push it away,
   // and the comparison already quotes the page; "Peek at the notes" in More still opens them.
   function compare() {
+    // Key-mashing is neither an answer nor "I don't remember"; ask once, kindly, instead of grading it.
+    if (explained.trim() && !looksLikeWords(explained)) { setNudge(true); return; }
     setCompared(true);
     if (typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches) onRevealSource();
   }
@@ -170,11 +173,12 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
             <p className={styles.kicker}>Now in your own words</p>
             <h1 className={styles.prompt}>{run.explainPrompt}</h1>
             <label htmlFor="run-explain" className="sr-only">Your explanation</label>
-            {!compared ? <textarea id="run-explain" className={styles.area} rows={4} autoFocus value={explained} onChange={(event) => setExplained(event.target.value)} placeholder="Close the page. Write it from memory." /> : null}
+            {!compared ? <textarea id="run-explain" className={styles.area} rows={4} autoFocus value={explained} onChange={(event) => { setExplained(event.target.value); setNudge(false); }} placeholder="Close the page. Write it from memory." /> : null}
+            {nudge && !compared ? <p className={styles.nudge} role="alert">That doesn’t look like an answer yet. Write a few words from memory, or tap “I don’t remember”.</p> : null}
             {!compared ? (
               <div className={styles.row}>
                 <button type="button" className={styles.primary} onClick={compare}>Compare with the page <span aria-hidden="true">→</span></button>
-                {!explained.trim() ? <button type="button" className={styles.link} onClick={compare}>I don’t remember</button> : null}
+                {!explained.trim() || nudge ? <button type="button" className={styles.link} onClick={() => { setExplained(""); setNudge(false); setCompared(true); }}>I don’t remember</button> : null}
               </div>
             ) : (
               <motion.div className={styles.compare} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>

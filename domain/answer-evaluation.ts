@@ -120,6 +120,11 @@ export function evaluateDiagnosisResponse(input: { answer: string; modelAnswer: 
   return evaluateLearningResponse({ retrieveAnswer: input.answer, applicationAnswer: input.answer, retrieveModelAnswer: input.modelAnswer, applicationModelAnswer: input.modelAnswer, assessment: input.assessment, retrievalOnly: true });
 }
 
+/** At least one real-looking word: "hhhhhhh" or "asdf" key-mashing is not an attempt to explain. */
+export function looksLikeWords(text: string) {
+  return text.toLocaleLowerCase().split(/[^\p{L}]+/u).some((word) => word.length >= 3 && /[aeiouy]/.test(word) && !/(.)\1\1/.test(word) && !/^(?:asd|qwe|zxc|sdf|jkl)/.test(word));
+}
+
 /** Words that carry no idea on their own, on top of the stopwords: they never count as a key word to remember. */
 const FILLER = new Set(["also", "because", "been", "being", "both", "each", "every", "more", "most", "only", "other", "some", "such", "than", "there", "these", "they", "those", "very", "what", "when", "where", "will", "would", "about", "after", "before", "between", "during", "over", "under", "your", "make", "makes", "made", "does", "done", "much", "many", "same", "into", "onto", "upon", "across", "through", "within", "without", "toward", "towards", "along"]);
 
