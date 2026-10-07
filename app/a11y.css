@@ -332,3 +332,13 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-f
 
 /* Tap target: the topic checkbox is at least 24px (WCAG 2.5.8). */
 .proposal-row input[type="checkbox"] { width: 24px; height: 24px; }
+
+/* Today on a phone is one card and one button. The sidebar's desktop controls and the notes reader
+   (which lives in Materials) stay off the small screen. */
+@media (max-width: 767px) {
+  .studio-rail-toggle, .studio-brand > span[aria-hidden="true"] { display: none; }
+  .core-workspace-grid:not(.is-materials) > .core-source-reader { display: none; }
+}
+
+/* The session header names the topic once; its place in the block is quieter. */
+.study-context-title small b { font-weight: 600; color: var(--color-midnight-ink); }

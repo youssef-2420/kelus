@@ -103,18 +103,30 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
       <AnimatePresence mode="wait" initial={false}>
         {item ? (
           <motion.section key={`check-${step}`} className={styles.card} {...motionProps} aria-label={`Check ${step + 1} of ${total}`}>
-            <p className={styles.kicker}>Check {step + 1} of {total}</p>
             <h1 className={styles.prompt}>{item.prompt}</h1>
 
             {item.kind === "choice" ? (
               <div className={styles.choices} role="group" aria-label="Choose one">
                 {item.choices?.map((choice, index) => {
-                  const state = answered ? (index === item.correctIndex ? styles.right : index === picked ? styles.wrong : styles.dim) : "";
+                  const isRight = answered && index === item.correctIndex;
+                  const isWrong = answered && !isRight && index === picked;
+                  const state = answered ? (isRight ? styles.right : isWrong ? styles.wrong : styles.dim) : "";
                   return (
-                    <button key={choice} type="button" className={`${styles.choice} ${state}`} disabled={Boolean(answered)} onClick={() => answer(index)}>
-                      <kbd aria-hidden="true">{index + 1}</kbd>
+                    <motion.button
+                      key={choice}
+                      type="button"
+                      className={`${styles.choice} ${state}`}
+                      disabled={Boolean(answered)}
+                      onClick={() => answer(index)}
+                      initial={reduce ? false : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={reduce ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.32, delay: 0.04 + index * 0.04 }}
+                      whileTap={reduce || answered ? undefined : { scale: 0.985 }}
+                    >
+                      {/* The number becomes the verdict in place, so the eye does not have to travel. */}
+                      <kbd aria-hidden="true">{isRight ? "✓" : isWrong ? "✕" : index + 1}</kbd>
                       <span>{choice}</span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -130,7 +142,7 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
 
             {answered ? (
               <motion.div className={`${styles.feedback} ${answered.right ? styles.ok : styles.no}`} role="status" initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-                <strong><PackArt name={answered.right ? "check" : "info"} className={styles.mark} />{answered.unsure ? (item.kind === "cloze" ? `That’s fine. It was “${item.modelAnswer}”.` : "That’s fine. Here’s the answer.") : answered.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
+                <strong>{answered.right ? <PackArt name="check" className={styles.mark} /> : null}{answered.unsure ? (item.kind === "cloze" ? `That’s fine. It was “${item.modelAnswer}”.` : "That’s fine. Here’s the answer.") : answered.right ? "Right." : item.kind === "cloze" ? `Not quite. It was “${item.modelAnswer}”.` : "Not quite."}</strong>
                 <p className={styles.quote}>“{item.sourceQuote}”</p>
                 {answered.elsewhere ? (
                   <div className={styles.elsewhere}>

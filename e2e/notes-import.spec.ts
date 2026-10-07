@@ -15,7 +15,7 @@ test("a Notion Markdown export opens a first question, and its topics are listed
 
 test("pasted notes work the same way, and the first question quotes the notes", async ({ page }) => {
   await startFromPaste(page, notion);
-  await expect(page.getByRole("button", { name: "Peek at the notes" })).toBeVisible();
+  await page.getByRole("button", { name: "More session options" }).click();
   await page.getByRole("button", { name: "Peek at the notes" }).click();
   await expect(page.locator('article[aria-label^="Section"]')).toBeVisible();
 });
@@ -150,17 +150,19 @@ test("a file with no real topics says so plainly and returns to the start screen
 
 test("a topic that is not real can be removed from the question screen, with a confirmation", async ({ page }) => {
   await startFromFile(page, mdFile);
-  const title = (await page.locator(".study-run-label").innerText()).split(" · ")[0];
+  const title = await page.locator(".study-context-title small b").innerText();
   const before = await topicNames(page);
   expect(before).toContain(title);
   await page.goto("/today");
-  await page.getByRole("button", { name: /Start this topic|Resume session/ }).first().click();
+  await page.getByRole("button", { name: /Start this topic|Continue/ }).first().click();
   await expect(page).toHaveURL(/\/session/);
-  await page.getByRole("button", { name: "Not a real topic? Remove it" }).click();
-  await expect(page.getByRole("group", { name: "Confirm remove this topic" })).toContainText(title);
+  const more = page.getByRole("button", { name: "More session options" });
+  await more.click();
+  await page.getByRole("button", { name: "Remove this topic" }).click();
+  await expect(page.getByRole("group", { name: /^Remove “/ })).toContainText(title);
   await page.getByRole("button", { name: "Keep" }).click();
-  await expect(page.getByRole("button", { name: "Not a real topic? Remove it" })).toBeVisible();
-  await page.getByRole("button", { name: "Not a real topic? Remove it" }).click();
+  await expect(page.getByRole("button", { name: "Remove this topic" })).toBeVisible();
+  await page.getByRole("button", { name: "Remove this topic" }).click();
   await page.getByRole("button", { name: "Yes, remove" }).click();
   await expect(page).toHaveURL(/\/today/);
   const after = await topicNames(page);

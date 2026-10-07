@@ -230,7 +230,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await start.click();
 
   await expect(page).toHaveURL(/\/session/);
-  await expect(page.locator(".study-context.is-folio")).toContainText(/Topic 1 of \d+/);
+  await expect(page.locator(".study-context.is-folio")).toContainText(/topic 1 of \d+/i);
   // One topic is a short run: instant checks, then one explanation in your own words.
   await expect(page.getByRole("list", { name: /^Step 1 of \d$/ })).toBeVisible();
   await expect(page.getByRole("button", { name: "Close", exact: true })).toBeVisible();
@@ -238,7 +238,9 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await expect(page.locator(".study-progress")).toHaveCount(0);
   await expect(page.locator("header.site-header.is-session")).toHaveCount(1);
   await expect(page.locator("header.site-header.is-session")).toBeHidden();
-  await expect(page.getByRole("button", { name: "Peek at the notes" })).toBeVisible();
+  // One quiet header: peeking and removing live behind "More", not in a line above the question.
+  await expect(page.getByRole("button", { name: "Peek at the notes" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "More session options" })).toBeVisible();
   await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -264,7 +266,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await expect(page).toHaveURL(/\/today/);
   await expect(page.getByText(/Last answer:/)).toBeVisible();
   await page.reload();
-  await page.getByRole("button", { name: "Resume session" }).click();
+  await page.getByRole("button", { name: /^Continue/ }).click();
   await expect(page).toHaveURL(/\/session/);
   await expect(page.locator(".study-context.is-folio")).toContainText("2 of 3");
   await page.goto("/today?section=materials");

@@ -15,7 +15,8 @@ import styles from "./TodayRoute.module.css";
 function citeWhisper(source: { label: string; locator?: string | null } | undefined) {
   if (!source) return null;
   const locator = source.locator?.trim();
-  if (!locator || /not your upload/i.test(locator)) return source.label;
+  // "Section 2" of pasted notes says nothing; a PDF page number does.
+  if (!locator || /not your upload/i.test(locator) || /^Section\b/.test(locator)) return source.label;
   return `${source.label} · ${locator}`;
 }
 
@@ -103,10 +104,11 @@ export function TodayRoute({
     .filter((event) => event.kind === "retrieval" && concepts.some((item) => item.id === event.conceptId))
     .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
   const lastTopic = concepts.find((item) => item.id === lastPractice?.conceptId)?.name;
-  const lastResult = lastPractice?.outcome === "failure" ? "Needs another attempt" : lastPractice?.outcome === "partial" ? "Getting there" : lastPractice?.outcome === "success" ? "Strong evidence" : "Evidence recorded";
+  // The same words the result card used, so one outcome never has three names.
+  const lastResult = lastPractice?.outcome === "failure" ? "Needs another attempt" : lastPractice?.outcome === "partial" ? "Partly there" : lastPractice?.outcome === "success" ? "Solid pass" : "Answer saved";
   const ready = Math.round(Math.max(0, Math.min(1, estimatedReadiness(concepts))) * 100);
   const aim = Math.round(Math.max(0, Math.min(100, targetPercent)));
-  const level = (mastery: number, tried: boolean) => (!tried ? "New" : mastery < 0.34 ? "Weak" : mastery < 0.67 ? "Okay" : "Strong");
+  const level = (mastery: number, tried: boolean) => (!tried ? "New" : mastery < 0.34 ? "Needs work" : mastery < 0.67 ? "Partly there" : "Solid");
 
   return (
     <div className={styles.page}>
@@ -132,7 +134,7 @@ export function TodayRoute({
         <p className={styles.why} data-block="today-decision" aria-label="Why this topic is first">{decision[0]} {payoff}</p>
         <ul className={styles.chips} aria-label="What this takes">
           <li>3 quick checks</li>
-          <li>1 explanation, notes closed</li>
+          <li>1 explanation</li>
         </ul>
         <div className={styles.actions}>
           <motion.button
