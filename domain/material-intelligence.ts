@@ -477,6 +477,22 @@ export function proposeConceptsFromMetadata(input: {
   return proposals;
 }
 
+/** Small words every readable English passage uses. Scan noise ("omaliance tet Sralysing fuel co") has almost none. */
+const FUNCTION_WORDS = new Set(["a", "an", "the", "of", "to", "in", "on", "at", "by", "for", "with", "from", "and", "or", "but", "is", "are", "was", "were", "be", "been", "has", "have", "had", "it", "its", "this", "that", "these", "those", "as", "into", "not", "no", "can", "will", "when", "which", "who", "than", "then", "so", "if", "their", "they", "there", "each", "all", "more", "most", "one", "two", "many", "some", "per", "between", "does", "do"]);
+
+/**
+ * Readable text, not scan noise: at least one small connecting word per dozen words, and most words look like words
+ * (letters with vowels, not one-letter or broken fragments). Slide bullets pass; garbled OCR does not.
+ */
+export function looksReadable(text: string) {
+  // Single letters ("O(n)", "x") are notation, not evidence either way.
+  const words = text.toLocaleLowerCase().split(/[^\p{L}'-]+/u).filter((word) => word.length > 1 || word === "a");
+  if (words.length < 5) return false;
+  const glue = words.filter((word) => FUNCTION_WORDS.has(word)).length;
+  const wordLike = words.filter((word) => /[aeiouy]/.test(word) && !/(.)\1\1/.test(word)).length;
+  return glue >= Math.max(1, Math.floor(words.length / 12)) && wordLike / words.length >= 0.8;
+}
+
 /** A filename or outline can suggest a topic, but cannot support a lesson or answer key. */
 export function isSourceBackedProposal(proposal: ProposedConcept) {
   const excerpt = proposal.sourceExcerpt.trim();
@@ -485,7 +501,8 @@ export function isSourceBackedProposal(proposal: ProposedConcept) {
     && excerpt.split(/\s+/).length >= 5
     && excerpt.toLocaleLowerCase() !== proposal.name.trim().toLocaleLowerCase()
     && !/^Suggested from the file title/i.test(excerpt)
-    && !ADMINISTRATIVE_EXCERPT.test(excerpt);
+    && !ADMINISTRATIVE_EXCERPT.test(excerpt)
+    && looksReadable(excerpt);
 }
 
 export function proposalConfidence(proposal: ProposedConcept): "high" | "review" {

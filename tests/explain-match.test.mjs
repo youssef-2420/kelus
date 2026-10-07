@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { explainMatch } from "../domain/answer-evaluation.ts";
+import { explainMatch, looksLikeWords } from "../domain/answer-evaluation.ts";
 
 const page = "Osmosis is the movement of water across a partially permeable membrane from a dilute solution to a more concentrated solution.";
 
@@ -17,4 +17,10 @@ test("a full explanation in the page's words is suggested as nailed, and an empt
   assert.equal(explainMatch("Osmosis is when water moves through a partially permeable membrane from a dilute solution into a concentrated solution.", page, "Osmosis").suggest, "nailed");
   assert.equal(explainMatch("", page, "Osmosis").suggest, "missed");
   assert.equal(explainMatch("It is about cells", page, "Osmosis").suggest, "missed");
+});
+
+test("key-mashing is not taken as an explanation", () => {
+  assert.equal(looksLikeWords("hhhhhhh"), false);
+  assert.equal(looksLikeWords("asdfgh"), false);
+  assert.equal(looksLikeWords("Water moves in"), true);
 });

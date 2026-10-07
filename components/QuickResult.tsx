@@ -60,7 +60,7 @@ export function QuickResult({
 
       {stats ? (
         <motion.div {...rise(0.3)} className={styles.facts}>
-          <div className={styles.fact}>
+          {stats.total > 0 ? <div className={styles.fact}>
             <span className={styles.label}>Quick checks</span>
             <span className={styles.pips} role="img" aria-label={`${stats.right} of ${stats.total} checks right${stats.unsure ? `, ${stats.unsure} marked not sure` : ""}`}>
               {Array.from({ length: stats.total }, (_, index) => (
@@ -68,7 +68,7 @@ export function QuickResult({
               ))}
             </span>
             <strong>{stats.right} of {stats.total}{stats.unsure ? <small> · {stats.unsure} not sure</small> : null}</strong>
-          </div>
+          </div> : null}
           <div className={styles.fact}>
             <span className={styles.label}>You said</span>
             <strong>{SELF_LABEL[stats.self]}</strong>

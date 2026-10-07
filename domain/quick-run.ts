@@ -65,8 +65,8 @@ function pickChecks(all: PracticeItem[], round: number, strict = true) {
 /**
  * A short run for one topic: up to three instant checks, then one explanation in the learner's own words.
  * Everything comes from the topic's page, and each check tests a different fact from the one the explanation asks for.
- * Returns null when the page gives fewer than two checkable questions,
- * so the longer loop is used instead.
+ * Every topic gets the same run. A page too thin for two checks still gets one check, or none, and the
+ * explanation; null only when there is nothing on the page to explain at all.
  */
 export function buildQuickRun(input: { activity: LearningActivity; name: string; siblingNames: string[]; round?: number }): QuickRun | null {
   const { activity, name, siblingNames } = input;
@@ -94,12 +94,13 @@ export function buildQuickRun(input: { activity: LearningActivity; name: string;
   const fromAll = fromAny.length >= 2 ? fromAny : pickChecks(anyDrillable, round);
   // A one-sentence page (common in slides) can only be asked about that sentence; two angles on it still beat none.
   const checks = fromAll.length >= 2 ? fromAll : pickChecks(anyDrillable, round, false);
-  if (checks.length < 2) return null;
+  const usable = checks.length >= 2 ? checks : pickChecks(anyDrillable, round, false).slice(0, 1);
+  if (!explainAnswer.trim()) return null;
   const sentences = splitSentences([activity.learn.explanation, ...activity.learn.keyPoints].join("\n"));
-  const used = [explainAnswer, ...checks.map((item) => item.sourceQuote)];
+  const used = [explainAnswer, ...usable.map((item) => item.sourceQuote)];
   const extraFact = sentences.find((sentence) => sentence.length >= 40 && !used.some((quote) => overlaps(quote, sentence)));
   return {
-    checks,
+    checks: usable,
     explainPrompt: round % 2 === 1 ? `Close the page. What would you tell a friend about ${name}?` : activity.retrieve.prompt,
     explainAnswer,
     explainQuote: explainAnswer,
@@ -125,6 +126,8 @@ export function whereAnswerBelongs(item: PracticeItem, given: string, sentences:
  * learner rated their own explanation. A strong rating cannot rescue wrong checks, and a miss caps the result.
  */
 export function quickOutcome(input: { right: number; total: number; self: SelfGrade }): RetrievalOutcome {
+  // With no checks, the explanation is the only evidence, so it decides alone.
+  if (input.total === 0) return input.self === "nailed" ? "success" : input.self === "partly" ? "partial" : "failure";
   const share = input.total > 0 ? input.right / input.total : 0;
   const self = input.self === "nailed" ? 1 : input.self === "partly" ? 0.5 : 0;
   const score = share * 0.5 + self * 0.5;
@@ -137,5 +140,6 @@ export function quickOutcome(input: { right: number; total: number; self: SelfGr
 export function quickSummary(input: { right: number; total: number; self: SelfGrade; unsure?: number }) {
   const rating = input.self === "nailed" ? "nailed it" : input.self === "partly" ? "partly there" : "missed it";
   const unsure = input.unsure ? ` (${input.unsure} marked not sure)` : "";
+  if (input.total === 0) return `You rated your explanation: ${rating}.`;
   return `${input.right} of ${input.total} quick checks right${unsure}. You rated your explanation: ${rating}.`;
 }

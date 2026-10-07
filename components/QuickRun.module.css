@@ -493,3 +493,13 @@
   font-weight: 600;
   vertical-align: 2px;
 }
+
+.nudge {
+  margin: -4px 0 0;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #fbf3e4;
+  color: var(--color-midnight-ink);
+  font-size: var(--text-body-sm);
+  line-height: 1.45;
+}
