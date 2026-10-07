@@ -108,7 +108,8 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
 
   const motionProps = reduce
     ? {}
-    : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -6 }, transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] as const } };
+    // The next card waits for the old one to leave, so leaving is a quick fade: no empty frame in between.
+    : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -4, transition: { duration: 0.1 } }, transition: { duration: 0.22, ease: [0.22, 1, 0.36, 1] as const } };
 
   return (
     <div className={styles.run}>
