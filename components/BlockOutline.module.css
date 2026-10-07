@@ -1,0 +1,91 @@
+/* Only where there is room beside the question: a quiet outline in the left margin. */
+.outline {
+  display: none;
+}
+
+@media (min-width: 1180px) {
+  .outline {
+    position: fixed;
+    top: 112px;
+    left: max(32px, calc(50vw - 640px));
+    z-index: 1;
+    display: grid;
+    gap: 4px;
+    width: 220px;
+  }
+}
+
+.course {
+  margin: 0 0 10px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-slate);
+}
+
+.label {
+  margin: 0 0 4px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-smoke, #6b7066);
+}
+
+.outline ol {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.outline li {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--color-slate);
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-smoke, #6b7066);
+  background: rgba(18, 22, 15, 0.05);
+}
+
+.current {
+  background: rgba(18, 22, 15, 0.05);
+  color: var(--color-midnight-ink) !important;
+  font-weight: 600;
+}
+
+.current .mark {
+  background: var(--color-midnight-ink);
+  box-shadow: 0 0 0 3px rgba(18, 22, 15, 0.12);
+  width: 8px;
+  height: 8px;
+  margin-left: 6px;
+  border-radius: 50%;
+}
+
+.success .mark { background: var(--color-kelus); color: #fff; }
+.partial .mark { background: #f4ead8; color: #9a5b16; }
+.failure .mark { background: #f6e6e3; color: #a1352b; }
+.ahead { opacity: 0.75; }

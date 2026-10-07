@@ -906,11 +906,11 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
                 : concepts.length
                   ? "Sample model ready"
                   : embedded
-                    ? "Empty binder"
+                    ? "No notes yet"
                     : "Nothing saved yet"}
             </h2>
           </div>
-          <span>{embedded ? "This exam" : "This device"}</span>
+          {embedded ? null : <span>This device</span>}
         </header>
         {courseMaterials.length ? (
           <ul>{courseMaterials.map((item) => <MaterialRow key={item.id} item={item} userId={auth.user?.id} syncState={syncStates[item.id]} quiet={embedded} onAnalyze={(material) => void analyzePdf(material)} onRemoved={(material) => removeMaterialSource(material.id)} linkedTopics={state.snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === item.id)).length} topicNames={[...new Set(state.snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === item.id)).map((activity) => state.snapshot.concepts.find((concept) => concept.id === activity.conceptId)?.name).filter((name): name is string => Boolean(name)))]} />)}</ul>

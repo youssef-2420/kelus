@@ -390,10 +390,12 @@ export function renameCourse(courseId: string, name: string) {
   persistDemoState({ ...state, snapshot: { ...state.snapshot, courses: state.snapshot.courses.map((course) => (course.id === courseId ? { ...course, name: clean } : course)) } });
 }
 
-export function setExamDate(state: DemoState, date: string) {
+export function setExamDate(state: DemoState, date: string, targetPercent?: number) {
   const when = new Date(`${date}T12:00:00.000Z`);
   if (Number.isNaN(when.getTime()) || when.getTime() <= Date.parse(state.nowIso)) throw new Error("Choose an exam date in the future.");
-  const exams = state.snapshot.exams.map((exam) => (exam.isActive ? { ...exam, examDate: when.toISOString(), datePlaceholder: false } : exam));
+  // The aim is chosen with the date: until then no target is shown, because nobody set one.
+  const target = typeof targetPercent === "number" && targetPercent >= 50 && targetPercent <= 100 ? Math.round(targetPercent) : undefined;
+  const exams = state.snapshot.exams.map((exam) => (exam.isActive ? { ...exam, examDate: when.toISOString(), datePlaceholder: false, ...(target ? { targetPercent: target } : {}) } : exam));
   const next: DemoState = { ...state, snapshot: refreshCaches({ ...state.snapshot, exams }, state.nowIso) };
   persistDemoState(next);
   return next;

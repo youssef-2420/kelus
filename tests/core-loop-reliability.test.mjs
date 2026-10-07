@@ -253,7 +253,7 @@ test("claims that start with 'The <topic> ...' get a specific recall question", 
   const pages = [{ pageNumber: 3, text: "Total Revenue Test\n\nThe total revenue test links elasticity to a firm's revenue. When demand is elastic, a price increase lowers total revenue." }];
   const proposals = proposeConceptsFromPages({ materialId: "trt", sourceLabel: "Econ", pages });
   const model = buildConfirmedMaterialModel({ proposals, courseId: "c", userId: "u", nowIso, pages });
-  assert.equal(model.prompts[0].promptText, "What does Total Revenue Test link, according to your notes?");
+  assert.equal(model.prompts[0].promptText, "What does the total revenue test link, according to your notes?");
 });
 
 test("a recall check accepts a correct definition without asking for reasoning or transfer", () => {

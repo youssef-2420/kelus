@@ -28,6 +28,7 @@ import { aiActive, aiConfigured, fetchAiTopicContent, readCachedAi } from "@/lib
 import { mergeAiContent, type AiTopicContent } from "@/domain/ai-content";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { SessionMenu } from "@/components/SessionMenu";
+import { BlockOutline } from "@/components/BlockOutline";
 import { addMissedLines } from "@/lib/missed-lines";
 import { trackEvent } from "@/lib/analytics";
 
@@ -459,6 +460,15 @@ function SessionBody() {
           </button>
         </div>
       </div>
+      {quickMode ? (
+        <BlockOutline
+          course={state.snapshot.courses.find((item) => item.id === concept.courseId)?.name ?? "Your course"}
+          topics={session.plannedConceptIds.map((id) => {
+            const last = [...state.snapshot.events].reverse().find((event) => event.sessionId === session.id && event.kind === "retrieval" && event.conceptId === id);
+            return { id, name: state.snapshot.concepts.find((item) => item.id === id)?.name ?? "Topic", outcome: last?.outcome ?? null, current: id === concept.id };
+          })}
+        />
+      ) : null}
       <aside className="session-workspace-rail" aria-label="Course workspace">
         <p>Your course</p>
         <strong>{state.snapshot.courses.find((item) => item.id === concept.courseId)?.name ?? "Course"}</strong>

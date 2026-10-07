@@ -15,12 +15,15 @@ export function ExamPulse({ readiness, targetPercent, daysToExam, datePending = 
       </div>
       <div className={styles.track} aria-hidden="true">
         <span className={styles.fill} style={{ width: `${ready}%` }} />
-        <i className={styles.target} style={{ left: `${target}%` }} />
+        {datePending ? null : <i className={styles.target} style={{ left: `${target}%` }} />}
       </div>
-      <div className={styles.fact}>
-        <strong>{target}%</strong>
-        <span>Your target</span>
-      </div>
+      {/* The target is chosen with the exam date; before that nobody has set one, so none is shown. */}
+      {datePending ? null : (
+        <div className={styles.fact}>
+          <strong>{target}%</strong>
+          <span>Your target</span>
+        </div>
+      )}
       <div className={styles.fact}>
         {/* Without a real exam date there is no countdown to show, only a placeholder. */}
         <strong>{datePending ? "—" : daysToExam}</strong>

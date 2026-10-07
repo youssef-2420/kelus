@@ -9,7 +9,7 @@ import styles from "./ProgressView.module.css";
 
 const pct = (value: number) => Math.round(Math.max(0, Math.min(1, value)) * 100);
 
-function Trend({ series, target }: { series: Array<{ label: string; readiness: number; answered: number }>; target: number }) {
+function Trend({ series, target }: { series: Array<{ label: string; readiness: number; answered: number }>; target: number | null }) {
   const width = 560;
   const height = 150;
   const pad = { left: 8, right: 8, top: 10, bottom: 22 };
@@ -20,9 +20,13 @@ function Trend({ series, target }: { series: Array<{ label: string; readiness: n
   const last = series[series.length - 1];
   const first = series[0];
   return (
-    <svg className={styles.chart} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Estimated readiness over 14 days: from ${pct(first.readiness)}% to ${pct(last.readiness)}%, aiming for ${target}%.`}>
-      <line x1={pad.left} x2={width - pad.right} y1={y(target / 100)} y2={y(target / 100)} className={styles.target} />
-      <text x={width - pad.right} y={y(target / 100) - 5} textAnchor="end" className={styles.targetLabel}>Your target {target}%</text>
+    <svg className={styles.chart} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={`Estimated readiness over 14 days: from ${pct(first.readiness)}% to ${pct(last.readiness)}%${target === null ? "" : `, aiming for ${target}%`}.`}>
+      {target === null ? null : (
+        <>
+          <line x1={pad.left} x2={width - pad.right} y1={y(target / 100)} y2={y(target / 100)} className={styles.target} />
+          <text x={width - pad.right} y={y(target / 100) - 5} textAnchor="end" className={styles.targetLabel}>Your target {target}%</text>
+        </>
+      )}
       <path d={area} className={styles.area} />
       <path d={line} className={styles.line} />
       {series.map((point, index) => (point.answered > 0 ? <circle key={point.label} cx={x(index)} cy={y(point.readiness)} r={3.2} className={styles.dot} /> : null))}
@@ -69,7 +73,7 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
         <h2 id="progress-headline">{progressHeadline(summary)}</h2>
         <p className={styles.caveat}>Estimated from your own answers. It is not a prediction of your grade.</p>
         {summary.enough ? (
-          <Trend series={summary.series} target={target} />
+          <Trend series={summary.series} target={examDatePending ? null : target} />
         ) : (
           <div className={styles.thinRow}>
             <PackArt name="growing" className={styles.growing} size={150} />
