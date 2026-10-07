@@ -36,8 +36,9 @@ export function AiConsent() {
         </p>
         {remote ? (
           <p className={styles.fine}>
-            Only that page text is sent. Your files, name and answers stay on this device, and the service doesn’t store what it receives.
-            Off by default; turn it off any time and what it wrote is removed from this device.
+            Only that page text is sent, to a Kelus service that passes it to Anthropic’s API; Kelus doesn’t store it, and Anthropic handles it under its API terms.
+            Your files, name and answers stay on this device. Off by default; turn it off any time and what it wrote is removed from this device.
+            <a href="/privacy#ai-questions"> Read the details.</a>
           </p>
         ) : (
           <p className={styles.fine}>

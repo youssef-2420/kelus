@@ -14,7 +14,7 @@ export default function PrivacyPage() {
       <article className="legal-panel">
         <p className="kicker">Legal</p>
         <h1>Privacy</h1>
-        <p className="legal-updated">Last updated: September 7, 2026</p>
+        <p className="legal-updated">Last updated: October 7, 2026</p>
         <p className="legal-lede">
           Kelus is a local-first revision and exam practice tool. Without an account, your course PDFs and study progress stay on this
           device. If you sign in, Kelus can sync that work to your private account so you can continue on another
@@ -25,7 +25,8 @@ export default function PrivacyPage() {
         <ul>
           <li>
             <strong>Course materials</strong> — PDFs you upload are read in the browser to propose concepts. Concept
-            extraction runs on this device. Without sign-in, PDF files stay in this browser’s storage.
+            extraction and the standard questions are made on this device. Without sign-in, PDF files stay in this browser’s storage.
+            The one exception is the optional AI question writing described below, which is off until you turn it on.
           </li>
           <li>
             <strong>Study state</strong> — exam setup, confirmed concepts, diagnosis answers, and session history are
@@ -75,11 +76,32 @@ export default function PrivacyPage() {
           anonymization on. It helps us understand which pages are used — not to build an advertising profile.
         </p>
 
+        <h2 id="ai-questions">Optional: AI-written questions</h2>
+        <p>
+          This is off by default and appears in Materials only when it is available. When you turn it on, there are two cases:
+        </p>
+        <ul>
+          <li>
+            <strong>On-device model</strong> — if your Chrome has its own built-in model, the questions are written inside your
+            browser and your notes never leave this device. Chrome downloads the model once (about 2 GB).
+          </li>
+          <li>
+            <strong>Hosted model</strong> — Kelus sends the text of one topic at a time, with writing instructions, to a small
+            Kelus service that passes it to Anthropic’s API to write the questions. Your files, name, email and answers are not
+            sent. The Kelus service does not store or log the text. Anthropic processes it under its own API terms, which may
+            include keeping it for a limited time; Kelus does not use it to train a model.
+          </li>
+        </ul>
+        <p>
+          Every written question must quote your page, and any that does not is discarded. The written questions are kept in this
+          browser. Turning the switch off removes them from this device. Text that was already sent cannot be recalled by Kelus.
+        </p>
+
         <h2>Reading scanned PDFs</h2>
         <p>
           If a PDF is a scan with no selectable text, Kelus reads it on your device with an open-source text-recognition
           engine. To do that, your browser downloads the engine and its English language data from the jsDelivr public
-          CDN (cdn.jsdelivr.net). Your pages and their text are not sent anywhere; the request is only for the engine,
+          CDN (cdn.jsdelivr.net). For this step your pages and their text are not sent anywhere; the request is only for the engine,
           so jsDelivr can see that your browser asked for it. PDFs with real text never make this request.
         </p>
 
@@ -87,7 +109,7 @@ export default function PrivacyPage() {
         <ul>
           <li>We do not sell personal information.</li>
           <li>We do not run third-party ad auctions on Kelus pages.</li>
-          <li>We do not use your syllabus to train a public model as part of the current static product.</li>
+          <li>We do not use your notes or syllabus to train a model.</li>
         </ul>
 
         <h2>Your choices</h2>
