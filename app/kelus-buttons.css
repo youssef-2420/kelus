@@ -138,3 +138,77 @@
 [tabindex="-1"]:focus-visible {
   outline: none !important;
 }
+
+/* ── One header through the first run ─────────────────────────────────────────────────────────────────
+   The start and reading screens use the same quiet bar as the session: the small "K kelus" mark on the left,
+   a text-weight Sign in on the right, the same height and rule, so dropping a file never changes the frame. */
+html body .site-header.is-product:not(.is-session) {
+  height: 58px !important;
+  min-height: 58px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  background: var(--paper, #fbfaf7) !important;
+  border-bottom: 1px solid rgba(18, 22, 15, 0.08) !important;
+  box-shadow: none !important;
+}
+html body .site-header.is-product:not(.is-session) .site-header-inner {
+  min-height: 56px !important;
+  align-items: center !important;
+}
+html body .site-header.is-product .mark {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-midnight-ink) !important;
+  text-decoration: none;
+}
+html body .site-header.is-product .mark svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: var(--color-midnight-ink);
+}
+.site-wordmark {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  color: var(--color-midnight-ink);
+}
+html body .site-header.is-product :is(.site-header-action, .site-auth-button) {
+  min-height: 40px !important;
+  padding: 0 10px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--color-slate) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+}
+html body .site-header.is-product :is(.site-header-action, .site-auth-button):hover {
+  background: rgba(18, 22, 15, 0.06) !important;
+  color: var(--color-midnight-ink) !important;
+}
+
+/* The session draws its own header ("K kelus · topic · More · Close"); the site's never shows there, not even for
+   the frame before the session marks the page. */
+html body header.site-header.is-session { display: none !important; }
+/* The mark sits exactly where the session's does, so it never shifts sideways between screens. */
+html body .site-header.is-product:not(.is-session) {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+html body .site-header.is-product:not(.is-session) .site-header-inner {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  height: 58px !important;
+  min-height: 58px !important;
+  /* The mark's box starts 8.6px left of its drawing; this lands the drawing on the session's 22px. */
+  padding: 0 18px 0 30.6px !important;
+}
+html body .site-header.is-product:not(.is-session) .mark {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+html body .site-header.is-product:not(.is-session) { display: flex !important; align-items: center !important; }
+html body .site-header.is-product:not(.is-session) .site-header-inner { display: flex !important; align-items: center !important; }
