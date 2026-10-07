@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
 import { HabitStrip } from "@/components/HabitStrip";
+import { NudgeCard } from "@/components/NudgeCard";
 import { useReturnVisit, WelcomeBack } from "@/components/WelcomeBack";
 import { ReminderCard } from "@/components/ReminderCard";
 import { ExamDateCard } from "@/components/ExamDateCard";
@@ -158,6 +159,7 @@ export function TodayRoute({
       </motion.article>
 
       <HabitStrip events={events} concepts={concepts} />
+      {hasPriorEvidence ? <NudgeCard /> : null}
 
       {nextStops.length ? (
         <aside className={styles.then} data-block="today-next" aria-label="Planned next topics">

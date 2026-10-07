@@ -30,6 +30,7 @@ import { AuthProvider } from "@/components/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
+import { NudgeKeeper } from "@/components/NudgeKeeper";
 
 /* Marked-script system: Literata (reading / display) + IBM Plex Sans (UI).
    Keep --font-inter / --font-source-serif variable names for existing CSS. */
@@ -53,6 +54,8 @@ const marketingSans = Inter({ subsets: ["latin"], variable: "--font-marketing-in
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kelus.me"),
+  // Installing Kelus as an app is what lets nudges arrive while it is closed (Chrome).
+  manifest: "/manifest.webmanifest",
   title: "Kelus — Revise your lessons. Prepare for exams.",
   description: "Revise your course material with recall questions, application practice, and answer feedback. Kelus uses your answers to suggest what to review before your exam.",
   openGraph: {
@@ -78,6 +81,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </Suspense>
               <RouteTransition>{children}</RouteTransition>
               <Toaster />
+              <NudgeKeeper />
             </TooltipProvider>
           </LearnerProvider>
         </AuthProvider>

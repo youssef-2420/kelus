@@ -9,6 +9,7 @@ import { buildConfirmedMaterialModel, looksReadable } from "../domain/material-i
 import { createRetrievalEvent, sessionSummary } from "../domain/session";
 import type { Concept, ExtractedMaterialPage, LearnerSnapshot, LearningEvent, ProposedConcept, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
 import { createLearnerSnapshot, type SetupInput } from "./setup";
+import type { MissedLine } from "../domain/return-visit";
 
 const STORAGE_KEY = "kelus-learning-state-v2";
 const LAST_SESSION_KEY = "kelus:last-session-completed-at";
@@ -22,7 +23,30 @@ export type DemoState = {
   nowIso: string;
   onboardingCompleted: boolean;
   diagnosisCompleted: boolean;
+  /** Lines missed in runs, for the next visit's warm-up. Part of the state, so it syncs with the account. */
+  missedLines?: MissedLine[];
 };
+
+const MISSED_LIMIT = 40;
+
+/** Both lists, one entry per line, newest last: used when two devices meet at sign-in. */
+export function mergeMissedLines(a: MissedLine[] = [], b: MissedLine[] = []) {
+  const byQuote = new Map<string, MissedLine>();
+  for (const line of [...a, ...b]) {
+    const seen = byQuote.get(line.quote);
+    if (!seen || line.at > seen.at) byQuote.set(line.quote, line);
+  }
+  return [...byQuote.values()].sort((x, y) => x.at.localeCompare(y.at)).slice(-MISSED_LIMIT);
+}
+
+/** Changes the missed-line list and saves it with the rest of the learner state. */
+export function updateMissedLines(change: (lines: MissedLine[]) => MissedLine[]) {
+  const state = getDemoSnapshot();
+  const current = state.missedLines ?? [];
+  const next = change(current).slice(-MISSED_LIMIT);
+  if (next.length === current.length && next.every((line, index) => line === current[index])) return;
+  persistDemoState({ ...state, missedLines: next }, true);
+}
 
 function refreshCaches(snapshot: LearnerSnapshot, nowIso: string): LearnerSnapshot {
   return {
@@ -118,7 +142,7 @@ export function chooseLocalStateForSignIn(account: DemoState | null, guest: Demo
 export function replaceDemoState(value: unknown) {
   if (!validStoredState(value)) throw new Error("The saved learner state is not compatible with this version of Kelus.");
   const { state } = advanceNowIfNeeded(value);
-  persistDemoState(state);
+  persistDemoState(state, true);
   return state;
 }
 
@@ -146,7 +170,13 @@ const listeners = new Set<() => void>();
 let clientCache: DemoState | null = null;
 const emit = () => listeners.forEach((listener) => listener());
 
-function persistDemoState(state: DemoState) {
+/**
+ * Most changes are computed from a copy of the state taken earlier (a run is graded from the state it started
+ * with). Missed lines change on their own path, so every other save carries the newest list forward instead of
+ * dropping lines added in the meantime. Only the missed-line updater and a full replace set the list itself.
+ */
+function persistDemoState(input: DemoState, ownsMissedLines = false) {
+  const state = ownsMissedLines || !clientCache?.missedLines ? input : { ...input, missedLines: clientCache.missedLines };
   clientCache = state;
   if (typeof window !== "undefined") window.localStorage.setItem(demoStateStorageKey(), JSON.stringify(state));
   emit();
@@ -183,7 +213,7 @@ export const getServerDemoSnapshot = () => SERVER_SNAPSHOT;
 
 export function resetDemoState(nowMs = Date.now()) {
   const state = initialDemoState(nowMs);
-  persistDemoState(state);
+  persistDemoState(state, true); // A fresh start: no lines carried over from before.
   if (typeof window !== "undefined") {
     void import("./material-store").then(({ clearMaterials }) => clearMaterials());
   }
@@ -198,7 +228,7 @@ export function loadAminaDemo(nowMs = Date.now()) {
     onboardingCompleted: true,
     diagnosisCompleted: true,
   };
-  persistDemoState(state);
+  persistDemoState(state, true); // A fresh start: no lines carried over from before.
   if (typeof window !== "undefined") {
     void import("./material-store").then(({ clearMaterials, seedDemoMaterial }) => {
       clearMaterials();
@@ -218,7 +248,7 @@ export function completeOnboarding(input: SetupInput, nowMs = Date.now()) {
   };
   // The first PDF is committed to IndexedDB before this state becomes visible.
   // Clearing materials here would race with that write and strand the course.
-  persistDemoState(state);
+  persistDemoState(state, true); // A fresh start: no lines carried over from before.
   return state;
 }
 
