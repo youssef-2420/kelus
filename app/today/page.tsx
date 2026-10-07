@@ -7,7 +7,6 @@ import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { RevisionSurface } from "@/components/RevisionSurface";
 import { useLearner } from "@/components/LearnerProvider";
 import { trackEvent } from "@/lib/analytics";
-import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 import styles from "./loading.module.css";
 import { addSourceMaterial, getMaterialsSnapshot, getServerMaterialsSnapshot, removeMaterial, subscribeMaterials } from "@/lib/material-store";
 import { removeRemoteMaterial } from "@/lib/material-sync";
@@ -152,21 +151,15 @@ function TodayBody() {
 
 export default function TodayPage() {
   return (
-    <LateralPage>
-      <Suspense
-        fallback={
-          <SuspenseFallbackExit>
-            <main id="main" className={`destination-page ${styles.loading}`}>
-              <h1 className="destination-page-title" role="status">Opening Today…</h1>
-              <div className={styles.lines} aria-hidden="true"><span /><span /><span /></div>
-            </main>
-          </SuspenseFallbackExit>
-        }
-      >
-        <SuspenseReveal>
-          <TodayBody />
-        </SuspenseReveal>
-      </Suspense>
-    </LateralPage>
+    <Suspense
+      fallback={
+        <main id="main" className={`destination-page ${styles.loading}`}>
+          <h1 className="destination-page-title" role="status">Opening Today…</h1>
+          <div className={styles.lines} aria-hidden="true"><span /><span /><span /></div>
+        </main>
+      }
+    >
+      <TodayBody />
+    </Suspense>
   );
 }
