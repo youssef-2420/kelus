@@ -10,6 +10,20 @@ import type {
 
 const ADMINISTRATIVE =
   /\b(?:attendance|calendar|contact|course syllabus|email|grading|instructor|office hours|reading list|schedule|syllabus|textbook)\b|\b(?:late|attendance|grading|course|class|academic|honou?r(?: code)?|privacy|refund|make-?up|plagiarism|submission|exam|office|lab|safety) polic(?:y|ies)\b|^assessments?$|\bassessments? (?:schedule|dates?|weights?|weighting|breakdown|criteria|overview|methods?)\b/i;
+/** "BIO 101", "CS201", "Week 4", "Lecture 3", "Unit 2": a heading that names the document, not something to study. */
+const COURSE_CODE = /\b[A-Z]{2,5}\s?\d{3}[A-Z]?\b/;
+const DOCUMENT_NUMBER = /\b(?:week|lecture|lesson|unit|module|chapter|session|seminar|tutorial|class)\s*\d+\b/i;
+export function isDocumentTitle(value: string) {
+  return COURSE_CODE.test(value) || DOCUMENT_NUMBER.test(value);
+}
+
+/** The document's own title, from the first lines of the first page: it names the course instead of becoming a topic. */
+export function documentTitle(pages: ExtractedMaterialPage[]) {
+  const first = [...pages].sort((a, b) => a.pageNumber - b.pageNumber)[0];
+  const line = first?.text.split(/\n+/).slice(0, 6).map((entry) => entry.trim()).find((entry) => entry.length >= 4 && entry.length <= 90 && isDocumentTitle(entry));
+  return line ? line.replace(/\s+/g, " ") : null;
+}
+
 /** Course-logistics text near a heading means the "topic" is a title page, not something to study. */
 const ADMINISTRATIVE_EXCERPT = /\b(?:office hours?|instructor\s*:|attendance|grading\s*:)|e-?mail\s*:|\S+@\S+\.\S+/i;
 /** Headings that structure a document but are not something to study on their own. */
@@ -65,17 +79,27 @@ function stablePart(value: string) {
 
 function excerptFor(lines: string[], index: number, fallback: string) {
   const nearby: string[] = [];
-  for (const raw of lines.slice(index + 1, index + 8)) {
+  for (const raw of lines.slice(index + 1, index + 16)) {
     const line = raw.trim();
     if (!line) {
       if (nearby.length) break;
       continue;
     }
-    if (looksLikeConcept(line) && nearby.length) break;
-    if (line.length > 18 && !looksLikeConcept(line)) nearby.push(line);
-    if (nearby.join(" ").length >= 520) break;
+    // A PDF wraps a sentence across lines; a short tail like "no energy." still belongs to it.
+    const continues = nearby.length > 0 && (!/[.!?:;”")]$/.test(nearby[nearby.length - 1]) || /^[a-z(]/.test(line));
+    if (looksLikeConcept(line) && nearby.length && !continues) break;
+    if ((line.length > 18 && !looksLikeConcept(line)) || continues) nearby.push(line);
+    if (nearby.join(" ").length >= 520 && /[.!?]["”)]?$/.test(line)) break;
   }
-  return (nearby.length ? nearby.join("\n") : fallback).slice(0, 700);
+  return wholeSentences(nearby.length ? nearby.join("\n") : fallback, 760);
+}
+
+/** Never end on half a sentence: a question built from "…is passive and needs" teaches the wrong thing. */
+function wholeSentences(text: string, limit: number) {
+  const clipped = text.slice(0, limit);
+  if (/[.!?]["”)]?\s*$/.test(clipped)) return clipped.trim();
+  const end = Math.max(...[...clipped.matchAll(/[.!?]["”)]?(?=\s)/g)].map((match) => (match.index ?? 0) + match[0].length), -1);
+  return end > 40 ? clipped.slice(0, end).trim() : clipped.trim();
 }
 
 function escapeRegExp(value: string) {
@@ -139,7 +163,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "biology":
       return {
         learnTitle: `Trace the mechanism behind ${name}.`,
-        retrievePrompt: `Without looking, describe the mechanism or relationship the source gives for ${name}.`,
+        retrievePrompt: `How does ${name} work, according to your notes?`,
         applyPrompt: `Suppose one required part of ${name} is reduced or blocked. Predict the consequence and trace the mechanism.`,
         applyHint: "Name the changed component, then trace its effect through the system.",
         applyAnswer: `A sound answer identifies the changed component and uses this source-backed mechanism to predict the result: ${claim}`,
@@ -147,7 +171,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "computer_science":
       return {
         learnTitle: `Trace how ${name} behaves.`,
-        retrievePrompt: `Without looking, explain the rule or process the source gives for ${name}.`,
+        retrievePrompt: `How does ${name} work, step by step?`,
         applyPrompt: `Suppose the input grows or one required condition fails. Trace how ${name} behaves and name the resulting state or output.`,
         applyHint: "State the input, follow the process in order, and name the resulting state or output.",
         applyAnswer: `A sound trace follows the source-backed process step by step and reaches a consistent output: ${claim}`,
@@ -155,7 +179,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "history":
       return {
         learnTitle: `Explain the forces shaping ${name}.`,
-        retrievePrompt: `Without looking, state the source's central causal claim about ${name}.`,
+        retrievePrompt: `What do your notes say caused ${name}, or what it led to?`,
         applyPrompt: `Suppose the source's main causal condition were weaker. Explain how that could alter the historical outcome.`,
         applyHint: "Name the changed condition, connect it to the source's cause, then explain the likely consequence.",
         applyAnswer: `A sound answer preserves the source's causal relationship while changing the historical condition: ${claim}`,
@@ -163,7 +187,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "law":
       return {
         learnTitle: `Make the rule in ${name} usable.`,
-        retrievePrompt: `Without looking, state the rule or legal test the source gives for ${name}.`,
+        retrievePrompt: `What is the rule for ${name}, according to your notes?`,
         applyPrompt: `Suppose one required element of the rule for ${name} is missing. Apply the rule and give a qualified conclusion.`,
         applyHint: "State the rule, connect each relevant fact to it, then give a qualified conclusion.",
         applyAnswer: `A sound application states the source-backed rule, tests the relevant facts, and reaches a supported conclusion: ${claim}`,
@@ -171,7 +195,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     case "mathematics":
       return {
         learnTitle: `Reconstruct the method behind ${name}.`,
-        retrievePrompt: `Without looking, state the rule, theorem, or method the source gives for ${name}.`,
+        retrievePrompt: `What is the rule or method for ${name}?`,
         applyPrompt: `Suppose one condition of the rule or method for ${name} is not satisfied. Show what can still be concluded and why.`,
         applyHint: "Name the rule first, substitute or transform carefully, and check the result against the conditions.",
         applyAnswer: `A sound solution names the source-backed method, applies it step by step, and checks its conditions: ${claim}`,
@@ -179,7 +203,7 @@ function activityLanguage(mode: SubjectMode, name: string, claim: string) {
     default:
       return {
         learnTitle: `Make ${name} usable from the source.`,
-        retrievePrompt: `Without looking, what central claim does the course make about ${name}?`,
+        retrievePrompt: `What do your notes say about ${name}?`,
         applyPrompt: `Apply the source's claim about ${name} to a new example that is not copied from the page.`,
         applyHint: "Keep the same underlying relationship. Change only the situation.",
         applyAnswer: `A strong answer reuses this source-backed claim in a new context: ${claim}`,
@@ -409,7 +433,7 @@ export function proposeConceptsFromPages(input: {
       if (proposals.length >= limit || (!matcher(line) && !layoutHeading)) return;
       const name = cleanCandidate(line);
       const key = name.toLocaleLowerCase();
-      if ((!matcher(name) && !layoutHeading) || seen.has(key) || ADMINISTRATIVE.test(name) || GENERIC_HEADING.test(name.trim())) return;
+      if ((!matcher(name) && !layoutHeading) || seen.has(key) || ADMINISTRATIVE.test(name) || GENERIC_HEADING.test(name.trim()) || isDocumentTitle(name)) return;
       seen.add(key);
       proposals.push({
         id: `proposal-${stablePart(`${input.materialId}:${key}`)}`,

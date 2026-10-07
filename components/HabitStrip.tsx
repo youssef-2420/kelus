@@ -52,7 +52,7 @@ export function HabitStrip({ events, concepts }: { events: LearningEvent[]; conc
           {summary.pointsThisWeek > 0 ? <span> Estimated readiness is up {summary.pointsThisWeek} point{summary.pointsThisWeek === 1 ? "" : "s"} this week.</span> : null}
         </p>
       ) : null}
-      <Link href="/today?section=progress" className={styles.more}>See what changed <span aria-hidden="true">→</span></Link>
+      <Link href="/today?section=progress" className={styles.more}>See your progress <span aria-hidden="true">→</span></Link>
     </section>
   );
 }

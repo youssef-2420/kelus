@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useSyncExternalStore } from "react";
 
 const links: Array<{
   href: string;
@@ -22,9 +22,16 @@ const links: Array<{
 
 const PRODUCT_HREFS = new Set(["/today", "/materials", "/map"]);
 
+const noop = () => () => {};
+
 export function SiteHeader() {
   const pathname = usePathname();
   const auth = useAuth();
+  // The header hydrates a moment after the page, and by then the account check may already have finished. Until
+  // it has hydrated, it shows exactly what the static HTML shows ("checking account"), so React never sees two
+  // different headers (the old "Minified React error #418" on Today and Materials).
+  const hydrated = useSyncExternalStore(noop, () => true, () => false);
+  const checkingAccount = !hydrated || auth.loading;
   const inSession = pathname.startsWith("/session");
   const inProduct = ["/today", "/materials", "/map", "/concept"].some((path) => pathname.startsWith(path));
   const onHome = pathname === "/";
@@ -72,7 +79,7 @@ export function SiteHeader() {
           <Link href="/today" className="site-session-return" title="Return to Today — your place is kept">
             Close
           </Link>
-        ) : auth.loading ? (
+        ) : checkingAccount ? (
           <span className="site-auth-loading" aria-label="Checking account" />
         ) : auth.user ? (
           <details

@@ -379,6 +379,17 @@ export function removeMaterialLearning(state: DemoState, materialId: string) {
 }
 
 /** The learner chose their real exam date. Must be in the future. */
+/**
+ * Renames a course from the latest saved state, not a copy: it runs right after topics are confirmed, and a stale
+ * copy would undo them.
+ */
+export function renameCourse(courseId: string, name: string) {
+  const state = getDemoSnapshot();
+  const clean = name.trim().slice(0, 90);
+  if (!clean || !state.snapshot.courses.some((course) => course.id === courseId && course.name !== clean)) return;
+  persistDemoState({ ...state, snapshot: { ...state.snapshot, courses: state.snapshot.courses.map((course) => (course.id === courseId ? { ...course, name: clean } : course)) } });
+}
+
 export function setExamDate(state: DemoState, date: string) {
   const when = new Date(`${date}T12:00:00.000Z`);
   if (Number.isNaN(when.getTime()) || when.getTime() <= Date.parse(state.nowIso)) throw new Error("Choose an exam date in the future.");

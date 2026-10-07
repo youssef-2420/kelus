@@ -1,0 +1,191 @@
+/* The end of a block: what you did, what comes back, one way on. Same voice as the result card. */
+.done {
+  display: grid;
+  gap: 16px;
+  max-width: 34rem;
+  justify-items: stretch !important;
+}
+
+/* An older global rule centres and shrinks children of the folio; every block here spans the full column. */
+.done > * {
+  width: 100%;
+  justify-self: stretch;
+}
+
+.done h1 {
+  margin: 0;
+}
+
+.lede {
+  margin: -4px 0 0;
+  color: var(--color-slate);
+  line-height: 1.5;
+}
+
+.topics {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topics li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 2px 12px;
+  min-height: 52px;
+  padding: 10px 14px;
+  border: 1px solid rgba(18, 22, 15, 0.08);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.topics strong {
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+/* On a phone the outcome sits under the topic name; there is room beside it on wider screens. */
+.word {
+  grid-column: 2;
+  font-size: var(--text-body-sm);
+  color: var(--color-slate);
+}
+
+.mark {
+  grid-row: span 2;
+}
+
+@media (min-width: 520px) {
+  .topics li { grid-template-columns: 28px minmax(0, 1fr) auto; }
+  .word { grid-column: auto; }
+  .mark { grid-row: auto; }
+}
+
+.mark {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 0.875rem;
+}
+
+.success .mark { background: var(--color-kelus); color: #fff; }
+.partial .mark { background: #f4ead8; color: #9a5b16; }
+.failure .mark { background: #f6e6e3; color: #a1352b; }
+.success .word { color: var(--color-kelus); }
+
+/* Tomorrow, drawn: the warm-up is the reason to come back, so it gets the picture. */
+.tomorrow {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 18px;
+  border: 1px solid #efe3cf;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fdf8ef 0%, #fffdf9 100%);
+}
+
+.tomorrow > div {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+}
+
+.tomorrow h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.tomorrow p {
+  margin: 0;
+  color: var(--color-slate);
+  font-size: var(--text-body-sm);
+}
+
+/* The drawing sits in the corner; the first lines make room for it. */
+.art {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 78px;
+  height: auto;
+  pointer-events: none;
+}
+
+.tomorrow :global(.kicker),
+.tomorrow h2 {
+  padding-right: 84px;
+}
+
+.calendar {
+  justify-self: start;
+  margin-top: 4px;
+  padding: 0 !important;
+  text-align: left !important;
+}
+
+.note {
+  color: var(--color-kelus) !important;
+}
+
+.primary {
+  justify-self: stretch;
+  text-align: center;
+}
+
+.quiet {
+  display: grid;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(18, 22, 15, 0.08);
+  color: var(--color-smoke, #6b7066);
+  font-size: var(--text-body-sm);
+}
+
+.quiet p {
+  margin: 0;
+}
+
+.quiet button {
+  min-height: 36px;
+  padding: 0 2px;
+  border: 0;
+  background: none;
+  color: var(--color-midnight-ink);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.quiet summary {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .primary {
+    justify-self: start;
+  }
+
+  .art {
+    width: 104px;
+  }
+
+  .tomorrow :global(.kicker),
+  .tomorrow h2 {
+    padding-right: 112px;
+  }
+}
