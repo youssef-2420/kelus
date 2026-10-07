@@ -15,7 +15,6 @@ import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
-import { LateralPage, SuspenseFallbackExit, SuspenseReveal } from "@/components/PageTransition";
 
 function CompleteBody() {
   const search = useSearchParams();
@@ -291,20 +290,14 @@ function CompleteBody() {
 
 export default function SessionCompletePage() {
   return (
-    <LateralPage>
-      <Suspense
-        fallback={
-          <SuspenseFallbackExit>
-            <main id="main" className="study-shell is-complete-page">
-              <p>Updating your route…</p>
-            </main>
-          </SuspenseFallbackExit>
-        }
-      >
-        <SuspenseReveal>
-          <CompleteBody />
-        </SuspenseReveal>
-      </Suspense>
-    </LateralPage>
+    <Suspense
+      fallback={
+        <main id="main" className="study-shell is-complete-page">
+          <p>Updating your route…</p>
+        </main>
+      }
+    >
+      <CompleteBody />
+    </Suspense>
   );
 }
