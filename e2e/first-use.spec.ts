@@ -274,6 +274,6 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   const confirmation = page.getByRole("group", { name: /Confirm remove cell biology lecture/ });
   await expect(confirmation).toContainText("linked topics from your route");
   await confirmation.getByRole("button", { name: "Remove" }).click();
-  await expect(page.getByRole("heading", { name: "Add your notes." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start today’s route" })).toHaveCount(0);
 });

@@ -383,11 +383,11 @@ export function removeMaterialLearning(state: DemoState, materialId: string) {
  * Renames a course from the latest saved state, not a copy: it runs right after topics are confirmed, and a stale
  * copy would undo them.
  */
-export function renameCourse(courseId: string, name: string) {
+export function renameCourse(courseId: string, name: string, source: "notes" | "repair" | "user" = "notes") {
   const state = getDemoSnapshot();
   const clean = name.trim().slice(0, 90);
-  if (!clean || !state.snapshot.courses.some((course) => course.id === courseId && course.name !== clean)) return;
-  persistDemoState({ ...state, snapshot: { ...state.snapshot, courses: state.snapshot.courses.map((course) => (course.id === courseId ? { ...course, name: clean } : course)) } });
+  if (!clean || !state.snapshot.courses.some((course) => course.id === courseId && (course.name !== clean || course.nameSource !== source))) return;
+  persistDemoState({ ...state, snapshot: { ...state.snapshot, courses: state.snapshot.courses.map((course) => (course.id === courseId ? { ...course, name: clean, nameSource: source } : course)) } });
 }
 
 export function setExamDate(state: DemoState, date: string, targetPercent?: number) {

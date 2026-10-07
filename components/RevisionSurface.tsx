@@ -59,7 +59,7 @@ export function RevisionSurface() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion() === true;
-  const { state, start, reset, removeMaterialSource, setExamDate, abandon } = useLearner();
+  const { state, start, reset, removeMaterialSource, setExamDate, abandon, renameCourse } = useLearner();
   const auth = useAuth();
   const [confirmReset, setConfirmReset] = useState(false);
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
@@ -106,6 +106,19 @@ export function RevisionSurface() {
   const { snapshot, nowIso } = state;
   const course = snapshot.courses[0];
   const exam = snapshot.exams.find((item) => item.courseId === course?.id && item.isActive);
+
+  // Older versions named a course after the first file dropped, even one with no topics in it ("Attestation de
+  // stage"). When the name matches none of the notes the topics come from, take the name of the notes that do.
+  const namedCourseId = course?.id;
+  const courseName = course?.name;
+  const topicSources = snapshot.learningActivities
+    .filter((activity) => snapshot.concepts.some((concept) => concept.id === activity.conceptId && concept.courseId === namedCourseId))
+    .flatMap((activity) => activity.sourceReferences.map((reference) => reference.label).filter((label) => label && label !== "Document outline"));
+  const mainSource = [...topicSources.reduce((counts, label) => counts.set(label, (counts.get(label) ?? 0) + 1), new Map<string, number>())].sort((a, b) => b[1] - a[1])[0]?.[0];
+  const misnamed = Boolean(namedCourseId && courseName && mainSource && !course?.nameSource && namedCourseId !== "course-microeconomics" && courseName !== "My course" && !topicSources.includes(courseName) && !/^pasted notes$/i.test(mainSource));
+  useEffect(() => {
+    if (misnamed && namedCourseId && mainSource) renameCourse(namedCourseId, mainSource, "repair");
+  }, [misnamed, namedCourseId, mainSource, renameCourse]);
 
   if (!course || !exam) {
     return (

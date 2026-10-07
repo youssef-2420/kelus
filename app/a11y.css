@@ -347,3 +347,16 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-f
 @media (hover: none), (pointer: coarse) {
   .start-page .drop-hint { display: none; }
 }
+
+/* The block outline floats in the empty margin beside a question, only where there is room for it. */
+.block-outline-float { display: none; }
+@media (min-width: 1180px) {
+  .block-outline-float {
+    position: fixed;
+    top: 112px;
+    left: max(32px, calc(50vw - 640px));
+    z-index: 1;
+    display: block;
+    width: 220px;
+  }
+}
