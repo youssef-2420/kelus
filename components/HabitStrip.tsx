@@ -6,7 +6,7 @@ import { habitSummary } from "@/domain/habit";
 import type { Concept, LearningEvent } from "@/domain/types";
 import styles from "./HabitStrip.module.css";
 
-function message(summary: ReturnType<typeof habitSummary>) {
+function message(summary: ReturnType<typeof habitSummary>, studiedBefore: boolean) {
   if (summary.goalMet) {
     return summary.backTomorrow > 0
       ? `Done for today. ${summary.backTomorrow} topic${summary.backTomorrow === 1 ? "" : "s"} come${summary.backTomorrow === 1 ? "s" : ""} back tomorrow.`
@@ -14,7 +14,8 @@ function message(summary: ReturnType<typeof habitSummary>) {
   }
   if (summary.streak > 0 && !summary.studiedToday) return `Study one topic today to keep your ${summary.streak}-day streak.`;
   if (summary.topicsToday > 0) return `${summary.goal - summary.topicsToday} more to reach today’s goal.`;
-  return summary.streak === 0 ? "Answer your first topic to start a streak." : "";
+  if (summary.streak === 0) return studiedBefore ? "Answer one topic today to start a new streak." : "Answer your first topic to start a streak.";
+  return "";
 }
 
 /** The return loop on Today: today's goal, the last seven days, and the one thing that makes tomorrow worth opening. */
@@ -22,7 +23,7 @@ export function HabitStrip({ events, concepts }: { events: LearningEvent[]; conc
   const reduce = useReducedMotion() === true;
   const summary = habitSummary({ events, concepts });
   const share = Math.min(1, summary.topicsToday / summary.goal);
-  const text = message(summary);
+  const text = message(summary, events.some((event) => event.kind === "retrieval"));
 
   return (
     <section className={styles.strip} aria-label="Your study habit">

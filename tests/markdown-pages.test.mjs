@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { looksLikeMarkdownHeadings, markdownToPages, plainInline, structurePastedText } from "../domain/markdown-pages.ts";
+import { looksLikeMarkdownHeadings, markdownToPages, pastedTitle, plainInline, structurePastedText } from "../domain/markdown-pages.ts";
 import { buildConfirmedMaterialModel, isSourceBackedProposal, proposeConceptsFromPages } from "../domain/material-intelligence.ts";
 import { quoteIsOnPage } from "../domain/content-engine.ts";
 
@@ -106,4 +106,12 @@ test("pasted text without headings gets topics from its title lines, or becomes 
   const plain = structurePastedText("Price elasticity measures how strongly buyers respond to a change in price. It matters for revenue.");
   assert.match(plain, /^# Price Elasticity Measures How\nPrice elasticity/);
   assert.equal(structurePastedText("• one fact about cells that is long enough\n• another fact about cells that is long").startsWith("# One Fact About Cells"), true);
+});
+
+test("a short title line standing alone at the top names the course; a topic with text under it does not", () => {
+  assert.equal(pastedTitle("Cell biology\n\nOsmosis\nWater moves across a membrane."), "Cell biology");
+  assert.equal(pastedTitle("# Cell biology\n## Osmosis\nWater moves across a membrane."), "Cell biology");
+  assert.equal(pastedTitle("Osmosis\nWater moves across a membrane."), null);
+  assert.equal(pastedTitle("Water moves across a membrane from dilute to concentrated solutions.\n\nMore text."), null);
+  assert.equal(pastedTitle(""), null);
 });

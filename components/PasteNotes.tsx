@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MAX_NOTES_BYTES, structurePastedText } from "@/domain/markdown-pages";
+import { MAX_NOTES_BYTES, pastedTitle, structurePastedText } from "@/domain/markdown-pages";
 import styles from "./PasteNotes.module.css";
 
 /**
@@ -14,10 +14,15 @@ export function PasteNotes({ onFile, disabled = false }: { onFile: (file: File) 
 
   function use() {
     if (!text.trim()) return setError("Paste your notes first.");
-    const value = structurePastedText(text);
+    const heading = pastedTitle(text);
+    // The title names the course; left in, it would become an empty first page of the notes.
+    const body = heading ? text.replace(/^\s*(?:#\s+)?[^\n]*\n/, "") : text;
+    const value = structurePastedText(body);
     if (new Blob([value]).size > MAX_NOTES_BYTES) return setError("These notes are over 2 MB. Paste a smaller part.");
     setError("");
-    onFile(new File([value], "Pasted notes.md", { type: "text/markdown" }));
+    // A title line at the top names the file, and so the course: "Cell biology", not "My course".
+    const title = heading?.replace(/[\\/:*?"<>|]+/g, " ").trim();
+    onFile(new File([value], `${title || "Pasted notes"}.md`, { type: "text/markdown" }));
   }
 
   return (

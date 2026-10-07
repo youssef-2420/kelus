@@ -75,7 +75,7 @@ test("the start screen is one clear screen on phone, tablet and desktop", async 
   ]) {
     await page.setViewportSize(viewport);
     await page.goto("/today");
-    await expect(page.getByRole("heading", { name: "Drop your notes." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
     // One job: no stepper, no exam form, no topic checklist.
     await expect(page.locator(".studio-onboarding-steps")).toHaveCount(0);
     await expect(page.getByRole("button", { name: /Continue to exam details|Read my PDF/ })).toHaveCount(0);
@@ -155,7 +155,7 @@ test("workspace sidebar can be hidden and a source can be removed from it", asyn
   await expect(page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" })).toContainText("linked topic");
   await page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" }).getByRole("button", { name: "Remove" }).click();
   await expect(page.getByRole("button", { name: "Remove Built-in Microeconomics example" })).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Drop your notes." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   await expect(page.locator(".material-row")).toHaveCount(0);
 });
 

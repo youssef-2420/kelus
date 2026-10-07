@@ -99,13 +99,14 @@ export function progressSummary(input: { concepts: Concept[]; events: LearningEv
     return { id: concept.id, name: concept.name, before, after, delta: after - before, attempts: mine.length, lastOutcome: mine.at(-1)?.outcome ?? null };
   });
 
-  const stronger = topics.filter((topic) => topic.attempts > 0 && topic.delta >= MOVED).sort((a, b) => b.delta - a.delta);
-  const climbing = new Set(stronger.map((topic) => topic.id));
+  const climbing = new Set(topics.filter((topic) => topic.attempts > 0 && topic.delta >= MOVED).map((topic) => topic.id));
   // A topic is in one list. One that went up is "stronger", unless the answer you gave last still missed.
   const needsPass = topics
     .filter((topic) => topic.attempts > 0 && (topic.after < WEAK || topic.delta <= -MOVED || topic.lastOutcome === "failure"))
     .filter((topic) => !climbing.has(topic.id) || topic.lastOutcome === "failure")
     .sort((a, b) => a.after - b.after);
+  const needing = new Set(needsPass.map((topic) => topic.id));
+  const stronger = topics.filter((topic) => climbing.has(topic.id) && !needing.has(topic.id)).sort((a, b) => b.delta - a.delta);
   const notStarted = topics.filter((topic) => topic.attempts === 0);
   const topicsLeft = topics.filter((topic) => topic.after < STRONG).length;
 

@@ -342,3 +342,8 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-f
 
 /* The session header names the topic once; its place in the block is quieter. */
 .study-context-title small b { font-weight: 600; color: var(--color-midnight-ink); }
+
+/* "or drop it here" only where dragging exists: a mouse or trackpad. */
+@media (hover: none), (pointer: coarse) {
+  .start-page .drop-hint { display: none; }
+}

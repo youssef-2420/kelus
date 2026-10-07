@@ -26,7 +26,7 @@ test("notes too short to study from get a plain reason, and nothing is saved", a
   await page.locator("#paste-notes").fill("Osmosis is water.");
   await page.getByRole("button", { name: "Use these notes" }).click();
   await expect(page.getByRole("heading", { name: /couldn.t find topics/ })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Drop your notes." })).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Start with your notes." })).toHaveCount(0);
 });
 
 test("a file that is neither a PDF nor notes is refused with a clear reason", async ({ page }) => {
@@ -189,7 +189,7 @@ test("a leftover built-in sample never names the start screen or receives your n
   await page.goto("/today?sample=1");
   await page.getByRole("button", { name: "Remove Built-in Microeconomics example" }).click();
   await page.getByRole("group", { name: /Confirm remove/ }).getByRole("button", { name: "Remove" }).click();
-  await expect(page.getByRole("heading", { name: "Drop your notes." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   await expect(page.getByText("Microeconomics")).toHaveCount(0);
   await page.locator('input[type="file"]').setInputFiles(mdFile);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });

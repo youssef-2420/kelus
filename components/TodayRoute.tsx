@@ -44,6 +44,7 @@ export function TodayRoute({
   reminder,
   examDatePending = false,
   onSetExamDate,
+  focus,
 }: {
   route: RoutePlan;
   concepts: Concept[];
@@ -59,9 +60,11 @@ export function TodayRoute({
   reminder?: { courseName: string; examDate: string; minutes: number };
   examDatePending?: boolean;
   onSetExamDate?: (date: string) => void;
+  focus?: RoutePlan["allocations"][number];
 }) {
   const reduceMotion = useReducedMotion();
-  const [first] = route.allocations;
+  // The topic this card is about: the open block's current topic when there is one, else the route's first.
+  const first = focus ?? route.allocations[0];
   const { visit, nowIso } = useReturnVisit(events, concepts);
   // When the visit opens with a warm-up, that is the one green button; the topic waits one step quieter.
   const warmupFirst = !isSampleCourse && visit.returning && visit.warmup.length > 0;
@@ -100,8 +103,8 @@ export function TodayRoute({
   const firstSource = firstActivity?.sourceReferences[0];
   const firstName = firstConcept?.name ?? "Mixed Retrieval";
   const whisper = citeWhisper(firstSource);
-  const decision = describeRouteChoice(first, firstConcept);
-  const nextStops = route.allocations.slice(1, 4).map((allocation) => {
+  const decision = describeRouteChoice(first, firstConcept, { examDateKnown: !examDatePending });
+  const nextStops = route.allocations.filter((allocation) => allocation.conceptId !== first.conceptId).slice(0, 3).map((allocation) => {
     const concept = concepts.find((item) => item.id === allocation.conceptId);
     return { ...allocation, name: concept?.name ?? "Mixed recall", mastery: concept?.mastery ?? 0, tried: (concept?.retrievalAttempts ?? 0) > 0 };
   });

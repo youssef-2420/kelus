@@ -31,7 +31,7 @@ test("comfort friction: source-first setup, skip recall, faster PDF, calendar, m
     source("app/questions/page.tsx"),
   ]);
   // One screen, one job: notes in. No stepper, no exam form, no recall gate before the first question.
-  assert.match(setup, /Drop your notes\./);
+  assert.match(setup, /Start with your notes\./);
   assert.doesNotMatch(setup, /Continue to exam details|Read my PDF|Skip recall|Step</);
   // Faster PDF: reading stays bounded (it was 16 pages; whole decks take well under a second, so the bound is now 150).
   assert.match(pdf, /MAX_READ_PAGES\s*=\s*150/);
