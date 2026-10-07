@@ -10,7 +10,7 @@ export function ReadingNotes({ message, error, onStartOver }: { message: string;
         <h1 id="reading-title">Kelus couldn’t find topics in this file.</h1>
         <p>{error}</p>
         <p className={styles.hint}>Notes with a heading above each topic work best. A PDF needs selectable text, or a clear scan.</p>
-        <button type="button" className={styles.cta} onClick={onStartOver}>Try another file</button>
+        <button type="button" className={`k-btn ${styles.cta}`} onClick={onStartOver}>Try another file</button>
       </section>
     );
   }

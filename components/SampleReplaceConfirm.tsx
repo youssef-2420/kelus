@@ -23,7 +23,7 @@ export function SampleReplaceConfirm({ fileName, onConfirm, onCancel }: { fileNa
           You’ll set your exam date next.
         </p>
         <div className={styles.actions}>
-          <button ref={confirmRef} type="button" className={styles.primary} onClick={onConfirm}>Start my own course</button>
+          <button ref={confirmRef} type="button" className={`k-btn ${styles.primary}`} onClick={onConfirm}>Start my own course</button>
           <button type="button" className={styles.link} onClick={onCancel}>Keep the sample</button>
         </div>
       </div>

@@ -76,7 +76,7 @@ export function WelcomeBack({ visit, nowIso, nextName }: { visit: ReturnVisit; n
               ))}
             </ul>
             <motion.div className={styles.actions} {...rise(0.3 + visit.warmup.length * 0.07)}>
-              <Link href={`/session/warmup${nextName ? `?next=${encodeURIComponent(nextName)}` : ""}`} className={styles.primary} data-action="start-warmup">
+              <Link href={`/session/warmup${nextName ? `?next=${encodeURIComponent(nextName)}` : ""}`} className={`k-btn k-btn--marigold ${styles.primary}`} data-action="start-warmup">
                 Start the 1-minute warm-up <span aria-hidden="true">→</span>
               </Link>
               {nextName ? <span className={styles.or}>or go straight to {nextName} below</span> : null}

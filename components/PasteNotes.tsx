@@ -39,7 +39,7 @@ export function PasteNotes({ onFile, disabled = false }: { onFile: (file: File) 
         placeholder={"# Osmosis\nThe movement of water across a membrane…\n\n# Active transport\nUses ATP to move substances…"}
       />
       {error ? <p className={styles.error} role="alert">{error}</p> : null}
-      <button type="button" className={styles.use} onClick={use} disabled={disabled || !text.trim()}>Use these notes</button>
+      <button type="button" className={`k-btn ${styles.use}`} onClick={use} disabled={disabled || !text.trim()}>Use these notes</button>
     </details>
   );
 }

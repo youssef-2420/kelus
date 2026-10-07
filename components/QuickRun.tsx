@@ -155,7 +155,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
               <form className={styles.gap} onSubmit={(event) => { event.preventDefault(); if (typed.trim()) answer(typed); }}>
                 <label htmlFor={`run-gap-${step}`} className="sr-only">Your answer, one word</label>
                 <input id={`run-gap-${step}`} value={typed} onChange={(event) => setTyped(event.target.value)} disabled={Boolean(answered)} autoComplete="off" autoFocus placeholder="One word" />
-                {!answered ? <button type="submit" className={styles.primary} disabled={!typed.trim()}>Check</button> : null}
+                {!answered ? <button type="submit" className={`k-btn ${styles.primary}`} disabled={!typed.trim()}>Check</button> : null}
               </form>
             )}
 
@@ -171,7 +171,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
                     <p>“{answered.elsewhere}”</p>
                   </div>
                 ) : null}
-                <button ref={nextRef} type="button" className={styles.primary} onClick={next}>{step + 1 >= total ? (onChecksDone ? "See how it went" : "Now say it yourself") : "Next"} <span aria-hidden="true">→</span></button>
+                <button ref={nextRef} type="button" className={`k-btn ${styles.primary}`} onClick={next}>{step + 1 >= total ? (onChecksDone ? "See how it went" : "Now say it yourself") : "Next"} <span aria-hidden="true">→</span></button>
               </motion.div>
             ) : null}
           </motion.section>
@@ -184,7 +184,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
             {nudge && !compared ? <p className={styles.nudge} role="alert">That doesn’t look like an answer yet. Write a few words from memory, or tap “I don’t remember”.</p> : null}
             {!compared ? (
               <div className={styles.row}>
-                <button type="button" className={styles.primary} onClick={compare}>Compare with the page <span aria-hidden="true">→</span></button>
+                <button type="button" className={`k-btn ${styles.primary}`} onClick={compare}>Compare with the page <span aria-hidden="true">→</span></button>
                 {!explained.trim() || nudge ? <button type="button" className={styles.link} onClick={() => { setExplained(""); setNudge(false); setCompared(true); }}>I don’t remember</button> : null}
               </div>
             ) : (

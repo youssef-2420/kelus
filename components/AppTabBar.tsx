@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 import { PackArt, type PackArtName } from "@/components/PackArt";
 import styles from "./AppTabBar.module.css";
 
-export type AppTab<Id extends string> = { id: Id; label: string; art: PackArtName };
+export type AppTab<Id extends string> = { id: Id; label: string; art: PackArtName; tone?: "green" | "marigold" | "iris" };
 
 const noop = () => () => {};
 
@@ -27,7 +27,7 @@ export function AppTabBar<Id extends string>({ tabs, active, onSelect }: { tabs:
           <motion.button
             key={tab.id}
             type="button"
-            className={on ? `${styles.tab} ${styles.on}` : styles.tab}
+            className={`${on ? `${styles.tab} ${styles.on}` : styles.tab} ${styles[tab.tone ?? "green"]}`}
             aria-current={on ? "page" : undefined}
             onClick={() => onSelect(tab.id)}
             whileTap={reduce ? undefined : { scale: 0.92 }}

@@ -85,7 +85,7 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
           <div><dt>Days studied</dt><dd>{summary.daysStudied}<small> of 7</small></dd></div>
           <div><dt>Topics practised</dt><dd>{summary.topicsPractised}<small> of {concepts.length}</small></dd></div>
         </dl>
-        {!summary.enough ? <Link href="/today" className={styles.cta}>Practise a topic <span aria-hidden="true">→</span></Link> : null}
+        {!summary.enough ? <Link href="/today" className={`k-btn ${styles.cta}`}>Practise a topic <span aria-hidden="true">→</span></Link> : null}
       </motion.section>
 
       <Topics title="Got stronger" note="Higher than a week ago." items={summary.stronger} empty="Nothing has moved up yet. It shows here as soon as an answer does." />

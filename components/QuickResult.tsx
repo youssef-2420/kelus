@@ -92,8 +92,8 @@ export function QuickResult({
       <p className={styles.route} role="status">{routeLine}</p>
 
       <div className={styles.actions}>
-        {outcome !== "success" ? <button type="button" className={styles.secondary} onClick={onRetry}>Try again <span aria-hidden="true">↻</span></button> : null}
-        <button type="button" className={styles.primary} onClick={onContinue}>{nextName ? `Continue to ${nextName}` : "Finish block"} <span aria-hidden="true">→</span></button>
+        {outcome !== "success" ? <button type="button" className={`k-btn k-btn--paper ${styles.secondary}`} onClick={onRetry}>Try again <span aria-hidden="true">↻</span></button> : null}
+        <button type="button" className={`k-btn ${styles.primary}`} onClick={onContinue}>{nextName ? `Continue to ${nextName}` : "Finish block"} <span aria-hidden="true">→</span></button>
       </div>
 
       <details className={styles.more}>

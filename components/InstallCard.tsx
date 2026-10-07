@@ -83,7 +83,7 @@ export function InstallCard() {
           ) : null}
           <div className={styles.actions}>
             {!showSteps ? (
-              <motion.button type="button" className={styles.primary} onClick={() => void install()} whileTap={reduce ? undefined : { scale: 0.97 }}>
+              <motion.button type="button" className={`k-btn k-btn--small ${styles.primary}`} onClick={() => void install()} whileTap={reduce ? undefined : { scale: 0.97 }}>
                 {state === "ios" ? "Show me how" : "Install Kelus"}
               </motion.button>
             ) : null}

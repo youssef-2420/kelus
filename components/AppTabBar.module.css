@@ -41,7 +41,7 @@
   inset: 3px 10%;
   z-index: 0;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--color-kelus) 9%, transparent);
+  background: color-mix(in srgb, var(--tone) 13%, transparent);
 }
 
 .icon {
@@ -60,8 +60,13 @@
   letter-spacing: 0.01em;
 }
 
+/* Each section keeps its colour role: green to study, marigold for your notes, iris to see where you stand. */
+.green { --tone: var(--k-green); --tone-text: var(--k-green); }
+.marigold { --tone: var(--k-marigold); --tone-text: var(--k-marigold-text); }
+.iris { --tone: var(--k-iris); --tone-text: var(--k-iris); }
+
 .on {
-  color: var(--color-kelus);
+  color: var(--tone-text);
 }
 
 .on .icon {

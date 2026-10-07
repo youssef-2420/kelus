@@ -32,11 +32,11 @@ import { removeRemoteMaterial } from "@/lib/material-sync";
 
 export type SurfaceMode = "today" | "materials" | "map" | "progress";
 
-const MODES: Array<{ id: SurfaceMode; label: string; art: PackArtName }> = [
-  { id: "today", label: "Study plan", art: "list-check" },
-  { id: "materials", label: "Materials", art: "folder" },
-  { id: "map", label: "Topics", art: "diagram-project" },
-  { id: "progress", label: "Progress", art: "award" },
+const MODES: Array<{ id: SurfaceMode; label: string; art: PackArtName; tone: "green" | "marigold" | "iris" }> = [
+  { id: "today", label: "Study plan", art: "list-check", tone: "green" },
+  { id: "materials", label: "Materials", art: "folder", tone: "marigold" },
+  { id: "map", label: "Topics", art: "diagram-project", tone: "iris" },
+  { id: "progress", label: "Progress", art: "award", tone: "iris" },
 ];
 
 const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2, progress: 3 };
