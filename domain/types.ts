@@ -146,7 +146,9 @@ export type PracticeItem = {
   choices?: string[];
   correctIndex?: number;
   /** Groups look-alike items so a run mixes question styles ("truefalse" is a kind of choice). */
-  variant?: "truefalse";
+  variant?: "truefalse" | "pair" | "direction" | "why" | "match" | "notone";
+  /** How much thinking the question asks for: recall of a fact, or understanding (why, predict, compare). */
+  level?: "recall" | "understand";
   origin: "offline" | "ai";
 };
 

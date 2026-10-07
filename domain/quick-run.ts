@@ -37,9 +37,12 @@ export function buildQuickRun(input: { activity: LearningActivity; name: string;
   const pool = [...all.slice(turn), ...all.slice(0, turn)];
   const seen = new Set<string>();
   const style = (item: PracticeItem) => item.variant ?? item.kind;
-  const first = pool.filter((item) => (seen.has(style(item)) ? false : (seen.add(style(item)), true)));
-  const rest = pool.filter((item) => !first.includes(item));
-  const checks = [...first, ...rest].slice(0, MAX_CHECKS);
+  // A question that asks "why" or "which" beats a fill-in gap, so one understanding item leads when the page has one.
+  const lead = pool.find((item) => item.level === "understand");
+  if (lead) seen.add(style(lead));
+  const first = pool.filter((item) => (item === lead ? false : seen.has(style(item)) ? false : (seen.add(style(item)), true)));
+  const rest = pool.filter((item) => item !== lead && !first.includes(item));
+  const checks = [...(lead ? [lead] : []), ...first, ...rest].slice(0, MAX_CHECKS);
   if (checks.length < 2) return null;
   return {
     checks,
