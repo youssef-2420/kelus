@@ -24,7 +24,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
-import { freshOpenSession, resumeConceptId } from "@/lib/today-focus";
+import { freshOpenSession, restAware, resumeConceptId } from "@/lib/today-focus";
 import { generateRoute } from "@/domain/routing-engine";
 import { trackEvent } from "@/lib/analytics";
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, removeMaterial, subscribeMaterials } from "@/lib/material-store";
@@ -136,13 +136,15 @@ export function RevisionSurface() {
   }
 
   const concepts = snapshot.concepts.filter((concept) => concept.courseId === course.id);
-  const route = generateRoute({
+  const plannedRoute = generateRoute({
     concepts,
     relationships: snapshot.relationships,
     events: snapshot.events,
     exam,
     nowIso,
   });
+  // Straight after a block, "Up next" is a topic you have not just answered (the session starts in this order too).
+  const route = { ...plannedRoute, allocations: restAware(plannedRoute.allocations, snapshot.events, nowIso, concepts) };
   const days = daysUntilExam(exam, nowIso);
   const examDatePending = Boolean(exam.datePlaceholder);
   const isSampleCourse = course.id === "course-microeconomics" && exam.id === "exam-microeconomics-final";

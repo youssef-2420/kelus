@@ -6,6 +6,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
 import { HabitStrip } from "@/components/HabitStrip";
+import { habitSummary } from "@/domain/habit";
 import { NudgeCard } from "@/components/NudgeCard";
 import { InstallCard } from "@/components/InstallCard";
 import { useReturnVisit, WelcomeBack } from "@/components/WelcomeBack";
@@ -69,6 +70,8 @@ export function TodayRoute({
   const { visit, nowIso } = useReturnVisit(events, concepts);
   // When the visit opens with a warm-up, that is the one green button; the topic waits one step quieter.
   const warmupFirst = !isSampleCourse && visit.returning && visit.warmup.length > 0;
+  // With today's goal done, the next topic is offered as an extra, not pressed on.
+  const goalDone = !isSampleCourse && habitSummary({ events, concepts }).goalMet;
   const openedRef = useRef(false);
   const hasPriorEvidence = !isSampleCourse && events.some((event) => event.kind === "retrieval");
 
@@ -139,7 +142,7 @@ export function TodayRoute({
         animate={{ opacity: 1, y: 0 }}
         transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
       >
-        <p className={styles.kicker} data-block="today-page-folio">Up next · about {first.minutes} minutes</p>
+        <p className={styles.kicker} data-block="today-page-folio">{goalDone ? `Today’s goal is done · one more if you like, about ${first.minutes} minutes` : `Up next · about ${first.minutes} minutes`}</p>
         <h1 id="today-title" className={styles.title}>{firstName}</h1>
         <p className={styles.why} data-block="today-decision" aria-label="Why this topic is first">{decision.join(" ")}</p>
         <ul className={styles.chips} aria-label="What this takes">
@@ -150,7 +153,7 @@ export function TodayRoute({
           <motion.button
             type="button"
             data-action="start-topic"
-            className={`k-btn ${styles.start}${warmupFirst ? ` k-btn--paper ${styles.quiet}` : ""}`}
+            className={`k-btn ${styles.start}${warmupFirst || goalDone ? ` k-btn--paper ${styles.quiet}` : ""}`}
             onClick={onStart}
             whileTap={reduceMotion ? undefined : { scale: 0.97 }}
             transition={pressSpring}

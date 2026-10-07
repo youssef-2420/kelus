@@ -7,7 +7,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 import { TopicArt, topicArtKind } from "@/components/TopicArt";
 import { generateRoute } from "@/domain/routing-engine";
-import { freshOpenSession, resumeConceptId } from "@/lib/today-focus";
+import { freshOpenSession, restAware, restingTopics, resumeConceptId } from "@/lib/today-focus";
 import { describeRouteChoice } from "@/lib/today-reason";
 import { percent } from "@/lib/format";
 import styles from "./TopicMapPanel.module.css";
@@ -51,14 +51,16 @@ export function TopicMapPanel() {
     .sort((a, b) => b.examImportance - a.examImportance || a.mastery - b.mastery);
   const exam = state.snapshot.exams.find((item) => item.courseId === course.id && item.isActive);
   const routeStart = exam
-    ? generateRoute({
+    ? restAware(generateRoute({
         concepts,
         relationships: state.snapshot.relationships,
         events: state.snapshot.events,
         exam,
         nowIso: state.nowIso,
-      }).allocations.find((item) => item.conceptId !== "mixed-retrieval")
+      }).allocations, state.snapshot.events, state.nowIso, concepts).find((item) => item.conceptId !== "mixed-retrieval")
     : undefined;
+  // Answered in the last few hours: resting, not "due" yet, whatever the schedule says.
+  const resting = restingTopics(state.snapshot.events, state.nowIso);
   // With a block open, "Start here" is the topic Continue opens on Today, not the one just answered.
   const openBlock = freshOpenSession(state.snapshot.sessions, course.id, state.nowIso);
   const resumeId = resumeConceptId(openBlock, state.snapshot.events);
@@ -80,7 +82,7 @@ export function TopicMapPanel() {
   const rows = concepts.map((concept) => {
     const activity = state.snapshot.learningActivities.find((item) => item.conceptId === concept.id);
     const locator = activity?.sourceReferences[0]?.locator?.trim();
-    const due = concept.retrievalAttempts > 0 && Boolean(concept.nextReviewAt) && Date.parse(concept.nextReviewAt!) <= Date.parse(state.nowIso);
+    const due = concept.retrievalAttempts > 0 && !resting.has(concept.id) && Boolean(concept.nextReviewAt) && Date.parse(concept.nextReviewAt!) <= Date.parse(state.nowIso);
     return {
       concept,
       label: topicLevel(concept.mastery, concept.retrievalAttempts),

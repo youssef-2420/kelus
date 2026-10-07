@@ -14,6 +14,13 @@ import { trackEvent } from "@/lib/analytics";
 import type { CourseMaterial, ExtractedMaterialPage, MaterialRole, ProposedConcept } from "@/domain/types";
 import { ReadingNotes } from "@/components/ReadingNotes";
 import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
+
+function fileTypeLabel(fileName?: string | null, mimeType?: string | null) {
+  const name = (fileName ?? "").toLocaleLowerCase();
+  if (name.endsWith(".pdf") || mimeType === "application/pdf") return "PDF";
+  if (name.endsWith(".zip")) return "Notion export";
+  return "Notes";
+}
 import { SourceArt } from "@/components/SourceArt";
 
 // AnimatePresence can defer mounting this heading until the previous phase exits.
@@ -169,7 +176,8 @@ function MaterialRow({
   const isBuiltInExample = item.id.startsWith("material-demo-");
   const host = item.storage === "url" && item.sourceUrl ? sourceHost(item.sourceUrl) : null;
   const metaBits = item.storage === "local"
-    ? [quiet ? materialRoleLabel(item.role) : null, item.fileName, formatBytes(item.sizeBytes)].filter(Boolean)
+    // What the file is (PDF, notes, a Notion export) reads better than the role Kelus guessed from its name.
+    ? [quiet ? fileTypeLabel(item.fileName, item.mimeType) : null, item.fileName, formatBytes(item.sizeBytes)].filter(Boolean)
     : isBuiltInExample
       ? ["Built-in example · no original PDF"]
       : [quiet ? materialRoleLabel(item.role) : null, host ? (quiet ? `Link · ${host}` : `Bookmark · ${host}`) : "Saved link"].filter(Boolean);

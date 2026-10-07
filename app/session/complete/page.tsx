@@ -131,7 +131,7 @@ function CompleteBody() {
           ))}
         </ul>
 
-        <HabitStrip events={state.snapshot.events} concepts={courseConcepts} />
+        <HabitStrip events={state.snapshot.events} concepts={courseConcepts} compact />
 
         <section className={styles.tomorrow} aria-labelledby="complete-return-title">
           <PackArt name="time-flies" className={styles.art} size={120} />
