@@ -29,8 +29,8 @@ test("the result is one visual card: verdict, checks as dots, what to remember, 
   }
 
   // The detail is one tap away, not in your face.
-  await expect(page.getByText("How your plan changed")).toBeVisible();
+  await expect(page.getByText("What changed in your plan")).toBeVisible();
   await expect(page.getByLabel("What changed in this session")).toBeHidden();
-  await page.getByText("How your plan changed").click();
+  await page.getByText("What changed in your plan").click();
   await expect(page.getByLabel("What changed in this session")).toBeVisible();
 });

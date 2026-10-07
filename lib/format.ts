@@ -38,3 +38,9 @@ export function greeting(nowIso: string) {
   if (hour < 18) return "Good afternoon";
   return "Good evening";
 }
+
+/** One set of words for how a topic stands, used on Today, Topics and the result card alike. */
+export function topicLevel(mastery: number, attempts: number) {
+  if (attempts < 1) return "Not started";
+  return mastery < 0.34 ? "Needs work" : mastery < 0.67 ? "Partly there" : "Solid";
+}

@@ -56,7 +56,7 @@ export function QuickResult({
         <span className={styles.stamp}><MarkStamp outcome={outcome} /></span>
         <motion.h1 {...rise(0.1)} className={styles.title}>{verdict.title}</motion.h1>
       </div>
-      <motion.p {...rise(0.16)} className={styles.line}>{topic} · {attempts === 1 ? "first check" : `${attempts} checks`}. {verdict.line}</motion.p>
+      <motion.p {...rise(0.16)} className={styles.line}>{topic} · {attempts === 1 ? "first try" : `try ${attempts}`}. {verdict.line}</motion.p>
 
       {stats ? (
         <motion.div {...rise(0.3)} className={styles.facts}>
@@ -96,7 +96,7 @@ export function QuickResult({
       </div>
 
       <details className={styles.more}>
-        <summary>How your plan changed</summary>
+        <summary>What changed in your plan</summary>
         <div className={styles.moreBody}>{details}</div>
         {onSource ? <button type="button" className={styles.link} onClick={onSource}>Review the source behind this topic <span aria-hidden="true">↗</span></button> : null}
       </details>

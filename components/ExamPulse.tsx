@@ -4,7 +4,7 @@ import styles from "./ExamPulse.module.css";
  * The same three facts on every core page: where you are, where you're aiming, how long you have.
  * Readiness is an estimate from your answers, so it says so.
  */
-export function ExamPulse({ readiness, targetPercent, daysToExam }: { readiness: number; targetPercent: number; daysToExam: number }) {
+export function ExamPulse({ readiness, targetPercent, daysToExam, datePending = false }: { readiness: number; targetPercent: number; daysToExam: number; datePending?: boolean }) {
   const ready = Math.round(Math.max(0, Math.min(1, readiness)) * 100);
   const target = Math.round(Math.max(0, Math.min(100, targetPercent)));
   return (
@@ -22,8 +22,9 @@ export function ExamPulse({ readiness, targetPercent, daysToExam }: { readiness:
         <span>Your target</span>
       </div>
       <div className={styles.fact}>
-        <strong>{daysToExam}</strong>
-        <span>{daysToExam === 1 ? "day left" : "days left"}</span>
+        {/* Without a real exam date there is no countdown to show, only a placeholder. */}
+        <strong>{datePending ? "—" : daysToExam}</strong>
+        <span>{datePending ? "No exam date" : daysToExam === 1 ? "day left" : "days left"}</span>
       </div>
     </div>
   );

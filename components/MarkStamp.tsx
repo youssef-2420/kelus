@@ -43,8 +43,7 @@ export function MarkStamp({ outcome, label }: { outcome: MarkOutcome; label?: st
       {outcome === "success" ? <motion.path className={styles.tick} d="M38 62L54 78L84 42" {...draw(0.55, 0.4)} /> : null}
       {outcome === "partial" ? (
         <>
-          <motion.path className={styles.mark} d="M42 60H78" {...draw(0.55, 0.3)} />
-          <motion.path className={styles.mark} d="M60 42V78" {...draw(0.7, 0.3)} />
+          <motion.path className={styles.mark} d="M44 60H76" {...draw(0.55, 0.3)} />
         </>
       ) : null}
       {outcome === "failure" ? (

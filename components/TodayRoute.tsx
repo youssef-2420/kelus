@@ -1,5 +1,6 @@
 "use client";
 
+import { topicLevel } from "@/lib/format";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
@@ -107,7 +108,7 @@ export function TodayRoute({
   const lastResult = lastPractice?.outcome === "failure" ? "Needs another attempt" : lastPractice?.outcome === "partial" ? "Partly there" : lastPractice?.outcome === "success" ? "Solid pass" : "Answer saved";
   const ready = Math.round(Math.max(0, Math.min(1, estimatedReadiness(concepts))) * 100);
   const aim = Math.round(Math.max(0, Math.min(100, targetPercent)));
-  const level = (mastery: number, tried: boolean) => (!tried ? "New" : mastery < 0.34 ? "Needs work" : mastery < 0.67 ? "Partly there" : "Solid");
+  const level = (mastery: number, tried: boolean) => (tried ? topicLevel(mastery, 1) : "New");
 
   return (
     <div className={styles.page}>

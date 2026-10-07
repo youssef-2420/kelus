@@ -1,22 +1,16 @@
 "use client";
 
+import { topicLevel } from "@/lib/format";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useLearner } from "@/components/LearnerProvider";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 import { TopicArt, topicArtKind } from "@/components/TopicArt";
 import { generateRoute } from "@/domain/routing-engine";
-import { topicEvidence } from "@/domain/mastery-evidence";
 import { describeRouteChoice } from "@/lib/today-reason";
 import { percent } from "@/lib/format";
 import styles from "./TopicMapPanel.module.css";
 
-function statusLabel(mastery: number | null, attempts: number) {
-  if (attempts < 1 || mastery == null) return "Not started";
-  if (mastery >= 0.8) return "Secure";
-  if (mastery >= 0.55) return "Developing";
-  return "Needs work";
-}
 
 /** Mastery as a ring. No evidence means an empty dashed ring, never a made-up number. */
 function MasteryRing({ value }: { value: number | null }) {
@@ -79,16 +73,15 @@ export function TopicMapPanel() {
 
   const totalWeight = concepts.reduce((sum, concept) => sum + Math.max(0, concept.examImportance), 0) || 1;
   const rows = concepts.map((concept) => {
-    const evidence = topicEvidence(concept, state.snapshot.prompts, state.snapshot.events, state.nowIso);
     const activity = state.snapshot.learningActivities.find((item) => item.conceptId === concept.id);
     const locator = activity?.sourceReferences[0]?.locator?.trim();
     const due = concept.retrievalAttempts > 0 && Boolean(concept.nextReviewAt) && Date.parse(concept.nextReviewAt!) <= Date.parse(state.nowIso);
     return {
       concept,
-      evidence,
-      label: statusLabel(evidence.mastery, concept.retrievalAttempts),
+      label: topicLevel(concept.mastery, concept.retrievalAttempts),
+      mastery: concept.retrievalAttempts > 0 ? concept.mastery : null,
       share: Math.round((Math.max(0, concept.examImportance) / totalWeight) * 100),
-      page: locator && !/not your upload/i.test(locator) ? locator : null,
+      page: locator && !/not your upload/i.test(locator) && !/^Section\b/.test(locator) ? locator : null,
       due,
     };
   });
@@ -97,8 +90,8 @@ export function TopicMapPanel() {
 
   const tally = (label: string) => rows.filter((row) => row.label === label).length;
   const summary = [
-    { label: "Secure", tone: styles.secure },
-    { label: "Developing", tone: styles.developing },
+    { label: "Solid", tone: styles.secure },
+    { label: "Partly there", tone: styles.developing },
     { label: "Needs work", tone: styles.needs },
     { label: "Not started", tone: styles.none },
   ].map((item) => ({ ...item, count: tally(item.label) }));
@@ -121,7 +114,7 @@ export function TopicMapPanel() {
         </ul>
       </div>
       <ol className={`index-toc topic-cards ${styles.grid}`} aria-label="Topics, next topic first">
-        {rows.map(({ concept, evidence, label, share, page, due }, index) => {
+        {rows.map(({ concept, mastery, label, page, due }, index) => {
           const isStart = startConceptId === concept.id;
           const checks = concept.retrievalAttempts;
           const reason = isStart && startAllocation ? describeRouteChoice(startAllocation, concept)[0] : null;
@@ -146,15 +139,16 @@ export function TopicMapPanel() {
                   </ConceptTitleTransition>
                   <span className="index-toc-meta">
                     {isStart ? "Start here" : label}
-                    {evidence.mastery == null ? "" : ` · ${percent(evidence.mastery)}`}
+                    {mastery == null ? "" : ` · ${percent(mastery)}`}
                   </span>
                   <span className={styles.facts}>
-                    {page ? `${page} · ` : ""}{share}% of exam · {checks === 0 ? "No checks yet" : `${checks} check${checks === 1 ? "" : "s"}`}
+                    {/* Exam weights are estimated from how much text a topic has, not set by anyone, so no "% of exam" here. */}
+                    {[page, checks === 0 ? "No checks yet" : `${checks} check${checks === 1 ? "" : "s"}`].filter(Boolean).join(" · ")}
                   </span>
                   {due ? <span className={styles.due}>Review due</span> : null}
                   {reason ? <span className={styles.why}>{reason}</span> : null}
                 </span>
-                <MasteryRing value={evidence.mastery} />
+                <MasteryRing value={mastery} />
               </Link>
             </motion.li>
           );

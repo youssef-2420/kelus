@@ -568,7 +568,7 @@ function SessionBody() {
                 locator={activity.sourceReferences[0]?.locator ?? "your notes"}
                 goalDone={goalToday.topicsToday}
                 goal={goalToday.goal}
-                routeLine={`${routeOrderChanged ? "The remaining topic order changed. " : minuteChanges.length ? "The topic order stayed, but the time plan changed. " : "The remaining route is unchanged. "}${nextConceptName ? `${nextConceptName} is next.` : "This is the last topic in this block."}`}
+                routeLine={nextConceptName ? `${routeOrderChanged ? "Your plan moved around this answer. " : ""}Next: ${nextConceptName}.` : "That was the last topic for now."}
                 nextName={nextConceptName}
                 onRetry={retryCurrentConcept}
                 onContinue={advance}
