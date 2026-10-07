@@ -3,6 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { checkPracticeAnswer } from "@/domain/practice-check";
+import { explainMatch } from "@/domain/answer-evaluation";
 import { PackArt } from "@/components/PackArt";
 import { whereAnswerBelongs, type QuickRun as Run, type SelfGrade } from "@/domain/quick-run";
 import styles from "./QuickRun.module.css";
@@ -44,6 +45,9 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   }, [answered, reduce]);
 
   const onChecks = step < total;
+  const match = compared ? explainMatch(explained, run.explainAnswer, run.topic) : null;
+  // Below three key words there is too little to compare fairly, so nothing is highlighted or suggested.
+  const useful = match && match.keys >= 3 && explained.trim() ? match : null;
   const item = onChecks ? run.checks[step] : null;
 
   function answer(value: string | number) {
@@ -66,6 +70,13 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
   function next() {
     setAnswered(null); setPicked(null); setTyped("");
     setStep((current) => current + 1);
+  }
+
+  // On a wide screen the notes open beside the comparison. On a phone they would land above it and push it away,
+  // and the comparison already quotes the page; "Peek at the notes" in More still opens them.
+  function compare() {
+    setCompared(true);
+    if (typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches) onRevealSource();
   }
 
   function finish(self: SelfGrade, at: number) {
@@ -162,8 +173,8 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
             {!compared ? <textarea id="run-explain" className={styles.area} rows={4} autoFocus value={explained} onChange={(event) => setExplained(event.target.value)} placeholder="Close the page. Write it from memory." /> : null}
             {!compared ? (
               <div className={styles.row}>
-                <button type="button" className={styles.primary} onClick={() => { setCompared(true); onRevealSource(); }}>Compare with the page <span aria-hidden="true">→</span></button>
-                {!explained.trim() ? <button type="button" className={styles.link} onClick={() => { setCompared(true); onRevealSource(); }}>I don’t remember</button> : null}
+                <button type="button" className={styles.primary} onClick={compare}>Compare with the page <span aria-hidden="true">→</span></button>
+                {!explained.trim() ? <button type="button" className={styles.link} onClick={compare}>I don’t remember</button> : null}
               </div>
             ) : (
               <motion.div className={styles.compare} initial={reduce ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
@@ -173,13 +184,23 @@ export function QuickRun({ run, onRevealSource, onFinish }: { run: Run; onReveal
                 </div>
                 <div>
                   <span>The page says</span>
-                  <p>{run.explainAnswer}</p>
+                  <p>
+                    {useful
+                      ? useful.parts.map((part, index) => (part.key ? <mark key={index} className={part.hit ? styles.hit : styles.miss} style={{ animationDelay: `${120 + index * 18}ms` }}>{part.text}</mark> : part.text))
+                      : run.explainAnswer}
+                  </p>
                 </div>
+                {useful ? (
+                  <p className={styles.coverage} role="status">
+                    You used <strong>{useful.hits} of {useful.keys}</strong> key words.
+                    {useful.missed.length ? <> Left out: <b>{useful.missed.slice(0, 3).join(", ")}</b>.</> : " Nothing important left out."}
+                  </p>
+                ) : null}
                 <fieldset className={styles.grades}>
                   <legend>How close was it?</legend>
                   {GRADES.map((grade) => (
-                    <button key={grade.value} type="button" onClick={(event) => finish(grade.value, event.timeStamp)}>
-                      <strong>{grade.label}</strong>
+                    <button key={grade.value} type="button" className={useful?.suggest === grade.value ? styles.suggested : undefined} onClick={(event) => finish(grade.value, event.timeStamp)}>
+                      <strong>{grade.label}{useful?.suggest === grade.value ? <em>Suggested</em> : null}</strong>
                       <small>{grade.hint}</small>
                     </button>
                   ))}

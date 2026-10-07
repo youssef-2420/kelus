@@ -119,3 +119,45 @@ export function evaluateLearningResponse(input: {
 export function evaluateDiagnosisResponse(input: { answer: string; modelAnswer: string; assessment?: LearningActivity["assessment"] }): AnswerEvaluation {
   return evaluateLearningResponse({ retrieveAnswer: input.answer, applicationAnswer: input.answer, retrieveModelAnswer: input.modelAnswer, applicationModelAnswer: input.modelAnswer, assessment: input.assessment, retrievalOnly: true });
 }
+
+/** Words that carry no idea on their own, on top of the stopwords: they never count as a key word to remember. */
+const FILLER = new Set(["also", "because", "been", "being", "both", "each", "every", "more", "most", "only", "other", "some", "such", "than", "there", "these", "they", "those", "very", "what", "when", "where", "will", "would", "about", "after", "before", "between", "during", "over", "under", "your", "make", "makes", "made", "does", "done", "much", "many", "same", "into", "onto", "upon", "across", "through", "within", "without", "toward", "towards", "along"]);
+
+export type ExplainPart = { text: string; key: boolean; hit: boolean };
+export type ExplainMatch = { parts: ExplainPart[]; keys: number; hits: number; missed: string[]; suggest: "nailed" | "partly" | "missed" };
+
+/**
+ * Lines a student's own explanation up against the page sentence: which of the page's key words they used (in any
+ * form: "turgid"/"turgidity" is not matched, "gains"/"gain" is) and which they left out, grouped into phrases.
+ * It only suggests a self-grade; the student still decides, because a good paraphrase can use other words.
+ */
+export function explainMatch(answer: string, reference: string, topic = ""): ExplainMatch {
+  const saidStems = evidenceTokens(answer).filter((token) => token.length >= 4);
+  // "moves" covers "movement": a shared start of four letters or more counts as the same word.
+  const covered = (word: string) => { const stemmed = normalizeToken(word); return saidStems.some((token) => token === stemmed || (token.length >= 4 && stemmed.startsWith(token)) || (stemmed.length >= 4 && token.startsWith(stemmed))); };
+  // The topic's own name is on the screen; leaving it out of an explanation is not a gap.
+  const named = new Set(topic.toLocaleLowerCase().split(/[^\p{L}\p{N}-]+/u).filter(Boolean));
+  const parts: ExplainPart[] = [];
+  for (const piece of reference.split(/(\s+)/)) {
+    const word = piece.toLocaleLowerCase().replace(/[^\p{L}\p{N}-]+/gu, "");
+    const key = word.length >= 4 && !STOPWORDS.has(word) && !FILLER.has(word) && !named.has(word) && !/^\d+$/.test(word);
+    parts.push({ text: piece, key, hit: key && covered(word) });
+  }
+  const seen = new Set<string>();
+  const unique = parts.filter((part) => part.key && !seen.has(normalizeToken(part.text.toLocaleLowerCase().replace(/[^\p{L}\p{N}-]+/gu, ""))) && seen.add(normalizeToken(part.text.toLocaleLowerCase().replace(/[^\p{L}\p{N}-]+/gu, ""))));
+  const keys = unique.length;
+  const hits = unique.filter((part) => part.hit).length;
+  // Neighbouring missed key words read as one idea: "partially permeable membrane", not three separate words.
+  const missed: string[] = [];
+  let run: string[] = [];
+  const flush = () => { if (run.length) missed.push(run.join(" ")); run = []; };
+  for (const part of parts) {
+    if (/^\s+$/.test(part.text)) continue;
+    if (part.key && !part.hit) run.push(part.text.replace(/[^\p{L}\p{N}-]+/gu, ""));
+    else flush();
+  }
+  flush();
+  const share = keys ? hits / keys : 0;
+  const suggest = !answer.trim() || share < 0.35 ? "missed" : share < 0.75 ? "partly" : "nailed";
+  return { parts, keys, hits, missed: [...new Set(missed.map((phrase) => phrase.toLocaleLowerCase()))], suggest };
+}

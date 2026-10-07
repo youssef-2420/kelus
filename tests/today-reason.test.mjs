@@ -8,8 +8,8 @@ test("a first attempt is described as missing evidence, not low ability", () => 
     { retrievalAttempts: 0 },
   );
   assert.deepEqual(explanation, [
-    "You have not checked your recall on this topic in Kelus yet.",
-    "Your current course model gives this topic higher exam weight.",
+    "New to you here: no answers on it yet.",
+    "It carries more weight in your exam.",
   ]);
 });
 
@@ -19,8 +19,8 @@ test("earlier weak answers and prerequisite value explain the choice", () => {
     { retrievalAttempts: 3 },
   );
   assert.deepEqual(explanation, [
-    "Your earlier answers suggest this topic needs another pass.",
-    "A stronger grasp here may help with connected topics later.",
+    "Your last answers here were shaky.",
+    "It helps with the topics that build on it.",
   ]);
 });
 
@@ -28,7 +28,7 @@ test("mixed recall and untagged choices avoid invented precision", () => {
   assert.match(describeRouteChoice({ reasons: [] })[0], /mixed-recall/);
   assert.deepEqual(
     describeRouteChoice({ reasons: [] }, { retrievalAttempts: 2 }),
-    ["Selected from your current course and study history."],
+    ["Next in your plan."],
   );
 });
 

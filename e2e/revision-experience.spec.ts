@@ -76,7 +76,7 @@ test("a student can follow the study plan into topics and open one", async ({ pa
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/today/?sample=1");
   await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
-  await expect(page.getByLabel("Why this topic is first")).toContainText("earlier answers");
+  await expect(page.getByLabel("Why this topic is first")).toContainText("last answers here were shaky");
   await expect(page.getByRole("button", { name: /Start this topic/ })).toBeVisible();
 
   await page.getByRole("button", { name: "Topics" }).click();
