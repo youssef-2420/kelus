@@ -16,7 +16,8 @@ export type ReturnVisit = {
 };
 
 const HOURS = 60 * 60 * 1000;
-const SPACING_MS = 4 * HOURS;
+/** How long a missed line rests before it comes back: long enough that recalling it takes real effort. */
+export const SPACING_MS = 4 * HOURS;
 const WARMUP_SIZE = 3;
 
 /**

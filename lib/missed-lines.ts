@@ -1,37 +1,38 @@
 /**
- * The lines from your notes that you missed in a run, kept on this device so the next visit can start with them.
- * A line leaves the list once you get it right in a warm-up. Nothing here is sent anywhere.
+ * The lines from your notes that you missed in a run, so the next visit can start with them. They live in the
+ * learner state: on this device, and in your account when you sign in. A line leaves the list once you get it
+ * right in a warm-up.
  */
 
 import type { MissedLine } from "@/domain/return-visit";
+import { getDemoSnapshot, subscribeDemoState, updateMissedLines } from "@/lib/demo-store";
 
 export type { MissedLine };
 
-const KEY = "kelus-missed-lines-v1";
-const EVENT = "kelus-missed-lines";
-const LIMIT = 40;
+const LEGACY_KEY = "kelus-missed-lines-v1";
 const EMPTY: MissedLine[] = [];
-let cache: { raw: string | null; value: MissedLine[] } = { raw: null, value: EMPTY };
+let migrated = false;
 
-function read(): MissedLine[] {
+/** Lines saved by the first version, in their own browser key, move into the learner state once. */
+function migrateLegacy() {
+  if (migrated || typeof window === "undefined") return;
+  migrated = true;
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (raw === cache.raw) return cache.value;
-    const parsed = raw ? JSON.parse(raw) : [];
-    cache = { raw, value: Array.isArray(parsed) ? parsed.filter((line) => line && typeof line.quote === "string") : EMPTY };
-    return cache.value;
-  } catch {
-    return EMPTY;
-  }
-}
-
-function write(lines: MissedLine[]) {
-  try { window.localStorage.setItem(KEY, JSON.stringify(lines.slice(-LIMIT))); } catch { /* Without storage the warm-up simply has nothing to show. */ }
-  window.dispatchEvent(new Event(EVENT));
+    const raw = window.localStorage.getItem(LEGACY_KEY);
+    if (!raw) return;
+    window.localStorage.removeItem(LEGACY_KEY);
+    const old = JSON.parse(raw);
+    if (Array.isArray(old) && old.length) {
+      const lines = old.filter((line) => line && typeof line.quote === "string" && typeof line.at === "string");
+      queueMicrotask(() => updateMissedLines((current) => [...lines.filter((line) => !current.some((kept) => kept.quote === line.quote)), ...current]));
+    }
+  } catch { /* Nothing to move. */ }
 }
 
 export function getMissedLines() {
-  return typeof window === "undefined" ? EMPTY : read();
+  if (typeof window === "undefined") return EMPTY;
+  migrateLegacy();
+  return getDemoSnapshot().missedLines ?? EMPTY;
 }
 
 export function getServerMissedLines() {
@@ -39,28 +40,28 @@ export function getServerMissedLines() {
 }
 
 export function subscribeMissedLines(onChange: () => void) {
-  window.addEventListener(EVENT, onChange);
-  window.addEventListener("storage", onChange);
-  return () => { window.removeEventListener(EVENT, onChange); window.removeEventListener("storage", onChange); };
+  const off = subscribeDemoState(onChange);
+  return () => { off(); };
 }
 
 /** Adds this run's misses. A line already on the list moves to the newest place instead of appearing twice. */
 export function addMissedLines(lines: MissedLine[]) {
   if (!lines.length) return;
   const quotes = new Set(lines.map((line) => line.quote));
-  write([...read().filter((line) => !quotes.has(line.quote)), ...lines]);
+  updateMissedLines((current) => [...current.filter((line) => !quotes.has(line.quote)), ...lines]);
 }
 
 /** Lines answered right again are done. */
 export function resolveMissedLines(quotes: string[]) {
   if (!quotes.length) return;
   const done = new Set(quotes);
-  write(read().filter((line) => !done.has(line.quote)));
+  updateMissedLines((current) => current.filter((line) => !done.has(line.quote)));
 }
 
 /** Lines of topics that no longer exist (removed, or a new course) are dropped. */
 export function keepMissedLinesFor(conceptIds: Set<string>) {
-  const current = read();
-  const kept = current.filter((line) => conceptIds.has(line.conceptId));
-  if (kept.length !== current.length) write(kept);
+  updateMissedLines((current) => {
+    const kept = current.filter((line) => conceptIds.has(line.conceptId));
+    return kept.length === current.length ? current : kept;
+  });
 }

@@ -1,0 +1,14 @@
+{
+  "name": "Kelus",
+  "short_name": "Kelus",
+  "description": "Revise from your own notes, a few minutes a day.",
+  "start_url": "/today",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fbfaf7",
+  "theme_color": "#1f6b45",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/apple-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

@@ -27,6 +27,7 @@ import {
   setDemoStateOwner,
   subscribeDemoState,
   type DemoState,
+  mergeMissedLines,
 } from "@/lib/demo-store";
 import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
@@ -92,9 +93,12 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     readLearnerState(userId).then((remote) => {
       if (!active) return;
       if (remote) {
-        const claimed = stateForAuthenticatedUser(remote, userId);
+        // The account's state wins, but missed lines from this device join it, so a warm-up never loses a line.
+        const localMissed = mergeMissedLines(readStoredDemoState(userId)?.missedLines, guestBeforeSwitch?.missedLines);
+        const claimed = stateForAuthenticatedUser({ ...remote, missedLines: mergeMissedLines(remote.missedLines, localMissed) }, userId);
         replaceDemoState(claimed);
-        lastWritten.current = JSON.stringify(claimed);
+        // Remember the account's copy, not the merge, so the merged lines are written back on the next sync.
+        lastWritten.current = JSON.stringify(stateForAuthenticatedUser(remote, userId));
         setMaterialClaim({ userId, claimGuest: false });
       } else {
         // Capture the guest before switching scopes. The account's own local
