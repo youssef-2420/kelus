@@ -28,6 +28,7 @@ import { aiActive, aiConfigured, fetchAiTopicContent, readCachedAi } from "@/lib
 import { mergeAiContent, type AiTopicContent } from "@/domain/ai-content";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { SessionMenu } from "@/components/SessionMenu";
+import { addMissedLines } from "@/lib/missed-lines";
 import { trackEvent } from "@/lib/analytics";
 
 type Phase = "learn" | "retrieve" | "apply" | "evaluate" | "result" | "reroute";
@@ -265,6 +266,8 @@ function SessionBody() {
     const summary = quickSummary(result);
     setQuickStats({ right: result.right, total: result.total, unsure: result.unsure, self: result.self });
     setQuickMissed(result.missed);
+    // What was missed comes back at the start of the next visit, as a warm-up.
+    if (concept) addMissedLines(result.missed.map((quote) => ({ conceptId: concept.id, name: concept.name, quote, at: state.nowIso })));
     setRetrieveAnswer(result.explained);
     setApplicationAnswer(summary);
     responseTimeMs.current = result.elapsedMs;
