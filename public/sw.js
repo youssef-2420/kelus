@@ -1,7 +1,8 @@
 /*
- * Kelus nudges. This worker does one thing: tell you when lines you missed are ready for a warm-up.
- * It has no fetch handler, so it never caches or intercepts pages. Everything it reads was written by the page
- * into IndexedDB on this device; nothing is sent anywhere.
+ * Kelus as an app: it opens instantly and works offline, and it tells you when lines you missed are ready for a
+ * warm-up. Pages are always fetched fresh when online (the cached copy is only a fallback), so a new release is
+ * never hidden behind an old one. Only Kelus's own files are cached; sign-in, analytics and other sites never are.
+ * Everything the nudge reads was written by the page into IndexedDB on this device; nothing is sent anywhere.
  */
 
 const DB = "kelus-nudge";
@@ -62,8 +63,71 @@ async function maybeNudge() {
   });
 }
 
-self.addEventListener("install", () => self.skipWaiting());
-self.addEventListener("activate", (event) => event.waitUntil(self.clients.claim()));
+const CACHE = "kelus-app-v1";
+const SHELL = ["/", "/today/", "/manifest.webmanifest", "/icons/icon-192.png"];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(SHELL)).catch(() => undefined).then(() => self.skipWaiting()));
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil((async () => {
+    const names = await caches.keys();
+    await Promise.all(names.filter((name) => name.startsWith("kelus-app-") && name !== CACHE).map((name) => caches.delete(name)));
+    await self.clients.claim();
+  })());
+});
+
+/** A page's cache key ignores the query: /session/?id=… and /today/?section=… share their page's HTML. */
+function pageKey(url) {
+  const path = url.pathname.endsWith("/") || url.pathname.includes(".") ? url.pathname : `${url.pathname}/`;
+  return new Request(new URL(path, url.origin).href);
+}
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  // Pages: network first, so you always get the newest Kelus online; the last copy opens it offline.
+  if (request.mode === "navigate") {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      try {
+        const fresh = await fetch(request);
+        if (fresh.ok) cache.put(pageKey(url), fresh.clone());
+        return fresh;
+      } catch {
+        return (await cache.match(pageKey(url))) || (await cache.match("/today/")) || Response.error();
+      }
+    })());
+    return;
+  }
+
+  // Built files carry a content hash in their name: once cached, they never change.
+  if (url.pathname.startsWith("/_next/static/")) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      const hit = await cache.match(request);
+      if (hit) return hit;
+      const fresh = await fetch(request);
+      if (fresh.ok) cache.put(request, fresh.clone());
+      return fresh;
+    })());
+    return;
+  }
+
+  // Drawings, icons and fonts: show the cached copy at once, refresh it in the background.
+  if (/\.(?:svg|png|jpg|jpeg|webp|woff2?|webmanifest)$/.test(url.pathname)) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE);
+      const hit = await cache.match(request);
+      const refresh = fetch(request).then((fresh) => { if (fresh.ok) cache.put(request, fresh.clone()); return fresh; }).catch(() => hit);
+      return hit || refresh;
+    })());
+  }
+});
 
 self.addEventListener("periodicsync", (event) => {
   if (event.tag === "kelus-nudge") event.waitUntil(maybeNudge());

@@ -22,6 +22,7 @@ export type KelusAnalyticsEvent =
   | { name: "next_route_opened"; source: "completion" | "calendar" }
   | { name: "reminder_downloaded" }
   | { name: "nudges_enabled" }
+  | { name: "app_installed" }
   | { name: "today_opened"; returning: boolean; has_next_route: boolean }
   | { name: "route_recalculated"; changed: boolean; outcome: "partial" | "failure" }
   | { name: "sample_loaded"; source: string }

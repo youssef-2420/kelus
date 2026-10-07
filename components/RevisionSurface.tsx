@@ -18,6 +18,7 @@ import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { ProgressView } from "@/components/ProgressView";
 import { AutoStart } from "@/components/AutoStart";
 import { PackArt, type PackArtName } from "@/components/PackArt";
+import { AppTabBar } from "@/components/AppTabBar";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
@@ -382,6 +383,7 @@ export function RevisionSurface() {
           </motion.div>
         </AnimatePresence>
         </main>
+        <AppTabBar tabs={MODES} active={mode} onSelect={setMode} />
       </div>
       {sampleFile ? (
         <SampleReplaceConfirm

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Fraunces, Inter, IBM_Plex_Sans, Literata } from "next/font/google";
 import "./globals.css";
@@ -31,6 +31,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { NudgeKeeper } from "@/components/NudgeKeeper";
+import { AppRuntime } from "@/components/AppRuntime";
 
 /* Marked-script system: Literata (reading / display) + IBM Plex Sans (UI).
    Keep --font-inter / --font-source-serif variable names for existing CSS. */
@@ -52,10 +53,21 @@ const literata = Literata({
 const marketingSerif = Fraunces({ subsets: ["latin"], axes: ["opsz"], variable: "--font-fraunces", display: "swap", preload: false });
 const marketingSans = Inter({ subsets: ["latin"], variable: "--font-marketing-inter", display: "swap", preload: false });
 
+// The status bar takes the page's paper colour, so an installed Kelus has no browser-coloured strip on top; the
+// layout reaches into the notch area and pads itself with the safe-area insets instead.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#fbfaf7",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://kelus.me"),
   // Installing Kelus as an app is what lets nudges arrive while it is closed (Chrome).
   manifest: "/manifest.webmanifest",
+  // Added to an iPhone home screen, Kelus opens full screen like an app, under its own name.
+  appleWebApp: { capable: true, title: "Kelus", statusBarStyle: "default" },
   title: "Kelus — Revise your lessons. Prepare for exams.",
   description: "Revise your course material with recall questions, application practice, and answer feedback. Kelus uses your answers to suggest what to review before your exam.",
   openGraph: {
@@ -82,6 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <RouteTransition>{children}</RouteTransition>
               <Toaster />
               <NudgeKeeper />
+              <AppRuntime />
             </TooltipProvider>
           </LearnerProvider>
         </AuthProvider>

@@ -1,3 +1,4 @@
+import { sectionsNav } from "./helpers";
 import { expect, test } from "@playwright/test";
 
 test("notebook preview is keyboard-operable and setup fits mobile", async ({ page }) => {
@@ -94,7 +95,7 @@ test("the course workspace stays legible across its sections and returns home", 
   await expect(page.locator(".studio-main")).toHaveCSS("background-color", "rgb(255, 255, 255)");
   await expect(page.locator(".studio-topbar-course")).toHaveText("Microeconomics");
 
-  const sections = page.getByRole("navigation", { name: "Revision sections" });
+  const sections = sectionsNav(page);
   await sections.getByRole("button", { name: "Materials" }).click();
   await expect(page.getByRole("heading", { name: "Materials" })).toBeVisible();
   await expect(sections.getByRole("button", { name: "Materials" })).toHaveAttribute("aria-pressed", "true");
