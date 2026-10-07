@@ -1,5 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+test("pricing opens from the homepage with the Plus accent and no stale homepage", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("navigation", { name: "Primary navigation" }).getByRole("link", { name: "Pricing" }).click();
+  await expect(page.getByRole("heading", { name: "Start revising. Stay in control." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Revise your lessons. Walk into the exam ready." })).toHaveCount(0);
+  await expect(page.locator(".pricing-offer.is-pass")).toHaveCSS("background-color", "rgb(242, 237, 248)");
+});
+
 test("pricing plans zoom gently without losing mobile or reduced-motion usability", async ({ browser }) => {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto("/pricing/");

@@ -50,6 +50,12 @@ test("map to concept navigation is hierarchical with shared titles", async () =>
   assert.match(header, /viewTransitionName:\s*"site-header"/);
 });
 
+test("lateral navigation does not leave the previous page visible under the updated header", async () => {
+  const css = await source("app/view-transitions.css");
+  assert.match(css, /::view-transition-old\(\.fade-out\)\s*\{\s*display:\s*none/);
+  assert.match(css, /::view-transition-new\(\.fade-in\)\s*\{\s*animation:\s*none/);
+});
+
 test("one persistent header owns navigation for every page", async () => {
   const header = await source("components/SiteHeader.tsx");
   const shell = await source("components/AppShell.tsx");
