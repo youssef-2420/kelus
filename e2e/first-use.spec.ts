@@ -247,8 +247,8 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await page.screenshot({ path: "/tmp/kelus-session-mobile.png", fullPage: true });
   await playQuickRun(page, "I cannot yet explain the mechanism from memory.", "Missed it");
   await expect(page.getByRole("heading", { name: /^(Needs another attempt|Partly there)\.$/ })).toBeVisible();
-  await expect(page.getByText(/first check/)).toBeVisible();
-  await expect(page.getByRole("status").filter({ hasText: /(topic order stayed|remaining topic order|remaining route)/ })).toBeVisible();
+  await expect(page.getByText(/first (?:check|try)/)).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /(Next: |last topic for now)/ })).toBeVisible();
   for (const width of [320, 375, 414]) {
     await page.setViewportSize({ width, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
@@ -257,7 +257,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await page.getByRole("button", { name: /Try again/ }).click();
   await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
   await playQuickRun(page, "I still cannot explain it.", "Missed it");
-  await expect(page.getByText(/2 checks/)).toBeVisible();
+  await expect(page.getByText(/try 2/)).toBeVisible();
   await page.getByRole("button", { name: /Continue to/ }).click();
   await expect(page.locator(".reroute-view h1, section[aria-label^=\"Check 1 of\"], .session-learn h1").first()).toBeVisible();
   await expect(page.locator(".reroute-lines")).toHaveCount(0);

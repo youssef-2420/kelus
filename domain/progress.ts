@@ -99,7 +99,7 @@ export function progressSummary(input: { concepts: Concept[]; events: LearningEv
     return { id: concept.id, name: concept.name, before, after, delta: after - before, attempts: mine.length, lastOutcome: mine.at(-1)?.outcome ?? null };
   });
 
-  const stronger = topics.filter((topic) => topic.delta >= MOVED).sort((a, b) => b.delta - a.delta);
+  const stronger = topics.filter((topic) => topic.attempts > 0 && topic.delta >= MOVED).sort((a, b) => b.delta - a.delta);
   const climbing = new Set(stronger.map((topic) => topic.id));
   // A topic is in one list. One that went up is "stronger", unless the answer you gave last still missed.
   const needsPass = topics

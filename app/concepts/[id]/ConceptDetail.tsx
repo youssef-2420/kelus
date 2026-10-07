@@ -83,7 +83,8 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
               <p>{concept.retrievalAttempts === 0 ? "No recall checks yet." : `Based on ${concept.retrievalAttempts} recall check${concept.retrievalAttempts === 1 ? "" : "s"}.`}</p>
             </div>
             <dl>
-              <div><dt>Practice mastery</dt><dd>{evidence.mastery === null ? "Not yet measured" : percent(evidence.mastery)}</dd></div>
+              {/* The same number as Topics, Progress and readiness: one model, so a topic never shows two percentages. */}
+              <div><dt>Practice mastery</dt><dd>{concept.retrievalAttempts === 0 ? "Not yet measured" : percent(concept.mastery)}</dd></div>
               <div><dt>Question coverage</dt><dd>{evidence.availableQuestions ? percent(evidence.coverage) : "No questions yet"}</dd></div>
               <div><dt>Evidence</dt><dd>{confidenceLabel(concept.confidence)}</dd></div>
               <div><dt>Last checked</dt><dd>{daysAgoLabel(concept.lastReviewedAt, state.nowIso)}</dd></div>

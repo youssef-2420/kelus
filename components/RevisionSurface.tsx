@@ -308,9 +308,9 @@ export function RevisionSurface() {
                 </motion.h1>
               </AnimatePresence>
               <p className="kelus-paper-lede kelus-space-lede">
-                {mode === "materials" ? "The sources behind your revision." : mode === "progress" ? "What your own answers say has changed." : "What to study next, then the rest by exam weight."}
+                {mode === "materials" ? "The sources behind your revision." : mode === "progress" ? "What your own answers say has changed." : "What to study next, then everything else."}
               </p>
-              <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} />
+              <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} datePending={examDatePending} />
             </div>
             <InkArt name={mode === "materials" ? "sources" : "topics"} className="studio-section-art" />
           </header>

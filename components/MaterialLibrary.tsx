@@ -893,7 +893,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       <section className={`material-shelf${embedded ? " is-binder" : ""}`} aria-labelledby="source-shelf-title">
         <header>
           <div>
-            <p className="kicker">{embedded ? "In this binder" : "Source shelf"}</p>
+            <p className="kicker">{embedded ? "Your notes" : "Source shelf"}</p>
             <h2 id="source-shelf-title">
               {courseMaterials.length
                 ? `${courseMaterials.length} ${embedded ? (courseMaterials.length === 1 ? "source" : "sources") : "saved"}`
@@ -928,7 +928,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       </section>
 
       {embedded ? (
-        <p className="material-binder-note">Only confirmed topics change your route. Pages stay with this exam.</p>
+        <p className="material-binder-note">Everything stays on this device unless you sign in to sync.</p>
       ) : (
         <aside className="material-honesty">
           <p className="kicker">Private and reviewable</p>
