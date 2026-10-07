@@ -7,6 +7,7 @@ import { useLearner } from "@/components/LearnerProvider";
 import { ConceptTitleTransition } from "@/components/PageTransition";
 import { TopicArt, topicArtKind } from "@/components/TopicArt";
 import { generateRoute } from "@/domain/routing-engine";
+import { AnkiExport } from "@/components/AnkiExport";
 import { freshOpenSession, restAware, restingTopics, resumeConceptId } from "@/lib/today-focus";
 import { describeRouteChoice } from "@/lib/today-reason";
 import { percent } from "@/lib/format";
@@ -161,6 +162,7 @@ export function TopicMapPanel() {
           );
         })}
       </ol>
+      <AnkiExport course={course.name} concepts={concepts} activities={state.snapshot.learningActivities} />
     </div>
   );
 }

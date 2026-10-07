@@ -1,0 +1,36 @@
+.card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px 16px;
+  align-items: center;
+  margin-top: 20px;
+  padding: 16px 18px;
+  border: 1px dashed rgba(18, 22, 15, 0.16);
+  border-radius: 12px;
+  background: var(--color-mist);
+}
+
+.card h2 {
+  margin: 0 0 2px;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.card p {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-slate);
+}
+
+.done {
+  grid-column: 1 / -1;
+  color: var(--color-midnight-ink) !important;
+}
+
+@media (max-width: 520px) {
+  .card { grid-template-columns: minmax(0, 1fr); }
+  .card button { justify-self: start; }
+}
