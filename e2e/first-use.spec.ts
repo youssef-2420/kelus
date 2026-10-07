@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { closeToToday, startFromFile } from "./helpers";
+import { sectionsNav, closeToToday, startFromFile } from "./helpers";
 
 function biologyPdf() {
   const text = [
@@ -166,7 +166,7 @@ test("sample course without an original PDF gives the route room and makes uploa
   await expect(page.locator(".core-source-reader")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Add your course PDF" })).toBeVisible();
   await page.screenshot({ path: "/tmp/kelus-sample-route-without-pdf.png", fullPage: true });
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Materials" }).click();
+  await sectionsNav(page).getByRole("button", { name: "Materials" }).click();
   await expect(page.locator(".material-binder-stack.is-source-first")).toBeVisible();
   await expect(page.locator(".material-row strong").getByText("Built-in Microeconomics example")).toBeVisible();
   await expect(page.getByText("Built-in example · no original PDF")).toBeVisible();
@@ -177,7 +177,7 @@ test("sample course without an original PDF gives the route room and makes uploa
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await expect(page.locator(".material-add-page[open] input[type='file']")).toBeVisible();
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan" }).click();
+  await sectionsNav(page).getByRole("button", { name: "Study plan" }).click();
   await page.locator('button[data-action="start-topic"]').click();
   await expect(page.locator("main.study-shell.is-source-missing")).toBeVisible();
   await expect(page.locator(".session-workspace-source")).toHaveCount(0);
@@ -192,7 +192,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await closeToToday(page);
   await expect(page).toHaveURL(/\/today/);
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan", exact: true })).toBeVisible();
+  await expect(sectionsNav(page).getByRole("button", { name: "Study plan", exact: true })).toBeVisible();
   await expect(page.locator("#today-title")).toBeVisible();
   await expect(page.locator(".core-source-reader canvas")).toBeVisible();
   await page.screenshot({ path: "/tmp/kelus-core-source-desktop.png", fullPage: true });
@@ -203,7 +203,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   }
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Topics", exact: true }).click();
+  await sectionsNav(page).getByRole("button", { name: "Topics", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?\?section=map/);
   await expect(page.getByRole("list", { name: "Topics, next topic first" })).toBeVisible();
   await expect(page.locator(".index-toc > li").first()).toBeVisible();
@@ -219,7 +219,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await expect(page).toHaveURL(/section=map/);
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/kelus-map-mobile.png", fullPage: true });
-  await page.getByRole("navigation", { name: "Revision sections" }).getByRole("button", { name: "Study plan", exact: true }).click();
+  await sectionsNav(page).getByRole("button", { name: "Study plan", exact: true }).click();
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page).not.toHaveURL(/section=/);
   await expect(page.locator(".today-evidence-disclosure")).toHaveCount(0);

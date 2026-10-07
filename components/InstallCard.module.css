@@ -1,0 +1,112 @@
+.card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px 14px;
+  align-items: start;
+  padding: 16px 18px;
+  border: 1px solid rgba(18, 22, 15, 0.08);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(18, 22, 15, 0.04);
+}
+
+.icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(31, 107, 69, 0.25);
+}
+
+.text h2 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--color-midnight-ink);
+}
+
+.text p {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.5;
+  color: var(--color-slate);
+}
+
+.steps {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+  margin: 2px 0 0;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--color-mist);
+  list-style: none;
+  font-size: var(--text-body-sm);
+  color: var(--color-midnight-ink);
+}
+
+.steps li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.num {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  border-radius: 50%;
+  background: var(--color-kelus);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.glyph {
+  width: 18px;
+  height: 18px;
+  color: #0a84ff;
+}
+
+.actions {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.primary {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--color-kelus);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary:hover {
+  background: var(--color-kelus-hover);
+}
+
+.later {
+  min-height: 44px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  color: var(--color-slate);
+  font: inherit;
+  font-size: var(--text-body-sm);
+  cursor: pointer;
+}
+
+.primary:focus-visible,
+.later:focus-visible {
+  outline: 2px solid var(--color-midnight-ink);
+  outline-offset: 2px;
+}

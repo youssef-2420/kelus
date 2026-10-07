@@ -1,0 +1,78 @@
+.bar {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .bar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(18, 22, 15, 0.08);
+    background: rgba(251, 250, 247, 0.9);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    backdrop-filter: saturate(160%) blur(16px);
+  }
+}
+
+.tab {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3px;
+  min-height: 54px;
+  padding: 4px 2px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: var(--color-slate);
+  font: inherit;
+  cursor: pointer;
+}
+
+/* A soft pill slides to the section you are in. */
+.pill {
+  position: absolute;
+  inset: 3px 10%;
+  z-index: 0;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-kelus) 9%, transparent);
+}
+
+.icon {
+  position: relative;
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  opacity: 0.6;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.on {
+  color: var(--color-kelus);
+}
+
+.on .icon {
+  opacity: 1;
+}
+
+.on .label {
+  font-weight: 650;
+}
+
+.tab:focus-visible {
+  outline: 2px solid var(--color-kelus);
+  outline-offset: -2px;
+}

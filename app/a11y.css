@@ -360,3 +360,16 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-f
     width: 220px;
   }
 }
+
+/* ── Kelus as a phone app ─────────────────────────────────────────────────────────────────────────────
+   On a phone the sections live in the bottom tab bar (AppTabBar); the side column's copy of them is hidden. */
+html { -webkit-tap-highlight-color: transparent; }
+@media (max-width: 767px) {
+  html body.is-course-studio .studio-nav.revision-surface-modes { display: none !important; }
+  /* Content never hides under the bar. */
+  html body.is-course-studio .kelus-space { padding-bottom: calc(76px + env(safe-area-inset-bottom)) !important; }
+}
+
+/* Opened from the home screen: no browser around it, so the page itself respects the notch and the home bar. */
+html.is-installed-app body { padding-top: env(safe-area-inset-top); }
+html.is-installed-app body { overscroll-behavior-y: none; }

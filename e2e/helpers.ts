@@ -55,3 +55,8 @@ export async function playQuickRun(page: Page, explanation = "It depends on how 
   await page.getByRole("button", { name: /Compare with the page/ }).click();
   await page.getByRole("button", { name: new RegExp(grade) }).click();
 }
+
+/** The sections, wherever they are on this screen size: the side column on wide screens, the bottom tab bar on a phone. */
+export function sectionsNav(page: Page) {
+  return page.locator('nav[aria-label="Revision sections"]:visible, nav[aria-label="Sections"]:visible').first();
+}
