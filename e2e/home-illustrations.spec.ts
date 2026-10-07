@@ -1,63 +1,44 @@
 import { expect, test } from "@playwright/test";
 
-test("animated study papers remain readable on mobile", async ({ page }, testInfo) => {
+test("the four study scenes and student illustration fit on mobile", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
 
   const chapters = page.locator("[data-revision-step]");
-  await expect(chapters).toHaveCount(3);
+  await expect(chapters).toHaveCount(4);
   for (const chapter of await chapters.all()) {
     await chapter.scrollIntoViewIfNeeded();
     await expect(chapter.locator("svg")).toBeVisible();
-    const art = chapter.locator("svg").locator("..");
-    expect(parseFloat(await art.evaluate((element) => getComputedStyle(element).borderTopLeftRadius))).toBeGreaterThan(30);
   }
-  await chapters.first().locator("svg").locator("..").screenshot({ path: testInfo.outputPath("rounded-study-mobile.png"), animations: "disabled" });
+  await chapters.first().screenshot({ path: testInfo.outputPath("study-scene-mobile.png"), animations: "disabled" });
 
-  const section = page.locator("section").filter({ has: page.getByRole("heading", { name: "The studying happens here." }) });
-  await section.locator("[data-study-loop]").scrollIntoViewIfNeeded();
-  await expect(section.locator("[data-paper]")).toHaveCount(3);
-  await expect(section.getByText("A study pass, in motion")).toBeVisible();
-
-  const horizontalOverflow = await page.evaluate(
-    () => document.documentElement.scrollWidth > window.innerWidth,
-  );
-  expect(horizontalOverflow).toBe(false);
-  await expect(section.locator("[data-study-loop]")).toHaveAttribute("data-phase", "2");
-  await expect(section.locator('[data-paper="route"]')).toHaveCSS("opacity", "1");
-  await section.screenshot({ path: testInfo.outputPath("animated-study-mobile.png"), animations: "disabled" });
+  const studying = page.locator("section").filter({ has: page.getByRole("heading", { name: "The studying happens here." }) });
+  await studying.scrollIntoViewIfNeeded();
+  await expect(studying.getByRole("img", { name: "A student revising at a desk" })).toBeVisible();
+  await studying.screenshot({ path: testInfo.outputPath("student-study-mobile.png"), animations: "disabled" });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth)).toBe(false);
 });
 
-test("home keeps the illustrated chapters and the animated study papers", async ({ page }, testInfo) => {
+test("home tells the notes → recall → feedback → route story", async ({ page }, testInfo) => {
   await page.goto("/");
-
-  const section = page.locator("section").filter({ has: page.getByRole("heading", { name: "The studying happens here." }) });
   const steps = page.locator("[data-revision-step]");
-  await expect(steps).toHaveCount(3);
   await expect(steps.locator("h3")).toHaveText([
     "Start with your material.",
     "Try it from memory.",
+    "Check what held up.",
     "See the route change.",
   ]);
   for (const step of await steps.all()) {
     await step.scrollIntoViewIfNeeded();
     await expect(step.locator("svg")).toBeVisible();
   }
-  await steps.first().locator("svg").locator("..").screenshot({ path: testInfo.outputPath("rounded-study-desktop.png"), animations: "disabled" });
-  await section.locator("[data-study-loop]").scrollIntoViewIfNeeded();
-  await expect(section.locator("[data-study-loop]")).toHaveAttribute("data-phase", "2");
-  const replay = section.getByRole("button", { name: "Replay" });
-  await replay.click();
-  await expect(section.locator("[data-study-loop]")).toHaveAttribute("data-phase", "0");
-  await expect(section.locator("[data-study-loop]")).toHaveAttribute("data-phase", "2");
-  await expect(section.locator('[data-paper="route"]')).toHaveCSS("opacity", "1");
-  await section.screenshot({ path: testInfo.outputPath("animated-study-desktop.png"), animations: "disabled" });
+  await steps.nth(2).screenshot({ path: testInfo.outputPath("feedback-scene-desktop.png"), animations: "disabled" });
+  await expect(page.getByRole("img", { name: "A student revising at a desk" })).toBeVisible();
 });
 
-test("reduced motion shows the completed study papers without running a loop", async ({ page }) => {
+test("reduced motion keeps the illustrated sequence visible", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const section = page.locator("section").filter({ has: page.getByRole("heading", { name: "The studying happens here." }) });
-  await expect(section.locator("[data-study-loop]")).toHaveAttribute("data-phase", "2");
-  await expect(section.getByRole("button", { name: "Replay" })).toHaveCount(0);
+  await expect(page.locator("[data-revision-step] svg")).toHaveCount(4);
+  await expect(page.getByRole("img", { name: "A student revising at a desk" })).toBeVisible();
 });
