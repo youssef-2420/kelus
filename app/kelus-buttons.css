@@ -131,3 +131,10 @@
     transform: none;
   }
 }
+
+/* Focus is moved onto a screen's container (tabindex="-1") so screen readers start there. That is not a keyboard
+   focus the learner chose, so it never draws a ring around the whole card. */
+[tabindex="-1"]:focus,
+[tabindex="-1"]:focus-visible {
+  outline: none !important;
+}

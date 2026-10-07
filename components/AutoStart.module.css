@@ -1,0 +1,10 @@
+/* Covers Today for the instant between reading the notes and the first question opening. */
+.cover {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+  background: var(--paper, #fbfaf7);
+}

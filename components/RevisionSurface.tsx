@@ -212,7 +212,7 @@ export function RevisionSurface() {
 
   const panelTransition = reduceMotion
     ? { duration: 0.12, ease: kelusEase }
-    : { type: "spring" as const, bounce: 0, duration: 0.4 };
+    : { type: "spring" as const, bounce: 0, duration: 0.3 };
 
   return (
     <section className={`kelus-space is-studio${railHidden ? " is-rail-hidden" : ""}`} aria-label="Revision workbench">
@@ -349,7 +349,7 @@ export function RevisionSurface() {
             custom={direction}
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
+            exit={reduceMotion ? { opacity: 0, transition: { duration: 0.08 } } : { opacity: 0, transition: { duration: 0.1 } }}
             transition={panelTransition}
           >
             {mode === "today" ? (
