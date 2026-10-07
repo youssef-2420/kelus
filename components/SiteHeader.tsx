@@ -13,14 +13,16 @@ const links: Array<{
   always: true;
 }> = [
   // Kept in source for deep-link + lock tests. Product chrome lives in the course space rail.
-  { href: "/today", label: "Today", matches: ["/today", "/session"], always: true },
-  { href: "/materials", label: "Materials", matches: ["/materials"], always: true },
-  { href: "/map", label: "Map", matches: ["/map", "/concept", "/concepts"], always: true },
+  // Signed in, the header names the app's own four sections, in the same words as its tab bar and side column.
+  { href: "/today", label: "Study plan", matches: ["/session"], always: true },
+  { href: "/today?section=materials", label: "Materials", matches: ["/materials"], always: true },
+  { href: "/today?section=map", label: "Topics", matches: ["/map", "/concept", "/concepts"], always: true },
+  { href: "/today?section=progress", label: "Progress", matches: [], always: true },
   { href: "/route", label: "How it works", matches: ["/route"], always: true },
   { href: "/pricing", label: "Pricing", matches: ["/pricing", "/waitlist"], always: true },
 ];
 
-const PRODUCT_HREFS = new Set(["/today", "/materials", "/map"]);
+const PRODUCT_HREFS = new Set(["/today", "/today?section=materials", "/today?section=map", "/today?section=progress"]);
 
 const noop = () => () => {};
 
@@ -60,8 +62,8 @@ export function SiteHeader() {
       <div className="site-header-inner">
         <Link href="/" className="mark site-footer-mark" aria-label="Kelus home" aria-current={pathname === "/" ? "page" : undefined}>
           <KelusLogoMark />
-          {/* In the product the mark carries its name, the same "K kelus" as the session and course headers. */}
-          {inProduct || inSession ? <span className="site-wordmark">kelus</span> : null}
+          {/* The mark always carries its name: the same "K kelus" as the product's own headers. */}
+          <span className="site-wordmark">kelus</span>
         </Link>
 
         {inSession ? null : inProduct ? null : (

@@ -60,8 +60,8 @@ test("one persistent header owns navigation for every page", async () => {
   const header = await source("components/SiteHeader.tsx");
   const shell = await source("components/AppShell.tsx");
   assert.match(header, /aria-current=/);
-  assert.match(header, /href: "\/materials"/);
-  assert.match(header, /href: "\/map"/);
+  assert.match(header, /href: "\/today\?section=materials"/);
+  assert.match(header, /href: "\/today\?section=map", label: "Topics"/);
   assert.match(header, /href: "\/route"/);
   assert.match(header, /className="site-auth-button"/);
   assert.match(header, /auth\.openDialog/);
@@ -157,17 +157,17 @@ test("ledger design keeps the mobile homepage in one column", async () => {
   assert.match(layout, /booklet-paper\.css/);
   assert.match(css, /\.kelus-hero\.home-hero\.is-student\s*\{[\s\S]*?grid-template-columns: minmax\(0, 1fr\)/);
   assert.match(css, /--color-indigo-ink/);
-  assert.match(header, /href: "\/materials"/);
+  assert.match(header, /href: "\/today\?section=materials"/);
   assert.match(layout, /revision-studio\.css/);
 });
 
 test("core product nav is visible without sign-in or onboarding", async () => {
   const header = await source("components/SiteHeader.tsx");
   assert.match(header, /href: "\/today".*always: true/s);
-  assert.match(header, /href: "\/materials".*always: true/s);
-  assert.match(header, /href: "\/map".*always: true/s);
-  assert.doesNotMatch(header, /href: "\/materials".*always: false/s);
-  assert.doesNotMatch(header, /href: "\/map".*always: false/s);
+  assert.match(header, /href: "\/today\?section=materials".*always: true/s);
+  assert.match(header, /href: "\/today\?section=map".*always: true/s);
+  assert.doesNotMatch(header, /href: "\/today\?section=materials".*always: false/s);
+  assert.doesNotMatch(header, /label: "Map"/);
 });
 
 test("signed-in header stays focused on the core product", async () => {
