@@ -66,7 +66,7 @@ test("the sample course has history, so it shows a real trend with a chart and a
 
 test("the daily goal strip links to the Progress screen", async ({ page }) => {
   await newCourse(page);
-  await page.getByRole("link", { name: /See what changed/ }).click();
+  await page.getByRole("link", { name: /See your progress/ }).click();
   await expect(page).toHaveURL(/section=progress/);
   await expect(page.locator("#progress-headline")).toBeVisible();
 });

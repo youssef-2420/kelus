@@ -28,6 +28,7 @@ import {
   subscribeDemoState,
   type DemoState,
   mergeMissedLines,
+  renameCourse,
 } from "@/lib/demo-store";
 import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
@@ -61,6 +62,7 @@ type Store = {
   removeMaterialSource: (materialId: string) => void;
   removeTopic: (conceptId: string) => void;
   setExamDate: (date: string) => void;
+  renameCourse: (courseId: string, name: string) => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -226,6 +228,9 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
     },
     setExamDate(date) {
       setExamDate(state, date);
+    },
+    renameCourse(courseId, name) {
+      renameCourse(courseId, name);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;

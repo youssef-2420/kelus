@@ -315,8 +315,12 @@ function SessionBody() {
         const next = updatedSession?.latestRoute.allocations.map((allocation) => String(allocation.conceptId)) ?? [];
         trackEvent({ name: "route_recalculated", changed: routeChanged || previous.join("|") !== next.join("|"), outcome: lastOutcome });
       }
-      setPhase("reroute");
-      return;
+      // In a quick run the result card already said where the plan goes next ("Continue to …"); a second
+      // "Updated." screen would only be one more stop. The longer loop keeps its route view.
+      if (!quickMode) {
+        setPhase("reroute");
+        return;
+      }
     }
     if (index + 1 >= plannedLength) {
       router.push(`/session/complete?id=${activeSessionId}`);

@@ -21,7 +21,7 @@ import { SourceArt } from "@/components/SourceArt";
 function focusPhaseHeading(node: HTMLHeadingElement | null) {
   node?.focus();
 }
-import { buildConfirmedMaterialModel, isSourceBackedProposal, MAX_PROPOSED_TOPICS, proposalConfidence, proposeConceptsFromPages } from "@/domain/material-intelligence";
+import { documentTitle, buildConfirmedMaterialModel, isSourceBackedProposal, MAX_PROPOSED_TOPICS, proposalConfidence, proposeConceptsFromPages } from "@/domain/material-intelligence";
 import {
   addLinkMaterial,
   addSourceMaterial,
@@ -246,7 +246,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
   const reduceMotion = useReducedMotion();
   const auth = useAuth();
   const router = useRouter();
-  const { state, confirmConcepts, removeMaterialSource } = useLearner();
+  const { state, confirmConcepts, removeMaterialSource, renameCourse } = useLearner();
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -430,7 +430,13 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
       dispatch({ type: "REVIEW_READY", analysis: nextAnalysis });
       trackEvent({ name: "concept_review_started", concept_count: proposals.length });
       // Quiet mode: no checklist first. Every topic found is confirmed, and can be removed later from Topics.
-      if (quiet && proposals.length) confirmProposals(proposals, pages);
+      if (quiet && proposals.length) {
+        confirmProposals(proposals, pages);
+        // On the first notes, the document's own title ("BIO 101 · Week 4: Cells and transport") names the course,
+        // in place of a name pieced together from the file name.
+        const title = documentTitle(pages);
+        if (title && course.name === material.title) renameCourse(course.id, title);
+      }
       setSelectedIds(new Set(proposals.map((proposal) => proposal.id)));
       setDraftNames(Object.fromEntries(proposals.map((proposal) => [proposal.id, proposal.name])));
       if (courseMaterials.filter((item) => item.storage === "local").length >= 3) {

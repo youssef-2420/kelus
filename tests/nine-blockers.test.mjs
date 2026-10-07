@@ -64,8 +64,9 @@ test("trust surfaces show a real demo outcome and student-facing support copy", 
   assert.doesNotMatch(status, /Inbox proof/);
   assert.match(status, /Questions are answered by email/);
   assert.match(materials, /proposalConfidence/);
-  assert.match(complete, /The useful change/);
-  assert.match(complete, /Before/);
-  assert.match(complete, /After/);
+  // The end of a block names each topic with its outcome and says what comes back tomorrow; no before/after essay.
+  assert.match(complete, /Topics in this block/);
+  assert.match(complete, /back as a 1-minute warm-up/);
+  assert.doesNotMatch(complete, /ReadinessShift|The useful change/);
   assert.match(setup, /Your notes stay on this device/);
 });
