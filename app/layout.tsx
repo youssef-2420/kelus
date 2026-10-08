@@ -33,6 +33,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { NudgeKeeper } from "@/components/NudgeKeeper";
 import { AppRuntime } from "@/components/AppRuntime";
+import { UpdateWatcher } from "@/components/UpdateWatcher";
 
 /* Marked-script system: Literata (reading / display) + IBM Plex Sans (UI).
    Keep --font-inter / --font-source-serif variable names for existing CSS. */
@@ -96,6 +97,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Toaster />
               <NudgeKeeper />
               <AppRuntime />
+              <UpdateWatcher />
             </TooltipProvider>
           </LearnerProvider>
         </AuthProvider>

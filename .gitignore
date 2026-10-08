@@ -17,3 +17,4 @@ tsconfig.tsbuildinfo
 test-results/
 playwright-report/
 supabase/.temp/
+public/version.json

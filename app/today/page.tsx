@@ -14,6 +14,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { CURRENT_COURSE_ID, type SetupInput } from "@/lib/setup";
 
 const SAMPLE_COURSE_ID = "course-microeconomics";
+const SAMPLE_SESSION_KEY = "kelus-sample-open";
 import type { LearnerSnapshot } from "@/domain/types";
 
 function BuildingPlan({ snapshot, onReady }: { snapshot: LearnerSnapshot; onReady: (input: Parameters<ReturnType<typeof useLearner>["completeDiagnosis"]>[0]) => void }) {
@@ -42,6 +43,15 @@ function TodayBody() {
   const notesSource = materials.find((item) => item.storage === "local")?.kind === "text";
   const sampleHandled = useRef(false);
   const wantsSample = searchParams.get("sample") === "1";
+  // The built-in sample is only ever shown in the browser session that asked for it (?sample=1). Saved or synced
+  // from an older visit, it is not the learner's course, so Today starts them on their own notes instead.
+  const [sampleOpened] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      if (wantsSample) window.sessionStorage.setItem(SAMPLE_SESSION_KEY, "1");
+      return window.sessionStorage.getItem(SAMPLE_SESSION_KEY) === "1";
+    } catch { return wantsSample; }
+  });
   const sampleBooting = wantsSample && !state.onboardingCompleted;
 
   useEffect(() => {
@@ -120,6 +130,10 @@ function TodayBody() {
   }
 
   if (!state.onboardingCompleted) {
+    return <DropNotes first onFile={startFromFile} />;
+  }
+
+  if (state.snapshot.courses[0]?.id === SAMPLE_COURSE_ID && !sampleOpened && !wantsSample) {
     return <DropNotes first onFile={startFromFile} />;
   }
 
