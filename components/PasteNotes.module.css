@@ -67,3 +67,17 @@
 .use:hover:not(:disabled) {
   background: var(--color-periwinkle-wash);
 }
+
+/* The tools it reads from, by their own marks, on one line above the how-to. */
+.works {
+  display: flex;
+  /* Inside this row each name is its own item, so its mark centres on it. */
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 14px;
+  margin-bottom: 4px;
+  color: var(--color-midnight-ink);
+}
+
+.works :global(.brand-inline) { display: inline-flex; align-items: center; }
+.works :global(.brand-inline) > svg { vertical-align: 0 !important; }

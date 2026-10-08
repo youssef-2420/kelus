@@ -24,6 +24,7 @@ import { InlineName } from "@/components/InlineName";
 import { kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
 import { OPEN_SEARCH_EVENT } from "@/components/CommandPalette";
+import { BrandIcon, brandForFile } from "@/components/BrandIcon";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
@@ -267,7 +268,7 @@ export function RevisionSurface() {
             const linkedTopics = snapshot.learningActivities.filter((activity) => activity.sourceReferences.some((reference) => reference.materialId === material.id)).length;
             return <div key={material.id} className="core-source-item">
               <button type="button" className={`core-source-open${selectedMaterial?.id === material.id ? " is-selected" : ""}`} onClick={() => { setSelectedMaterialId(material.id); setMode("materials"); }} title={title}>
-                <span aria-hidden="true">{material.id.startsWith("material-demo-") ? "◇" : material.storage === "local" ? "▤" : "↗"}</span><span className="core-source-name">{title}</span>
+                {brandForFile(material.fileName, material.mimeType) ? <BrandIcon brand={brandForFile(material.fileName, material.mimeType)!} size={14} className="core-source-brand" /> : <span aria-hidden="true">{material.id.startsWith("material-demo-") ? "◇" : material.storage === "local" ? "▤" : "↗"}</span>}<span className="core-source-name">{title}</span>
               </button>
               <button type="button" className="core-source-remove" aria-label={`Remove ${title}`} title={`Remove ${title}`} onClick={() => { setSourceError(null); setConfirmSourceId(material.id); }}>×</button>
               {confirmSourceId === material.id ? <div className="core-source-confirm" role="group" aria-label={`Confirm remove ${title}`}>

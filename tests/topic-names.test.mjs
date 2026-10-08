@@ -48,3 +48,11 @@ test("search lists each group once, topics first, best match first inside it", a
   assert.deepEqual(rankItems(items, "o").map((item) => item.label), ["Osmosis", "Diffusion", "Topics", "Progress"]);
   assert.deepEqual(rankItems(items, "").map((item) => item.id), ["a", "b", "c", "d", "e"]);
 });
+
+test("only notes read from a Notion export get Notion's mark; pasted notes do not", async () => {
+  const { brandForFile } = await import("../components/BrandIcon.tsx");
+  assert.equal(brandForFile("notion-export.md", "text/markdown;variant=notion"), "notion");
+  assert.equal(brandForFile("Course.zip", null), "notion");
+  assert.equal(brandForFile("Pasted notes.md", "text/markdown"), null);
+  assert.equal(brandForFile("lecture.pdf", "application/pdf"), null);
+});

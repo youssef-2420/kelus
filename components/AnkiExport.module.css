@@ -1,6 +1,6 @@
 .card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   gap: 10px 16px;
   align-items: center;
   margin-top: 20px;
@@ -33,4 +33,21 @@
 @media (max-width: 520px) {
   .card { grid-template-columns: minmax(0, 1fr); }
   .card button { justify-self: start; }
+}
+
+/* Anki's star, in ink, on a small paper tile: the place the cards are going. */
+.logo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(18, 22, 15, 0.1);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--color-midnight-ink);
+}
+
+@media (max-width: 520px) {
+  .card { grid-template-columns: auto minmax(0, 1fr); }
+  .card > button { grid-column: 1 / -1; }
 }
