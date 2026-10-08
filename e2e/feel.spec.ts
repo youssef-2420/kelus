@@ -60,6 +60,8 @@ test("the course and a topic are renamed where they stand, and a removed topic c
 test("⌘K finds a topic by a few letters and opens it; the sidebar's Search opens the same box", async ({ page }) => {
   await startFromPaste(page, notes);
   await page.goto("/today");
+  // The shortcut is live once the workspace has loaded; the sidebar's Search row shows it has.
+  await expect(page.getByRole("button", { name: /^Search/ })).toBeVisible();
   await page.keyboard.press("ControlOrMeta+k");
   const box = page.getByRole("dialog", { name: "Search your course" });
   await expect(box).toBeVisible();
