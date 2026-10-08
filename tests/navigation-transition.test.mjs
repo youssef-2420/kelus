@@ -39,9 +39,10 @@ test("map to concept navigation is hierarchical with shared titles", async () =>
     source("components/SiteHeader.tsx"),
   ]);
   assert.match(map, /DirectionalPage/);
-  assert.match(knowledgeMap, /transitionTypes=\{\["nav-forward"\]\}/);
+  // Topic links are plain in-app links: a forced prefetch made the static build drop the click without navigating.
+  assert.doesNotMatch(knowledgeMap, /prefetch=\{true\}/);
   assert.match(knowledgeMap, /ConceptTitleTransition/);
-  assert.match(inspector, /transitionTypes=\{\["nav-forward"\]\}/);
+  assert.doesNotMatch(inspector, /prefetch=\{true\}/);
   assert.match(inspector, /ConceptTitleTransition/);
   assert.match(detail, /transitionTypes=\{\["nav-back"\]\}/);
   assert.match(detail, /ConceptTitleTransition/);

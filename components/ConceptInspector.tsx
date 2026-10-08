@@ -78,7 +78,7 @@ export function ConceptInspector({ concept, concepts, relationships, events, now
         {related.length ? <ul>{related.map((item) => <li key={item.concept.id}><b>{item.concept.name}</b><small>{item.kind}</small></li>)}</ul> : <p>No linked concepts yet.</p>}
       </section>
 
-      <Link href={`/concept?id=${encodeURIComponent(concept.id)}`} transitionTypes={["nav-forward"]} prefetch={true}>Open full learning history <span aria-hidden="true">→</span></Link>
+      <Link href={`/concept?id=${encodeURIComponent(concept.id)}`}>Open full learning history <span aria-hidden="true">→</span></Link>
     </aside>
   );
 }

@@ -68,7 +68,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
 
   return (
     <DirectionalPage>
-      <AppShell action={<nav className={styles.actions} aria-label="Topic navigation"><Link href="/map" transitionTypes={["nav-back"]}>← Topics</Link><Link href="/today">Study plan</Link></nav>}>
+      <AppShell action={<nav className={styles.actions} aria-label="Topic navigation"><Link href="/map">← Topics</Link><Link href="/today">Study plan</Link></nav>}>
         <div className={styles.page}>
           <header className={styles.header}>
             <p className={styles.eyebrow}>{courseName} · Topic</p>
@@ -107,7 +107,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
             <h2>Connected topics</h2>
             {related.length ? <ul className={styles.list}>
               {related.map((item) => item && (
-                <li key={item.other.id}><Link href={`/concept?id=${encodeURIComponent(item.other.id)}`} transitionTypes={["nav-forward"]} prefetch={true}>{item.other.name} <span>↗</span></Link></li>
+                <li key={item.other.id}><Link href={`/concept?id=${encodeURIComponent(item.other.id)}`}>{item.other.name} <span>↗</span></Link></li>
               ))}
             </ul> : <p className={styles.empty}>No confirmed topic links yet.</p>}
           </section>
