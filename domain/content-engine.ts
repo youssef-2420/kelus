@@ -53,6 +53,18 @@ const NUMBERED = /^\s*\(?(\d{1,2})[.)]\s+/;
  * One idea per unit: a bullet, a numbered step, a "term: meaning" line, or a sentence.
  * Bullet and step markers are removed so they never leak into questions.
  */
+/**
+ * A scan often loses the capital at the start of a line. When the line is still a whole sentence (it ends with a
+ * stop and has the small joining words a sentence has), give the capital back so it can be asked about. A heading
+ * row or a fragment keeps its lowercase start, and no question quotes it.
+ */
+function restoreCapital(line: string) {
+  if (!/^[a-z]/.test(line) || !/[.!?]["”)]?$/.test(line)) return line;
+  const words = line.toLocaleLowerCase().match(/[\p{L}']+/gu) ?? [];
+  const glue = words.filter((word) => GLUE.has(word)).length;
+  return words.length >= 6 && glue >= 2 ? line.charAt(0).toLocaleUpperCase() + line.slice(1) : line;
+}
+
 export function units(text: string) {
   const out: string[] = [];
   // A PDF wraps long lines. A line that starts in lowercase continues the one before it.
@@ -61,7 +73,7 @@ export function units(text: string) {
     const line = raw.trim();
     if (!line) continue;
     if (lines.length && /^[a-z]/.test(line) && !BULLET.test(line) && !/[.!?:]["”)]?$/.test(lines[lines.length - 1])) lines[lines.length - 1] += ` ${line}`;
-    else lines.push(line);
+    else lines.push(restoreCapital(line));
   }
   for (const line of lines) {
     const cleaned = line.replace(BULLET, "").replace(/\s+/g, " ").trim();

@@ -416,6 +416,13 @@ export function setExamDate(state: DemoState, date: string, targetPercent?: numb
   return next;
 }
 
+/** Puts the active exam's date and aim back as they were: the undo after setting a date. */
+export function restoreExamPlan(previous: Pick<DemoState["snapshot"]["exams"][number], "id" | "examDate" | "datePlaceholder" | "targetPercent">) {
+  const state = getDemoSnapshot();
+  const exams = state.snapshot.exams.map((exam) => (exam.id === previous.id ? { ...exam, examDate: previous.examDate, datePlaceholder: previous.datePlaceholder, targetPercent: previous.targetPercent } : exam));
+  persistDemoState({ ...state, snapshot: refreshCaches({ ...state.snapshot, exams }, state.nowIso) });
+}
+
 /** Take one topic out of the course (it was not a real topic). Its practice history stays as history. */
 export function removeConcept(state: DemoState, conceptId: string) {
   const next = withoutConcepts(state, new Set([conceptId]));
