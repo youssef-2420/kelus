@@ -141,7 +141,7 @@ export function TodayRoute({
         animate={{ opacity: 1, y: 0 }}
         transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       >
-        <p className={styles.kicker} data-block="today-page-folio">{goalDone ? `Today’s goal is done · one more if you like, about ${first.minutes} minutes` : `Up next · about ${first.minutes} minutes`}</p>
+        <p className={styles.kicker} data-block="today-page-folio">{goalDone ? `Goal done · one more? About ${first.minutes} min` : `Up next · about ${first.minutes} minutes`}</p>
         <h1 id="today-title" className={styles.title}>{firstName}</h1>
         <p className={styles.why} data-block="today-decision" aria-label="Why this topic is first">{decision.join(" ")}</p>
         <ul className={styles.chips} aria-label="What this takes">

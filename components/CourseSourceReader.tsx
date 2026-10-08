@@ -114,7 +114,7 @@ export function CourseSourceReader({ material, initialPage = 1, concealed = fals
           </div>
         ) : null}
       </header>
-      <div className="core-source-stage" ref={viewport}>
+      <div className={`core-source-stage${isNotes ? " is-notes" : ""}`} ref={viewport}>
         {concealed ? (
           <div className="core-source-state is-concealed"><span aria-hidden="true">◌</span><strong>Source closed for recall</strong><p>Try the question from memory. You can reopen the original page if you need it.</p>{onShowSource ? <button type="button" onClick={onShowSource}>Show source</button> : null}</div>
         ) : !material ? (

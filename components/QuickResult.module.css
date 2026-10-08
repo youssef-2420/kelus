@@ -24,7 +24,7 @@
 /* Today's goal is a habit, so it takes the marigold of things that bring you back. */
 .goalDots i.on { border-color: var(--k-marigold-edge); background: var(--k-marigold); }
 
-.remember { display: grid; gap: 6px; margin: 0; padding: 14px 16px; border-left: 3px solid var(--k-marigold); border-radius: 0 8px 8px 0; background: var(--k-marigold-wash); }
+.remember { display: grid; gap: 6px; margin: 0; padding: 14px 16px; border: 1px solid color-mix(in srgb, var(--k-marigold) 35%, transparent); border-radius: 12px; background: var(--k-marigold-wash); }
 .rememberHead { display: inline-flex; align-items: center; gap: 8px; font-size: var(--text-caption); font-weight: 600; color: var(--k-marigold-text); }
 .remember p { margin: 0; font-family: var(--font-display); font-size: 1.125rem; line-height: 1.45; color: var(--color-midnight-ink); }
 .icon { width: 20px; height: 20px; flex: none; vertical-align: -4px; }

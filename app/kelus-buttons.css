@@ -441,3 +441,22 @@ html body.is-session-complete main#main.study-shell.is-complete-page {
   font-weight: 600 !important;
   letter-spacing: -0.01em;
 }
+
+/* Headings that are whole sentences read as sentences: medium weight, not the bold of a page title. */
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) :is(#progress-headline, #complete-return-title) {
+  font-weight: 500 !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* The reader's label: readable size, sentence case, the quiet colour of every other label. */
+html body.is-course-studio .core-source-title span {
+  color: var(--color-slate) !important;
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+}
+
+/* Notes are one short section at a time: the reader fits them instead of keeping a PDF page's height empty. */
+html body .core-source-stage.is-notes { min-height: 0; flex: 0 1 auto; }
+html body .core-source-reader:has(.core-source-stage.is-notes),
+html body .core-source-reader:has(.core-source-stage.is-notes) .core-source-stage { background: transparent !important; }

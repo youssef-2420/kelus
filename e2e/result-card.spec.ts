@@ -15,7 +15,7 @@ test("the result is one visual card: verdict, checks as dots, what to remember, 
   await expect(page.getByText("Quick checks", { exact: true })).toBeVisible();
   await expect(page.getByRole("img", { name: /\d of \d checks right/ })).toBeVisible();
   await expect(page.getByText("You said", { exact: true })).toBeVisible();
-  await expect(page.getByText(/^(?:Worth remembering|Worth another look|One more line from your notes)/)).toBeVisible();
+  await expect(page.getByText(/^(?:Worth remembering|The line you missed|A line you missed|One more line from your notes)/)).toBeVisible();
   await expect(page.getByLabel(/Today: \d of \d topics/)).toBeVisible();
 
   // The next step is on screen without scrolling, on a phone too.
