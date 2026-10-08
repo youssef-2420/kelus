@@ -8,19 +8,18 @@ test("the second visit opens with what you missed, warms up on it, then goes on 
   await startFromPaste(page, notes);
   await playQuickRun(page, "Water moves across a membrane.", "Partly");
   await page.goto("/today");
-  await expect(page.getByRole("heading", { name: "Welcome back." })).toHaveCount(0);
+  await expect(page.locator("#welcome-title")).toHaveCount(0);
 
   // Two days later.
   await page.clock.setSystemTime(new Date("2026-10-08T18:30:00"));
   await page.goto("/today");
-  const card = page.getByRole("region", { name: "Welcome back." });
-  await expect(card).toContainText("Good evening.");
-  await expect(card).toContainText("It’s been 2 days.");
-  await expect(card).toContainText("Last time: Osmosis");
+  const card = page.getByRole("region", { name: "Good evening." });
+  await expect(card).toContainText("2 days ago you practised Osmosis.");
+  await expect(card).not.toContainText("One line to choose the right word for");
   await expect(card.getByRole("list", { name: "Lines to warm up on" }).locator("li").first()).toBeVisible();
   await expect(page.locator('[data-action="start-topic"]')).toBeVisible();
 
-  await card.getByRole("link", { name: /Start the 1-minute warm-up/ }).click();
+  await card.getByRole("link", { name: /Warm up · 1 min/ }).click();
   await expect(page).toHaveURL(/\/session\/warmup/);
   await expect(page.getByText("Warm-up · lines you missed last time")).toBeVisible();
   for (let guard = 0; guard < 4; guard += 1) {

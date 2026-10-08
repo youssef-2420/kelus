@@ -16,6 +16,7 @@ test("a later visit is a return: it knows how long you were away and what you di
   assert.equal(visit.daysAway, 2);
   assert.equal(visit.lastName, "Osmosis");
   assert.equal(visit.lastOutcome, "partial");
+  assert.deepEqual(visit.lastDayNames, ["Osmosis"]);
 });
 
 test("the warm-up spreads across topics first and never repeats a line", () => {

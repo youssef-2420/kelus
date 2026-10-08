@@ -276,3 +276,31 @@
   font-size: 1rem;
   line-height: 1.5;
 }
+
+/* The end of a block sits on the page like every other screen: no box around it, the same quiet column. */
+:global(body.is-session-complete) .done {
+  width: min(100% - 32px, 36rem) !important;
+  max-width: none !important;
+  margin: 0 auto !important;
+  padding: 36px 0 72px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Extras at the very end open on click, and say so with the same chevron as the result screen. */
+.quiet details summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  color: var(--color-slate);
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+.quiet details summary::-webkit-details-marker { display: none; }
+.quiet details summary::after { content: ""; width: 6px; height: 6px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1); }
+.quiet details[open] summary::after { margin-top: 3px; transform: rotate(-135deg); }
+.quiet details summary:hover { color: var(--color-midnight-ink); }

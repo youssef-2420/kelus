@@ -11,6 +11,8 @@ export type ReturnVisit = {
   daysAway: number;
   lastName: string | null;
   lastOutcome: RetrievalOutcome | null;
+  /** Every topic answered on the last study day, in the order they were first answered that day. */
+  lastDayNames: string[];
   /** Up to three missed lines old enough to be worth a warm-up, one per topic first. */
   warmup: MissedLine[];
 };
@@ -49,9 +51,16 @@ export function returnVisit(input: { events: LearningEvent[]; names: Map<string,
     }
   }
 
+  // Answers in one block can share a timestamp, so "the last topic" is not well defined: name the whole day instead.
+  const lastDay = last ? dayKey(new Date(lastMs)) : null;
+  const lastDayNames = lastDay ? [...new Set(input.events
+    .filter((event) => event.kind === "retrieval" && input.names.has(event.conceptId) && dayKey(new Date(Date.parse(event.createdAt))) === lastDay)
+    .map((event) => input.names.get(event.conceptId)!))] : [];
+
   return {
     returning,
     daysAway,
+    lastDayNames,
     lastName: last ? input.names.get(last.conceptId) ?? null : null,
     lastOutcome: last?.outcome ?? null,
     warmup: returning ? warmup.map((line) => ({ ...line, name: input.names.get(line.conceptId) ?? line.name })) : [],

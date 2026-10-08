@@ -11,17 +11,22 @@ import { getMissedLines, getServerMissedLines, keepMissedLinesFor, subscribeMiss
 import styles from "./WelcomeBack.module.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
-const OUTCOME: Record<string, string> = { success: "solid pass", partial: "partly there", failure: "needs another attempt" };
 
 function greeting(nowIso: string) {
   const hour = new Date(nowIso).getHours();
   return hour < 5 ? "Late night study." : hour < 12 ? "Good morning." : hour < 18 ? "Good afternoon." : "Good evening.";
 }
 
-function away(days: number) {
-  if (days <= 0) return "Back again today.";
-  if (days === 1) return "Last time was yesterday.";
-  return `It’s been ${days} days.`;
+function list(names: string[]) {
+  if (names.length <= 1) return names[0] ?? "";
+  if (names.length > 3) return `${names.slice(0, 2).join(", ")} and ${names.length - 2} more`;
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+/** Where you left off, in one sentence: when, and what you practised then. */
+function leftOff(days: number, names: string[]) {
+  const when = days <= 0 ? "Earlier today" : days === 1 ? "Yesterday" : `${days} days ago`;
+  return names.length ? `${when} you practised ${list(names)}.` : `${when} you practised here.`;
 }
 
 /**
@@ -41,8 +46,9 @@ export function WelcomeBack({ visit, nowIso, nextName }: { visit: ReturnVisit; n
   const reduce = useReducedMotion() === true;
   if (!visit.returning) return null;
   // The preview shows each line with its gap, as the warm-up will ask it: a teaser, never the answer.
-  const teasers = warmupChecks(visit.warmup).map(({ line, item }) => ({ line, text: item.kind === "cloze" ? (item.prompt.match(/“(.+)”$/)?.[1] ?? null) : null }));
-  const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.45, delay, ease } });
+  // Any kind of check quotes its line in “…”; only the quoted part is shown, never the answer.
+  const teasers = warmupChecks(visit.warmup).map(({ line, item }) => ({ line, text: item.prompt.match(/“(.+)”/)?.[1] ?? null }));
+  const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.22, delay: delay * 0.5, ease } });
   const warm = visit.warmup.length > 0;
 
   return (
@@ -51,18 +57,14 @@ export function WelcomeBack({ visit, nowIso, nextName }: { visit: ReturnVisit; n
       aria-labelledby="welcome-title"
       initial={reduce ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={reduce ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.55 }}
+      transition={reduce ? { duration: 0 } : { duration: 0.22, ease }}
     >
       <motion.span className={styles.art} {...rise(0.12)}>
         <PackArt name={visit.daysAway >= 1 ? "time-flies" : "on-the-laptop"} size={150} />
       </motion.span>
       <div className={styles.body}>
-        <p className={styles.kicker}>{greeting(nowIso)}</p>
-        <h2 id="welcome-title" className={styles.title}>Welcome back.</h2>
-        <p className={styles.line}>
-          {away(visit.daysAway)}
-          {visit.lastName ? <> Last time: <b>{visit.lastName}</b>{visit.lastOutcome ? `, ${OUTCOME[visit.lastOutcome]}` : ""}.</> : null}
-        </p>
+        <h2 id="welcome-title" className={styles.title}>{greeting(nowIso)}</h2>
+        <p className={styles.line}>{leftOff(visit.daysAway, visit.lastDayNames)}</p>
 
         {warm ? (
           <>
@@ -71,13 +73,13 @@ export function WelcomeBack({ visit, nowIso, nextName }: { visit: ReturnVisit; n
               {teasers.map(({ line, text }, index) => (
                 <motion.li key={line.quote} {...rise(0.22 + index * 0.07)}>
                   <b>{line.name}</b>
-                  <span>{text ? text.split("_____").map((part, at, parts) => <Fragment key={at}>{part}{at < parts.length - 1 ? <><i className={styles.gap} aria-hidden="true" /><span className="sr-only">blank</span></> : null}</Fragment>) : "One line to choose the right word for"}</span>
+                  <span>{text ? text.split("_____").map((part, at, parts) => <Fragment key={at}>{part}{at < parts.length - 1 ? <><i className={styles.gap} aria-hidden="true" /><span className="sr-only">blank</span></> : null}</Fragment>) : "One quick question on this line."}</span>
                 </motion.li>
               ))}
             </ul>
             <motion.div className={styles.actions} {...rise(0.3 + visit.warmup.length * 0.07)}>
               <Link href={`/session/warmup${nextName ? `?next=${encodeURIComponent(nextName)}` : ""}`} className={`k-btn k-btn--marigold ${styles.primary}`} data-action="start-warmup">
-                Start the 1-minute warm-up <span aria-hidden="true">→</span>
+                Warm up · 1 min <span aria-hidden="true">→</span>
               </Link>
               {nextName ? <span className={styles.or}>or go straight to {nextName} below</span> : null}
             </motion.div>

@@ -46,10 +46,12 @@ test("after answering, the screen counts the answers but still does not claim a 
   await playRun(page);
   await page.goto("/today?section=progress");
   await expect(page.locator("#progress-headline")).toContainText("Too early to say");
-  await expect(page.getByText(/Based on \d+ answers? so far/)).toBeVisible();
+  await expect(page.getByText(/\d+ answers? so far\. Kelus draws a trend once there are 6/)).toBeVisible();
   const answers = page.locator("dl").getByText("Answers", { exact: true }).locator("xpath=..").locator("dd");
   await expect(answers).not.toHaveText("0");
-  await expect(page.getByRole("region", { name: "Not started" })).not.toContainText("Osmosis");
+  // Osmosis was answered; "Not started" lists only the rest, and disappears once every topic has an answer.
+  const notStarted = page.getByRole("region", { name: "Not started" });
+  if (await notStarted.count()) await expect(notStarted).not.toContainText("Osmosis");
 });
 
 test("the sample course has history, so it shows a real trend with a chart and a pace line", async ({ page }) => {
