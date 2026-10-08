@@ -1342,7 +1342,7 @@ button, input, textarea { font: inherit; }
 }
 .home-bar .mark:active { transform: scale(0.98); }
 .home-nav a { position: relative; font-size: 16px; }
-.home-nav a[aria-current="page"] { color: var(--ink); font-weight: 600; }
+.home-nav a[aria-current="page"] { color: var(--ink); font-weight: 650; }
 .home-nav a::after {
   content: "";
   position: absolute;
@@ -1494,7 +1494,7 @@ button, input, textarea { font: inherit; }
 }
 .home-principles dl { margin: 0; border-top: 1px solid var(--ink); }
 .home-principles dl > div { display: grid; grid-template-columns: 180px 1fr; gap: 34px; padding: 22px 0; border-bottom: 1px solid var(--line); }
-.home-principles dt { font-weight: 700; }
+.home-principles dt { font-weight: 750; }
 .home-principles dd { margin: 0; color: var(--muted); font-family: var(--font-display), Georgia, serif; font-size: 1.125rem; letter-spacing: var(--type-reading-tracking); line-height: 1.45; }
 .home-foot {
   min-height: 540px;
