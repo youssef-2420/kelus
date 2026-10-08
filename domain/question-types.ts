@@ -202,3 +202,91 @@ export function framePairs(ctx: Ctx): Draft[] {
   }
   return out;
 }
+
+const CONDITION = /^(when|if|whenever|once)\s+(.{8,}?),\s+(.{12,})$/i;
+const sameish = (a: string, b: string) => a.toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim() === b.toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+
+/**
+ * "What happens when …?" from the page's own if/when sentences. The right answer is what the notes say follows; the
+ * wrong ones are what follows in the page's other cases, or the same outcome reversed, so each is a real mix-up.
+ */
+export function effectQuestions(ctx: Ctx, flip: (sentence: string) => string | null): Draft[] {
+  const cases = ctx.sentences
+    .map((sentence) => ({ sentence, match: strip(sentence).match(CONDITION) }))
+    .filter((entry): entry is { sentence: string; match: RegExpMatchArray } => Boolean(entry.match) && !PRONOUN_START.test(entry.match![3]));
+  const out: Draft[] = [];
+  for (const { sentence, match } of cases) {
+    const [, word, condition, outcome] = match;
+    if (words(outcome) > 18 || words(condition) > 14) continue;
+    const wrong = [
+      ...cases.filter((other) => other.sentence !== sentence).map((other) => other.match[3]),
+      ...ctx.sentences.filter((other) => other !== sentence).map((other) => subjectPredicate(other)).filter((sp): sp is { subject: string; predicate: string } => sp !== null).map((sp) => `${sp.subject} ${sp.predicate}`),
+    ]
+      // A wrong option must be an outcome, not another case ("When demand is elastic, …") or a definition of this one.
+      .filter((text) => words(text) <= 18 && !sameish(text, outcome) && !CONDITION.test(strip(text)) && !/\bwhen\b|\bif\b/i.test(text));
+    const reversed = flip(outcome);
+    const pool = [...new Set([...(reversed ? [reversed] : []), ...shuffle(wrong, `${ctx.conceptId}e${sentence}`)])].filter((text) => !sameish(text, outcome)).slice(0, 3);
+    if (pool.length < 2) continue;
+    const answer = cap(outcome);
+    const choices = shuffle([answer, ...pool.map(cap)], `${ctx.conceptId}eo${sentence}`);
+    out.push({
+      kind: "choice",
+      variant: "predict",
+      level: "understand",
+      prompt: `According to your notes, what happens ${word.toLocaleLowerCase()} ${condition}?`,
+      modelAnswer: answer,
+      hint: `${ctx.locator} says what follows ${word.toLocaleLowerCase()} ${condition}.`,
+      explanation: `${ctx.locator}: “${sentence}”`,
+      sourceQuote: sentence,
+      choices,
+      correctIndex: choices.indexOf(answer),
+    });
+    if (out.length >= 2) break;
+  }
+  return out;
+}
+
+/** Only direction words are turned around here, so the changed line is clearly false and still reads as English. */
+const SAFE_FLIPS = new Set(["increase", "increases", "decrease", "decreases", "increased", "decreased", "raises", "raise", "lowers", "lower", "higher", "more", "less", "above", "below", "gains", "loses", "gain", "lose", "elastic", "inelastic", "rises", "falls", "rise", "fall", "up", "down", "left", "right", "positive", "negative", "faster", "slower", "larger", "smaller", "greater"]);
+function safeFlip(original: string, changed: string) {
+  const a = original.split(/\s+/);
+  const b = changed.split(/\s+/);
+  if (a.length !== b.length) return false;
+  const at = a.findIndex((word, index) => word !== b[index]);
+  if (at < 0) return false;
+  const was = a[at].toLocaleLowerCase().replace(/[^a-z]/g, "");
+  const now = b[at].toLocaleLowerCase().replace(/[^a-z]/g, "");
+  if (!SAFE_FLIPS.has(was) || !SAFE_FLIPS.has(now)) return false;
+  // "a elastic" / "an inelastic" read wrong: keep the article right or skip the line.
+  const before = (a[at - 1] ?? "").toLocaleLowerCase();
+  if ((before === "a" && /^[aeiou]/.test(now)) || (before === "an" && !/^[aeiou]/.test(now))) return false;
+  return true;
+}
+
+/**
+ * "Which of these does NOT match your notes?": three lines exactly as written, and one with its key word turned
+ * around (increases → decreases). Finding the odd one out means knowing what the notes really say.
+ */
+export function notMatching(ctx: Ctx, flip: (sentence: string) => string | null): Draft[] {
+  const usable = ctx.sentences.filter((sentence) => sentence.length <= 170 && !PRONOUN_START.test(sentence));
+  for (const sentence of shuffle(usable, `${ctx.conceptId}n`)) {
+    const changed = flip(sentence);
+    if (!changed || !safeFlip(sentence, changed)) continue;
+    const truths = shuffle(usable.filter((other) => other !== sentence), `${ctx.conceptId}nt${sentence}`).slice(0, 3);
+    if (truths.length < 3) continue;
+    const choices = shuffle([changed, ...truths], `${ctx.conceptId}no${sentence}`);
+    return [{
+      kind: "choice",
+      variant: "notone",
+      level: "understand",
+      prompt: `Which of these does NOT match your notes on ${ctx.name}?`,
+      modelAnswer: changed,
+      hint: "Three are exactly what the notes say. One has a word turned around.",
+      explanation: `The notes say: “${sentence}”`,
+      sourceQuote: sentence,
+      choices,
+      correctIndex: choices.indexOf(changed),
+    }];
+  }
+  return [];
+}
