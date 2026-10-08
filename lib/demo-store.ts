@@ -5,7 +5,7 @@ import { recomputeConceptCache, withCachedState } from "../domain/learner-model"
 import { generateRoute } from "../domain/routing-engine";
 import { estimatedReadiness } from "../domain/readiness";
 import { recalculateSessionRoute } from "../domain/session-engine";
-import { buildConfirmedMaterialModel, looksReadable } from "../domain/material-intelligence";
+import { buildConfirmedMaterialModel, isNamedTopic, looksReadable, topicNameFrom } from "../domain/material-intelligence";
 import { createRetrievalEvent, sessionSummary } from "../domain/session";
 import type { Concept, ExtractedMaterialPage, LearnerSnapshot, LearningEvent, ProposedConcept, RetrievalOutcome, SelfRating, StudySession } from "../domain/types";
 import { createLearnerSnapshot, type SetupInput } from "./setup";
@@ -160,8 +160,9 @@ export function readStoredDemoState(ownerId = activeOwnerId): DemoState | null {
     if (!validStoredState(parsed)) return null;
     const advanced = advanceNowIfNeeded(parsed);
     const purged = purgeUnsourcedTopics(advanced.state);
-    if (advanced.changed || purged.changed) window.localStorage.setItem(demoStateStorageKey(ownerId), JSON.stringify(purged.state));
-    return purged.state;
+    const named = nameNumberedTopics(purged.state);
+    if (advanced.changed || purged.changed || named.changed) window.localStorage.setItem(demoStateStorageKey(ownerId), JSON.stringify(named.state));
+    return named.state;
   } catch {
     return null;
   }
@@ -433,6 +434,23 @@ export function purgeUnsourcedTopics(state: DemoState): { state: DemoState; chan
       || !looksReadable([activity.learn.explanation, ...activity.learn.keyPoints].join(" ")))
     .map((activity) => activity.conceptId));
   return ids.size ? { state: withoutConcepts(state, ids), changed: true } : { state, changed: false };
+}
+
+/** Topics saved before names were checked can be called "1" or "2": give each a name from its own text. */
+export function nameNumberedTopics(state: DemoState): { state: DemoState; changed: boolean } {
+  if (state.snapshot.concepts.every((concept) => isNamedTopic(concept.name))) return { state, changed: false };
+  const taken = new Set(state.snapshot.concepts.map((concept) => concept.name.toLocaleLowerCase()));
+  const concepts = state.snapshot.concepts.map((concept) => {
+    if (isNamedTopic(concept.name)) return concept;
+    const activity = state.snapshot.learningActivities.find((item) => item.conceptId === concept.id);
+    const text = activity ? [activity.learn.explanation, ...activity.learn.keyPoints].join("\n") : "";
+    const locator = activity?.sourceReferences[0]?.locator ?? `Topic ${concept.name}`;
+    let name = topicNameFrom(concept.name, text, locator);
+    if (taken.has(name.toLocaleLowerCase())) name = `${name} (${locator})`;
+    taken.add(name.toLocaleLowerCase());
+    return { ...concept, name };
+  });
+  return { state: { ...state, snapshot: { ...state.snapshot, concepts } }, changed: true };
 }
 
 export function recordRetrieval(state: DemoState, input: {

@@ -17,6 +17,16 @@ import styles from "./complete.module.css";
 
 const OUTCOME: Record<string, string> = { success: "Solid pass", partial: "Partly there", failure: "Needs another attempt" };
 
+/** Partly there, as a half-filled dot: halfway, not a minus. */
+function HalfDot() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14">
+      <circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M8 1.75A6.25 6.25 0 0 0 8 14.25Z" fill="currentColor" />
+    </svg>
+  );
+}
+
 function CompleteBody() {
   const search = useSearchParams();
   const reduceMotion = useReducedMotion();
@@ -103,6 +113,8 @@ function CompleteBody() {
   const missedToday = (state.missedLines ?? []).filter((line) => line.at >= session.startedAt && practised.some((event) => event.conceptId === line.conceptId)).length;
   const nextFresh = nextStopId ? { conceptId: nextStopId } : undefined;
   const allGood = practised.length > 0 && practised.every((event) => event.outcome === "success");
+  // The ring is the share of the block you got: a solid topic counts whole, a partly-there one half.
+  const credit = practised.length ? practised.reduce((sum, event) => sum + (event.outcome === "success" ? 1 : event.outcome === "partial" ? 0.5 : 0), 0) / practised.length : 0;
 
   return (
     <main id="main" className="study-shell is-complete-page">
@@ -112,7 +124,7 @@ function CompleteBody() {
         animate={{ opacity: 1, y: 0 }}
         transition={reduceMotion ? { duration: 0.12 } : { duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
-        <MarkStamp outcome={allGood ? "success" : "partial"} label={allGood ? "Block done, all solid" : "Block done"} />
+        <MarkStamp outcome={allGood ? "success" : "partial"} fill={credit} label={allGood ? "Block done, all solid" : `Block done, ${known.length} of ${practised.length} solid`} />
         <h1>Done.</h1>
         <p className={styles.lede}>
           {practised.length} {practised.length === 1 ? "topic" : "topics"}{course ? ` from ${course.name}` : ""}. Your answers are saved.
@@ -142,7 +154,7 @@ function CompleteBody() {
               animate={{ opacity: 1, x: 0 }}
               transition={reduceMotion ? { duration: 0 } : { duration: 0.3, delay: 0.12 + index * 0.06, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span className={styles.mark} aria-hidden="true">{event.outcome === "success" ? "✓" : event.outcome === "partial" ? "–" : "↻"}</span>
+              <span className={styles.mark} aria-hidden="true">{event.outcome === "success" ? "✓" : event.outcome === "partial" ? <HalfDot /> : "↻"}</span>
               <strong>{name(event.conceptId)}</strong>
               <span className={styles.word}>{OUTCOME[event.outcome ?? "partial"]}</span>
             </motion.li>

@@ -23,6 +23,12 @@
   stroke-width: 4;
 }
 
+.half {
+  fill: var(--color-midnight-ink);
+  stroke: var(--color-midnight-ink);
+  stroke-width: 4;
+}
+
 .tick {
   stroke: var(--color-kelus);
   stroke-width: 7;

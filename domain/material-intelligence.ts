@@ -68,6 +68,27 @@ function looksLikeConcept(value: string) {
   return HEADING_PREFIX.test(value) || NUMBER_PREFIX.test(value) || titleWords >= Math.max(1, Math.ceil(words.length * 0.55));
 }
 
+/** A name a person could revise from: it has a real word in it, not just "1" or "2.3" from a form or a numbered list. */
+export function isNamedTopic(name: string) {
+  return /\p{L}{3}/u.test(name);
+}
+
+/**
+ * A topic called "1" tells nobody what to revise. Name it from the first real line of its own text, a few words long;
+ * if the text has none, from where it sits ("Page 2").
+ */
+export function topicNameFrom(name: string, excerpt: string, locator: string) {
+  if (isNamedTopic(name)) return name;
+  for (const raw of excerpt.split(/\n+|(?<=[.!?:])\s+/)) {
+    const line = cleanCandidate(raw).replace(/[.!?:;,]+$/, "");
+    if (!isNamedTopic(line)) continue;
+    const words = line.split(/\s+/);
+    const short = words.length > 6 ? `${words.slice(0, 6).join(" ")}…` : line;
+    if (short.length >= 3) return short.charAt(0).toLocaleUpperCase() + short.slice(1);
+  }
+  return locator;
+}
+
 function stablePart(value: string) {
   let hash = 2166136261;
   for (const character of value) {
@@ -446,17 +467,20 @@ export function proposeConceptsFromPages(input: {
     lines.forEach((line, index) => {
       const layoutHeading = layoutHeadings.has(cleanCandidate(line).toLocaleLowerCase());
       if (proposals.length >= limit || (!matcher(line) && !layoutHeading)) return;
-      const name = cleanCandidate(line);
+      const locator = page.pageNumber === 0 ? "Document outline" : `${input.locatorLabel ?? "Page"} ${page.pageNumber}`;
+      const sourceExcerpt = excerptFor(lines, index, line);
+      const heading = cleanCandidate(line);
+      const name = topicNameFrom(heading, sourceExcerpt, locator);
       const key = name.toLocaleLowerCase();
-      if ((!matcher(name) && !layoutHeading) || seen.has(key) || ADMINISTRATIVE.test(name) || GENERIC_HEADING.test(name.trim()) || isDocumentTitle(name)) return;
+      if ((!matcher(heading) && !layoutHeading) || seen.has(key) || ADMINISTRATIVE.test(name) || GENERIC_HEADING.test(name.trim()) || isDocumentTitle(name)) return;
       seen.add(key);
       proposals.push({
         id: `proposal-${stablePart(`${input.materialId}:${key}`)}`,
         materialId: input.materialId,
         name,
         sourceLabel: input.sourceLabel,
-        locator: page.pageNumber === 0 ? "Document outline" : `${input.locatorLabel ?? "Page"} ${page.pageNumber}`,
-        sourceExcerpt: excerptFor(lines, index, line),
+        locator,
+        sourceExcerpt,
       });
     });
   }
