@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { playQuickRun, startFromPaste } from "./helpers";
+import { nudgesAlreadyOn, saveExamDate, playQuickRun, startFromPaste } from "./helpers";
 
 const notes = "Cell biology\n\nOsmosis\nOsmosis is the movement of water across a partially permeable membrane from a dilute solution to a more concentrated solution. In a hypotonic solution a plant cell gains water and becomes turgid because the cell wall pushes back.\n\nEnzymes\nEnzymes are biological catalysts that speed up reactions without being used up. Each enzyme has an active site with a specific shape, so it only binds one substrate.";
 const iphone = "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
@@ -23,6 +23,9 @@ test.describe("on a phone", () => {
     await startFromPaste(page, notes);
     await playQuickRun(page, "Water moves.", "Partly");
     await page.goto("/today");
+    await saveExamDate(page);
+    await nudgesAlreadyOn(page);
+    await page.reload();
     const card = page.getByRole("region", { name: "Put Kelus on your home screen" });
     await card.getByRole("button", { name: "Show me how" }).click();
     await expect(card.getByRole("list", { name: "Add to Home Screen in Safari" })).toContainText("Add to Home Screen");
@@ -45,6 +48,9 @@ test("where the browser offers an install prompt, the card's button opens it", a
   await startFromPaste(page, notes);
   await playQuickRun(page, "Water moves.", "Partly");
   await page.goto("/today");
+  await saveExamDate(page);
+  await nudgesAlreadyOn(page);
+  await page.reload();
   await page.getByRole("region", { name: "Put Kelus on your home screen" }).getByRole("button", { name: "Install Kelus" }).click();
   await expect.poll(() => page.evaluate(() => (window as unknown as { __prompted: boolean }).__prompted)).toBe(true);
 });

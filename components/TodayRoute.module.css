@@ -188,3 +188,16 @@
 @media (prefers-reduced-motion: reduce) {
   .start.start { transition: none; }
 }
+
+/* The path: one dot per topic (ink outline new, marigold started, green solid), and the days still ahead. */
+.top {
+  display: grid !important;
+  gap: 8px !important;
+  justify-content: stretch !important;
+}
+.path { font-size: var(--text-body); color: var(--color-slate); }
+.dots { display: flex; flex-wrap: wrap; gap: 5px; }
+.dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid rgba(18, 22, 15, 0.22); background: #fff; }
+.dots i.dotStarted { border-color: var(--k-marigold-edge); background: var(--k-marigold); }
+.dots i.dotSolid { border-color: var(--k-green-edge); background: var(--k-green); }
+.ahead { color: var(--k-iris); font-weight: 500; }

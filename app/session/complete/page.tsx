@@ -97,6 +97,9 @@ function CompleteBody() {
   // What this block was: each topic once, with how its last answer went, in the result card's own words.
   const sessionAnswers = state.snapshot.events.filter((event) => event.sessionId === session.id && event.kind === "retrieval");
   const practised = [...new Map(sessionAnswers.map((event) => [event.conceptId, event])).values()];
+  const known = practised.filter((event) => event.outcome === "success");
+  const rank = { failure: 0, partial: 1, success: 2 } as const;
+  const weakest = [...practised].filter((event) => event.outcome !== "success").sort((a, b) => rank[a.outcome ?? "partial"] - rank[b.outcome ?? "partial"])[0];
   const missedToday = (state.missedLines ?? []).filter((line) => line.at >= session.startedAt && practised.some((event) => event.conceptId === line.conceptId)).length;
   const nextFresh = nextStopId ? { conceptId: nextStopId } : undefined;
   const allGood = practised.length > 0 && practised.every((event) => event.outcome === "success");
@@ -114,6 +117,21 @@ function CompleteBody() {
         <p className={styles.lede}>
           {practised.length} {practised.length === 1 ? "topic" : "topics"}{course ? ` from ${course.name}` : ""}. Your answers are saved.
         </p>
+
+        {/* What changed, the way a tutor would say it: what you now know, and the one thing to fix next. */}
+        <section className={styles.changed} aria-label="What changed">
+          <p>
+            <span className={styles.changedLabel}>You now know</span>
+            {known.length ? <b>{known.map((event) => name(event.conceptId)).join(", ")}</b> : <span className={styles.none}>nothing solid yet, which is normal on a first pass</span>}
+          </p>
+          {weakest ? (
+            <p>
+              <span className={styles.changedLabel}>Your weak spot</span>
+              <b>{name(weakest.conceptId)}</b>
+              <span className={styles.none}>{nextStopId === weakest.conceptId ? " · it’s first next time" : " · its missed lines open tomorrow’s warm-up"}</span>
+            </p>
+          ) : null}
+        </section>
 
         <ul className={styles.topics} aria-label="Topics in this block">
           {practised.map((event, index) => (
