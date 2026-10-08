@@ -334,7 +334,7 @@ body.is-session-booklet .site-header.is-session {
   padding: 0 2px;
   color: var(--color-steel, #5c6570);
   font-size: 0.875rem;
-  font-weight: 450;
+  font-weight: 400;
 }
 
 .study-shell .study-close:active {
@@ -589,7 +589,7 @@ body.is-kelus-space .site-space-label {
   cursor: pointer;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
   font-size: 0.8125rem;
-  font-weight: 450;
+  font-weight: 400;
   min-height: 32px;
   display: inline-flex;
   align-items: center;
@@ -1291,7 +1291,7 @@ body.is-session-booklet.is-booklet-system .site-header.is-session .site-footer-m
 body.is-session-booklet.is-booklet-system .site-session-label {
   color: var(--color-steel, #5c6570);
   font-size: 0.875rem;
-  font-weight: 450;
+  font-weight: 400;
 }
 
 body.is-session-booklet.is-booklet-system .site-session-return {
@@ -1320,7 +1320,7 @@ body.is-session-booklet.is-booklet-system .study-more > summary {
   cursor: pointer;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 72%, transparent);
   font-size: 0.8125rem;
-  font-weight: 450;
+  font-weight: 400;
   min-height: 32px;
   display: inline-flex;
   align-items: center;
@@ -1356,7 +1356,7 @@ body.is-session-booklet.is-booklet-system .study-discard-trigger,
 body.is-session-booklet.is-booklet-system .study-discard .text-btn {
   color: color-mix(in srgb, var(--color-steel, #5c6570) 78%, transparent);
   font-size: 0.8125rem;
-  font-weight: 450;
+  font-weight: 400;
 }
 
 body.is-session-booklet.is-booklet-system .study-discard-trigger:hover,
@@ -1625,7 +1625,7 @@ body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes but
   background: transparent;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 85%, transparent);
   font-size: 1rem;
-  font-weight: 450;
+  font-weight: 400;
   letter-spacing: -0.01em;
   text-align: center;
   box-shadow: none;
@@ -1664,7 +1664,7 @@ body.is-paper-column .kelus-paper-more > summary {
   align-items: center;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
   font-size: 0.875rem;
-  font-weight: 450;
+  font-weight: 400;
 }
 
 body.is-paper-column .kelus-paper-more > summary::-webkit-details-marker {
@@ -2192,7 +2192,7 @@ body.is-session-booklet .study-reroute-sep {
   color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
   font-family: var(--font-sans, system-ui, sans-serif);
   font-size: 0.85em;
-  font-weight: 450;
+  font-weight: 400;
   letter-spacing: 0;
 }
 
@@ -2214,7 +2214,7 @@ body.is-session-booklet .session-work-lede {
   max-width: 36ch;
   color: var(--color-steel, #5c6570);
   font-size: 1rem;
-  font-weight: 450;
+  font-weight: 400;
   line-height: 1.45;
 }
 
@@ -2325,7 +2325,7 @@ body.is-session-booklet .study-context.is-folio,
 
 .study-shell .study-context.is-folio small {
   font-size: 0.875rem;
-  font-weight: 450;
+  font-weight: 400;
   color: var(--color-steel, #5c6570);
 }
 

@@ -191,7 +191,7 @@ body.is-course-studio .studio-onboarding .destination-form .setup-first-upload i
 }
 
 .material-source-preview-head > div { display: grid; min-width: 0; gap: 2px; }
-.material-source-preview-head span { color: var(--color-hero-orange); font-size: 0.68rem; font-weight: 650; letter-spacing: 0.08em; }
+.material-source-preview-head span { color: var(--color-hero-orange); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; }
 .material-source-preview-head strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.875rem; }
 .material-source-preview-head a { flex: 0 0 auto; color: var(--booklet-kelus) !important; font-size: 0.8125rem; font-weight: 600; }
 .material-source-page { min-height: 320px; max-height: min(58vh, 580px); overflow: auto; padding: var(--spacing-24); background: var(--booklet-paper); }

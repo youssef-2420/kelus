@@ -273,7 +273,7 @@ body.is-course-studio .kelus-space.is-studio {
   margin: 8px 0 10px;
   color: #f7f7f2;
   font-size: clamp(2rem, 4.5vw, 3.5rem);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.055em;
   line-height: 1.1;
   overflow-wrap: anywhere;
@@ -447,7 +447,7 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
   color: #f7f7f2;
   font-family: var(--font-inter), "IBM Plex Sans", sans-serif;
   font-size: clamp(2.15rem, 4vw, 3.35rem);
-  font-weight: 650;
+  font-weight: 600;
   letter-spacing: -0.045em;
   line-height: 1.1;
   overflow-wrap: anywhere;
@@ -507,7 +507,7 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
   display: block;
   font-family: var(--font-inter), "IBM Plex Sans", sans-serif;
   font-size: 1rem;
-  font-weight: 550;
+  font-weight: 500;
 }
 
 .is-course-studio .index-toc-row.is-start .index-toc-meta {

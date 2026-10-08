@@ -63,7 +63,8 @@
   max-width: none !important;
   font-family: var(--font-display) !important;
   font-size: clamp(1.25rem, 1.7vw, 1.5rem) !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.015em !important;
   line-height: 1.35 !important;
   letter-spacing: -0.005em !important;
   color: var(--color-midnight-ink) !important;

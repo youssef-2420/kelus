@@ -40,7 +40,7 @@
   background: var(--btn-bg) !important;
   color: var(--btn-ink) !important;
   font: inherit;
-  font-weight: 650 !important;
+  font-weight: 600 !important;
   letter-spacing: 0.005em;
   text-decoration: none !important;
   cursor: pointer;
@@ -409,4 +409,35 @@ html body.is-session-complete main#main.study-shell.is-complete-page {
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+}
+
+/* ── One typeface in the product: Inter ───────────────────────────────────────────────────────────────
+   Titles, questions, text and buttons all set in Inter, as in Notion. Weights are four: 400 text, 500 labels,
+   600 headings and buttons, 700 big titles; big titles are set tight. The homepage keeps its own fonts. */
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page)) {
+  --font-inter: var(--font-marketing-inter);
+  --font-source-serif: var(--font-marketing-inter);
+  --font-booklet: var(--font-marketing-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-editorial: var(--font-booklet);
+  --font-display: var(--font-booklet);
+  --font-sans: var(--font-booklet);
+  font-family: var(--font-booklet);
+  font-feature-settings: "cv11", "ss01";
+}
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page)) :is(h1, h2, h3) {
+  font-optical-sizing: auto;
+  font-variation-settings: normal !important;
+}
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page)) h1 {
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+}
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page)) :is(h2, h3) {
+  font-weight: 600 !important;
+  letter-spacing: -0.015em !important;
+}
+/* Names that used to be serif read as names in Inter at 600: topic cards, the list on Today, result facts. */
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) :is(.index-toc-name, [data-block="today-next"] li strong, .study-mark-moment strong) {
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
 }
