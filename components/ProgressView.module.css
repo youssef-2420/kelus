@@ -30,7 +30,7 @@
 }
 
 .caveat, .thin { margin: 0; font-size: var(--text-body-sm); line-height: 1.5; color: var(--color-slate); }
-.thin { padding: 12px 14px; border-left: 3px solid var(--color-frost); background: var(--color-mist); }
+.thin { padding: 12px 14px; border-radius: 10px; background: var(--color-mist); }
 
 .chart { display: block; width: 100%; height: auto; margin-top: 4px; }
 .area { fill: var(--color-periwinkle-wash); }

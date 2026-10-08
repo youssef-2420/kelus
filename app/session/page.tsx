@@ -614,7 +614,7 @@ function SessionBody() {
                 // The definition was just compared on the screen before, so end on something else: the line that was
                 // missed, or a line from the page that this run did not use.
                 remember={quickMissed[0] ?? run?.extraFact ?? activity.retrieve.modelAnswer}
-                rememberLabel={quickMissed[0] ? "Worth another look" : run?.extraFact ? "One more line from your notes" : "Worth remembering"}
+                rememberLabel={quickMissed[0] ? (quickMissed.length > 1 ? "A line you missed" : "The line you missed") : run?.extraFact ? "One more line from your notes" : "Worth remembering"}
                 locator={activity.sourceReferences[0]?.locator ?? "your notes"}
                 goalDone={goalToday.topicsToday}
                 goal={goalToday.goal}

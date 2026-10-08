@@ -120,8 +120,8 @@
   display: grid;
   gap: 6px;
   padding: 12px 14px;
-  border-left: 3px solid var(--color-midnight-ink);
-  border-radius: 0 4px 4px 0;
+  border: 1px solid rgba(18, 22, 15, 0.1);
+  border-radius: 10px;
   background: var(--color-pure-white);
 }
 
