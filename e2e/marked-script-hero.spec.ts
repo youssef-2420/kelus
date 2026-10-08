@@ -32,15 +32,11 @@ test("Set up and sample revision open the course workspace without a cover image
   await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
 });
 
-test("the first section lets visitors try a pass then set up their own course", async ({ page }) => {
+test("the revision story follows the hero without a duplicate interactive sample", async ({ page }) => {
   await page.goto("/");
-  // The hands-on proof follows the marked-script hero, before explanatory chapters.
-  await expect(page.locator("main > section").nth(1)).toHaveAttribute("id", "try");
-  const sample = page.locator("#try");
-  await sample.getByRole("button", { name: "Reveal answer" }).click();
-  await sample.getByRole("button", { name: "I remembered" }).click();
-  await expect(sample.getByText("Supply & Demand", { exact: true })).toBeVisible();
-  await sample.getByRole("link", { name: "Set up my course" }).click();
+  await expect(page.locator("#try, .booklet-board")).toHaveCount(0);
+  await expect(page.locator("main > section").nth(1).getByRole("heading", { name: "Your notes become the next move." })).toBeVisible();
+  await page.locator('[data-hero="marked-script"]').getByRole("link", { name: "Set up" }).click();
   await expect(page).toHaveURL(/\/today\/?$/);
   await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
 });

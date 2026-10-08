@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
-test("homepage presents marked-script hero and one sample proof without a repeated close", () => {
+test("homepage presents marked-script hero followed by the illustrated revision story", () => {
   const page = readFileSync("app/page.tsx", "utf8");
   const hero = readFileSync("components/hero/KelusHero.tsx", "utf8");
   const story = readFileSync("components/home/HomeAfterHero.tsx", "utf8");
@@ -19,12 +19,9 @@ test("homepage presents marked-script hero and one sample proof without a repeat
   assert.doesNotMatch(hero, /LEARNING_EXAMPLES/);
   assert.doesNotMatch(hero, /home-brand/);
   assert.doesNotMatch(hero, /hero-window-controls/);
-  const board = readFileSync("components/hero/BookletRevisionBoard.tsx", "utf8");
-  assert.match(board, /Today’s route|today/i);
-  assert.match(board, /Reveal answer|booklet-flow-reveal|Reveal/);
   assert.doesNotMatch(story, /HeroProductDemo/);
-  assert.match(story, /BookletRevisionBoard/);
-  assert.match(story, /poster-sample/);
+  assert.doesNotMatch(story, /BookletRevisionBoard|poster-sample|Interactive sample/);
+  assert.match(story, /RevisionLoopVisuals/);
   assert.doesNotMatch(story, /home-close|folio-close|Walk into the exam knowing/);
   assert.doesNotMatch(story, /Try sample \(~1 min\)/);
   assert.doesNotMatch(story, /Set my exam/);

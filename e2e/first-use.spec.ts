@@ -96,19 +96,11 @@ test("a PDF opens its first question by itself, and is still there after a refre
   await expect(page.getByText("Cell Membranes").first()).toBeVisible();
 });
 
-test("homepage sample makes both route outcomes visible", async ({ page }) => {
+test("homepage points into the real revision flow without a duplicate sample", async ({ page }) => {
   await page.goto("/");
-  const demo = page.locator(".booklet-board");
-  await expect(demo.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
-  await demo.getByRole("button", { name: "Reveal answer" }).click();
-  await demo.getByRole("button", { name: "I was shaky" }).click();
-  await expect(demo.locator(".booklet-flow-route li").first()).toContainText("Elasticity");
-  await expect(demo.locator(".notebook-signal")).toContainText("moves from second to first");
-  await demo.getByRole("button", { name: "Hide answer" }).click();
-  await demo.getByRole("button", { name: "Reveal answer" }).click();
-  await demo.getByRole("button", { name: "I remembered" }).click();
-  await expect(demo.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
-  await expect(demo.locator(".notebook-signal")).toContainText("comes next");
+  await expect(page.locator(".booklet-board")).toHaveCount(0);
+  await page.locator('[data-hero="marked-script"]').getByRole("link", { name: "Set up" }).click();
+  await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
 });
 
 test("Add source opens the file picker and reads the chosen PDF", async ({ page }) => {

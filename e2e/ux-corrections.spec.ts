@@ -14,23 +14,13 @@ test("marketing navigation and footer have clean semantics on mobile", async ({ 
   }
 });
 
-test("sample route explains its actual outcome and total", async ({ page }) => {
+test("homepage explains the revision loop without the duplicate sample board", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.getByText("Interactive sample", { exact: true })).toBeVisible();
+  await expect(page.getByText("Interactive sample", { exact: true })).toHaveCount(0);
+  await expect(page.locator(".booklet-board")).toHaveCount(0);
   await expect(page.getByRole("group", { name: /Sample Microeconomics study sheet/ })).toBeVisible();
-  const reveal = page.getByRole("button", { name: "Reveal answer" });
-  await expect(page.locator("#board-answer")).toHaveCount(1);
-  await expect(page.locator("#board-answer")).toBeHidden();
-  expect((await reveal.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-  await reveal.click();
-  await page.getByRole("button", { name: "I remembered", exact: true }).click();
-  await expect(page.locator(".booklet-flow-route-title")).toContainText("39 min");
-  await page.getByRole("button", { name: "Hide answer" }).click();
-  await page.getByRole("button", { name: "Reveal answer" }).click();
-  await page.getByRole("button", { name: "I was shaky" }).click();
-  await expect(page.getByRole("status").filter({ hasText: "Elasticity moves from second to first" })).toBeVisible();
-  await expect(page.locator(".booklet-flow-route-title")).toContainText("45 min");
+  await expect(page.getByRole("heading", { name: "Your notes become the next move." })).toBeVisible();
 });
 
 test("course examples use ordinary keyboard-operable buttons", async ({ page }) => {
