@@ -16,7 +16,13 @@ test("How it works tells one course story and actions stay green", async ({ page
   await expect(page.locator('figure').first()).toContainText("Microeconomics");
   await expect(page.locator('figure').nth(1)).toContainText("Why does demand become more elastic");
   await expect(page.locator('figure').nth(2)).toContainText("Elasticity");
-  await expect(page.getByRole("link", { name: "Set up my course" }).first()).toHaveCSS("background-color", "rgb(31, 107, 69)");
+  const setupActions = page.getByRole("link", { name: "Set up my course" });
+  await expect(setupActions).toHaveCount(2);
+  await expect(setupActions.first()).toHaveCSS("background-color", "rgb(31, 107, 69)");
+  await expect(setupActions.first()).toHaveCSS("border-radius", "999px");
+  await expect(setupActions.first()).toHaveCSS("min-height", "52px");
+  await expect(setupActions.first()).toHaveAttribute("href", "/today/");
+  await expect(setupActions.last()).toHaveCSS("border-radius", "999px");
   for (const width of [320, 375, 414, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `overflow at ${width}px`).toBe(true);
