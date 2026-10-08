@@ -1,18 +1,10 @@
 import { sectionsNav } from "./helpers";
 import { expect, test } from "@playwright/test";
 
-test("notebook preview is keyboard-operable and setup fits mobile", async ({ page }) => {
+test("setup fits mobile without a duplicate homepage preview", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
-  const board = page.locator(".booklet-board");
-  const reveal = board.getByRole("button", { name: "Reveal answer" });
-  await reveal.focus();
-  await page.keyboard.press("Enter");
-  await expect(board.locator("#board-answer")).toBeVisible();
-  await expect(board.getByRole("button", { name: "Hide answer" })).toHaveAttribute("aria-expanded", "true");
-  await page.keyboard.press("Enter");
-  await expect(board.locator("#board-answer")).toBeHidden();
-  await expect(board.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator(".booklet-board")).toHaveCount(0);
   await page.goto("/today");
   await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   await expect(page.locator('input[type="file"]')).toHaveCount(1);
@@ -27,27 +19,17 @@ test("hero content is visible before hydration", async ({ browser }) => {
   expect(await page.locator("h1").textContent()).toBe("Revise your lessons. Walk into the exam ready.");
   await expect(page.locator("[class*=notion]")).toHaveCount(0);
   await expect(page.locator(".site-header")).toHaveCSS("box-shadow", "none");
-  await expect(page.locator(".booklet-board")).toBeVisible();
+  await expect(page.locator(".booklet-board")).toHaveCount(0);
   await context.close();
 });
 
-test("hero recall preview reveals, reorders, resets, and works on a narrow screen", async ({ page }) => {
+test("hero and revision steps work on a narrow screen", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Revise your lessons");
 
-  const board = page.locator(".booklet-board");
-  await board.scrollIntoViewIfNeeded();
-
-  await expect(board.locator("#board-answer")).toBeHidden();
-  await board.getByRole("button", { name: "Reveal answer" }).click();
-  await expect(board.getByText("Buyers can switch when price rises", { exact: false })).toBeVisible();
-  await board.getByRole("button", { name: "I remembered" }).click();
-  await expect(board.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
-  await board.getByRole("button", { name: "Hide answer" }).click();
-  await expect(board.locator("#board-answer")).toBeHidden();
-  await expect(board.getByRole("button", { name: "Reveal answer" })).toHaveAttribute("aria-expanded", "false");
-  await expect(board.locator(".booklet-flow-route li").first()).toContainText("Supply & Demand");
+  await expect(page.locator(".booklet-board")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Your notes become the next move." })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 

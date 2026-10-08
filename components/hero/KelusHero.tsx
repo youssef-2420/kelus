@@ -5,7 +5,7 @@ import styles from "./MarkedScriptHero.module.css";
 /**
  * Revision-sheet hero: one headline, one lede, one primary path.
  * Brand lives in the site header — not repeated in the hero.
- * Interactive sample lives below the fold.
+ * The illustrated revision story follows below the fold.
  */
 export function KelusHero() {
   return (
