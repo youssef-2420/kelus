@@ -238,3 +238,32 @@ html body :is(.site-header .mark .site-wordmark, .study-brand > span, .is-course
   letter-spacing: inherit !important;
   color: inherit !important;
 }
+
+/* ── The course sidebar, quieter ──────────────────────────────────────────────────────────────────────
+   The mark and « share one row; the section you are in is shown by its wash alone (no extra dot); a source's ×
+   appears when you point at it, so a slip never lands on it. Touch screens always show it. */
+.is-course-studio .studio-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.is-course-studio .studio-brand-row .studio-brand { flex: 1 1 auto; min-width: 0; }
+html body.is-course-studio .studio-brand-row .studio-rail-toggle {
+  flex: none;
+  justify-content: center;
+  width: 32px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0;
+  opacity: 0.7;
+}
+html body.is-course-studio .studio-brand-row .studio-rail-toggle:hover { opacity: 1; }
+html body.is-course-studio .studio-rail-reopen { justify-content: center; width: 32px; min-height: 32px; padding: 0; }
+html body.is-course-studio .studio-nav.revision-surface-modes button[data-mode][aria-pressed="true"]::after { content: none; }
+html body.is-course-studio .studio-nav.revision-surface-modes { margin-top: 28px; }
+@media (hover: hover) and (pointer: fine) {
+  .core-source-item .core-source-remove { opacity: 0; transition: opacity 120ms; }
+  .core-source-item:hover .core-source-remove,
+  .core-source-item:focus-within .core-source-remove { opacity: 1; }
+}

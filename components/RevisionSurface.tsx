@@ -58,6 +58,15 @@ function hrefForMode(mode: SurfaceMode) {
  * Course space as a booklet page.
  * Thin strip for section switching; Today’s topic is the page title.
  */
+/** « to fold the column away, » to bring it back: the sidebar's own control, drawn rather than spelled out. */
+function RailChevrons({ open = false }: { open?: boolean }) {
+  return (
+    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style={open ? { transform: "scaleX(-1)" } : undefined}>
+      <path d="M8 4L4 8l4 4M12.5 4l-4 4 4 4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function RevisionSurface() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -228,12 +237,13 @@ export function RevisionSurface() {
   return (
     <section className={`kelus-space is-studio${railHidden ? " is-rail-hidden" : ""}`} aria-label="Revision workbench">
       {!railHidden ? <aside className="studio-rail" aria-label="Course workspace">
-        <Link href="/" className="studio-brand" aria-label="Kelus home">
-          <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
-          <span aria-hidden="true">↗</span>
-        </Link>
-        <button type="button" className="studio-rail-toggle" onClick={() => setRailHidden(true)} aria-label="Hide workspace sidebar">Hide sidebar <span aria-hidden="true">←</span></button>
-        <p className="studio-rail-label studio-navigation-label">Your workspace</p>
+        {/* The mark and the one control that belongs to the column itself, on one row, as in Notion. */}
+        <div className="studio-brand-row">
+          <Link href="/" className="studio-brand" aria-label="Kelus home">
+            <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
+          </Link>
+          <button type="button" className="studio-rail-toggle" onClick={() => setRailHidden(true)} aria-label="Hide workspace sidebar" title="Hide sidebar"><RailChevrons /></button>
+        </div>
         <nav className="studio-nav revision-surface-modes" aria-label="Revision sections">
           {MODES.map((item) => {
             const active = item.id === mode;
@@ -290,7 +300,7 @@ export function RevisionSurface() {
           <button type="button" className="core-add-source" onClick={() => sourcePickerRef.current?.click()}>＋ Add source</button>
         </div>
         <div className="studio-rail-bottom">
-          <Link href="/" className="studio-home-link">← Back to Kelus</Link>
+          <Link href="/" className="studio-home-link">← Back</Link>
           {auth.user ? (
             <button type="button" className="studio-account-action" onClick={() => auth.signOut()}>Sign out</button>
           ) : auth.configured ? (
@@ -324,7 +334,7 @@ export function RevisionSurface() {
 
       <div className="studio-main">
         <header className="studio-topbar">
-          <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={() => setRailHidden(false)} aria-label="Show workspace sidebar">→ <span>Show sidebar</span></button> : null}<span className="studio-topbar-course" title={course.name}>{isSampleCourse ? course.name : <InlineName value={course.name} label="Rename course" onSave={(next) => renameCourse(course.id, next, "user")} />}</span></span>
+          <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={() => setRailHidden(false)} aria-label="Show workspace sidebar" title="Show sidebar"><RailChevrons open /></button> : null}<span className="studio-topbar-course" title={course.name}>{isSampleCourse ? course.name : <InlineName value={course.name} label="Rename course" onSave={(next) => renameCourse(course.id, next, "user")} />}</span></span>
           <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{examDatePending ? "Add your exam date" : `${days} day${days === 1 ? "" : "s"} to exam`}</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
