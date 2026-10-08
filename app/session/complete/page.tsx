@@ -13,6 +13,7 @@ import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
 import { PackArt } from "@/components/PackArt";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
 import styles from "./complete.module.css";
 
 const OUTCOME: Record<string, string> = { success: "Solid pass", partial: "Partly there", failure: "Needs another attempt" };
@@ -117,6 +118,15 @@ function CompleteBody() {
   const credit = practised.length ? practised.reduce((sum, event) => sum + (event.outcome === "success" ? 1 : event.outcome === "partial" ? 0.5 : 0), 0) / practised.length : 0;
 
   return (
+    <>
+    {/* The same bar the session had a moment ago: the block ends on its own page, not off the edge of the app. */}
+    <header className={styles.bar}>
+      <span className={styles.barTitle}>
+        <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
+        <small><b>{course?.name ?? "Your course"}</b> · block done</small>
+      </span>
+      <Link href="/today" className={styles.barClose}>Close</Link>
+    </header>
     <main id="main" className="study-shell is-complete-page">
       <motion.section
         className={`complete-folio is-page ${styles.done}`}
@@ -124,7 +134,7 @@ function CompleteBody() {
         animate={{ opacity: 1, y: 0 }}
         transition={reduceMotion ? { duration: 0.12 } : { duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       >
-        <MarkStamp outcome={allGood ? "success" : "partial"} fill={credit} label={allGood ? "Block done, all solid" : `Block done, ${known.length} of ${practised.length} solid`} />
+        <MarkStamp outcome={allGood ? "success" : credit === 0 ? "failure" : "partial"} fill={credit} label={allGood ? "Block done, all solid" : `Block done, ${known.length} of ${practised.length} solid`} />
         <h1>Done.</h1>
         <p className={styles.lede}>
           {practised.length} {practised.length === 1 ? "topic" : "topics"}{course ? ` from ${course.name}` : ""}. Your answers are saved.
@@ -210,6 +220,7 @@ function CompleteBody() {
         </div>
       </motion.section>
     </main>
+    </>
   );
 }
 
