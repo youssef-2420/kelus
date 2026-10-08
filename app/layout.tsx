@@ -54,7 +54,8 @@ const literata = Literata({
 
 // Opt-in marketing families. No global replacement or app-route preload.
 const marketingSerif = Fraunces({ subsets: ["latin"], axes: ["opsz"], variable: "--font-fraunces", display: "swap", preload: false });
-const marketingSans = Inter({ subsets: ["latin"], variable: "--font-marketing-inter", display: "swap", preload: false });
+// Inter is the product's one typeface (titles, text, buttons), so it loads up front; the homepage opts in as before.
+const marketingSans = Inter({ subsets: ["latin"], variable: "--font-marketing-inter", display: "swap", axes: ["opsz"] });
 
 // The status bar takes the page's paper colour, so an installed Kelus has no browser-coloured strip on top; the
 // layout reaches into the notch area and pads itself with the safe-area insets instead.

@@ -93,7 +93,7 @@ body.is-booklet-system .material-ready h2,
 body.is-booklet-system .concept-confirmation h2 {
   font-family: var(--font-source-serif), Literata, Georgia, "Times New Roman", serif;
   font-optical-sizing: auto;
-  font-weight: 550;
+  font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.025em;
 }
