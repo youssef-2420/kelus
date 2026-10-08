@@ -68,6 +68,8 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
   const summary = progressSummary({ concepts, events, nowMs: Date.parse(nowIso), daysToExam });
   const target = Math.round(Math.max(0, Math.min(100, targetPercent)));
   const gap = target - pct(summary.readinessNow);
+  // Before the first answer there is nothing to compare, so the page is one card and the list of topics to start.
+  const fresh = summary.answers === 0;
 
   return (
     <div className={styles.page}>
@@ -75,7 +77,7 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
         <p className={styles.kicker}>This week</p>
         <h2 id="progress-headline">{progressHeadline(summary)}</h2>
         <p className={styles.caveat}>Estimated from your own answers. It is not a prediction of your grade.</p>
-        {summary.enough ? (
+        {fresh ? null : summary.enough ? (
           <Trend series={summary.series} target={examDatePending ? null : target} />
         ) : (
           <div className={styles.thinRow}>
@@ -83,19 +85,19 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
             <p className={styles.thin}>Based on {summary.answers} answer{summary.answers === 1 ? "" : "s"} so far. A trend needs at least 6 answers across 2 topics in two weeks, so Kelus doesn’t guess before then.</p>
           </div>
         )}
-        <dl className={styles.stats}>
+        {fresh ? null : <dl className={styles.stats}>
           <div><dt>Answers</dt><dd>{summary.answers}</dd></div>
           <div><dt>Days studied</dt><dd>{summary.daysStudied}<small> of 7</small></dd></div>
           <div><dt>Topics practised</dt><dd>{summary.topicsPractised}<small> of {concepts.length}</small></dd></div>
-        </dl>
+        </dl>}
         {!summary.enough ? <Link href="/today" className={`k-btn ${styles.cta}`}>Practise a topic <span aria-hidden="true">→</span></Link> : null}
       </motion.section>
 
-      <Topics title="Got stronger" note="Higher than a week ago." items={summary.stronger} empty="Nothing has moved up yet. It shows here as soon as an answer does." />
-      <Topics title="Needs another pass" note="Low, slipping, or your last answer missed." items={summary.needsPass} empty="No weak spots from your answers so far." />
+      {fresh ? null : <Topics title="Got stronger" note="Higher than a week ago." items={summary.stronger} empty="Nothing has moved up yet. It shows here as soon as an answer does." />}
+      {fresh ? null : <Topics title="Needs another pass" note="Low, slipping, or your last answer missed." items={summary.needsPass} empty="No weak spots from your answers so far." />}
       <Topics title="Not started" note="No answers yet, so Kelus has no evidence either way." items={summary.notStarted} empty="You have answered every topic at least once." />
 
-      <section className={styles.pace} aria-label="Pace to your target">
+      {fresh ? null : <section className={styles.pace} aria-label="Pace to your target">
         <PackArt name="target" className={styles.paceArt} size={84} />
         <h3>To reach your target</h3>
         {examDatePending ? (
@@ -106,7 +108,7 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
             {gap > 0 ? ` You are ${gap} point${gap === 1 ? "" : "s"} below your ${target}% target.` : ` You are at or above your ${target}% target.`}
           </p>
         ) : <p>Every topic looks strong from your answers. Keep a quick review going so it stays that way.</p>}
-      </section>
+      </section>}
     </div>
   );
 }

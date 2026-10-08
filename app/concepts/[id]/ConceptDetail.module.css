@@ -1,6 +1,6 @@
 /* One topic, on the same paper as Topics and the session: serif title, plain sentences, the block's own marks. */
 .page {
-  width: min(100%, 42rem);
+  width: min(100% - 32px, 42rem);
   margin: 0 auto;
   padding: 28px 0 64px;
   color: var(--color-midnight-ink);

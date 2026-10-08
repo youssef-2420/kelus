@@ -22,6 +22,11 @@ function Mark({ outcome }: { outcome: keyof typeof OUTCOME }) {
   );
 }
 
+/** Standalone, the page draws its own shell; inside the course workspace it is only the page. */
+function Frame({ embedded, children }: { embedded: boolean; children: React.ReactNode }) {
+  return embedded ? <>{children}</> : <DirectionalPage><AppShell>{children}</AppShell></DirectionalPage>;
+}
+
 function when(iso: string, nowIso: string) {
   const days = Math.round((Date.parse(nowIso) - Date.parse(iso)) / 86_400_000);
   if (days <= 0) return "Today";
@@ -42,7 +47,7 @@ function nextTime(iso: string | null, nowIso: string) {
  * One topic, as a page you can act on: where you stand in a sentence, one button to study it, what your notes say
  * about it, and every answer you have given on it.
  */
-export function ConceptDetail({ conceptId }: { conceptId?: string }) {
+export function ConceptDetail({ conceptId, embedded = false }: { conceptId?: string; /** Inside the course workspace, which already draws the sidebar and top bar. */ embedded?: boolean }) {
   const params = useParams<{ id?: string }>();
   const search = useSearchParams();
   const router = useRouter();
@@ -50,17 +55,13 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
   const { renameTopic, start, abandon, state } = useLearner();
   if (!state.onboardingCompleted) {
     return (
-      <DirectionalPage>
-        <AppShell><div className={styles.page}><h1 className={styles.title}>Add your notes first.</h1><Link href="/today" className="k-btn">Start with your notes <span aria-hidden="true">→</span></Link></div></AppShell>
-      </DirectionalPage>
+      <Frame embedded={embedded}><div className={styles.page}><h1 className={styles.title}>Add your notes first.</h1><Link href="/today" className="k-btn">Start with your notes <span aria-hidden="true">→</span></Link></div></Frame>
     );
   }
   const concept = state.snapshot.concepts.find((item) => item.id === id);
   if (!concept) {
     return (
-      <DirectionalPage>
-        <AppShell><div className={styles.page}><h1 className={styles.title}>This topic is gone.</h1><p className={styles.lede}>It may have been removed from your course.</p><Link href="/today?section=map" className="text-btn">Back to Topics</Link></div></AppShell>
-      </DirectionalPage>
+      <Frame embedded={embedded}><div className={styles.page}><h1 className={styles.title}>This topic is gone.</h1><p className={styles.lede}>It may have been removed from your course.</p><Link href="/today?section=map" className="text-btn">Back to Topics</Link></div></Frame>
     );
   }
   const course = state.snapshot.courses.find((item) => item.id === concept.courseId);
@@ -88,11 +89,10 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
   }
 
   return (
-    <DirectionalPage>
-      <AppShell>
+    <Frame embedded={embedded}>
         <article className={styles.page}>
           <nav className={styles.crumbs} aria-label="Where you are">
-            <Link href="/today?section=map">← {course?.name ?? "Topics"}</Link>
+            <Link href="/today?section=map">← Topics</Link>
           </nav>
           <header className={styles.header}>
             <ConceptTitleTransition id={concept.id}>
@@ -128,7 +128,6 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
             ) : <p className={styles.empty}>None yet. Each answer shows here, and decides when the topic comes back.</p>}
           </section>
         </article>
-      </AppShell>
-    </DirectionalPage>
+    </Frame>
   );
 }

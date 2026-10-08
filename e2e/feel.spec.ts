@@ -106,3 +106,25 @@ test("a section is on screen at once: no waiting for the old one to fade out", a
   expect(seen.panels).toBe(1);
   expect(seen.opacity).toBeGreaterThanOrEqual(0.5);
 });
+
+test("⌘Z also takes back a rename, and a topic's page keeps the course sidebar", async ({ page }) => {
+  await startFromPaste(page, notes);
+  await page.goto("/today");
+  const before = await page.locator(".studio-topbar-course").innerText();
+  await page.getByRole("button", { name: /Rename course/ }).click();
+  await page.getByRole("textbox", { name: "Rename course" }).fill("Biology mock exam");
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".studio-topbar-course")).toHaveText("Biology mock exam");
+  await page.locator("body").click({ position: { x: 600, y: 700 } });
+  await page.keyboard.press("ControlOrMeta+z");
+  await expect(page.locator(".studio-topbar-course")).toHaveText(before);
+
+  await page.goto("/today?section=map");
+  await page.locator(".index-toc-row").first().click();
+  await expect(page).toHaveURL(/\/concept/);
+  const nav = page.locator('nav[aria-label="Revision sections"]');
+  await expect(nav.getByRole("button", { name: "Topics", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: /Study this topic|Study it again/ })).toBeVisible();
+  await nav.getByRole("button", { name: "Topics", exact: true }).click();
+  await expect(page).toHaveURL(/section=map/);
+});

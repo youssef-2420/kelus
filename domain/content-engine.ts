@@ -60,7 +60,7 @@ export function units(text: string) {
   for (const raw of text.split(/\n+/)) {
     const line = raw.trim();
     if (!line) continue;
-    if (lines.length && /^[a-z]/.test(line) && !BULLET.test(line)) lines[lines.length - 1] += ` ${line}`;
+    if (lines.length && /^[a-z]/.test(line) && !BULLET.test(line) && !/[.!?:]["”)]?$/.test(lines[lines.length - 1])) lines[lines.length - 1] += ` ${line}`;
     else lines.push(line);
   }
   for (const line of lines) {
@@ -96,9 +96,11 @@ export function numberedSteps(rawText: string) {
 }
 
 export function splitSentences(text: string) {
+  // A line that ends a sentence ends it, even when a scan starts the next line in lowercase ("…departure.\ncrew
+  // rest minimum"): only a line with no closing stop is a wrapped sentence that carries on.
   return text
-    .replace(/\s+/g, " ")
-    .split(/(?<=[.!?])\s+(?=[A-Z“"(])/)
+    .split(/(?<=[.!?]["”)]?)[ \t]*\n+/)
+    .flatMap((block) => block.replace(/\s+/g, " ").split(/(?<=[.!?])\s+(?=[A-Z“"(])/))
     .map((part) => part.trim())
     .filter((part) => part.length >= 20);
 }
@@ -221,7 +223,11 @@ export function buildPractice(input: {
   siblingFacts?: string[];
 }): PracticeItem[] {
   const { conceptId, name, excerpt, locator } = input;
-  const sentences = units(excerpt);
+  // Every question quotes a line from the notes, so each line must read as a sentence: never a heading row or a
+  // fragment a scan cut loose ("crew rest minimum 10 hours duty time max"). Fall back to all lines only if none do.
+  const allLines = units(excerpt);
+  const readable = allLines.filter(readsAsSentence);
+  const sentences = readable.length ? readable : allLines;
   const items: PracticeItem[] = [];
   // A question with a visible defect is worse than none: the lint decides, not the generator's optimism.
   const add = (item: Omit<PracticeItem, "id" | "origin">) => {

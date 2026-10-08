@@ -144,7 +144,7 @@ test("the index is a paper TOC; uploaded concepts have a static-exportable detai
   assert.match(inspector, /Open full learning history/);
   assert.match(inspector, /\/concept\?id=\$\{encodeURIComponent\(concept\.id\)\}/);
   assert.match(panel, /\/concept\?id=\$\{encodeURIComponent\(concept\.id\)\}/);
-  assert.match(legacy, /<ConceptDetail \/>/);
+  assert.match(legacy, /<ConceptRoute \/>/);
   assert.match(detail, /Study this topic/);
 });
 

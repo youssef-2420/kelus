@@ -25,6 +25,7 @@ import { kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
 import { OPEN_SEARCH_EVENT } from "@/components/CommandPalette";
 import { BrandIcon, brandForFile } from "@/components/BrandIcon";
+import { ConceptDetail } from "@/app/concepts/[id]/ConceptDetail";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
@@ -71,7 +72,7 @@ function RailChevrons({ open = false }: { open?: boolean }) {
   );
 }
 
-export function RevisionSurface() {
+export function RevisionSurface({ topicId }: { /** A topic's own page, opened inside the course workspace (Topics stays selected). */ topicId?: string | null } = {}) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion() === true;
@@ -89,7 +90,7 @@ export function RevisionSurface() {
   // Shown only once the browser says which key it is; the server HTML has none, so nothing jumps.
   const searchKeys = useSyncExternalStore(noSubscribe, searchKeysNow, () => "");
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
-  const mode = modeFromSection(searchParams.get("section"));
+  const mode = topicId ? "map" : modeFromSection(searchParams.get("section"));
   useEffect(() => {
     document.body.classList.add("is-kelus-space", "is-booklet-page", "is-course-studio");
     return () => document.body.classList.remove("is-kelus-space", "is-booklet-page", "is-course-studio");
@@ -185,7 +186,7 @@ export function RevisionSurface() {
   const hasReadableSource = selectedMaterial?.storage === "local" && !selectedMaterial.id.startsWith("material-demo-");
 
   function setMode(next: SurfaceMode) {
-    if (next === mode) return;
+    if (next === mode && !topicId) return;
     // A real step in history, so the browser's Back returns to the section you came from.
     router.push(hrefForMode(next), { scroll: false });
   }
@@ -333,7 +334,8 @@ export function RevisionSurface() {
           <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{examDatePending ? "Add your exam date" : `${days} day${days === 1 ? "" : "s"} to exam`}</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">
-        {mode !== "today" ? (
+        {topicId ? <ConceptDetail conceptId={topicId} embedded /> : null}
+        {!topicId && mode !== "today" ? (
           <header className="studio-section-head kelus-paper-head kelus-space-top is-section">
             <div className="kelus-space-identity">
               {/* Sections swap at once, as pages do in Notion: no waiting for the old one to leave. */}
@@ -349,7 +351,7 @@ export function RevisionSurface() {
         ) : null}
 
         {/* The new section is on screen the frame after the click; a short settle of its ink, never an exit to wait for. */}
-          <motion.div
+          {topicId ? null : <motion.div
             key={mode}
             className="studio-panel kelus-paper-body kelus-space-panel revision-surface-panel"
             initial={reduceMotion ? false : { opacity: 0.55 }}
@@ -386,7 +388,7 @@ export function RevisionSurface() {
             {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} interceptFile={isSampleCourse ? (file) => { setSampleFile(file); return true; } : undefined} /><AiConsent /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
             {mode === "progress" ? <ProgressView concepts={concepts} events={snapshot.events} nowIso={nowIso} daysToExam={days} targetPercent={exam.targetPercent} examDatePending={examDatePending} /> : null}
-          </motion.div>
+          </motion.div>}
         </main>
         <AppTabBar tabs={MODES} active={mode} onSelect={setMode} />
       </div>
