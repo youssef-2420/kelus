@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useRef, useState, useSyncExternalStore } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
+import { PackArt } from "@/components/PackArt";
 import { RecallIllustration, RouteIllustration, SourceIllustration } from "@/components/home/RevisionObjects";
 import { StudyScene } from "@/components/home/StudyScene";
 import { LEARNING_EXAMPLES, type LearningExample } from "@/data/learning-examples";
@@ -43,22 +44,22 @@ function RerouteVisual({ example, visible, reduceMotion }: VisualProps) {
 }
 
 const stages = [
-  { number: "01", cue: "Source", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source" },
-  { number: "02", cue: "Recall", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall" },
-  { number: "03", cue: "Route", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route" },
+  { number: "01", cue: "Source", icon: "folder", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source" },
+  { number: "02", cue: "Recall", icon: "clipboard-check", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall" },
+  { number: "03", cue: "Route", icon: "diagram-project", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route" },
 ] as const;
 
 function Chapter({ stage, example, reduceMotion }: { stage: (typeof stages)[number]; example: LearningExample; reduceMotion: boolean }) {
   const chapterRef = useRef<HTMLLIElement>(null);
   const visible = useInView(chapterRef, { once: true, margin: "-12% 0px -12%" });
-  const { number, cue, title, body, detail, Visual, tone } = stage;
+  const { number, cue, icon, title, body, detail, Visual, tone } = stage;
   // <li key={number} /> remains the chapter identity contract for the route test.
 
   return (
     <motion.li ref={chapterRef} className={styles.chapter} data-tone={tone}>
       <div className={styles.chapterText}>
         <motion.span className={styles.chapterLabel} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .08, duration: .4, ease: kelusEase }}>
-          <span>{number}</span>{cue}
+          <span>{number}</span><PackArt name={icon} className={styles.chapterIcon} />{cue}
         </motion.span>
         <motion.h2 initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .15, duration: .48, ease: kelusEase }}>{title}</motion.h2>
         <motion.p initial={reduceMotion ? false : { opacity: 0, y: 10 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .22, duration: .48, ease: kelusEase }}>{body}</motion.p>
