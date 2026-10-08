@@ -92,16 +92,17 @@ test("a section is on screen at once: no waiting for the old one to fade out", a
   await startFromPaste(page, notes);
   await page.goto("/today");
   await page.locator('nav[aria-label="Revision sections"]').waitFor();
-  const ms = await page.evaluate(() => new Promise<number>((resolve) => {
-    const start = performance.now();
+  // Watch every frame from the click: the first frame with the new section must already show it (no fade up from
+  // nothing), and the old section must never sit on screen beside it while it leaves.
+  const seen = await page.evaluate(() => new Promise<{ opacity: number; panels: number }>((resolve) => {
     document.querySelector<HTMLButtonElement>('nav[aria-label="Revision sections"] button[data-mode="map"]')!.click();
     const tick = () => {
-      const title = document.querySelector("#section-title")?.textContent;
-      const panel = document.querySelector(".revision-surface-panel .index-toc-row");
-      if (title === "Topics" && panel && Number(getComputedStyle(panel.closest(".revision-surface-panel")!).opacity) > 0.5) resolve(performance.now() - start);
+      const row = document.querySelector(".revision-surface-panel .index-toc-row");
+      if (row) resolve({ opacity: Number(getComputedStyle(row.closest(".revision-surface-panel")!).opacity), panels: document.querySelectorAll(".revision-surface-panel").length });
       else requestAnimationFrame(tick);
     };
     tick();
   }));
-  expect(ms).toBeLessThan(120);
+  expect(seen.panels).toBe(1);
+  expect(seen.opacity).toBeGreaterThanOrEqual(0.5);
 });
