@@ -162,17 +162,6 @@ html body .site-header.is-product .mark {
   color: var(--color-midnight-ink) !important;
   text-decoration: none;
 }
-html body .site-header.is-product .mark svg {
-  width: 20px !important;
-  height: 20px !important;
-  color: var(--color-midnight-ink);
-}
-.site-wordmark {
-  font-size: 1.1rem;
-  font-weight: 600;
-  letter-spacing: -0.05em;
-  color: var(--color-midnight-ink);
-}
 html body .site-header.is-product :is(.site-header-action, .site-auth-button) {
   min-height: 40px !important;
   padding: 0 10px !important;
@@ -203,11 +192,12 @@ html body .site-header.is-product:not(.is-session) .site-header-inner {
   margin: 0 !important;
   height: 58px !important;
   min-height: 58px !important;
-  /* The mark's box starts 8.6px left of its drawing; this lands the drawing on the session's 22px. */
-  padding: 0 18px 0 30.6px !important;
+  /* Same 22px inset as the session bar, so the mark never shifts sideways between screens. */
+  padding: 0 18px 0 22px !important;
 }
 html body .site-header.is-product:not(.is-session) .mark {
-  margin: 0 !important;
+  /* Sign in sits at the far right, as on every other page. */
+  margin: 0 auto 0 0 !important;
   padding: 0 !important;
 }
 html body .site-header.is-product:not(.is-session) { display: flex !important; align-items: center !important; }
@@ -215,7 +205,6 @@ html body .site-header.is-product:not(.is-session) .site-header-inner { display:
 
 /* Marketing pages too: "K kelus" in ink, the same mark the product uses. */
 html body .site-header .mark { display: inline-flex !important; align-items: center; gap: 6px; color: var(--color-midnight-ink) !important; text-decoration: none; }
-html body .site-header .mark svg { width: 22px !important; height: 22px !important; }
 
 /* Topic cards respond to the pointer, as rows do in Notion: a lift of the edge and a faint wash. */
 .index-toc-row.topic-card { transition: border-color 120ms, background-color 120ms, box-shadow 160ms, transform 160ms; }
@@ -223,3 +212,29 @@ html body .site-header .mark svg { width: 22px !important; height: 22px !importa
   .index-toc-row.topic-card:hover { border-color: rgba(18, 22, 15, 0.22) !important; background-color: color-mix(in srgb, #fff 92%, var(--k-green-wash)) !important; box-shadow: 0 4px 14px rgba(18, 22, 15, 0.07) !important; }
 }
 .index-toc-row.topic-card:active { transform: scale(0.995); }
+
+/* ── One Kelus mark ───────────────────────────────────────────────────────────────────────────────────
+   Every header carries the same "K kelus" as the course sidebar: a 23px K and the wordmark at 1.42rem, light, so the
+   brand is the same size whether you are on the homepage, a topic, a session or the end of a block. */
+html body :is(.site-header .mark, .study-brand, .is-course-studio .studio-brand-identity) {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--color-midnight-ink) !important;
+  font-size: 1.42rem !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.065em !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  width: auto !important;
+}
+html body :is(.site-header .mark, .study-brand, .is-course-studio .studio-brand-identity) svg {
+  width: 23px !important;
+  height: 23px !important;
+  color: var(--color-midnight-ink) !important;
+}
+html body :is(.site-header .mark .site-wordmark, .study-brand > span, .is-course-studio .studio-brand-identity strong) {
+  font: inherit !important;
+  letter-spacing: inherit !important;
+  color: inherit !important;
+}
