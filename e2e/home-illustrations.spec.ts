@@ -6,9 +6,11 @@ test("the four study scenes and student illustration fit on mobile", async ({ pa
 
   const chapters = page.locator("[data-revision-step]");
   await expect(chapters).toHaveCount(4);
+  await expect(chapters.locator('img[src^="/art/notion-pack/icon-"]')).toHaveCount(4);
   for (const chapter of await chapters.all()) {
     await chapter.scrollIntoViewIfNeeded();
     await expect(chapter.locator("svg")).toBeVisible();
+    await expect(chapter.locator('img[src^="/art/notion-pack/icon-"]')).toBeVisible();
   }
   await chapters.first().screenshot({ path: testInfo.outputPath("study-scene-mobile.png"), animations: "disabled" });
 
@@ -41,4 +43,18 @@ test("reduced motion keeps the illustrated sequence visible", async ({ page }) =
   await page.goto("/");
   await expect(page.locator("[data-revision-step] svg")).toHaveCount(4);
   await expect(page.getByRole("img", { name: "A student revising at a desk" })).toBeVisible();
+});
+
+test("How it works uses the same small icons without changing its three-step flow", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/route/");
+  const chapters = page.getByRole("region", { name: "The Kelus revision loop" }).locator("ol > li");
+  await expect(chapters).toHaveCount(3);
+  await expect(chapters.locator('img[src^="/art/notion-pack/icon-"]')).toHaveCount(3);
+  for (const icon of await chapters.locator('img[src^="/art/notion-pack/icon-"]').all()) {
+    await expect(icon).toHaveAttribute("alt", "");
+  }
+  await chapters.first().scrollIntoViewIfNeeded();
+  await chapters.first().screenshot({ path: testInfo.outputPath("how-step-mobile.png"), animations: "disabled" });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
 });

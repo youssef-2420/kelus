@@ -79,6 +79,13 @@
   padding: 0 clamp(0rem, 2vw, 1.5rem);
 }
 
+.stepIcon {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 1.1rem;
+}
+
 .caption h3 {
   margin: 0 0 0.65rem;
   font-family: var(--font-marketing-heading), Georgia, serif;

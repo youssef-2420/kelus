@@ -3,6 +3,7 @@
 import { useRef, useSyncExternalStore } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { Reveal } from "@/components/motion";
+import { PackArt } from "@/components/PackArt";
 import { StudyScene } from "./StudyScene";
 import styles from "./RevisionLoopVisuals.module.css";
 
@@ -13,6 +14,7 @@ const stages = [
     description: "Your lecture notes give the question its context.",
     className: styles.source,
     kind: "notes",
+    icon: "folder",
   },
   {
     number: "02",
@@ -20,6 +22,7 @@ const stages = [
     description: "An answer shows what you can recall—and what still needs work.",
     className: styles.recall,
     kind: "recall",
+    icon: "clipboard-check",
   },
   {
     number: "03",
@@ -27,6 +30,7 @@ const stages = [
     description: "See the answer beside your attempt, then mark what still needs another pass.",
     className: styles.feedback,
     kind: "feedback",
+    icon: "list-check",
   },
   {
     number: "04",
@@ -34,6 +38,7 @@ const stages = [
     description: "A weak answer brings that topic closer, without guessing a grade.",
     className: styles.route,
     kind: "route",
+    icon: "diagram-project",
   },
 ] as const;
 
@@ -45,13 +50,14 @@ function RevisionStep({ stage }: { stage: (typeof stages)[number] }) {
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const reducedMotion = hydrated && prefersReducedMotion;
   const active = reducedMotion || inView;
-  const { number, title, description, className, kind } = stage;
+  const { number, title, description, className, kind, icon } = stage;
   const entranceX = number === "02" || number === "04" ? -32 : 32;
 
   return (
     <article ref={ref} className={`${styles.stage} ${className}`} data-revision-step={number}>
       <div className={styles.caption}>
         <div>
+          <PackArt name={icon} className={styles.stepIcon} size={30} />
           <h3>{title}</h3>
           <p>{description}</p>
         </div>

@@ -12,8 +12,10 @@ test("every file the art component points at exists, is a real SVG, and keeps it
     assert.ok(statSync(file).size > 200, `${file} looks empty`);
     assert.match(readFileSync(file, "utf8"), /<svg[\s>]/);
   }
-  // The licence status is written down next to the files, so it cannot be forgotten.
-  assert.match(readFileSync("public/art/notion-pack/SOURCE.md", "utf8"), /LICENSE: NOT YET CONFIRMED/);
+  // Keep the source and the checked usage terms beside the exported assets.
+  const note = readFileSync("public/art/notion-pack/SOURCE.md", "utf8");
+  assert.match(note, /Overflow Design/);
+  assert.match(note, /https:\/\/www\.overflow\.design\/license\//);
 });
 
 test("the art is decorative: hidden from screen readers with empty alt text", () => {

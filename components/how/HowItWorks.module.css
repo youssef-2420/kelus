@@ -42,6 +42,7 @@
 .chapterText { align-self: center; }
 .chapterLabel { display: inline-flex; align-items: center; gap: 16px; margin-bottom: 30px; font-size: 13px; font-weight: 600; }
 .chapterLabel span { font-variant-numeric: tabular-nums; }
+.chapterIcon { display: block; width: 22px; height: 22px; flex: none; }
 .chapter[data-tone="source"] .chapterLabel { color: var(--orange); }
 .chapter[data-tone="recall"] .chapterLabel { color: var(--purple); }
 .chapter[data-tone="route"] .chapterLabel { color: var(--green); }
