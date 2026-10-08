@@ -26,6 +26,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { OPEN_SEARCH_EVENT } from "@/components/CommandPalette";
 import { BrandIcon, brandForFile } from "@/components/BrandIcon";
 import { ConceptDetail } from "@/app/concepts/[id]/ConceptDetail";
+import { useDocumentTitle } from "@/lib/use-title";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
@@ -91,6 +92,11 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
   const searchKeys = useSyncExternalStore(noSubscribe, searchKeysNow, () => "");
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const mode = topicId ? "map" : modeFromSection(searchParams.get("section"));
+  // The tab says where you are, like any good app: "Topics · Cell biology — Kelus".
+  const tabSection = topicId ? state.snapshot.concepts.find((item) => item.id === topicId)?.name : MODES.find((item) => item.id === mode)?.label;
+  const tabCourse = state.snapshot.courses[0]?.name;
+  useDocumentTitle(tabSection ? `${tabSection}${tabCourse ? ` · ${tabCourse}` : ""} — Kelus` : null);
+
   useEffect(() => {
     document.body.classList.add("is-kelus-space", "is-booklet-page", "is-course-studio");
     return () => document.body.classList.remove("is-kelus-space", "is-booklet-page", "is-course-studio");

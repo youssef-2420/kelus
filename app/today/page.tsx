@@ -168,9 +168,15 @@ export default function TodayPage() {
   return (
     <Suspense
       fallback={
-        <main id="main" className={`destination-page ${styles.loading}`}>
-          <h1 className="destination-page-title" role="status">Opening Today…</h1>
-          <div className={styles.lines} aria-hidden="true"><span /><span /><span /></div>
+        // The shape of the workspace, drawn quietly while it loads: nothing jumps when the real page arrives.
+        <main id="main" className={styles.loading}>
+          <h1 className="sr-only" role="status">Opening Today…</h1>
+          <div className={styles.rail} aria-hidden="true"><i className={styles.brand} /><i /><i /><i /><i /></div>
+          <div className={styles.stage} aria-hidden="true">
+            <i className={styles.line} />
+            <div className={styles.card}><i className={styles.kicker} /><i className={styles.title} /><i className={styles.text} /><i className={styles.button} /></div>
+            <i className={styles.row} /><i className={styles.row} />
+          </div>
         </main>
       }
     >

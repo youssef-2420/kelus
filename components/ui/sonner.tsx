@@ -8,6 +8,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       theme="light"
+      position="bottom-center"
+      offset={24}
+      gap={8}
       className="toaster group"
       icons={{
         success: (
@@ -28,10 +31,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+          // A dark ink pill at the bottom, like Notion's: it never competes with the page, and Undo stands out.
+          "--normal-bg": "#1b1f19",
+          "--normal-text": "#f6f5f0",
+          "--normal-border": "transparent",
+          "--border-radius": "12px",
         } as CSSProperties
       }
       toastOptions={{

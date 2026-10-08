@@ -194,7 +194,9 @@ test("a leftover built-in sample never names the start screen or receives your n
   await page.getByRole("button", { name: "Remove Built-in Microeconomics example" }).click();
   await page.getByRole("group", { name: /Confirm remove/ }).getByRole("button", { name: "Remove" }).click();
   await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
-  await expect(page.getByText("Microeconomics")).toHaveCount(0);
+  // Nothing on the page names the sample (Next's hidden route announcer may still hold the last tab title).
+  await expect(page.locator("main, header, nav, aside").getByText("Microeconomics")).toHaveCount(0);
+  await expect(page).not.toHaveTitle(/Microeconomics/);
   await page.locator('input[type="file"]').setInputFiles(mdFile);
   await startBuiltPlan(page);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
