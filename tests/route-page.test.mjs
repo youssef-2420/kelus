@@ -62,7 +62,7 @@ test("route explainer lives on its own page", () => {
   assert.match(examples, /Economics|Microeconomics/);
   assert.match(examples, /Computer science/);
   assert.match(examples, /History/);
-  assert.match(story, /Choose an example course/);
+  assert.doesNotMatch(story, /Choose an example course|exampleSwitcher|setExampleIndex/);
   assert.match(story, /Not a predicted grade/);
 });
 
