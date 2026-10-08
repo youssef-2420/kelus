@@ -17,6 +17,7 @@ import { estimatedReadiness } from "@/domain/readiness";
 import { TopicMapPanel } from "@/components/TopicMapPanel";
 import { ProgressView } from "@/components/ProgressView";
 import { AutoStart } from "@/components/AutoStart";
+import { ankiCards } from "@/domain/anki-export";
 import { PackArt, type PackArtName } from "@/components/PackArt";
 import { AppTabBar } from "@/components/AppTabBar";
 import { kelusDuration, kelusEase } from "@/components/motion";
@@ -146,6 +147,14 @@ export function RevisionSurface() {
   // Straight after a block, "Up next" is a topic you have not just answered (the session starts in this order too).
   const route = { ...plannedRoute, allocations: restAware(plannedRoute.allocations, snapshot.events, nowIso, concepts) };
   const days = daysUntilExam(exam, nowIso);
+  const firstTopic = route.allocations.find((item) => item.conceptId !== "mixed-retrieval");
+  const builtPlan = {
+    course: course.name,
+    topics: concepts.length,
+    questions: ankiCards(concepts, snapshot.learningActivities).length,
+    minutes: plannedRoute.allocations.reduce((sum, item) => sum + item.minutes, 0),
+    firstName: concepts.find((concept) => concept.id === firstTopic?.conceptId)?.name ?? "your first topic",
+  };
   const examDatePending = Boolean(exam.datePlaceholder);
   const isSampleCourse = course.id === "course-microeconomics" && exam.id === "exam-microeconomics-final";
   const courseId = course.id;
@@ -357,7 +366,7 @@ export function RevisionSurface() {
                 {hasReadableSource ? <CourseSourceReader key={`${selectedMaterial.id}-${selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1}`} material={selectedMaterial} initialPage={selectedMaterial.id === preferredMaterial?.id ? referencedPage : 1} /> : null}
                 <div className="core-workspace-action workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
                   {!hasReadableSource ? <p className="core-source-inline">This plan has no original PDF beside it. <Link href="/today?section=materials">Add your course PDF</Link> to study from your own pages.</p> : null}
-                  <AutoStart ready={route.allocations.length > 0} onStart={openSession ? resume : begin} />
+                  <AutoStart ready={route.allocations.length > 0} plan={builtPlan} showPlan={!snapshot.events.some((event) => event.kind === "retrieval")} onStart={openSession ? resume : begin} />
                   <AiPrefetch route={route} concepts={concepts} activities={snapshot.learningActivities} />
                   <TodayRoute
                     route={route}

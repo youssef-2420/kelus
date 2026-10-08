@@ -2,13 +2,15 @@
 
 import { topicLevel } from "@/lib/format";
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
 import { HabitStrip } from "@/components/HabitStrip";
-import { habitSummary } from "@/domain/habit";
+import { habitSummary, studyPath } from "@/domain/habit";
 import { NudgeCard } from "@/components/NudgeCard";
 import { InstallCard } from "@/components/InstallCard";
+import { getNudgeSettings, getServerNudgeSettings, nudgesSupported, subscribeNudgeSettings } from "@/lib/nudge";
+import { installState, serverInstallState, subscribeInstall } from "@/lib/install-app";
 import { useReturnVisit, WelcomeBack } from "@/components/WelcomeBack";
 import { ReminderCard } from "@/components/ReminderCard";
 import { ExamDateCard } from "@/components/ExamDateCard";
@@ -68,6 +70,10 @@ export function TodayRoute({
   // The topic this card is about: the open block's current topic when there is one, else the route's first.
   const first = focus ?? route.allocations[0];
   const { visit, nowIso } = useReturnVisit(events, concepts);
+  const nudges = useSyncExternalStore(subscribeNudgeSettings, getNudgeSettings, getServerNudgeSettings);
+  const install = useSyncExternalStore(subscribeInstall, installState, serverInstallState);
+  // Nudges off when Today opened: the card stays for this visit, so turning them on is confirmed where you tapped.
+  const [nudgesOffAtOpen] = useState(() => typeof window !== "undefined" && !getNudgeSettings().on);
   // When the visit opens with a warm-up, that is the one green button; the topic waits one step quieter.
   const warmupFirst = !isSampleCourse && visit.returning && visit.warmup.length > 0;
   // With today's goal done, the next topic is offered as an extra, not pressed on.
@@ -118,20 +124,30 @@ export function TodayRoute({
   const lastTopic = concepts.find((item) => item.id === lastPractice?.conceptId)?.name;
   // The same words the result card used, so one outcome never has three names.
   const lastResult = lastPractice?.outcome === "failure" ? "Needs another attempt" : lastPractice?.outcome === "partial" ? "Partly there" : lastPractice?.outcome === "success" ? "Solid pass" : "Answer saved";
-  const ready = Math.round(Math.max(0, Math.min(1, estimatedReadiness(concepts))) * 100);
-  const aim = Math.round(Math.max(0, Math.min(100, targetPercent)));
+  const installable = install === "prompt" || install === "ios";
+  const path = studyPath({ concepts, nowMs: Date.parse(nowIso), daysToExam: examDatePending ? null : daysToExam });
   const level = (mastery: number, tried: boolean) => (tried ? topicLevel(mastery, 1) : "New");
 
   return (
     <div className={styles.page}>
       {!isSampleCourse ? <WelcomeBack visit={visit} nowIso={nowIso} nextName={firstName} /> : null}
-      <div className={styles.top}>
-        <p><strong>{examTarget}</strong> · {examDatePending ? "no date yet" : `${daysToExam} day${daysToExam === 1 ? "" : "s"} to go`}</p>
-        <div className={styles.ready} role="group" aria-label="Exam readiness">
-          <span>Ready {ready}%</span>
-          <span className={styles.track} aria-hidden="true"><i style={{ width: `${ready}%` }} /></span>
-          {examDatePending ? null : <span>Your target {aim}%</span>}
+      {/* Where the course stands, in steps rather than a percentage: started, solid, and the days still ahead. */}
+      <div className={styles.top} role="group" aria-label="Your path through the course">
+        <p className={styles.path}>
+          <strong>{path.started} of {path.total}</strong> topics started{path.solid ? <> · <strong>{path.solid}</strong> solid</> : null}
+        </p>
+        <div className={styles.dots} aria-hidden="true">
+          {concepts.slice(0, 24).map((concept) => <i key={concept.id} className={concept.retrievalAttempts > 0 ? (concept.mastery >= 0.67 ? styles.dotSolid : styles.dotStarted) : undefined} />)}
         </div>
+        <p className={styles.ahead}>
+          {path.daysLeft === 0
+            ? "Everything is solid. Keep a short review going."
+            : examDatePending || path.readyByMs === null
+              ? `About ${path.daysLeft} study day${path.daysLeft === 1 ? "" : "s"} to cover it all.`
+              : path.aheadOfExam !== null && path.aheadOfExam >= 0
+                ? `At this pace you’re ready by ${new Date(path.readyByMs).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" })}, ${path.aheadOfExam === 0 ? "just in time" : `${path.aheadOfExam} day${path.aheadOfExam === 1 ? "" : "s"} before your exam`}.`
+                : `About ${path.daysLeft} study days left and ${daysToExam} until your exam: a little more each day gets you there.`}
+        </p>
       </div>
 
       <motion.article
@@ -166,8 +182,6 @@ export function TodayRoute({
       </motion.article>
 
       <HabitStrip events={events} concepts={concepts} />
-      {hasPriorEvidence ? <InstallCard /> : null}
-      {hasPriorEvidence ? <NudgeCard /> : null}
 
       {nextStops.length ? (
         <aside className={styles.then} data-block="today-next" aria-label="Planned next topics">
@@ -186,8 +200,14 @@ export function TodayRoute({
         </aside>
       ) : null}
 
-      {examDatePending && onSetExamDate && !isSampleCourse ? <ExamDateCard onSave={onSetExamDate} /> : null}
-      {reminder && !isSampleCourse && !examDatePending ? <ReminderCard {...reminder} nextStopName={firstName} /> : null}
+      {/* One extra at a time, most useful first: the exam date gives the path its finish line, then the nudge that
+          brings you back, then the home-screen app, then the calendar reminder. */}
+      {isSampleCourse ? null
+        : examDatePending && onSetExamDate ? <ExamDateCard onSave={onSetExamDate} />
+        : hasPriorEvidence && (nudgesOffAtOpen || !nudges.on) && nudgesSupported() ? <NudgeCard />
+        : hasPriorEvidence && installable ? <InstallCard />
+        : reminder ? <ReminderCard {...reminder} nextStopName={firstName} />
+        : null}
     </div>
   );
 }

@@ -1,8 +1,9 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ReadingNotes } from "@/components/ReadingNotes";
+import { PackArt } from "@/components/PackArt";
 import styles from "./AutoStart.module.css";
 
 const FLAG = "kelus-start-first-run";
@@ -11,28 +12,63 @@ function flagged() {
   try { return window.sessionStorage.getItem(FLAG) === "1"; } catch { return false; }
 }
 
+function clearFlag() {
+  try { window.sessionStorage.removeItem(FLAG); } catch { /* Harmless. */ }
+}
+
+export type BuiltPlan = { course: string; topics: number; questions: number; minutes: number; firstName: string };
+
 /**
- * Right after the first notes are read, open the first question instead of parking on a plan screen. Once.
- * While it opens, the reading screen stays on top, so Today never flashes up for a moment in between.
+ * Right after new notes are read: what Kelus made from them, in numbers, before the first question. It is the moment
+ * the learner sees the work done for them; one tap starts the first topic, or they can look at the plan first.
  */
-export function AutoStart({ ready, onStart }: { ready: boolean; onStart: () => void }) {
-  const fired = useRef(false);
+export function AutoStart({ ready, plan, showPlan, onStart }: { ready: boolean; plan: BuiltPlan; /** First notes, nothing answered yet: show what was built. Otherwise (a warm-up's Continue) go straight on. */ showPlan: boolean; onStart: () => void }) {
+  const reduce = useReducedMotion() === true;
   // Mounted only after the notes are read (never in the server HTML), so reading storage here is safe.
-  const [covering] = useState(() => typeof window !== "undefined" && flagged());
+  const [open, setOpen] = useState(() => typeof window !== "undefined" && flagged());
+  const fired = useRef(false);
   useEffect(() => {
-    if (fired.current || !ready) return;
-    if (!flagged()) return;
+    if (!open || showPlan || !ready || fired.current) return;
     fired.current = true;
-    try { window.sessionStorage.removeItem(FLAG); } catch { /* Harmless. */ }
+    clearFlag();
     onStart();
     // Once, when Today is ready.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ready]);
-  if (!covering) return null;
-  // At the page body, so no animated parent can shift it or let the tab bar show through.
+  }, [open, showPlan, ready]);
+  if (!open || !ready) return null;
+  // Going straight on: a plain cover for the instant before the question opens, so Today never flashes.
+  if (!showPlan) return createPortal(<div className={styles.cover} />, document.body);
+
+  const rows = [
+    { big: String(plan.topics), label: plan.topics === 1 ? "topic found in your notes" : "topics found in your notes" },
+    { big: String(plan.questions), label: "questions written from your own lines" },
+    { big: `${Math.max(5, Math.round(plan.minutes / 5) * 5)} min`, label: "to go through all of it once" },
+  ];
+  const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] as const } });
+
+  function start() { clearFlag(); onStart(); }
+  function later() { clearFlag(); setOpen(false); }
+
   return createPortal(
     <div className={styles.cover}>
-      <ReadingNotes message="Your first question is ready." />
+      <section className={styles.card} aria-labelledby="built-title">
+        <motion.span {...rise(0)} className={styles.art}><PackArt name="growing" size={140} /></motion.span>
+        <motion.p {...rise(0.05)} className={styles.kicker}>{plan.course}</motion.p>
+        <motion.h1 {...rise(0.1)} id="built-title">Your study plan is ready.</motion.h1>
+        <ul className={styles.rows}>
+          {rows.map((row, index) => (
+            <motion.li key={row.label} {...rise(0.25 + index * 0.12)}>
+              <strong>{row.big}</strong>
+              <span>{row.label}</span>
+            </motion.li>
+          ))}
+        </ul>
+        <motion.p {...rise(0.65)} className={styles.how}>Each question comes from a line in your notes. What you miss comes back tomorrow, until you know it.</motion.p>
+        <motion.div {...rise(0.75)} className={styles.actions}>
+          <button type="button" className="k-btn" onClick={start}>Start with {plan.firstName} <span aria-hidden="true">→</span></button>
+          <button type="button" className={styles.later} onClick={later}>See the plan first</button>
+        </motion.div>
+      </section>
     </div>,
     document.body,
   );

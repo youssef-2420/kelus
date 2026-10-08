@@ -82,3 +82,21 @@ export function habitSummary(input: { events: LearningEvent[]; concepts: Concept
     backTomorrow,
   };
 }
+
+export type StudyPath = { total: number; started: number; solid: number; daysLeft: number; readyByMs: number | null; aheadOfExam: number | null };
+
+/**
+ * How far the course is, in plain steps: topics started, topics solid, and about how many study days remain at the
+ * daily goal. With a real exam date, when that would finish and how it compares with the exam.
+ */
+export function studyPath(input: { concepts: Concept[]; nowMs: number; daysToExam: number | null; goal?: number }): StudyPath {
+  const goal = input.goal ?? DAILY_TOPIC_GOAL;
+  const total = input.concepts.length;
+  const started = input.concepts.filter((concept) => concept.retrievalAttempts > 0).length;
+  const solid = input.concepts.filter((concept) => concept.retrievalAttempts > 0 && concept.mastery >= 0.67).length;
+  // A topic needs about two good passes to become solid; unstarted ones need both, started ones one more.
+  const passes = input.concepts.reduce((sum, concept) => sum + (concept.retrievalAttempts > 0 && concept.mastery >= 0.67 ? 0 : concept.retrievalAttempts > 0 ? 1 : 2), 0);
+  const daysLeft = passes === 0 ? 0 : Math.max(1, Math.ceil(passes / goal));
+  const readyByMs = input.daysToExam === null ? null : input.nowMs + (daysLeft - 1) * 86_400_000;
+  return { total, started, solid, daysLeft, readyByMs, aheadOfExam: input.daysToExam === null ? null : input.daysToExam - daysLeft };
+}

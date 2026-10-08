@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { sectionsNav, closeToToday, startFromFile } from "./helpers";
+import { startBuiltPlan, sectionsNav, closeToToday, startFromFile } from "./helpers";
 
 function biologyPdf() {
   const text = [
@@ -124,7 +124,8 @@ test("Add source opens the file picker and reads the chosen PDF", async ({ page 
   });
   // The sample is never mixed with your own file: it offers to start your own course with it.
   await page.getByRole("dialog", { name: "Start your own course?" }).getByRole("button", { name: "Start my own course" }).click();
-  // Your file starts your own course and its first question opens: no form in between.
+  // Your file starts your own course: Kelus shows what it built, and one tap opens the first question.
+  await startBuiltPlan(page);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
   await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
 });
@@ -135,9 +136,9 @@ test("course workspace fills the viewport without a blank footer band", async ({
   const workspace = page.locator(".kelus-space.is-studio");
   await expect(workspace).toBeVisible();
   expect(await workspace.evaluate((element) => element.getBoundingClientRect().bottom)).toBeGreaterThanOrEqual(899);
-  const pulse = page.getByRole("group", { name: "Exam readiness" });
-  await expect(pulse).toContainText("Your target");
-  await expect(pulse).toContainText("85%");
+  // Where the course stands, as a path: topics started and the days still ahead.
+  const pulse = page.getByRole("group", { name: "Your path through the course" });
+  await expect(pulse).toContainText(/of \d+ topics started/);
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });

@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
-import { closeToToday, gotoStart, startFromFile, startFromPaste, topicNames } from "./helpers";
+import { nudgesAlreadyOn, startBuiltPlan, closeToToday, gotoStart, startFromFile, startFromPaste, topicNames } from "./helpers";
 
 const notion = readFileSync("tests/fixtures/notion-export.md", "utf8");
 const mdFile = { name: "cell-biology.md", mimeType: "text/markdown", buffer: Buffer.from(notion) };
@@ -71,6 +71,9 @@ test("the daily reminder waits for a real exam date, then repeats until it", asy
   await ask.getByLabel("Exam date").fill(exam);
   await ask.getByRole("button", { name: "Save date" }).click();
   await expect(ask).toHaveCount(0);
+  // One card at a time: with nudges already on, the calendar reminder is next.
+  await nudgesAlreadyOn(page);
+  await page.reload();
 
   const card = page.getByRole("region", { name: "Make it a daily habit" });
   await expect(card).toBeVisible();
@@ -102,6 +105,7 @@ test("your own file never mixes into the sample: it starts your own course, and 
   await page.getByRole("dialog", { name: "Start your own course?" }).getByRole("button", { name: "Start my own course" }).click();
 
   // The file starts your own course and opens its first question; none of the sample is left.
+  await startBuiltPlan(page);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
   await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
   await closeToToday(page);
@@ -133,6 +137,7 @@ test("a course with no topics is one screen with one job, and adding notes there
 
   await page.locator('input[type="file"]').setInputFiles(mdFile);
   // The notes are read quietly and the first question opens: no checklist in between.
+  await startBuiltPlan(page);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
   await expect(page.getByLabel(/^Check 1 of \d$/)).toBeVisible();
 });
@@ -146,6 +151,7 @@ test("a file with no real topics says so plainly and returns to the start screen
   await expect(page.getByRole("heading", { name: /^(Start with|Add) your notes\.$/ })).toBeVisible();
   // The failed file is gone, so a good one works straight away.
   await page.locator('input[type="file"]').setInputFiles(mdFile);
+  await startBuiltPlan(page);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
 });
 
@@ -174,7 +180,7 @@ test("a topic that is not real can be removed from the question screen, with a c
 test("the exam date is asked after the first run, not before, and a real date turns on the countdown", async ({ page }) => {
   await startFromFile(page, mdFile);
   await closeToToday(page);
-  await expect(page.getByText(/no date yet/)).toBeVisible();
+  await expect(page.getByText(/study days? to cover it all/)).toBeVisible();
   await expect(page.getByText(/days? to exam/)).toHaveCount(0);
   const ask = page.getByRole("region", { name: "When is your exam?" });
   await ask.getByRole("button", { name: "Save date" }).click();
@@ -182,7 +188,7 @@ test("the exam date is asked after the first run, not before, and a real date tu
   const exam = new Date(Date.now() + 6 * 86_400_000).toISOString().slice(0, 10);
   await ask.getByLabel("Exam date").fill(exam);
   await ask.getByRole("button", { name: "Save date" }).click();
-  await expect(page.getByText(/\d+ days? to go/)).toBeVisible();
+  await expect(page.getByText(/ready by|just in time|study days left/)).toBeVisible();
   await expect(page.getByText(/days? to exam/).first()).toBeVisible();
 });
 
@@ -193,6 +199,7 @@ test("a leftover built-in sample never names the start screen or receives your n
   await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   await expect(page.getByText("Microeconomics")).toHaveCount(0);
   await page.locator('input[type="file"]').setInputFiles(mdFile);
+  await startBuiltPlan(page);
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
   await closeToToday(page);
   // It is a new course made from the file, not the sample with notes added.
