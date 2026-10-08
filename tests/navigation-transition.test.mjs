@@ -44,7 +44,7 @@ test("map to concept navigation is hierarchical with shared titles", async () =>
   assert.match(knowledgeMap, /ConceptTitleTransition/);
   assert.doesNotMatch(inspector, /prefetch=\{true\}/);
   assert.match(inspector, /ConceptTitleTransition/);
-  assert.match(detail, /transitionTypes=\{\["nav-back"\]\}/);
+  assert.doesNotMatch(detail, /prefetch=\{true\}/);
   assert.match(detail, /ConceptTitleTransition/);
   assert.match(css, /prefers-reduced-motion:\s*reduce/);
   assert.match(css, /::view-transition-group\(site-header\)/);
