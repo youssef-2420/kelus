@@ -391,6 +391,19 @@ export function renameCourse(courseId: string, name: string, source: "notes" | "
   persistDemoState({ ...state, snapshot: { ...state.snapshot, courses: state.snapshot.courses.map((course) => (course.id === courseId ? { ...course, name: clean, nameSource: source } : course)) } });
 }
 
+/** Renames a topic everywhere it is shown. From the latest saved state, like renameCourse. */
+export function renameConcept(conceptId: string, name: string) {
+  const state = getDemoSnapshot();
+  const clean = name.trim().slice(0, 90);
+  if (!clean) return;
+  persistDemoState({ ...state, snapshot: refreshCaches({ ...state.snapshot, concepts: state.snapshot.concepts.map((concept) => (concept.id === conceptId ? { ...concept, name: clean } : concept)) }, state.nowIso) });
+}
+
+/** Puts back a state saved a moment ago: the undo after removing something. */
+export function restoreDemoState(state: DemoState) {
+  persistDemoState(state, true);
+}
+
 export function setExamDate(state: DemoState, date: string, targetPercent?: number) {
   const when = new Date(`${date}T12:00:00.000Z`);
   if (Number.isNaN(when.getTime()) || when.getTime() <= Date.parse(state.nowIso)) throw new Error("Choose an exam date in the future.");

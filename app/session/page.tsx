@@ -149,7 +149,10 @@ function SessionBody() {
   const [runKey, setRunKey] = useState(0);
   const total = session?.plannedConceptIds.length ?? 0;
   const focusStep = useCallback((node: HTMLElement | null) => {
-    if (node && phase !== "retrieve" && phase !== "apply") node.focus();
+    if (!node || (["retrieve", "apply"] as Phase[]).includes(phase)) return;
+    // Where you'd type, if the screen has a field (a gap, an explanation), so you can just start typing; else the screen.
+    const field = node.querySelector<HTMLElement>("input:not([disabled]):not([type=hidden]), textarea:not([disabled])");
+    (field ?? node).focus({ preventScroll: true });
   }, [phase]);
 
   useEffect(() => {
@@ -439,7 +442,7 @@ function SessionBody() {
               ...(quickMode ? [{
                 label: "Remove this topic",
                 danger: true,
-                confirm: { question: `Remove “${concept.name}” for good? It is not a real topic.`, yes: "Yes, remove" },
+                // No "are you sure": it can be undone from the note that appears.
                 onSelect: () => { abandon(session.id); removeTopic(concept.id); router.push("/today"); },
               }] : []),
               {

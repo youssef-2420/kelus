@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useAuth } from "@/components/AuthProvider";
+import { toast } from "sonner";
 import {
   finishSession,
   abandonSession,
@@ -29,6 +30,8 @@ import {
   type DemoState,
   mergeMissedLines,
   renameCourse,
+  renameConcept,
+  restoreDemoState,
 } from "@/lib/demo-store";
 import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
@@ -63,6 +66,7 @@ type Store = {
   removeTopic: (conceptId: string) => void;
   setExamDate: (date: string, targetPercent?: number) => void;
   renameCourse: (courseId: string, name: string, source?: "notes" | "repair" | "user") => void;
+  renameTopic: (conceptId: string, name: string) => void;
 };
 
 const StoreContext = createContext<Store | null>(null);
@@ -224,7 +228,14 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       removeMaterialLearning(state, materialId);
     },
     removeTopic(conceptId) {
+      // Removing is instant, and undoable for a few seconds, as in Notion: no "are you sure" first.
+      const before = getDemoSnapshot();
+      const name = before.snapshot.concepts.find((concept) => concept.id === conceptId)?.name ?? "Topic";
       removeConcept(state, conceptId);
+      toast(`Removed “${name}”`, { action: { label: "Undo", onClick: () => restoreDemoState(before) }, duration: 6000 });
+    },
+    renameTopic(conceptId, name) {
+      renameConcept(conceptId, name);
     },
     setExamDate(date, targetPercent) {
       setExamDate(state, date, targetPercent);
