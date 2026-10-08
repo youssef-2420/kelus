@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
-import { HabitStrip } from "@/components/HabitStrip";
 import { habitSummary, studyPath } from "@/domain/habit";
 import { NudgeCard } from "@/components/NudgeCard";
 import { InstallCard } from "@/components/InstallCard";
@@ -17,15 +16,8 @@ import { ExamDateCard } from "@/components/ExamDateCard";
 import { estimatedReadiness } from "@/domain/readiness";
 import { describeRouteChoice } from "@/lib/today-reason";
 import { trackEvent } from "@/lib/analytics";
+import { HabitStrip } from "@/components/HabitStrip";
 import styles from "./TodayRoute.module.css";
-
-function citeWhisper(source: { label: string; locator?: string | null } | undefined) {
-  if (!source) return null;
-  const locator = source.locator?.trim();
-  // "Section 2" of pasted notes says nothing; a PDF page number does.
-  if (!locator || /not your upload/i.test(locator) || /^Section\b/.test(locator)) return source.label;
-  return `${source.label} · ${locator}`;
-}
 
 const pressSpring = { type: "spring", bounce: 0, duration: 0.28 } as const;
 
@@ -110,9 +102,7 @@ export function TodayRoute({
 
   const firstConcept = concepts.find((item) => item.id === first.conceptId);
   const firstActivity = activities.find((item) => item.conceptId === first.conceptId);
-  const firstSource = firstActivity?.sourceReferences[0];
   const firstName = firstConcept?.name ?? "A mix of earlier topics";
-  const whisper = citeWhisper(firstSource);
   const decision = describeRouteChoice(first, firstConcept, { examDateKnown: !examDatePending });
   const nextStops = route.allocations.filter((allocation) => allocation.conceptId !== first.conceptId).slice(0, 3).map((allocation) => {
     const concept = concepts.find((item) => item.id === allocation.conceptId);
@@ -135,18 +125,16 @@ export function TodayRoute({
       <div className={styles.top} role="group" aria-label="Your path through the course">
         <p className={styles.path}>
           <strong>{path.started} of {path.total}</strong> topics started{path.solid ? <> · <strong>{path.solid}</strong> solid</> : null}
-        </p>
-        <div className={styles.dots} aria-hidden="true">
-          {concepts.slice(0, 24).map((concept) => <i key={concept.id} className={concept.retrievalAttempts > 0 ? (concept.mastery >= 0.67 ? styles.dotSolid : styles.dotStarted) : undefined} />)}
-        </div>
-        <p className={styles.ahead}>
-          {path.daysLeft === 0
-            ? "Everything is solid. Keep a short review going."
-            : examDatePending || path.readyByMs === null
-              ? `About ${path.daysLeft} study day${path.daysLeft === 1 ? "" : "s"} to cover it all.`
-              : path.aheadOfExam !== null && path.aheadOfExam >= 0
-                ? `At this pace you’re ready by ${new Date(path.readyByMs).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" })}, ${path.aheadOfExam === 0 ? "just in time" : `${path.aheadOfExam} day${path.aheadOfExam === 1 ? "" : "s"} before your exam`}.`
-                : `About ${path.daysLeft} study days left and ${daysToExam} until your exam: a little more each day gets you there.`}
+          <span className={styles.ahead}>
+            {" · "}
+            {path.daysLeft === 0
+              ? "everything is solid, keep a short review going."
+              : examDatePending || path.readyByMs === null
+                ? `about ${path.daysLeft} study day${path.daysLeft === 1 ? "" : "s"} to cover it all.`
+                : path.aheadOfExam !== null && path.aheadOfExam >= 0
+                  ? `ready by ${new Date(path.readyByMs).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" })} at this pace, ${path.aheadOfExam === 0 ? "just in time" : `${path.aheadOfExam} day${path.aheadOfExam === 1 ? "" : "s"} before your exam`}.`
+                  : `about ${path.daysLeft} study days left and ${daysToExam} until your exam.`}
+          </span>
         </p>
       </div>
 
@@ -156,7 +144,7 @@ export function TodayRoute({
         aria-labelledby="today-title"
         initial={reduceMotion ? false : { opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
+        transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       >
         <p className={styles.kicker} data-block="today-page-folio">{goalDone ? `Today’s goal is done · one more if you like, about ${first.minutes} minutes` : `Up next · about ${first.minutes} minutes`}</p>
         <h1 id="today-title" className={styles.title}>{firstName}</h1>
@@ -176,12 +164,12 @@ export function TodayRoute({
           >
             {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
           </motion.button>
-          {whisper ? <p className={styles.source}>From {whisper}</p> : null}
         </div>
         {lastPractice && lastTopic ? <p className={styles.source}>Last answer: {lastTopic} · {lastResult}.</p> : null}
       </motion.article>
 
-      <HabitStrip events={events} concepts={concepts} />
+      {/* The streak is what brings you back tomorrow; the full picture is one click away in Progress. */}
+      <HabitStrip events={events} concepts={concepts} link={false} />
 
       {nextStops.length ? (
         <aside className={styles.then} data-block="today-next" aria-label="Planned next topics">

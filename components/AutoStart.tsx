@@ -44,7 +44,7 @@ export function AutoStart({ ready, plan, showPlan, onStart }: { ready: boolean; 
     { big: String(plan.questions), label: "questions written from your own lines" },
     { big: `${Math.max(5, Math.round(plan.minutes / 5) * 5)} min`, label: "to go through all of it once" },
   ];
-  const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] as const } });
+  const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.22, delay, ease: [0.22, 1, 0.36, 1] as const } });
 
   function start() { clearFlag(); onStart(); }
   function later() { clearFlag(); setOpen(false); }
@@ -53,18 +53,18 @@ export function AutoStart({ ready, plan, showPlan, onStart }: { ready: boolean; 
     <div className={styles.cover}>
       <section className={styles.card} aria-labelledby="built-title">
         <motion.span {...rise(0)} className={styles.art}><PackArt name="growing" size={140} /></motion.span>
-        <motion.p {...rise(0.05)} className={styles.kicker}>{plan.course}</motion.p>
-        <motion.h1 {...rise(0.1)} id="built-title">Your study plan is ready.</motion.h1>
+        <motion.p {...rise(0.03)} className={styles.kicker}>{plan.course}</motion.p>
+        <motion.h1 {...rise(0.06)} id="built-title">Your study plan is ready.</motion.h1>
         <ul className={styles.rows}>
           {rows.map((row, index) => (
-            <motion.li key={row.label} {...rise(0.25 + index * 0.12)}>
+            <motion.li key={row.label} {...rise(0.09 + index * 0.04)}>
               <strong>{row.big}</strong>
               <span>{row.label}</span>
             </motion.li>
           ))}
         </ul>
-        <motion.p {...rise(0.65)} className={styles.how}>Each question comes from a line in your notes. What you miss comes back tomorrow, until you know it.</motion.p>
-        <motion.div {...rise(0.75)} className={styles.actions}>
+        <motion.p {...rise(0.18)} className={styles.how}>Each question comes from a line in your notes. What you miss comes back tomorrow, until you know it.</motion.p>
+        <motion.div {...rise(0.2)} className={styles.actions}>
           <button type="button" className="k-btn" onClick={start}>Start with {plan.firstName} <span aria-hidden="true">→</span></button>
           <button type="button" className={styles.later} onClick={later}>See the plan first</button>
         </motion.div>

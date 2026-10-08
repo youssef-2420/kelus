@@ -55,7 +55,7 @@
   border-radius: 5px;
   color: var(--color-slate);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 
 .list {
@@ -68,7 +68,7 @@
 .group {
   margin: 8px 10px 4px;
   color: var(--color-slate);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -96,7 +96,7 @@
 .detail {
   flex: none;
   color: var(--color-slate);
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
 }
 
 .enter {
@@ -111,5 +111,5 @@
 .empty {
   padding: 18px 10px;
   color: var(--color-slate);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }

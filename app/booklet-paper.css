@@ -41,13 +41,14 @@
 
   --border-hairline: #d5d9d0;
   --ease-booklet: cubic-bezier(0.22, 1, 0.36, 1);
-  --dur-booklet: 200ms;
-  --dur-instant: 80ms;
-  --dur-micro: 100ms;
-  --dur-fast: 150ms;
-  --dur-normal: 200ms;
-  --dur-moderate: 300ms;
-  --dur-slow: 400ms;
+  /* Two speeds only: 120ms for feedback (press, hover, focus), 220ms for anything that moves or appears. */
+  --dur-booklet: 220ms;
+  --dur-instant: 120ms;
+  --dur-micro: 120ms;
+  --dur-fast: 120ms;
+  --dur-normal: 220ms;
+  --dur-moderate: 220ms;
+  --dur-slow: 220ms;
 }
 
 body.is-booklet-system {
@@ -173,8 +174,8 @@ body.is-booklet-system .kicker {
   color: rgba(0, 0, 0, 0.64);
   font-size: var(--text-caption);
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* ── Hero: centered paper stack + product mock ── */

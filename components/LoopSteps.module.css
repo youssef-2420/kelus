@@ -46,7 +46,7 @@
 
 .step strong {
   font-family: var(--font-display);
-  font-size: 1.0625rem;
+  font-size: 1.125rem;
   font-weight: 600;
   color: var(--color-midnight-ink);
 }

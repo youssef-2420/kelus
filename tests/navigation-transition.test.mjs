@@ -145,7 +145,7 @@ test("the index is a paper TOC; uploaded concepts have a static-exportable detai
   assert.match(inspector, /\/concept\?id=\$\{encodeURIComponent\(concept\.id\)\}/);
   assert.match(panel, /\/concept\?id=\$\{encodeURIComponent\(concept\.id\)\}/);
   assert.match(legacy, /<ConceptDetail \/>/);
-  assert.match(detail, /\/concept\?id=/);
+  assert.match(detail, /Study this topic/);
 });
 
 test("ledger design keeps the mobile homepage in one column", async () => {

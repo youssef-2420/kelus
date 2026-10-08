@@ -506,7 +506,8 @@ export function recordRetrieval(state: DemoState, input: {
   return next;
 }
 
-export function startSession(state: DemoState, courseId: string, examId: string) {
+/** `firstConceptId` opens the block on that topic (from its own page); the rest follow in the route's order. */
+export function startSession(state: DemoState, courseId: string, examId: string, firstConceptId?: string) {
   const exam = state.snapshot.exams.find((item) => item.id === examId);
   if (!exam) throw new Error("Active exam missing.");
   const route = generateRoute({
@@ -518,6 +519,10 @@ export function startSession(state: DemoState, courseId: string, examId: string)
   });
   // Topics answered in the last few hours rest behind the others: the same order Today shows.
   const plannedConceptIds = restAware(route.allocations, state.snapshot.events, state.nowIso, state.snapshot.concepts.filter((concept) => concept.courseId === courseId)).map((item) => item.conceptId).filter((id): id is string => id !== "mixed-retrieval");
+  if (firstConceptId && state.snapshot.concepts.some((concept) => concept.id === firstConceptId && concept.courseId === courseId)) {
+    const rest = plannedConceptIds.filter((id) => id !== firstConceptId);
+    plannedConceptIds.splice(0, plannedConceptIds.length, firstConceptId, ...rest);
+  }
   const abandoned = state.snapshot.sessions.map((item) =>
     item.courseId === courseId && item.status === "in_progress"
       ? { ...item, status: "abandoned" as const, endedAt: state.nowIso }

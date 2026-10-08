@@ -48,7 +48,7 @@ export function QuickResult({
   const verdict = VERDICT[outcome];
   // The verdict is readable at once; the rest follows in a short stagger, all settled within about half a second.
   const pop = (index: number) => (reduce ? {} : { initial: { opacity: 0, scale: 0.4 }, animate: { opacity: 1, scale: 1 }, transition: { duration: 0.26, delay: 0.18 + index * 0.08, ease } });
-  const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3, delay: delay * 0.45, ease } });
+  const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.22, delay: delay * 0.3, ease } });
   const goalMet = goalDone >= goal;
 
   return (

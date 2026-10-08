@@ -18,14 +18,14 @@ body.is-course-studio .surface-map .topic-cards .index-toc-row {
 
 body.is-course-studio .surface-map .topic-cards .index-toc-name {
   font-family: var(--font-display);
-  font-size: 1.1875rem;
+  font-size: 1.125rem;
   font-weight: 500;
   line-height: 1.2;
   color: var(--color-midnight-ink);
 }
 
 body.is-course-studio .surface-map .topic-cards .is-start .index-toc-name {
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   color: var(--color-midnight-ink);
 }
 

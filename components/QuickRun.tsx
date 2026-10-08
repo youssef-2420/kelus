@@ -142,7 +142,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
                       onClick={() => answer(index)}
                       initial={reduce ? false : { opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={reduce ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.32, delay: 0.04 + index * 0.04 }}
+                      transition={reduce ? { duration: 0 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1], delay: 0.03 + index * 0.03 }}
                       whileTap={reduce || answered ? undefined : { scale: 0.985 }}
                     >
                       {/* The number becomes the verdict in place, so the eye does not have to travel. */}

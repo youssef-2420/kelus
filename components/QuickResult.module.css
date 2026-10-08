@@ -15,11 +15,11 @@
 .facts { display: flex; flex-wrap: wrap; gap: 12px 28px; padding: 14px 0; border-block: 1px solid var(--color-frost); }
 .fact { display: grid; gap: 4px; align-content: start; }
 .label { font-size: var(--text-caption); font-weight: 600; letter-spacing: 0.02em; color: var(--color-smoke); }
-.fact strong { font-family: var(--font-display); font-size: 1.25rem; font-weight: 500; color: var(--color-midnight-ink); }
+.fact strong { font-family: var(--font-display); font-size: 1.375rem; font-weight: 500; color: var(--color-midnight-ink); }
 .fact small { font-family: inherit; font-size: var(--text-body-sm); font-weight: 400; color: var(--color-smoke); }
 
 .pips, .goalDots { display: inline-flex; gap: 8px; }
-.pips i, .goalDots i { display: block; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--color-frost); background: var(--color-pure-white); transition: background-color 200ms, border-color 200ms; }
+.pips i, .goalDots i { display: block; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--color-frost); background: var(--color-pure-white); transition: background-color 220ms, border-color 220ms; }
 .pips i.on { border-color: var(--k-green); background: var(--k-green); }
 /* Today's goal is a habit, so it takes the marigold of things that bring you back. */
 .goalDots i.on { border-color: var(--k-marigold-edge); background: var(--k-marigold); }
@@ -33,7 +33,7 @@
 .route { margin: 0; font-size: var(--text-body-sm); line-height: 1.5; color: var(--color-smoke); }
 
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 4px; }
-.primary, .secondary { min-height: 52px; padding: 0 24px; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer; transition: transform 80ms, background-color 120ms; }
+.primary, .secondary { min-height: 52px; padding: 0 24px; border-radius: 8px; font: inherit; font-weight: 600; cursor: pointer; transition: transform 120ms, background-color 120ms; }
 .primary { border: 0; background: var(--color-kelus); color: var(--color-pure-white); }
 .primary:hover { background: var(--color-kelus-hover); }
 .secondary { border: 1px solid var(--color-midnight-ink); background: var(--color-pure-white); color: var(--color-midnight-ink); }

@@ -101,6 +101,14 @@ function SessionBody() {
   const [sourcePanel, setSourcePanel] = useState<SourcePanelState | null>(null);
   const [openingSource, setOpeningSource] = useState(false);
   const [sourceRevealed, setSourceRevealed] = useState(false);
+  // The full notes slide in from the side when asked for; the page under the question never rearranges.
+  const [notesOpen, setNotesOpen] = useState(false);
+  useEffect(() => {
+    if (!notesOpen) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") setNotesOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [notesOpen]);
   const sourceRequest = useRef(0);
   const sourceCloseRef = useRef<HTMLButtonElement>(null);
   const sourceOpenerRef = useRef<HTMLElement | null>(null);
@@ -260,6 +268,7 @@ function SessionBody() {
     setRouteBeforeAllocations([]);
     setHelpMode(null);
     setSourceRevealed(false);
+    setNotesOpen(false);
     setPhase("learn");
     startedAt.current = 0;
     responseTimeMs.current = 0;
@@ -295,6 +304,7 @@ function SessionBody() {
       setEvaluation(null);
       setHelpMode(null);
       setSourceRevealed(false);
+    setNotesOpen(false);
       setRunKey((value) => value + 1);
       setPhase("learn");
       startedAt.current = performance.now();
@@ -305,6 +315,7 @@ function SessionBody() {
     setEvaluation(null);
     setHelpMode(null);
     setSourceRevealed(false);
+    setNotesOpen(false);
     setPhase("retrieve");
     startedAt.current = performance.now();
   }
@@ -429,16 +440,20 @@ function SessionBody() {
   }
 
   return (
-    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}${recallWithoutLooking && hasReadableSource ? " is-recalling" : ""}${quickMode && (recallWithoutLooking || phase === "result") ? " is-focus" : ""}`}>
+    <main id="main" data-phase={phase} className={`study-shell${sourcePanel ? " is-source-open" : ""}${hasReadableSource ? "" : " is-source-missing"}${recallWithoutLooking && hasReadableSource ? " is-recalling" : ""}${quickMode ? " is-focus" : ""}${quickMode && notesOpen && hasReadableSource ? " is-notes-open" : ""}`}>
       <div className="study-context is-folio">
         <span className="study-context-title">
           <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
-          <small><b>{concept.name}</b>{total > 1 ? ` · topic ${index + 1} of ${total}` : ""}</small>
+          {/* In a run the topic is named above the question, where the eye already is, not squeezed beside the mark. */}
+          {quickMode ? null : <small><b>{concept.name}</b>{total > 1 ? ` · topic ${index + 1} of ${total}` : ""}</small>}
         </span>
         <div className="study-folio-actions">
           <SessionMenu
             items={[
-              ...(quickMode && recallWithoutLooking && hasReadableSource ? [{ label: "Peek at the notes", onSelect: () => setSourceRevealed(true) }] : []),
+              ...(quickMode && hasReadableSource ? [{
+                label: notesOpen ? "Hide your notes" : recallWithoutLooking ? "Peek at the notes" : "See your notes",
+                onSelect: () => { setSourceRevealed(true); setNotesOpen((open) => !open); },
+              }] : []),
               ...(quickMode ? [{
                 label: "Remove this topic",
                 danger: true,
@@ -475,7 +490,7 @@ function SessionBody() {
         ) : null;
         // One outline, never two: in a run it takes the side column's place when that column shows (notes open),
         // and floats in the empty margin when the focus layout hides the column.
-        const focusLayout = quickMode && (recallWithoutLooking || phase === "result");
+        const focusLayout = quickMode;
         return (
           <>
             {outline && focusLayout ? <div className="block-outline-float">{outline}</div> : null}
@@ -496,7 +511,8 @@ function SessionBody() {
           </>
         );
       })()}
-      {hasReadableSource ? <div className="session-workspace-source">
+      {hasReadableSource ? <div className="session-workspace-source" aria-label="Your notes">
+        {quickMode ? <button type="button" className="session-notes-close" onClick={() => setNotesOpen(false)} aria-label="Close your notes">Close notes <span aria-hidden="true">→</span></button> : null}
         <CourseSourceReader key={`${currentMaterial.id}-${sourcePage}`} material={currentMaterial} initialPage={sourcePage} concealed={recallWithoutLooking} onShowSource={() => setSourceRevealed(true)} />
       </div> : null}
       <div className="study-loop-track">
@@ -585,7 +601,7 @@ function SessionBody() {
             initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.99, y: 8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={reduceMotion ? { opacity: 0, transition: { duration: 0.08 } } : { opacity: 0, y: -6, transition: { duration: 0.14, ease: kelusEase } }}
-            transition={reduceMotion ? { duration: 0.12 } : { duration: 0.28, ease: kelusEase }}
+            transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: kelusEase }}
           >
             <p className="study-count sr-only" aria-live="polite">Marked</p>
             {lastOutcome && !quickMode ? <MarkStamp outcome={lastOutcome} /> : null}
@@ -693,8 +709,8 @@ function SessionBody() {
               reduceMotion
                 ? { opacity: 0 }
                 : phase === "learn" || phase === "retrieve" || phase === "apply"
-                  ? { opacity: 0, y: 12 }
-                  : { opacity: 0, x: 28 }
+                  ? { opacity: 0, y: 6 }
+                  : { opacity: 0, x: 12 }
             }
             animate={{ opacity: 1, x: 0, y: 0 }}
             // Leaving is a quick fade: the next screen waits for it, so a long exit is dead time.
@@ -705,10 +721,13 @@ function SessionBody() {
                   ? { opacity: 0, y: -6, transition: { duration: 0.14, ease: kelusEase } }
                   : { opacity: 0, x: -12, transition: { duration: 0.14, ease: kelusEase } }
             }
-            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.45 }}
+            transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: kelusEase }}
           >
             <p className="study-count sr-only" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
+            {phase === "learn" && quickMode && run ? (
+              <p className="study-topic-kicker"><b>{concept.name}</b>{total > 1 ? <span>Topic {index + 1} of {total}</span> : null}</p>
+            ) : null}
             {phase === "learn" && quickMode && run ? (
               <QuickRun key={`${concept.id}-${runKey}`} run={run} onRevealSource={() => setSourceRevealed(true)} onFinish={finishQuick} />
             ) : null}

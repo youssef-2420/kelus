@@ -8,7 +8,7 @@ test("a whole block runs from the first question to the end with no stop between
   await startFromPaste(page, notes);
   const seen: string[] = [];
   for (let topic = 0; topic < 6; topic++) {
-    seen.push(await page.locator(".study-context-title small b").innerText());
+    seen.push(await page.locator(".study-topic-kicker b").innerText());
     for (let step = 0; step < 6; step++) {
       await page.locator('#run-explain, button:has-text("I’m not sure")').first().waitFor();
       if (await page.locator("#run-explain").count()) break;

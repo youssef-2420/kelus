@@ -43,8 +43,8 @@
 .is-booklet-product .course-workspace-identity span {
   color: #9b9a97;
   font-size: 10px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .is-booklet-product .course-workspace-identity strong {
@@ -416,7 +416,7 @@
 .destination-page.is-booklet-product .setup-sample p {
   margin: 0;
   color: #37352f;
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.45;
 }
 
@@ -656,10 +656,10 @@
 
 .how-page.is-booklet-product .how-principle dt {
   color: #787774;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .how-page.is-booklet-product .how-principle dd {
@@ -720,8 +720,14 @@
 .is-booklet-system .is-booklet-product .cta { background: var(--color-booklet-blue); border-color: var(--color-booklet-blue); min-height: 44px; }
 .is-booklet-system .site-header-action:hover,
 .is-booklet-system .cta:hover { background: #185536; border-color: #185536; }
-.is-booklet-system :is(a, button, summary, input, textarea, select):focus-visible { outline: 2px solid var(--color-booklet-blue); outline-offset: 3px; }
-.is-booklet-system :is(button, .cta) { transition: background-color 180ms ease, transform 180ms ease; }
+.is-booklet-system :is(a, button, summary, input[type="checkbox"], input[type="radio"]):focus-visible { outline: 2px solid var(--color-booklet-blue); outline-offset: 3px; }
+/* A text field shows focus with its own edge and a soft wash: one ring, never an outline floating outside the border. */
+.is-booklet-system :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), textarea, select):focus-visible {
+  outline: none !important;
+  border-color: var(--color-kelus) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-kelus) 16%, transparent) !important;
+}
+.is-booklet-system :is(button, .cta) { transition: background-color 120ms cubic-bezier(0.22, 1, 0.36, 1), transform 120ms cubic-bezier(0.22, 1, 0.36, 1); }
 .is-booklet-system button:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 .site-account-menu { position: relative; margin-left: auto; }
 .site-account-menu summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none; font-size: 14px; }
@@ -900,7 +906,7 @@
 .destination-page.is-booklet-product .time-choices { gap: 8px; }
 .is-booklet-product .material-ingest { padding: 24px; border: 1px solid var(--color-frost); border-radius: 12px; background: white; }
 .is-booklet-product .material-ingest-title { margin-bottom: 16px; }
-.is-booklet-product .material-ingest-title h2 { font-size: 24px; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; }
+.is-booklet-product .material-ingest-title h2 { font-size: 1.375rem; font-weight: 600; line-height: 1.25; letter-spacing: -.02em; }
 .is-booklet-product .material-role-field { margin-bottom: 20px; }
 @media (max-width: 900px) {
   .is-booklet-product .course-workspace-rail { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; }
@@ -917,6 +923,6 @@
   .is-booklet-system .home .folio-close.home-close { padding: 56px 16px 48px; }
   .is-booklet-system .home .site-footer { padding-inline: 16px; }
   .is-booklet-product .today-brief.is-revision-studio { padding: 16px; }
-  .is-booklet-product .today-brief.is-revision-studio h1 { font-size: 30px; }
+  .is-booklet-product .today-brief.is-revision-studio h1 { font-size: 1.75rem; }
   .is-booklet-product .today-workbench.is-revision-studio .today-lead-main { margin-top: 12px; gap: 12px; }
 }

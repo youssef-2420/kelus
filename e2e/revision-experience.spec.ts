@@ -67,8 +67,9 @@ test("a student can follow the study plan into topics and open one", async ({ pa
   await page.locator(".index-toc a").first().click();
   await expect(page).toHaveURL(/\/concept\/?\?id=c-elasticity/);
   await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Needs another pass" })).toBeVisible();
-  await expect(page.getByRole("navigation", { name: "Topic navigation" }).getByRole("link", { name: /Topics/ })).toBeVisible();
+  await expect(page.getByTestId("topic-standing")).toContainText("Needs work");
+  await expect(page.getByRole("button", { name: /Study it again/ })).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Where you are" }).getByRole("link")).toBeVisible();
 });
 
 test("the course workspace stays legible across its sections and returns home", async ({ page }) => {

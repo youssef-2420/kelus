@@ -48,7 +48,7 @@
 
 .rows li {
   display: grid;
-  grid-template-columns: 5.5rem minmax(0, 1fr);
+  grid-template-columns: 4.75rem minmax(0, 1fr);
   align-items: baseline;
   gap: 12px;
   padding: 12px 16px;
@@ -59,14 +59,14 @@
 
 .rows strong {
   font-family: var(--font-display);
-  font-size: 1.625rem;
+  font-size: 1.75rem;
   font-weight: 500;
   color: var(--k-green, #1f6b45);
   font-variant-numeric: tabular-nums;
 }
 
 .rows li:nth-child(2) strong { color: var(--k-iris, #6a4fa3); }
-.rows li:nth-child(3) strong { color: var(--k-marigold-text, #8d5410); font-size: 1.25rem; }
+.rows li:nth-child(3) strong { color: var(--k-marigold-text, #8d5410); font-size: 1.375rem; }
 
 .rows span {
   color: var(--color-midnight-ink);
@@ -90,7 +90,10 @@
   min-height: 44px;
   border: 0;
   background: none;
-  color: var(--color-slate);
+  color: var(--color-midnight-ink);
+  text-decoration: underline;
+  text-decoration-color: rgba(18, 22, 15, 0.25);
+  text-underline-offset: 3px;
   font: inherit;
   font-size: var(--text-body-sm);
   cursor: pointer;

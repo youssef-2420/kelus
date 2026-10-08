@@ -48,6 +48,8 @@ export function CommandPalette() {
     if (!enabled) return;
     const show = () => { returnFocus.current = document.activeElement as HTMLElement | null; setQuery(""); setActive(0); setOpen(true); };
     const onKey = (event: KeyboardEvent) => {
+      // Escape closes it wherever focus is, even in the instant before the field has taken it.
+      if (event.key === "Escape" && open) { event.preventDefault(); setOpen(false); return; }
       if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey) && !event.altKey && !event.shiftKey) {
         event.preventDefault();
         if (open) setOpen(false); else show();

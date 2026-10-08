@@ -177,6 +177,24 @@ function pickGapWord(sentence: string, name: string, page: string, relaxed = fal
   return best ? (best as { word: string }).word : null;
 }
 
+const GLUE = new Set(["a", "an", "the", "of", "to", "in", "on", "at", "by", "for", "with", "from", "and", "or", "but", "is", "are", "was", "were", "be", "been", "has", "have", "had", "it", "its", "this", "that", "these", "those", "as", "into", "not", "no", "can", "will", "when", "which", "who", "than", "so", "if", "their", "they", "each", "does", "do", "because", "while", "where", "how", "may", "must", "should"]);
+
+/**
+ * A line a student can fill in: it starts like a sentence and reads like one, with the small words that join a
+ * sentence together. Headings and lists run together by a scan ("route time fight operation flight monitoring and
+ * crew future fights") start mid-thought and have almost none, so no gap is made from them.
+ */
+export function readsAsSentence(sentence: string) {
+  const text = sentence.trim().replace(/^[“"‘'(]+/, "");
+  if (!/^[\p{Lu}\d]/u.test(text)) return false;
+  const all = text.match(/[\p{L}']+/gu) ?? [];
+  // Headings run together: most words after the first are capitalised ("Route Planning Flight Monitoring …").
+  const rest = all.slice(1).filter((word) => word.length > 3);
+  if (rest.length >= 4 && rest.filter((word) => /^\p{Lu}/u.test(word)).length / rest.length >= 0.5) return false;
+  // A longer line with not one joining word is a list, not a sentence.
+  return all.length <= 10 || all.some((word) => GLUE.has(word.toLocaleLowerCase()));
+}
+
 /**
  * Hides the topic name so the question does not give itself away. Only when the topic is the subject at the
  * start of the sentence and appears nowhere else: replacing it inside a longer phrase ("Price elasticity of
@@ -283,7 +301,7 @@ export function buildPractice(input: {
   for (const sentence of sentences.slice(0, 10)) {
     if (gapSentences.has(sentence)) continue;
     if (sentence === definition && sentences.length > 1 && usedDefinitionForIdea) continue;
-    if (words(sentence).length < 7 || sentence.length > 220) continue;
+    if (words(sentence).length < 7 || sentence.length > 220 || !readsAsSentence(sentence)) continue;
     const pair = termPairs(sentence)[0];
     const gapSource = pair && sentence.includes(pair.meaning) ? pair.meaning : sentence;
     const gap = pickGapWord(gapSource, pair ? `${name} ${pair.term}` : name, excerpt, relaxed);

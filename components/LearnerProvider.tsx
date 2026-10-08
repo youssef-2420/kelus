@@ -42,7 +42,7 @@ import { flushMaterialSyncQueue, initializeMaterialSync, writeRemoteMaterialStat
 
 type Store = {
   state: DemoState;
-  start: (courseId: string, examId: string) => string;
+  start: (courseId: string, examId: string, firstConceptId?: string) => string;
   abandon: (sessionId: string) => void;
   submit: (input: {
     conceptId: string;
@@ -209,8 +209,8 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
   }, [activeUserId, materialClaim]);
   const store = useMemo<Store>(() => ({
     state,
-    start(courseId, examId) {
-      return startSession(state, courseId, examId).session.id;
+    start(courseId, examId, firstConceptId) {
+      return startSession(state, courseId, examId, firstConceptId).session.id;
     },
     abandon(sessionId) {
       abandonSession(state, sessionId);
