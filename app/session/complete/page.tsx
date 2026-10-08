@@ -92,16 +92,19 @@ function CompleteBody() {
 
   if (!session || !summary) {
     return (
-      <main id="main" className="study-shell is-complete-page">
-        <section className="complete-hero is-empty">
-          <p className="study-mark-kicker">Session</p>
-          <h1>No completed session here yet.</h1>
-          <p>Finish a session to see what you practised and what needs another review.</p>
-          <Link href="/today" className="cta">
-            Back to Today <span aria-hidden="true">→</span>
-          </Link>
-        </section>
-      </main>
+      <>
+        <header className={styles.bar}>
+          <span className={styles.barTitle}>
+            <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
+          </span>
+          <Link href="/today" className={styles.barClose}>Close</Link>
+        </header>
+        <main id="main" className={styles.empty}>
+          <h1>Nothing finished yet.</h1>
+          <p>When you finish a block, this page shows what you practised and what comes back tomorrow.</p>
+          <Link href="/today" className="k-btn">Back to your plan <span aria-hidden="true">→</span></Link>
+        </main>
+      </>
     );
   }
 

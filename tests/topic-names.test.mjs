@@ -93,3 +93,9 @@ test("a real sentence that a scan lowercased gets its capital back and can be as
   assert.ok(prompts.some((prompt) => /Flight monitoring tracks/.test(prompt)), prompts.join("\n"));
   assert.ok(prompts.every((prompt) => !/fight operation/i.test(prompt)));
 });
+
+test("the result says why: checks and your own rating each count, so a Partly with no check right is another attempt", async () => {
+  const { verdictReason } = await import("../lib/verdict.ts");
+  assert.equal(verdictReason("failure", { right: 0, total: 2, unsure: 1, self: "partly" }), "0 of 2 checks right, so even though your explanation was partly there, it comes back tomorrow.");
+  assert.match(verdictReason("success", { right: 3, total: 3, unsure: 0, self: "nailed" }), /^3 of 3 checks right and you nailed/);
+});

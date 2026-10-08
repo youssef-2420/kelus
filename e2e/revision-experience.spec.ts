@@ -35,8 +35,9 @@ test("hero and revision steps work on a narrow screen", async ({ page }) => {
 
 test("a direct completion URL never invents a completed session", async ({ page }) => {
   await page.goto("/session/complete?id=missing-session");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("No completed session here yet.");
-  await expect(page.locator(".complete-hero .cta, .is-complete-page .cta")).toContainText("Back to Today");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Nothing finished yet.");
+  await expect(page.getByRole("link", { name: /Back to your plan/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Kelus home" })).toBeVisible();
   await expect(page.getByText("estimated readiness", { exact: true })).toHaveCount(0);
 });
 

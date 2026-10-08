@@ -6,7 +6,9 @@ import styles from "./BlockOutline.module.css";
 
 export type OutlineTopic = { id: string; name: string; outcome: RetrievalOutcome | null; current: boolean };
 
-const MARK: Record<RetrievalOutcome, string> = { success: "✓", partial: "–", failure: "↻" };
+/** Partly there is a half-filled dot everywhere in Kelus, never a minus. */
+const HALF = <svg viewBox="0 0 16 16" width="11" height="11" style={{ display: "block" }}><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M8 1.75A6.25 6.25 0 0 0 8 14.25Z" fill="currentColor" /></svg>;
+const MARK: Record<RetrievalOutcome, React.ReactNode> = { success: "✓", partial: HALF, failure: "↻" };
 const WORD: Record<RetrievalOutcome, string> = { success: "Solid pass", partial: "Partly there", failure: "Needs another attempt" };
 
 /**
@@ -24,11 +26,11 @@ export function BlockOutline({ course, topics }: { course: string; topics: Outli
         {topics.map((topic, index) => (
           <motion.li
             key={topic.id}
-            className={topic.current ? styles.current : topic.outcome ? styles[topic.outcome] : styles.ahead}
+            className={[topic.current ? styles.current : null, topic.outcome ? styles[topic.outcome] : null, !topic.current && !topic.outcome ? styles.ahead : null].filter(Boolean).join(" ")}
             aria-current={topic.current ? "step" : undefined}
             initial={reduce ? false : { opacity: 0, x: -4 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={reduce ? { duration: 0 } : { duration: 0.3, delay: index * 0.04 }}
+            transition={reduce ? { duration: 0 } : { duration: 0.22, delay: index * 0.03 }}
           >
             <span className={styles.mark} aria-hidden="true">{topic.outcome ? MARK[topic.outcome] : topic.current ? "" : index + 1}</span>
             <span className={styles.name}>{topic.name}</span>

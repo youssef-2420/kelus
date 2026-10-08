@@ -108,12 +108,6 @@ export function TodayRoute({
     const concept = concepts.find((item) => item.id === allocation.conceptId);
     return { ...allocation, name: concept?.name ?? "A mix of earlier topics", mastery: concept?.mastery ?? 0, tried: (concept?.retrievalAttempts ?? 0) > 0 };
   });
-  const lastPractice = isSampleCourse ? null : [...events]
-    .filter((event) => event.kind === "retrieval" && concepts.some((item) => item.id === event.conceptId))
-    .sort((left, right) => right.createdAt.localeCompare(left.createdAt))[0];
-  const lastTopic = concepts.find((item) => item.id === lastPractice?.conceptId)?.name;
-  // The same words the result card used, so one outcome never has three names.
-  const lastResult = lastPractice?.outcome === "failure" ? "Needs another attempt" : lastPractice?.outcome === "partial" ? "Partly there" : lastPractice?.outcome === "success" ? "Solid pass" : "Answer saved";
   const installable = install === "prompt" || install === "ios";
   const path = studyPath({ concepts, nowMs: Date.parse(nowIso), daysToExam: examDatePending ? null : daysToExam });
   const level = (mastery: number, tried: boolean) => (tried ? topicLevel(mastery, 1) : "New");
@@ -165,7 +159,6 @@ export function TodayRoute({
             {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
           </motion.button>
         </div>
-        {lastPractice && lastTopic ? <p className={styles.source}>Last answer: {lastTopic} · {lastResult}.</p> : null}
       </motion.article>
 
       {/* The streak is what brings you back tomorrow; the full picture is one click away in Progress. */}

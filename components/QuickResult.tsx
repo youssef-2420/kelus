@@ -6,17 +6,20 @@ import { MarkStamp } from "@/components/MarkStamp";
 import { PackArt } from "@/components/PackArt";
 import type { RetrievalOutcome } from "@/domain/types";
 import type { SelfGrade } from "@/domain/quick-run";
+import { verdictReason } from "@/lib/verdict";
 import styles from "./QuickResult.module.css";
 
-export type QuickStats = { right: number; total: number; unsure: number; self: SelfGrade };
+export type { QuickStats } from "@/lib/verdict";
+import type { QuickStats } from "@/lib/verdict";
 
-const VERDICT: Record<RetrievalOutcome, { title: string; line: string }> = {
-  success: { title: "Solid pass.", line: "You knew it and you could say it." },
-  partial: { title: "Partly there.", line: "Some of it is solid. One more look will fix the rest." },
-  failure: { title: "Needs another attempt.", line: "That is what practice is for. Now you know what to read again." },
+const VERDICT: Record<RetrievalOutcome, { title: string }> = {
+  success: { title: "Solid pass." },
+  partial: { title: "Partly there." },
+  failure: { title: "Needs another attempt." },
 };
 
 const SELF_LABEL: Record<SelfGrade, string> = { nailed: "Nailed it", partly: "Partly", missed: "Missed it" };
+
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
@@ -57,7 +60,7 @@ export function QuickResult({
         <span className={styles.stamp}><MarkStamp outcome={outcome} /></span>
         <motion.h1 {...rise(0.1)} className={styles.title}>{verdict.title}</motion.h1>
       </div>
-      <motion.p {...rise(0.16)} className={styles.line}>{topic} · {attempts === 1 ? "first try" : `try ${attempts}`}. {verdict.line}</motion.p>
+      <motion.p {...rise(0.16)} className={styles.line}>{topic} · {attempts === 1 ? "first try" : `try ${attempts}`}. {verdictReason(outcome, stats)}</motion.p>
 
       {stats ? (
         <motion.div {...rise(0.3)} className={styles.facts}>

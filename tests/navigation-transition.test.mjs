@@ -99,7 +99,8 @@ test("Today measures return visits without changing the study decision", async (
   const today = await source("components/TodayRoute.tsx");
   const analytics = await source("lib/analytics.ts");
   assert.match(today, /today_opened/);
-  assert.match(today, /Last answer:/);
+  // The result card just said how the last answer went; Today does not repeat it.
+  assert.doesNotMatch(today, /Last answer:/);
   assert.match(analytics, /today_opened/);
 });
 
