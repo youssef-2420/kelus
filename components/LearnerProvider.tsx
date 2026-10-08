@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
+import { clearUndo, isTypingTarget, offerUndo, takeUndo } from "@/lib/undo";
 import {
   finishSession,
   abandonSession,
@@ -81,6 +82,19 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
   const lastWritten = useRef("");
   const [syncMessage, setSyncMessage] = useState<string | null>(null);
   const [materialClaim, setMaterialClaim] = useState<{ userId: string; claimGuest: boolean } | null>(null);
+
+  // ⌘Z / Ctrl+Z outside a text field puts back the last removal, the same as the toast's Undo.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() !== "z" || !(event.metaKey || event.ctrlKey) || event.shiftKey || event.altKey || isTypingTarget(event.target)) return;
+      const label = takeUndo();
+      if (!label) return;
+      event.preventDefault();
+      toast(`Put back “${label}”`, { duration: 2500 });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -232,7 +246,8 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       const before = getDemoSnapshot();
       const name = before.snapshot.concepts.find((concept) => concept.id === conceptId)?.name ?? "Topic";
       removeConcept(state, conceptId);
-      toast(`Removed “${name}”`, { action: { label: "Undo", onClick: () => restoreDemoState(before) }, duration: 6000 });
+      const id = toast(`Removed “${name}”`, { action: { label: "Undo", onClick: () => { clearUndo(); restoreDemoState(before); } }, duration: 6000 });
+      offerUndo(name, () => { toast.dismiss(id); restoreDemoState(before); });
     },
     renameTopic(conceptId, name) {
       renameConcept(conceptId, name);

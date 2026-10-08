@@ -56,3 +56,52 @@ test("the course and a topic are renamed where they stand, and a removed topic c
   await page.getByRole("button", { name: "Undo" }).click();
   expect(await topicNames(page)).toContain(name);
 });
+
+test("⌘K finds a topic by a few letters and opens it; the sidebar's Search opens the same box", async ({ page }) => {
+  await startFromPaste(page, notes);
+  await page.goto("/today");
+  await page.keyboard.press("ControlOrMeta+k");
+  const box = page.getByRole("dialog", { name: "Search your course" });
+  await expect(box).toBeVisible();
+  await page.keyboard.type("enz");
+  await expect(box.getByRole("option").first()).toContainText("Enzymes");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/concept/);
+  await expect(page.getByRole("button", { name: /Rename topic/ })).toContainText("Enzymes");
+  await page.goto("/today");
+  await page.getByRole("button", { name: /^Search/ }).click();
+  await expect(box).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(box).toHaveCount(0);
+});
+
+test("⌘Z puts back a removed topic, the same as the toast's Undo", async ({ page }) => {
+  await startFromPaste(page, notes);
+  await page.goto("/today");
+  await page.locator('[data-action="start-topic"]').click();
+  const name = await page.locator(".study-context-title small b").innerText();
+  await page.getByRole("button", { name: "More session options" }).click();
+  await page.getByRole("button", { name: "Remove this topic" }).click();
+  await expect(page).toHaveURL(/\/today/);
+  await page.keyboard.press("ControlOrMeta+z");
+  await expect(page.getByText(`Put back “${name}”`)).toBeVisible();
+  expect(await topicNames(page)).toContain(name);
+});
+
+test("a section is on screen at once: no waiting for the old one to fade out", async ({ page }) => {
+  await startFromPaste(page, notes);
+  await page.goto("/today");
+  await page.locator('nav[aria-label="Revision sections"]').waitFor();
+  const ms = await page.evaluate(() => new Promise<number>((resolve) => {
+    const start = performance.now();
+    document.querySelector<HTMLButtonElement>('nav[aria-label="Revision sections"] button[data-mode="map"]')!.click();
+    const tick = () => {
+      const title = document.querySelector("#section-title")?.textContent;
+      const panel = document.querySelector(".revision-surface-panel .index-toc-row");
+      if (title === "Topics" && panel && Number(getComputedStyle(panel.closest(".revision-surface-panel")!).opacity) > 0.5) resolve(performance.now() - start);
+      else requestAnimationFrame(tick);
+    };
+    tick();
+  }));
+  expect(ms).toBeLessThan(120);
+});

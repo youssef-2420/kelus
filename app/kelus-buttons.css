@@ -267,3 +267,34 @@ html body.is-course-studio .studio-nav.revision-surface-modes { margin-top: 28px
   .core-source-item:hover .core-source-remove,
   .core-source-item:focus-within .core-source-remove { opacity: 1; }
 }
+
+/* Search, at the top of the sidebar as in Notion, with its shortcut on the right. */
+html body.is-course-studio .studio-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  margin: 18px 0 -12px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-slate);
+  font: inherit;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+html body.is-course-studio .studio-search:hover { background: var(--core-selected-paper, rgba(18, 22, 15, 0.05)); color: var(--color-midnight-ink); }
+html body.is-course-studio .studio-search:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 1px; }
+html body.is-course-studio .studio-search kbd {
+  margin-left: auto;
+  padding: 1px 6px;
+  border: 1px solid rgba(18, 22, 15, 0.12);
+  border-radius: 5px;
+  color: var(--color-slate);
+  font: inherit;
+  font-size: 0.72rem;
+}
+@media (max-width: 900px) { html body.is-course-studio .studio-search { display: none; } }
