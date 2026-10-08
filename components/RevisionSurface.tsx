@@ -282,6 +282,8 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
           <input
             ref={sourcePickerRef}
             className="sr-only"
+            // "＋ Add source" opens it; the hidden field is not a second stop for the keyboard.
+            tabIndex={-1}
             type="file"
             accept={SOURCE_FILE_ACCEPT}
             aria-label="Choose a course PDF"

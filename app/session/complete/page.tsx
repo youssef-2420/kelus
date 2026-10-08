@@ -209,7 +209,7 @@ function CompleteBody() {
           ) : <p role="status">{usefulness ? "Thanks. Good to know." : "Thanks. That helps make it better."}</p>}
           {completedSessions === 1 ? (
             <details>
-              <summary>Support through exam day</summary>
+              <summary>Want Kelus through to exam day?</summary>
               <SoftUpgradePrompt moment="first_session" />
             </details>
           ) : null}

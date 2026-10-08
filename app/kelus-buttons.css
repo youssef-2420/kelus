@@ -398,3 +398,15 @@ html body.is-course-studio .core-workspace-grid.is-today-single > .core-workspac
 /* Topics: the cards and the Anki card share the section title's 24px edge, on a phone too. */
 html body.is-course-studio .surface-map.is-toc .index-toc { padding-left: 24px !important; padding-right: 24px !important; }
 html body.is-course-studio .surface-map.is-toc > section[aria-labelledby="anki-title"] { margin-left: 24px; margin-right: 24px; }
+
+/* The end of a block sits on the page, like every other screen: no paper sheet around it. */
+html body.is-session-complete main#main.study-shell.is-complete-page {
+  width: min(100% - 32px, 36rem);
+  max-width: none;
+  margin: 0 auto;
+  padding: 24px 0 72px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}

@@ -82,7 +82,7 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
         ) : (
           <div className={styles.thinRow}>
             <PackArt name="growing" className={styles.growing} size={150} />
-            <p className={styles.thin}>Based on {summary.answers} answer{summary.answers === 1 ? "" : "s"} so far. A trend needs at least 6 answers across 2 topics in two weeks, so Kelus doesn’t guess before then.</p>
+            <p className={styles.thin}>{summary.answers} answer{summary.answers === 1 ? "" : "s"} so far. Kelus draws a trend once there are 6, so it never guesses from a few.</p>
           </div>
         )}
         {fresh ? null : <dl className={styles.stats}>
@@ -95,7 +95,7 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
 
       {fresh ? null : <Topics title="Got stronger" note="Higher than a week ago." items={summary.stronger} empty="Nothing has moved up yet. It shows here as soon as an answer does." />}
       {fresh ? null : <Topics title="Needs another pass" note="Low, slipping, or your last answer missed." items={summary.needsPass} empty="No weak spots from your answers so far." />}
-      <Topics title="Not started" note="No answers yet, so Kelus has no evidence either way." items={summary.notStarted} empty="You have answered every topic at least once." />
+      {summary.notStarted.length ? <Topics title="Not started" note="No answers yet, so Kelus has no evidence either way." items={summary.notStarted} empty="" /> : null}
 
       {fresh ? null : <section className={styles.pace} aria-label="Pace to your target">
         <PackArt name="target" className={styles.paceArt} size={84} />

@@ -116,7 +116,8 @@ export function TodayRoute({
     <div className={styles.page}>
       {!isSampleCourse ? <WelcomeBack visit={visit} nowIso={nowIso} nextName={firstName} /> : null}
       {/* Where the course stands, in steps rather than a percentage: started, solid, and the days still ahead. */}
-      <div className={styles.top} role="group" aria-label="Your path through the course">
+      {/* On a warm-up day the warm-up is the first thing to do; the path line and extras wait for a plain day. */}
+      {warmupFirst ? null : <div className={styles.top} role="group" aria-label="Your path through the course">
         <p className={styles.path}>
           <strong>{path.started} of {path.total}</strong> topics started{path.solid ? <> · <strong>{path.solid}</strong> solid</> : null}
           <span className={styles.ahead}>
@@ -130,7 +131,7 @@ export function TodayRoute({
                   : `about ${path.daysLeft} study days left and ${daysToExam} until your exam.`}
           </span>
         </p>
-      </div>
+      </div>}
 
       <motion.article
         className={styles.card}
@@ -183,7 +184,7 @@ export function TodayRoute({
 
       {/* One extra at a time, most useful first: the exam date gives the path its finish line, then the nudge that
           brings you back, then the home-screen app, then the calendar reminder. */}
-      {isSampleCourse ? null
+      {isSampleCourse || warmupFirst ? null
         : examDatePending && onSetExamDate ? <ExamDateCard onSave={onSetExamDate} />
         : hasPriorEvidence && (nudgesOffAtOpen || !nudges.on) && nudgesSupported() ? <NudgeCard />
         : hasPriorEvidence && installable ? <InstallCard />

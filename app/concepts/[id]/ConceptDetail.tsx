@@ -73,11 +73,14 @@ export function ConceptDetail({ conceptId, embedded = false }: { conceptId?: str
   const checks = activity?.practice?.length ?? 0;
   const percent = Math.round(concept.mastery * 100);
   const comesBack = nextTime(concept.nextReviewAt, state.nowIso);
+  // Answered within the last few hours: "due now" would read as nagging straight after a block.
+  const justStudied = concept.lastReviewedAt ? Date.parse(state.nowIso) - Date.parse(concept.lastReviewedAt) < 4 * 3_600_000 : false;
   // The same number Topics and Progress show: one model, so a topic never has two percentages.
   const answered = concept.retrievalAttempts;
   const standing = !answered
     ? `Not started. ${checks ? `${checks} questions are ready from your notes.` : "Its questions are ready from your notes."}`
-    : `${percent >= 80 ? "Solid" : "Needs work"} · ${percent}% from ${answered} answer${answered === 1 ? "" : "s"}${comesBack ? `, and ${comesBack}` : ""}.`;
+    // The same percentage as Topics; straight after a block, say when it comes back rather than "due now".
+    : `${percent >= 80 ? "Solid" : "Needs work"} · ${percent}% from ${answered} answer${answered === 1 ? "" : "s"}. ${justStudied ? "It comes back in your next warm-up." : comesBack ? `${comesBack.charAt(0).toUpperCase()}${comesBack.slice(1)}.` : ""}`.trim();
 
   function study() {
     if (!course || !exam || !concept) return;
