@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AppShell } from "@/components/AppShell";
-import { ConceptDetail } from "@/app/concepts/[id]/ConceptDetail";
+import { ConceptRoute } from "./ConceptRoute";
 
 export const metadata: Metadata = {
   title: "Concept — Kelus",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function ConceptQueryPage() {
   return (
     <Suspense fallback={<AppShell><p>Opening concept…</p></AppShell>}>
-      <ConceptDetail />
+      <ConceptRoute />
     </Suspense>
   );
 }

@@ -65,3 +65,19 @@ test("no gap question from headings or a list that a scan ran together", async (
   assert.equal(readsAsSentence("Enzymes are biological catalysts that speed up reactions without being used up."), true);
   assert.equal(readsAsSentence("“Water moves toward the side with more solute because the solute lowers the water potential there.”"), true);
 });
+
+test("a scanned page with run-together headings and cut-off lines only yields questions from whole sentences", async () => {
+  const { buildPractice } = await import("../domain/content-engine.ts");
+  const excerpt = [
+    "route planning real time fight operation flight monitoring and crew future fights scheduling dispatch",
+    "Operation Control Centre Crew Scheduling Flight Dispatch Maintenance Control Fuel Policy",
+    "The operation manager approves the daily flight schedule before it is published to the crews.",
+    "Dispatchers prepare the flight plan, the fuel figures and the weather briefing for each departure.",
+    "crew rest minimum 10 hours duty time max 13 hours standby reserve",
+  ].join("\n");
+  const items = buildPractice({ conceptId: "c", name: "Operation manager", excerpt, locator: "Page 1", siblingNames: ["Crew scheduling", "Dispatch"] });
+  assert.ok(items.length >= 2);
+  for (const item of items) {
+    assert.doesNotMatch(item.prompt, /fight operation|Control Centre Crew|crew rest|\. [a-z]/, item.prompt);
+  }
+});

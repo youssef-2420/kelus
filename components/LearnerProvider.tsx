@@ -250,13 +250,18 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       offerUndo(name, () => { toast.dismiss(id); restoreDemoState(before); });
     },
     renameTopic(conceptId, name) {
+      const before = getDemoSnapshot().snapshot.concepts.find((concept) => concept.id === conceptId)?.name;
       renameConcept(conceptId, name);
+      // ⌘Z puts the old name back, as in Notion; a rename needs no toast of its own.
+      if (before && before !== name.trim()) offerUndo(before, () => renameConcept(conceptId, before), 30_000);
     },
     setExamDate(date, targetPercent) {
       setExamDate(state, date, targetPercent);
     },
     renameCourse(courseId, name, source) {
+      const before = getDemoSnapshot().snapshot.courses.find((course) => course.id === courseId)?.name;
       renameCourse(courseId, name, source);
+      if (source === "user" && before && before !== name.trim()) offerUndo(before, () => renameCourse(courseId, before, "user"), 30_000);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;
