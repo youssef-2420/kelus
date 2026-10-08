@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { checkPracticeAnswer } from "@/domain/practice-check";
 import { explainMatch, looksLikeWords } from "@/domain/answer-evaluation";
 import { PackArt } from "@/components/PackArt";
@@ -10,6 +10,9 @@ import styles from "./QuickRun.module.css";
 
 /** `missed` holds the page lines behind the checks that were wrong or not sure, so the result can point back to them. */
 export type QuickRunResult = { right: number; total: number; unsure: number; self: SelfGrade; explained: string; elapsedMs: number; missed: string[] };
+
+const noSubscribe = () => () => {};
+const modKeyNow = () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘" : "Ctrl ");
 
 const GRADES: Array<{ value: SelfGrade; label: string; hint: string }> = [
   { value: "nailed", label: "Nailed it", hint: "Same idea, my own words" },
@@ -29,6 +32,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
   onChecksDone?: (result: { right: number; total: number; missed: string[] }) => void;
 }) {
   const reduce = useReducedMotion() === true;
+  const modKey = useSyncExternalStore(noSubscribe, modKeyNow, () => "⌘");
   const started = useRef(0);
   const total = run.checks.length;
   const [step, setStep] = useState(0); // 0..total-1 = checks, total = explain
@@ -57,6 +61,11 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
   const useful = match && match.keys >= 3 && explained.trim() ? match : null;
   const item = onChecks ? run.checks[step] : null;
 
+  /** A light tap on phones: a short one when right, a slightly longer one when not. Never on desktop. */
+  function feel(ok: boolean) {
+    try { if (window.matchMedia("(pointer: coarse)").matches) navigator.vibrate?.(ok ? 8 : [14, 40, 14]); } catch { /* Not supported: fine. */ }
+  }
+
   function answer(value: string | number) {
     if (!item || answered) return;
     const ok = checkPracticeAnswer(item, value);
@@ -64,6 +73,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
     const given = typeof value === "number" ? item.choices?.[value] ?? "" : value.trim();
     setAnswered({ right: ok, given, elsewhere: ok ? null : whereAnswerBelongs(item, given, run.sentences) });
     if (ok) { setRight((count) => count + 1); setStreak((count) => count + 1); } else { setStreak(0); setMissed((list) => [...list, item.sourceQuote]); }
+    feel(ok);
   }
 
   // "Not sure" earns no credit, shows the answer, and does not break a streak: honesty should never cost more than guessing.
@@ -92,6 +102,20 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
   function finish(self: SelfGrade, at: number) {
     onFinish({ right, total, unsure, self, explained, elapsedMs: Math.max(0, Math.round(at - started.current)), missed });
   }
+
+  // In the explanation: ⌘↵ (Ctrl+Enter) compares; once compared, 1, 2 and 3 pick how close it was.
+  useEffect(() => {
+    if (item) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (!compared && event.key === "Enter" && (event.metaKey || event.ctrlKey)) { event.preventDefault(); compare(); return; }
+      if (compared && !event.metaKey && !event.ctrlKey && !event.altKey && /^[123]$/.test(event.key) && !(event.target instanceof HTMLTextAreaElement)) {
+        event.preventDefault(); finish(GRADES[Number(event.key) - 1].value, event.timeStamp);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [item, compared, explained]);
 
   // 1-4 pick an option, like a quiz.
   useEffect(() => {
@@ -153,11 +177,20 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
                 })}
               </div>
             ) : (
-              <form className={styles.gap} onSubmit={(event) => { event.preventDefault(); if (typed.trim()) answer(typed); }}>
+              <motion.form
+                className={styles.gap}
+                onSubmit={(event) => { event.preventDefault(); if (typed.trim()) answer(typed); }}
+                // A wrong word gives a small shake, the way a lock refuses a key; a right one just settles.
+                animate={!reduce && answered && !answered.right && !answered.unsure ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
+                transition={{ duration: 0.32, ease: "easeOut" }}
+              >
                 <label htmlFor={`run-gap-${step}`} className="sr-only">Your answer, one word</label>
-                <input id={`run-gap-${step}`} value={typed} onChange={(event) => setTyped(event.target.value)} disabled={Boolean(answered)} autoComplete="off" autoFocus placeholder="One word" />
-                {!answered ? <button type="submit" className={`k-btn ${styles.primary}`} disabled={!typed.trim()}>Check</button> : null}
-              </form>
+                <span className={styles.field} data-state={answered ? (answered.right ? "right" : answered.unsure ? "unsure" : "wrong") : undefined}>
+                  <input id={`run-gap-${step}`} value={typed} onChange={(event) => setTyped(event.target.value)} disabled={Boolean(answered)} autoComplete="off" autoFocus placeholder="One word" />
+                  {answered?.right ? <motion.span className={styles.fieldMark} aria-hidden="true" initial={reduce ? false : { scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 520, damping: 26 }}>✓</motion.span> : null}
+                </span>
+                {!answered ? <button type="submit" className={`k-btn ${styles.primary}`} disabled={!typed.trim()}>Check<kbd className={styles.key} aria-hidden="true">↵</kbd></button> : null}
+              </motion.form>
             )}
 
             {!answered ? <button type="button" className={styles.unsure} onClick={notSure}>I’m not sure</button> : null}
@@ -185,7 +218,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
             {nudge && !compared ? <p className={styles.nudge} role="alert">That doesn’t look like an answer yet. Write a few words from memory, or tap “I don’t remember”.</p> : null}
             {!compared ? (
               <div className={styles.row}>
-                <button type="button" className={`k-btn ${styles.primary}`} onClick={compare}>Compare with the page <span aria-hidden="true">→</span></button>
+                <button type="button" className={`k-btn ${styles.primary}`} onClick={compare}>Compare with the page<kbd className={styles.key} aria-hidden="true">{modKey}↵</kbd></button>
                 {!explained.trim() || nudge ? <button type="button" className={styles.link} onClick={() => { setExplained(""); setNudge(false); setCompared(true); }}>I don’t remember</button> : null}
               </div>
             ) : (
@@ -213,6 +246,7 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
                   {GRADES.map((grade) => (
                     <button key={grade.value} type="button" className={useful?.suggest === grade.value ? styles.suggested : undefined} onClick={(event) => finish(grade.value, event.timeStamp)}>
                       <strong>{grade.label}{useful?.suggest === grade.value ? <em>Suggested</em> : null}</strong>
+                      <kbd className={styles.gradeKey} aria-hidden="true">{GRADES.indexOf(grade) + 1}</kbd>
                       <small>{grade.hint}</small>
                     </button>
                   ))}

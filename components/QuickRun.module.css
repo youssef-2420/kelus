@@ -521,3 +521,22 @@
 .grades button.suggested {
   padding-top: 30px;
 }
+
+/* ── Answer feedback, in the field itself ─────────────────────────────────────────────────────────────
+   Right: the edge turns green and a tick lands at the end of the line. Wrong: the edge turns the miss colour and the
+   form gives one small shake (see QuickRun). Unsure: stays neutral. */
+.field { position: relative; display: flex; flex: 1; min-width: 0; }
+.field input { flex: 1; width: 100%; }
+.field[data-state="right"] input { border-color: var(--color-kelus) !important; background: color-mix(in srgb, var(--color-kelus) 6%, #fff) !important; color: var(--color-midnight-ink); }
+.field[data-state="wrong"] input { border-color: color-mix(in srgb, var(--k-coral, #c2513e) 70%, transparent) !important; background: color-mix(in srgb, var(--k-coral, #c2513e) 5%, #fff) !important; text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--k-coral, #c2513e) 60%, transparent); }
+.fieldMark { position: absolute; top: 50%; right: 14px; display: grid; place-items: center; width: 24px; height: 24px; margin-top: -12px; border-radius: 50%; background: var(--color-kelus); color: #fff; font-size: 0.8125rem; font-weight: 700; }
+
+/* Keyboard hints live inside the button on desktop only; touch screens never show keys they do not have. */
+.key { display: none; margin-left: 10px; padding: 1px 6px; border-radius: 5px; background: rgba(255, 255, 255, 0.18); color: inherit; font: inherit; font-size: 0.75rem; font-weight: 500; line-height: 1.5; }
+.gradeKey { display: none; position: absolute; bottom: 10px; right: 10px; min-width: 20px; padding: 0 5px; border: 1px solid var(--color-frost); border-radius: 5px; color: var(--color-slate); font: inherit; font-size: 0.75rem; line-height: 18px; text-align: center; }
+@media (hover: hover) and (pointer: fine) {
+  .key, .gradeKey { display: inline-block; }
+}
+.grades button { position: relative; border-radius: 10px !important; transition: border-color 120ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 120ms cubic-bezier(0.22, 1, 0.36, 1), transform 120ms cubic-bezier(0.22, 1, 0.36, 1); }
+.grades button:hover { box-shadow: 0 4px 14px rgba(18, 22, 15, 0.07); }
+.grades button:active { transform: scale(0.985); }

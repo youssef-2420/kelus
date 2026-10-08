@@ -12,6 +12,7 @@ import type { Concept, LearningActivity, RetrievalOutcome, RouteAllocation } fro
 import { getMaterialsSnapshot, getServerMaterialsSnapshot, subscribeMaterials } from "@/lib/material-store";
 import { readMaterialPdf } from "@/lib/material-sync";
 import { useAuth } from "@/components/AuthProvider";
+import { useDocumentTitle } from "@/lib/use-title";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { LoopSteps } from "@/components/LoopSteps";
 import { MarkStamp } from "@/components/MarkStamp";
@@ -103,6 +104,7 @@ function SessionBody() {
   const [sourceRevealed, setSourceRevealed] = useState(false);
   // The full notes slide in from the side when asked for; the page under the question never rearranges.
   const [notesOpen, setNotesOpen] = useState(false);
+
   useEffect(() => {
     if (!notesOpen) return;
     const onKey = (event: KeyboardEvent) => { if (event.key === "Escape") setNotesOpen(false); };
@@ -200,6 +202,10 @@ function SessionBody() {
     try { return JSON.parse(sessionStorage.getItem("kelus-session-before") || "[]") as Concept[]; }
     catch { return []; }
   }, []);
+
+  // The tab names the topic you are on, so a glance at the browser says where the block is.
+  const tabTopic = concept?.name;
+  useDocumentTitle(tabTopic ? `${tabTopic} · Studying — Kelus` : null);
 
   if (!session || !concept || !prompt || !activity) {
     return (

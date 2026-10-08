@@ -268,7 +268,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       if (source === "user" && before && before !== name.trim()) offerUndo(`Renamed back to “${before}”`, () => renameCourse(courseId, before, "user"), 30_000);
     },
   }), [state]);
-  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;
+  return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="sr-only" role="status">Loading your course…</p>}</StoreContext.Provider>;
 }
 
 export function useLearner() {

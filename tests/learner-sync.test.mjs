@@ -47,6 +47,7 @@ test("local learner and material records are isolated by owner, with a separate 
 test("the learner shell does not render one account while private scopes are switching", async () => {
   const provider = await readFile(new URL("../components/LearnerProvider.tsx", import.meta.url), "utf8");
   assert.match(provider, /getDemoStateOwner\(\) === activeUserId && materialOwner === activeUserId/);
-  assert.match(provider, /Loading your private learning route/);
+  // While scopes switch, nothing of the other account renders: only a status for screen readers.
+  assert.match(provider, /scopeAligned \? children : <p className="sr-only" role="status">Loading your course…<\/p>/);
   assert.match(provider, /claimGuestMaterials\(userId\)/);
 });

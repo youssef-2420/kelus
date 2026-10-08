@@ -13,6 +13,7 @@ import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
 import { PackArt } from "@/components/PackArt";
+import { useDocumentTitle } from "@/lib/use-title";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import styles from "./complete.module.css";
 
@@ -59,6 +60,8 @@ function CompleteBody() {
   const nextStopId = nextRoute?.allocations.find((allocation) => allocation.conceptId !== "mixed-retrieval" && !coveredIds.has(allocation.conceptId))?.conceptId;
   const nextStopName = nextStopId ? name(nextStopId) : null;
   const minutes = session?.plannedMinutes || exam?.availableMinutes || 45;
+
+  useDocumentTitle(summary ? `Done · ${course?.name ?? "Your block"} — Kelus` : null);
 
   useEffect(() => {
     document.body.classList.add("is-session-booklet", "is-session-complete");
