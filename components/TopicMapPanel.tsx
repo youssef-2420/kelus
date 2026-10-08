@@ -137,8 +137,7 @@ export function TopicMapPanel() {
               <Link
                 href={`/concept?id=${encodeURIComponent(concept.id)}`}
                 className={`index-toc-row topic-card ${styles.card}${isStart ? " is-start" : ""}`}
-                transitionTypes={["nav-forward"]}
-                prefetch={true}
+               
               >
                 <span className={styles.art}><TopicArt kind={topicArtKind(concept.name)} /></span>
                 <span className={`topic-card-main ${styles.main}`}>
