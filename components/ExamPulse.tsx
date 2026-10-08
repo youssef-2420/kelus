@@ -11,7 +11,8 @@ export function ExamPulse({ readiness, targetPercent, daysToExam, datePending = 
     <div className={styles.pulse} role="group" aria-label="Exam readiness">
       <div className={styles.fact}>
         <strong>{answered ? `${ready}%` : "—"}</strong>
-        <span>{answered ? "Estimated ready" : "Ready, after your first answers"}</span>
+        {/* A handful of answers moves the estimate a lot, so it says it is early until there are enough to trust. */}
+        <span>{!answered ? "Ready, after your first answers" : answered < 6 ? "Early estimate" : "Estimated ready"}</span>
       </div>
       <div className={styles.track} aria-hidden="true">
         <span className={styles.fill} style={{ width: `${ready}%` }} />

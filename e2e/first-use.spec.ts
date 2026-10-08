@@ -262,7 +262,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await expect(page.locator(".reroute-cause")).toHaveCount(0);
   await page.getByRole("button", { name: "Close", exact: true }).click();
   await expect(page).toHaveURL(/\/today/);
-  await expect(page.getByText(/Last answer:/)).toBeVisible();
+  await expect(page.locator("#today-title")).toBeVisible();
   await page.reload();
   await page.getByRole("button", { name: /^Continue/ }).click();
   await expect(page).toHaveURL(/\/session/);

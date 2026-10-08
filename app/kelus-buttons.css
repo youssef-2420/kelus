@@ -61,10 +61,11 @@
   box-shadow: 0 0 0 var(--btn-edge), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
 
+/* Keyboard focus: a thin ring a little away from the button, clear without being heavier than the button. */
 .k-btn:focus-visible,
 .cta:not(.home-cta):focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--btn-edge) 55%, transparent) !important;
-  outline-offset: 3px !important;
+  outline: 2px solid color-mix(in srgb, var(--btn-edge) 45%, transparent) !important;
+  outline-offset: 2px !important;
 }
 
 /* Not ready yet (nothing typed): a quiet outline of the button, not a grey slab that looks broken. */

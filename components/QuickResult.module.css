@@ -41,7 +41,12 @@
 .primary:focus-visible, .secondary:focus-visible, .more summary:focus-visible, .link:focus-visible { outline: 2px solid var(--color-midnight-ink); outline-offset: 2px; }
 
 .more { border-top: 1px solid var(--color-frost); padding-top: 4px; }
-.more summary { min-height: 44px; display: flex; align-items: center; cursor: pointer; font-size: var(--text-body-sm); font-weight: 600; color: var(--color-slate); }
+.more summary { min-height: 44px; display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: var(--text-body-sm); font-weight: 600; color: var(--color-slate); list-style: none; }
+.more summary::-webkit-details-marker { display: none; }
+/* It opens: a chevron says so, and turns when it does. */
+.more summary::after { content: ""; width: 7px; height: 7px; margin-top: -3px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(45deg); transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1); }
+.more[open] summary::after { margin-top: 3px; transform: rotate(-135deg); }
+.more summary:hover { color: var(--color-midnight-ink); }
 .moreBody { display: grid; gap: 10px; padding-bottom: 8px; }
 .link { min-height: 44px; padding: 0; border: 0; background: none; color: var(--color-midnight-ink); font: inherit; font-size: var(--text-body-sm); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
 
