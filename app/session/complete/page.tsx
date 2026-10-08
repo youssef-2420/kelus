@@ -123,7 +123,6 @@ function CompleteBody() {
     <header className={styles.bar}>
       <span className={styles.barTitle}>
         <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
-        <small><b>{course?.name ?? "Your course"}</b> · block done</small>
       </span>
       <Link href="/today" className={styles.barClose}>Close</Link>
     </header>

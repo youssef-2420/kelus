@@ -50,7 +50,7 @@ test("the course and a topic are renamed where they stand, and a removed topic c
 
   await page.goto("/today");
   await page.locator('[data-action="start-topic"]').click();
-  const name = await page.locator(".study-context-title small b").innerText();
+  const name = await page.locator(".study-topic-kicker b").innerText();
   await page.getByRole("button", { name: "More session options" }).click();
   await page.getByRole("button", { name: "Remove this topic" }).click();
   await page.getByRole("button", { name: "Undo" }).click();
@@ -79,7 +79,7 @@ test("⌘Z puts back a removed topic, the same as the toast's Undo", async ({ pa
   await startFromPaste(page, notes);
   await page.goto("/today");
   await page.locator('[data-action="start-topic"]').click();
-  const name = await page.locator(".study-context-title small b").innerText();
+  const name = await page.locator(".study-topic-kicker b").innerText();
   await page.getByRole("button", { name: "More session options" }).click();
   await page.getByRole("button", { name: "Remove this topic" }).click();
   await expect(page).toHaveURL(/\/today/);

@@ -56,3 +56,12 @@ test("only notes read from a Notion export get Notion's mark; pasted notes do no
   assert.equal(brandForFile("Pasted notes.md", "text/markdown"), null);
   assert.equal(brandForFile("lecture.pdf", "application/pdf"), null);
 });
+
+test("no gap question from headings or a list that a scan ran together", async () => {
+  const { readsAsSentence } = await import("../domain/content-engine.ts");
+  assert.equal(readsAsSentence("route plan time fight operation flight monitoring and crew future fights."), false);
+  assert.equal(readsAsSentence("Route Planning Flight Monitoring Crew Scheduling Fuel Policy Dispatch Release."), false);
+  assert.equal(readsAsSentence("In a hypotonic solution a plant cell gains water and becomes turgid because the cell wall pushes back."), true);
+  assert.equal(readsAsSentence("Enzymes are biological catalysts that speed up reactions without being used up."), true);
+  assert.equal(readsAsSentence("“Water moves toward the side with more solute because the solute lowers the water potential there.”"), true);
+});

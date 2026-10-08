@@ -46,7 +46,7 @@
   cursor: pointer;
   box-shadow: 0 3px 0 var(--btn-edge), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
   transform: translateY(0);
-  transition: transform 90ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 90ms cubic-bezier(0.22, 1, 0.36, 1), filter 120ms !important;
+  transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 120ms cubic-bezier(0.22, 1, 0.36, 1), filter 120ms !important;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -67,19 +67,21 @@
   outline-offset: 3px !important;
 }
 
+/* Not ready yet (nothing typed): a quiet outline of the button, not a grey slab that looks broken. */
 .k-btn:disabled,
 .cta:not(.home-cta):disabled {
-  --btn-bg: #e7e9e4;
-  --btn-ink: #7a8077;
-  --btn-edge: #d3d7cf;
-  cursor: not-allowed;
+  --btn-bg: transparent;
+  --btn-ink: #8a8f86;
+  --btn-edge: transparent;
+  box-shadow: inset 0 0 0 1.5px rgba(18, 22, 15, 0.14) !important;
+  cursor: default;
 }
 
 /* The arrow (any aria-hidden span at the end) leans forward on hover. */
 .k-btn > span[aria-hidden="true"]:last-child,
 .cta:not(.home-cta) > span[aria-hidden="true"]:last-child {
   display: inline-block;
-  transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .k-btn:hover:not(:disabled) > span[aria-hidden="true"]:last-child,
@@ -207,7 +209,7 @@ html body .site-header.is-product:not(.is-session) .site-header-inner { display:
 html body .site-header .mark { display: inline-flex !important; align-items: center; gap: 6px; color: var(--color-midnight-ink) !important; text-decoration: none; }
 
 /* Topic cards respond to the pointer, as rows do in Notion: a lift of the edge and a faint wash. */
-.index-toc-row.topic-card { transition: border-color 120ms, background-color 120ms, box-shadow 160ms, transform 160ms; }
+.index-toc-row.topic-card { transition: border-color 120ms, background-color 120ms, box-shadow 120ms, transform 120ms; }
 @media (hover: hover) {
   .index-toc-row.topic-card:hover { border-color: rgba(18, 22, 15, 0.22) !important; background-color: color-mix(in srgb, #fff 92%, var(--k-green-wash)) !important; box-shadow: 0 4px 14px rgba(18, 22, 15, 0.07) !important; }
 }
@@ -221,7 +223,7 @@ html body :is(.site-header .mark, .study-brand, .is-course-studio .studio-brand-
   align-items: center !important;
   gap: 8px !important;
   color: var(--color-midnight-ink) !important;
-  font-size: 1.42rem !important;
+  font-size: 1.375rem !important;
   font-weight: 400 !important;
   letter-spacing: -0.065em !important;
   line-height: 1 !important;
@@ -282,7 +284,7 @@ html body.is-course-studio .studio-search {
   background: transparent;
   color: var(--color-slate);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   text-align: left;
   cursor: pointer;
 }
@@ -295,7 +297,7 @@ html body.is-course-studio .studio-search kbd {
   border-radius: 5px;
   color: var(--color-slate);
   font: inherit;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
 }
 @media (max-width: 900px) { html body.is-course-studio .studio-search { display: none; } }
 
@@ -318,3 +320,80 @@ html body.is-course-studio .studio-search kbd {
   color: var(--color-midnight-ink);
 }
 .core-source-brand { color: var(--color-midnight-ink); }
+
+/* ── A run keeps one layout from the first check to the result ─────────────────────────────────────────
+   The question stays in its centred column. The full notes, when asked for, slide over from the right edge; nothing
+   underneath moves. The topic is named above the question, small, where the eye already is. */
+.study-topic-kicker {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 14px;
+  color: var(--color-slate);
+  font-size: 0.875rem;
+}
+.study-topic-kicker b {
+  color: var(--color-midnight-ink);
+  font-weight: 600;
+}
+.study-topic-kicker span::before { content: "·"; margin-right: 10px; color: var(--color-frost, #c9ccc4); }
+
+html body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus.is-notes-open > .session-workspace-source {
+  position: fixed;
+  top: 58px;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: block;
+  width: min(30rem, 100%);
+  overflow-y: auto;
+  border-left: 1px solid rgba(18, 22, 15, 0.1);
+  background: var(--paper, #fbfaf7);
+  box-shadow: -18px 0 40px rgba(18, 22, 15, 0.08);
+  animation: kelus-notes-in 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes kelus-notes-in { from { transform: translateX(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  html body.is-session-booklet main#main.study-shell.is-notes-open > .session-workspace-source { animation-duration: 1ms; }
+}
+.session-notes-close { display: none; }
+main.study-shell.is-notes-open .session-notes-close {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 0;
+  border-bottom: 1px solid rgba(18, 22, 15, 0.08);
+  background: var(--paper, #fbfaf7);
+  color: var(--color-slate);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+main.study-shell.is-notes-open .session-notes-close:hover { color: var(--color-midnight-ink); }
+
+/* Today, one column: the next topic, one line of progress, then what follows. */
+html body.is-course-studio .core-workspace-grid.is-today-single {
+  display: block !important;
+  width: min(100% - 32px, 40rem);
+  margin: 0 auto;
+  padding: 8px 0 64px;
+  border: 0 !important;
+  background: transparent !important;
+}
+html body.is-course-studio .core-workspace-grid.is-today-single > .core-workspace-action {
+  width: 100%;
+  max-width: none;
+  padding: 24px 0 0;
+  border: 0 !important;
+}
+
+/* Topics: the cards and the Anki card share the section title's 24px edge, on a phone too. */
+html body.is-course-studio .surface-map.is-toc .index-toc { padding-left: 24px !important; padding-right: 24px !important; }
+html body.is-course-studio .surface-map.is-toc > section[aria-labelledby="anki-title"] { margin-left: 24px; margin-right: 24px; }

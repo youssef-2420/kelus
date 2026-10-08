@@ -4,14 +4,14 @@ import styles from "./ExamPulse.module.css";
  * The same three facts on every core page: where you are, where you're aiming, how long you have.
  * Readiness is an estimate from your answers, so it says so.
  */
-export function ExamPulse({ readiness, targetPercent, daysToExam, datePending = false }: { readiness: number; targetPercent: number; daysToExam: number; datePending?: boolean }) {
-  const ready = Math.round(Math.max(0, Math.min(1, readiness)) * 100);
+export function ExamPulse({ readiness, targetPercent, daysToExam, datePending = false, answered = 1 }: { readiness: number; targetPercent: number; daysToExam: number; datePending?: boolean; /** Answers given so far: with none, there is nothing to estimate from, so no number is shown. */ answered?: number }) {
+  const ready = answered ? Math.round(Math.max(0, Math.min(1, readiness)) * 100) : 0;
   const target = Math.round(Math.max(0, Math.min(100, targetPercent)));
   return (
     <div className={styles.pulse} role="group" aria-label="Exam readiness">
       <div className={styles.fact}>
-        <strong>{ready}%</strong>
-        <span>Estimated ready</span>
+        <strong>{answered ? `${ready}%` : "—"}</strong>
+        <span>{answered ? "Estimated ready" : "Ready, after your first answers"}</span>
       </div>
       <div className={styles.track} aria-hidden="true">
         <span className={styles.fill} style={{ width: `${ready}%` }} />

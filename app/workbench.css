@@ -14,10 +14,10 @@
   border-radius: 999px;
   min-height: 40px;
   padding: 8px 14px;
-  font-size: 0.92rem;
+  font-size: 0.875rem;
   letter-spacing: -0.01em;
   color: var(--color-steel, #5c6570);
-  transition: background 140ms ease, color 140ms ease, transform 100ms ease;
+  transition: background 120ms cubic-bezier(0.22, 1, 0.36, 1), color 120ms cubic-bezier(0.22, 1, 0.36, 1), transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .site-nav.is-workbench a:hover {
@@ -63,7 +63,7 @@
   border-radius: 999px;
   color: var(--color-steel, #5c6570);
   text-decoration: none;
-  font-size: 0.84rem;
+  font-size: 0.8125rem;
 }
 
 .workbench-chapter-index {
@@ -73,7 +73,7 @@
   height: 1.35rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -115,9 +115,9 @@
 
 .workbench-chapter-label {
   margin: 0;
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--color-steel, #5c6570);
 }
 
@@ -149,7 +149,7 @@
 
 .workbench-bridge span {
   color: var(--color-ink, #111);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 @media (max-width: 720px) {
@@ -228,10 +228,10 @@
   background: transparent;
   color: var(--color-steel, #5c6570);
   font: inherit;
-  font-size: 0.92rem;
+  font-size: 0.875rem;
   letter-spacing: -0.01em;
   cursor: pointer;
-  transition: background 140ms ease, color 140ms ease, transform 100ms ease;
+  transition: background 120ms cubic-bezier(0.22, 1, 0.36, 1), color 120ms cubic-bezier(0.22, 1, 0.36, 1), transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .revision-surface-modes button:hover {
@@ -299,7 +299,7 @@ body.is-kelus-space .kelus-paper-home {
   margin: 0 0 2px;
   color: var(--color-ink, #111);
   font-family: var(--font-ledger, Georgia, serif);
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.03em;
   text-decoration: none;
@@ -333,7 +333,7 @@ body.is-session-booklet .site-header.is-session {
   min-height: 40px;
   padding: 0 2px;
   color: var(--color-steel, #5c6570);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 450;
 }
 
@@ -354,7 +354,7 @@ body.is-session-booklet .site-header.is-session {
   display: flex;
   align-items: center;
   color: var(--color-steel, #5c6570);
-  font-size: 0.92rem;
+  font-size: 0.875rem;
 }
 
 .study-shell .session-help-page > summary::-webkit-details-marker {
@@ -379,7 +379,7 @@ body.is-session-booklet .site-header.is-session {
   border-radius: 0;
   background: transparent;
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 .study-shell .session-help-choices button.is-active {
@@ -406,9 +406,9 @@ body.is-session-booklet .site-header.is-session {
   display: block;
   margin-bottom: 6px;
   color: var(--color-steel, #5c6570);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .study-shell .answer-pages section p {
@@ -437,7 +437,7 @@ body.is-session-booklet .site-header.is-session {
 .study-shell .reroute-whisper {
   margin: 0;
   color: var(--color-steel, #5c6570);
-  font-size: 0.92rem;
+  font-size: 0.875rem;
 }
 
 .study-shell .reroute-cause,
@@ -460,7 +460,7 @@ body.is-kelus-space .site-header.is-space .site-header-inner {
 body.is-kelus-space .site-space-label {
   margin: 0 auto 0 16px;
   color: var(--color-steel, #5c6570);
-  font-size: 0.92rem;
+  font-size: 0.875rem;
   letter-spacing: -0.01em;
 }
 
@@ -496,9 +496,9 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-rail-mark {
   margin: 0 0 6px;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--color-steel, #5c6570);
 }
 
@@ -506,7 +506,7 @@ body.is-kelus-space .site-space-label {
   margin: 0;
   font-family: var(--font-source-serif), Literata, Georgia, serif;
   font-optical-sizing: auto;
-  font-size: 1.15rem;
+  font-size: 1.125rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.25;
@@ -550,13 +550,13 @@ body.is-kelus-space .site-space-label {
 }
 
 .kelus-space-nav-label {
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.015em;
 }
 
 .kelus-space-nav-hint {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--color-steel, #5c6570);
   font-weight: 400;
 }
@@ -574,7 +574,7 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-rail-meta {
   margin: 0;
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
   line-height: 1.45;
   color: var(--color-steel, #5c6570);
 }
@@ -588,7 +588,7 @@ body.is-kelus-space .site-space-label {
   list-style: none;
   cursor: pointer;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
   font-weight: 450;
   min-height: 32px;
   display: inline-flex;
@@ -685,7 +685,7 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-stage .material-ingest.is-embedded .material-ingest-title h2 {
   font-family: var(--font-source-serif), Literata, Georgia, serif;
-  font-size: 1.35rem;
+  font-size: 1.375rem;
   font-weight: 440;
   letter-spacing: -0.025em;
   margin: 0 0 12px;
@@ -694,7 +694,7 @@ body.is-kelus-space .site-space-label {
 .kelus-space-stage .material-ingest.is-embedded .material-role-field > p {
   max-width: 42ch;
   color: var(--color-steel, #5c6570);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .kelus-space-stage .material-shelf > header {
@@ -710,9 +710,9 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-stage .material-shelf > header > span {
   color: var(--color-steel, #5c6570);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .kelus-space-stage .material-shelf-empty p {
@@ -734,7 +734,7 @@ body.is-kelus-space .site-space-label {
 .kelus-space-stage .material-honesty p:last-child {
   max-width: 48ch;
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -761,7 +761,7 @@ body.is-kelus-space .site-space-label {
   }
 
   .kelus-space-rail-course {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .kelus-space-nav.revision-surface-modes {
@@ -826,7 +826,7 @@ body.is-kelus-space .site-space-label {
 .kelus-space-stage .today-lead-cite {
   margin: 18px 0 0;
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   line-height: 1.45;
 }
 
@@ -847,7 +847,7 @@ body.is-kelus-space .site-space-label {
 }
 
 .kelus-space-stage .today-queue-label span {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.01em;
 }
@@ -858,18 +858,18 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-stage .today-plan-list .plan-topic strong {
   font-family: var(--font-source-serif), Literata, Georgia, serif;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.02em;
 }
 
 .kelus-space-stage .today-plan-list .plan-time strong {
-  font-size: 1.15rem;
+  font-size: 1.125rem;
 }
 
 .kelus-space-stage .today-reroute-note {
   margin-top: 18px;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 body.is-booklet-system .study-progress {
@@ -934,7 +934,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 .kelus-space-stage .today-lead-foot .today-evidence-disclosure > summary {
   padding: 0;
   min-height: 0;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .kelus-space-stage .today-lead-action {
@@ -951,9 +951,9 @@ body.is-kelus-space .site-header.is-space .site-space-label {
   gap: 12px;
   margin-bottom: 10px;
   color: var(--color-steel, #5c6570);
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .kelus-space-stage .today-lead-label strong {
@@ -965,7 +965,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.04em;
   text-transform: none;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--color-steel, #5c6570);
 }
 
@@ -1000,7 +1000,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 
 .kelus-space-stage .today-plan-list .plan-index {
   color: var(--color-steel, #5c6570);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   letter-spacing: 0.06em;
 }
 
@@ -1058,7 +1058,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 .kelus-space-stage .surface-map.is-luxury .map-tools [role="status"] {
   color: var(--color-steel, #5c6570);
   font-variant-numeric: tabular-nums;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   white-space: nowrap;
 }
 
@@ -1084,7 +1084,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 .kelus-space-stage .surface-map.is-luxury .topic-map-graph-note {
   margin-top: 0.65rem;
   color: var(--color-steel, #5c6570);
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-list {
@@ -1103,7 +1103,7 @@ body.is-booklet-system .study-wayfinding {
 body.is-booklet-system .study-page-mark {
   margin: 0;
   font-family: var(--font-source-serif), Literata, Georgia, serif;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 440;
   letter-spacing: -0.02em;
   color: var(--color-ink, #12160f);
@@ -1114,7 +1114,7 @@ body.is-booklet-system .study-page-mark span {
   color: var(--color-steel, #5c6570);
   font-family: inherit;
   font-variant-numeric: tabular-nums;
-  font-size: 0.92rem;
+  font-size: 0.875rem;
 }
 
 body.is-booklet-system .study-wayfinding .study-steps {
@@ -1131,9 +1131,9 @@ body.is-booklet-system .study-wayfinding .study-steps li {
   position: static;
   padding: 0 0 0 12px;
   margin: 0;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
   border-top: 0;
 }
@@ -1173,8 +1173,8 @@ body.is-booklet-system .topic-map-node.is-stable circle {
 body.is-booklet-system .topic-map-node .topic-map-status {
   fill: var(--booklet-mute, #5c6570);
   font-size: 2.6px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 body.is-booklet-system .topic-map-node.is-weak .topic-map-status,
@@ -1195,7 +1195,7 @@ body.is-booklet-system .study-question textarea {
   border-radius: 4px;
   background: #fff;
   border-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
-  font-size: 1.02rem;
+  font-size: 1rem;
 }
 
 body.is-booklet-system .session-learn ul {
@@ -1204,7 +1204,7 @@ body.is-booklet-system .session-learn ul {
 
 body.is-booklet-system .session-sources > span {
   letter-spacing: 0.08em;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
 }
 
 /* Session as paper, not a floating card */
@@ -1283,21 +1283,21 @@ body.is-session-booklet.is-booklet-system .study-shell {
 }
 
 body.is-session-booklet.is-booklet-system .site-header.is-session .site-footer-mark {
-  font-size: 1.15rem;
+  font-size: 1.125rem;
   letter-spacing: -0.03em;
   font-weight: 500;
 }
 
 body.is-session-booklet.is-booklet-system .site-session-label {
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   font-weight: 450;
 }
 
 body.is-session-booklet.is-booklet-system .site-session-return {
   min-height: 40px;
   color: var(--color-steel, #5c6570);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   border-bottom: 0;
 }
 
@@ -1319,7 +1319,7 @@ body.is-session-booklet.is-booklet-system .study-more > summary {
   list-style: none;
   cursor: pointer;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 72%, transparent);
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 450;
   min-height: 32px;
   display: inline-flex;
@@ -1355,7 +1355,7 @@ body.is-session-booklet.is-booklet-system .study-more .study-discard-trigger {
 body.is-session-booklet.is-booklet-system .study-discard-trigger,
 body.is-session-booklet.is-booklet-system .study-discard .text-btn {
   color: color-mix(in srgb, var(--color-steel, #5c6570) 78%, transparent);
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 450;
 }
 
@@ -1394,9 +1394,9 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   cursor: pointer;
   padding: 10px 0;
   color: var(--color-steel, #5c6570);
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-list-details > summary::-webkit-details-marker {
@@ -1429,7 +1429,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   margin: 0 0 14px;
   max-width: 42ch;
   color: var(--color-steel, #5c6570);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 
@@ -1455,7 +1455,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 
 .kelus-space-stage .material-drop.is-quiet strong {
   font-family: var(--font-source-serif), Literata, Georgia, serif;
-  font-size: 1.2rem;
+  font-size: 1.125rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--color-kelus, #1f6b45);
@@ -1463,7 +1463,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 
 .kelus-space-stage .material-drop.is-quiet span {
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 .kelus-space-stage .material-shelf.is-binder > header .kicker {
@@ -1471,7 +1471,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   text-transform: none;
   letter-spacing: 0;
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 .kelus-space-stage .material-shelf.is-binder > header h2 {
@@ -1492,7 +1492,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 
 .kelus-space-stage .material-shelf.is-binder .material-name strong {
   font-family: var(--font-source-serif), Literata, Georgia, serif;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   white-space: normal;
@@ -1501,7 +1501,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 .kelus-space-stage .material-shelf.is-binder .material-name small {
   margin-top: 4px;
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   white-space: normal;
 }
 
@@ -1512,7 +1512,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   border-radius: 0;
   background: transparent;
   color: var(--color-steel, #5c6570);
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -1543,7 +1543,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   margin: 1.25rem 0 0;
   max-width: 42ch;
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 
@@ -1553,7 +1553,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 
 .kelus-space-stage .material-ingest.is-embedded .material-bookmarks > summary {
   color: var(--color-steel, #5c6570);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
 }
 
 
@@ -1586,7 +1586,7 @@ body.is-paper-column .kelus-paper-bar-course {
 body.is-paper-column .kelus-paper-course {
   margin: 0;
   font-family: var(--font-source-serif), Literata, Georgia, serif;
-  font-size: 1.05rem;
+  font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   color: var(--color-ink, #12160f);
@@ -1594,7 +1594,7 @@ body.is-paper-column .kelus-paper-course {
 
 body.is-paper-column .kelus-paper-meta {
   margin: 2px 0 0;
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
   color: var(--color-steel, #5c6570);
 }
 
@@ -1624,7 +1624,7 @@ body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes but
   border-radius: 0;
   background: transparent;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 85%, transparent);
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 450;
   letter-spacing: -0.01em;
   text-align: center;
@@ -1663,7 +1663,7 @@ body.is-paper-column .kelus-paper-more > summary {
   display: inline-flex;
   align-items: center;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   font-weight: 450;
 }
 
@@ -1728,7 +1728,7 @@ body.is-paper-column .kelus-paper-lede {
   margin: 10px 0 0;
   max-width: 42ch;
   color: var(--color-steel, #5c6570);
-  font-size: 1.02rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 
@@ -1759,7 +1759,7 @@ body.is-paper-column .kelus-paper-body {
 
   body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes button {
     padding: 0 10px;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
 }
 
@@ -1821,14 +1821,14 @@ body.is-paper-column .index-toc-row:active {
 
 body.is-paper-column .index-toc-num {
   font-variant-numeric: tabular-nums;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--color-steel, #5c6570);
 }
 
 body.is-paper-column .index-toc-name {
   display: block;
   font-family: var(--font-ledger, Georgia, serif);
-  font-size: 1.15rem;
+  font-size: 1.125rem;
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.25;
@@ -1837,7 +1837,7 @@ body.is-paper-column .index-toc-name {
 body.is-paper-column .index-toc-meta {
   display: block;
   margin-top: 4px;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   color: var(--color-steel, #5c6570);
 }
 
@@ -1882,7 +1882,7 @@ body.is-paper-column .index-toc-row.is-start .index-toc-meta {
   display: flex;
   align-items: center;
   padding: 10px 0;
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--color-steel, #5c6570);
 }
@@ -1919,7 +1919,7 @@ body.is-booklet-page .today-page-folio {
   flex-wrap: wrap;
   gap: 8px 16px;
   margin: 0;
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   letter-spacing: 0.02em;
   color: color-mix(in srgb, var(--color-steel, #5c6570) 92%, transparent);
 }
@@ -1984,7 +1984,7 @@ body.is-booklet-page .kelus-paper-course {
 }
 
 body.is-booklet-page .kelus-paper-meta {
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
 }
 
 body.is-booklet-page .kelus-paper-home {
@@ -2051,10 +2051,10 @@ body.is-session-booklet .study-mark-moment {
 body.is-session-booklet .study-mark-kicker {
   margin: 0;
   color: var(--color-steel, #5c6570);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 body.is-session-booklet .study-mark-moment > h1 {
@@ -2098,7 +2098,7 @@ body.is-session-booklet .study-mark-whisper {
   margin: 4px 0 8px;
   max-width: 34ch;
   color: var(--color-steel, #5c6570);
-  font-size: 0.98rem;
+  font-size: 1rem;
   line-height: 1.45;
 }
 
@@ -2213,7 +2213,7 @@ body.is-session-booklet .session-work-lede {
   margin: 0;
   max-width: 36ch;
   color: var(--color-steel, #5c6570);
-  font-size: 0.98rem;
+  font-size: 1rem;
   font-weight: 450;
   line-height: 1.45;
 }
@@ -2239,7 +2239,7 @@ body.is-session-booklet textarea.session-work-field {
   box-shadow: none;
   color: var(--color-ink, #12160f);
   font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
-  font-size: 1.08rem;
+  font-size: 1.125rem;
   font-weight: 440;
   letter-spacing: -0.015em;
   line-height: 1.55rem;
@@ -2324,7 +2324,7 @@ body.is-session-booklet .study-context.is-folio,
 }
 
 .study-shell .study-context.is-folio small {
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   font-weight: 450;
   color: var(--color-steel, #5c6570);
 }
@@ -2409,10 +2409,10 @@ body.is-session-complete .complete-return {
 body.is-session-complete .complete-return .kicker {
   margin: 0;
   color: var(--color-steel, #5c6570);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 body.is-session-complete .complete-return h2 {
@@ -2429,7 +2429,7 @@ body.is-session-complete .complete-return > p {
   margin: 0;
   max-width: 36ch;
   color: var(--color-steel, #5c6570);
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.45;
 }
 
@@ -2454,7 +2454,7 @@ body.is-session-complete .complete-return-note {
   margin: 0;
   min-height: 1.2em;
   color: var(--color-steel, #5c6570);
-  font-size: 0.88rem;
+  font-size: 0.875rem;
 }
 
 body.is-session-complete .complete-moved,
@@ -2472,7 +2472,7 @@ body.is-session-complete details > summary {
   list-style: none;
   padding: 14px 0;
   color: var(--color-steel, #5c6570);
-  font-size: 0.92rem;
+  font-size: 0.875rem;
 }
 
 body.is-session-complete details > summary::-webkit-details-marker {
@@ -2492,9 +2492,9 @@ body.is-session-complete .complete-columns {
 
 body.is-session-complete .complete-columns .kicker {
   margin: 0 0 6px;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--color-steel, #5c6570);
 }
 

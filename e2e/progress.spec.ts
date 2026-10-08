@@ -64,9 +64,9 @@ test("the sample course has history, so it shows a real trend with a chart and a
   for (const name of stronger) expect(needs).not.toContain(name);
 });
 
-test("the daily goal strip links to the Progress screen", async ({ page }) => {
+test("Progress is one click from Today, in the sections", async ({ page }) => {
   await newCourse(page);
-  await page.getByRole("link", { name: /See your progress/ }).click();
+  await page.locator('nav[aria-label="Revision sections"]').getByRole("button", { name: "Progress", exact: true }).click();
   await expect(page).toHaveURL(/section=progress/);
   await expect(page.locator("#progress-headline")).toBeVisible();
 });

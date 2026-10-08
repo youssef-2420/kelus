@@ -53,7 +53,7 @@
 .today-workbench.is-revision-studio .today-lead-label { display: flex; gap: 12px; align-items: center; }
 .today-workbench.is-revision-studio .today-lead-main { margin-top: 20px; grid-template-columns: minmax(0, 1fr) 72px; gap: 20px; }
 .today-workbench.is-revision-studio .today-lead-main h3 { font-size: clamp(28px, 3.5vw, 42px); line-height: 1.1; letter-spacing: -.035em; }
-.today-workbench.is-revision-studio .today-lead-main p { font-size: 15px; line-height: 1.5; max-width: 40ch; }
+.today-workbench.is-revision-studio .today-lead-main p { font-size: 1rem; line-height: 1.5; max-width: 40ch; }
 .today-workbench.is-revision-studio .today-lead-time { border: 0; padding: 0; text-align: right; }
 .today-workbench.is-revision-studio .today-lead-time strong { font-size: 40px; }
 .today-workbench.is-revision-studio .today-lead-sequence { margin-top: 28px; }
@@ -74,7 +74,7 @@
   .is-revision-studio .home-copy h1#home-hero-title { font-size: 46px; }
   .is-revision-studio .home-copy .home-lede { font-size: 16px; }
   .is-revision-studio .hero-loop-cue { gap: 9px; margin-block: 20px 24px; }
-  .is-revision-studio .hero-loop-cue i { font-size: 11px; }
+  .is-revision-studio .hero-loop-cue i { font-size: 0.75rem; }
   .is-revision-studio .home-actions { align-items: stretch; gap: 16px; }
   .is-revision-studio .hero-demo-head { padding-inline: 16px; }
   .is-revision-studio .hero-demo-body { padding: 20px 16px; }

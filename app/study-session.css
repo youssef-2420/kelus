@@ -84,7 +84,7 @@ body.is-session-booklet.is-booklet-system .study-context.is-folio {
   min-height: 34px;
   gap: 6px;
   color: var(--ink);
-  font-size: 1.1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: -0.05em;
   text-decoration: none;
@@ -106,7 +106,7 @@ body.is-session-booklet.is-booklet-system .study-context-title small {
 body.is-session-booklet.is-booklet-system .study-more > summary,
 body.is-session-booklet.is-booklet-system .study-close {
   color: var(--color-slate);
-  font-size: 0.85rem;
+  font-size: 0.875rem;
 }
 
 .study-phase-track {
@@ -126,14 +126,14 @@ body.is-session-booklet.is-booklet-system .study-close {
   padding: 8px 10px;
   border-top: 2px solid var(--line);
   color: var(--color-smoke);
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 500;
   white-space: nowrap;
 }
 
 .study-phase-track li span {
   color: inherit;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -192,7 +192,7 @@ body.is-session-booklet.is-booklet-system .session-work-lede,
 body.is-session-booklet.is-booklet-system .study-mark-lede {
   color: var(--color-slate);
   font-family: var(--font-sans);
-  font-size: 0.98rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 
@@ -298,7 +298,7 @@ body.is-session-booklet.is-booklet-system .study-mark-moment > h1 {
 body.is-session-booklet.is-booklet-system .study-mark-summary {
   margin: 0;
   color: var(--color-slate);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
@@ -321,7 +321,7 @@ body.is-session-booklet.is-booklet-system .session-value-proof > div {
 
 body.is-session-booklet.is-booklet-system .session-value-proof span {
   color: var(--color-slate);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -396,7 +396,7 @@ body.is-session-booklet.is-booklet-system .study-context :is(button, summary):fo
   .study-phase-track li {
     justify-content: center;
     padding-inline: 4px;
-    font-size: 0.72rem;
+    font-size: 0.75rem;
   }
 
   .study-phase-track li span { display: none; }

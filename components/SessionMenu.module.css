@@ -55,11 +55,11 @@
   background: transparent;
   color: var(--color-midnight-ink);
   font: inherit;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   font-weight: 450;
   text-align: left;
   cursor: pointer;
-  transition: background-color 100ms;
+  transition: background-color 120ms;
 }
 
 .root .item:hover,
@@ -80,7 +80,7 @@
 
 .root .confirm p {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.4;
   color: var(--color-midnight-ink);
 }

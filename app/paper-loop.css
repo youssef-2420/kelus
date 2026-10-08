@@ -250,7 +250,7 @@ body.is-booklet-system .is-notebook .paper-source {
 
 body.is-booklet-system .is-notebook .paper-step {
   font-family: var(--font-booklet), Inter, sans-serif;
-  font-size: 11px;
+  font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
@@ -368,7 +368,7 @@ body.is-booklet-system .is-notebook .board-answer {
   margin: 14px 0 0;
   padding: 12px 0 0;
   border-top: 1px dashed #d5cfc4;
-  font-size: 15px;
+  font-size: 1rem;
   line-height: 1.5;
   color: #2c2a27;
 }

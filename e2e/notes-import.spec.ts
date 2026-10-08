@@ -157,7 +157,7 @@ test("a file with no real topics says so plainly and returns to the start screen
 
 test("a topic that is not real can be removed from the question screen, and undone", async ({ page }) => {
   await startFromFile(page, mdFile);
-  const title = await page.locator(".study-context-title small b").innerText();
+  const title = await page.locator(".study-topic-kicker b").innerText();
   const before = await topicNames(page);
   expect(before).toContain(title);
   await page.goto("/today");

@@ -20,5 +20,5 @@ test("topic index and topic detail show the same derived practice mastery", asyn
   expect(indexMastery).toBeTruthy();
   await topic.click();
   await expect(page.getByRole("heading", { name: "Elasticity" })).toBeVisible();
-  await expect(page.getByText("Practice mastery").locator("..").locator("dd")).toHaveText(indexMastery!);
+  await expect(page.getByTestId("topic-standing")).toContainText(indexMastery!);
 });

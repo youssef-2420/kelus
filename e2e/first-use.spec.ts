@@ -155,7 +155,8 @@ test("workspace sidebar can be hidden and a source can be removed from it", asyn
 test("sample course without an original PDF gives the route room and makes upload the first material action", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/today?sample=1");
-  await expect(page.locator(".core-workspace-grid.is-source-missing")).toBeVisible();
+  // Today is one column: the next topic. The notes live in Materials.
+  await expect(page.locator(".core-workspace-grid.is-today-single")).toBeVisible();
   await expect(page.locator(".core-source-reader")).toHaveCount(0);
   await expect(page.getByRole("link", { name: "Add your course PDF" })).toBeVisible();
   await page.screenshot({ path: "/tmp/kelus-sample-route-without-pdf.png", fullPage: true });
@@ -187,8 +188,12 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await expect(page.getByRole("region", { name: "Revision workbench" })).toBeVisible();
   await expect(sectionsNav(page).getByRole("button", { name: "Study plan", exact: true })).toBeVisible();
   await expect(page.locator("#today-title")).toBeVisible();
+  // The PDF itself opens in Materials, page by page; Today stays one column.
+  await expect(page.locator(".core-source-reader")).toHaveCount(0);
+  await sectionsNav(page).getByRole("button", { name: "Materials", exact: true }).click();
   await expect(page.locator(".core-source-reader canvas")).toBeVisible();
   await page.screenshot({ path: "/tmp/kelus-core-source-desktop.png", fullPage: true });
+  await sectionsNav(page).getByRole("button", { name: "Study plan", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Today", exact: true })).toHaveCount(0);
   // The course is named after the file until the learner renames it (no form asks for a name any more).
   await expect(page.getByText(/cell biology lecture/i).first()).toBeVisible();
@@ -223,7 +228,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await start.click();
 
   await expect(page).toHaveURL(/\/session/);
-  await expect(page.locator(".study-context.is-folio")).toContainText(/topic 1 of \d+/i);
+  await expect(page.locator(".study-topic-kicker")).toContainText(/topic 1 of \d+/i);
   // One topic is a short run: instant checks, then one explanation in your own words.
   await expect(page.getByRole("list", { name: /^Step 1 of \d$/ })).toBeVisible();
   await expect(page.getByRole("button", { name: "Close", exact: true })).toBeVisible();
@@ -261,7 +266,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await page.reload();
   await page.getByRole("button", { name: /^Continue/ }).click();
   await expect(page).toHaveURL(/\/session/);
-  await expect(page.locator(".study-context.is-folio")).toContainText("2 of 3");
+  await expect(page.locator(".study-topic-kicker")).toContainText("2 of 3");
   await page.goto("/today?section=materials");
   await page.getByRole("button", { name: "Remove", exact: true }).click();
   const confirmation = page.getByRole("group", { name: /Confirm remove cell biology lecture/ });

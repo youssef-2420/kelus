@@ -34,7 +34,7 @@ body.is-course-studio .kelus-space.is-studio {
 
 .is-course-studio .studio-brand {
   padding-inline: var(--spacing-8);
-  font-size: 1.42rem;
+  font-size: 1.375rem;
 }
 
 .is-course-studio .studio-brand > span:last-child {
@@ -63,7 +63,7 @@ body.is-course-studio .kelus-space.is-studio {
   padding: 10px var(--spacing-16);
   border-radius: var(--radius-ledger);
   color: var(--studio-muted);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 500;
   transition: background-color var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard);
 }
@@ -155,13 +155,13 @@ body.is-course-studio .kelus-space.is-studio {
 }
 
 .is-course-studio .studio-topbar-course {
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
 .is-course-studio .studio-topbar-status {
   color: var(--studio-muted);
-  font-size: 0.79rem;
+  font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -209,7 +209,7 @@ body.is-course-studio .studio-panel .today-page-folio {
   justify-content: space-between;
   gap: var(--spacing-16);
   color: var(--studio-muted);
-  font-size: 0.82rem;
+  font-size: 0.8125rem;
   font-weight: 500;
 }
 
@@ -226,7 +226,7 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
 .is-course-studio .today-first-duration {
   margin-top: var(--spacing-16);
   color: var(--studio-muted);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 .is-course-studio .today-decision {
@@ -239,14 +239,14 @@ body.is-course-studio .studio-panel .today-lead-action.is-page #today-title {
 .is-course-studio .today-next-label {
   margin-bottom: var(--spacing-16);
   color: var(--studio-ink);
-  font-size: 0.77rem;
+  font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
 }
 
 .is-course-studio .today-decision p:not(.today-decision-label) {
   color: var(--studio-muted);
-  font-size: 0.94rem;
+  font-size: 1rem;
   line-height: 1.45;
 }
 
@@ -470,12 +470,12 @@ body.is-course-studio .studio-onboarding .diagnosis-page :is(.diagnosis-panel, .
 
 .is-course-studio .studio-onboarding .setup-payoff strong {
   color: var(--studio-ink);
-  font-size: 0.84rem;
+  font-size: 0.8125rem;
 }
 
 .is-course-studio .studio-onboarding .setup-payoff span {
   color: var(--studio-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
 }
 
 .is-course-studio .studio-page-heading {
@@ -655,7 +655,7 @@ body.is-booklet-system.is-course-studio .studio-onboarding .material-binder-stac
   }
 
   .is-course-studio .studio-topbar-status {
-    font-size: 0.74rem;
+    font-size: 0.75rem;
   }
 
   .is-course-studio .studio-topbar-kind,

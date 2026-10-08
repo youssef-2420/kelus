@@ -9,14 +9,14 @@ import { type ReactNode } from "react";
  * Inclusive: prefer opacity over travel; honour prefers-reduced-motion.
  */
 
-/** Duration tokens (seconds for Motion; CSS uses ms equivalents). */
+/** Duration tokens (seconds for Motion; CSS uses ms equivalents). Two speeds: 0.12 feedback, 0.22 movement. */
 export const kelusDuration = {
-  instant: 0.08,
-  micro: 0.1,
-  fast: 0.15,
-  normal: 0.2,
-  moderate: 0.3,
-  slow: 0.4,
+  instant: 0.12,
+  micro: 0.12,
+  fast: 0.12,
+  normal: 0.22,
+  moderate: 0.22,
+  slow: 0.22,
 } as const;
 
 /** Standard state-transition easing — cubic-bezier(0.22, 1, 0.36, 1) */

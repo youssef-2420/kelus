@@ -125,14 +125,15 @@ export function TopicMapPanel() {
         {rows.map(({ concept, mastery, label, page, due }, index) => {
           const isStart = startConceptId === concept.id;
           const checks = concept.retrievalAttempts;
-          const reason = isStart && startAllocation ? describeRouteChoice(startAllocation, concept, { examDateKnown: !state.snapshot.exams.some((exam) => exam.isActive && exam.datePlaceholder) })[0] : null;
+          // A new topic already says "Start here" / "Not started": the "no answers yet" reason would only repeat it.
+          const reason = isStart && startAllocation && concept.retrievalAttempts > 0 ? describeRouteChoice(startAllocation, concept, { examDateKnown: !state.snapshot.exams.some((exam) => exam.isActive && exam.datePlaceholder) })[0] : null;
           return (
             <motion.li
               key={concept.id}
               className={isStart ? `is-start ${styles.start}` : undefined}
               initial={reduce ? false : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={reduce ? { duration: 0 } : { type: "spring", bounce: 0, duration: 0.5, delay: Math.min(index, 8) * 0.045 }}
+              transition={reduce ? { duration: 0 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1], delay: Math.min(index, 8) * 0.025 }}
             >
               <Link
                 href={`/concept?id=${encodeURIComponent(concept.id)}`}
@@ -150,7 +151,7 @@ export function TopicMapPanel() {
                   </span>
                   <span className={styles.facts}>
                     {/* Exam weights are estimated from how much text a topic has, not set by anyone, so no "% of exam" here. */}
-                    {[page, checks === 0 ? "No checks yet" : `${checks} check${checks === 1 ? "" : "s"}`].filter(Boolean).join(" · ")}
+                    {[page, checks === 0 ? null : `${checks} check${checks === 1 ? "" : "s"}`].filter(Boolean).join(" · ")}
                   </span>
                   {due ? <span className={styles.due}>Review due</span> : null}
                   {reason ? <span className={styles.why}>{reason}</span> : null}

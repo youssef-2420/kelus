@@ -14,10 +14,10 @@
 
 .label {
   margin: 0 0 4px;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
   color: var(--color-smoke, #6b7066);
 }
 
