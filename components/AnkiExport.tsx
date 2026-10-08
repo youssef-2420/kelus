@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ankiCards, ankiFile } from "@/domain/anki-export";
 import type { Concept, LearningActivity } from "@/domain/types";
 import { trackEvent } from "@/lib/analytics";
+import { BrandIcon } from "@/components/BrandIcon";
 import styles from "./AnkiExport.module.css";
 
 /** Takes the course's questions to Anki: one file, imported with File → Import. Built on this device; nothing is sent. */
@@ -28,6 +29,7 @@ export function AnkiExport({ course, concepts, activities }: { course: string; c
 
   return (
     <section className={styles.card} aria-labelledby="anki-title">
+      <span className={styles.logo}><BrandIcon brand="anki" size={22} /></span>
       <div>
         <h2 id="anki-title">Take your cards to Anki</h2>
         <p>Every question for these {concepts.length} topics, with the answer and the line from your notes on the back.</p>

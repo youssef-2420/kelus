@@ -18,10 +18,11 @@ import { MATERIAL_ROLES, materialRoleLabel } from "@/domain/materials";
 function fileTypeLabel(fileName?: string | null, mimeType?: string | null) {
   const name = (fileName ?? "").toLocaleLowerCase();
   if (name.endsWith(".pdf") || mimeType === "application/pdf") return "PDF";
-  if (name.endsWith(".zip")) return "Notion export";
+  if (name.endsWith(".zip") || /variant=notion/i.test(mimeType ?? "")) return "Notion export";
   return "Notes";
 }
 import { SourceArt } from "@/components/SourceArt";
+import { BrandIcon, brandForFile } from "@/components/BrandIcon";
 
 // AnimatePresence can defer mounting this heading until the previous phase exits.
 // Focus on attachment, when the target actually exists, rather than on phase change.
@@ -184,7 +185,7 @@ function MaterialRow({
 
   return (
     <li className={`material-row${item.processingStatus === "failed" ? " is-failed" : ""}${quiet ? " is-quiet material-card" : ""}`}>
-      {quiet ? <span className="material-card-art"><SourceArt role={item.role} isLink={item.storage === "url"} /></span> : <span className="material-kind">{isBuiltInExample ? "Example" : materialRoleLabel(item.role)}</span>}
+      {quiet ? <span className="material-card-art">{brandForFile(item.fileName, item.mimeType) ? <span className="material-card-brand"><BrandIcon brand={brandForFile(item.fileName, item.mimeType)!} size={28} /></span> : <SourceArt role={item.role} isLink={item.storage === "url"} />}</span> : <span className="material-kind">{isBuiltInExample ? "Example" : materialRoleLabel(item.role)}</span>}
       <span className="material-name">
         <strong>{isBuiltInExample ? "Built-in Microeconomics example" : item.title}</strong>
         {metaBits.length ? <small>{metaBits.join(" · ")}</small> : null}

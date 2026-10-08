@@ -298,3 +298,23 @@ html body.is-course-studio .studio-search kbd {
   font-size: 0.72rem;
 }
 @media (max-width: 900px) { html body.is-course-studio .studio-search { display: none; } }
+
+/* Another product named in a line, with its own mark just before the name. */
+.brand-inline {
+  display: inline;
+  white-space: nowrap;
+}
+.brand-inline > svg { margin-right: 4px; vertical-align: -0.125em !important; }
+
+/* A Notion export or Markdown file shows its tool's mark, on the same paper tile size as the drawn sources. */
+.material-card-brand {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid rgba(18, 22, 15, 0.1);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-midnight-ink);
+}
+.core-source-brand { color: var(--color-midnight-ink); }

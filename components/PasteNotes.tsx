@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandIcon } from "@/components/BrandIcon";
 import { useState } from "react";
 import { MAX_NOTES_BYTES, pastedTitle, structurePastedText } from "@/domain/markdown-pages";
 import styles from "./PasteNotes.module.css";
@@ -28,7 +29,15 @@ export function PasteNotes({ onFile, disabled = false }: { onFile: (file: File) 
   return (
     <details className={styles.paste}>
       <summary>Or paste your notes</summary>
-      <p className={styles.help}>Works with Notion, Obsidian and any Markdown. In Notion, use Export, then Markdown, or copy the page and paste it here.</p>
+      <p className={styles.help}>
+        <span className={styles.works}>
+          Works with
+          <span className="brand-inline"><BrandIcon brand="notion" size={14} />Notion</span>
+          <span className="brand-inline"><BrandIcon brand="obsidian" size={14} />Obsidian</span>
+          <span className="brand-inline"><BrandIcon brand="markdown" size={15} />Markdown</span>
+        </span>
+        In Notion, use Export, then Markdown, or copy the page and paste it here.
+      </p>
       <label htmlFor="paste-notes" className="sr-only">Your notes</label>
       <textarea
         id="paste-notes"

@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandIcon } from "@/components/BrandIcon";
 import { useEffect, useState, type DragEvent } from "react";
 import { PackArt } from "@/components/PackArt";
 import { PasteNotes } from "@/components/PasteNotes";
@@ -71,7 +72,7 @@ export function DropNotes({ onFile, first = false, courseName }: { onFile: (file
             <span className="setup-upload-mark" aria-hidden="true"><PackArt name="folder" size={44} /></span>
             <strong>{busy ? "Reading your file…" : "Choose a PDF or notes"}</strong>
             {/* Dragging only exists with a mouse or trackpad; a phone gets the file types instead. */}
-            <span>{busy ? "This takes a few seconds." : <><span className="drop-hint">or drop it here · </span>PDF, Markdown, .txt or a Notion .zip</>}</span>
+            <span>{busy ? "This takes a few seconds." : <><span className="drop-hint">or drop it here · </span>PDF, <span className="brand-inline"><BrandIcon brand="markdown" size={15} />Markdown</span>, .txt or a <span className="brand-inline"><BrandIcon brand="notion" size={14} />Notion</span> .zip</>}</span>
           </label>
           <PasteNotes onFile={(file) => void take(file)} disabled={busy} />
           {error ? <p className="setup-error" role="alert">{error}</p> : null}
