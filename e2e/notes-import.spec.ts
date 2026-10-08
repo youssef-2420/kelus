@@ -155,7 +155,7 @@ test("a file with no real topics says so plainly and returns to the start screen
   await expect(page).toHaveURL(/\/session/, { timeout: 30_000 });
 });
 
-test("a topic that is not real can be removed from the question screen, with a confirmation", async ({ page }) => {
+test("a topic that is not real can be removed from the question screen, and undone", async ({ page }) => {
   await startFromFile(page, mdFile);
   const title = await page.locator(".study-context-title small b").innerText();
   const before = await topicNames(page);
@@ -165,13 +165,10 @@ test("a topic that is not real can be removed from the question screen, with a c
   await expect(page).toHaveURL(/\/session/);
   const more = page.getByRole("button", { name: "More session options" });
   await more.click();
+  // Removed at once, with an Undo in the note that appears (no "are you sure" first).
   await page.getByRole("button", { name: "Remove this topic" }).click();
-  await expect(page.getByRole("group", { name: /^Remove “/ })).toContainText(title);
-  await page.getByRole("button", { name: "Keep" }).click();
-  await expect(page.getByRole("button", { name: "Remove this topic" })).toBeVisible();
-  await page.getByRole("button", { name: "Remove this topic" }).click();
-  await page.getByRole("button", { name: "Yes, remove" }).click();
   await expect(page).toHaveURL(/\/today/);
+  await expect(page.getByText(`Removed “${title}”`)).toBeVisible();
   const after = await topicNames(page);
   expect(after).toHaveLength(before.length - 1);
   expect(after).not.toContain(title);

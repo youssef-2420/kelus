@@ -20,6 +20,7 @@ import { AutoStart } from "@/components/AutoStart";
 import { ankiCards } from "@/domain/anki-export";
 import { PackArt, type PackArtName } from "@/components/PackArt";
 import { AppTabBar } from "@/components/AppTabBar";
+import { InlineName } from "@/components/InlineName";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
@@ -182,7 +183,8 @@ export function RevisionSurface() {
 
   function setMode(next: SurfaceMode) {
     if (next === mode) return;
-    router.replace(hrefForMode(next), { scroll: false });
+    // A real step in history, so the browser's Back returns to the section you came from.
+    router.push(hrefForMode(next), { scroll: false });
   }
 
   function begin() {
@@ -322,7 +324,7 @@ export function RevisionSurface() {
 
       <div className="studio-main">
         <header className="studio-topbar">
-          <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={() => setRailHidden(false)} aria-label="Show workspace sidebar">→ <span>Show sidebar</span></button> : null}<span className="studio-topbar-course" title={course.name}>{course.name}</span></span>
+          <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={() => setRailHidden(false)} aria-label="Show workspace sidebar">→ <span>Show sidebar</span></button> : null}<span className="studio-topbar-course" title={course.name}>{isSampleCourse ? course.name : <InlineName value={course.name} label="Rename course" onSave={(next) => renameCourse(course.id, next, "user")} />}</span></span>
           <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{examDatePending ? "Add your exam date" : `${days} day${days === 1 ? "" : "s"} to exam`}</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">

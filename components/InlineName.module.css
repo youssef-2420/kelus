@@ -1,0 +1,32 @@
+/* Plain text until pointed at: then a soft wash shows it can be changed, as in Notion. */
+.name {
+  display: inline;
+  max-width: 100%;
+  margin: 0 -4px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  cursor: text;
+  transition: background-color 120ms;
+}
+.name:hover { background: rgba(18, 22, 15, 0.06); }
+.name:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 1px; }
+
+.input {
+  display: inline-block;
+  width: min(100%, 36ch);
+  margin: 0 -4px;
+  padding: 0 4px;
+  border: 0;
+  border-radius: 5px;
+  outline: 2px solid var(--color-kelus);
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}

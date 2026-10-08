@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { InlineName } from "@/components/InlineName";
 import { useParams, useSearchParams } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { useLearner } from "@/components/LearnerProvider";
@@ -36,7 +37,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
   const params = useParams<{ id?: string }>();
   const search = useSearchParams();
   const id = conceptId ?? search.get("id") ?? params.id;
-  const { state } = useLearner();
+  const { renameTopic, state } = useLearner();
   if (!state.onboardingCompleted) {
     return (
       <DirectionalPage>
@@ -72,7 +73,7 @@ export function ConceptDetail({ conceptId }: { conceptId?: string }) {
           <header className={styles.header}>
             <p className={styles.eyebrow}>{courseName} · Topic</p>
             <ConceptTitleTransition id={concept.id}>
-              <h1 className={styles.title}>{concept.name}</h1>
+              <h1 className={styles.title}><InlineName value={concept.name} label="Rename topic" onSave={(next) => renameTopic(concept.id, next)} /></h1>
             </ConceptTitleTransition>
             <p className={styles.lede}>The route uses your recall history to decide when to revisit this topic.</p>
           </header>
