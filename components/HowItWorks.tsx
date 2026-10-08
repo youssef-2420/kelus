@@ -92,7 +92,7 @@ export function HowItWorks() {
         <motion.h1 id="how-title" initial={reduceMotion ? false : { opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ delay: reduceMotion ? 0 : 0.06, duration: 0.65, ease: kelusEase }}>Your lessons become <br />a better revision habit.</motion.h1>
         <motion.div className={styles.heroBottom} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduceMotion ? 0 : 0.14, duration: 0.5, ease: kelusEase }}>
           <p>Bring your course. Recall what you know. Let each answer shape what you practise next.</p>
-          <Link className={styles.primaryAction} href="/today">Set up my course<span aria-hidden="true">↗</span></Link>
+          <Link className={styles.primaryAction} href="/today">Set up my course<span className={styles.primaryArrow} aria-hidden="true">→</span></Link>
         </motion.div>
       </section>
       <section className={styles.story} aria-label="The Kelus revision loop">
@@ -112,7 +112,7 @@ export function HowItWorks() {
       </motion.section>
       <motion.footer ref={finalRef} className={styles.final} initial={reduceMotion ? false : { opacity: 0, y: 14 }} animate={finalVisible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: 0.55, ease: kelusEase }}>
         <p>Ready to revise your own lessons?</p>
-        <Link className={styles.primaryAction} href="/today">Set up my course<span aria-hidden="true">↗</span></Link>
+        <Link className={styles.primaryAction} href="/today">Set up my course<span className={styles.primaryArrow} aria-hidden="true">→</span></Link>
       </motion.footer>
     </div>
   );
