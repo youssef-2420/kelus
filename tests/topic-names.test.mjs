@@ -81,3 +81,15 @@ test("a scanned page with run-together headings and cut-off lines only yields qu
     assert.doesNotMatch(item.prompt, /fight operation|Control Centre Crew|crew rest|\. [a-z]/, item.prompt);
   }
 });
+
+test("a real sentence that a scan lowercased gets its capital back and can be asked about", async () => {
+  const { buildPractice } = await import("../domain/content-engine.ts");
+  const excerpt = [
+    "route planning real time fight operation flight monitoring and crew future fights.",
+    "The operation manager approves the daily flight schedule before it is published to the crews.",
+    "flight monitoring tracks every aircraft in real time and alerts the duty manager when a delay exceeds fifteen minutes.",
+  ].join("\n");
+  const prompts = buildPractice({ conceptId: "c", name: "Operation manager", excerpt, locator: "Page 1", siblingNames: ["Dispatch"] }).map((item) => item.prompt);
+  assert.ok(prompts.some((prompt) => /Flight monitoring tracks/.test(prompt)), prompts.join("\n"));
+  assert.ok(prompts.every((prompt) => !/fight operation/i.test(prompt)));
+});

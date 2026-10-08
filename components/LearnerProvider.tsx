@@ -33,6 +33,7 @@ import {
   renameCourse,
   renameConcept,
   restoreDemoState,
+  restoreExamPlan,
 } from "@/lib/demo-store";
 import type { Concept, ExtractedMaterialPage, ProposedConcept, RetrievalOutcome, SelfRating } from "@/domain/types";
 import type { SetupInput } from "@/lib/setup";
@@ -90,7 +91,7 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       const label = takeUndo();
       if (!label) return;
       event.preventDefault();
-      toast(`Put back “${label}”`, { duration: 2500 });
+      toast(label, { duration: 2500 });
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -247,21 +248,24 @@ export function LearnerProvider({ children }: { children: ReactNode }) {
       const name = before.snapshot.concepts.find((concept) => concept.id === conceptId)?.name ?? "Topic";
       removeConcept(state, conceptId);
       const id = toast(`Removed “${name}”`, { action: { label: "Undo", onClick: () => { clearUndo(); restoreDemoState(before); } }, duration: 6000 });
-      offerUndo(name, () => { toast.dismiss(id); restoreDemoState(before); });
+      offerUndo(`Put back “${name}”`, () => { toast.dismiss(id); restoreDemoState(before); });
     },
     renameTopic(conceptId, name) {
       const before = getDemoSnapshot().snapshot.concepts.find((concept) => concept.id === conceptId)?.name;
       renameConcept(conceptId, name);
       // ⌘Z puts the old name back, as in Notion; a rename needs no toast of its own.
-      if (before && before !== name.trim()) offerUndo(before, () => renameConcept(conceptId, before), 30_000);
+      if (before && before !== name.trim()) offerUndo(`Renamed back to “${before}”`, () => renameConcept(conceptId, before), 30_000);
     },
     setExamDate(date, targetPercent) {
+      const active = getDemoSnapshot().snapshot.exams.find((exam) => exam.isActive);
+      const previous = active ? { id: active.id, examDate: active.examDate, datePlaceholder: active.datePlaceholder, targetPercent: active.targetPercent } : null;
       setExamDate(state, date, targetPercent);
+      if (previous) offerUndo(previous.datePlaceholder ? "Exam date removed" : "Exam date put back", () => restoreExamPlan(previous), 30_000);
     },
     renameCourse(courseId, name, source) {
       const before = getDemoSnapshot().snapshot.courses.find((course) => course.id === courseId)?.name;
       renameCourse(courseId, name, source);
-      if (source === "user" && before && before !== name.trim()) offerUndo(before, () => renameCourse(courseId, before, "user"), 30_000);
+      if (source === "user" && before && before !== name.trim()) offerUndo(`Renamed back to “${before}”`, () => renameCourse(courseId, before, "user"), 30_000);
     },
   }), [state]);
   return <StoreContext.Provider value={store}>{auth.user && syncMessage ? <p className="learner-sync-status" role="status">{syncMessage}</p> : null}{scopeAligned ? children : <p className="learner-sync-status" role="status">Loading your private learning route…</p>}</StoreContext.Provider>;

@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { startFromPaste, topicNames } from "./helpers";
+import { saveExamDate, startFromPaste, topicNames } from "./helpers";
 
 const notes = "Cell biology\n\nOsmosis\nOsmosis is the movement of water across a partially permeable membrane from a dilute solution to a more concentrated solution. In a hypotonic solution a plant cell gains water and becomes turgid because the cell wall pushes back.\n\nEnzymes\nEnzymes are biological catalysts that speed up reactions without being used up. Each enzyme has an active site with a specific shape, so it only binds one substrate.\n\nDiffusion\nDiffusion is the net movement of particles from an area of higher concentration to an area of lower concentration. It is a passive process, so it needs no energy from the cell.";
 
@@ -127,4 +127,16 @@ test("⌘Z also takes back a rename, and a topic's page keeps the course sidebar
   await expect(page.getByRole("button", { name: /Study this topic|Study it again/ })).toBeVisible();
   await nav.getByRole("button", { name: "Topics", exact: true }).click();
   await expect(page).toHaveURL(/section=map/);
+});
+
+test("⌘Z takes back a newly set exam date", async ({ page }) => {
+  await startFromPaste(page, notes);
+  await page.goto("/today");
+  await expect(page.locator(".studio-topbar-status")).toContainText("Add your exam date");
+  await saveExamDate(page, 9);
+  await expect(page.locator(".studio-topbar-status")).toContainText("days to exam");
+  await page.locator("body").click({ position: { x: 600, y: 760 } });
+  await page.keyboard.press("ControlOrMeta+z");
+  await expect(page.getByText("Exam date removed")).toBeVisible();
+  await expect(page.locator(".studio-topbar-status")).toContainText("Add your exam date");
 });

@@ -2,6 +2,7 @@
  * The one thing that can be taken back right now, as in Notion: the Undo in a toast and ⌘Z (Ctrl+Z) do the same.
  * Only the latest change is kept, and only for as long as its toast is up.
  */
+/** `message` is what the toast says once it is undone, e.g. "Put back “Osmosis”". */
 type Undo = { label: string; run: () => void; until: number };
 
 let latest: Undo | null = null;
