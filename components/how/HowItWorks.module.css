@@ -24,15 +24,7 @@
 .primaryAction { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 30px; padding: 0 22px; border: 1px solid var(--green); border-radius: 4px; background: var(--green); color: #fff; font-size: 14px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background-color 160ms ease, transform 120ms ease; }
 .primaryAction:hover { background: #185536; color: #fff; }
 .primaryAction:active { transform: scale(.97); }
-.primaryAction:focus-visible, .exampleSwitcher button:focus-visible { outline: 2px solid var(--green); outline-offset: 4px; }
-.exampleSwitcher { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 62px; padding-top: 17px; border-top: 1px solid var(--rule); font-size: 14px; }
-.exampleSwitcher > span { color: var(--mute); }
-.exampleSwitcher [role="group"] { display: flex; flex-wrap: wrap; gap: 7px; }
-.exampleSwitcher button { min-height: 44px; padding: 8px 13px; border: 1px solid transparent; border-radius: 4px; background: transparent; color: var(--mute); font: inherit; cursor: pointer; transition: color 160ms ease, background-color 160ms ease, transform 120ms ease; }
-.exampleSwitcher button:hover { color: var(--ink); }
-.exampleSwitcher button:active { transform: scale(.97); }
-.exampleSwitcher button:disabled { opacity: .55; cursor: not-allowed; }
-.exampleSwitcher button[aria-pressed="true"] { border-color: var(--green); background: color-mix(in srgb, var(--green) 9%, white); color: var(--green); font-weight: 600; }
+.primaryAction:focus-visible { outline: 2px solid var(--green); outline-offset: 4px; }
 .story { border-top: 1px solid var(--ink); }
 .story ol { margin: 0; padding: 0; list-style: none; }
 .chapter { display: grid; grid-template-columns: minmax(0, .87fr) minmax(0, 1.13fr); gap: clamp(36px, 7vw, 100px); align-items: center; min-height: 540px; padding: 86px 0; border-bottom: 1px solid var(--rule); }
@@ -80,7 +72,6 @@
   .hero, .chapter, .principle, .final { width: min(100% - 36px, 600px); }
   .hero { padding-top: 60px; }
   .heroBottom { align-items: start; flex-direction: column; }
-  .exampleSwitcher { margin-top: 44px; }
   .chapter, .chapter:nth-child(even) { grid-template-columns: 1fr; gap: 30px; min-height: auto; padding: 64px 0; }
   .chapter:nth-child(even) .visualWrap, .chapter:nth-child(even) .chapterText { grid-column: 1; grid-row: auto; }
   .chapter h2 { max-width: 15ch; }
@@ -98,6 +89,6 @@
   .final { flex-direction: column; align-items: stretch; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .primaryAction, .exampleSwitcher button { transition: none; }
+  .primaryAction { transition: none; }
   .visualWrap { transform: none !important; }
 }

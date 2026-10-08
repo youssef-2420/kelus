@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
-import { useRef, useState, useSyncExternalStore } from "react";
+import { motion, useInView, useReducedMotion } from "motion/react";
+import { useRef, useSyncExternalStore } from "react";
 import { kelusDuration, kelusEase } from "@/components/motion";
 import { PackArt } from "@/components/PackArt";
 import { RecallIllustration, RouteIllustration, SourceIllustration } from "@/components/home/RevisionObjects";
@@ -49,6 +49,8 @@ const stages = [
   { number: "03", cue: "Route", icon: "diagram-project", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route" },
 ] as const;
 
+const example = LEARNING_EXAMPLES[0];
+
 function Chapter({ stage, example, reduceMotion }: { stage: (typeof stages)[number]; example: LearningExample; reduceMotion: boolean }) {
   const chapterRef = useRef<HTMLLIElement>(null);
   const visible = useInView(chapterRef, { once: true, margin: "-12% 0px -12%" });
@@ -65,11 +67,9 @@ function Chapter({ stage, example, reduceMotion }: { stage: (typeof stages)[numb
         <motion.p initial={reduceMotion ? false : { opacity: 0, y: 10 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .22, duration: .48, ease: kelusEase }}>{body}</motion.p>
         <motion.span className={styles.chapterDetail} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .29, duration: .42, ease: kelusEase }}>{detail}</motion.span>
       </div>
-      <AnimatePresence initial={false} mode="sync">
-        <motion.div key={`${example.id}-${number}`} className={styles.visualWrap} initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={visible ? { opacity: 1, y: 0 } : undefined} exit={reduceMotion ? undefined : { opacity: 0, y: -8 }} transition={{ duration: reduceMotion ? 0 : kelusDuration.normal, ease: kelusEase }}>
-          <Visual example={example} visible={visible} reduceMotion={reduceMotion} />
-        </motion.div>
-      </AnimatePresence>
+      <motion.div className={styles.visualWrap} initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: reduceMotion ? 0 : kelusDuration.normal, ease: kelusEase }}>
+        <Visual example={example} visible={visible} reduceMotion={reduceMotion} />
+      </motion.div>
     </motion.li>
   );
 }
@@ -78,8 +78,6 @@ export function HowItWorks() {
   const hydrated = useSyncExternalStore(() => () => {}, () => true, () => false);
   const motionPreference = useReducedMotion();
   const reduceMotion = !hydrated || motionPreference === true;
-  const [exampleIndex, setExampleIndex] = useState(0);
-  const example = LEARNING_EXAMPLES[exampleIndex];
   const principleRef = useRef<HTMLElement>(null);
   const finalRef = useRef<HTMLElement>(null);
   const principleVisible = useInView(principleRef, { once: true, margin: "-12% 0px -12%" });
@@ -95,12 +93,6 @@ export function HowItWorks() {
         <motion.div className={styles.heroBottom} initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduceMotion ? 0 : 0.14, duration: 0.5, ease: kelusEase }}>
           <p>Bring your course. Recall what you know. Let each answer shape what you practise next.</p>
           <Link className={styles.primaryAction} href="/today">Set up my course<span aria-hidden="true">↗</span></Link>
-        </motion.div>
-        <motion.div className={styles.exampleSwitcher} initial={reduceMotion ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: reduceMotion ? 0 : 0.2, duration: 0.45, ease: kelusEase }}>
-          <span>See it with</span>
-          <div role="group" aria-label="Choose an example course">
-            {LEARNING_EXAMPLES.map((item, index) => <button key={item.id} type="button" aria-pressed={index === exampleIndex} onClick={() => setExampleIndex(index)}>{item.label}</button>)}
-          </div>
         </motion.div>
       </section>
       <section className={styles.story} aria-label="The Kelus revision loop">

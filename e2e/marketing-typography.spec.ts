@@ -10,15 +10,12 @@ test("How it works uses the shared Kelus canvas on desktop and mobile", async ({
   }
 });
 
-test("How it works illustrations follow the selected course and actions stay green", async ({ page }) => {
+test("How it works tells one course story and actions stay green", async ({ page }) => {
   await page.goto("/route/");
-  const courseGroup = page.getByRole("group", { name: "Choose an example course" });
+  await expect(page.getByRole("group", { name: "Choose an example course" })).toHaveCount(0);
   await expect(page.locator('figure').first()).toContainText("Microeconomics");
-  await courseGroup.getByRole("button", { name: "Computer science" }).click();
-  await expect(courseGroup.getByRole("button", { name: "Computer science" })).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator('figure').first()).toContainText("Data Structures");
-  await expect(page.locator('figure').nth(1)).toContainText("hash table");
-  await expect(page.locator('figure').nth(2)).toContainText("First to review: Hash tables");
+  await expect(page.locator('figure').nth(1)).toContainText("Why does demand become more elastic");
+  await expect(page.locator('figure').nth(2)).toContainText("Elasticity");
   await expect(page.getByRole("link", { name: "Set up my course" }).first()).toHaveCSS("background-color", "rgb(31, 107, 69)");
   for (const width of [320, 375, 414, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });

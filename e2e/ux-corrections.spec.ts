@@ -23,13 +23,10 @@ test("homepage explains the revision loop without the duplicate sample board", a
   await expect(page.getByRole("heading", { name: "Your notes become the next move." })).toBeVisible();
 });
 
-test("course examples use ordinary keyboard-operable buttons", async ({ page }) => {
+test("How it works keeps the steps without a redundant course chooser", async ({ page }) => {
   await page.goto("/route/");
-  const group = page.getByRole("group", { name: "Choose an example course", exact: true });
-  const history = group.getByRole("button", { name: "History", exact: true });
-  await history.focus();
-  await page.keyboard.press("Enter");
-  await expect(history).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("group", { name: "Choose an example course" })).toHaveCount(0);
+  await expect(page.locator('section[class*="story"] ol > li')).toHaveCount(3);
   await expect(page.getByRole("tablist")).toHaveCount(0);
 });
 
