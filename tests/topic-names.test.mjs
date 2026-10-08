@@ -35,3 +35,16 @@ test("partly there is a half-filled dot, not a minus, and the done ring fills to
   assert.match(page, /fill=\{credit\}/);
   assert.doesNotMatch(stamp, /M44 60H76/);
 });
+
+test("search lists each group once, topics first, best match first inside it", async () => {
+  const { rankItems } = await import("../lib/search-rank.ts");
+  const items = [
+    { id: "a", group: "Topics", label: "Diffusion", href: "" },
+    { id: "b", group: "Topics", label: "Osmosis", href: "" },
+    { id: "c", group: "Go to", label: "Topics", href: "" },
+    { id: "d", group: "Topics", label: "Enzymes", href: "" },
+    { id: "e", group: "Go to", label: "Progress", href: "" },
+  ];
+  assert.deepEqual(rankItems(items, "o").map((item) => item.label), ["Osmosis", "Diffusion", "Topics", "Progress"]);
+  assert.deepEqual(rankItems(items, "").map((item) => item.id), ["a", "b", "c", "d", "e"]);
+});

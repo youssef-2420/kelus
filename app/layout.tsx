@@ -1,3 +1,4 @@
+import { CommandPalette } from "@/components/CommandPalette";
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Fraunces, Inter, IBM_Plex_Sans, Literata } from "next/font/google";
@@ -98,6 +99,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NudgeKeeper />
               <AppRuntime />
               <UpdateWatcher />
+              <Suspense fallback={null}>
+                <CommandPalette />
+              </Suspense>
             </TooltipProvider>
           </LearnerProvider>
         </AuthProvider>

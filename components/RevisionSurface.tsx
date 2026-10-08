@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
@@ -21,8 +21,9 @@ import { ankiCards } from "@/domain/anki-export";
 import { PackArt, type PackArtName } from "@/components/PackArt";
 import { AppTabBar } from "@/components/AppTabBar";
 import { InlineName } from "@/components/InlineName";
-import { kelusDuration, kelusEase } from "@/components/motion";
+import { kelusEase } from "@/components/motion";
 import { useAuth } from "@/components/AuthProvider";
+import { OPEN_SEARCH_EVENT } from "@/components/CommandPalette";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import { useLearner } from "@/components/LearnerProvider";
 import { daysUntilExam } from "@/domain/scheduler";
@@ -41,7 +42,6 @@ const MODES: Array<{ id: SurfaceMode; label: string; art: PackArtName; tone: "gr
   { id: "progress", label: "Progress", art: "award", tone: "iris" },
 ];
 
-const MODE_ORDER: Record<SurfaceMode, number> = { today: 0, materials: 1, map: 2, progress: 3 };
 
 const pressSpring = { type: "spring", bounce: 0, duration: 0.24 } as const;
 
@@ -58,6 +58,9 @@ function hrefForMode(mode: SurfaceMode) {
  * Course space as a booklet page.
  * Thin strip for section switching; Today’s topic is the page title.
  */
+const noSubscribe = () => () => {};
+const searchKeysNow = () => (/Mac|iPhone|iPad/.test(navigator.platform) ? "⌘K" : "Ctrl K");
+
 /** « to fold the column away, » to bring it back: the sidebar's own control, drawn rather than spelled out. */
 function RailChevrons({ open = false }: { open?: boolean }) {
   return (
@@ -82,19 +85,10 @@ export function RevisionSurface() {
   const [removingSourceId, setRemovingSourceId] = useState<string | null>(null);
   const [sourceError, setSourceError] = useState<string | null>(null);
   const sourcePickerRef = useRef<HTMLInputElement>(null);
+  // Shown only once the browser says which key it is; the server HTML has none, so nothing jumps.
+  const searchKeys = useSyncExternalStore(noSubscribe, searchKeysNow, () => "");
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const mode = modeFromSection(searchParams.get("section"));
-  const [direction, setDirection] = useState(1);
-  const previousMode = useRef(mode);
-
-  useEffect(() => {
-    const from = previousMode.current;
-    if (from !== mode) {
-      setDirection(MODE_ORDER[mode] >= MODE_ORDER[from] ? 1 : -1);
-      previousMode.current = mode;
-    }
-  }, [mode]);
-
   useEffect(() => {
     document.body.classList.add("is-kelus-space", "is-booklet-page", "is-course-studio");
     return () => document.body.classList.remove("is-kelus-space", "is-booklet-page", "is-course-studio");
@@ -230,10 +224,6 @@ export function RevisionSurface() {
     }
   }
 
-  const panelTransition = reduceMotion
-    ? { duration: 0.12, ease: kelusEase }
-    : { type: "spring" as const, bounce: 0, duration: 0.3 };
-
   return (
     <section className={`kelus-space is-studio${railHidden ? " is-rail-hidden" : ""}`} aria-label="Revision workbench">
       {!railHidden ? <aside className="studio-rail" aria-label="Course workspace">
@@ -244,6 +234,11 @@ export function RevisionSurface() {
           </Link>
           <button type="button" className="studio-rail-toggle" onClick={() => setRailHidden(true)} aria-label="Hide workspace sidebar" title="Hide sidebar"><RailChevrons /></button>
         </div>
+        <button type="button" className="studio-search" onClick={() => window.dispatchEvent(new Event(OPEN_SEARCH_EVENT))}>
+          <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M13 13l4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+          Search
+          {searchKeys ? <kbd>{searchKeys}</kbd> : null}
+        </button>
         <nav className="studio-nav revision-surface-modes" aria-label="Revision sections">
           {MODES.map((item) => {
             const active = item.id === mode;
@@ -341,18 +336,8 @@ export function RevisionSurface() {
         {mode !== "today" ? (
           <header className="studio-section-head kelus-paper-head kelus-space-top is-section">
             <div className="kelus-space-identity">
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.h1
-                  key={modeMeta.label}
-                  id="section-title"
-                  initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -3 }}
-                  transition={{ duration: reduceMotion ? 0.1 : kelusDuration.fast, ease: kelusEase }}
-                >
-                  {modeMeta.label}
-                </motion.h1>
-              </AnimatePresence>
+              {/* Sections swap at once, as pages do in Notion: no waiting for the old one to leave. */}
+              <h1 id="section-title">{modeMeta.label}</h1>
               <p className="kelus-paper-lede kelus-space-lede">
                 {mode === "materials" ? "The sources behind your revision." : mode === "progress" ? "What your own answers say has changed." : "What to study next, then everything else."}
               </p>
@@ -363,15 +348,13 @@ export function RevisionSurface() {
           </header>
         ) : null}
 
-        <AnimatePresence mode="wait" initial={false} custom={direction}>
+        {/* The new section is on screen the frame after the click; a short settle of its ink, never an exit to wait for. */}
           <motion.div
             key={mode}
             className="studio-panel kelus-paper-body kelus-space-panel revision-surface-panel"
-            custom={direction}
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0, transition: { duration: 0.08 } } : { opacity: 0, transition: { duration: 0.1 } }}
-            transition={panelTransition}
+            initial={reduceMotion ? false : { opacity: 0.55 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.12, ease: kelusEase }}
           >
             {mode === "today" ? (
               <div className={`core-workspace-grid${hasReadableSource ? "" : " is-source-missing"}`} aria-label="Today's route">
@@ -404,7 +387,6 @@ export function RevisionSurface() {
             {mode === "map" ? <TopicMapPanel /> : null}
             {mode === "progress" ? <ProgressView concepts={concepts} events={snapshot.events} nowIso={nowIso} daysToExam={days} targetPercent={exam.targetPercent} examDatePending={examDatePending} /> : null}
           </motion.div>
-        </AnimatePresence>
         </main>
         <AppTabBar tabs={MODES} active={mode} onSelect={setMode} />
       </div>
