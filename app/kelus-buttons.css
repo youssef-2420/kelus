@@ -802,3 +802,12 @@ html body.is-course-studio [data-block="today-lead"] { box-shadow: none !importa
 /* Topic cards are text and a progress ring: no icon column. */
 html body.is-course-studio .surface-map .topic-cards .index-toc-row,
 html body.is-course-studio .surface-map .topic-cards > li.is-start .index-toc-row { grid-template-columns: minmax(0, 1fr) auto !important; }
+/* The search field is the box itself: no focus ring or glow inside it (the dialog already shows where you are). */
+#kelus-search-input,
+#kelus-search-input:focus,
+#kelus-search-input:focus-visible {
+  border: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}

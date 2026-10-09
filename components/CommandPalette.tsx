@@ -121,6 +121,8 @@ export function CommandPalette() {
               <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M13 13l4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
               <input
                 ref={input}
+                id="kelus-search-input"
+                autoFocus
                 value={query}
                 onChange={(event) => { setQuery(event.target.value); setActive(0); }}
                 onKeyDown={onKeyDown}
