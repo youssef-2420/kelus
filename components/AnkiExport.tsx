@@ -29,7 +29,7 @@ export function AnkiExport({ course, concepts, activities }: { course: string; c
 
   return (
     <section className={styles.card} aria-labelledby="anki-title">
-      <span className={styles.logo}><BrandIcon brand="anki" size={22} /></span>
+      <span className={styles.logo}><BrandIcon brand="anki" size={40} tile /></span>
       <div>
         <h2 id="anki-title">Take your cards to Anki</h2>
         <p>Every question for these {concepts.length} topics, with the answer and the line from your notes on the back.</p>

@@ -41,10 +41,8 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border: 1px solid rgba(18, 22, 15, 0.1);
-  border-radius: 10px;
-  background: #fff;
-  color: var(--color-midnight-ink);
+  border: 0;
+  background: transparent;
 }
 
 @media (max-width: 520px) {
