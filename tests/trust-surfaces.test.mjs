@@ -173,7 +173,7 @@ test("primary CTA language and readiness stay consistent", async () => {
   assert.match(await source("app/session/complete/page.tsx"), /Topics in this block/);
   assert.doesNotMatch(surface, /Est\. readiness/);
   assert.match(await source("components/MasteryEvidence.tsx"), /not a predicted grade|not a grade prediction/);
-  assert.match(await source("components/TodayRoute.tsx"), /styles\.card/);
+  assert.match(await source("components/TodayRoute.tsx"), /data-block="today-lead"/);
   assert.match(await source("components/TodayRoute.tsx"), /whileTap/);
   assert.match(await source("components/TodayRoute.tsx"), /today-decision/);
   assert.match(await source("components/TodayRoute.tsx"), /today-next/);

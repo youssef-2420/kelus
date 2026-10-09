@@ -17,7 +17,7 @@ import { estimatedReadiness } from "@/domain/readiness";
 import { describeRouteChoice } from "@/lib/today-reason";
 import { trackEvent } from "@/lib/analytics";
 import { HabitStrip } from "@/components/HabitStrip";
-import styles from "./TodayRoute.module.css";
+import q from "./TodayQuiet.module.css";
 
 const pressSpring = { type: "spring", bounce: 0, duration: 0.28 } as const;
 
@@ -85,6 +85,19 @@ export function TodayRoute({
     });
   }, [hasPriorEvidence, isSampleCourse, route.allocations.length]);
 
+  // Enter on Today starts (or continues) the next topic, as the button's ↵ says.
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "Enter" || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target && target !== document.body && target.closest("input, textarea, select, button, a, [contenteditable], [role=dialog]")) return;
+      event.preventDefault();
+      onStart();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onStart]);
+
   if (!first) {
     return (
       <div className="today-route-empty materials-empty">
@@ -114,79 +127,76 @@ export function TodayRoute({
   const path = studyPath({ concepts, nowMs: Date.parse(nowIso), daysToExam: examDatePending ? null : daysToExam, doneToday: goalDoneCount });
   const level = (mastery: number, tried: boolean) => (tried ? topicLevel(mastery, 1) : "New");
 
+  const courseName = reminder?.courseName ?? examTarget;
+  const pathLine = path.daysLeft === 0
+    ? "everything is solid, keep a short review going"
+    : examDatePending || path.readyByMs === null
+      ? `about ${path.daysLeft} study day${path.daysLeft === 1 ? "" : "s"} to cover it all`
+      : path.aheadOfExam !== null && path.aheadOfExam >= 0
+        ? `ready by ${new Date(path.readyByMs).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" })} at this pace, ${path.aheadOfExam === 0 ? "just in time" : `${path.aheadOfExam} day${path.aheadOfExam === 1 ? "" : "s"} before your exam`}`
+        : `about ${path.daysLeft} study days left and ${daysToExam} until your exam`;
+  const ease = [0.22, 1, 0.36, 1] as const;
+  // One soft settle for the whole page, in order, all done by about a quarter of a second.
+  const settle = (index: number) => (reduceMotion ? {} : { initial: { opacity: 0, y: 4 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.18, delay: index * 0.03, ease } });
+  const quietStart = warmupFirst || goalDone;
+
   return (
-    <div className={styles.page}>
+    <div className={q.page}>
       {!isSampleCourse ? <WelcomeBack visit={visit} nowIso={nowIso} nextName={firstName} /> : null}
-      {/* Where the course stands, in steps rather than a percentage: started, solid, and the days still ahead. */}
-      {/* On a warm-up day the warm-up is the first thing to do; the path line and extras wait for a plain day. */}
-      {warmupFirst ? null : <div className={styles.top} role="group" aria-label="Your path through the course">
-        <p className={styles.path}>
-          <strong>{path.started} of {path.total}</strong> topics started{path.solid ? <> · <strong>{path.solid}</strong> solid</> : null}
-          <span className={styles.ahead}>
-            {" · "}
-            {path.daysLeft === 0
-              ? "everything is solid, keep a short review going."
-              : examDatePending || path.readyByMs === null
-                ? `about ${path.daysLeft} study day${path.daysLeft === 1 ? "" : "s"} to cover it all.`
-                : path.aheadOfExam !== null && path.aheadOfExam >= 0
-                  ? `ready by ${new Date(path.readyByMs).toLocaleDateString([], { weekday: "short", day: "numeric", month: "short" })} at this pace, ${path.aheadOfExam === 0 ? "just in time" : `${path.aheadOfExam} day${path.aheadOfExam === 1 ? "" : "s"} before your exam`}.`
-                  : `about ${path.daysLeft} study days left and ${daysToExam} until your exam.`}
-          </span>
-        </p>
-      </div>}
 
-      <motion.article
-        className={styles.card}
-        data-block="today-lead"
-        aria-labelledby="today-title"
-        initial={reduceMotion ? false : { opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {/* The topic is the heading; what it takes and why it is next follow it, never sit above it as a label. */}
-        <h1 id="today-title" className={styles.title}>{firstName}</h1>
-        <p className={styles.meta} data-block="today-page-folio">{goalDone ? "Today’s goal is done. One more if you like: " : ""}{first.minutes} min · 3 quick checks and 1 explanation</p>
-        <p className={styles.why} data-block="today-decision" aria-label="Why this topic is first">{decision.join(" ")}</p>
-        <div className={styles.actions}>
-          <motion.button
-            type="button"
-            data-action="start-topic"
-            className={`k-btn ${styles.start}${warmupFirst || goalDone ? ` k-btn--paper ${styles.quiet}` : ""}`}
-            onClick={onStart}
-            whileTap={reduceMotion ? undefined : { scale: 0.97 }}
-            transition={pressSpring}
-          >
-            {startLabel ?? "Start this topic"} <span aria-hidden="true">→</span>
-          </motion.button>
-        </div>
-      </motion.article>
+      {/* The page is titled like a document: the course, then one grey line on where it stands. */}
+      <motion.header className={q.head} {...settle(0)}>
+        <h1 className={q.title}>{courseName}</h1>
+        {warmupFirst ? null : (
+          <p className={q.meta} role="group" aria-label="Your path through the course">
+            <strong>{path.started} of {path.total}</strong> topics started{path.solid ? <> · <strong>{path.solid}</strong> solid</> : null} · {pathLine}
+          </p>
+        )}
+      </motion.header>
 
-      {/* The streak is what brings you back tomorrow; the full picture is one click away in Progress. */}
-      <HabitStrip events={events} concepts={concepts} link={false} />
+      <motion.section className={q.next} data-block="today-lead" aria-labelledby="today-title" {...settle(1)}>
+        <p className={q.label}>{startLabel ? "Continue" : goalDone ? "One more, if you like" : "Up next"}</p>
+        <h2 id="today-title" className={q.topic}>{firstName}</h2>
+        <p className={q.sub} data-block="today-page-folio">{first.minutes} min · 3 quick checks and 1 explanation</p>
+        <p className={q.why} data-block="today-decision" aria-label="Why this topic is first">{decision.join(" ")}</p>
+        <motion.button
+          type="button"
+          data-action="start-topic"
+          className={quietStart ? q.secondary : q.primary}
+          onClick={onStart}
+          whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+          transition={pressSpring}
+        >
+          {startLabel ?? "Start this topic"}
+          {quietStart ? null : <kbd className={q.key} aria-hidden="true">↵</kbd>}
+        </motion.button>
+      </motion.section>
+
+      <motion.div {...settle(2)}><HabitStrip events={events} concepts={concepts} link={false} line /></motion.div>
 
       {nextStops.length ? (
-        <aside className={styles.then} data-block="today-next" aria-label="Planned next topics">
-          <h2>Then</h2>
+        <motion.section className={q.then} data-block="today-next" aria-label="Planned next topics" {...settle(3)}>
+          <h2 className={q.label}>Then</h2>
           <ol>
             <AnimatePresence initial={false} mode="popLayout">
             {nextStops.map((stop, index) => (
               <motion.li
                 key={`${stop.conceptId}-${nextStops.slice(0, index).filter((other) => other.conceptId === stop.conceptId).length}`}
                 layout={!reduceMotion}
-                initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                initial={reduceMotion ? false : { opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -10, transition: { duration: 0.18 } }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1], layout: { type: "spring", stiffness: 420, damping: 38 } }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -8, transition: { duration: 0.16 } }}
+                transition={{ duration: 0.18, ease, layout: { type: "spring", stiffness: 420, damping: 38 } }}
               >
                 <strong>{stop.name}</strong>
-                <span className={styles.tag}>{stop.conceptId === "mixed-retrieval" ? "Review" : level(stop.mastery, stop.tried)}</span>
-                <span className={styles.min}>{stop.minutes} min</span>
+                <span>{stop.conceptId === "mixed-retrieval" ? "Review" : level(stop.mastery, stop.tried)}</span>
+                <em>{stop.minutes} min</em>
               </motion.li>
             ))}
             </AnimatePresence>
           </ol>
-          <p>Your answer can change what comes next.</p>
-        </aside>
+          <p className={q.foot}>Your answers can change what comes next.</p>
+        </motion.section>
       ) : null}
 
       {/* One extra at a time, most useful first: the exam date gives the path its finish line, then the nudge that
