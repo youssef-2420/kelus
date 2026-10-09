@@ -162,3 +162,56 @@ html body.is-session-complete [class*="complete"][class*="topics"] { gap: 0 !imp
 html body.is-session-complete [class*="complete"][class*="topics"] > li { min-height: 44px !important; padding: 8px 0 !important; border: 0 !important; border-bottom: 1px solid var(--q-line) !important; border-radius: 0 !important; background: transparent !important; }
 html body.is-session-complete [class*="complete"][class*="tomorrow"] { padding: 18px 0 0 !important; border: 0 !important; border-top: 1px solid var(--q-line) !important; border-radius: 0 !important; background: transparent !important; }
 html body.is-session-complete [class*="complete"][class*="changed"] { background: var(--q-hover) !important; border-radius: 10px !important; }
+
+/* ── Phone: one bar, not two ─────────────────────────────────────────────────────────────────────────
+   The logo and the course share a single 52px bar; the page meta carries the exam line. */
+@media (max-width: 650px) {
+  html body.is-course-studio .kelus-space.is-studio { position: relative; }
+  html body.is-course-studio .studio-rail {
+    height: 52px !important;
+    min-height: 0 !important;
+    padding: 0 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--q-line) !important;
+    background: #fff !important;
+  }
+  html body.is-course-studio .studio-rail { justify-content: flex-start !important; }
+  html body.is-course-studio .studio-brand-row { width: auto !important; padding: 0 !important; justify-content: flex-start !important; }
+  html body.is-course-studio .studio-brand { justify-content: flex-start !important; }
+  html body.is-course-studio .studio-rail :is(.studio-search, .studio-rail-toggle, .studio-nav) { display: none !important; }
+  html body.is-course-studio .studio-topbar {
+    position: absolute !important;
+    top: 0; right: 0; left: 120px;
+    height: 52px !important; min-height: 0 !important;
+    padding: 0 16px 0 0 !important;
+    display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: 10px;
+  }
+  html body.is-course-studio .studio-topbar-leading { min-width: 0; }
+  html body.is-course-studio .studio-topbar-course { overflow: hidden; max-width: 46vw; white-space: nowrap; text-overflow: ellipsis; }
+  html body.is-course-studio .studio-topbar-status { display: none !important; }
+  html body.is-course-studio .studio-topbar-signin { margin: 0 !important; }
+}
+
+/* ── Session sidebar: the same quiet list as the course sidebar ─────────────────────────────────── */
+html body.is-session-booklet [class*="BlockOutline"][class*="course"] { color: var(--q-text-2) !important; font-size: 0.8125rem !important; font-weight: 500 !important; }
+html body.is-session-booklet [class*="BlockOutline"][class*="label"] { color: var(--q-text-3) !important; font-size: 0.75rem !important; font-weight: 500 !important; }
+html body.is-session-booklet [class*="BlockOutline"][class*="outline"] li { min-height: 30px !important; padding: 0 8px !important; border-radius: 6px !important; font-size: 0.875rem !important; }
+html body.is-session-booklet [class*="BlockOutline"][class*="current"] { background: var(--q-selected) !important; color: var(--q-ink) !important; font-weight: 500 !important; }
+
+/* ── Materials: the reader and the file sit on the page, not in boxes ────────────────────────────── */
+html body.is-course-studio .core-source-reader { border: 0 !important; background: transparent !important; box-shadow: none !important; }
+html body.is-course-studio .core-source-toolbar { border-bottom: 1px solid var(--q-line) !important; background: transparent !important; }
+html body.is-course-studio .core-source-stage.is-notes > * { border: 0 !important; box-shadow: none !important; padding-inline: 0 !important; background: transparent !important; }
+html body.is-course-studio .material-card {
+  border: 0 !important; border-top: 1px solid var(--q-line) !important; border-radius: 0 !important;
+  background: transparent !important; box-shadow: none !important; padding-inline: 0 !important;
+}
+html body.is-course-studio .material-card .material-actions { border-top: 0 !important; padding-top: 4px !important; }
+html body.is-course-studio .material-card .material-actions :is(a, button) { font-size: 0.8125rem !important; font-weight: 500 !important; }
+html body.is-course-studio .material-card-art { width: 36px !important; height: 36px !important; }
+html body.is-course-studio .material-card-art svg, html body.is-course-studio .material-card-art img { width: 28px !important; height: 28px !important; }
+html body.is-course-studio .material-card-chips span { border-color: var(--q-line-strong) !important; background: transparent !important; color: var(--q-text-2) !important; font-size: 0.75rem !important; }
+html body.is-course-studio details.material-add-page { border-style: solid !important; border-color: var(--q-line) !important; border-radius: 10px !important; }
+html body.is-course-studio details.material-add-page > summary { min-height: 44px !important; color: var(--q-ink) !important; font-size: 0.875rem !important; font-weight: 500 !important; }

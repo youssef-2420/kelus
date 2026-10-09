@@ -50,11 +50,7 @@ body.is-booklet-system .site-header.is-home .site-auth-button {
   color: rgba(18, 22, 15, 0.78);
 }
 
-body.is-booklet-system .site-header.is-home .site-header-action {
-  background: var(--booklet-kelus);
-  border-color: var(--booklet-kelus);
-  color: #f7f8f5;
-}
+
 
 @media (max-width: 720px) {
   body.is-booklet-system .site-header.is-home .site-header-inner {
@@ -68,45 +64,17 @@ body.is-booklet-system .site-header.is-home .site-header-action {
 }
 
 /* ── Hero: asymmetric essay margin + edge bleed art ── */
-body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.is-poster {
-  background: var(--booklet-paper);
-  color: var(--booklet-ink);
-  min-height: min(100vh, 880px);
-}
 
-body.is-booklet-system .is-poster .poster-copy {
-  max-width: 34rem;
-  padding: 88px max(32px, calc((100vw - 1180px) / 2)) 64px;
-  gap: 0;
-}
+
+
 
 /* Brand lives in the site header — keep any leftover hero-brand markup hidden. */
-body.is-booklet-system .is-poster .hero-brand {
-  display: none !important;
-}
+
 
 /* Headline is the hero apex now that the giant wordmark is gone. */
-body.is-booklet-system .kelus-hero.home-hero.is-poster .poster-copy.home-copy h1,
-body.is-booklet-system .is-poster .poster-copy h1 {
-  max-width: 13.5ch;
-  margin: 0;
-  font-family: var(--font-editorial);
-  font-optical-sizing: auto;
-  font-size: clamp(2.5rem, 5.2vw, 3.6rem) !important;
-  font-weight: 600 !important;
-  line-height: 1.1;
-  letter-spacing: -0.028em;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .is-poster .hero-line-break {
-  display: block;
-  margin-top: 0.1em;
-  color: var(--booklet-mute);
-  font-weight: 400;
-  font-size: 0.94em;
-  letter-spacing: -0.02em;
-}
+
+
 
 body.is-booklet-system .is-poster .home-lede {
   max-width: 34ch;
@@ -141,122 +109,41 @@ body.is-booklet-system .is-poster .home-cta:hover {
   color: #fff;
 }
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet.is-poster .home-secondary,
-body.is-booklet-system .is-poster .home-secondary {
-  background: transparent !important;
-  border: 1px solid #aeb6a8 !important;
-  color: var(--booklet-ink) !important;
-  border-radius: 4px;
-  font-family: var(--font-sans);
-  font-weight: 500;
-}
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet.is-poster .home-secondary:hover,
-body.is-booklet-system .is-poster .home-secondary:hover {
-  background: #e3e8df !important;
-  color: var(--booklet-ink) !important;
-}
 
-body.is-booklet-system .is-poster .poster-visual {
-  min-height: 440px;
-}
 
-body.is-booklet-system .is-poster .exam-route-art {
-  object-fit: cover;
-  object-position: center top;
-}
+
+
+
+
 
 /* ── Sample: one teach, quiet ── */
-body.is-booklet-system .poster-sample {
-  background: var(--booklet-lift);
-  border-top: 1px solid var(--booklet-rule);
-  padding: 56px max(24px, calc((100vw - 980px) / 2)) 72px;
-  scroll-margin-top: 5.5rem;
-}
 
-body.is-booklet-system .poster-sample-intro .kicker {
-  color: var(--booklet-mute);
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 1rem;
-  font-weight: 500;
-}
 
-body.is-booklet-system .poster-sample-intro h2 {
-  margin: 6px 0 10px;
-  max-width: 16ch;
-  font-family: var(--font-editorial);
-  font-size: clamp(28px, 3.2vw, 40px);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .poster-sample-intro p {
-  max-width: 42ch;
-  margin: 0;
-  color: var(--booklet-mute);
-  font-size: 16px;
-  line-height: 1.5;
-}
 
-body.is-booklet-system .poster-sample-next {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
-  max-width: 980px;
-  margin: 22px auto 0;
-  padding-top: 18px;
-  border-top: 1px solid var(--booklet-rule);
-  font-family: var(--font-sans);
-}
 
-body.is-booklet-system .poster-sample-next p { margin: 0; color: var(--booklet-mute); }
-body.is-booklet-system .poster-sample-next a { color: var(--booklet-kelus); font-weight: 600; text-decoration-thickness: 1px; text-underline-offset: 4px; }
-body.is-booklet-system .poster-sample-next a:focus-visible { outline: 2px solid var(--booklet-kelus); outline-offset: 4px; }
 
-@media (max-width: 640px) {
-  body.is-booklet-system .poster-sample-next { display: block; }
-  body.is-booklet-system .poster-sample-next a { display: inline-block; margin-top: 10px; min-height: 44px; padding-top: 9px; }
-}
+
+
+
+
+
+
+
+
+
 
 /* ── Chapters: essay sections, not feature cards ── */
-body.is-booklet-system .folio-story {
-  background: var(--booklet-paper);
-}
 
-body.is-booklet-system .folio-chapter {
-  border-bottom: 1px solid var(--booklet-rule);
-  padding-block: clamp(3.5rem, 8vh, 5.5rem);
-  scroll-margin-top: 5.5rem;
-  align-items: center;
-}
 
-body.is-booklet-system .folio-chapter-index {
-  position: static;
-  display: none; /* sequence told by reading order, not watermark chrome */
-}
 
-body.is-booklet-system .folio-chapter-copy .kicker {
-  margin-bottom: 0.65rem;
-  color: var(--booklet-mute);
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: 1rem;
-  font-weight: 500;
-}
 
-body.is-booklet-system .folio-chapter-copy h2 {
-  max-width: 14ch;
-  margin: 0 0 0.85rem;
-  font-family: var(--font-editorial);
-  font-size: clamp(1.85rem, 3.4vw, 2.45rem);
-  font-weight: 500;
-  letter-spacing: -0.032em;
-  line-height: 1.12;
-  color: var(--booklet-ink);
-}
+
+
+
+
+
 
 body.is-booklet-system .folio-chapter-copy > p:not(.kicker) {
   max-width: 40ch;
@@ -268,40 +155,16 @@ body.is-booklet-system .folio-chapter-copy > p:not(.kicker) {
   opacity: 1;
 }
 
-body.is-booklet-system .folio-chapter-copy > a {
-  color: var(--booklet-kelus);
-  font-weight: 600;
-}
 
-body.is-booklet-system .folio-chapter.is-plan .folio-chapter-art .v1-plan,
-body.is-booklet-system .folio-chapter.is-reroute .folio-chapter-art .v1-reroute,
-body.is-booklet-system .folio-chapter.is-materials .folio-chapter-art .v1-materials {
-  background: var(--booklet-lift);
-  border: 1px solid var(--booklet-rule);
-  border-radius: 10px;
-  box-shadow: none;
-  color: var(--booklet-ink);
-}
+
+
 
 /* ── Method ── */
-body.is-booklet-system .folio-method {
-  background: var(--booklet-lift);
-  border-top: 1px solid var(--booklet-rule);
-  scroll-margin-top: 5.5rem;
-}
 
-body.is-booklet-system .folio-method-heading .kicker {
-  text-transform: none;
-  letter-spacing: 0;
-  color: var(--booklet-mute);
-  font-weight: 500;
-}
 
-body.is-booklet-system .folio-method-heading h2 {
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  color: var(--booklet-ink);
-}
+
+
+
 
 body.is-booklet-system .folio-method-heading > p:not(.kicker) {
   color: var(--booklet-mute);
@@ -309,107 +172,37 @@ body.is-booklet-system .folio-method-heading > p:not(.kicker) {
   opacity: 1;
 }
 
-body.is-booklet-system .folio-method-grid {
-  border: 1px solid var(--booklet-rule);
-  border-radius: 10px;
-  overflow: hidden;
-  background: #fff;
-}
 
-body.is-booklet-system .folio-method-grid > div {
-  background: #fff;
-  border: 0;
-  border-radius: 0;
-  border-right: 1px solid var(--booklet-rule);
-  border-bottom: 1px solid var(--booklet-rule);
-  box-shadow: none;
-  padding: 1.15rem 1.2rem;
-}
 
-body.is-booklet-system .folio-method-grid dt {
-  color: var(--booklet-mute);
-  text-transform: none;
-  letter-spacing: 0;
-  font-weight: 600;
-  font-size: 0.875rem;
-}
 
-body.is-booklet-system .folio-method-grid dd {
-  color: var(--booklet-ink);
-}
+
+
+
+
 
 /* ── Close cluster ── */
-body.is-booklet-system .home .folio-close.home-close,
-body.is-booklet-system .home-close.folio-close {
-  background: var(--booklet-paper);
-  border-top: 1px solid var(--booklet-rule);
-  color: var(--booklet-ink);
-  scroll-margin-top: 5.5rem;
-}
 
-body.is-booklet-system .home .folio-close .home-close-inner,
-body.is-booklet-system .home-close-inner.is-cluster {
-  display: grid !important;
-  gap: 1.2rem;
-  justify-items: start;
-  max-width: 36rem !important;
-  margin-inline: 0 !important;
-  width: min(36rem, 100%);
-}
 
-body.is-booklet-system .home .home-close-copy h2,
-body.is-booklet-system .home-close-copy h2 {
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .home .home-close-copy p,
-body.is-booklet-system .home-close-copy p {
-  color: var(--booklet-mute);
-  opacity: 1;
-}
 
-body.is-booklet-system .home .home-close-actions .cta,
-body.is-booklet-system .home-close-actions .cta {
-  background: var(--booklet-kelus);
-  border-color: var(--booklet-kelus);
-  color: #f7f8f5;
-}
 
-body.is-booklet-system .home .home-close-actions .text-btn,
-body.is-booklet-system .home-close-actions .text-btn {
-  color: var(--booklet-mute);
-}
 
-@media (max-width: 979px) {
-  body.is-booklet-system .is-poster .poster-copy {
-    padding: 56px 24px 28px;
-  }
-  body.is-booklet-system .is-poster .hero-brand {
-    display: none !important;
-  }
-  body.is-booklet-system .is-poster .poster-copy h1 {
-    font-size: clamp(2.1rem, 9vw, 3rem) !important;
-  }
-}
+
+
+
+
+
+
+
 
 
 /* ── Product chrome: same booklet as the homepage ── */
-body.is-booklet-system .shell.is-booklet-product,
-body.is-booklet-system .course-workspace-layout.is-booklet-product,
-body.is-booklet-system .destination-page.is-booklet-product,
-body.is-booklet-system .diagnosis-page.is-booklet-product,
-body.is-booklet-system .how-page.is-booklet-product {
+body.is-booklet-system .shell.is-booklet-product,body.is-booklet-system .course-workspace-layout.is-booklet-product,body.is-booklet-system .destination-page.is-booklet-product {
   background: var(--booklet-paper);
   color: var(--booklet-ink);
 }
 
-body.is-booklet-system .destination-page.is-booklet-product,
-body.is-booklet-system .diagnosis-page.is-booklet-product,
-body.is-booklet-system .is-booklet-product .materials-empty,
-body.is-booklet-system .is-booklet-product .today-brief.is-revision-studio,
-body.is-booklet-system .is-booklet-product .today-workbench.is-revision-studio {
+body.is-booklet-system .destination-page.is-booklet-product,body.is-booklet-system .is-booklet-product .materials-empty {
   background: var(--booklet-lift);
   border: 1px solid var(--booklet-rule);
   border-radius: 4px;
@@ -427,12 +220,7 @@ body.is-booklet-system .how-title {
   color: var(--booklet-ink);
 }
 
-body.is-booklet-system .is-booklet-product .kicker,
-body.is-booklet-system .destination-page .kicker,
-body.is-booklet-system .materials-empty .kicker,
-body.is-booklet-system .how-page .kicker,
-body.is-booklet-system .diagnosis-page .kicker,
-body.is-booklet-system .shell.is-booklet-product .kicker {
+body.is-booklet-system .is-booklet-product .kicker,body.is-booklet-system .destination-page .kicker,body.is-booklet-system .materials-empty .kicker,body.is-booklet-system .shell.is-booklet-product .kicker {
   text-transform: none !important;
   letter-spacing: 0;
   font-size: 1rem;
@@ -440,16 +228,9 @@ body.is-booklet-system .shell.is-booklet-product .kicker {
   color: var(--booklet-mute);
 }
 
-body.is-booklet-system .booklet-setup-page-mark {
-  display: none;
-}
 
-body.is-booklet-system .is-booklet-product .cta,
-body.is-booklet-system .destination-page.is-booklet-product .cta,
-body.is-booklet-system .diagnosis-page.is-booklet-product .cta,
-body.is-booklet-system .how-page.is-booklet-product .cta,
-body.is-booklet-system .site-header.is-product .site-header-action,
-body.is-booklet-system .site-header:not(.is-home) .site-header-action {
+
+body.is-booklet-system .is-booklet-product .cta,body.is-booklet-system .destination-page.is-booklet-product .cta,body.is-booklet-system .site-header:not(.is-home) .site-header-action {
   background: var(--booklet-kelus);
   border-color: var(--booklet-kelus);
   color: #f7f8f5;
@@ -463,67 +244,35 @@ body.is-booklet-system .site-header:not(.is-home) .site-header-action:hover {
   color: #fff;
 }
 
-body.is-booklet-system .is-booklet-product .text-btn,
-body.is-booklet-system .materials-empty .text-btn,
-body.is-booklet-system .setup-sample-cta {
+body.is-booklet-system .is-booklet-product .text-btn,body.is-booklet-system .materials-empty .text-btn {
   color: var(--booklet-mute);
 }
 
-body.is-booklet-system .is-booklet-product .course-workspace-rail {
-  background: var(--booklet-paper);
-  border-right: 1px solid var(--booklet-rule);
-}
 
-body.is-booklet-system .is-booklet-product .course-workspace-identity span,
-body.is-booklet-system .is-booklet-product .material-shelf > header > span,
-body.is-booklet-system .is-booklet-product .today-lead-label,
-body.is-booklet-system .is-booklet-product .today-lead-time span {
+
+
+body.is-booklet-system .is-booklet-product .material-shelf > header > span {
   text-transform: none;
   letter-spacing: 0;
   font-weight: 500;
   color: var(--booklet-mute);
 }
 
-body.is-booklet-system .destination-page.is-booklet-product .time-choices label.is-selected {
-  background: var(--booklet-kelus);
-  border-color: var(--booklet-kelus);
-  color: #f7f8f5;
-}
 
-body.is-booklet-system .destination-page.is-booklet-product fieldset,
-body.is-booklet-system .destination-page.is-booklet-product .setup-progress,
-body.is-booklet-system .destination-page.is-booklet-product .setup-sample {
+
+body.is-booklet-system .destination-page.is-booklet-product fieldset {
   background: transparent;
   border-color: var(--booklet-rule);
   box-shadow: none;
 }
 
-body.is-booklet-system .setup-sample {
-  margin-top: 1.5rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--booklet-rule);
-  border-radius: 0;
-}
 
-body.is-booklet-system .is-booklet-product .today-lead-action,
-body.is-booklet-system .is-booklet-product .map-workspace,
-body.is-booklet-system .diagnosis-page.is-booklet-product .diagnosis-panel,
-body.is-booklet-system .diagnosis-page.is-booklet-product .diagnosis-check {
-  background: var(--booklet-lift);
-  border: 1px solid var(--booklet-rule);
-  border-radius: 4px;
-  box-shadow: none;
-}
+
+
 
 /* Kill leftover SaaS uppercase + Booklet blue accents */
-body.is-booklet-system .destination-pair label,
-body.is-booklet-system .destination-page.is-booklet-product .destination-pair label,
-body.is-booklet-system .destination-page.is-booklet-product .time-choices span,
-body.is-booklet-system .is-notebook .booklet-board-steps li,
-body.is-booklet-system .is-notebook .booklet-flow-route-title,
-body.is-booklet-system .is-notebook .booklet-flow-route-title span,
-body.is-booklet-system .booklet-product-rail-label,
-body.is-booklet-system .is-booklet-product .course-workspace-identity span {
+
+body.is-booklet-system .is-notebook .booklet-board-steps li,body.is-booklet-system .is-notebook .booklet-flow-route-title,body.is-booklet-system .is-notebook .booklet-flow-route-title span {
   text-transform: none !important;
   letter-spacing: 0;
 }
@@ -560,24 +309,9 @@ body.is-booklet-system .is-marked-setup .destination-support {
   line-height: 1.45;
 }
 
-body.is-booklet-system .is-marked-setup .setup-sequence {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem 0.55rem;
-  margin: 0 0 1.75rem;
-  padding: 0.85rem 0;
-  border-top: 1px solid var(--booklet-rule);
-  border-bottom: 1px solid var(--booklet-rule);
-  color: var(--booklet-mute);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
 
-body.is-booklet-system .is-marked-setup .setup-sequence [aria-current="step"] {
-  color: var(--booklet-ink);
-  font-weight: 600;
-}
+
+
 
 body.is-booklet-system .is-marked-setup fieldset {
   margin: 0;
@@ -623,76 +357,25 @@ body.is-booklet-system .is-marked-setup input:not([type="radio"]):not([type="che
   border-bottom-color: var(--booklet-kelus) !important;
 }
 
-body.is-booklet-system .is-marked-setup .time-choices {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 0.75rem;
-  margin: 0.35rem 0 1rem;
-}
 
-body.is-booklet-system .is-marked-setup .time-choices label {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.25rem;
-  min-height: 44px;
-  padding: 0.45rem 0.8rem;
-  border: 1px solid var(--booklet-rule) !important;
-  border-radius: 4px !important;
-  background: #f7f8f5 !important;
-  color: var(--booklet-mute);
-  cursor: pointer;
-  transition: transform 120ms var(--ease-enter, cubic-bezier(0.22, 1, 0.36, 1)), border-color 120ms cubic-bezier(0.22, 1, 0.36, 1), background 120ms cubic-bezier(0.22, 1, 0.36, 1), color 120ms cubic-bezier(0.22, 1, 0.36, 1);
-}
 
-body.is-booklet-system .is-marked-setup .time-choices label:active {
-  transform: scale(0.97);
-}
 
-body.is-booklet-system .is-marked-setup .time-choices label strong {
-  font-size: 1rem;
-  font-weight: 600;
-  color: inherit;
-}
 
-body.is-booklet-system .is-marked-setup .time-choices label span {
-  font-size: 0.875rem;
-}
 
-body.is-booklet-system .is-marked-setup .time-choices label.is-selected {
-  background: #e8f1eb !important;
-  border-color: var(--booklet-kelus) !important;
-  color: var(--booklet-ink) !important;
-}
 
-body.is-booklet-system .is-marked-setup .setup-sample {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem 1.5rem;
-  margin-top: 2rem;
-  padding: 1.25rem 0 0;
-  border: 0;
-  border-top: 1px solid var(--booklet-rule);
-  border-radius: 0;
-  background: transparent !important;
-}
 
-body.is-booklet-system .is-marked-setup .setup-sample .kicker {
-  margin: 0 0 0.35rem;
-}
 
-body.is-booklet-system .is-marked-setup .setup-sample p {
-  max-width: 34ch;
-  margin: 0;
-  color: var(--booklet-mute);
-}
 
-body.is-booklet-system .is-marked-setup .setup-sample-cta,
-body.is-booklet-system .is-marked-setup .text-btn.setup-sample-cta {
-  color: var(--booklet-kelus) !important;
-  font-weight: 600;
-}
+
+
+
+
+
+
+
+
+
+
 
 /* ── Elevation: sample board as marked notebook craft ── */
 body.is-booklet-system .is-notebook.is-elevated .notebook-sheet {
@@ -805,31 +488,15 @@ body.is-booklet-system .is-notebook.is-elevated .notebook-signal.is-quiet {
   font-size: 0.875rem;
 }
 
-body.is-booklet-system .poster-sample {
-  background: var(--booklet-lift);
-}
 
-body.is-booklet-system .poster-sample-intro .kicker {
-  color: var(--booklet-mute);
-}
 
-body.is-booklet-system .poster-sample-intro h2 {
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-}
 
-body.is-booklet-system .home-close.folio-close {
-  background: var(--booklet-paper);
-}
 
-body.is-booklet-system .home-close-copy h2 {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.75rem, 3vw, 2.35rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  max-width: 18ch;
-}
+
+
+
+
+
 
 /* ── To nine: one system across marketing + product ── */
 
@@ -849,54 +516,29 @@ body.is-booklet-system .site-header .site-footer-mark {
 }
 
 /* Session chrome: sentence case, quiet ink */
-body.is-booklet-system .site-session-label {
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-  font-weight: 500;
-  color: var(--booklet-mute);
-}
+
 
 body.is-booklet-system .site-session-return {
   color: var(--booklet-kelus);
 }
 
 /* How-it-works: no ALL CAPS kickers */
-body.is-booklet-system .how-page .how-example-switcher > span,
-body.is-booklet-system .how-page .how-loop > header span,
-body.is-booklet-system .how-page .kicker,
+
 body.is-booklet-system .how-illustration text {
   text-transform: none !important;
   letter-spacing: 0;
 }
 
-body.is-booklet-system .how-page.is-booklet-product .cta,
-body.is-booklet-system .how-page .cta {
-  background: var(--booklet-kelus);
-  border-color: var(--booklet-kelus);
-}
+
 
 /* Product accents that still hardcode Booklet blue */
-body.is-booklet-system .is-booklet-product .course-stage.is-complete i,
-body.is-booklet-system .is-booklet-product .course-stage.is-current i,
-body.is-booklet-system .is-booklet-product .course-workspace-progress li.is-complete i,
-body.is-booklet-system .is-booklet-product .course-workspace-progress li.is-current i {
-  background: var(--booklet-kelus) !important;
-  border-color: var(--booklet-kelus) !important;
-  color: #f7f8f5 !important;
-}
 
-body.is-booklet-system .is-booklet-product .course-workspace-progress li.is-complete i {
-  color: var(--booklet-kelus) !important;
-  background: rgba(31, 107, 69, 0.12) !important;
-}
+
+
 
 /* Soften Today / Materials: less SaaS card stack */
-body.is-booklet-system .is-booklet-product .today-brief.is-revision-studio,
-body.is-booklet-system .is-booklet-product .today-workbench.is-revision-studio,
-body.is-booklet-system .is-booklet-product .materials-shelf,
-body.is-booklet-system .is-booklet-product .materials-ingest,
-body.is-booklet-system .is-booklet-product .materials-empty,
-body.is-booklet-system .is-booklet-product .map-workspace {
+
+body.is-booklet-system .is-booklet-product .materials-empty {
   background: var(--booklet-lift);
   border: 1px solid var(--booklet-rule);
   border-radius: 2px;
@@ -908,29 +550,18 @@ body.is-booklet-system .shell.is-booklet-product {
   background: var(--booklet-paper);
 }
 
-body.is-booklet-system .is-booklet-product .course-workspace-rail {
-  background: transparent;
-  border-right: 1px solid var(--booklet-rule);
-}
 
-body.is-booklet-system .is-booklet-product .course-workspace-identity strong {
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  letter-spacing: -0.02em;
-}
 
-body.is-booklet-system .is-booklet-product .today-title,
-body.is-booklet-system .is-booklet-product .today-workbench-heading h2,
-body.is-booklet-system .is-booklet-product .materials-empty h1,
-body.is-booklet-system .is-booklet-product .materials-empty h2 {
+
+
+body.is-booklet-system .is-booklet-product .today-title,body.is-booklet-system .is-booklet-product .materials-empty h1,body.is-booklet-system .is-booklet-product .materials-empty h2 {
   font-family: var(--font-editorial);
   font-weight: 500;
   letter-spacing: -0.03em;
 }
 
-body.is-booklet-system .is-booklet-product .today-lead-action,
-body.is-booklet-system .is-booklet-product .cta,
-body.is-booklet-system .is-booklet-product button.cta {
+
+body.is-booklet-system .is-booklet-product .cta,body.is-booklet-system .is-booklet-product button.cta {
   background: var(--booklet-kelus);
   border-color: var(--booklet-kelus);
   color: #f7f8f5;
@@ -938,23 +569,10 @@ body.is-booklet-system .is-booklet-product button.cta {
   box-shadow: none;
 }
 
-body.is-booklet-system .is-booklet-product .booklet-product-rail-label,
-body.is-booklet-system .booklet-product-rail-label {
-  text-transform: none !important;
-  letter-spacing: 0;
-  font-weight: 500;
-}
+
 
 /* Sidebar labels: sentence case (Learning loop, Current course) */
-body.is-booklet-system .is-booklet-product .course-workspace-identity > span,
-body.is-booklet-system .is-booklet-product .course-workspace-progress > div > span,
-body.is-booklet-system .course-workspace-identity > span,
-body.is-booklet-system .course-workspace-progress > div > span {
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-  font-weight: 500;
-  color: var(--booklet-mute);
-}
+
 
 /* ── Product chrome fix: booklet page, not SaaS workspace ── */
 body.is-booklet-system .course-workspace-layout.is-booklet-shell {
@@ -1017,37 +635,13 @@ body.is-booklet-system .course-masthead-exam {
   line-height: 1.4;
 }
 
-body.is-booklet-system .course-masthead-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem 1.1rem;
-  padding: 0;
-  border: 0;
-}
 
-body.is-booklet-system .course-masthead-nav a {
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-  color: var(--booklet-mute);
-  font-size: 1rem;
-  font-weight: 500;
-  text-decoration: none;
-  border-bottom: 2px solid transparent;
-}
 
-body.is-booklet-system .course-masthead-nav a:hover {
-  color: var(--booklet-ink);
-  background: transparent;
-}
 
-body.is-booklet-system .course-masthead-nav a.is-active {
-  color: var(--booklet-ink);
-  font-weight: 600;
-  border-bottom-color: var(--booklet-kelus);
-  background: transparent;
-  box-shadow: none;
-}
+
+
+
+
 
 body.is-booklet-system .course-masthead-phase {
   display: flex;
@@ -1070,108 +664,33 @@ body.is-booklet-system .course-masthead-phase a:hover {
 }
 
 /* Today: one paper surface, no nested cards */
-body.is-booklet-system .today-brief.is-booklet-today,
-body.is-booklet-system .today-workbench.is-booklet-today {
-  margin: 0;
-  padding: 0;
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
 
-body.is-booklet-system .today-brief.is-booklet-today {
-  margin-bottom: 1.75rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--booklet-rule) !important;
-}
 
-body.is-booklet-system .today-brief.is-booklet-today .kicker {
-  margin: 0 0 0.35rem;
-}
 
-body.is-booklet-system .today-brief.is-booklet-today h1 {
-  margin: 0;
-  font-family: var(--font-editorial);
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 500;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .today-brief-lede {
-  max-width: 38ch;
-  margin: 0.85rem 0 0;
-  color: var(--booklet-mute);
-  font-size: 1rem;
-  line-height: 1.45;
-}
 
-body.is-booklet-system .today-brief-exam {
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .today-workbench-heading {
-  margin: 0 0 0.85rem;
-  color: var(--booklet-mute);
-  font-family: var(--font-sans);
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-action {
-  padding: 0;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-label {
-  margin-bottom: 0.55rem;
-  color: var(--booklet-mute);
-  font-size: 0.875rem;
-  font-weight: 500;
-  letter-spacing: 0;
-  text-transform: none;
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-main h3 {
-  margin: 0;
-  font-family: var(--font-editorial);
-  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 1.08;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-main p,
-body.is-booklet-system .is-booklet-today .today-lead-main small {
-  color: var(--booklet-mute);
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-time strong {
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-sequence {
-  margin-top: 1.1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--booklet-rule);
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-sequence ol {
-  gap: 0.75rem;
-  color: var(--booklet-mute);
-  font-size: 0.875rem;
-  font-variant-numeric: tabular-nums;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 body.is-booklet-system .is-booklet-today .cta.today-start {
   margin-top: 1rem;
@@ -1181,21 +700,14 @@ body.is-booklet-system .is-booklet-today .cta.today-start {
 }
 
 /* Materials / map: same paper, no floating cards */
-body.is-booklet-system .is-booklet-shell .materials-empty,
-body.is-booklet-system .is-booklet-shell .map-workspace,
-body.is-booklet-system .is-booklet-shell .material-shelf,
-body.is-booklet-system .is-booklet-shell .materials-ingest,
-body.is-booklet-system .is-booklet-shell .material-library,
-body.is-booklet-system .is-booklet-shell .today-route-empty {
+body.is-booklet-system .is-booklet-shell .materials-empty,body.is-booklet-system .is-booklet-shell .material-shelf,body.is-booklet-system .is-booklet-shell .today-route-empty {
   background: transparent !important;
   border: 0 !important;
   box-shadow: none !important;
   border-radius: 0 !important;
 }
 
-body.is-booklet-system .is-booklet-shell .materials-empty h1,
-body.is-booklet-system .is-booklet-shell .map-workspace h1,
-body.is-booklet-system .is-booklet-shell .material-library h1 {
+body.is-booklet-system .is-booklet-shell .materials-empty h1 {
   font-family: var(--font-editorial);
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -1206,9 +718,7 @@ body.is-booklet-system .is-booklet-shell .material-library h1 {
     width: calc(100% - 1.5rem);
     padding-top: 0.75rem;
   }
-  body.is-booklet-system .course-masthead-nav {
-    gap: 0.25rem 0.85rem;
-  }
+  
 }
 
 /* Materials: kill remaining SaaS cards + blue drop zone */
@@ -1273,13 +783,7 @@ body.is-booklet-system .course-workspace-content .material-drop.is-dragging {
   background: rgba(31, 107, 69, 0.06) !important;
 }
 
-body.is-booklet-system .today-readiness-hint {
-  max-width: 42ch;
-  margin: 0.65rem 0 0;
-  color: var(--booklet-mute);
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
+
 
 body.is-booklet-system .course-masthead-hint {
   color: var(--booklet-mute);
@@ -1292,9 +796,7 @@ body.is-booklet-system .course-workspace-rail:not(.course-masthead) {
 }
 
 /* Map: paper list, sentence-case status, Kelus ink (not sky blue) */
-body.is-booklet-system .is-booklet-shell .map-workspace,
-body.is-booklet-system .course-workspace-content .map-workspace,
-body.is-booklet-system .course-workspace-content .knowledge-map,
+
 body.is-booklet-system .course-workspace-content .map-list {
   background: transparent !important;
   border: 0 !important;
@@ -1321,31 +823,12 @@ body.is-booklet-system .mark-status.is-fading {
 }
 
 /* How-it-works illustrations: no white card — ink on paper */
-body.is-booklet-system .how-page .how-stage-visual > *,
-body.is-booklet-system .how-page .how-illustration,
-body.is-booklet-system .how-page .how-map-fragment,
-body.is-booklet-system .how-page .how-diagnosis-fragment,
-body.is-booklet-system .how-page .how-session-fragment,
-body.is-booklet-system .how-page .how-material-fragment,
-body.is-booklet-system .how-page .how-reroute-fragment,
-body.is-booklet-system .how-page .how-today-fragment {
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
 
-body.is-booklet-system .how-page .how-illustration svg {
-  background: transparent;
-}
 
-body.is-booklet-system .how-page .how-paper-stack rect,
-body.is-booklet-system .how-page .how-concept-node:not(.is-primary) circle,
-body.is-booklet-system .how-page .how-route-node circle,
-body.is-booklet-system .how-page .how-route-target circle:first-of-type,
-body.is-booklet-system .how-page .how-answer-signal rect,
-body.is-booklet-system .first-run-gate-preview .how-paper-stack rect,
-body.is-booklet-system .first-run-gate-preview .how-concept-node:not(.is-primary) circle {
+
+
+
+body.is-booklet-system .how-page .how-concept-node:not(.is-primary) circle,body.is-booklet-system .first-run-gate-preview .how-paper-stack rect,body.is-booklet-system .first-run-gate-preview .how-concept-node:not(.is-primary) circle {
   fill: transparent !important;
 }
 
@@ -1452,37 +935,15 @@ body.is-booklet-system .materials-empty.is-session-empty h1 {
   margin-bottom: var(--spacing-16);
 }
 
-body.is-booklet-system .session-empty-preview {
-  display: grid;
-  gap: 0.65rem;
-  margin: 1.25rem 0 0;
-  padding: 0;
-  list-style: none;
-}
 
-body.is-booklet-system .session-empty-preview li {
-  display: grid;
-  grid-template-columns: 6.5rem 1fr;
-  gap: 0.75rem;
-  align-items: baseline;
-  padding: 0.55rem 0;
-  border-top: 1px solid var(--booklet-rule);
-}
 
-body.is-booklet-system .session-empty-preview li:last-child {
-  border-bottom: 1px solid var(--booklet-rule);
-}
 
-body.is-booklet-system .session-empty-preview strong {
-  font-family: var(--font-editorial);
-  font-weight: 500;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .session-empty-preview span {
-  color: var(--booklet-mute);
-  font-size: 1rem;
-}
+
+
+
+
+
 
 /* ── Topic map graph ── */
 body.is-booklet-system .topic-map-graph {
@@ -1607,29 +1068,11 @@ body.is-booklet-system .pricing-page.is-booklet-pricing .founding-cta-note {
 }
 
 /* First-run: one primary CTA; sample as aside */
-body.is-booklet-system .first-run-gate-aside {
-  margin: 0.35rem 0 0;
-  color: var(--booklet-mute);
-  font-size: 0.875rem;
-}
 
-body.is-booklet-system .first-run-gate-aside a,
-body.is-booklet-system .first-run-gate-aside .text-btn {
-  color: var(--booklet-ink);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  min-height: 0;
-  padding: 0;
-  display: inline;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  font: inherit;
-}
 
-body.is-booklet-system .first-run-gate-aside .text-btn:active {
-  transform: none;
-}
+
+
+
 
 /* Map graph denser */
 body.is-booklet-system .topic-map-svg {
@@ -1655,23 +1098,11 @@ body.is-booklet-system .topic-map-node.is-selected circle {
 
 /* Mobile setup: keep Continue visible */
 @media (max-width: 720px) {
-  body.is-booklet-system .is-marked-setup .destination-actions {
-    position: sticky;
-    bottom: 0;
-    z-index: 4;
-    margin: 0.75rem -0.25rem 0;
-    padding: 0.75rem 0.25rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
-    background: linear-gradient(180deg, rgba(238, 241, 236, 0), var(--booklet-paper) 28%);
-  }
+  
 
-  body.is-booklet-system .is-marked-setup .destination-actions .cta {
-    width: 100%;
-    justify-self: stretch;
-  }
+  
 
-  body.is-booklet-system .is-marked-setup .destination-actions-spacer {
-    display: none;
-  }
+  
 
   body.is-booklet-system .site-nav {
     overflow-x: auto;
@@ -1698,22 +1129,15 @@ body.is-booklet-system .pricing-page .founding-cta.is-reserve .founding-cta-stat
 }
 
 
-body.is-booklet-system .site-nav .nav-label-short { display: none; }
-body.is-booklet-system .site-nav .nav-label-full { display: inline; }
+
+
 
 /* ── AUDIT FIX: booklet geometry, map labels, mobile chrome, paper dropzone ── */
-body.is-booklet-system .is-poster .home-cta,
-body.is-booklet-system .is-poster .home-secondary,
-body.is-booklet-system .is-poster .cta,
-body.is-booklet-system .kelus-hero.is-folio.is-booklet.is-poster .home-cta,
-body.is-booklet-system .kelus-hero.is-folio.is-booklet.is-poster .home-secondary,
-body.is-booklet-system .kelus-hero.is-folio.is-booklet.is-poster .cta {
+body.is-booklet-system .is-poster .home-cta,body.is-booklet-system .is-poster .cta {
   border-radius: 4px !important;
 }
 
-body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.is-poster {
-  background: var(--booklet-paper) !important;
-}
+
 
 body.is-booklet-system .topic-map-node text {
   font-size: 3.05px;
@@ -1762,8 +1186,8 @@ body.is-booklet-system .topic-map-node.is-label-below text {
     font-size: 0.875rem;
   }
 
-  body.is-booklet-system .site-nav .nav-label-full { display: none; }
-  body.is-booklet-system .site-nav .nav-label-short { display: inline; }
+  
+  
 
   body.is-booklet-system .site-nav {
     mask-image: linear-gradient(90deg, #000 0%, #000 calc(100% - 1.25rem), transparent);
@@ -1779,18 +1203,11 @@ body.is-booklet-system .topic-map-node.is-label-below text {
     font-size: clamp(1.35rem, 6vw, 1.7rem);
   }
 
-  body.is-booklet-system .course-masthead-nav {
-    gap: 0.25rem 0.85rem;
-  }
+  
 
-  body.is-booklet-system .course-masthead-nav a {
-    min-height: 36px;
-    font-size: 0.875rem;
-  }
+  
 
-  body.is-booklet-system .course-masthead-hint,
-  body.is-booklet-system .course-sample-note,
-  body.is-booklet-system .sample-course-note {
+  body.is-booklet-system .course-masthead-hint {
     margin-bottom: 0.55rem;
     font-size: 0.8125rem;
     line-height: 1.35;
@@ -1857,9 +1274,7 @@ body.is-booklet-system .route-transition {
   background-color: var(--booklet-paper);
 }
 
-body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.paper-loop-hero.is-desk {
-  background: var(--booklet-paper) !important;
-}
+
 
 @media (max-width: 720px) {
   /* Masthead: identity one line, drop the “Current course” kicker */
@@ -1904,40 +1319,20 @@ body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet.paper-loop-hero
   }
 
   /* Today: less title weight once masthead already names the course */
-  body.is-booklet-system .today-brief.is-booklet-today {
-    margin-top: 0;
-  }
+  
 
-  body.is-booklet-system .today-brief.is-booklet-today h1 {
-    font-size: clamp(1.55rem, 7vw, 1.85rem);
-    margin: 0.15rem 0 0.45rem;
-  }
+  
 
-  body.is-booklet-system .today-brief.is-booklet-today .kicker {
-    font-size: 0.8125rem;
-  }
+  
 
-  body.is-booklet-system .today-brief-lede,
-  body.is-booklet-system .today-welcome,
-  body.is-booklet-system .today-readiness-hint {
-    font-size: 0.875rem;
-    line-height: 1.4;
-  }
+  
 
-  body.is-booklet-system .today-workbench.is-booklet-today {
-    margin-top: 1rem;
-  }
+  
 
-  body.is-booklet-system .today-workbench-heading {
-    font-size: 1rem;
-    margin-bottom: 0.55rem;
-  }
+  
 
   /* Materials / map page titles: less air under masthead */
-  body.is-booklet-system .course-workspace-content .materials-head,
-  body.is-booklet-system .course-workspace-content .map-head-block,
-  body.is-booklet-system .destination-page .materials-empty,
-  body.is-booklet-system .map-page .map-intro {
+  body.is-booklet-system .course-workspace-content .materials-head,  body.is-booklet-system .destination-page .materials-empty {
     margin-top: 0;
   }
 }
@@ -1984,17 +1379,7 @@ body.is-booklet-system {
   --hero-paper: var(--booklet-paper);
 }
 
-body.is-booklet-system,
-body.is-booklet-system .is-booklet-product,
-body.is-booklet-system .course-workspace-layout,
-body.is-booklet-system .route-transition,
-body.is-booklet-system .destination-page,
-body.is-booklet-system .folio-product-stage,
-body.is-booklet-system .folio-chapter,
-body.is-booklet-system .folio-method,
-body.is-booklet-system .kelus-hero,
-body.is-booklet-system .paper-loop-hero,
-body.is-booklet-system .is-notebook .notebook-sheet {
+body.is-booklet-system,body.is-booklet-system .is-booklet-product,body.is-booklet-system .course-workspace-layout,body.is-booklet-system .route-transition,body.is-booklet-system .destination-page,body.is-booklet-system .is-notebook .notebook-sheet {
   background-color: var(--booklet-paper) !important;
 }
 
@@ -2011,15 +1396,8 @@ body.is-booklet-system .is-booklet-product.shell {
   background: var(--booklet-paper) !important;
 }
 
-body.is-booklet-system .is-booklet-product .today-brief.is-revision-studio,
-body.is-booklet-system .is-booklet-product .today-workbench.is-revision-studio,
-body.is-booklet-system .is-booklet-product .materials-empty,
-body.is-booklet-system .is-booklet-product .materials-head,
-body.is-booklet-system .is-booklet-product .materials-shelf,
-body.is-booklet-system .is-booklet-product .materials-ingest,
-body.is-booklet-system .is-booklet-product .map-workspace,
-body.is-booklet-system .is-booklet-product .diagnosis-panel,
-body.is-booklet-system .is-booklet-product .diagnosis-check {
+
+body.is-booklet-system .is-booklet-product .materials-empty,body.is-booklet-system .is-booklet-product .materials-head {
   background: transparent !important;
   border: 0 !important;
   border-top: 1px solid var(--booklet-rule) !important;
@@ -2027,13 +1405,9 @@ body.is-booklet-system .is-booklet-product .diagnosis-check {
   box-shadow: none !important;
 }
 
-body.is-booklet-system .is-booklet-product .course-workspace-rail {
-  background: transparent !important;
-  box-shadow: none !important;
-}
 
-body.is-booklet-system .is-booklet-product .today-lead-action,
-body.is-booklet-system .is-booklet-product .map-workspace .map,
+
+
 body.is-booklet-system .is-booklet-product .topic-map .map {
   background: var(--booklet-lift) !important;
   border: 1px solid var(--booklet-rule) !important;
@@ -2042,12 +1416,8 @@ body.is-booklet-system .is-booklet-product .topic-map .map {
 }
 
 /* Kill leftover #fafafa / soft-gray product panels */
-body.is-booklet-system .is-booklet-product .setup-sample,
-body.is-booklet-system .is-booklet-product .setup-progress,
-body.is-booklet-system .destination-page.is-booklet-product fieldset,
-body.is-booklet-system .destination-page.is-booklet-product .setup-sample,
-body.is-booklet-system .is-booklet-product .diagnosis-panel,
-body.is-booklet-system .is-booklet-product .site-account-panel {
+
+body.is-booklet-system .destination-page.is-booklet-product fieldset,body.is-booklet-system .is-booklet-product .site-account-panel {
   background: var(--booklet-paper) !important;
   box-shadow: none !important;
 }
@@ -2075,24 +1445,18 @@ body.is-booklet-system::before {
   }
 }
 
-body.is-booklet-system .course-workspace-content,
-body.is-booklet-system .shell.is-booklet-shell main,
-body.is-booklet-system .map-workspace,
-body.is-booklet-system .today-brief.is-booklet-today {
+body.is-booklet-system .course-workspace-content,body.is-booklet-system .shell.is-booklet-shell main {
   letter-spacing: -0.005em;
 }
 
-body.is-booklet-system .today-brief.is-booklet-today h1,
-body.is-booklet-system .map-workspace h1,
-body.is-booklet-system .materials-empty h1,
-body.is-booklet-system .is-booklet-gate h1 {
+
+body.is-booklet-system .materials-empty h1,body.is-booklet-system .is-booklet-gate h1 {
   letter-spacing: -0.035em;
   line-height: 1.08;
 }
 
-body.is-booklet-system .today-brief-lede,
-body.is-booklet-system .first-run-gate-lede,
-body.is-booklet-system .map-intro p {
+
+body.is-booklet-system .first-run-gate-lede {
   line-height: 1.42;
   max-width: 38rem;
 }
@@ -2108,10 +1472,7 @@ body.is-booklet-system .today-start {
 }
 
 /* Press: ink settles into the page */
-body.is-booklet-system .cta:active,
-body.is-booklet-system .home-cta:active,
-body.is-booklet-system .today-start:active,
-body.is-booklet-system .site-header-action:active {
+body.is-booklet-system .cta:active,body.is-booklet-system .home-cta:active,body.is-booklet-system .today-start:active {
   transform: scale(0.98);
   transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -2168,97 +1529,33 @@ body.is-booklet-system .concept-confirmation-secondary button:hover {
 }
 
 /* Diagnosis: sentence-case meta, flatten nesting, kelus grades */
-body.is-booklet-system .flow-context,
-body.is-booklet-system .diagnosis-context {
-  width: min(940px, calc(100% - 40px));
-  margin-left: auto;
-  margin-right: auto;
-  text-transform: none;
-  letter-spacing: -0.01em;
-  font-size: 0.875rem;
-  color: var(--booklet-mute);
-  border-bottom-color: var(--booklet-rule);
-}
 
-body.is-booklet-system .flow-context b,
-body.is-booklet-system .diagnosis-context b {
-  color: var(--booklet-ink);
-  font-weight: 600;
-  text-transform: none;
-  letter-spacing: -0.01em;
-}
 
-body.is-booklet-system .diagnosis-page.is-booklet-product {
-  background: var(--booklet-paper);
-  border: 0;
-  box-shadow: none;
-}
 
-body.is-booklet-system .diagnosis-page.is-booklet-product .diagnosis-panel,
-body.is-booklet-system .diagnosis-page.is-booklet-product .diagnosis-check {
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  padding-top: 1.5rem;
-}
 
-body.is-booklet-system .diagnosis-page .diagnosis-panel h1,
-body.is-booklet-system .diagnosis-page .diagnosis-check h1 {
-  font-family: var(--font-editorial), Literata, Georgia, serif;
-  font-optical-sizing: auto;
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  color: var(--booklet-ink);
-}
 
-body.is-booklet-system .diagnosis-list button.is-selected {
-  color: #f7f8f5;
-  background: var(--booklet-kelus);
-  border-color: var(--booklet-kelus);
-}
 
-body.is-booklet-system .diagnosis-list button:focus-visible,
-body.is-booklet-system .diagnosis-grades button:focus-visible {
-  outline-color: var(--booklet-kelus);
-}
 
-body.is-booklet-system .diagnosis-cta {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 0.75rem;
-}
 
-body.is-booklet-system .diagnosis-skip {
-  color: var(--booklet-mute);
-  text-decoration-color: color-mix(in srgb, var(--booklet-mute) 40%, transparent);
-}
 
-body.is-booklet-system .diagnosis-skip:hover {
-  color: var(--booklet-ink);
-  text-decoration-color: color-mix(in srgb, var(--booklet-ink) 45%, transparent);
-}
 
-body.is-booklet-system .diagnosis-grades button.is-primary {
-  background: var(--booklet-kelus);
-  border-color: var(--booklet-kelus);
-  color: #f7f8f5;
-}
 
-body.is-booklet-system .diagnosis-grades button.is-outline {
-  color: var(--booklet-ink);
-  border-color: var(--booklet-kelus);
-}
 
-body.is-booklet-system .diagnosis-grades button.is-primary:hover {
-  background: #185536;
-  border-color: #185536;
-}
 
-body.is-booklet-system .diagnosis-grades button.is-ghost {
-  color: var(--booklet-mute);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Today: quieter masthead phase, one lead action */
 body.is-booklet-system .course-masthead-phase {
@@ -2284,36 +1581,22 @@ body.is-booklet-system .shell-context-action .text-btn {
   font-weight: 500;
 }
 
-body.is-booklet-system .today-brief.is-booklet-today h1 {
-  max-width: 14ch;
-}
 
-body.is-booklet-system .is-booklet-today .today-lead-label strong {
-  font-weight: 600;
-  color: var(--booklet-ink);
-}
+
+
 
 body.is-booklet-system .is-booklet-today .cta.today-start:active {
   transform: scale(0.98);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.is-booklet-system .concept-confirmation-secondary button:active,
-  body.is-booklet-system .diagnosis-skip:active,
-  body.is-booklet-system .is-booklet-today .cta.today-start:active {
+  body.is-booklet-system .concept-confirmation-secondary button:active,  body.is-booklet-system .is-booklet-today .cta.today-start:active {
     transform: none;
   }
 }
 
 /* ── Premium craft lock: one ink, no Notion blue leftovers ── */
-body.is-booklet-system .cta,
-body.is-booklet-system a.cta,
-body.is-booklet-system button.cta,
-body.is-booklet-system .today-start,
-body.is-booklet-system .cta.today-start,
-body.is-booklet-system .study-shell .cta,
-body.is-booklet-system .study-ratings button.is-primary,
-body.is-booklet-system .diagnosis-grades button.is-primary {
+body.is-booklet-system .cta,body.is-booklet-system a.cta,body.is-booklet-system button.cta,body.is-booklet-system .today-start,body.is-booklet-system .cta.today-start,body.is-booklet-system .study-shell .cta,body.is-booklet-system .study-ratings button.is-primary {
   background: var(--color-kelus, #1f6b45) !important;
   border-color: var(--color-kelus, #1f6b45) !important;
   color: #fff !important;
@@ -2335,29 +1618,15 @@ body.is-booklet-system .study-question textarea:focus-visible {
   border-color: var(--color-kelus, #1f6b45);
 }
 
-body.is-booklet-system .study-wayfinding [aria-current="step"] {
-  color: var(--color-kelus, #1f6b45);
-}
 
-body.is-booklet-system .study-progress i {
-  background: var(--color-kelus, #1f6b45);
-}
 
-body.is-booklet-system .session-apply-hint button,
-body.is-booklet-system .session-help button[aria-pressed="true"] {
-  color: var(--color-kelus, #1f6b45);
-}
 
-body.is-booklet-system .today-evidence-disclosure > summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.35rem 0.75rem;
-}
 
-body.is-booklet-system .today-evidence-disclosure > summary span {
-  margin-left: 0;
-}
+
+
+
+
+
 
 body.is-booklet-system .kelus-space-top {
   border-bottom-color: color-mix(in srgb, var(--color-rule, #d9d4cc) 55%, transparent);

@@ -23,12 +23,12 @@ body.is-course-studio .studio-rail {
   background: var(--core-rail-paper);
 }
 
-body.is-course-studio .studio-navigation-label { margin: 36px 10px 8px; }
+
 body.is-course-studio .studio-nav.revision-surface-modes { gap: 3px; }
 body.is-course-studio .studio-nav.revision-surface-modes button { min-height: 42px; border-radius: 8px; }
 
 /* A selected section should be easy to find without turning the rail into a card stack. */
-body.is-course-studio .studio-navigation-label { margin: 30px 12px 10px; font-size: 0.75rem; }
+
 body.is-course-studio .studio-nav.revision-surface-modes button {
   position: relative;
   min-height: 44px;
@@ -58,25 +58,12 @@ body.is-course-studio .studio-nav.revision-surface-modes button[data-mode="today
 body.is-course-studio .studio-nav.revision-surface-modes button[data-mode="materials"] { --mode-signal: var(--color-hero-orange); }
 body.is-course-studio .studio-nav.revision-surface-modes button[data-mode="map"] { --mode-signal: var(--color-hero-purple); }
 
-body.is-course-studio .studio-onboarding .studio-onboarding-content {
-  width: min(100% - 48px, 760px);
-  margin-inline: auto;
-  padding-block: 36px 56px;
-}
-body.is-course-studio .studio-onboarding .setup-stage-content > .destination-support { margin-bottom: 24px; }
-body.is-course-studio .studio-onboarding .setup-payoff { grid-template-columns: minmax(0, 1fr); gap: 0; margin: 20px 0 0; }
-body.is-course-studio .studio-onboarding .setup-payoff li {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  min-height: 0;
-  padding: 10px 0;
-  border: 0;
-  border-top: 1px solid var(--line);
-  background: transparent;
-}
-body.is-course-studio .studio-onboarding .setup-payoff strong { flex: 0 0 96px; }
-body.is-course-studio .studio-onboarding .setup-payoff span { line-height: 1.4; }
+
+
+
+
+
+
 
 .core-rail-sources { margin-top: 34px; }
 .core-rail-sources > p:first-child { display: flex; justify-content: space-between; margin: 0 10px 8px; font-size: 0.75rem; font-weight: 600; color: var(--color-slate); }
@@ -92,11 +79,11 @@ body.is-course-studio .studio-onboarding .setup-payoff span { line-height: 1.4; 
 .core-source-item .core-source-open { min-width: 0; }
 .core-source-remove { width: 40px; height: 44px; border: 0; border-radius: 6px; background: transparent; color: var(--color-slate); font: inherit; font-size: 1.125rem; cursor: pointer; }
 .core-source-remove:hover { color: var(--k-danger); background: #fbede8; }
-.core-source-confirm { grid-column: 1 / -1; padding: 9px 10px 12px; border-bottom: 1px solid var(--line); }
-.core-source-confirm p { margin: 0 0 8px; color: var(--ink); font-size: .75rem; line-height: 1.4; }
-.core-source-confirm button { margin-right: 12px; border: 0; background: transparent; color: var(--color-slate); font: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
-.core-source-confirm button.is-danger { color: var(--k-danger); }
-.core-source-confirm button:disabled { opacity: .5; cursor: wait; }
+
+
+
+
+
 .core-source-error { margin: 8px 10px; color: var(--k-danger); font-size: 0.75rem; line-height: 1.4; }
 .studio-rail-toggle, .studio-rail-reopen { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--color-slate); font: inherit; font-size: 0.75rem; cursor: pointer; }
 .studio-rail-toggle { margin: 12px 0 0; }
@@ -127,10 +114,10 @@ body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-q
 body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-quiet:hover,
 body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-quiet:focus-within { border-color: var(--color-kelus); background: var(--core-selected-paper); }
 body.is-course-studio .material-binder-stack.is-source-first .material-drop.is-quiet strong { font-family: var(--font-sans); font-size: 1rem; font-weight: 600; letter-spacing: -.02em; }
-body.is-course-studio .core-workspace-action .today-exam-context { margin: 8px 0 0; color: var(--color-slate); font-size: 0.75rem; line-height: 1.4; }
-body.is-course-studio .core-workspace-action .today-route-execution.is-booklet-page { display: block; padding: 30px clamp(22px, 3vw, 48px); }
-body.is-course-studio .core-workspace-action .today-lead-action.is-page { margin: 0; padding: 0; }
-body.is-course-studio .core-workspace-action .today-lead-action.is-page #today-title { max-width: none; margin-top: 10px; font-size: clamp(2rem, 3vw, 2.8rem); line-height: 1.12; letter-spacing: -0.05em; overflow-wrap: anywhere; }
+
+
+
+
 body.is-course-studio .core-workspace-action .today-decision { max-width: none; margin-top: 26px; padding-top: 18px; }
 body.is-course-studio .core-workspace-action .today-next { width: 100%; margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--line); }
 body.is-course-studio .core-workspace-action .today-start { width: 100%; margin-top: 24px; justify-content: center; }
@@ -173,7 +160,7 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-s
 body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing {
   grid-template-columns: 220px minmax(0, 1fr);
 }
-body.is-session-booklet.is-booklet-system main.study-shell[data-phase].is-source-missing > .study-phase-track,
+
 body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing > :is(.study-question.is-page, .reroute-view.is-page) { grid-column: 2; }
 body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing > :is(.study-question.is-page, .reroute-view.is-page) { width: min(100%, 880px); margin-inline: auto; border-left: 0; }
 body.is-session-booklet.is-booklet-system .study-context.is-folio { grid-column: 1 / -1; grid-row: 1; min-height: 56px; padding: 7px 22px; }
@@ -191,8 +178,8 @@ body.is-session-booklet.is-booklet-system .study-context.is-folio { grid-column:
 .session-workspace-source { grid-column: 2; grid-row: 2 / span 2; min-width: 0; min-height: 0; }
 .session-workspace-source .core-source-reader { height: 100%; }
 .session-workspace-source .core-source-stage { max-height: calc(100dvh - 190px); }
-body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-phase-track { grid-column: 3; grid-row: 2; align-self: start; gap: 3px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
-body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-phase-track li { justify-content: center; min-width: 0; padding: 8px 2px; font-size: 0.75rem; }
+
+
 body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] > :is(.study-question.is-page, .reroute-view.is-page) { grid-column: 3; grid-row: 3; min-width: 0; min-height: 0; max-height: calc(100dvh - 210px); overflow: auto; margin: 0; padding: 28px clamp(22px, 3vw, 46px) 56px; border: 0; border-left: 1px solid var(--line); }
 body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .study-question.is-page h1,
 body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .reroute-view.is-page h1 { font-size: clamp(1.65rem, 2.25vw, 2.3rem); line-height: 1.18; }
@@ -204,7 +191,7 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .sessio
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase], body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-open { grid-template-columns: 170px minmax(0, 1fr) minmax(330px, 1fr); }
 }
 @media (max-width: 950px) {
-  body.is-course-studio .studio-onboarding .studio-onboarding-content { width: 100%; padding-block: 0; }
+  
   body.is-course-studio .kelus-space.is-studio { grid-template-columns: 190px minmax(0, 1fr); }
   .core-workspace-grid { display: flex; flex-direction: column; }
   .core-workspace-grid > .core-source-reader { height: 480px; flex: none; }
@@ -212,11 +199,11 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .sessio
   .core-source-stage { max-height: 420px; min-height: 300px; }
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase], body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-open { grid-template-columns: 170px minmax(0, 1fr); grid-template-rows: 56px 420px auto 1fr; }
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing { grid-template-columns: 170px minmax(0, 1fr); grid-template-rows: 56px auto minmax(0, 1fr); }
-  body.is-session-booklet.is-booklet-system main.study-shell[data-phase].is-source-missing > .study-phase-track { grid-row: 2; }
+  
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-source-missing > :is(.study-question.is-page, .reroute-view.is-page) { grid-row: 3; }
   .session-workspace-rail { grid-row: 2 / span 3; }
   .session-workspace-source { grid-column: 2; grid-row: 2; }
-  body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-phase-track { grid-column: 2; grid-row: 3; }
+  
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] > :is(.study-question.is-page, .reroute-view.is-page) { grid-column: 2; grid-row: 4; max-height: none; }
 }
 @media (max-width: 900px) {
@@ -228,7 +215,7 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .sessio
   body.is-course-studio .material-ingest.is-embedded .material-role-field { grid-template-columns: minmax(0, 1fr); }
   body.is-course-studio .kelus-space.is-studio { display: block; }
   body.is-course-studio .studio-rail { position: static; height: auto; max-height: none; padding: 10px 14px; }
-  body.is-course-studio .studio-navigation-label, .core-rail-sources, body.is-course-studio .studio-rail-bottom { display: none; }
+   .core-rail-sources, body.is-course-studio .studio-rail-bottom { display: none; }
   body.is-course-studio .studio-nav.revision-surface-modes { display: flex; }
   body.is-course-studio .studio-nav.revision-surface-modes button { flex: 1; }
   body.is-course-studio .studio-topbar { padding-inline: 16px; }
@@ -243,6 +230,6 @@ body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .sessio
   .session-workspace-rail { display: none; }
   .session-workspace-source { height: 320px; flex: none; }
   .session-workspace-source .core-source-stage { max-height: 260px; min-height: 260px; }
-  body.is-session-booklet.is-booklet-system main.study-shell[data-phase] > .study-phase-track { width: 100%; }
+  
   body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase] > :is(.study-question.is-page, .reroute-view.is-page) { max-height: none; overflow: visible; padding: 24px 20px 56px; }
 }

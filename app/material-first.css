@@ -1,70 +1,31 @@
 /* Hallmark · genre: modern-minimal · macrostructure: Workbench · design-system: design.md · designed-as-app */
 /* Hallmark · pre-emit critique: P5 H5 E4 S5 R5 V4 */
 /* Source first: one usable PDF action before any exam form fields. */
-.is-course-studio .studio-onboarding[data-stage="upload"] .studio-onboarding-steps li.is-current,
-.is-course-studio .studio-onboarding[data-stage="confirm"] .studio-onboarding-steps li.is-current {
-  box-shadow: inset 2px 0 0 var(--color-hero-orange);
-  background: var(--color-hero-orange-wash);
-  color: var(--color-hero-orange);
-}
 
-body.is-course-studio .studio-onboarding .destination-page.is-material-first .destination-form {
-  max-width: 680px;
-}
 
-body.is-course-studio .studio-onboarding .setup-stage-content {
-  display: grid;
-  gap: 0;
-}
 
-body.is-course-studio .studio-onboarding .setup-stage-content .destination-support {
-  margin-block: var(--spacing-12) var(--spacing-24);
-}
 
-body.is-course-studio .studio-onboarding .setup-stage-content fieldset {
-  display: grid;
-  gap: 0;
-  margin: var(--spacing-24) 0 0;
-  padding: 0;
-  border: 0;
-}
 
-body.is-course-studio .studio-onboarding .setup-stage-content fieldset legend {
-  margin-bottom: var(--spacing-16);
-  font-size: 1rem;
-}
 
-body.is-course-studio .studio-onboarding .setup-section {
-  padding-block: var(--spacing-20);
-  border-top: 1px solid var(--studio-hairline);
-}
 
-body.is-course-studio .studio-onboarding .setup-source-section {
-  padding-top: var(--spacing-16);
-}
 
-body.is-course-studio .studio-onboarding .setup-exam-section {
-  display: grid;
-  gap: var(--spacing-24);
-}
 
-body.is-course-studio .studio-onboarding .setup-rhythm-section .destination-support {
-  margin: 0 0 var(--spacing-12);
-}
 
-body.is-course-studio .studio-onboarding .setup-rhythm-section .destination-support:last-child {
-  max-width: 42ch;
-  margin: var(--spacing-12) 0 0;
-  font-size: 0.8125rem;
-}
 
-body.is-course-studio .studio-onboarding .setup-section .setup-selected-file {
-  margin: 0;
-}
 
-body.is-course-studio .studio-onboarding .destination-page.is-material-first .destination-form > .kicker {
-  color: var(--color-hero-orange);
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .is-material-first .destination-page-title {
   max-width: 16ch;
@@ -101,13 +62,7 @@ body.is-course-studio .studio-onboarding .destination-page.is-material-first .de
 .is-material-first .setup-first-upload:active { transform: scale(0.99); }
 .is-material-first .setup-first-upload:focus-within { outline: 2px solid var(--color-kelus); outline-offset: 3px; }
 
-body.is-course-studio .studio-onboarding .destination-form .setup-first-upload input[type="file"] {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  opacity: 0;
-}
+
 
 .is-material-first .setup-upload-mark {
   display: grid;
@@ -141,22 +96,12 @@ body.is-course-studio .studio-onboarding .destination-form .setup-first-upload i
   line-height: 1.5;
 }
 
-.is-material-first .setup-selected-file {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-16);
-  min-height: 60px;
-  margin-bottom: var(--spacing-32);
-  padding: var(--spacing-12) var(--spacing-16);
-  border-left: 2px solid var(--color-hero-orange);
-  background: var(--color-hero-orange-wash);
-  font-size: 0.875rem;
-}
 
-.is-material-first .setup-selected-file span { flex: 0 0 auto; color: var(--color-hero-orange); }
-.is-material-first .setup-selected-file strong { min-width: 0; overflow-wrap: anywhere; }
-.is-material-first .setup-selected-file button { margin-left: auto; color: var(--color-hero-orange); }
-.is-material-first .setup-back { min-height: 44px; }
+
+
+
+
+
 
 /* A source-backed review desk: the original page remains visible while the
    student accepts or edits Kelus's proposed revision topics. */
@@ -200,9 +145,7 @@ body.is-course-studio .studio-onboarding .destination-form .setup-first-upload i
 .material-source-preview > p { margin: 0; padding: var(--spacing-12) var(--spacing-16); border-top: 1px solid var(--booklet-rule); color: var(--color-slate); font-size: 0.8125rem; }
 
 @media (max-width: 900px) {
-  .is-material-first .setup-payoff {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  
 
   .is-material-first .setup-first-upload {
     min-height: 180px;
@@ -216,17 +159,17 @@ body.is-course-studio .studio-onboarding .destination-form .setup-first-upload i
 
 @media (max-width: 600px) {
   .is-material-first .setup-first-upload { min-height: 190px; padding: var(--spacing-24); }
-  .is-material-first .setup-selected-file { flex-wrap: wrap; }
-  .is-material-first .setup-selected-file strong { flex-basis: 100%; order: 2; }
-  .is-material-first .setup-selected-file button { order: 1; }
+  
+  
+  
   .material-source-page { max-height: 180px; padding: var(--spacing-16); }
   .material-source-preview > p { display: none; }
 }
 
-body.is-course-studio .studio-onboarding .concept-confirmation { padding-block: var(--spacing-24); }
-body.is-course-studio .studio-onboarding .concept-confirmation h2 { font-size: clamp(1.5rem, 2.5vw, 2.1rem); line-height: 1.18; }
-body.is-course-studio .studio-onboarding .concept-confirmation > header { margin-bottom: var(--spacing-24); }
-body.is-course-studio .studio-onboarding .concept-confirmation-actions { position: static; margin-top: var(--spacing-24); }
+
+
+
+
 body.is-course-studio .studio-onboarding[data-stage="confirm"] .material-binder-stack:has(.concept-confirmation) :is(.material-shelf, .material-binder-note) { display: none; }
 
 @media (prefers-reduced-motion: reduce) {

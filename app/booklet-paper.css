@@ -130,9 +130,8 @@ body.is-booklet-system .site-nav a[aria-current="page"] {
   box-shadow: none;
 }
 
-body.is-booklet-system .site-header-action,
-body.is-booklet-system .cta,
-body.is-booklet-system a.cta {
+
+body.is-booklet-system .cta,body.is-booklet-system a.cta {
   background: var(--color-booklet-blue);
   border-color: var(--color-booklet-blue);
   color: #fff;
@@ -144,14 +143,13 @@ body.is-booklet-system a.cta {
   transition: background var(--dur-fast) var(--ease-booklet), transform var(--dur-micro) var(--ease-booklet);
 }
 
-body.is-booklet-system .site-header-action:hover,
-body.is-booklet-system .cta:hover,
-body.is-booklet-system a.cta:hover {
+
+body.is-booklet-system .cta:hover,body.is-booklet-system a.cta:hover {
   background: var(--color-kelus-hover, #185536);
   border-color: var(--color-kelus-hover, #185536);
 }
 
-body.is-booklet-system .site-header-action:active,
+
 body.is-booklet-system .cta:active {
   transform: scale(0.97);
 }
@@ -179,141 +177,39 @@ body.is-booklet-system .kicker {
 }
 
 /* ── Hero: centered paper stack + product mock ── */
-body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: clamp(1.75rem, 4vw, 2.75rem);
-  min-height: min(92vh, 900px);
-  padding: clamp(2.75rem, 7vh, 4.5rem) max(20px, calc((100vw - min(1120px, var(--page-max-width))) / 2)) clamp(2rem, 5vh, 3.5rem);
-  background: var(--color-paper-warmth);
-  text-align: center;
-}
 
-body.is-booklet-system .kelus-hero.is-booklet .folio-hero-atmosphere,
-body.is-booklet-system .kelus-hero.is-booklet .folio-hero-rule {
-  display: none;
-}
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 42rem;
-  padding: 0;
-  margin: 0 auto;
-}
 
-body.is-booklet-system .hero-marks {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 0 0 1.35rem;
-  padding: 0;
-  list-style: none;
-}
 
-body.is-booklet-system .hero-marks li {
-  width: 40px;
-  height: 40px;
-  border: 2px solid;
-  border-radius: 9999px;
-  display: grid;
-  place-items: center;
-  box-shadow: none;
-}
 
-body.is-booklet-system .hero-marks li span {
-  width: 14px;
-  height: 14px;
-  border-radius: 9999px;
-  opacity: 0.85;
-}
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 {
-  max-width: 16ch;
-  margin: 0 0 1.1rem;
-  color: var(--color-ink-black);
-  font-family: var(--font-editorial);
-  font-optical-sizing: auto;
-  font-size: clamp(2.6rem, 5.4vw, 3.75rem);
-  font-weight: 600;
-  line-height: 1.1;
-  letter-spacing: -0.028em;
-  text-wrap: balance;
-}
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 .hero-pill {
-  display: inline;
-  padding: 0.08em 0.38em;
-  border-radius: var(--radius-pills);
-  background: var(--color-peach-pill);
-  color: var(--color-ink-black);
-  font-weight: 600;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-}
+
+
+
+
+
+
+
+
 
 body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 span:not(.hero-pill) {
   color: inherit;
   font-weight: inherit;
 }
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-lede {
-  max-width: 42ch;
-  margin: 0 0 1.5rem;
-  color: var(--color-graphite);
-  font-family: var(--font-editorial);
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.56;
-}
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-cta {
-  background: var(--color-booklet-blue);
-  border-color: var(--color-booklet-blue);
-  border-radius: var(--radius-buttons);
-  font-weight: 500;
-  font-size: var(--text-body-sm);
-  min-height: 36px;
-  padding: 6px 15px;
-}
 
-body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-secondary {
-  background: transparent;
-  border: 1px solid #aeb6a8;
-  border-radius: 999px;
-  color: var(--booklet-ink, var(--k-ink));
-  font-weight: 500;
-  font-size: var(--text-body-sm);
-  min-height: 36px;
-  padding: 6px 15px;
-  backdrop-filter: none;
-}
 
-body.is-booklet-system .folio-hero-booklet {
-  width: min(100%, 720px);
-  margin: 0 auto;
-  justify-self: center;
-}
+
+
+
+
+
 
 /* Hero product mock — white card on paper, hairline only; soft product shadow ok */
-body.is-booklet-system .booklet-board-shell {
-  background: var(--color-pure-white);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-cards);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+
 
 body.is-booklet-system .booklet-board-main {
   padding: 36px 22px 18px;
@@ -325,7 +221,7 @@ body.is-booklet-system .booklet-board-head h2 {
   letter-spacing: -0.03em;
 }
 
-body.is-booklet-system .booklet-page-mark,
+
 body.is-booklet-system .booklet-product-page-mark {
   background: var(--color-charcoal);
 }
@@ -374,29 +270,13 @@ body.is-booklet-system .booklet-flow-route-title strong {
 }
 
 /* ── Product stage ── */
-body.is-booklet-system .folio-product-stage {
-  background: var(--color-paper-warmth);
-  border-top: 1px solid var(--border-hairline);
-  padding-block: var(--spacing-80, 80px);
-}
 
-body.is-booklet-system .folio-product-intro .kicker {
-  color: rgba(0, 0, 0, 0.4);
-}
 
-body.is-booklet-system .folio-product-intro h2 {
-  color: var(--color-ink-black);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-}
 
-body.is-booklet-system .folio-product-intro > p {
-  color: var(--color-graphite);
-  font-family: var(--font-editorial);
-  font-size: 18px;
-  line-height: 1.56;
-}
+
+
+
+
 
 body.is-booklet-system .booklet-product-shell {
   background: var(--color-pure-white);
@@ -449,20 +329,11 @@ body.is-booklet-system .booklet-product-demo .hero-demo-signal span {
 }
 
 /* ── Story chapters: sticky-note accent cards ── */
-body.is-booklet-system .folio-story {
-  background: var(--color-paper-warmth);
-}
 
-body.is-booklet-system .folio-chapter {
-  border-bottom: 1px solid var(--border-hairline);
-  padding-block: var(--spacing-80, 80px);
-}
 
-body.is-booklet-system .folio-chapter-copy h2 {
-  color: var(--color-ink-black);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
+
+
+
 
 body.is-booklet-system .folio-chapter-copy > p:not(.kicker) {
   color: var(--color-graphite);
@@ -471,107 +342,41 @@ body.is-booklet-system .folio-chapter-copy > p:not(.kicker) {
   line-height: 1.56;
 }
 
-body.is-booklet-system .folio-chapter-copy > a {
-  color: var(--color-booklet-blue);
-  font-weight: 500;
-}
 
-body.is-booklet-system .folio-chapter-index {
-  color: rgba(0, 0, 0, 0.06);
-}
 
-body.is-booklet-system .folio-chapter-art .v1-plan,
-body.is-booklet-system .folio-chapter-art .v1-reroute,
-body.is-booklet-system .folio-chapter-art .v1-materials {
-  background: var(--color-pure-white);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-cards);
-  box-shadow: none;
-}
 
-body.is-booklet-system .folio-chapter.is-plan .folio-chapter-art .v1-plan {
-  background: var(--color-marigold);
-  border-color: transparent;
-}
 
-body.is-booklet-system .folio-chapter.is-reroute .folio-chapter-art .v1-reroute {
-  background: var(--color-sky-wash);
-  border-color: transparent;
-}
+
+
+
+
+
 
 /* Materials chapter: quiet paper shelf, not a coral blast */
-body.is-booklet-system .folio-chapter.is-materials .folio-chapter-art .v1-materials {
-  background: var(--color-pure-white);
-  border: 1px solid var(--border-hairline);
-  color: var(--color-ink-black);
-}
 
-body.is-booklet-system .folio-chapter.is-materials .material-route-art-frame {
-  margin: 0;
-  border-bottom: 1px solid var(--border-hairline);
-  background: #f7f5f0;
-}
 
-body.is-booklet-system .folio-chapter.is-materials .material-route-art-frame::before,
-body.is-booklet-system .folio-chapter.is-materials .material-route-art-frame::after {
-  display: none;
-}
 
-body.is-booklet-system .folio-chapter.is-materials .material-route-art {
-  max-height: 220px;
-  object-fit: cover;
-  object-position: center top;
-}
 
-body.is-booklet-system .folio-chapter.is-materials .v1-materials > header {
-  min-height: 0;
-  padding: 16px 20px;
-}
 
-body.is-booklet-system .folio-chapter.is-materials .v1-materials li {
-  min-height: 64px;
-  margin: 8px 12px;
-  padding: 12px 14px;
-  background: var(--booklet-paper, #ffffff);
-  border: 1px solid var(--border-hairline);
-}
 
-body.is-booklet-system .folio-chapter.is-materials .v1-materials > footer {
-  background: var(--color-paper-warmth, #ffffff);
-  color: var(--color-graphite);
-}
 
-body.is-booklet-system .folio-chapter-art .v1-plan > header,
-body.is-booklet-system .folio-chapter-art .v1-reroute > header,
-body.is-booklet-system .folio-chapter-art .v1-materials > header {
-  background: transparent;
-  border-bottom-color: rgba(0, 0, 0, 0.08);
-}
 
-body.is-booklet-system .folio-chapter-art .v1-plan li,
-body.is-booklet-system .folio-chapter-art .v1-reroute li,
-body.is-booklet-system .folio-chapter-art .v1-materials li {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(0, 0, 0, 0.08);
-  border-radius: var(--radius-buttons);
-}
 
-body.is-booklet-system .folio-chapter-art .v1-almost {
-  background: var(--color-booklet-blue);
-  border-color: var(--color-booklet-blue);
-}
+
+
+
+
+
+
+
+
+
+
 
 /* Method + close */
-body.is-booklet-system .folio-method {
-  background: var(--color-paper-warmth);
-  border-top: 1px solid var(--border-hairline);
-  padding-block: var(--spacing-80, 80px);
-}
 
-body.is-booklet-system .folio-method-heading h2 {
-  color: var(--color-ink-black);
-  font-weight: 600;
-}
+
+
 
 body.is-booklet-system .folio-method-heading > p:not(.kicker) {
   color: var(--color-graphite);
@@ -580,59 +385,29 @@ body.is-booklet-system .folio-method-heading > p:not(.kicker) {
   line-height: 1.56;
 }
 
-body.is-booklet-system .folio-method-grid > div {
-  background: var(--color-pure-white);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-cards);
-  box-shadow: none;
-}
 
-body.is-booklet-system .folio-method-grid dt {
-  color: rgba(0, 0, 0, 0.4);
-}
 
-body.is-booklet-system .folio-method-grid dd {
-  color: var(--color-ink-black);
-}
 
-body.is-booklet-system .folio-close.home-close,
-body.is-booklet-system .home-close.folio-close {
-  background: var(--color-paper-warmth);
-  border-top: 1px solid var(--border-hairline);
-  color: var(--color-ink-black);
-}
 
-body.is-booklet-system .home-close-copy h2 {
-  color: var(--color-ink-black);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
 
-body.is-booklet-system .home-close-copy p {
-  color: var(--color-graphite);
-}
 
-body.is-booklet-system .home-close-actions .cta {
-  background: var(--color-booklet-blue);
-}
 
-body.is-booklet-system .home-close-actions .text-btn {
-  color: var(--color-graphite);
-}
+
+
+
+
+
+
+
+
 
 /* Product surfaces already using is-booklet-product */
-body.is-booklet-system .is-booklet-product .cta,
-body.is-booklet-system .destination-page.is-booklet-product .time-choices label.is-selected,
-body.is-booklet-system .pricing-page.is-booklet-product .pricing-plan .cta {
+body.is-booklet-system .is-booklet-product .cta,body.is-booklet-system .pricing-page.is-booklet-product .pricing-plan .cta {
   background: var(--color-booklet-blue);
   border-color: var(--color-booklet-blue);
 }
 
-body.is-booklet-system .destination-page.is-booklet-product,
-body.is-booklet-system .is-booklet-product .materials-empty,
-body.is-booklet-system .is-booklet-product .materials-head,
-body.is-booklet-system .is-booklet-product .today-brief.is-revision-studio,
-body.is-booklet-system .is-booklet-product .today-workbench.is-revision-studio {
+body.is-booklet-system .destination-page.is-booklet-product,body.is-booklet-system .is-booklet-product .materials-empty,body.is-booklet-system .is-booklet-product .materials-head {
   background: var(--color-pure-white);
   border: 1px solid var(--border-hairline);
   border-radius: var(--radius-cards);
@@ -643,47 +418,15 @@ body.is-booklet-system .course-workspace-layout.is-booklet-product {
   background: var(--color-paper-warmth);
 }
 
-body.is-booklet-system .is-booklet-product .course-workspace-rail {
-  background: var(--color-paper-warmth);
-  border-right: 1px solid var(--border-hairline);
-}
 
-body.is-booklet-system .how-page.is-booklet-product {
-  background: var(--color-paper-warmth);
-}
 
-body.is-booklet-system .how-page.is-booklet-product .how-title {
-  color: var(--color-ink-black);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-}
 
-body.is-booklet-system .how-page.is-booklet-product .cta {
-  background: var(--color-booklet-blue);
-}
 
-@media (max-width: 980px) {
-  body.is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet {
-    min-height: 0;
-    gap: 1.5rem;
-    padding-top: 2rem;
-  }
 
-  body.is-booklet-system .folio-hero-booklet {
-    width: 100%;
-    max-width: 520px;
-  }
 
-  body.is-booklet-system .kelus-hero.is-folio.is-booklet .folio-hero-copy h1 {
-    max-width: 14ch;
-    font-size: clamp(2.35rem, 9vw, 3.25rem);
-  }
 
-  body.is-booklet-system .hero-marks li {
-    width: 34px;
-    height: 34px;
-  }
-}
+
+
 
 /* Inclusive motion: no travel/scale when reduced motion is on */
 @media (prefers-reduced-motion: reduce) {
@@ -696,9 +439,8 @@ body.is-booklet-system .how-page.is-booklet-product .cta {
     scroll-behavior: auto !important;
   }
 
-  body.is-booklet-system .site-header-action:active,
-  body.is-booklet-system .cta:active,
-  body.is-booklet-system a.cta:active {
+  
+  body.is-booklet-system .cta:active,  body.is-booklet-system a.cta:active {
     transform: none;
   }
 }

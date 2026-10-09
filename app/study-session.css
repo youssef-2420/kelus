@@ -103,51 +103,21 @@ body.is-session-booklet.is-booklet-system .study-context-title small {
   white-space: nowrap;
 }
 
-body.is-session-booklet.is-booklet-system .study-more > summary,
+
 body.is-session-booklet.is-booklet-system .study-close {
   color: var(--color-slate);
   font-size: 0.875rem;
 }
 
-.study-phase-track {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--spacing-8);
-  margin: 0;
-  padding: var(--spacing-24) 0;
-  list-style: none;
-}
 
-.study-phase-track li {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  padding: 8px 10px;
-  border-top: 2px solid var(--line);
-  color: var(--color-smoke);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
 
-.study-phase-track li span {
-  color: inherit;
-  font-size: 0.75rem;
-  font-variant-numeric: tabular-nums;
-}
 
-.study-phase-track li.is-current {
-  border-top-color: var(--study-step-ink);
-  background: var(--study-step-wash);
-  color: var(--study-step-ink);
-  font-weight: 600;
-}
 
-.study-phase-track li.is-done {
-  border-top-color: var(--color-kelus);
-  color: var(--color-kelus);
-}
+
+
+
+
+
 
 body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .study-question.is-page,
 body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .reroute-view.is-page {
@@ -393,13 +363,9 @@ body.is-session-booklet.is-booklet-system .study-context :is(button, summary):fo
     max-width: none;
   }
 
-  .study-phase-track li {
-    justify-content: center;
-    padding-inline: 4px;
-    font-size: 0.75rem;
-  }
+  
 
-  .study-phase-track li span { display: none; }
+  
 }
 
 @media (max-width: 375px) {
@@ -407,8 +373,8 @@ body.is-session-booklet.is-booklet-system .study-context :is(button, summary):fo
     padding-inline: var(--spacing-16);
   }
 
-  .study-phase-track { gap: 4px; }
-  .study-phase-track li { font-size: 0.68rem; }
+  
+  
   body.is-session-booklet.is-booklet-system .session-value-proof > div { grid-template-columns: 1fr; gap: 4px; }
 }
 
