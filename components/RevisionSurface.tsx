@@ -7,8 +7,6 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { MaterialLibrary } from "@/components/MaterialLibrary";
 import { CourseSourceReader } from "@/components/CourseSourceReader";
 import { TodayRoute } from "@/components/TodayRoute";
-import { AiPrefetch } from "@/components/AiPrefetch";
-import { AiConsent } from "@/components/AiConsent";
 import { SampleReplaceConfirm } from "@/components/SampleReplaceConfirm";
 import { setPendingSetupFile } from "@/lib/pending-setup-file";
 import { SOURCE_FILE_ACCEPT } from "@/domain/materials";
@@ -367,7 +365,6 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
                 <div className="core-workspace-action workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
                   {!hasReadableSource ? <p className="core-source-inline">This plan has no original PDF beside it. <Link href="/today?section=materials">Add your course PDF</Link> to study from your own pages.</p> : null}
                   <AutoStart ready={route.allocations.length > 0} plan={builtPlan} showPlan={!snapshot.events.some((event) => event.kind === "retrieval")} onStart={openSession ? resume : begin} />
-                  <AiPrefetch route={route} concepts={concepts} activities={snapshot.learningActivities} />
                   <TodayRoute
                     route={route}
                     concepts={concepts}
@@ -388,7 +385,7 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
                 </div>
               </div>
             ) : null}
-            {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} interceptFile={isSampleCourse ? (file) => { setSampleFile(file); return true; } : undefined} /><AiConsent /></div></div> : null}
+            {mode === "materials" ? <div className={`core-workspace-grid is-materials${hasReadableSource ? "" : " is-source-missing"}`}>{hasReadableSource ? <CourseSourceReader key={selectedMaterial.id} material={selectedMaterial} /> : null}<div className="core-workspace-action"><MaterialLibrary embedded incomingFile={incomingSource} onIncomingFileHandled={() => setIncomingSource(null)} interceptFile={isSampleCourse ? (file) => { setSampleFile(file); return true; } : undefined} /></div></div> : null}
             {mode === "map" ? <TopicMapPanel /> : null}
             {mode === "progress" ? <ProgressView concepts={concepts} events={snapshot.events} nowIso={nowIso} daysToExam={days} targetPercent={exam.targetPercent} examDatePending={examDatePending} /> : null}
           </motion.div>}
