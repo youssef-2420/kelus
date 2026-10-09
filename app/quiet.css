@@ -92,3 +92,73 @@ html body.is-course-studio [class*="NudgeCard"] button:hover { background: var(-
 html body.is-course-studio [class*="WelcomeBack"][class*="card"] { padding: 0 0 24px !important; margin-bottom: 28px !important; border: 0 !important; border-bottom: 1px solid var(--q-line) !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
 
 @media (prefers-reduced-motion: reduce) { html body.is-course-studio * { transition-duration: 1ms !important; } }
+
+/* ── Every product screen on the quiet scale ─────────────────────────────────────────────────────────
+   One type scale: page title 30/600, section 20/600, small heading 15/600, body 14–15. One button: 36px, flat,
+   radius 8, green only for the main action, outlined for the rest. One press. */
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) {
+  --q-title: 1.875rem;
+  --q-section: 1.25rem;
+}
+
+/* Page titles: sections, topic page, result, Done. */
+html body.is-course-studio #section-title,
+html body.is-course-studio [class*="ConceptDetail"][class*="title"],
+html body.is-session-booklet .study-mark-moment h1,
+html body.is-session-complete .complete-folio > h1 {
+  font-size: var(--q-title) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  letter-spacing: -0.025em !important;
+  max-width: none !important;
+}
+/* The end of a block is a moment: a little larger, never a poster. */
+html body.is-session-complete .complete-folio > h1 { font-size: 2.25rem !important; }
+
+/* Section-level headings. */
+html body.is-course-studio :is(#progress-headline, [class*="ConceptDetail"][class*="section"] h2, .material-shelf h2, [class*="NotesSection"] h2),
+html body.is-session-complete #complete-return-title {
+  font-size: var(--q-section) !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.015em !important;
+}
+html body.is-course-studio [class*="ProgressView"] :is(.group h3, h3) { font-size: 0.9375rem !important; font-weight: 600 !important; }
+html body.is-course-studio .kelus-paper-lede, html body.is-course-studio .kelus-space-lede { font-size: 0.875rem !important; color: var(--q-text-2) !important; }
+
+/* Questions keep their weight but step down to the section size. */
+html body.is-session-booklet [class*="QuickRun"][class*="prompt"] { font-size: 1.25rem !important; line-height: 1.4 !important; }
+
+/* One button. */
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) :is(.k-btn, .cta:not(.home-cta)) {
+  min-height: 36px !important;
+  height: auto !important;
+  padding: 0 14px !important;
+  gap: 8px !important;
+  border-radius: 8px !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  box-shadow: 0 1px 2px rgba(25, 26, 24, 0.12) !important;
+  transition: background-color 120ms var(--q-ease), filter 120ms var(--q-ease), transform 120ms var(--q-ease) !important;
+}
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) :is(.k-btn, .cta:not(.home-cta)):active:not(:disabled) { transform: scale(0.98) !important; box-shadow: none !important; }
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) .k-btn--paper {
+  --btn-bg: #fff; --btn-ink: var(--q-ink);
+  box-shadow: inset 0 0 0 1px var(--q-line-strong) !important;
+}
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) .k-btn--paper:hover:not(:disabled) { filter: none !important; background: var(--q-hover) !important; }
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) :is(.k-btn, .cta:not(.home-cta)) > span[aria-hidden="true"]:last-child { font-size: 0.9em; }
+/* The Done page's main action is not a full-width banner. */
+html body.is-session-complete .complete-folio a.cta { justify-self: start !important; width: auto !important; }
+
+/* Cards on the session and Done pages: a hairline, no shadow, the same radius. */
+html body.is-session-complete .complete-folio :is(ul li, section) { box-shadow: none !important; }
+html body.is-session-booklet [class*="QuickResult"][class*="remember"] { border-radius: 10px !important; }
+
+/* Leftover boxes flattened: the readiness strip, the Done page's topic rows and its come-back note. */
+html body.is-course-studio [class*="ExamPulse"][class*="pulse"] { padding: 12px 0 !important; border: 0 !important; border-top: 1px solid var(--q-line) !important; border-bottom: 1px solid var(--q-line) !important; border-radius: 0 !important; background: transparent !important; }
+html body.is-session-complete [class*="complete"][class*="topics"] { gap: 0 !important; }
+html body.is-session-complete [class*="complete"][class*="topics"] > li { min-height: 44px !important; padding: 8px 0 !important; border: 0 !important; border-bottom: 1px solid var(--q-line) !important; border-radius: 0 !important; background: transparent !important; }
+html body.is-session-complete [class*="complete"][class*="tomorrow"] { padding: 18px 0 0 !important; border: 0 !important; border-top: 1px solid var(--q-line) !important; border-radius: 0 !important; background: transparent !important; }
+html body.is-session-complete [class*="complete"][class*="changed"] { background: var(--q-hover) !important; border-radius: 10px !important; }
