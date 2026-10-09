@@ -1,5 +1,7 @@
 "use client";
 
+import { createPortal } from "react-dom";
+
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState, type FormEvent, type MouseEvent } from "react";
@@ -110,7 +112,9 @@ export function SignInDialog() {
     if (event.target === event.currentTarget) auth.closeDialog();
   }
 
-  return (
+  // Portalled to the end of the page: it always sits above the workspace, whatever stacking a screen sets up.
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <AnimatePresence>
       {auth.dialogOpen ? (
         <motion.div
@@ -185,6 +189,7 @@ export function SignInDialog() {
           </motion.section>
         </motion.div>
       ) : null}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 }
