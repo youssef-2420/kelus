@@ -1,5 +1,15 @@
 import { test, expect } from "@playwright/test";
 
+test("homepage study sheet can show both route outcomes", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Sellers are allowed to charge more." }).click();
+  await expect(page.getByText("Elasticity moves to the top of the route.")).toBeVisible();
+  await page.getByRole("button", { name: "Try another answer" }).click();
+  await expect(page.getByRole("button", { name: "Buyers can switch to another option when the price rises." })).toBeEnabled();
+  await page.getByRole("button", { name: "Buyers can switch to another option when the price rises." }).click();
+  await expect(page.getByText("Elasticity can wait. Kelus asks again later.")).toBeVisible();
+});
+
 test("How it works uses the shared Kelus canvas on desktop and mobile", async ({ page }) => {
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 900 });

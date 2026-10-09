@@ -18,7 +18,7 @@
 .hero { padding: clamp(68px, 9vw, 126px) 0 42px; }
 .eyebrow { margin: 0 0 26px; color: var(--mute); font-size: 14px; font-weight: 600; }
 .hero h1, .chapter h2, .principle h2, .final p { font-family: var(--font-marketing-heading), Georgia, serif; font-optical-sizing: auto; }
-.hero h1 { max-width: 13ch; min-width: 0; margin: 0; font-size: clamp(48px, 7.3vw, 94px); font-weight: 500; letter-spacing: -0.038em; line-height: 1.06; overflow-wrap: anywhere; }
+.hero h1 { max-width: 15ch; min-width: 0; margin: 0; font-size: clamp(48px, 6vw, 76px); font-weight: 500; letter-spacing: -0.038em; line-height: 1.08; overflow-wrap: anywhere; }
 .heroBottom { display: flex; justify-content: space-between; align-items: end; gap: 32px; max-width: 960px; margin-top: 36px; }
 .heroBottom p { max-width: 37ch; margin: 0; color: var(--mute); font-size: clamp(17px, 1.8vw, 21px); line-height: 1.45; }
 .primaryAction { display: inline-flex; min-height: 52px; align-items: center; justify-content: center; gap: 26px; padding: 0 18px 0 25px; border: 1px solid var(--green); border-radius: 999px; background: var(--green); color: var(--color-pure-white); font-size: 15px; font-weight: 600; text-decoration: none; white-space: nowrap; transition: background-color 180ms var(--ease-standard), transform 150ms var(--ease-standard); }
@@ -45,10 +45,6 @@
 .chapter h2 { max-width: 12ch; min-width: 0; margin: 0; font-size: clamp(39px, 4.2vw, 62px); font-weight: 500; letter-spacing: -.045em; line-height: 1.08; overflow-wrap: anywhere; }
 .chapter h2 { color: var(--ink); }
 .chapterText > p { max-width: 45ch; margin: 23px 0 0; color: var(--mute); font-size: 17px; line-height: 1.6; }
-.chapter[data-tone="source"] .chapterDetail { border-color: color-mix(in srgb, var(--orange) 28%, var(--rule)); }
-.chapter[data-tone="recall"] .chapterDetail { border-color: color-mix(in srgb, var(--purple) 28%, var(--rule)); }
-.chapter[data-tone="route"] .chapterDetail { border-color: color-mix(in srgb, var(--green) 28%, var(--rule)); }
-.chapterDetail { display: block; max-width: 48ch; margin-top: 24px; padding-top: 14px; border-top: 1px solid var(--rule); color: var(--mute); font-size: 12px; line-height: 1.5; }
 .visualWrap { min-width: 0; }
 .visual { min-width: 0; margin: 0; }
 .art { display: grid; place-items: center; min-height: 380px; overflow: clip; }

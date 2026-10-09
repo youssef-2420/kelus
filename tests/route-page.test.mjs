@@ -47,11 +47,10 @@ test("route explainer lives on its own page", () => {
   const story = readFileSync("components/HowItWorks.tsx", "utf8");
   const examples = readFileSync("data/learning-examples.ts", "utf8");
   assert.match(page, /HowItWorks/);
-  assert.match(story, /Add the lessons you want to revise/);
-  assert.match(story, /Confirm your revision topics/);
-  assert.match(story, /Show what you know/);
-  assert.match(story, /Start today’s revision/);
-  assert.match(story, /Review, recall, and apply/);
+  assert.match(story, /Add a syllabus, lecture PDF, notes, or a past exam/);
+  assert.match(story, /Kelus proposes topics; you confirm/);
+  assert.match(story, /A short check gives Kelus a starting estimate/);
+  assert.match(story, /Inside a session, retrieve an answer, apply the idea, and check your reasoning/);
   assert.match(story, /Your answer changes the route/);
   assert.match(story, /<h1 id="how-title"/);
   assert.doesNotMatch(story, /BlurText/);
