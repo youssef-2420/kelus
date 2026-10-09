@@ -33,5 +33,5 @@ test("answering a topic starts a streak and moves today's goal", async ({ page }
   await expect(strip).toContainText("1 of 3 topics");
   await expect(strip).toContainText("2 more to reach today’s goal.");
   await expect(strip.getByRole("progressbar", { name: "Today’s goal" })).toHaveAttribute("aria-valuenow", "1");
-  await expect(strip.getByRole("list", { name: "Last seven days" }).locator("li")).toHaveCount(7);
+  // Today keeps one quiet line; the full week lives on Progress and the Done page.
 });

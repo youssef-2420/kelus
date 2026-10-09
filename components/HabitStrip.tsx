@@ -19,11 +19,24 @@ function message(summary: ReturnType<typeof habitSummary>, studiedBefore: boolea
 }
 
 /** The return loop on Today: today's goal, the last seven days, and the one thing that makes tomorrow worth opening. */
-export function HabitStrip({ events, concepts, compact = false, link = true }: { events: LearningEvent[]; concepts: Concept[]; /** Goal and week only, where the page says what comes next itself. */ compact?: boolean; /** "See your progress", where Progress is not already one click away. */ link?: boolean }) {
+export function HabitStrip({ events, concepts, compact = false, link = true, line = false }: { events: LearningEvent[]; concepts: Concept[]; /** Goal and week only, where the page says what comes next itself. */ compact?: boolean; /** "See your progress", where Progress is not already one click away. */ link?: boolean; /** One quiet line: a thin bar, today's count, the streak and what to do next. */ line?: boolean }) {
   const reduce = useReducedMotion() === true;
   const summary = habitSummary({ events, concepts });
   const share = Math.min(1, summary.topicsToday / summary.goal);
   const text = message(summary, events.some((event) => event.kind === "retrieval"));
+
+  if (line) {
+    return (
+      <section className={styles.line} aria-label="Your study habit">
+        <span className={styles.lineTrack} role="progressbar" aria-label="Today’s goal" aria-valuemin={0} aria-valuemax={summary.goal} aria-valuenow={Math.min(summary.topicsToday, summary.goal)}>
+          <motion.i className={summary.goalMet ? styles.met : undefined} initial={reduce ? false : { width: 0 }} animate={{ width: `${share * 100}%` }} transition={{ duration: reduce ? 0 : 0.4, ease: [0.22, 1, 0.36, 1] }} />
+        </span>
+        <span><strong>{Math.min(summary.topicsToday, summary.goal)} of {summary.goal} topics</strong> today</span>
+        {summary.streak > 0 ? <><span className={styles.sep} aria-hidden="true" /><span>{summary.streak}-day streak</span></> : null}
+        {text ? <><span className={styles.sep} aria-hidden="true" /><span className={styles.lineNote} role="status">{text}</span></> : null}
+      </section>
+    );
+  }
 
   return (
     <section className={styles.strip} aria-label="Your study habit">

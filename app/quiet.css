@@ -1,0 +1,96 @@
+/* ── Kelus quiet system ─────────────────────────────────────────────────────────────────────────────
+   The one source for the product shell's look: tokens, the sidebar, the top bar, and the extras under a page.
+   Loaded last. A document, not a dashboard: 14px text, few borders, space separating, green on one action.
+   Older stylesheets are being retired screen by screen; until then this file has the final word. */
+:root {
+  --q-ink: #191a18;
+  --q-text-2: #6b6f68;
+  --q-text-3: #9a9e96;
+  --q-line: #ececea;
+  --q-line-strong: #dededb;
+  --q-hover: #f3f3f1;
+  --q-selected: #ececea;
+  --q-rail: #fafaf9;
+  --q-green: #1f6b45;
+  --q-green-hover: #18573a;
+  --q-ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+body.is-course-studio { font-size: 14px; color: var(--q-ink); background: #fff; }
+
+/* Sidebar */
+html body.is-course-studio .studio-rail {
+  padding: 12px 10px !important;
+  border-right: 1px solid var(--q-line) !important;
+  background: var(--q-rail) !important;
+  box-shadow: none !important;
+}
+html body.is-course-studio .studio-brand-row { padding: 2px 4px 10px; }
+html body.is-course-studio .studio-brand-identity { font-size: 0.9375rem !important; font-weight: 600 !important; letter-spacing: -0.02em !important; }
+html body.is-course-studio .studio-brand-identity svg { width: 18px !important; height: 18px !important; }
+html body.is-course-studio .studio-search { min-height: 30px !important; margin: 0 0 2px !important; padding: 0 8px !important; border-radius: 6px !important; color: var(--q-text-2) !important; font-size: 0.875rem !important; font-weight: 500 !important; }
+html body.is-course-studio .studio-search kbd { border: 0 !important; padding: 0 !important; color: var(--q-text-3) !important; font-size: 0.6875rem !important; }
+html body.is-course-studio .studio-nav.revision-surface-modes { gap: 1px !important; margin-top: 2px !important; }
+html body.is-course-studio .studio-nav.revision-surface-modes button {
+  min-height: 30px !important;
+  padding: 0 8px !important;
+  gap: 10px !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  color: var(--q-text-2) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  transition: background-color 120ms var(--q-ease), color 120ms var(--q-ease) !important;
+}
+html body.is-course-studio .studio-nav.revision-surface-modes button:hover { background: var(--q-hover) !important; color: var(--q-ink) !important; }
+html body.is-course-studio .studio-nav.revision-surface-modes button[aria-pressed="true"] { background: var(--q-selected) !important; color: var(--q-ink) !important; font-weight: 500 !important; }
+html body.is-course-studio .studio-nav .nav-art { width: 16px !important; height: 16px !important; opacity: 0.75; }
+html body.is-course-studio .studio-nav button[aria-pressed="true"] .nav-art { opacity: 1; }
+html body.is-course-studio .core-rail-sources { margin-top: 18px !important; padding: 0 !important; border: 0 !important; }
+html body.is-course-studio .core-rail-sources .studio-rail-label { margin: 0 8px 4px !important; color: var(--q-text-3) !important; font-size: 0.75rem !important; font-weight: 500 !important; letter-spacing: 0 !important; }
+html body.is-course-studio .core-rail-sources .studio-rail-label span { display: none; }
+html body.is-course-studio .core-source-open { min-height: 30px !important; padding: 0 8px !important; border-radius: 6px !important; background: transparent !important; color: var(--q-ink) !important; font-size: 0.875rem !important; }
+html body.is-course-studio .core-source-open:hover, html body.is-course-studio .core-source-open.is-selected { background: var(--q-hover) !important; }
+html body.is-course-studio .core-source-remove { width: 26px !important; height: 26px !important; min-height: 0 !important; min-width: 0 !important; }
+html body.is-course-studio .core-add-source { min-height: 30px !important; padding: 0 8px !important; border-radius: 6px !important; color: var(--q-text-2) !important; font-size: 0.875rem !important; font-weight: 500 !important; }
+html body.is-course-studio .core-add-source:hover { background: var(--q-hover) !important; color: var(--q-ink) !important; }
+html body.is-course-studio .studio-rail-bottom { gap: 1px !important; padding-top: 8px !important; border-top: 0 !important; }
+html body.is-course-studio .studio-rail-bottom :is(a, button, summary) { min-height: 30px !important; padding: 0 8px !important; border-radius: 6px !important; color: var(--q-text-2) !important; font-size: 0.875rem !important; }
+html body.is-course-studio .studio-rail-bottom :is(a, button, summary):hover { background: var(--q-hover) !important; color: var(--q-ink) !important; }
+
+/* Top bar: a quiet breadcrumb, the page itself carries the title. */
+html body.is-course-studio .studio-topbar { min-height: 44px !important; border-bottom: 0 !important; background: transparent !important; }
+html body.is-course-studio .studio-topbar-course { color: var(--q-text-2) !important; font-size: 0.8125rem !important; font-weight: 500 !important; }
+html body.is-course-studio .studio-topbar-status { color: var(--q-text-3) !important; font-size: 0.8125rem !important; }
+
+/* The extras under Today (exam date, nudges, install, reminder, welcome): flat sections under a hairline. */
+html body.is-course-studio [class*="ExamDateCard"][class*="card"],
+html body.is-course-studio [class*="NudgeCard"][class*="card"],
+html body.is-course-studio [class*="InstallCard"][class*="card"],
+html body.is-course-studio [class*="ReminderCard"][class*="card"] {
+  margin-top: 40px !important;
+  padding: 18px 0 0 !important;
+  border: 0 !important;
+  border-top: 1px solid var(--q-line) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+html body.is-course-studio [class*="ExamDateCard"][class*="card"] h2,
+html body.is-course-studio [class*="NudgeCard"][class*="card"] h2,
+html body.is-course-studio [class*="InstallCard"][class*="card"] h2,
+html body.is-course-studio [class*="ReminderCard"][class*="card"] h2 { font-size: 0.9375rem !important; font-weight: 600 !important; letter-spacing: -0.01em !important; }
+html body.is-course-studio [class*="ExamDateCard"] :is(input, select),
+html body.is-course-studio [class*="NudgeCard"] select { min-height: 34px !important; border: 1px solid var(--q-line-strong) !important; border-radius: 7px !important; font-size: 0.875rem !important; }
+html body.is-course-studio [class*="ExamDateCard"] button,
+html body.is-course-studio [class*="NudgeCard"] button,
+html body.is-course-studio [class*="InstallCard"] button.k-btn {
+  min-height: 34px !important; height: 34px !important; padding: 0 14px !important; border-radius: 7px !important;
+  background: #fff !important; color: var(--q-ink) !important; border: 1px solid var(--q-line-strong) !important;
+  box-shadow: none !important; font-size: 0.875rem !important; font-weight: 500 !important;
+}
+html body.is-course-studio [class*="ExamDateCard"] button:hover,
+html body.is-course-studio [class*="NudgeCard"] button:hover { background: var(--q-hover) !important; }
+html body.is-course-studio [class*="WelcomeBack"][class*="card"] { padding: 0 0 24px !important; margin-bottom: 28px !important; border: 0 !important; border-bottom: 1px solid var(--q-line) !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; }
+
+@media (prefers-reduced-motion: reduce) { html body.is-course-studio * { transition-duration: 1ms !important; } }
