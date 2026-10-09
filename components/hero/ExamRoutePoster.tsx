@@ -72,12 +72,15 @@ export function ExamRoutePoster() {
           </div>
         </div>
 
-        <div className={styles.nextStep} aria-live="polite">
-          <span className={styles.nextLabel}>{answered ? (gotIt ? "After a confident answer" : "After a shaky answer") : "Your route"}</span>
-          <strong>
-            {!answered ? "Pick an answer to see how it changes." : gotIt ? "Elasticity can wait. Kelus asks again later." : "Elasticity moves to the top of the route."}
-            {answered ? <motion.span key={String(gotIt)} className={styles.routeArrow} data-cue="route" initial={reduceMotion ? false : { opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>{gotIt ? "✓" : "↗"}</motion.span> : null}
-          </strong>
+        <div className={styles.nextStep}>
+          <div className={styles.routeResult} aria-live="polite">
+            <span className={styles.nextLabel}>{answered ? (gotIt ? "After a confident answer" : "After a shaky answer") : "Your route"}</span>
+            <strong>
+              {!answered ? "Pick an answer to see how it changes." : gotIt ? "Elasticity can wait. Kelus asks again later." : "Elasticity moves to the top of the route."}
+              {answered ? <motion.span key={String(gotIt)} className={styles.routeArrow} data-cue="route" initial={reduceMotion ? false : { opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: reduceMotion ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }}>{gotIt ? "✓" : "↗"}</motion.span> : null}
+            </strong>
+          </div>
+          {answered ? <button type="button" className={styles.tryAgain} onClick={() => setPicked(null)}>Try another answer</button> : null}
         </div>
       </motion.div>
     </figure>

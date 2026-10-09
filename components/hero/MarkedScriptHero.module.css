@@ -203,9 +203,25 @@
   border-top: 1px solid var(--hero-line);
 }
 
+.routeResult { min-width: 0; }
 .nextLabel { color: var(--hero-muted); font-weight: 400; }
 .nextStep strong { color: var(--hero-green); font-family: var(--font-marketing-sans), Arial, sans-serif; font-size: 15px; font-weight: 600; }
 .routeArrow { display: inline-block; margin-left: 4px; }
+.tryAgain {
+  flex: none;
+  min-height: 44px;
+  padding: 0 0 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--hero-green);
+  font: 600 14px var(--font-marketing-sans), Arial, sans-serif;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.tryAgain:hover { color: var(--color-kelus-hover); }
+.tryAgain:focus-visible { outline: 3px solid var(--hero-green); outline-offset: 3px; }
+.tryAgain:active { transform: scale(.97); }
 
 @media (max-width: 640px) {
   .copy { padding-top: 64px; }
@@ -218,10 +234,12 @@
   .note p, .recall p { margin-top: 10px; font-size: clamp(21px, 6vw, 27px); }
   .recall { margin-top: 24px; padding-left: 18px; }
   .recallRule { top: 24px; }
-  .nextStep { display: block; margin-top: 30px; }
+  .nextStep { display: flex; align-items: start; flex-direction: column; margin-top: 30px; }
   .nextStep strong { display: block; margin-top: 6px; line-height: 1.4; }
+  .tryAgain { padding-left: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .primary, .primaryArrow, .option { transition: none; }
+  .tryAgain:active { transform: none; }
 }

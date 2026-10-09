@@ -44,9 +44,9 @@ function RerouteVisual({ example, visible, reduceMotion }: VisualProps) {
 }
 
 const stages = [
-  { number: "01", cue: "Source", icon: "folder", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", detail: "Add the lessons you want to revise · Confirm your revision topics", Visual: SourceVisual, tone: "source" },
-  { number: "02", cue: "Recall", icon: "clipboard-check", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", detail: "Show what you know · Start today’s revision · Review, recall, and apply", Visual: RecallVisual, tone: "recall" },
-  { number: "03", cue: "Route", icon: "diagram-project", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", detail: "Your answer changes the route", Visual: RerouteVisual, tone: "route" },
+  { number: "01", cue: "Source", icon: "folder", title: "Start with what you were taught.", body: "Add a syllabus, lecture PDF, notes, or a past exam. Kelus proposes topics; you confirm what belongs in your course. Each topic keeps a link back to its source.", Visual: SourceVisual, tone: "source" },
+  { number: "02", cue: "Recall", icon: "clipboard-check", title: "Show what you can recall.", body: "A short check gives Kelus a starting estimate. Then today’s route tells you what to practise first. Inside a session, retrieve an answer, apply the idea, and check your reasoning.", Visual: RecallVisual, tone: "recall" },
+  { number: "03", cue: "Route", icon: "diagram-project", title: "See the route respond.", body: "A weak answer brings a topic forward; a stronger one gives it room. Your answer changes the route, so the next practice session reflects what actually happened—not a fixed schedule.", Visual: RerouteVisual, tone: "route" },
 ] as const;
 
 const example = LEARNING_EXAMPLES[0];
@@ -54,7 +54,7 @@ const example = LEARNING_EXAMPLES[0];
 function Chapter({ stage, example, reduceMotion }: { stage: (typeof stages)[number]; example: LearningExample; reduceMotion: boolean }) {
   const chapterRef = useRef<HTMLLIElement>(null);
   const visible = useInView(chapterRef, { once: true, margin: "-12% 0px -12%" });
-  const { number, cue, icon, title, body, detail, Visual, tone } = stage;
+  const { number, cue, icon, title, body, Visual, tone } = stage;
   // <li key={number} /> remains the chapter identity contract for the route test.
 
   return (
@@ -65,7 +65,6 @@ function Chapter({ stage, example, reduceMotion }: { stage: (typeof stages)[numb
         </motion.span>
         <motion.h2 initial={reduceMotion ? false : { opacity: 0, y: 12 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .15, duration: .48, ease: kelusEase }}>{title}</motion.h2>
         <motion.p initial={reduceMotion ? false : { opacity: 0, y: 10 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .22, duration: .48, ease: kelusEase }}>{body}</motion.p>
-        <motion.span className={styles.chapterDetail} initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ delay: reduceMotion ? 0 : .29, duration: .42, ease: kelusEase }}>{detail}</motion.span>
       </div>
       <motion.div className={styles.visualWrap} initial={reduceMotion ? false : { opacity: 0, y: 18 }} animate={visible ? { opacity: 1, y: 0 } : undefined} transition={{ duration: reduceMotion ? 0 : kelusDuration.normal, ease: kelusEase }}>
         <Visual example={example} visible={visible} reduceMotion={reduceMotion} />

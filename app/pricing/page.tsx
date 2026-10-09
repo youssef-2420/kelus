@@ -27,9 +27,9 @@ export default function PricingPage() {
         <p className="kicker">Pricing</p>
         <h1>Start revising. Stay in control.</h1>
         <p className="legal-lede">
-          Your course, study plan, and practice are free. Kelus Plus will be $4.99 a month when subscriptions open.
+          Revise your own course for free. Kelus Plus is planned at $4.99/month.
           {syncReady
-            ? " A free account can sync your progress across devices."
+            ? " Free sign-in can sync your progress across devices."
             : " Your progress stays on this device."}
         </p>
 
