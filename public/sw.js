@@ -63,7 +63,7 @@ async function maybeNudge() {
   });
 }
 
-const CACHE = "kelus-app-v1";
+const CACHE = "kelus-app-v2";
 const SHELL = ["/", "/today/", "/manifest.webmanifest", "/icons/icon-192.png"];
 
 self.addEventListener("install", (event) => {
