@@ -213,7 +213,7 @@ function SessionBody() {
         <section className="materials-empty is-session-empty">
           <p className="kicker">Session</p>
           <h1>No active revision yet.</h1>
-          <p>Sessions open from Today’s route. Each block walks one topic through the same loop:</p>
+          <p>Sessions open from your study plan. Each block walks one topic through the same loop:</p>
           <LoopSteps />
           <div className="materials-empty-actions">
             <button className="cta" type="button" onClick={() => router.replace("/today")}>
@@ -483,7 +483,7 @@ function SessionBody() {
           <button
             type="button"
             className="text-btn study-close"
-            title="Return to Today — your place is kept"
+            title="Back to your study plan — your place is kept"
             onClick={() => router.push("/today")}
           >
             Close

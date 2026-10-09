@@ -80,7 +80,7 @@ export function SiteHeader() {
         )}
 
         {inSession ? (
-          <Link href="/today" className="site-session-return" title="Return to Today — your place is kept">
+          <Link href="/today" className="site-session-return" title="Back to your study plan — your place is kept">
             Close
           </Link>
         ) : checkingAccount ? (
