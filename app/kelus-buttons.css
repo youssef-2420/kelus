@@ -820,3 +820,6 @@ html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-bran
 }
 html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-brand-identity) svg { width: 23px !important; height: 23px !important; }
 html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-brand-identity) :is(span, strong) { font: inherit !important; letter-spacing: inherit !important; color: inherit !important; }
+/* The K is ink everywhere, as in the header (the footer drew it in green). */
+html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-brand-identity) svg,
+html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-brand-identity) svg * { color: var(--k-ink, #12160f) !important; stroke: currentColor; }
