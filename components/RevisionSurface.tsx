@@ -346,7 +346,7 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
               <p className="kelus-paper-lede kelus-space-lede">
                 {mode === "materials" ? "The sources behind your revision." : mode === "progress" ? "What your own answers say has changed." : "What to study next, then everything else."}
               </p>
-              <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} datePending={examDatePending} answered={snapshot.events.filter((event) => event.kind === "retrieval" && concepts.some((concept) => concept.id === event.conceptId)).length} />
+              {mode !== "progress" ? null : <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} datePending={examDatePending} answered={snapshot.events.filter((event) => event.kind === "retrieval" && concepts.some((concept) => concept.id === event.conceptId)).length} />}
             </div>
             {/* A drawing beside the section name, from the same hand as the rest of the app. Progress has its own. */}
             {mode !== "progress" ? <PackArt name={mode === "materials" ? "on-the-laptop" : "target"} className="studio-section-art" size={mode === "materials" ? 168 : 128} /> : null}

@@ -7,8 +7,10 @@
 
 .bar {
   display: flex;
-  gap: 2px;
-  height: 8px;
+  gap: 3px;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
   overflow: hidden;
   border-radius: 2px;
 }
@@ -43,8 +45,8 @@
 
 /* One hue, three weights: strong is the pass-mark green; weak stays ink, not alarm red. */
 .secure { background: var(--color-kelus); }
-.developing { background: color-mix(in srgb, var(--color-kelus) 45%, var(--color-mist)); }
-.needs { background: var(--color-midnight-ink); }
+.developing { background: var(--k-marigold, #f3b23e); }
+.needs { background: color-mix(in srgb, var(--k-coral, #c2513e) 70%, #fff); }
 .none { background: var(--color-frost); }
 
 .meter {

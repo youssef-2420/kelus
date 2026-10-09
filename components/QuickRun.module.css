@@ -50,13 +50,6 @@
   display: grid;
   gap: 14px;
 }
-
-.kicker {
-  margin: 0;
-  font-size: var(--text-body-sm);
-  color: var(--color-smoke);
-}
-
 .prompt {
   margin: 0 !important;
   /* As wide as the answer box under it, so the question and the field share one edge. */

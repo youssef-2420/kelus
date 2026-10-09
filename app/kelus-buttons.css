@@ -690,3 +690,22 @@ html body.is-session-booklet .core-source-title span { color: var(--color-slate)
 html body.is-session-booklet main#main.study-shell.is-notes-open > .session-workspace-source .core-source-stage { flex: 1 1 auto !important; min-height: 0 !important; max-height: none !important; overflow-y: auto; }
 /* While a name is being edited, its place shows the whole field and its ring, not a clipped sliver. */
 html body :is(.studio-topbar-course, .studio-topbar-leading):has(input) { overflow: visible !important; padding-inline: 4px; }
+
+/* ── Impeccable polish ──────────────────────────────────────────────────────────────────────────────── */
+/* Progress: its blocks sit on the page, divided by space and a rule, not boxed inside the page. */
+html body.is-course-studio [class*="ProgressView"][class*="lead"],
+html body.is-course-studio [class*="ProgressView"][class*="pace"] {
+  padding: 0 0 28px !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(18, 22, 15, 0.08) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* The parts the browser draws carry the palette too: caret and scrollbars. */
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page)) :is(input, textarea) { caret-color: var(--color-kelus); }
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) { scrollbar-color: rgba(18, 22, 15, 0.22) transparent; scrollbar-width: thin; }
+/* Progress pace: the drawing keeps its column so text never runs under it. */
+html body.is-course-studio [class*="ProgressView"][class*="pace"] { padding-right: 120px !important; }
+/* Status tags in the Then list fit on one line. */
+html body [data-block="today-next"] [class*="TodayRoute"][class*="tag"] { white-space: nowrap; }

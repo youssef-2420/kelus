@@ -141,13 +141,10 @@ export function TodayRoute({
         animate={{ opacity: 1, y: 0 }}
         transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       >
-        <p className={styles.kicker} data-block="today-page-folio">{goalDone ? `Goal done · one more? About ${first.minutes} min` : `Up next · about ${first.minutes} minutes`}</p>
+        {/* The topic is the heading; what it takes and why it is next follow it, never sit above it as a label. */}
         <h1 id="today-title" className={styles.title}>{firstName}</h1>
+        <p className={styles.meta} data-block="today-page-folio">{goalDone ? "Today’s goal is done. One more if you like: " : ""}{first.minutes} min · 3 quick checks and 1 explanation</p>
         <p className={styles.why} data-block="today-decision" aria-label="Why this topic is first">{decision.join(" ")}</p>
-        <ul className={styles.chips} aria-label="What this takes">
-          <li>3 quick checks</li>
-          <li>1 explanation</li>
-        </ul>
         <div className={styles.actions}>
           <motion.button
             type="button"
@@ -180,8 +177,7 @@ export function TodayRoute({
                 transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1], layout: { type: "spring", stiffness: 420, damping: 38 } }}
               >
                 <strong>{stop.name}</strong>
-                <span className={styles.tag}>{level(stop.mastery, stop.tried)}</span>
-                <span className={styles.track} aria-hidden="true"><i style={{ width: `${Math.round(stop.mastery * 100)}%` }} /></span>
+                <span className={styles.tag}>{stop.conceptId === "mixed-retrieval" ? "Review" : level(stop.mastery, stop.tried)}</span>
                 <span className={styles.min}>{stop.minutes} min</span>
               </motion.li>
             ))}
