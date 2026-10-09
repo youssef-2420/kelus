@@ -26,8 +26,6 @@ html body.is-course-studio .studio-rail {
   box-shadow: none !important;
 }
 html body.is-course-studio .studio-brand-row { padding: 2px 4px 10px; }
-html body.is-course-studio .studio-brand-identity { font-size: 0.9375rem !important; font-weight: 600 !important; letter-spacing: -0.02em !important; }
-html body.is-course-studio .studio-brand-identity svg { width: 18px !important; height: 18px !important; }
 html body.is-course-studio .studio-search { min-height: 30px !important; margin: 0 0 2px !important; padding: 0 8px !important; border-radius: 6px !important; color: var(--q-text-2) !important; font-size: 0.875rem !important; font-weight: 500 !important; }
 html body.is-course-studio .studio-search kbd { border: 0 !important; padding: 0 !important; color: var(--q-text-3) !important; font-size: 0.6875rem !important; }
 html body.is-course-studio .studio-nav.revision-surface-modes { gap: 1px !important; margin-top: 2px !important; }
