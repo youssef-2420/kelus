@@ -78,7 +78,8 @@ export function isNamedTopic(name: string) {
  * if the text has none, from where it sits ("Page 2").
  */
 export function topicNameFrom(name: string, excerpt: string, locator: string) {
-  if (isNamedTopic(name)) return name;
+  // A scan often loses the capital: "enzyme denatures" reads as a heading once it has it back.
+  if (isNamedTopic(name)) return name.charAt(0).toLocaleUpperCase() + name.slice(1);
   for (const raw of excerpt.split(/\n+|(?<=[.!?:])\s+/)) {
     const line = cleanCandidate(raw).replace(/[.!?:;,]+$/, "");
     if (!isNamedTopic(line)) continue;

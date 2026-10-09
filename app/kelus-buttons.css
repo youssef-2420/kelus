@@ -760,3 +760,31 @@ html body .rail-confirm-yes, html body .material-remove-confirm .material-remove
 html body.is-course-studio .rail-menu-item.is-danger { color: var(--k-danger); }
 /* Course sources in the rail: the file glyph in the source colour, the selected row in the same wash as the nav. */
 html body.is-course-studio .core-source-open.is-selected { background: var(--k-selected) !important; color: var(--k-ink) !important; box-shadow: none !important; }
+
+/* Bookmark form: title and link stacked full width, the button under them; the error sits right under the field. */
+html body.is-course-studio .material-add-body .material-link-form {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 12px !important;
+  margin-top: 12px;
+}
+html body.is-course-studio .material-add-body .material-link-form > div { display: grid; gap: 6px; min-width: 0; }
+html body.is-course-studio .material-add-body .material-link-form label { display: flex; justify-content: space-between; font-size: 0.8125rem; font-weight: 500; color: var(--k-text-2); }
+html body.is-course-studio .material-add-body .material-link-form input { width: 100% !important; min-height: 44px; padding: 0 12px; border: 1px solid var(--k-line-strong); border-radius: 10px; background: var(--k-surface); font: inherit; font-size: 0.9375rem; }
+html body.is-course-studio .material-add-body .material-link-form .cta { justify-self: start; }
+html body.is-course-studio .material-link-hint { margin: 8px 0 0; font-size: 0.8125rem; color: var(--k-text-2); }
+/* Errors say so: the danger colour on a soft wash, in place, not grey text somewhere else. */
+html body :is(.setup-error, .material-error, .material-link-error, [role="alert"].material-status) {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fbefec;
+  color: var(--k-danger) !important;
+  font-size: 0.875rem;
+}
+html body .setup-error:empty { display: none; }
+/* Sign in sits in the course bar on a phone, where the sidebar's link is hidden. */
+.studio-topbar-signin { display: none; }
+@media (max-width: 650px) {
+  html body.is-course-studio .studio-topbar-signin { display: inline-flex; align-items: center; min-height: 36px; margin-left: auto; margin-right: 12px; padding: 0 12px; border: 1px solid var(--k-line-strong); border-radius: 9px; background: var(--k-surface); color: var(--k-ink); font: inherit; font-size: 0.8125rem; font-weight: 600; }
+}

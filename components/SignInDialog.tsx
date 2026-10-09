@@ -136,8 +136,7 @@ export function SignInDialog() {
             <button type="button" className="auth-close" onClick={auth.closeDialog} aria-label="Close sign in">
               <span aria-hidden="true">×</span>
             </button>
-            <p className="auth-kicker">Your Kelus account</p>
-            <h2 id={titleId}>{mode === "signin" ? "Welcome back." : "Create your account."}</h2>
+            <h2 id={titleId}>{mode === "signin" ? "Sign in to Kelus" : "Create your Kelus account"}</h2>
             <p className="auth-intro">
               {mode === "signin"
                 ? "Return to your lessons and revision progress."

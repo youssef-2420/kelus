@@ -257,6 +257,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
   const materials = useSyncExternalStore(subscribeMaterials, getMaterialsSnapshot, getServerMaterialsSnapshot);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [role, setRole] = useState<MaterialRole>("notes");
   const [ingest, setIngest] = useState<IngestState>(INITIAL_INGEST_STATE);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -568,15 +569,14 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
   function addLink(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     dispatch({ type: "CLEAR_FEEDBACK" });
+    setLinkError(null);
     try {
       addLinkMaterial({ courseId: course.id, title, value: url, role });
       setTitle("");
       setUrl("");
     } catch (caught) {
-      dispatch({
-        type: "LINK_FAILED",
-        message: caught instanceof Error ? caught.message : "The link could not be saved. Check the URL and try again.",
-      });
+      // Said right under the link field, where the mistake is.
+      setLinkError(caught instanceof Error ? caught.message : "The link could not be saved. Check the URL and try again.");
     }
   }
 
@@ -700,7 +700,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
             <details className="material-bookmarks"><summary>Save a video or web link instead</summary>
             <form className="material-link-form" onSubmit={addLink}>
               <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" disabled={busy} /></div>
-              <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" disabled={busy} /></div>
+              <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => { setUrl(event.target.value); setLinkError(null); }} placeholder="https://…" inputMode="url" disabled={busy} aria-invalid={linkError ? true : undefined} aria-describedby={linkError ? "material-url-error" : undefined} />{linkError ? <p id="material-url-error" className="material-link-error" role="alert">{linkError}</p> : null}</div>
               <button className="cta" type="submit" disabled={!url.trim() || busy}>Save bookmark</button>
             </form>
             <p className="material-link-hint">Bookmarks stay on your shelf for quick open. Upload a PDF when you want Kelus to propose topics.</p>
@@ -774,7 +774,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
         <details className="material-bookmarks"><summary>Save a video or web link instead</summary>
         <form className="material-link-form" onSubmit={addLink}>
           <div><label htmlFor="material-title">Title <span>optional</span></label><input id="material-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Week 3 lecture video" disabled={busy} /></div>
-          <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => setUrl(event.target.value)} placeholder="https://…" inputMode="url" disabled={busy} /></div>
+          <div className="material-url-field"><label htmlFor="material-url">Bookmark a video or web link</label><input id="material-url" value={url} onChange={(event) => { setUrl(event.target.value); setLinkError(null); }} placeholder="https://…" inputMode="url" disabled={busy} aria-invalid={linkError ? true : undefined} aria-describedby={linkError ? "material-url-error" : undefined} />{linkError ? <p id="material-url-error" className="material-link-error" role="alert">{linkError}</p> : null}</div>
           <button className="cta" type="submit" disabled={!url.trim() || busy}>Save bookmark</button>
         </form>
         <p className="material-link-hint">
