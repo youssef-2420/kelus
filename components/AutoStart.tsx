@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { PackArt } from "@/components/PackArt";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import styles from "./AutoStart.module.css";
 
@@ -60,7 +59,6 @@ export function AutoStart({ ready, plan, showPlan, onStart }: { ready: boolean; 
         <button type="button" className={styles.barLater} onClick={later}>Not now</button>
       </header>
       <section className={styles.card} aria-labelledby="built-title">
-        <motion.span {...rise(0)} className={styles.art}><PackArt name="growing" size={140} /></motion.span>
         <motion.h1 {...rise(0.03)} id="built-title">{plan.course} is ready to study.</motion.h1>
         <motion.p {...rise(0.06)} className={styles.summary}>
           Kelus found <b>{rows[0].big} {plan.topics === 1 ? "topic" : "topics"}</b> in your notes and wrote <b>{rows[1].big} {plan.questions === 1 ? "question" : "questions"}</b> from your own lines. Going through all of it once takes about <b>{rows[2].big}</b>.

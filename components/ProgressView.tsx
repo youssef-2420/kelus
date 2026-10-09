@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
-import { PackArt } from "@/components/PackArt";
 import { progressHeadline, progressSummary, type TopicChange } from "@/domain/progress";
 import type { Concept, LearningEvent } from "@/domain/types";
 import styles from "./ProgressView.module.css";
@@ -80,7 +79,6 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
           <Trend series={summary.series} target={examDatePending ? null : target} />
         ) : (
           <div className={styles.thinRow}>
-            <PackArt name="growing" className={styles.growing} size={150} />
             <p className={styles.thin}>{summary.answers} answer{summary.answers === 1 ? "" : "s"} so far. Kelus draws a trend once there are 6, so it never guesses from a few.</p>
           </div>
         )}
@@ -97,7 +95,6 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
       {summary.notStarted.length ? <Topics title="Not started" note="No answers yet, so Kelus has no evidence either way." items={summary.notStarted} empty="" /> : null}
 
       {fresh ? null : <section className={styles.pace} aria-label="Pace to your target">
-        <PackArt name="target" className={styles.paceArt} size={84} />
         <h3>To reach your target</h3>
         {examDatePending ? (
           <p>{summary.topicsLeft} topic{summary.topicsLeft === 1 ? " is" : "s are"} not strong yet. Add your exam date on the Study plan page and Kelus will work out how many topics a day you need.</p>

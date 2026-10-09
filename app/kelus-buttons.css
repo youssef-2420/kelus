@@ -722,7 +722,7 @@ html body.is-course-studio [class*="ProgressView"][class*="pace"] {
 :is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page)) :is(input, textarea) { caret-color: var(--color-kelus); }
 :is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) { scrollbar-color: rgba(18, 22, 15, 0.22) transparent; scrollbar-width: thin; }
 /* Progress pace: the drawing keeps its column so text never runs under it. */
-html body.is-course-studio [class*="ProgressView"][class*="pace"] { padding-right: 120px !important; }
+html body.is-course-studio [class*="ProgressView"][class*="pace"] { padding-right: 0 !important; }
 /* Status tags in the Then list fit on one line. */
 html body [data-block="today-next"] [class*="TodayRoute"][class*="tag"] { white-space: nowrap; }
 
@@ -790,3 +790,15 @@ html body .setup-error:empty { display: none; }
 }
 
 html body .auth-backdrop { z-index: 200; }
+/* Decorative drawings are gone from the product, so the space reserved for them goes too. */
+html body [class*="ReminderCard"][class*="card"],
+html body [class*="NudgeCard"][class*="card"],
+html body [class*="WelcomeBack"][class*="body"],
+html body [class*="WelcomeBack"][class*="card"],
+html body [class*="complete"][class*="tomorrow"],
+html body [class*="complete"][class*="tomorrow"] > div { padding-right: 18px !important; grid-template-columns: minmax(0, 1fr) !important; }
+/* Today's card: a border, no floating drop shadow. */
+html body.is-course-studio [data-block="today-lead"] { box-shadow: none !important; }
+/* Topic cards are text and a progress ring: no icon column. */
+html body.is-course-studio .surface-map .topic-cards .index-toc-row,
+html body.is-course-studio .surface-map .topic-cards > li.is-start .index-toc-row { grid-template-columns: minmax(0, 1fr) auto !important; }

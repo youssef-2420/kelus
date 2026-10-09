@@ -4,7 +4,6 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { Fragment, useEffect, useMemo, useSyncExternalStore } from "react";
 import { useLearner } from "@/components/LearnerProvider";
-import { PackArt } from "@/components/PackArt";
 import { returnVisit, warmupChecks, type ReturnVisit } from "@/domain/return-visit";
 import type { Concept, LearningEvent } from "@/domain/types";
 import { getMissedLines, getServerMissedLines, keepMissedLinesFor, subscribeMissedLines } from "@/lib/missed-lines";
@@ -59,9 +58,6 @@ export function WelcomeBack({ visit, nowIso, nextName }: { visit: ReturnVisit; n
       animate={{ opacity: 1, y: 0 }}
       transition={reduce ? { duration: 0 } : { duration: 0.22, ease }}
     >
-      <motion.span className={styles.art} {...rise(0.12)}>
-        <PackArt name={visit.daysAway >= 1 ? "time-flies" : "on-the-laptop"} size={150} />
-      </motion.span>
       <div className={styles.body}>
         <h2 id="welcome-title" className={styles.title}>{greeting(nowIso)}</h2>
         <p className={styles.line}>{leftOff(visit.daysAway, visit.lastDayNames)}</p>

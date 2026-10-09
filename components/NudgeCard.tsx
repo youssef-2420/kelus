@@ -2,7 +2,6 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState, useSyncExternalStore } from "react";
-import { PackArt } from "@/components/PackArt";
 import { REMINDER_TIMES } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
 import { getNudgeSettings, getServerNudgeSettings, nudgesSupported, permission, sendTestNudge, setNudgeTime, subscribeNudgeSettings, turnOffNudges, turnOnNudges } from "@/lib/nudge";
@@ -67,7 +66,6 @@ export function NudgeCard() {
         </motion.section>
       ) : (
         <motion.section key="off" className={styles.card} aria-labelledby="nudge-title" initial={reduce ? false : { opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }} transition={{ duration: 0.25 }}>
-          <PackArt name="on-the-laptop" className={styles.art} size={132} />
           <div className={styles.text}>
             <h2 id="nudge-title">A nudge when your warm-up is ready</h2>
             <p>One notification a day, only when lines you missed are ready to try again, and never after you’ve already studied that day.</p>

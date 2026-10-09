@@ -174,7 +174,7 @@
 
 .tomorrow :global(.kicker),
 .tomorrow h2 {
-  padding-right: 84px;
+  
 }
 
 .calendar {
@@ -236,7 +236,7 @@
 
   .tomorrow :global(.kicker),
   .tomorrow h2 {
-    padding-right: 112px;
+    
   }
 }
 

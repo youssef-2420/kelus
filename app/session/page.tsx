@@ -544,10 +544,10 @@ function SessionBody() {
             tabIndex={-1}
             key="reroute"
             className="reroute-view is-page study-reroute-moment"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.985, y: 10 }}
+            initial={reduceMotion ? { opacity: 0 } : { opacity: 0.6, y: 4 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -6 }}
-            transition={reduceMotion ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
+            exit={{ opacity: 0, transition: { duration: 0 } }}
+            transition={reduceMotion ? { duration: 0.12 } : { duration: 0.18, ease: kelusEase }}
             aria-live="polite"
           >
             <motion.p
@@ -610,10 +610,11 @@ function SessionBody() {
             tabIndex={-1}
             key={`${concept.id}-result`}
             className="study-question is-page study-mark-moment"
-            initial={reduceMotion ? { opacity: 0 } : { opacity: 0, scale: 0.99, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0, transition: { duration: 0.08 } } : { opacity: 0, y: -6, transition: { duration: 0.14, ease: kelusEase } }}
-            transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: kelusEase }}
+            // The next screen is there the frame after the click: no exit to wait for, a short settle from almost visible.
+            initial={reduceMotion ? false : { opacity: 0.6, y: 4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0 } }}
+            transition={{ duration: 0.18, ease: kelusEase }}
           >
             <p className="study-count sr-only" aria-live="polite">Marked</p>
             {lastOutcome && !quickMode ? <MarkStamp outcome={lastOutcome} /> : null}
@@ -717,23 +718,10 @@ function SessionBody() {
             tabIndex={-1}
             key={`${concept.id}-${phase}`}
             className="study-question is-page"
-            initial={
-              reduceMotion
-                ? { opacity: 0 }
-                : phase === "learn" || phase === "retrieve" || phase === "apply"
-                  ? { opacity: 0, y: 6 }
-                  : { opacity: 0, x: 12 }
-            }
+            initial={reduceMotion ? false : { opacity: 0.6, y: 4 }}
             animate={{ opacity: 1, x: 0, y: 0 }}
-            // Leaving is a quick fade: the next screen waits for it, so a long exit is dead time.
-            exit={
-              reduceMotion
-                ? { opacity: 0, transition: { duration: 0.08 } }
-                : phase === "learn" || phase === "retrieve" || phase === "apply"
-                  ? { opacity: 0, y: -6, transition: { duration: 0.14, ease: kelusEase } }
-                  : { opacity: 0, x: -12, transition: { duration: 0.14, ease: kelusEase } }
-            }
-            transition={reduceMotion ? { duration: 0.12 } : { duration: 0.22, ease: kelusEase }}
+            exit={{ opacity: 0, transition: { duration: 0 } }}
+            transition={{ duration: 0.18, ease: kelusEase }}
           >
             <p className="study-count sr-only" aria-live="polite">{PHASE_LABEL[phase as "learn" | "retrieve" | "apply" | "evaluate"]}</p>
 
