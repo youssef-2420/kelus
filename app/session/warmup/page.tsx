@@ -81,7 +81,6 @@ function WarmUp() {
           transition={reduce ? { duration: 0.12 } : { type: "spring", bounce: 0, duration: 0.5 }}
           aria-labelledby="warmup-done-title"
         >
-          <PackArt name={result.right === result.total ? "growing" : "time-flies"} className={styles.art} size={180} />
           <h1 id="warmup-done-title">
             {result.right === result.total ? "All of it came back." : result.right === 0 ? "Not yet. That’s what warm-ups are for." : `${result.right} of ${result.total} came back.`}
           </h1>

@@ -92,7 +92,7 @@
 
 .card {
   display: grid;
-  grid-template-columns: 56px minmax(0, 1fr) 40px;
+  grid-template-columns: minmax(0, 1fr) 40px;
   gap: 4px 16px;
   align-items: center;
   height: 100%;
@@ -120,7 +120,7 @@
 }
 
 .start .card {
-  grid-template-columns: 88px minmax(0, 1fr) 48px;
+  grid-template-columns: minmax(0, 1fr) 48px;
   padding: 22px 22px 22px 18px;
   border-color: var(--color-kelus);
   background: var(--color-periwinkle-wash);

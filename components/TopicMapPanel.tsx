@@ -5,7 +5,6 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useLearner } from "@/components/LearnerProvider";
 import { ConceptTitleTransition } from "@/components/PageTransition";
-import { TopicArt, topicArtKind } from "@/components/TopicArt";
 import { generateRoute } from "@/domain/routing-engine";
 import { AnkiExport } from "@/components/AnkiExport";
 import { freshOpenSession, restAware, restingTopics, resumeConceptId } from "@/lib/today-focus";
@@ -144,7 +143,6 @@ export function TopicMapPanel() {
                 className={`index-toc-row topic-card ${styles.card}${isStart ? " is-start" : ""}`}
                
               >
-                <span className={styles.art}><TopicArt kind={topicArtKind(concept.name)} /></span>
                 <span className={`topic-card-main ${styles.main}`}>
                   <ConceptTitleTransition id={concept.id}>
                     <strong className="index-toc-name">{concept.name}</strong>

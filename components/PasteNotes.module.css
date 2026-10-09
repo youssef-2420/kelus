@@ -82,3 +82,7 @@
 
 .works :global(.brand-inline) { display: inline-flex; align-items: center; }
 .works :global(.brand-inline) > svg { vertical-align: 0 !important; }
+
+.spinner { width: 14px; height: 14px; margin-right: 8px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: kelus-spin 700ms linear infinite; }
+@keyframes kelus-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2s; } }

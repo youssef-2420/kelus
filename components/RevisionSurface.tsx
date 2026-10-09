@@ -350,10 +350,7 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
                 {mode === "materials" ? "The sources behind your revision." : mode === "progress" ? "What your own answers say has changed." : "What to study next, then everything else."}
               </p>
               {mode !== "progress" ? null : <ExamPulse readiness={estimatedReadiness(concepts)} targetPercent={exam.targetPercent} daysToExam={days} datePending={examDatePending} answered={snapshot.events.filter((event) => event.kind === "retrieval" && concepts.some((concept) => concept.id === event.conceptId)).length} />}
-            </div>
-            {/* A drawing beside the section name, from the same hand as the rest of the app. Progress has its own. */}
-            {mode !== "progress" ? <PackArt name={mode === "materials" ? "on-the-laptop" : "target"} className="studio-section-art" size={mode === "materials" ? 168 : 128} /> : null}
-          </header>
+            </div>          </header>
         ) : null}
 
         {/* The new section is on screen the frame after the click; a short settle of its ink, never an exit to wait for. */}

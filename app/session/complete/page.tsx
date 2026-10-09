@@ -12,7 +12,6 @@ import { WaitlistForm } from "@/components/WaitlistForm";
 import { SoftUpgradePrompt } from "@/components/SoftUpgradePrompt";
 import { downloadTomorrowStudyIcs } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
-import { PackArt } from "@/components/PackArt";
 import { useDocumentTitle } from "@/lib/use-title";
 import { KelusLogoMark } from "@/components/KelusLogoMark";
 import styles from "./complete.module.css";
@@ -179,7 +178,6 @@ function CompleteBody() {
         <HabitStrip events={state.snapshot.events} concepts={courseConcepts} compact />
 
         <section className={styles.tomorrow} aria-labelledby="complete-return-title">
-          <PackArt name="time-flies" className={styles.art} size={120} />
           <div>
             <h2 id="complete-return-title">
               {missedToday

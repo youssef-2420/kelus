@@ -48,7 +48,8 @@ export function PasteNotes({ onFile, disabled = false }: { onFile: (file: File) 
         placeholder={"# Osmosis\nThe movement of water across a membrane…\n\n# Active transport\nUses ATP to move substances…"}
       />
       {error ? <p className={styles.error} role="alert">{error}</p> : null}
-      <button type="button" className={`k-btn ${styles.use}`} onClick={use} disabled={disabled || !text.trim()}>Use these notes</button>
+      {/* While Kelus reads them the button says so, right where the learner is looking. */}
+      <button type="button" className={`k-btn ${styles.use}`} onClick={use} disabled={disabled || !text.trim()} aria-busy={disabled && Boolean(text.trim()) ? true : undefined}>{disabled && text.trim() ? <><span className={styles.spinner} aria-hidden="true" />Finding your topics…</> : "Use these notes"}</button>
     </details>
   );
 }

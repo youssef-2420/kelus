@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { downloadDailyStudyIcs, REMINDER_TIMES } from "@/lib/study-reminder";
 import { trackEvent } from "@/lib/analytics";
-import { PackArt } from "@/components/PackArt";
 import styles from "./ReminderCard.module.css";
 
 const KEY = "kelus-reminder-time-v1";
@@ -35,7 +34,6 @@ export function ReminderCard({ courseName, examDate, minutes, nextStopName }: { 
 
   return (
     <section className={styles.card} aria-labelledby="reminder-title">
-      <PackArt name="time-flies" className={styles.art} size={104} />
       <div>
         <h2 id="reminder-title">Make it a daily habit</h2>
         <p>
