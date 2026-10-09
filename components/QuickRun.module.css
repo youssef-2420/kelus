@@ -133,8 +133,8 @@
 }
 
 .choice.wrong kbd {
-  border-color: #a1352b;
-  background: #a1352b;
+  border-color: var(--k-danger);
+  background: var(--k-danger);
   color: #fff;
 }
 

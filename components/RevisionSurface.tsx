@@ -83,7 +83,9 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
   const [selectedMaterialId, setSelectedMaterialId] = useState<string | null>(null);
   const [incomingSource, setIncomingSource] = useState<File | null>(null);
   const [sampleFile, setSampleFile] = useState<File | null>(null);
-  const [railHidden, setRailHidden] = useState(false);
+  const [railHidden, setRailHiddenState] = useState(false);
+  const [railAnimated, setRailAnimated] = useState(false);
+  const setRailHidden = (hidden: boolean) => { setRailAnimated(true); setRailHiddenState(hidden); };
   const [confirmSourceId, setConfirmSourceId] = useState<string | null>(null);
   const [removingSourceId, setRemovingSourceId] = useState<string | null>(null);
   const [sourceError, setSourceError] = useState<string | null>(null);
@@ -232,7 +234,7 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
   }
 
   return (
-    <section className={`kelus-space is-studio${railHidden ? " is-rail-hidden" : ""}`} aria-label="Revision workbench">
+    <section className={`kelus-space is-studio${railHidden ? " is-rail-hidden" : ""}${railAnimated ? " is-rail-animated" : ""}`} aria-label="Revision workbench">
       {/* The column stays mounted and folds away, so hiding and showing it glide instead of jumping. */}
       <aside className="studio-rail" aria-label="Course workspace" inert={railHidden} aria-hidden={railHidden || undefined}>
         {/* The mark and the one control that belongs to the column itself, on one row, as in Notion. */}

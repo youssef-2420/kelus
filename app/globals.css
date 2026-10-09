@@ -6316,7 +6316,7 @@ h3,
   line-height: 1;
   letter-spacing: -0.045em;
   text-decoration: none;
-  color: #111;
+  color: var(--k-ink);
 }
 
 .site-footer-mark .kelus-logo-mark {
@@ -6745,7 +6745,7 @@ h3,
 
 .material-ocr-progress p {
   margin: 0;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -6769,7 +6769,7 @@ h3,
 
 .setup-sample p {
   margin: 0.2rem 0 0;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 1rem;
   max-width: 36ch;
 }
@@ -6796,7 +6796,7 @@ h3,
 
 .founding-cta-note {
   margin: 0;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 0.875rem;
   line-height: 1.45;
 }
@@ -6811,7 +6811,7 @@ h3,
 
 .waitlist-export p {
   margin: 0;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -6859,7 +6859,7 @@ h3,
 
 .questions-mailto-fallback {
   margin: 0.65rem 0 0;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -6868,7 +6868,7 @@ h3,
   padding: 0.75rem 0.9rem;
   border: 1px solid color-mix(in srgb, var(--color-product-border, #d7dde8) 88%, transparent);
   border-radius: 12px;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 0.875rem;
   line-height: 1.45;
 }
@@ -6894,14 +6894,14 @@ h3,
 
 .complete-return p {
   margin: 0;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.5;
 }
 
 .today-welcome {
   margin: 0 0 0.35rem;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 1rem;
 }
 
@@ -6949,7 +6949,7 @@ h3,
 .complete-return-note {
   min-height: 1.35em;
   margin: 0.65rem 0 0;
-  color: var(--color-product-secondary, #5b6578);
+  color: var(--color-product-secondary, var(--k-text-2));
   font-size: 0.875rem;
 }
 

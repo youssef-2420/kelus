@@ -5,6 +5,19 @@
    iris    = see      (progress, readiness, topics, the exam plan)
    Coral is kept for a miss and nothing else. */
 :root {
+  /* ── The one product palette ────────────────────────────────────────────────────────────────────────
+     Ink for text, one secondary grey, one hairline, two surfaces. Colour only carries a job:
+     green = do (and right), marigold = comes back (warm-ups, streak, missed lines), iris = where you stand
+     (readiness meters and data, never sentences or buttons), coral/danger = a miss or a removal. */
+  --k-ink: #12160f;
+  --k-text-2: #5a6358;
+  --k-text-3: #7c8478;
+  --k-line: #e3e6df;
+  --k-line-strong: #d5d9d0;
+  --k-surface: #ffffff;
+  --k-surface-2: #f6f7f4;
+  --k-selected: #e9efe8;
+  --k-danger: #a8402f;
   --k-green: #1f6b45;
   --k-green-edge: #134630;
   --k-green-wash: #e6f1ea;
@@ -498,7 +511,8 @@ html body [data-sonner-toast] [data-button] {
    Its column closes to nothing while the page slides over and the rail's contents fade, as in Notion; showing it runs
    the same motion back. The column keeps its width inside, so nothing reflows while it closes. */
 @media (min-width: 651px) {
-  html body.is-course-studio .kelus-space.is-studio {
+  /* Only once the learner has folded it: the column never animates in on page load. */
+  html body.is-course-studio .kelus-space.is-studio.is-rail-animated {
     transition: grid-template-columns 260ms cubic-bezier(0.22, 1, 0.36, 1);
   }
   html body.is-course-studio .kelus-space.is-studio.is-rail-hidden {
@@ -507,6 +521,8 @@ html body [data-sonner-toast] [data-button] {
   html body.is-course-studio .kelus-space.is-studio > .studio-rail {
     min-width: 0;
     overflow: hidden;
+  }
+  html body.is-course-studio .kelus-space.is-studio.is-rail-animated > .studio-rail {
     transition: opacity 180ms cubic-bezier(0.22, 1, 0.36, 1), transform 260ms cubic-bezier(0.22, 1, 0.36, 1), padding 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 260ms;
   }
   html body.is-course-studio .kelus-space.is-studio > .studio-rail > * { min-width: 214px; }
@@ -570,7 +586,7 @@ html body.is-course-studio .material-add-body .material-add-drop {
   padding: 22px 20px !important;
   border: 1.5px dashed rgba(18, 22, 15, 0.18) !important;
   border-radius: 12px !important;
-  background: #fafaf8 !important;
+  background: var(--k-surface-2) !important;
   text-align: left;
   cursor: pointer;
   transition: border-color 120ms, background-color 120ms;
@@ -626,7 +642,7 @@ html body .material-remove-confirm {
 }
 html body .material-remove-confirm .material-remove-question { color: var(--color-midnight-ink); font-size: 0.9375rem; line-height: 1.45; }
 html body .material-remove-confirm .material-remove-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-html body .material-remove-confirm .material-remove-yes { --btn-bg: #b44a37; --btn-edge: #7f2f22; --btn-ink: #fff; }
+html body .material-remove-confirm .material-remove-yes { --btn-bg: var(--k-danger); --btn-edge: #7f2f22; --btn-ink: #fff; }
 /* The card's actions wrap so the remove question takes a full row under them. */
 html body.is-course-studio .material-card .material-actions { flex-wrap: wrap; row-gap: 8px; }
 html body.is-course-studio .material-card .material-actions .material-remove-confirm .k-btn {
@@ -652,7 +668,7 @@ html body.is-course-studio .rail-confirm {
 }
 html body.is-course-studio .rail-confirm-actions { display: flex; gap: 6px; }
 html body.is-course-studio .rail-confirm .k-btn { flex: 1; min-height: 36px !important; padding: 0 10px !important; border-radius: 9px !important; font-size: 0.8125rem !important; }
-html body.is-course-studio .rail-confirm-yes { --btn-bg: #b44a37; --btn-edge: #7f2f22; --btn-ink: #fff; }
+html body.is-course-studio .rail-confirm-yes { --btn-bg: var(--k-danger); --btn-edge: #7f2f22; --btn-ink: #fff; }
 html body.is-course-studio .studio-more[open] { display: grid; gap: 4px; }
 html body.is-course-studio .rail-menu-item {
   min-height: 36px;
@@ -666,7 +682,7 @@ html body.is-course-studio .rail-menu-item {
   text-align: left;
   cursor: pointer;
 }
-html body.is-course-studio .rail-menu-item.is-danger { color: #a1352b; }
+html body.is-course-studio .rail-menu-item.is-danger { color: var(--k-danger); }
 html body.is-course-studio .rail-menu-item:hover { background: rgba(18, 22, 15, 0.05); }
 
 /* The notes drawer covers the whole height below the bar, on a phone a full sheet; the reader inside scrolls. */
@@ -709,3 +725,38 @@ html body.is-course-studio [class*="ProgressView"][class*="pace"] {
 html body.is-course-studio [class*="ProgressView"][class*="pace"] { padding-right: 120px !important; }
 /* Status tags in the Then list fit on one line. */
 html body [data-block="today-next"] [class*="TodayRoute"][class*="tag"] { white-space: nowrap; }
+
+/* Every older token name now reads from the one palette, so no screen can drift to its own grey or ink. */
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page), body.is-booklet-system) {
+  --color-midnight-ink: var(--k-ink);
+  --color-ink: var(--k-ink);
+  --ink: var(--k-ink);
+  --booklet-ink: var(--k-ink);
+  --studio-ink: var(--k-ink);
+  --color-slate: var(--k-text-2);
+  --color-steel: var(--k-text-2);
+  --color-smoke: var(--k-text-2);
+  --color-product-secondary: var(--k-text-2);
+  --booklet-mute: var(--k-text-2);
+  --studio-muted: var(--k-text-2);
+  --muted: var(--k-text-2);
+  --color-frost: var(--k-line-strong);
+  --line: var(--k-line);
+  --border-hairline: var(--k-line-strong);
+  --booklet-rule: var(--k-line-strong);
+  --color-rule: var(--k-line-strong);
+  --color-mist: var(--k-surface-2);
+  --studio-rail-paper: var(--k-surface-2);
+  --core-rail-paper: var(--k-surface-2);
+  --core-selected-paper: var(--k-selected);
+  --paper: var(--k-surface);
+  --color-pure-white: var(--k-surface);
+  --color-hero-orange: var(--k-marigold-text);
+  color: var(--k-ink);
+}
+:is(body.is-course-studio, body.is-session-booklet, body.is-session-complete) ::placeholder { color: var(--k-text-3); opacity: 1; }
+/* Danger has one colour, for text and for the button. */
+html body .rail-confirm-yes, html body .material-remove-confirm .material-remove-yes { --btn-bg: var(--k-danger) !important; --btn-edge: #7a2c20 !important; }
+html body.is-course-studio .rail-menu-item.is-danger { color: var(--k-danger); }
+/* Course sources in the rail: the file glyph in the source colour, the selected row in the same wash as the nav. */
+html body.is-course-studio .core-source-open.is-selected { background: var(--k-selected) !important; color: var(--k-ink) !important; box-shadow: none !important; }
