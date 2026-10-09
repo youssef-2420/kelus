@@ -63,11 +63,11 @@ test("materials support learning-purpose labels without claiming analysis", asyn
   assert.deepEqual(MATERIAL_ROLES.map((item) => item.value), ["syllabus", "lecture_slides", "notes", "past_exam", "course_outline", "other"]);
   assert.equal(materialRoleLabel("past_exam"), "Past exam");
   const library = await source("components/MaterialLibrary.tsx");
-  assert.match(library, /This source is/);
+  assert.match(library, /htmlFor="material-role">Type</);
   assert.match(library, /review every\s+suggested topic/);
   assert.match(library, /Confirm topics|Build my topic map|Build my Knowledge Map/);
   assert.match(library, /proposeConceptsFromPages/);
-  assert.match(library, /Digital PDFs with selectable text work best/);
+  assert.match(library, /PDFs with selectable text are read fastest/);
 });
 
 test("sessions expose a confirmed course source and its page", async () => {

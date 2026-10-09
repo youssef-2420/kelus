@@ -493,3 +493,200 @@ html body [data-sonner-toast] [data-button] {
 :is(body.is-course-studio, body.is-session-booklet, body.is-session-complete, body:has(.start-page)) ::selection { background: color-mix(in srgb, var(--color-kelus) 22%, transparent); color: inherit; }
 /* Questions keep the full width of their answer box: balanced breaks would wrap them early and short. */
 :is(body.is-session-booklet) .study-question :is(h1, h2), [class*="QuickRun"][class*="prompt"] { text-wrap: pretty !important; }
+
+/* ── The sidebar folds away ──────────────────────────────────────────────────────────────────────────
+   Its column closes to nothing while the page slides over and the rail's contents fade, as in Notion; showing it runs
+   the same motion back. The column keeps its width inside, so nothing reflows while it closes. */
+@media (min-width: 651px) {
+  html body.is-course-studio .kelus-space.is-studio {
+    transition: grid-template-columns 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  html body.is-course-studio .kelus-space.is-studio.is-rail-hidden {
+    grid-template-columns: 0px minmax(0, 1fr) !important;
+  }
+  html body.is-course-studio .kelus-space.is-studio > .studio-rail {
+    min-width: 0;
+    overflow: hidden;
+    transition: opacity 180ms cubic-bezier(0.22, 1, 0.36, 1), transform 260ms cubic-bezier(0.22, 1, 0.36, 1), padding 260ms cubic-bezier(0.22, 1, 0.36, 1), border-color 260ms;
+  }
+  html body.is-course-studio .kelus-space.is-studio > .studio-rail > * { min-width: 214px; }
+  html body.is-course-studio .kelus-space.is-studio.is-rail-hidden > .studio-rail {
+    padding-inline: 0 !important;
+    border-right-width: 0 !important;
+    opacity: 0;
+    transform: translateX(-12px);
+    border-right-color: transparent;
+    pointer-events: none;
+  }
+  /* The » that brings it back arrives with the same easing. */
+  html body.is-course-studio .studio-rail-reopen { animation: kelus-reopen-in 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+}
+@keyframes kelus-reopen-in { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 650px) {
+  html body.is-course-studio .kelus-space.is-studio.is-rail-hidden > .studio-rail { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html body.is-course-studio .kelus-space.is-studio,
+  html body.is-course-studio .kelus-space.is-studio > .studio-rail { transition: none; }
+  html body.is-course-studio .studio-rail-reopen { animation: none; }
+}
+
+/* ── Materials: adding a source, removing one ────────────────────────────────────────────────────────
+   The add panel is one card with even padding: a drop area like the start screen's, one line of help, the type as a
+   small field, the link option as a quiet disclosure. The remove question gets its own row and two real buttons. */
+html body.is-course-studio details.material-add-page {
+  border: 1px dashed rgba(18, 22, 15, 0.18) !important;
+  border-radius: 14px !important;
+  background: #fff !important;
+  padding: 0 !important;
+  transition: border-color 120ms, background-color 120ms;
+}
+html body.is-course-studio details.material-add-page[open] { border-style: solid !important; border-color: rgba(18, 22, 15, 0.12) !important; }
+html body.is-course-studio details.material-add-page > summary {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 20px !important;
+  list-style: none;
+  color: var(--color-kelus) !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+}
+html body.is-course-studio details.material-add-page > summary::-webkit-details-marker { display: none; }
+html body.is-course-studio .material-add-body {
+  display: grid !important;
+  gap: 14px !important;
+  margin: 0 !important;
+  padding: 0 20px 20px !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+html body.is-course-studio .material-add-body > * { margin: 0 !important; border: 0 !important; padding-inline: 0 !important; }
+html body.is-course-studio .material-add-body .material-add-drop {
+  position: relative;
+  display: grid !important;
+  gap: 4px;
+  padding: 22px 20px !important;
+  border: 1.5px dashed rgba(18, 22, 15, 0.18) !important;
+  border-radius: 12px !important;
+  background: #fafaf8 !important;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms, background-color 120ms;
+}
+html body.is-course-studio .material-add-body .material-add-drop:hover,
+html body.is-course-studio .material-add-body .material-add-drop.is-dragging,
+html body.is-course-studio .material-add-body .material-add-drop:focus-within { border-color: var(--color-kelus) !important; background: color-mix(in srgb, var(--color-kelus) 5%, #fff) !important; }
+html body.is-course-studio .material-add-body .material-add-drop input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+html body.is-course-studio .material-add-body .material-add-drop strong { font-size: 1rem; font-weight: 600; color: var(--color-midnight-ink); }
+html body.is-course-studio .material-add-body .material-add-drop span { font-size: 0.875rem; color: var(--color-slate); }
+html body.is-course-studio .material-add-body .material-ingest-hint { font-size: 0.875rem !important; line-height: 1.5; color: var(--color-slate) !important; }
+html body.is-course-studio .material-add-body .material-role-field {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+}
+html body.is-course-studio .material-add-body .material-role-field label { min-width: 0; font-size: 0.875rem; font-weight: 500; color: var(--color-slate); }
+html body.is-course-studio .material-add-body .material-role-field select {
+  flex: 1;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(18, 22, 15, 0.14) !important;
+  border-radius: 10px;
+  background: #fff;
+  font: inherit;
+  font-size: 0.875rem;
+}
+html body.is-course-studio .material-add-body .material-bookmarks { padding-top: 12px !important; border-top: 1px solid rgba(18, 22, 15, 0.08) !important; }
+html body.is-course-studio .material-add-body .material-bookmarks > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  list-style: none;
+  color: var(--color-slate);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+html body.is-course-studio .material-add-body .material-bookmarks > summary::-webkit-details-marker { display: none; }
+html body.is-course-studio .material-add-body .material-bookmarks > summary::after { content: ""; width: 6px; height: 6px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); transition: transform 120ms; }
+html body.is-course-studio .material-add-body .material-bookmarks[open] > summary::after { margin-top: 3px; transform: rotate(-135deg); }
+
+html body .material-remove-confirm {
+  display: grid !important;
+  grid-column: 1 / -1;
+  gap: 12px;
+  width: 100%;
+  margin-top: 4px;
+  padding: 14px 16px !important;
+  border-radius: 12px;
+  background: #fbf3f1;
+}
+html body .material-remove-confirm .material-remove-question { color: var(--color-midnight-ink); font-size: 0.9375rem; line-height: 1.45; }
+html body .material-remove-confirm .material-remove-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+html body .material-remove-confirm .material-remove-yes { --btn-bg: #b44a37; --btn-edge: #7f2f22; --btn-ink: #fff; }
+/* The card's actions wrap so the remove question takes a full row under them. */
+html body.is-course-studio .material-card .material-actions { flex-wrap: wrap; row-gap: 8px; }
+html body.is-course-studio .material-card .material-actions .material-remove-confirm .k-btn {
+  min-height: 40px !important;
+  padding: 0 16px !important;
+  border-radius: 10px !important;
+  font-size: 0.875rem !important;
+  text-decoration: none !important;
+}
+
+/* Confirmations in the sidebar: the question on its own lines, then Keep and the red action as real buttons. */
+html body.is-course-studio .rail-confirm {
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 10px;
+  margin: 6px 0 4px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fbf3f1;
+  color: var(--color-midnight-ink);
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+html body.is-course-studio .rail-confirm-actions { display: flex; gap: 6px; }
+html body.is-course-studio .rail-confirm .k-btn { flex: 1; min-height: 36px !important; padding: 0 10px !important; border-radius: 9px !important; font-size: 0.8125rem !important; }
+html body.is-course-studio .rail-confirm-yes { --btn-bg: #b44a37; --btn-edge: #7f2f22; --btn-ink: #fff; }
+html body.is-course-studio .studio-more[open] { display: grid; gap: 4px; }
+html body.is-course-studio .rail-menu-item {
+  min-height: 36px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-midnight-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: left;
+  cursor: pointer;
+}
+html body.is-course-studio .rail-menu-item.is-danger { color: #a1352b; }
+html body.is-course-studio .rail-menu-item:hover { background: rgba(18, 22, 15, 0.05); }
+
+/* The notes drawer covers the whole height below the bar, on a phone a full sheet; the reader inside scrolls. */
+html body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus.is-notes-open > .session-workspace-source {
+  position: fixed !important;
+  top: 58px !important;
+  bottom: 0 !important;
+  right: 0 !important;
+  left: auto !important;
+  height: auto !important;
+  max-height: none !important;
+  display: flex !important;
+  flex-direction: column;
+}
+html body.is-session-booklet main#main.study-shell.is-notes-open > .session-workspace-source .core-source-reader { flex: 1; height: auto !important; max-height: none !important; min-height: 0; }
+@media (max-width: 767px) {
+  html body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-focus.is-notes-open > .session-workspace-source { left: 0 !important; width: 100% !important; border-left: 0; }
+}
+html body.is-session-booklet .core-source-title span { color: var(--color-slate) !important; font-size: 0.75rem !important; font-weight: 500 !important; letter-spacing: 0 !important; }
+
+html body.is-session-booklet main#main.study-shell.is-notes-open > .session-workspace-source .core-source-stage { flex: 1 1 auto !important; min-height: 0 !important; max-height: none !important; overflow-y: auto; }
+/* While a name is being edited, its place shows the whole field and its ring, not a clipped sliver. */
+html body :is(.studio-topbar-course, .studio-topbar-leading):has(input) { overflow: visible !important; padding-inline: 4px; }

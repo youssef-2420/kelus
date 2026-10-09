@@ -145,7 +145,7 @@ test("workspace sidebar can be hidden and a source can be removed from it", asyn
   await page.getByRole("button", { name: "Show workspace sidebar" }).click();
   await expect(page.getByRole("complementary", { name: "Course workspace" })).toBeVisible();
   await page.getByRole("button", { name: "Remove Built-in Microeconomics example" }).click();
-  await expect(page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" })).toContainText("linked topic");
+  await expect(page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" })).toContainText(/its \d+ topics?/);
   await page.getByRole("group", { name: "Confirm remove Built-in Microeconomics example" }).getByRole("button", { name: "Remove" }).click();
   await expect(page.getByRole("button", { name: "Remove Built-in Microeconomics example" })).toHaveCount(0);
   await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
@@ -270,7 +270,7 @@ test("a real PDF becomes a first question, then Today, topics and a full session
   await page.goto("/today?section=materials");
   await page.getByRole("button", { name: "Remove", exact: true }).click();
   const confirmation = page.getByRole("group", { name: /Confirm remove cell biology lecture/ });
-  await expect(confirmation).toContainText("linked topics from your route");
+  await expect(confirmation).toContainText(/its \d+ topics?/);
   await confirmation.getByRole("button", { name: "Remove" }).click();
   await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   await expect(page.getByRole("button", { name: "Start today’s route" })).toHaveCount(0);

@@ -68,7 +68,7 @@ export function DropNotes({ onFile, first = false, courseName }: { onFile: (file
             onDragOver={(event) => event.preventDefault()}
             onDrop={drop}
           >
-            <input type="file" accept={SOURCE_FILE_ACCEPT} disabled={busy} onChange={(event) => { void take(event.target.files?.[0]); event.target.value = ""; }} />
+            <input type="file" title="" accept={SOURCE_FILE_ACCEPT} disabled={busy} onChange={(event) => { void take(event.target.files?.[0]); event.target.value = ""; }} />
             <span className="setup-upload-mark" aria-hidden="true"><PackArt name="folder" size={44} /></span>
             <strong>{busy ? "Reading your file…" : "Choose a PDF or notes"}</strong>
             {/* Dragging only exists with a mouse or trackpad; a phone gets the file types instead. */}

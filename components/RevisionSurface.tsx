@@ -233,13 +233,14 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
 
   return (
     <section className={`kelus-space is-studio${railHidden ? " is-rail-hidden" : ""}`} aria-label="Revision workbench">
-      {!railHidden ? <aside className="studio-rail" aria-label="Course workspace">
+      {/* The column stays mounted and folds away, so hiding and showing it glide instead of jumping. */}
+      <aside className="studio-rail" aria-label="Course workspace" inert={railHidden} aria-hidden={railHidden || undefined}>
         {/* The mark and the one control that belongs to the column itself, on one row, as in Notion. */}
         <div className="studio-brand-row">
           <Link href="/" className="studio-brand" aria-label="Kelus home">
             <span className="studio-brand-identity"><KelusLogoMark /><strong>kelus</strong></span>
           </Link>
-          <button type="button" className="studio-rail-toggle" onClick={() => setRailHidden(true)} aria-label="Hide workspace sidebar" title="Hide sidebar"><RailChevrons /></button>
+          <button type="button" className="studio-rail-toggle" onClick={(event) => { setRailHidden(true); /* Keyboard users keep their place on the button that brings it back. */ if (event.detail === 0) requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(".studio-rail-reopen")?.focus({ preventScroll: true })); }} aria-label="Hide workspace sidebar" title="Hide sidebar"><RailChevrons /></button>
         </div>
         <button type="button" className="studio-search" onClick={() => window.dispatchEvent(new Event(OPEN_SEARCH_EVENT))}>
           <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M13 13l4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
@@ -277,10 +278,12 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
                 {brandForFile(material.fileName, material.mimeType) ? <BrandIcon brand={brandForFile(material.fileName, material.mimeType)!} size={14} className="core-source-brand" /> : <span aria-hidden="true">{material.id.startsWith("material-demo-") ? "◇" : material.storage === "local" ? "▤" : "↗"}</span>}<span className="core-source-name">{title}</span>
               </button>
               <button type="button" className="core-source-remove" aria-label={`Remove ${title}`} title={`Remove ${title}`} onClick={() => { setSourceError(null); setConfirmSourceId(material.id); }}>×</button>
-              {confirmSourceId === material.id ? <div className="core-source-confirm" role="group" aria-label={`Confirm remove ${title}`}>
-                <p>Remove {title}?{linkedTopics ? ` This also removes ${linkedTopics} linked topic${linkedTopics === 1 ? "" : "s"} from your route.` : ""}{courseMaterials.length === 1 && linkedTopics ? " You may need another PDF to continue studying." : ""}</p>
-                <button type="button" onClick={() => setConfirmSourceId(null)} disabled={removingSourceId === material.id}>Cancel</button>
-                <button type="button" className="is-danger" onClick={() => void deleteSource(material.id)} disabled={removingSourceId === material.id}>{removingSourceId === material.id ? "Removing…" : "Remove"}</button>
+              {confirmSourceId === material.id ? <div className="rail-confirm is-source" role="group" aria-label={`Confirm remove ${title}`}>
+                <span>{linkedTopics ? `Remove it and its ${linkedTopics} topic${linkedTopics === 1 ? "" : "s"}? Your answers stay in your history.` : "Remove this source?"}</span>
+                <span className="rail-confirm-actions">
+                  <button type="button" className="k-btn k-btn--paper k-btn--small" onClick={() => setConfirmSourceId(null)} disabled={removingSourceId === material.id}>Keep</button>
+                  <button type="button" className="k-btn k-btn--small rail-confirm-yes" onClick={() => void deleteSource(material.id)} disabled={removingSourceId === material.id}>{removingSourceId === material.id ? "Removing…" : "Remove"}</button>
+                </span>
               </div> : null}
             </div>;
           }) : <p className="core-rail-empty">Add a PDF to keep it beside your plan.</p>}
@@ -290,6 +293,7 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
             className="sr-only"
             // "＋ Add source" opens it; the hidden field is not a second stop for the keyboard.
             tabIndex={-1}
+            title=""
             type="file"
             accept={SOURCE_FILE_ACCEPT}
             aria-label="Choose a course PDF"
@@ -313,32 +317,23 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
         <details className="studio-more" open={confirmReset || undefined}>
           <summary>Course options</summary>
           {confirmReset ? (
-            <span className="today-reset-confirm" role="group" aria-label="Confirm start over">
-              <span>Erase this route?</span>
-              <button type="button" className="text-btn" onClick={() => setConfirmReset(false)}>
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="text-btn is-danger"
-                onClick={() => {
-                  setConfirmReset(false);
-                  reset();
-                }}
-              >
-                Start over
-              </button>
+            <span className="rail-confirm" role="group" aria-label="Confirm start over">
+              <span>Start over? Your topics, answers and plan for this course are erased.</span>
+              <span className="rail-confirm-actions">
+                <button type="button" className="k-btn k-btn--paper k-btn--small" onClick={() => setConfirmReset(false)}>Keep</button>
+                <button type="button" className="k-btn k-btn--small rail-confirm-yes" onClick={() => { setConfirmReset(false); reset(); }}>Start over</button>
+              </span>
             </span>
           ) : (
-            <button type="button" className="text-btn" onClick={() => setConfirmReset(true)}>Start over</button>
+            <button type="button" className="rail-menu-item is-danger" onClick={() => setConfirmReset(true)}>Start over…</button>
           )}
         </details>
         </div>
-      </aside> : null}
+      </aside>
 
       <div className="studio-main">
         <header className="studio-topbar">
-          <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={() => setRailHidden(false)} aria-label="Show workspace sidebar" title="Show sidebar"><RailChevrons open /></button> : null}<span className="studio-topbar-course" title={course.name}>{isSampleCourse ? course.name : <InlineName value={course.name} label="Rename course" onSave={(next) => renameCourse(course.id, next, "user")} />}</span></span>
+          <span className="studio-topbar-leading">{railHidden ? <button type="button" className="studio-rail-reopen" onClick={(event) => { setRailHidden(false); if (event.detail === 0) requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(".studio-rail-toggle")?.focus({ preventScroll: true })); }} aria-label="Show workspace sidebar" title="Show sidebar"><RailChevrons open /></button> : null}<span className="studio-topbar-course" title={course.name}>{isSampleCourse ? course.name : <InlineName value={course.name} label="Rename course" onSave={(next) => renameCourse(course.id, next, "user")} />}</span></span>
           <span className="studio-topbar-status"><span className="studio-topbar-kind">{isSampleCourse ? "Sample course" : exam.target}</span><span className="studio-topbar-divider" aria-hidden="true">·</span><span>{examDatePending ? "Add your exam date" : `${days} day${days === 1 ? "" : "s"} to exam`}</span></span>
         </header>
         <main id="main" className="studio-page kelus-space-stage">

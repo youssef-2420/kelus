@@ -130,7 +130,7 @@ test("a course with no topics is one screen with one job, and adding notes there
   // A course with no topics left is a clean start: the same screen as the very first one, with no course name.
   await expect(page.getByRole("heading", { name: "Start with your notes." })).toBeVisible();
   // Not a second form: no source-role dropdown, no bookmark box, no empty-binder panel, a single file picker.
-  await expect(page.getByLabel("This source is")).toHaveCount(0);
+  await expect(page.getByLabel("Type", { exact: true })).toHaveCount(0);
   await expect(page.getByText("Save a video or web link instead")).toHaveCount(0);
   await expect(page.getByText("Empty binder")).toHaveCount(0);
   await expect(page.locator('input[type="file"]')).toHaveCount(1);
