@@ -109,7 +109,7 @@ body.is-booklet-system .site-header {
 }
 
 body.is-booklet-system .site-footer-mark {
-  color: #111;
+  color: var(--k-ink);
   font-weight: 400;
   letter-spacing: -0.045em;
 }
@@ -293,7 +293,7 @@ body.is-booklet-system .kelus-hero.is-folio.is-booklet .home-secondary {
   background: transparent;
   border: 1px solid #aeb6a8;
   border-radius: 999px;
-  color: var(--booklet-ink, #12160f);
+  color: var(--booklet-ink, var(--k-ink));
   font-weight: 500;
   font-size: var(--text-body-sm);
   min-height: 36px;

@@ -76,7 +76,7 @@ body.is-booklet-system .paper-loop-hero.is-desk .hero-brand {
   font-weight: 600;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 body.is-booklet-system .paper-loop-hero.is-desk .hero-brand-sr {
@@ -104,7 +104,7 @@ body.is-booklet-system .paper-loop-hero.is-desk .folio-hero-copy h1 {
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.035em;
-  color: #0a0a0a;
+  color: var(--k-ink);
   max-width: none;
 }
 
@@ -140,7 +140,7 @@ body.is-booklet-system .paper-loop-hero.is-desk .home-actions {
 body.is-booklet-system .paper-loop-hero.is-desk .home-cta {
   border-radius: 999px;
   padding-inline: 22px;
-  background: #0a0a0a;
+  background: var(--k-ink);
   color: #f7f8f5;
 }
 
@@ -152,7 +152,7 @@ body.is-booklet-system .paper-loop-hero.is-desk .home-secondary {
   border-radius: 999px;
   background: transparent;
   border: 1px solid #c9c4bb;
-  color: #0a0a0a;
+  color: var(--k-ink);
   backdrop-filter: none;
 }
 
@@ -173,7 +173,7 @@ body.is-booklet-system .is-notebook.booklet-board {
 body.is-booklet-system .is-notebook .notebook-sheet {
   position: relative;
   background: var(--booklet-paper, #ffffff);
-  border: 1px solid color-mix(in srgb, var(--booklet-ink, #12160f) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--booklet-ink, var(--k-ink)) 14%, transparent);
   border-radius: 2px 10px 10px 2px;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.7) inset,
@@ -254,7 +254,7 @@ body.is-booklet-system .is-notebook .paper-step {
   font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
-  color: #6b6560;
+  color: var(--k-text-2);
 }
 
 body.is-booklet-system .is-notebook .paper-source p {
@@ -263,7 +263,7 @@ body.is-booklet-system .is-notebook .paper-source p {
   font-size: clamp(26px, 2.5vw, 36px);
   line-height: 1.08;
   letter-spacing: -0.03em;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 body.is-booklet-system .is-notebook .paper-source p em {
@@ -274,7 +274,7 @@ body.is-booklet-system .is-notebook .paper-source p em {
 
 body.is-booklet-system .is-notebook .paper-source-caption {
   font-size: 12px;
-  color: #6b6560;
+  color: var(--k-text-2);
 }
 
 body.is-booklet-system .is-notebook .paper-membrane {
@@ -291,7 +291,7 @@ body.is-booklet-system .is-notebook .board-example-label {
   margin: 0 0 6px;
   font-size: 12px;
   letter-spacing: 0.02em;
-  color: #6b6560;
+  color: var(--k-text-2);
 }
 
 body.is-booklet-system .is-notebook .booklet-board-head h2 {
@@ -300,7 +300,7 @@ body.is-booklet-system .is-notebook .booklet-board-head h2 {
   font-size: 22px;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 body.is-booklet-system .is-notebook .booklet-board-steps {
@@ -322,11 +322,11 @@ body.is-booklet-system .is-notebook .booklet-board-steps li {
 }
 
 body.is-booklet-system .is-notebook .booklet-board-steps li.is-done {
-  color: #6b6560;
+  color: var(--k-text-2);
 }
 
 body.is-booklet-system .is-notebook .booklet-board-steps li.is-active {
-  color: #0a0a0a;
+  color: var(--k-ink);
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -339,7 +339,7 @@ body.is-booklet-system .is-notebook .booklet-flow-question {
   font-weight: 400;
   line-height: 1.28;
   letter-spacing: -0.02em;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 body.is-booklet-system .is-notebook .booklet-flow-reveal {
@@ -400,7 +400,7 @@ body.is-booklet-system .is-notebook .notebook-grades .is-primary {
 
 body.is-booklet-system .is-notebook .notebook-grades .is-ghost {
   background: transparent;
-  color: #0a0a0a;
+  color: var(--k-ink);
   border: 1px solid #c9c4bb;
 }
 
@@ -429,25 +429,25 @@ body.is-booklet-system .is-notebook .booklet-flow-route-title {
   font-size: 12px;
   letter-spacing: 0;
   text-transform: none;
-  color: #6b6560;
+  color: var(--k-text-2);
 }
 
 body.is-booklet-system .is-notebook .booklet-flow-route-title strong {
   font-size: 13px;
   letter-spacing: 0;
   text-transform: none;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 body.is-booklet-system .is-notebook .notebook-signal {
   margin: 0 0 10px;
   font-size: 13px;
   line-height: 1.4;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 body.is-booklet-system .is-notebook .notebook-signal.is-quiet {
-  color: #6b6560;
+  color: var(--k-text-2);
 }
 
 body.is-booklet-system .is-notebook .booklet-flow-route ul {
@@ -486,17 +486,17 @@ body.is-booklet-system .is-notebook .booklet-flow-route li > span {
 body.is-booklet-system .is-notebook .booklet-flow-route strong {
   display: block;
   font-size: 14px;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 body.is-booklet-system .is-notebook .booklet-flow-route small {
-  color: #6b6560;
+  color: var(--k-text-2);
 }
 
 body.is-booklet-system .is-notebook .booklet-flow-route b {
   font-size: 13px;
   font-weight: 500;
-  color: #0a0a0a;
+  color: var(--k-ink);
 }
 
 /* Demo chapter: one full interactive teach, not a twin hero stage */

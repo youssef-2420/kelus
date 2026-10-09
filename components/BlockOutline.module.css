@@ -18,7 +18,7 @@
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--color-smoke, #6b7066);
+  color: var(--color-smoke, var(--k-text-2));
 }
 
 .outline ol {
@@ -60,7 +60,7 @@
 }
 
 .current {
-  background: rgba(18, 22, 15, 0.05);
+  background: var(--k-selected);
   color: var(--color-midnight-ink) !important;
   font-weight: 600;
 }
@@ -77,5 +77,5 @@
 
 .success .mark, .current.success .mark { background: var(--color-kelus); color: #fff; }
 .partial .mark, .current.partial .mark { background: #f4ead8; color: #9a5b16; }
-.failure .mark, .current.failure .mark { background: #f6e6e3; color: #a1352b; }
+.failure .mark, .current.failure .mark { background: #f6e6e3; color: var(--k-danger); }
 .ahead { color: var(--color-slate); }

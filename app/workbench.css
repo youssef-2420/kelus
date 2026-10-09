@@ -16,21 +16,21 @@
   padding: 8px 14px;
   font-size: 0.875rem;
   letter-spacing: -0.01em;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   transition: background 120ms cubic-bezier(0.22, 1, 0.36, 1), color 120ms cubic-bezier(0.22, 1, 0.36, 1), transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .site-nav.is-workbench a:hover {
   background: color-mix(in srgb, #fff 70%, transparent);
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
 }
 
 .site-nav.is-workbench a.is-active,
 .site-nav.is-workbench a[aria-current="page"] {
   background: #fff;
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
   font-weight: 500;
-  box-shadow: 0 1px 0 color-mix(in srgb, #111 6%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--k-ink) 6%, transparent);
 }
 
 .site-nav.is-workbench a:active {
@@ -61,7 +61,7 @@
   min-height: 34px;
   padding: 4px 10px 4px 6px;
   border-radius: 999px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   text-decoration: none;
   font-size: 0.8125rem;
 }
@@ -78,7 +78,7 @@
 }
 
 .workbench-chapters li.is-done a {
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
 }
 
 .workbench-chapters li.is-done .workbench-chapter-index {
@@ -89,7 +89,7 @@
 
 .workbench-chapters li.is-current a {
   background: #fff;
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-kelus, #1f7a4c) 28%, transparent);
 }
 
@@ -118,7 +118,7 @@
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .workbench-focus.is-ready {
@@ -148,7 +148,7 @@
 }
 
 .workbench-bridge span {
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
   font-size: 1rem;
 }
 
@@ -195,13 +195,13 @@
   font-weight: 440;
   letter-spacing: -0.03em;
   line-height: 1.12;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 .revision-surface-lede {
   margin: 12px 0 0;
   max-width: 40rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.55;
 }
@@ -226,7 +226,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font: inherit;
   font-size: 0.875rem;
   letter-spacing: -0.01em;
@@ -236,15 +236,15 @@
 
 .revision-surface-modes button:hover {
   background: color-mix(in srgb, #fff 70%, transparent);
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
 }
 
 .revision-surface-modes button.is-active,
 .revision-surface-modes button[aria-pressed="true"] {
   background: #fff;
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
   font-weight: 500;
-  box-shadow: 0 1px 0 color-mix(in srgb, #111 6%, transparent);
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--k-ink) 6%, transparent);
 }
 
 .revision-surface-modes button:active {
@@ -297,7 +297,7 @@ body.is-kelus-space .kelus-space.is-paper {
 body.is-kelus-space .kelus-paper-home {
   display: inline-block;
   margin: 0 0 2px;
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
   font-family: var(--font-ledger, Georgia, serif);
   font-size: 1rem;
   font-weight: 500;
@@ -332,7 +332,7 @@ body.is-session-booklet .site-header.is-session {
 .study-shell .study-close {
   min-height: 40px;
   padding: 0 2px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
   font-weight: 400;
 }
@@ -353,7 +353,7 @@ body.is-session-booklet .site-header.is-session {
   min-height: 40px;
   display: flex;
   align-items: center;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -378,7 +378,7 @@ body.is-session-booklet .site-header.is-session {
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 90%, transparent);
   border-radius: 0;
   background: transparent;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -405,7 +405,7 @@ body.is-session-booklet .site-header.is-session {
 .study-shell .answer-pages section span {
   display: block;
   margin-bottom: 6px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
@@ -436,7 +436,7 @@ body.is-session-booklet .site-header.is-session {
 
 .study-shell .reroute-whisper {
   margin: 0;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -459,7 +459,7 @@ body.is-kelus-space .site-header.is-space .site-header-inner {
 
 body.is-kelus-space .site-space-label {
   margin: 0 auto 0 16px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
   letter-spacing: -0.01em;
 }
@@ -499,7 +499,7 @@ body.is-kelus-space .site-space-label {
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-rail-course {
@@ -510,7 +510,7 @@ body.is-kelus-space .site-space-label {
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.25;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 .kelus-space-nav.revision-surface-modes {
@@ -544,8 +544,8 @@ body.is-kelus-space .site-space-label {
 .kelus-space-nav.revision-surface-modes button.is-active,
 .kelus-space-nav.revision-surface-modes button[aria-pressed="true"] {
   background: #fff;
-  color: var(--color-ink, #111);
-  box-shadow: 0 1px 0 color-mix(in srgb, #111 5%, transparent);
+  color: var(--color-ink, var(--k-ink));
+  box-shadow: 0 1px 0 color-mix(in srgb, var(--k-ink) 5%, transparent);
   outline: 1px solid color-mix(in srgb, var(--color-kelus, #1f6b45) 22%, transparent);
 }
 
@@ -557,12 +557,12 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-nav-hint {
   font-size: 0.75rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-weight: 400;
 }
 
 .kelus-space-nav button.is-active .kelus-space-nav-hint {
-  color: color-mix(in srgb, var(--color-kelus, #1f6b45) 70%, var(--color-steel, #5c6570));
+  color: color-mix(in srgb, var(--color-kelus, #1f6b45) 70%, var(--color-steel, var(--k-text-2)));
 }
 
 .kelus-space-rail-foot {
@@ -576,7 +576,7 @@ body.is-kelus-space .site-space-label {
   margin: 0;
   font-size: 0.8125rem;
   line-height: 1.45;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-rail-more {
@@ -587,7 +587,7 @@ body.is-kelus-space .site-space-label {
 .kelus-space-rail-more > summary {
   list-style: none;
   cursor: pointer;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 75%, transparent);
   font-size: 0.8125rem;
   font-weight: 400;
   min-height: 32px;
@@ -601,7 +601,7 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-rail-more > summary:hover,
 .kelus-space-rail-more > summary:focus-visible {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-rail-more .today-reset-confirm,
@@ -614,7 +614,7 @@ body.is-kelus-space .site-space-label {
   padding: 10px 12px;
   background: #fff;
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, var(--k-ink)) 8%, transparent);
 }
 
 .kelus-space-stage {
@@ -652,12 +652,12 @@ body.is-kelus-space .site-space-label {
   font-weight: 440;
   letter-spacing: -0.03em;
   line-height: 1.1;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 .kelus-space-lede {
   margin: 12px 0 0;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.55;
 }
@@ -693,7 +693,7 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-stage .material-ingest.is-embedded .material-role-field > p {
   max-width: 42ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -709,7 +709,7 @@ body.is-kelus-space .site-space-label {
 }
 
 .kelus-space-stage .material-shelf > header > span {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
@@ -717,7 +717,7 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-stage .material-shelf-empty p {
   max-width: 42ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-stage .material-honesty {
@@ -733,7 +733,7 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-stage .material-honesty p:last-child {
   max-width: 48ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -825,7 +825,7 @@ body.is-kelus-space .site-space-label {
 
 .kelus-space-stage .today-lead-cite {
   margin: 18px 0 0;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
   line-height: 1.45;
 }
@@ -950,7 +950,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 10px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
@@ -966,7 +966,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
   letter-spacing: 0.04em;
   text-transform: none;
   font-size: 0.875rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-stage .today-lead-main {
@@ -999,7 +999,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 }
 
 .kelus-space-stage .today-plan-list .plan-index {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.75rem;
   letter-spacing: 0.06em;
 }
@@ -1015,7 +1015,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 
 .kelus-space-stage .plan-why {
   margin: 0 0 10px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-tools {
@@ -1047,7 +1047,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-tools input::placeholder {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-tools input:focus,
@@ -1056,7 +1056,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 }
 
 .kelus-space-stage .surface-map.is-luxury .map-tools [role="status"] {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-variant-numeric: tabular-nums;
   font-size: 0.875rem;
   white-space: nowrap;
@@ -1083,7 +1083,7 @@ body.is-kelus-space .site-header.is-space .site-space-label {
 
 .kelus-space-stage .surface-map.is-luxury .topic-map-graph-note {
   margin-top: 0.65rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.8125rem;
 }
 
@@ -1106,12 +1106,12 @@ body.is-booklet-system .study-page-mark {
   font-size: 1rem;
   font-weight: 440;
   letter-spacing: -0.02em;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-booklet-system .study-page-mark span {
   margin-right: 0.55rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-family: inherit;
   font-variant-numeric: tabular-nums;
   font-size: 0.875rem;
@@ -1134,7 +1134,7 @@ body.is-booklet-system .study-wayfinding .study-steps li {
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 70%, transparent);
   border-top: 0;
 }
 
@@ -1167,11 +1167,11 @@ body.is-booklet-system .topic-map-node.is-fading circle {
 body.is-booklet-system .topic-map-node.is-strong circle,
 body.is-booklet-system .topic-map-node.is-stable circle {
   fill: transparent;
-  stroke: color-mix(in srgb, var(--booklet-ink, #12160f) 55%, transparent);
+  stroke: color-mix(in srgb, var(--booklet-ink, var(--k-ink)) 55%, transparent);
 }
 
 body.is-booklet-system .topic-map-node .topic-map-status {
-  fill: var(--booklet-mute, #5c6570);
+  fill: var(--booklet-mute, var(--k-text-2));
   font-size: 2.6px;
   letter-spacing: 0;
   text-transform: none;
@@ -1225,7 +1225,7 @@ body.is-booklet-system .study-context > span b {
 }
 
 body.is-booklet-system .study-context > span small {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-weight: 400;
   letter-spacing: 0.02em;
   text-transform: none;
@@ -1248,7 +1248,7 @@ body.is-booklet-system .study-question :is(h1, h2) {
 
 body.is-booklet-system .session-explanation {
   max-width: 48ch;
-  color: color-mix(in srgb, var(--color-ink, #12160f) 82%, transparent);
+  color: color-mix(in srgb, var(--color-ink, var(--k-ink)) 82%, transparent);
 }
 
 body.is-booklet-system .answer-evaluation {
@@ -1289,14 +1289,14 @@ body.is-session-booklet.is-booklet-system .site-header.is-session .site-footer-m
 }
 
 body.is-session-booklet.is-booklet-system .site-session-label {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
   font-weight: 400;
 }
 
 body.is-session-booklet.is-booklet-system .site-session-return {
   min-height: 40px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
   border-bottom: 0;
 }
@@ -1318,7 +1318,7 @@ body.is-session-booklet.is-booklet-system .study-more {
 body.is-session-booklet.is-booklet-system .study-more > summary {
   list-style: none;
   cursor: pointer;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 72%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 72%, transparent);
   font-size: 0.8125rem;
   font-weight: 400;
   min-height: 32px;
@@ -1332,11 +1332,11 @@ body.is-session-booklet.is-booklet-system .study-more > summary::-webkit-details
 
 body.is-session-booklet.is-booklet-system .study-more > summary:hover,
 body.is-session-booklet.is-booklet-system .study-more > summary:focus-visible {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-session-booklet.is-booklet-system .study-more[open] > summary {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-session-booklet.is-booklet-system .study-more .study-discard,
@@ -1349,19 +1349,19 @@ body.is-session-booklet.is-booklet-system .study-more .study-discard-trigger {
   padding: 10px 12px;
   background: #fff;
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, var(--k-ink)) 8%, transparent);
 }
 
 body.is-session-booklet.is-booklet-system .study-discard-trigger,
 body.is-session-booklet.is-booklet-system .study-discard .text-btn {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 78%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 78%, transparent);
   font-size: 0.8125rem;
   font-weight: 400;
 }
 
 body.is-session-booklet.is-booklet-system .study-discard-trigger:hover,
 body.is-session-booklet.is-booklet-system .study-discard-trigger:focus-visible {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-session-booklet.is-booklet-system .study-progress {
@@ -1393,7 +1393,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   list-style: none;
   cursor: pointer;
   padding: 10px 0;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.8125rem;
   letter-spacing: 0;
   text-transform: none;
@@ -1428,7 +1428,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 .kelus-space-stage .material-ingest.is-embedded .material-ingest-lede {
   margin: 0 0 14px;
   max-width: 42ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -1444,7 +1444,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 .kelus-space-stage .material-drop.is-quiet:hover,
@@ -1462,12 +1462,12 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 }
 
 .kelus-space-stage .material-drop.is-quiet span {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
 .kelus-space-stage .material-shelf.is-binder > header .kicker {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   text-transform: none;
   letter-spacing: 0;
   font-weight: 500;
@@ -1500,7 +1500,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 
 .kelus-space-stage .material-shelf.is-binder .material-name small {
   margin-top: 4px;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
   white-space: normal;
 }
@@ -1511,7 +1511,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
   padding: 0;
   border-radius: 0;
   background: transparent;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0;
@@ -1530,7 +1530,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 .kelus-space-stage .material-shelf.is-binder .material-actions a,
 .kelus-space-stage .material-shelf.is-binder .material-actions button {
   font-weight: 500;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .kelus-space-stage .material-shelf.is-binder .material-actions a:hover,
@@ -1542,7 +1542,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 .kelus-space-stage .material-binder-note {
   margin: 1.25rem 0 0;
   max-width: 42ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
   line-height: 1.5;
 }
@@ -1552,7 +1552,7 @@ body.is-booklet-system .topic-map-node.is-start .topic-map-status {
 }
 
 .kelus-space-stage .material-ingest.is-embedded .material-bookmarks > summary {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -1589,13 +1589,13 @@ body.is-paper-column .kelus-paper-course {
   font-size: 1rem;
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-paper-column .kelus-paper-meta {
   margin: 2px 0 0;
   font-size: 0.8125rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes {
@@ -1623,7 +1623,7 @@ body.is-paper-column .kelus-paper-nav.kelus-space-nav.revision-surface-modes but
   border: 0;
   border-radius: 0;
   background: transparent;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 85%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 85%, transparent);
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: -0.01em;
@@ -1662,7 +1662,7 @@ body.is-paper-column .kelus-paper-more > summary {
   min-height: 40px;
   display: inline-flex;
   align-items: center;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 75%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 75%, transparent);
   font-size: 0.875rem;
   font-weight: 400;
 }
@@ -1673,7 +1673,7 @@ body.is-paper-column .kelus-paper-more > summary::-webkit-details-marker {
 
 body.is-paper-column .kelus-paper-more > summary:hover,
 body.is-paper-column .kelus-paper-more > summary:focus-visible {
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-paper-column .kelus-paper-more .today-reset-confirm,
@@ -1686,7 +1686,7 @@ body.is-paper-column .kelus-paper-more > .text-btn {
   padding: 10px 12px;
   background: #fff;
   border: 1px solid color-mix(in srgb, var(--color-rule, #d9d4cc) 85%, transparent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, #12160f) 8%, transparent);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-ink, var(--k-ink)) 8%, transparent);
 }
 
 body.is-paper-column .kelus-paper-page.kelus-space-stage {
@@ -1727,7 +1727,7 @@ body.is-paper-column .kelus-paper-head h1 {
 body.is-paper-column .kelus-paper-lede {
   margin: 10px 0 0;
   max-width: 42ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.5;
 }
@@ -1822,7 +1822,7 @@ body.is-paper-column .index-toc-row:active {
 body.is-paper-column .index-toc-num {
   font-variant-numeric: tabular-nums;
   font-size: 0.875rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-paper-column .index-toc-name {
@@ -1838,7 +1838,7 @@ body.is-paper-column .index-toc-meta {
   display: block;
   margin-top: 4px;
   font-size: 0.875rem;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-paper-column .index-toc-row.is-start .index-toc-name,
@@ -1884,7 +1884,7 @@ body.is-paper-column .index-toc-row.is-start .index-toc-meta {
   padding: 10px 0;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .material-add-page > summary::-webkit-details-marker {
@@ -1896,7 +1896,7 @@ body.is-paper-column .index-toc-row.is-start .index-toc-meta {
 }
 
 .material-add-page[open] > summary {
-  color: var(--color-ink, #111);
+  color: var(--color-ink, var(--k-ink));
 }
 
 /* Booklet page — Today is the topic, not a title stack */
@@ -1921,7 +1921,7 @@ body.is-booklet-page .today-page-folio {
   margin: 0;
   font-size: 0.875rem;
   letter-spacing: 0.02em;
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 92%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 92%, transparent);
 }
 
 body.is-booklet-page .today-lead-action.is-page h1,
@@ -1934,7 +1934,7 @@ body.is-booklet-page .today-lead-action.is-page #today-title {
   font-optical-sizing: auto;
   letter-spacing: -0.045em;
   line-height: 0.98;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-booklet-page .today-lead-action.is-page .today-start {
@@ -2039,7 +2039,7 @@ body.is-session-booklet .study-feedback.is-mark-folio > h1 {
 body.is-session-booklet .study-mark-lede {
   margin: 0 0 4px;
   max-width: 32ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.45;
 }
@@ -2050,7 +2050,7 @@ body.is-session-booklet .study-mark-moment {
 
 body.is-session-booklet .study-mark-kicker {
   margin: 0;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0;
@@ -2063,7 +2063,7 @@ body.is-session-booklet .study-mark-moment > h1 {
   font-size: clamp(3rem, 8vw, 4.5rem);
   letter-spacing: -0.05em;
   line-height: 0.96;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-booklet .study-mark-delta {
@@ -2078,15 +2078,15 @@ body.is-session-booklet .study-mark-delta {
   font-optical-sizing: auto;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-booklet .study-mark-from {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 88%, transparent);
 }
 
 body.is-session-booklet .study-mark-arrow {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 70%, transparent);
   font-size: 0.72em;
 }
 
@@ -2097,7 +2097,7 @@ body.is-session-booklet .study-mark-to {
 body.is-session-booklet .study-mark-whisper {
   margin: 4px 0 8px;
   max-width: 34ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.45;
 }
@@ -2136,13 +2136,13 @@ body.is-session-booklet .study-reroute-moment > h1 {
   font-size: clamp(3rem, 8vw, 4.5rem);
   letter-spacing: -0.05em;
   line-height: 0.96;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-booklet .study-reroute-lede {
   margin: 4px 0 0;
   max-width: 36ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.45;
 }
@@ -2154,7 +2154,7 @@ body.is-session-booklet .study-reroute-moved {
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.15;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-booklet .study-reroute-moved strong {
@@ -2173,11 +2173,11 @@ body.is-session-booklet .study-reroute-moment .reroute-whisper {
   font-weight: 500;
   letter-spacing: -0.025em;
   line-height: 1.35;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-from {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 88%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 88%, transparent);
 }
 
 body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to {
@@ -2185,11 +2185,11 @@ body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to {
 }
 
 body.is-session-booklet .study-reroute-moment .reroute-whisper .study-mark-to.is-down {
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-booklet .study-reroute-sep {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 70%, transparent);
   font-family: var(--font-sans, system-ui, sans-serif);
   font-size: 0.85em;
   font-weight: 400;
@@ -2212,7 +2212,7 @@ body.is-session-booklet .session-work > h1 {
 body.is-session-booklet .session-work-lede {
   margin: 0;
   max-width: 36ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.45;
@@ -2237,7 +2237,7 @@ body.is-session-booklet textarea.session-work-field {
     );
   background-origin: content-box;
   box-shadow: none;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
   font-family: var(--font-display, var(--font-source-serif), Literata, Georgia, serif);
   font-size: 1.125rem;
   font-weight: 440;
@@ -2253,7 +2253,7 @@ body.is-session-booklet .session-work-field:focus-visible {
 }
 
 body.is-session-booklet .session-work-field::placeholder {
-  color: color-mix(in srgb, var(--color-steel, #5c6570) 70%, transparent);
+  color: color-mix(in srgb, var(--color-steel, var(--k-text-2)) 70%, transparent);
   font-weight: 400;
 }
 
@@ -2326,7 +2326,7 @@ body.is-session-booklet .study-context.is-folio,
 .study-shell .study-context.is-folio small {
   font-size: 0.875rem;
   font-weight: 400;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 .study-shell .study-progress,
@@ -2371,13 +2371,13 @@ body.is-session-complete .complete-hero.is-empty > h1 {
   font-optical-sizing: auto;
   letter-spacing: -0.05em;
   line-height: 0.96;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-complete .complete-whisper {
   margin: 0;
   max-width: 34ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.45;
 }
@@ -2389,7 +2389,7 @@ body.is-session-complete .complete-next {
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.15;
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-complete .complete-next strong {
@@ -2408,7 +2408,7 @@ body.is-session-complete .complete-return {
 
 body.is-session-complete .complete-return .kicker {
   margin: 0;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0;
@@ -2428,7 +2428,7 @@ body.is-session-complete .complete-return h2 {
 body.is-session-complete .complete-return > p {
   margin: 0;
   max-width: 36ch;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 1rem;
   line-height: 1.45;
 }
@@ -2453,7 +2453,7 @@ body.is-session-complete .complete-return-actions .cta:active {
 body.is-session-complete .complete-return-note {
   margin: 0;
   min-height: 1.2em;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -2471,7 +2471,7 @@ body.is-session-complete details > summary {
   cursor: pointer;
   list-style: none;
   padding: 14px 0;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
   font-size: 0.875rem;
 }
 
@@ -2481,7 +2481,7 @@ body.is-session-complete details > summary::-webkit-details-marker {
 
 body.is-session-complete details > summary:hover,
 body.is-session-complete details > summary:focus-visible {
-  color: var(--color-ink, #12160f);
+  color: var(--color-ink, var(--k-ink));
 }
 
 body.is-session-complete .complete-columns {
@@ -2495,7 +2495,7 @@ body.is-session-complete .complete-columns .kicker {
   font-size: 0.75rem;
   letter-spacing: 0;
   text-transform: none;
-  color: var(--color-steel, #5c6570);
+  color: var(--color-steel, var(--k-text-2));
 }
 
 body.is-session-complete .complete-columns p {

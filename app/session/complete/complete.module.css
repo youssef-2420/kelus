@@ -126,7 +126,7 @@
 
 .success .mark { background: var(--color-kelus); color: #fff; }
 .partial .mark { background: #f4ead8; color: #9a5b16; }
-.failure .mark { background: #f6e6e3; color: #a1352b; }
+.failure .mark { background: #f6e6e3; color: var(--k-danger); }
 .success .word { color: var(--color-kelus); }
 
 /* Tomorrow, drawn: the warm-up is the reason to come back, so it gets the picture. */
@@ -198,7 +198,7 @@
   gap: 6px;
   padding-top: 12px;
   border-top: 1px solid rgba(18, 22, 15, 0.08);
-  color: var(--color-smoke, #6b7066);
+  color: var(--color-smoke, var(--k-text-2));
   font-size: var(--text-body-sm);
 }
 
@@ -245,10 +245,10 @@
   gap: 10px;
   padding: 16px 18px;
   border-radius: 12px;
-  background: var(--k-iris-wash);
+  background: var(--k-surface-2);
 }
 .changed p { margin: 0; line-height: 1.45; color: var(--color-midnight-ink); }
-.changedLabel { display: block; margin-bottom: 2px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--k-iris); }
+.changedLabel { display: block; margin-bottom: 2px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--k-text-2); }
 .none { color: var(--color-slate); }
 
 /* Before any block is finished: the same bar, one plain sentence, one way back. */

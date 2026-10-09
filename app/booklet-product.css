@@ -19,7 +19,7 @@
   --background: var(--color-paper-warmth);
   --paper: var(--color-paper-warmth);
   background: var(--color-paper-warmth);
-  color: #111111;
+  color: var(--k-ink);
 }
 
 /* Booklet product chrome — scoped under .is-booklet-product. */
@@ -32,7 +32,7 @@
 .is-booklet-product .course-workspace-rail {
   background: var(--color-paper-warmth, #ffffff);
   border-right: 1px solid var(--color-frost, #d5d9d0);
-  color: var(--color-midnight-ink, #12160f);
+  color: var(--color-midnight-ink, var(--k-ink));
 }
 
 .is-booklet-product .course-workspace-identity {
@@ -48,13 +48,13 @@
 }
 
 .is-booklet-product .course-workspace-identity strong {
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
 .is-booklet-product .course-workspace-identity small {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .is-booklet-product .course-workspace-nav a {
@@ -64,12 +64,12 @@
 
 .is-booklet-product .course-workspace-nav a:hover {
   background: #efefed;
-  color: #1a1a18;
+  color: var(--k-ink);
 }
 
 .is-booklet-product .course-workspace-nav a.is-active {
   background: #efefed;
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 600;
   box-shadow: none;
   border: 0;
@@ -92,7 +92,7 @@
 
 .is-booklet-product .course-stage i {
   background: #efefed;
-  color: #787774;
+  color: var(--k-text-2);
   border-radius: 6px;
 }
 
@@ -133,7 +133,7 @@
 .is-booklet-product .materials-empty h1,
 .is-booklet-product .materials-head h1,
 .is-booklet-product .today-title {
-  color: #1a1a18;
+  color: var(--k-ink);
   letter-spacing: -0.03em;
 }
 
@@ -157,17 +157,17 @@
 }
 
 .destination-page.is-booklet-product .destination-page-title {
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
 .destination-page.is-booklet-product .kicker {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .destination-page.is-booklet-product .destination-support {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .destination-page.is-booklet-product .setup-progress {
@@ -181,12 +181,12 @@
 .destination-page.is-booklet-product .setup-progress li {
   padding: 6px 10px;
   border-radius: 6px;
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .destination-page.is-booklet-product .setup-progress li[aria-current="step"] {
   background: #fff;
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 600;
   box-shadow: 0 1px 2px rgba(15, 15, 15, 0.04);
 }
@@ -277,12 +277,12 @@
 
 .is-booklet-system .site-nav a.is-active,
 .is-booklet-system .site-nav a[aria-current="page"] {
-  color: #1a1a18;
-  box-shadow: inset 0 -2px 0 #1a1a18;
+  color: var(--k-ink);
+  box-shadow: inset 0 -2px 0 var(--k-ink);
 }
 
 .is-booklet-system .site-nav a:hover {
-  color: #1a1a18;
+  color: var(--k-ink);
 }
 
 .is-booklet-system .site-footer-mark:hover,
@@ -338,7 +338,7 @@
 .is-booklet-product .materials-head h1,
 .is-booklet-product .today-title {
   max-width: 18ch;
-  color: #1a1a18;
+  color: var(--k-ink);
   font-size: clamp(1.75rem, 3.5vw, 2.35rem);
   font-weight: 700;
   letter-spacing: -0.03em;
@@ -349,7 +349,7 @@
 .is-booklet-product .materials-head .kicker,
 .is-booklet-product .materials-empty p,
 .is-booklet-product .materials-head p {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .is-booklet-product .material-drop:hover,
@@ -375,7 +375,7 @@
 .is-booklet-product .today-workbench.is-revision-studio h1 {
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: #1a1a18;
+  color: var(--k-ink);
 }
 
 /* First-run workspace page mark + callout */
@@ -391,7 +391,7 @@
   border-radius: 8px;
   background:
     radial-gradient(circle at 30% 30%, #fff 0 18%, transparent 19%),
-    linear-gradient(135deg, #1a1a18, #444);
+    linear-gradient(135deg, var(--k-ink), #444);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
@@ -462,7 +462,7 @@
 }
 
 .is-booklet-system .home-close-copy h2 {
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
@@ -492,7 +492,7 @@
   border-radius: 8px;
   background:
     radial-gradient(circle at 30% 30%, #fff 0 18%, transparent 19%),
-    linear-gradient(135deg, #1a1a18, #444);
+    linear-gradient(135deg, var(--k-ink), #444);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
@@ -514,7 +514,7 @@
 }
 
 .pricing-page.is-booklet-product h1 {
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
@@ -522,7 +522,7 @@
 /* How it works — last major ledger holdout */
 .how-page.is-booklet-product {
   background: var(--color-paper-warmth, #ffffff);
-  color: #1a1a18;
+  color: var(--k-ink);
 }
 
 .how-page.is-booklet-product .how-hero {
@@ -532,12 +532,12 @@
 }
 
 .how-page.is-booklet-product .kicker {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .how-page.is-booklet-product .how-title {
   max-width: 16ch;
-  color: #1a1a18;
+  color: var(--k-ink);
   font-size: clamp(2.2rem, 5vw, 3.4rem);
   font-weight: 700;
   letter-spacing: -0.035em;
@@ -545,7 +545,7 @@
 }
 
 .how-page.is-booklet-product .how-hero-foot p {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .how-page.is-booklet-product .how-example-switcher {
@@ -554,7 +554,7 @@
   align-items: center;
   gap: 10px;
   margin-top: 1.25rem;
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .how-page.is-booklet-product .how-example-switcher [role="group"] {
@@ -569,7 +569,7 @@
   border: 0;
   border-radius: 6px;
   background: transparent;
-  color: #787774;
+  color: var(--k-text-2);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
@@ -577,7 +577,7 @@
 
 .how-page.is-booklet-product .how-example-switcher button[aria-pressed="true"] {
   background: #efefed;
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 600;
 }
 
@@ -593,7 +593,7 @@
 }
 
 .how-page.is-booklet-product .how-loop > header span {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .how-page.is-booklet-product .how-loop > ol > li {
@@ -609,13 +609,13 @@
 }
 
 .how-page.is-booklet-product .how-stage-copy h2 {
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
 
 .how-page.is-booklet-product .how-stage-copy p {
-  color: #787774;
+  color: var(--k-text-2);
 }
 
 .how-page.is-booklet-product .how-stage-visual > *,
@@ -636,7 +636,7 @@
 }
 
 .how-page.is-booklet-product .how-principle h2 {
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 700;
   letter-spacing: -0.03em;
 }
@@ -655,7 +655,7 @@
 }
 
 .how-page.is-booklet-product .how-principle dt {
-  color: #787774;
+  color: var(--k-text-2);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0;
@@ -664,7 +664,7 @@
 
 .how-page.is-booklet-product .how-principle dd {
   margin: 0.35rem 0 0;
-  color: #1a1a18;
+  color: var(--k-ink);
 }
 
 .how-page.is-booklet-product .how-final {
@@ -684,7 +684,7 @@
 
 .how-page.is-booklet-product .how-final p {
   margin: 0;
-  color: #1a1a18;
+  color: var(--k-ink);
   font-weight: 600;
 }
 
@@ -710,11 +710,11 @@
 /* The same readable controls and paper surfaces throughout the journey. */
 .is-booklet-system .site-header { background: var(--color-paper-warmth); border-bottom: 1px solid var(--color-frost); backdrop-filter: none; }
 .is-booklet-system .site-header-inner { min-height: 72px; padding-block: 8px; }
-.is-booklet-system .site-footer-mark { color: #111; }
+.is-booklet-system .site-footer-mark { color: var(--k-ink); }
 .is-booklet-system .site-nav a { color: var(--color-steel); border-radius: 8px; padding: 10px 12px; border: 0; min-height: 44px; }
 .is-booklet-system .site-nav a:hover { background: #ebe9e6; }
-.is-booklet-system .site-nav a.is-active { background: #ebe9e6; color: #111; box-shadow: none; }
-.is-booklet-system .site-auth-button { border-color: var(--color-frost); border-radius: 8px; color: #111; background: white; }
+.is-booklet-system .site-nav a.is-active { background: #ebe9e6; color: var(--k-ink); box-shadow: none; }
+.is-booklet-system .site-auth-button { border-color: var(--color-frost); border-radius: 8px; color: var(--k-ink); background: white; }
 .is-booklet-system .site-header-action,
 .is-booklet-system .cta,
 .is-booklet-system .is-booklet-product .cta { background: var(--color-booklet-blue); border-color: var(--color-booklet-blue); min-height: 44px; }
@@ -732,20 +732,20 @@
 .site-account-menu { position: relative; margin-left: auto; }
 .site-account-menu summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none; font-size: 14px; }
 .site-account-menu summary::-webkit-details-marker { display: none; }
-.account-initial { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f6d5b8; color: #111; font-weight: 600; }
+.account-initial { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: #f6d5b8; color: var(--k-ink); font-weight: 600; }
 .site-account-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; width: min(280px, 85vw); padding: 16px; border: 1px solid var(--color-frost); border-radius: 12px; background: white; }
 .site-account-panel p { margin: 0 0 12px; color: var(--color-steel); font-size: 12px; }
-.site-account-panel strong { display: block; margin-top: 4px; color: #111; overflow-wrap: anywhere; font-size: 14px; }
+.site-account-panel strong { display: block; margin-top: 4px; color: var(--k-ink); overflow-wrap: anywhere; font-size: 14px; }
 .site-account-panel button { min-height: 44px; width: 100%; text-align: left; border: 0; border-radius: 8px; padding: 10px 12px; background: var(--color-paper-warmth); cursor: pointer; font: inherit; }
 
 /* Preserve the rebranded hero composition; remove the obsolete glow and dead air. */
 .is-booklet-system .kelus-hero.home-hero.is-folio.is-booklet { background: var(--color-paper-warmth); min-height: 0; padding-block: clamp(40px, 5vw, 72px); align-items: center; gap: clamp(32px, 5vw, 72px); }
 .is-booklet-system .folio-hero-atmosphere { display: none; }
 .is-booklet-system .kelus-hero.is-folio .folio-hero-copy { padding: 0; }
-.is-booklet-system .kelus-hero.is-folio .folio-hero-copy h1 { color: #111; font-family: var(--font-editorial); font-optical-sizing: auto; font-size: clamp(40px, 4.5vw, 58px); font-weight: 600; line-height: 1.1; letter-spacing: -.028em; }
-.is-booklet-system .kelus-hero.is-folio .folio-hero-copy h1 span { color: #111; }
+.is-booklet-system .kelus-hero.is-folio .folio-hero-copy h1 { color: var(--k-ink); font-family: var(--font-editorial); font-optical-sizing: auto; font-size: clamp(40px, 4.5vw, 58px); font-weight: 600; line-height: 1.1; letter-spacing: -.028em; }
+.is-booklet-system .kelus-hero.is-folio .folio-hero-copy h1 span { color: var(--k-ink); }
 .is-booklet-system .kelus-hero.is-folio .home-lede { max-width: 38ch; font-size: 18px; line-height: 1.55; }
-.is-booklet-system .kelus-hero.is-folio .home-secondary { background: transparent; border: 1px solid #aeb6a8; color: #12160f; border-radius: 999px; }
+.is-booklet-system .kelus-hero.is-folio .home-secondary { background: transparent; border: 1px solid #aeb6a8; color: var(--k-ink); border-radius: 999px; }
 .is-booklet-system .folio-hero-booklet { padding: 0; }
 .is-booklet-system .booklet-board { pointer-events: auto; }
 .is-booklet-system .booklet-board.is-clean .booklet-board-shell { box-shadow: 0 4px 12px rgba(0,0,0,.06); }
@@ -775,7 +775,7 @@
 .is-booklet-product .today-workbench-heading { display: block; margin-bottom: 16px; }
 .is-booklet-product .today-route-execution { border-top: 0; }
 .is-booklet-product .today-workbench.is-revision-studio .today-lead-action { padding: 24px; background: #f7f8f5; border: 1px solid #d5d9d0; border-radius: 4px; }
-.is-booklet-product .today-lead-main h3 { color: #111; font-weight: 600; }
+.is-booklet-product .today-lead-main h3 { color: var(--k-ink); font-weight: 600; }
 .is-booklet-product .today-workbench.is-revision-studio .today-lead-main h3 { font-size: clamp(26px, 3vw, 36px); }
 .is-booklet-product .today-queue-label { padding-top: 8px; }
 .is-booklet-product :is(.materials-head, .materials-empty, .diagnosis-panel, .diagnosis-check) { box-shadow: none; }
@@ -801,9 +801,9 @@
 .is-booklet-system .study-shell { max-width: 880px; width: calc(100% - 40px); padding-top: 24px; }
 .is-booklet-system .study-shell.is-source-open { max-width: 1320px; }
 .is-booklet-system .study-question { padding: clamp(20px, 4vw, 40px); background: white; border: 1px solid var(--color-frost); border-radius: 12px; margin-block: 24px; }
-.is-booklet-system .study-question :is(h1, h2) { color: #111; font-weight: 600; font-size: clamp(24px, 3vw, 34px); line-height: 1.2; letter-spacing: -.025em; }
+.is-booklet-system .study-question :is(h1, h2) { color: var(--k-ink); font-weight: 600; font-size: clamp(24px, 3vw, 34px); line-height: 1.2; letter-spacing: -.025em; }
 .is-booklet-system .session-explanation { font-size: 18px; line-height: 1.65; }
-.is-booklet-system .study-question textarea { min-height: 180px; width: 100%; padding: 16px; border: 1px solid #bdb9b4; border-radius: 8px; background: #fdfcfb; color: #111; font-size: 16px; line-height: 1.6; resize: vertical; }
+.is-booklet-system .study-question textarea { min-height: 180px; width: 100%; padding: 16px; border: 1px solid #bdb9b4; border-radius: 8px; background: #fdfcfb; color: var(--k-ink); font-size: 16px; line-height: 1.6; resize: vertical; }
 .is-booklet-system .session-help button { min-height: 44px; border-radius: 8px; }
 .is-booklet-system .answer-evaluation { border-radius: 12px; }
 .is-booklet-system .how-stage-visual > * { box-shadow: none; }

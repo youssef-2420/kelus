@@ -91,13 +91,13 @@ body.is-course-studio .studio-onboarding .setup-payoff span { line-height: 1.4; 
 .core-source-item { display: grid; grid-template-columns: minmax(0, 1fr) 40px; align-items: center; }
 .core-source-item .core-source-open { min-width: 0; }
 .core-source-remove { width: 40px; height: 44px; border: 0; border-radius: 6px; background: transparent; color: var(--color-slate); font: inherit; font-size: 1.125rem; cursor: pointer; }
-.core-source-remove:hover { color: #9c3b28; background: #fbede8; }
+.core-source-remove:hover { color: var(--k-danger); background: #fbede8; }
 .core-source-confirm { grid-column: 1 / -1; padding: 9px 10px 12px; border-bottom: 1px solid var(--line); }
 .core-source-confirm p { margin: 0 0 8px; color: var(--ink); font-size: .75rem; line-height: 1.4; }
 .core-source-confirm button { margin-right: 12px; border: 0; background: transparent; color: var(--color-slate); font: inherit; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
-.core-source-confirm button.is-danger { color: #9c3b28; }
+.core-source-confirm button.is-danger { color: var(--k-danger); }
 .core-source-confirm button:disabled { opacity: .5; cursor: wait; }
-.core-source-error { margin: 8px 10px; color: #9c3b28; font-size: 0.75rem; line-height: 1.4; }
+.core-source-error { margin: 8px 10px; color: var(--k-danger); font-size: 0.75rem; line-height: 1.4; }
 .studio-rail-toggle, .studio-rail-reopen { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 4px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--color-slate); font: inherit; font-size: 0.75rem; cursor: pointer; }
 .studio-rail-toggle { margin: 12px 0 0; }
 .studio-rail-toggle:hover, .studio-rail-reopen:hover { background: var(--core-selected-paper); color: var(--ink); }

@@ -34,7 +34,7 @@ export function ExamDateCard({ onSave }: { onSave: (date: string, targetPercent:
             {[60, 70, 80, 90].map((value) => <option key={value} value={value}>{value}% ready</option>)}
           </select>
         </label>
-        <button type="button" className="k-btn k-btn--iris k-btn--small" onClick={save}>Save date</button>
+        <button type="button" className="k-btn k-btn--small" onClick={save}>Save date</button>
       </div>
       {error ? <p className={styles.error} role="alert">{error}</p> : null}
     </section>

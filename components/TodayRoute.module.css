@@ -160,7 +160,7 @@
 .dots i { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid rgba(18, 22, 15, 0.22); background: #fff; }
 .dots i.dotStarted { border-color: var(--k-marigold-edge); background: var(--k-marigold); }
 .dots i.dotSolid { border-color: var(--k-green-edge); background: var(--k-green); }
-.ahead { color: var(--k-iris); font-weight: 500; }
+.ahead { color: var(--k-text-2); font-weight: 400; }
 
 /* Under the topic: how long it takes and what is in it, in one quiet line. */
 .meta { margin: 6px 0 0; color: var(--color-slate); font-size: 0.9375rem; font-variant-numeric: tabular-nums; }

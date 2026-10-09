@@ -69,7 +69,7 @@
 }
 
 .root .danger {
-  color: #a1352b;
+  color: var(--k-danger);
 }
 
 .root .confirm {
@@ -110,7 +110,7 @@
 
 .root .yes {
   border: 0;
-  background: #a1352b;
+  background: var(--k-danger);
   color: #fff;
 }
 
