@@ -52,13 +52,9 @@
 }
 
 /* Suspense handoff — same quiet fade; no rise/fall double-motion. */
-::view-transition-old(.slide-down) {
-  animation: var(--vt-duration-exit) ease-out both vt-fade reverse;
-}
 
-::view-transition-new(.slide-up) {
-  animation: var(--vt-duration-enter) var(--vt-ease) both vt-fade;
-}
+
+
 
 /* Hierarchical (Map ↔ concept) — opacity only; shared title carries continuity. */
 ::view-transition-old(.nav-forward),

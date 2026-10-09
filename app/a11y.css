@@ -1,14 +1,7 @@
 /* Accessibility pass, from measured results.
    Standalone controls reach the 44px target; the completion label and exam inputs get stronger contrast. */
 
-body.is-course-studio :is(.cta, .text-btn, .studio-rail-toggle, .studio-rail-reopen, .core-add-source, .core-source-open, .core-source-remove),
-body.is-session-booklet :is(.cta, .text-btn, .study-close, .study-back, .session-source-return, .study-brand, .session-workspace-rail nav a, .session-workspace-rail a),
-body.is-session-booklet .kelus-paper-more > summary,
-.core-source-toolbar button,
-.core-source-state :is(button, a),
-.complete-usefulness-actions button,
-.proposal-name-input,
-.material-source-preview-head a {
+body.is-course-studio :is(.cta, .text-btn, .studio-rail-toggle, .studio-rail-reopen, .core-add-source, .core-source-open, .core-source-remove),body.is-session-booklet :is(.cta, .text-btn, .study-close, .study-back, .session-source-return, .study-brand, .session-workspace-rail nav a, .session-workspace-rail a),.core-source-toolbar button,.core-source-state :is(button, a),.proposal-name-input,.material-source-preview-head a {
   min-height: 44px;
 }
 
@@ -34,12 +27,7 @@ body.is-session-complete .complete-folio .kicker {
 }
 
 /* Exam form inputs: a real focus ring, not only a 1px line colour. */
-body.is-course-studio .studio-onboarding input:focus-visible,
-body.is-course-studio .studio-onboarding select:focus-visible,
-body.is-course-studio .studio-onboarding textarea:focus-visible {
-  outline: 2px solid var(--color-kelus);
-  outline-offset: 2px;
-}
+
 
 /* Setup inputs use an underline style; keyboard focus gets a visible ring on top of it. */
 body.is-course-studio .studio-onboarding .is-marked-setup input:not([type="radio"]):not([type="checkbox"]):focus-visible {
@@ -61,25 +49,11 @@ body.is-session-booklet .session-sources button {
   align-items: center;
 }
 
-.study-more > summary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
-  padding-inline: 8px;
-  cursor: pointer;
-}
 
-body.is-course-studio .studio-onboarding .is-marked-setup input.destination-date[type="date"]:focus-visible {
-  outline: 2px solid var(--color-kelus) !important;
-  outline-offset: 2px;
-}
 
-body.is-session-booklet .study-folio-actions .study-more > summary {
-  min-height: 44px;
-  min-width: 44px;
-}
+
+
+
 
 /* Questions quote the learner's own page, so they run long: keep them readable, not poster-sized. */
 body.is-session-booklet.is-booklet-system main.study-shell[data-phase] .session-work > h1 {
@@ -121,12 +95,7 @@ body.is-session-booklet .session-ai-explanation span {
   color: var(--color-kelus);
 }
 
-body.is-session-booklet .study-run-label {
-  margin: 0;
-  padding: 10px 0;
-  font-size: var(--text-body-sm);
-  color: var(--color-slate);
-}
+
 
 /* Phones: while you recall, the closed source is a slim bar, so the question is the first thing you see. */
 @media (max-width: 950px) {
@@ -196,55 +165,9 @@ body.is-session-booklet .study-run-label {
 }
 
 /* Phone first-run: a progress bar and one step label instead of a cut-off tab row, and the main action stays in reach. */
-.studio-step-now { display: none; }
 
-@media (max-width: 700px) {
-  .is-course-studio .studio-onboarding-steps {
-    display: flex;
-    gap: 6px;
-    margin: 4px 0 0;
-    padding: 0;
-    overflow: visible;
-  }
 
-  body.is-course-studio .studio-onboarding .studio-onboarding-steps li {
-    flex: 1 1 0;
-    min-width: 0;
-    min-height: 0;
-    height: 4px;
-    padding: 0;
-    border: 0;
-    border-radius: 2px;
-    background: var(--color-frost);
-    font-size: 0;
-    box-shadow: none;
-  }
 
-  body.is-course-studio .studio-onboarding .studio-onboarding-steps li > span { display: none; }
-  body.is-course-studio .studio-onboarding .studio-onboarding-steps li.is-done { background: var(--color-kelus); }
-  body.is-course-studio .studio-onboarding .studio-onboarding-steps li.is-current { background: var(--color-midnight-ink); }
-
-  .studio-step-now {
-    display: block;
-    margin: 8px 0 0;
-    font-size: var(--text-body-sm);
-    color: var(--color-slate);
-  }
-
-  .studio-onboarding .studio-rail .studio-navigation-label { display: none; }
-
-  body.is-course-studio .studio-onboarding .destination-actions {
-    position: sticky;
-    bottom: 0;
-    z-index: 2;
-    margin-inline: -16px;
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    border-top: 1px solid var(--color-frost);
-    background: var(--color-pure-white);
-  }
-
-  body.is-course-studio .studio-onboarding .destination-actions .cta { flex: 1; justify-content: center; }
-}
 
 /* Quick run while the notes are closed: one centred column, nothing competing with the question.
    The page opens beside it as soon as the learner compares or peeks. */
@@ -274,13 +197,7 @@ body.is-session-booklet.is-booklet-system main#main.study-shell[data-phase].is-f
   border: 0;
 }
 
-.study-run-label .study-peek {
-  min-height: 0;
-  padding: 0;
-  font: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
+
 
 /* Notion-style pack art: nav icons, the empty course, and small marks. Decorative only. */
 .revision-surface-modes button { display: flex; align-items: center; gap: 10px; }
