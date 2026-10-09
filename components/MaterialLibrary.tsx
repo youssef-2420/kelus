@@ -233,13 +233,11 @@ function MaterialRow({
         )}
         {confirmRemove ? (
           <span className="material-remove-confirm" role="group" aria-label={`Confirm remove ${item.title}`}>
-            {linkedTopics ? <span>Removing this source also removes {linkedTopics} linked topic{linkedTopics === 1 ? "" : "s"} from your route.</span> : null}
-            <button type="button" className="text-btn" onClick={() => setConfirmRemove(false)} disabled={busy}>
-              Cancel
-            </button>
-            <button type="button" className="text-btn is-danger" onClick={() => void remove()} disabled={busy}>
-              Remove
-            </button>
+            <span className="material-remove-question">{linkedTopics ? `Remove this source and its ${linkedTopics} topic${linkedTopics === 1 ? "" : "s"}? Your answers stay in your history.` : "Remove this source?"}</span>
+            <span className="material-remove-actions">
+              <button type="button" className="k-btn k-btn--paper k-btn--small" onClick={() => setConfirmRemove(false)} disabled={busy}>Keep it</button>
+              <button type="button" className="k-btn k-btn--small material-remove-yes" onClick={() => void remove()} disabled={busy}>{busy ? "Removing…" : "Remove"}</button>
+            </span>
           </span>
         ) : (
           <button type="button" onClick={() => setConfirmRemove(true)} disabled={busy}>
@@ -657,30 +655,28 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           open={busy || Boolean(hardError) || sourceFirst || undefined}
         >
           <summary>Add a PDF or notes</summary>
-          <section className="material-ingest is-embedded" aria-labelledby="add-material-title">
-            <div className="material-ingest-title">
-              <h2 id="add-material-title" className="sr-only">Add your course source</h2>
-              <p className="material-ingest-lede">Kelus reads the pages, suggests topics, and waits for your confirmation before changing your route.</p>
-            </div>
-            <div className="material-role-field">
-              <label htmlFor="material-role">This source is</label>
-              <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
-                {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
-              </select>
-            </div>
+          {/* One drop area, one line of help, then the two optional choices: what kind of source, or a link instead. */}
+          <section className="material-ingest is-embedded material-add-body" aria-labelledby="add-material-title">
+            <h2 id="add-material-title" className="sr-only">Add your course source</h2>
             <label
-              className={`material-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""} is-quiet`}
+              className={`material-drop material-add-drop${dragging ? " is-dragging" : ""}${busy ? " is-busy" : ""}`}
               aria-busy={busy || undefined}
               onDragEnter={() => dispatch({ type: "DRAG_ENTER" })}
               onDragLeave={() => dispatch({ type: "DRAG_LEAVE" })}
               onDragOver={(event) => event.preventDefault()}
               onDrop={drop}
             >
-              <input ref={fileRef} type="file" accept={SOURCE_FILE_ACCEPT} onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
-              <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Choose a PDF or notes"}</strong>
-              <span>{busy && statusMessage ? statusMessage : "or drop one here · text-based PDFs work fastest"}</span>
+              <input ref={fileRef} type="file" title="" accept={SOURCE_FILE_ACCEPT} onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
+              <strong>{busy ? (statusMessage ?? "Reading your file…") : "Choose a file"}</strong>
+              <span>{busy && statusMessage ? statusMessage : "or drop it here · PDF, Markdown, .txt or a Notion .zip"}</span>
             </label>
-            <p className="material-ingest-hint">Digital PDFs with selectable text work best. Kelus reads the page text, and you review every proposed topic before it changes your route.</p>
+            <p className="material-ingest-hint">Kelus finds the topics in it and adds them to your plan. PDFs with selectable text are read fastest.</p>
+            <div className="material-role-field">
+              <label htmlFor="material-role">Type</label>
+              <select id="material-role" value={role} onChange={(event) => setRole(event.target.value as MaterialRole)} disabled={busy}>
+                {MATERIAL_ROLES.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+              </select>
+            </div>
             {busy && workingStep ? (
               <div className="material-work-status" role="status" aria-live="polite">
                 <ol className="material-work-steps" aria-label="PDF processing steps">
@@ -749,7 +745,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           onDragOver={(event) => event.preventDefault()}
           onDrop={drop}
         >
-          <input ref={fileRef} type="file" accept={SOURCE_FILE_ACCEPT} onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
+          <input ref={fileRef} type="file" title="" accept={SOURCE_FILE_ACCEPT} onChange={(event) => void savePdf(event.target.files?.[0])} disabled={busy} />
           <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 33V10m0 0-8 8m8-8 8 8M10 31v7h28v-7" /></svg>
           <strong>{busy ? (statusMessage ?? "Working on your PDF…") : "Drop a PDF here"}</strong>
           <span>{busy && statusMessage ? statusMessage : "or choose a file · up to 20 MB · clear text works fastest"}</span>

@@ -1,7 +1,7 @@
 "use client";
 
 import { topicLevel } from "@/lib/format";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { useLearner } from "@/components/LearnerProvider";
 import { ConceptTitleTransition } from "@/components/PageTransition";
@@ -41,7 +41,7 @@ function MasteryRing({ value }: { value: number | null }) {
  * what you can already recall, and whether it is due. The next topic comes first and says why.
  */
 export function TopicMapPanel() {
-  const { state } = useLearner();
+  const { state, removeTopic } = useLearner();
   const reduce = useReducedMotion() === true;
   const course = state.snapshot.courses[0];
   if (!course) return <p>No active course.</p>;
@@ -122,6 +122,8 @@ export function TopicMapPanel() {
         </ul>
       </div>
       <ol className={`index-toc topic-cards ${styles.grid}`} aria-label="Topics, next topic first">
+        {/* A removed topic shrinks away and the others glide into its place; Undo brings it back the same way. */}
+        <AnimatePresence initial={false} mode="popLayout">
         {rows.map(({ concept, mastery, label, page, due }, index) => {
           const isStart = startConceptId === concept.id;
           const checks = concept.retrievalAttempts;
@@ -130,10 +132,12 @@ export function TopicMapPanel() {
           return (
             <motion.li
               key={concept.id}
-              className={isStart ? `is-start ${styles.start}` : undefined}
+              layout={!reduce}
+              className={`${styles.item}${isStart ? ` is-start ${styles.start}` : ""}`}
               initial={reduce ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={reduce ? { duration: 0 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1], delay: Math.min(index, 8) * 0.025 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={reduce ? { opacity: 0, transition: { duration: 0.1 } } : { opacity: 0, scale: 0.94, filter: "blur(2px)", transition: { duration: 0.2, ease: [0.4, 0, 1, 1] } }}
+              transition={reduce ? { duration: 0 } : { duration: 0.22, ease: [0.22, 1, 0.36, 1], delay: Math.min(index, 8) * 0.025, layout: { type: "spring", stiffness: 420, damping: 38 } }}
             >
               <Link
                 href={`/concept?id=${encodeURIComponent(concept.id)}`}
@@ -158,9 +162,13 @@ export function TopicMapPanel() {
                 </span>
                 <MasteryRing value={mastery} />
               </Link>
+              <button type="button" className={styles.remove} onClick={() => removeTopic(concept.id)} aria-label={`Remove ${concept.name}`} title="Remove topic (you can undo)">
+                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+              </button>
             </motion.li>
           );
         })}
+        </AnimatePresence>
       </ol>
       <AnkiExport course={course.name} concepts={concepts} activities={state.snapshot.learningActivities} />
     </div>

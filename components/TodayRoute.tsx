@@ -1,7 +1,7 @@
 "use client";
 
 import { topicLevel } from "@/lib/format";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import type { Concept, LearningActivity, LearningEvent, RoutePlan, StudySession } from "@/domain/types";
@@ -169,14 +169,23 @@ export function TodayRoute({
         <aside className={styles.then} data-block="today-next" aria-label="Planned next topics">
           <h2>Then</h2>
           <ol>
+            <AnimatePresence initial={false} mode="popLayout">
             {nextStops.map((stop, index) => (
-              <li key={`${stop.conceptId}-${index}`}>
+              <motion.li
+                key={`${stop.conceptId}-${nextStops.slice(0, index).filter((other) => other.conceptId === stop.conceptId).length}`}
+                layout={!reduceMotion}
+                initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: -10, transition: { duration: 0.18 } }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1], layout: { type: "spring", stiffness: 420, damping: 38 } }}
+              >
                 <strong>{stop.name}</strong>
                 <span className={styles.tag}>{level(stop.mastery, stop.tried)}</span>
                 <span className={styles.track} aria-hidden="true"><i style={{ width: `${Math.round(stop.mastery * 100)}%` }} /></span>
                 <span className={styles.min}>{stop.minutes} min</span>
-              </li>
+              </motion.li>
             ))}
+            </AnimatePresence>
           </ol>
           <p>Your answer can change what comes next.</p>
         </aside>

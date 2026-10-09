@@ -17,14 +17,19 @@
 .name:hover { background: rgba(18, 22, 15, 0.06); }
 .name:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 1px; }
 
-.input {
+.input,
+.input:focus,
+.input:focus-visible {
   display: inline-block;
-  width: min(100%, 36ch);
+  /* As wide as the name being typed, never wider than its place: no empty box trailing after a short name. */
+  min-width: 4ch;
+  max-width: 100%;
+  box-shadow: 0 0 0 2px var(--color-kelus) !important;
+  outline: none !important;
+  border: 0 !important;
   margin: 0 -4px;
   padding: 0 4px;
-  border: 0;
   border-radius: 5px;
-  outline: 2px solid var(--color-kelus);
   background: #fff;
   color: inherit;
   font: inherit;

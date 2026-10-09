@@ -4,6 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { PackArt } from "@/components/PackArt";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
 import styles from "./AutoStart.module.css";
 
 const FLAG = "kelus-start-first-run";
@@ -39,10 +40,12 @@ export function AutoStart({ ready, plan, showPlan, onStart }: { ready: boolean; 
   // Going straight on: a plain cover for the instant before the question opens, so Today never flashes.
   if (!showPlan) return createPortal(<div className={styles.cover} />, document.body);
 
+  // Time from what there is to do: about 40 seconds a question and a minute and a half to explain each topic.
+  const minutes = Math.max(2, Math.ceil(plan.questions * 0.7 + plan.topics * 1.5));
   const rows = [
     { big: String(plan.topics), label: plan.topics === 1 ? "topic found in your notes" : "topics found in your notes" },
-    { big: String(plan.questions), label: "questions written from your own lines" },
-    { big: `${Math.max(5, Math.round(plan.minutes / 5) * 5)} min`, label: "to go through all of it once" },
+    { big: String(plan.questions), label: plan.questions === 1 ? "question written from your own lines" : "questions written from your own lines" },
+    { big: `${minutes < 10 ? minutes : Math.round(minutes / 5) * 5} min`, label: "to go through all of it once" },
   ];
   const rise = (delay: number) => (reduce ? {} : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.22, delay, ease: [0.22, 1, 0.36, 1] as const } });
 
@@ -51,6 +54,11 @@ export function AutoStart({ ready, plan, showPlan, onStart }: { ready: boolean; 
 
   return createPortal(
     <div className={styles.cover}>
+      {/* The same bar as every other screen, so this moment is still clearly Kelus, not a blank sheet. */}
+      <header className={styles.bar}>
+        <span className="study-brand"><KelusLogoMark /><span>kelus</span></span>
+        <button type="button" className={styles.barLater} onClick={later}>Not now</button>
+      </header>
       <section className={styles.card} aria-labelledby="built-title">
         <motion.span {...rise(0)} className={styles.art}><PackArt name="growing" size={140} /></motion.span>
         <motion.p {...rise(0.03)} className={styles.kicker}>{plan.course}</motion.p>

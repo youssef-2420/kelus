@@ -29,6 +29,8 @@ export function InlineName({ value, onSave, label, className }: { value: string;
       <input
         ref={input}
         className={`${styles.input} ${className ?? ""}`}
+        // A little wider than the text, so the last letter and the caret always fit.
+        style={{ width: `calc(${Math.max(4, draft.length + 2)}ch)` }}
         value={draft}
         aria-label={label}
         maxLength={90}

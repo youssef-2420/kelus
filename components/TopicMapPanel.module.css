@@ -214,3 +214,30 @@
     transition: none;
   }
 }
+
+/* Each card can be removed from its corner: shown on hover or focus with a mouse, always on touch. */
+.item { position: relative; }
+.remove {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-slate);
+  cursor: pointer;
+  transition: opacity 120ms cubic-bezier(0.22, 1, 0.36, 1), background-color 120ms, color 120ms;
+}
+.remove:hover { background: #fbede8; color: #9c3b28; }
+.remove:focus-visible { outline: 2px solid var(--color-kelus); outline-offset: 1px; opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .remove { opacity: 0; }
+  .item:hover .remove, .item:focus-within .remove { opacity: 1; }
+}
+/* The summary bar redistributes smoothly when a topic leaves or comes back. */
+.bar span { transition: flex-grow 260ms cubic-bezier(0.22, 1, 0.36, 1); }

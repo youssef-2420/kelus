@@ -142,3 +142,29 @@ test("⌘Z takes back a newly set exam date", async ({ page }) => {
   await expect(page.getByText("Exam date removed")).toBeVisible();
   await expect(page.locator(".studio-topbar-status")).toContainText("Add your exam date");
 });
+
+test("the sidebar folds away smoothly and comes back; a topic removed from Topics glides out and Undo returns it", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await startFromPaste(page, notes);
+  await page.goto("/today?section=map");
+  await page.locator(".index-toc-row").first().waitFor();
+  const widths = await page.evaluate(async () => {
+    const rail = document.querySelector(".studio-rail")!;
+    (document.querySelector(".studio-rail-toggle") as HTMLButtonElement).click();
+    const out: number[] = []; const t0 = performance.now();
+    while (performance.now() - t0 < 450) { out.push(Math.round(rail.getBoundingClientRect().width)); await new Promise((r) => requestAnimationFrame(r)); }
+    return out;
+  });
+  // Several in-between widths: it moved, it did not jump; and it ends closed.
+  expect(new Set(widths.filter((w) => w > 2 && w < 240)).size).toBeGreaterThan(2);
+  expect(widths[widths.length - 1]).toBeLessThanOrEqual(2);
+  await page.getByRole("button", { name: "Show workspace sidebar" }).click();
+  await expect(page.getByRole("button", { name: "Hide workspace sidebar" })).toBeVisible();
+
+  const card = page.locator(".index-toc > li").filter({ hasText: "Enzymes" });
+  await card.hover();
+  await card.getByRole("button", { name: "Remove Enzymes" }).click();
+  await expect(page.locator(".index-toc > li").filter({ hasText: "Enzymes" })).toHaveCount(0);
+  await page.locator("[data-sonner-toast] button", { hasText: "Undo" }).click();
+  await expect(page.locator(".index-toc > li").filter({ hasText: "Enzymes" })).toHaveCount(1);
+});

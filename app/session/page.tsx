@@ -464,7 +464,13 @@ function SessionBody() {
                 label: "Remove this topic",
                 danger: true,
                 // No "are you sure": it can be undone from the note that appears.
-                onSelect: () => { abandon(session.id); removeTopic(concept.id); router.push("/today"); },
+                // The page lifts away first, then the topic goes, so the removal reads as one gesture.
+                onSelect: () => {
+                  const main = document.getElementById("main");
+                  const go = () => { abandon(session.id); removeTopic(concept.id); router.push("/today"); };
+                  if (!main || reduceMotion) { go(); return; }
+                  main.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-6px) scale(0.99)" }], { duration: 200, easing: "cubic-bezier(0.4, 0, 1, 1)", fill: "forwards" }).finished.then(go, go);
+                },
               }] : []),
               {
                 label: "Discard block",
