@@ -16,7 +16,7 @@ export function SiteFooter({ compact = false }: { compact?: boolean }) {
       <div className="site-footer-inner">
         <Link href="/" className="mark site-footer-mark">
           <KelusLogoMark />
-          <span>Kelus</span>
+          <span className="site-wordmark">kelus</span>
         </Link>
         <nav className="site-footer-nav" aria-label="Footer">
           {links.map((link) => (

@@ -811,3 +811,12 @@ html body.is-course-studio .surface-map .topic-cards > li.is-start .index-toc-ro
   box-shadow: none !important;
   background: transparent !important;
 }
+
+/* One Kelus logo: the header's (23px K, 22px "kelus" at 400, tight) in the footer and the product too. */
+html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-brand-identity) {
+  display: inline-flex !important; align-items: center !important; gap: 8px !important;
+  font-size: 1.375rem !important; font-weight: 400 !important; letter-spacing: -0.065em !important; line-height: 1 !important;
+  color: var(--k-ink, #12160f) !important; text-decoration: none !important;
+}
+html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-brand-identity) svg { width: 23px !important; height: 23px !important; }
+html body :is(.site-header .mark, .site-footer .mark, .study-brand, .studio-brand-identity) :is(span, strong) { font: inherit !important; letter-spacing: inherit !important; color: inherit !important; }
