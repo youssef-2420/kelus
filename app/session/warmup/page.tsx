@@ -59,7 +59,7 @@ function WarmUp() {
         <PackArt name="award" className={styles.emptyIcon} size={40} />
         <h1>Nothing to warm up on.</h1>
         <p>Every line you missed has come back, or it is still too fresh to ask again.</p>
-        <Link href="/today" className={`k-btn ${styles.primary}`}>Back to Today <span aria-hidden="true">→</span></Link>
+        <Link href="/today" className={`k-btn ${styles.primary}`}>Back to study plan <span aria-hidden="true">→</span></Link>
       </section>
     );
   }
@@ -113,7 +113,7 @@ function WarmUp() {
             <motion.button type="button" className={`k-btn ${styles.primary}`} onClick={continueOn} whileTap={reduce ? undefined : { scale: 0.97 }}>
               {nextName ? `Continue to ${nextName}` : "Continue to your next topic"} <span aria-hidden="true">→</span>
             </motion.button>
-            <Link href="/today" className={`k-btn k-btn--paper ${styles.secondary}`}>Back to Today</Link>
+            <Link href="/today" className={`k-btn k-btn--paper ${styles.secondary}`}>Back to study plan</Link>
           </div>
         </motion.section>
       )}

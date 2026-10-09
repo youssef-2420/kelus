@@ -361,7 +361,7 @@ export function RevisionSurface({ topicId }: { /** A topic's own page, opened in
           >
             {mode === "today" ? (
               // Today is one column: what to do next. Your notes live in Materials and slide in beside a question.
-              <div className="core-workspace-grid is-today-single" aria-label="Today's route">
+              <div className="core-workspace-grid is-today-single" aria-label="Study plan">
                 <div className="core-workspace-action workbench-focus is-ready is-one-next is-booklet-page" aria-labelledby="today-title">
                   {!hasReadableSource ? <p className="core-source-inline">This plan has no original PDF beside it. <Link href="/today?section=materials">Add your course PDF</Link> to study from your own pages.</p> : null}
                   <AutoStart ready={route.allocations.length > 0} plan={builtPlan} showPlan={!snapshot.events.some((event) => event.kind === "retrieval")} onStart={openSession ? resume : begin} />

@@ -32,5 +32,5 @@ test("a whole block runs from the first question to the end with no stop between
   for (const name of seen) await expect(list).toContainText(name);
   await expect(list).toContainText("Needs another attempt"); // every check unsure and nothing remembered: honest, not flattering
   await expect(page.getByText(/Holding steady|The useful change|Did this help you decide/)).toHaveCount(0);
-  await expect(page.getByRole("link", { name: /Back to Today/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Back to study plan/ })).toBeVisible();
 });

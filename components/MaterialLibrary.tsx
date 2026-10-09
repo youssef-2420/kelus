@@ -924,7 +924,7 @@ export function MaterialLibrary({ embedded = false, incomingFile = null, onIncom
           <div className="material-shelf-empty">
             <p>Sample model is ready. Add your own syllabus when you want Kelus grounded in your files.</p>
             <Link className="cta" href="/today">
-              Continue to Today <span aria-hidden="true">→</span>
+              Continue to study plan <span aria-hidden="true">→</span>
             </Link>
           </div>
         ) : (

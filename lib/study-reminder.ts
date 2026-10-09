@@ -17,7 +17,7 @@ export function buildTomorrowStudyIcs(input: {
   const title = escape(`Kelus · ${input.courseName}`);
   const description = escape(
     [
-      input.nextStopName ? `Suggested first stop: ${input.nextStopName}.` : "Open Today for your next route.",
+      input.nextStopName ? `Suggested first stop: ${input.nextStopName}.` : "Open your study plan for the next topic.",
       input.todayUrl ?? "https://kelus.me/today/",
     ].join(" "),
   );
@@ -83,7 +83,7 @@ export function buildDailyStudyIcs(input: {
   const repeats = lastDay !== null && lastDay.getTime() > first.getTime();
   const slug = input.courseName.toLocaleLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "course";
   const description = escapeText([
-    input.nextStopName ? `Start with ${input.nextStopName}.` : "Open Today for your next topic.",
+    input.nextStopName ? `Start with ${input.nextStopName}.` : "Open your study plan for the next topic.",
     "A few minutes a day beats a long cram. https://kelus.me/today/",
   ].join(" "));
   return [

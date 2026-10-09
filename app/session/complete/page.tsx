@@ -196,7 +196,7 @@ function CompleteBody() {
         </section>
 
         <Link href="/today" className={`cta ${styles.primary}`} onClick={() => trackEvent({ name: "next_route_opened", source: "completion" })}>
-          Back to Today <span aria-hidden="true">→</span>
+          Back to study plan <span aria-hidden="true">→</span>
         </Link>
 
         <div className={styles.quiet}>
