@@ -10,6 +10,8 @@ import { QuickRun } from "@/components/QuickRun";
 import { returnVisit, warmupChecks } from "@/domain/return-visit";
 import type { QuickRun as Run } from "@/domain/quick-run";
 import { getMissedLines, getServerMissedLines, resolveMissedLines, subscribeMissedLines } from "@/lib/missed-lines";
+import { KelusLogoMark } from "@/components/KelusLogoMark";
+import { useEffect } from "react";
 import styles from "./warmup.module.css";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -66,8 +68,8 @@ function WarmUp() {
     <>
       {!result ? (
         <div className={styles.runWrap}>
-          <p className={styles.kicker}>Warm-up · lines you missed last time</p>
-          <h1 className={styles.heading}>Bring them back.</h1>
+          <h1 className={styles.heading}>Warm up on what you missed</h1>
+          <p className={styles.sub}>{plan.length === 1 ? "One line" : `${plan.length} lines`} from last time, about a minute.</p>
           <QuickRun run={run} onRevealSource={() => undefined} onFinish={() => undefined} onChecksDone={done} />
         </div>
       ) : (
@@ -120,12 +122,31 @@ function WarmUp() {
   );
 }
 
+function WarmUpShell({ children }: { children: React.ReactNode }) {
+  // Same page as a session: its bar, its body classes, so its type and colours.
+  useEffect(() => {
+    document.body.classList.add("is-session-booklet", "is-warmup");
+    return () => document.body.classList.remove("is-session-booklet", "is-warmup");
+  }, []);
+  return (
+    <>
+      <header className={styles.bar}>
+        <Link href="/" className="study-brand" aria-label="Kelus home"><KelusLogoMark /><span>kelus</span></Link>
+        <Link href="/today" className={styles.close}>Close</Link>
+      </header>
+      {children}
+    </>
+  );
+}
+
 export default function WarmUpPage() {
   return (
+    <WarmUpShell>
     <main id="main" className={styles.page}>
       <Suspense fallback={null}>
         <WarmUp />
       </Suspense>
     </main>
+    </WarmUpShell>
   );
 }

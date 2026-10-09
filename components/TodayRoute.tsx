@@ -69,7 +69,9 @@ export function TodayRoute({
   // When the visit opens with a warm-up, that is the one green button; the topic waits one step quieter.
   const warmupFirst = !isSampleCourse && visit.returning && visit.warmup.length > 0;
   // With today's goal done, the next topic is offered as an extra, not pressed on.
-  const goalDone = !isSampleCourse && habitSummary({ events, concepts }).goalMet;
+  const habit = habitSummary({ events, concepts });
+  const goalDone = !isSampleCourse && habit.goalMet;
+  const goalDoneCount = habit.topicsToday;
   const openedRef = useRef(false);
   const hasPriorEvidence = !isSampleCourse && events.some((event) => event.kind === "retrieval");
 
@@ -109,7 +111,7 @@ export function TodayRoute({
     return { ...allocation, name: concept?.name ?? "A mix of earlier topics", mastery: concept?.mastery ?? 0, tried: (concept?.retrievalAttempts ?? 0) > 0 };
   });
   const installable = install === "prompt" || install === "ios";
-  const path = studyPath({ concepts, nowMs: Date.parse(nowIso), daysToExam: examDatePending ? null : daysToExam });
+  const path = studyPath({ concepts, nowMs: Date.parse(nowIso), daysToExam: examDatePending ? null : daysToExam, doneToday: goalDoneCount });
   const level = (mastery: number, tried: boolean) => (tried ? topicLevel(mastery, 1) : "New");
 
   return (

@@ -168,3 +168,13 @@ test("the sidebar folds away smoothly and comes back; a topic removed from Topic
   await page.locator("[data-sonner-toast] button", { hasText: "Undo" }).click();
   await expect(page.locator(".index-toc > li").filter({ hasText: "Enzymes" })).toHaveCount(1);
 });
+
+test("renaming keeps every letter you type, even typed straight away", async ({ page }) => {
+  await startFromPaste(page, notes);
+  await page.goto("/today?section=map");
+  await page.locator(".index-toc-row").first().click();
+  await page.getByRole("button", { name: /Rename topic/ }).click();
+  await page.keyboard.type("Water movement");
+  await page.keyboard.press("Enter");
+  expect(await topicNames(page)).toContain("Water movement");
+});

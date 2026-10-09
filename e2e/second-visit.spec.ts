@@ -21,7 +21,7 @@ test("the second visit opens with what you missed, warms up on it, then goes on 
 
   await card.getByRole("link", { name: /Warm up · 1 min/ }).click();
   await expect(page).toHaveURL(/\/session\/warmup/);
-  await expect(page.getByText("Warm-up · lines you missed last time")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Warm up on what you missed" })).toBeVisible();
   for (let guard = 0; guard < 4; guard += 1) {
     await expect(page.getByRole("button", { name: "I’m not sure" }).or(page.getByRole("heading", { name: /came back|Not yet/ }))).toBeVisible();
     if (await page.getByRole("heading", { name: /came back|Not yet/ }).count()) break;

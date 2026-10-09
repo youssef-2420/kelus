@@ -15,7 +15,6 @@ export function InlineName({ value, onSave, label, className }: { value: string;
   function start() {
     setDraft(value);
     setEditing(true);
-    requestAnimationFrame(() => input.current?.select());
   }
 
   function finish(save: boolean) {
@@ -28,6 +27,9 @@ export function InlineName({ value, onSave, label, className }: { value: string;
     return (
       <input
         ref={input}
+        // Focused the moment it appears, with the old name selected: a fast first key is never lost.
+        autoFocus
+        onFocus={(event) => event.currentTarget.select()}
         className={`${styles.input} ${className ?? ""}`}
         // A little wider than the text, so the last letter and the caret always fit.
         style={{ width: `calc(${Math.max(4, draft.length + 2)}ch)` }}

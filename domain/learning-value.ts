@@ -63,7 +63,7 @@ export function calculateLearningValue(input: {
   if (concept.mastery < 0.55) reasons.push("LOW_MASTERY");
   if (concept.predictedRetention < Math.max(0.6, concept.mastery - 0.1)) reasons.push("RETENTION_FADING");
   if (dependentCount > 0 || gap > 0.25) reasons.push("PREREQUISITE_GAP");
-  if (days <= 14) reasons.push("EXAM_APPROACHING");
+  if (days <= 7) reasons.push("EXAM_APPROACHING");
   if (expectedGain >= 0.35) reasons.push("HIGH_EXPECTED_GAIN");
   if (reviewDue) reasons.push("REVIEW_DUE");
   if (concept.confidence < 0.45) reasons.push("LOW_CONFIDENCE_ESTIMATE");
