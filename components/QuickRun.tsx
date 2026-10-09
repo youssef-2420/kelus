@@ -211,7 +211,6 @@ export function QuickRun({ run, onRevealSource, onFinish, onChecksDone }: {
           </motion.section>
         ) : (
           <motion.section key="explain" className={styles.card} {...motionProps} aria-label="Explain it">
-            <p className={styles.kicker}>Now in your own words</p>
             <h1 className={styles.prompt}>{run.explainPrompt}</h1>
             <label htmlFor="run-explain" className="sr-only">Your explanation</label>
             {!compared ? <textarea id="run-explain" className={styles.area} rows={4} autoFocus value={explained} onChange={(event) => { setExplained(event.target.value); setNudge(false); }} placeholder="Close the page. Write it from memory." /> : null}

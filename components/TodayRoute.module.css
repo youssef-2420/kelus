@@ -24,24 +24,6 @@
   align-items: center;
   gap: 10px;
 }
-
-.track {
-  display: inline-block;
-  position: relative;
-  width: 120px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--color-frost);
-  overflow: hidden;
-}
-
-.track i {
-  position: absolute;
-  inset: 0 auto 0 0;
-  border-radius: 3px;
-  background: var(--k-iris);
-}
-
 .card {
   display: grid;
   gap: 18px;
@@ -51,9 +33,6 @@
   background: var(--color-pure-white);
   box-shadow: 0 1px 0 rgba(18, 22, 15, 0.03), 0 12px 32px -18px rgba(18, 22, 15, 0.18);
 }
-
-.kicker { margin: 0; font-size: var(--text-body-sm); font-weight: 600; color: var(--color-kelus); }
-
 .title {
   margin: 0 !important;
   font-family: var(--font-display) !important;
@@ -71,24 +50,6 @@
   line-height: 1.55;
   color: var(--color-slate);
 }
-
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.chips li {
-  padding: 6px 12px;
-  border: 1px solid var(--color-frost);
-  border-radius: 999px;
-  font-size: var(--text-body-sm);
-  color: var(--color-slate);
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -142,7 +103,8 @@
 
 .then li {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 4.5rem 120px 4rem;
+  /* Name, status, time: the bar column went with the duplicate progress meter. */
+  grid-template-columns: minmax(0, 1fr) auto 4rem;
   align-items: center;
   gap: 16px;
   padding: 16px 4px;
@@ -173,7 +135,6 @@
 /* The column is narrow beside the notes pane: drop the bar and let names wrap, never collide with the tag. */
 @container (max-width: 34rem) {
   .then li { grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; }
-  .then li .track { display: none; }
   .then li strong { font-size: 1.125rem; overflow-wrap: anywhere; }
 }
 
@@ -182,7 +143,6 @@
   .card { padding: 24px 20px; }
   .start.start { width: 100%; }
   .then li { grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; }
-  .then li .track { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -201,3 +161,6 @@
 .dots i.dotStarted { border-color: var(--k-marigold-edge); background: var(--k-marigold); }
 .dots i.dotSolid { border-color: var(--k-green-edge); background: var(--k-green); }
 .ahead { color: var(--k-iris); font-weight: 500; }
+
+/* Under the topic: how long it takes and what is in it, in one quiet line. */
+.meta { margin: 6px 0 0; color: var(--color-slate); font-size: 0.9375rem; font-variant-numeric: tabular-nums; }

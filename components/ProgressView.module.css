@@ -16,9 +16,6 @@
   background: var(--color-pure-white);
   box-shadow: 0 1px 0 rgba(18, 22, 15, 0.03), 0 12px 32px -18px rgba(18, 22, 15, 0.18);
 }
-
-.kicker { margin: 0; font-size: var(--text-body-sm); font-weight: 600; color: var(--k-iris); }
-
 .lead h2 {
   margin: 0;
   font-family: var(--font-display);

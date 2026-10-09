@@ -181,7 +181,6 @@ function CompleteBody() {
         <section className={styles.tomorrow} aria-labelledby="complete-return-title">
           <PackArt name="time-flies" className={styles.art} size={120} />
           <div>
-            <p className="kicker">Come back tomorrow</p>
             <h2 id="complete-return-title">
               {missedToday
                 ? missedToday <= 3

@@ -74,7 +74,6 @@ export function ProgressView({ concepts, events, nowIso, daysToExam, targetPerce
   return (
     <div className={styles.page}>
       <motion.section className={styles.lead} initial={reduce ? false : { opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduce ? 0 : 0.3, ease: [0.22, 1, 0.36, 1] }} aria-labelledby="progress-headline">
-        <p className={styles.kicker}>This week</p>
         <h2 id="progress-headline">{progressHeadline(summary)}</h2>
         <p className={styles.caveat}>{fresh ? "Nothing is estimated until you answer. When it is, it comes from your own answers, not a prediction of your grade." : "Estimated from your own answers. It is not a prediction of your grade."}</p>
         {fresh ? null : summary.enough ? (

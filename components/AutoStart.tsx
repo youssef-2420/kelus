@@ -61,18 +61,12 @@ export function AutoStart({ ready, plan, showPlan, onStart }: { ready: boolean; 
       </header>
       <section className={styles.card} aria-labelledby="built-title">
         <motion.span {...rise(0)} className={styles.art}><PackArt name="growing" size={140} /></motion.span>
-        <motion.p {...rise(0.03)} className={styles.kicker}>{plan.course}</motion.p>
-        <motion.h1 {...rise(0.06)} id="built-title">Your study plan is ready.</motion.h1>
-        <ul className={styles.rows}>
-          {rows.map((row, index) => (
-            <motion.li key={row.label} {...rise(0.09 + index * 0.04)}>
-              <strong>{row.big}</strong>
-              <span>{row.label}</span>
-            </motion.li>
-          ))}
-        </ul>
-        <motion.p {...rise(0.18)} className={styles.how}>Each question comes from a line in your notes. What you miss comes back tomorrow, until you know it.</motion.p>
-        <motion.div {...rise(0.2)} className={styles.actions}>
+        <motion.h1 {...rise(0.03)} id="built-title">{plan.course} is ready to study.</motion.h1>
+        <motion.p {...rise(0.06)} className={styles.summary}>
+          Kelus found <b>{rows[0].big} {plan.topics === 1 ? "topic" : "topics"}</b> in your notes and wrote <b>{rows[1].big} {plan.questions === 1 ? "question" : "questions"}</b> from your own lines. Going through all of it once takes about <b>{rows[2].big}</b>.
+        </motion.p>
+        <motion.p {...rise(0.09)} className={styles.how}>Each question comes from a line in your notes. What you miss comes back tomorrow, until you know it.</motion.p>
+        <motion.div {...rise(0.12)} className={styles.actions}>
           <button type="button" className="k-btn" onClick={start}>Start with {plan.firstName} <span aria-hidden="true">→</span></button>
           <button type="button" className={styles.later} onClick={later}>See the plan first</button>
         </motion.div>
