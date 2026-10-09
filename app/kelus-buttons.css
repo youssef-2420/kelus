@@ -788,3 +788,5 @@ html body .setup-error:empty { display: none; }
 @media (max-width: 650px) {
   html body.is-course-studio .studio-topbar-signin { display: inline-flex; align-items: center; min-height: 36px; margin-left: auto; margin-right: 12px; padding: 0 12px; border: 1px solid var(--k-line-strong); border-radius: 9px; background: var(--k-surface); color: var(--k-ink); font: inherit; font-size: 0.8125rem; font-weight: 600; }
 }
+
+html body .auth-backdrop { z-index: 200; }
